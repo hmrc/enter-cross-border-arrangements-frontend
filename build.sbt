@@ -15,16 +15,9 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(
     name := appName,
+    scalaVersion := "2.12.10",
     RoutesKeys.routesImport += "models._",
-    TwirlKeys.templateImports ++= Seq(
-      "play.twirl.api.HtmlFormat",
-      "play.twirl.api.HtmlFormat._",
-      "uk.gov.hmrc.play.views.html.helpers._",
-      "uk.gov.hmrc.play.views.html.layouts._",
-      "models.Mode",
-      "controllers.routes._"
-    ),
-    PlayKeys.playDefaultPort := 9000,
+    PlayKeys.playDefaultPort := 9762,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration;.*LanguageSwitchController",
@@ -54,4 +47,3 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   )
 )
 
-dependencyOverrides ++= AppDependencies.overrides
