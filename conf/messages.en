@@ -10,9 +10,9 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
-site.service_name = enter-cross-border-arrangements-frontend
+site.service_name = Enter cross-border arrangements for DAC6
 site.textarea.char_limit = (Limit is {0} characters)
-site.title.suffix = - enter-cross-border-arrangements-frontend - GOV.UK
+site.title.suffix = - GOV.UK
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
