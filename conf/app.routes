@@ -16,3 +16,7 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /sign-out                                    controllers.SignOutController.signOut
 
+GET        /hallmarks/hallmark-categories                           controllers.HallmarkCategoriesController.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-categories                           controllers.HallmarkCategoriesController.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmarks-categories                   controllers.HallmarkCategoriesController.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmarks-categories                   controllers.HallmarkCategoriesController.onSubmit(mode: Mode = CheckMode)

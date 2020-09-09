@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import play.api.libs.json.{JsValue, Json}
+import models.HallmarkCategories
+import play.api.libs.json.JsPath
 
-trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+case object HallmarkCategoriesPage extends QuestionPage[Set[HallmarkCategories]] {
 
-  implicit lazy val arbitraryHallmarkCategoriesUserAnswersEntry: Arbitrary[(HallmarkCategoriesPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkCategoriesPage.type]
-        value <- arbitrary[HallmarkCategories].map(Json.toJson(_))
-      } yield (page, value)
-    }
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "hallmarkCategories"
 }
