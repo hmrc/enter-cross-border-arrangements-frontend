@@ -10,6 +10,7 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
+site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.service_name = Enter cross-border arrangements for DAC6
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
@@ -37,8 +38,8 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 
-index.title = enter-cross
-index.heading = enter-cross
+index.title = Enter cross-border arrangements for DAC6
+index.heading = Enter cross-border arrangements for DAC6
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 session_expired.title = For your security, this service has been reset
