@@ -63,7 +63,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
-        "Does the arrangement meet the Main Benefit Test?' page " +
+        "to 'Does the arrangement meet the Main Benefit Test?' page " +
         "when checkbox A1, A2a, A2b & A3 is selected" in {
 
         forAll(arbitrary[UserAnswers]) {
@@ -71,8 +71,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA1").toSet)
-                  .success
-                  .value
+                .success
+                .value
               answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA2a").toSet)
                 .success
                 .value
@@ -85,7 +85,41 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkAController.onPageLoad(NormalMode))
+              .mustBe(routes.MainBenefitTestController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Does the arrangement meet the Main Benefit Test?' page " +
+        "to 'Check your answers' page when Yes is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(MainBenefitTestPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from 'Does the arrangement meet the Main Benefit Test?' page " +
+        "to 'There is a problem' page when No is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(MainBenefitTestPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkCategoriesController.onPageLoad(NormalMode)) // TODO - change to There is a problem page
         }
       }
     }

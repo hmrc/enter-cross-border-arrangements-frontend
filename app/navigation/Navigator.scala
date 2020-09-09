@@ -28,7 +28,8 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[Call] = {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
-    case HallmarkAPage => _ => Some(routes.HallmarkAController.onPageLoad(NormalMode)) //TODO change to main benefit test page
+    case HallmarkAPage => _ => Some(routes.MainBenefitTestController.onPageLoad(NormalMode))
+    case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -40,6 +41,12 @@ class Navigator @Inject()() {
     ua.get(HallmarkCategoriesPage) map {
       case set: Set[HallmarkCategories] if set.head == CategoryA =>
         routes.HallmarkAController.onPageLoad(mode)
+    }
+
+  private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(MainBenefitTestPage) map {
+      case true => routes.CheckYourAnswersController.onPageLoad()
+      case false => routes.HallmarkCategoriesController.onPageLoad(mode) //TODO - change to there is a problem page
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

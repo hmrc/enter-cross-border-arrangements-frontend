@@ -153,3 +153,9 @@ hallmarkA.checkYourAnswersLabel = Hallmarks that apply to this arrangement
 hallmarkA.error.required = Select which parts of hallmark A apply to this arrangement
 hallmarkA.hint=Select all parts that apply.
 
+
+mainBenefitTest.title = Does the arrangement meet the Main Benefit Test?
+mainBenefitTest.heading = Does the arrangement meet the Main Benefit Test?
+mainBenefitTest.checkYourAnswersLabel = The test is used to assess if the arrangement is obtaining a tax advantage.
+mainBenefitTest.hint = The test is used to assess if the arrangement is obtaining a tax advantage.
+mainBenefitTest.error.required = Select yes if the arrangement meets the Main Benefit Test
