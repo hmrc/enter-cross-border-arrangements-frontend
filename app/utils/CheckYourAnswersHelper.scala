@@ -29,6 +29,21 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def hallmarkA: Option[Row] = userAnswers.get(HallmarkAPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"hallmarkA.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Html(answer.map(a => msg"hallmarkA.$a".resolve).mkString(",<br>"))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.HallmarkAController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkA.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
     answer =>
       Row(

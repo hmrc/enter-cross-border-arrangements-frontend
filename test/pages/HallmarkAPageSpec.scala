@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import models.HallmarkA
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class HallmarkAPageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryHallmarkA: Arbitrary[HallmarkA] =
-    Arbitrary {
-      Gen.oneOf(HallmarkA.values.toSeq)
-    }
+  "HallmarkAPage" - {
 
-  implicit lazy val arbitraryHallmarkCategories: Arbitrary[HallmarkCategories] =
-    Arbitrary {
-      Gen.oneOf(HallmarkCategories.values.toSeq)
-    }
+    beRetrievable[Set[HallmarkA]](HallmarkAPage)
+
+    beSettable[Set[HallmarkA]](HallmarkAPage)
+
+    beRemovable[Set[HallmarkA]](HallmarkAPage)
+  }
 }

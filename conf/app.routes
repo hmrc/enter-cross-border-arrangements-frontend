@@ -20,3 +20,8 @@ GET        /hallmarks/hallmark-categories                           controllers.
 POST       /hallmarks/hallmark-categories                           controllers.HallmarkCategoriesController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmarks-categories                   controllers.HallmarkCategoriesController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmarks-categories                   controllers.HallmarkCategoriesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /hallmarks/hallmark-category-a                        controllers.HallmarkAController.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-category-a                        controllers.HallmarkAController.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-category-a                 controllers.HallmarkAController.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-category-a                 controllers.HallmarkAController.onSubmit(mode: Mode = CheckMode)

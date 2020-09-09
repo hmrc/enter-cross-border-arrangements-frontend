@@ -58,7 +58,34 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkCategoriesController.onPageLoad(NormalMode)) //TODO - Change to HallmarkAController
+              .mustBe(routes.HallmarkAController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
+        "Does the arrangement meet the Main Benefit Test?' page " +
+        "when checkbox A1, A2a, A2b & A3 is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA1").toSet)
+                  .success
+                  .value
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA2a").toSet)
+                .success
+                .value
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA2b").toSet)
+                .success
+                .value
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA3").toSet)
+                .success
+                .value
+
+            navigator
+              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkAController.onPageLoad(NormalMode))
         }
       }
     }

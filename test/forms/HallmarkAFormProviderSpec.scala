@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import models._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import forms.behaviours.CheckboxFieldBehaviours
+import models.HallmarkA
+import play.api.data.FormError
 
-trait ModelGenerators {
+class HallmarkAFormProviderSpec extends CheckboxFieldBehaviours {
 
-  implicit lazy val arbitraryHallmarkA: Arbitrary[HallmarkA] =
-    Arbitrary {
-      Gen.oneOf(HallmarkA.values.toSeq)
-    }
+  val form = new HallmarkAFormProvider()()
 
-  implicit lazy val arbitraryHallmarkCategories: Arbitrary[HallmarkCategories] =
-    Arbitrary {
-      Gen.oneOf(HallmarkCategories.values.toSeq)
-    }
+  ".value" - {
+
+    val fieldName = "value"
+    val requiredKey = "hallmarkA.error.required"
+
+    behave like checkboxField[HallmarkA](
+      form,
+      fieldName,
+      validValues  = HallmarkA.values,
+      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+    )
+
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
+  }
 }
