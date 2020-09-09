@@ -43,6 +43,24 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.IndexController.onPageLoad())
         }
       }
+
+      "must go from 'Which categories of hallmarks are relevant to this arrangement' page " +
+        "to 'Which parts of hallmark A apply to this arrangement?' page " +
+        "when checkbox A is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+                  .success
+                  .value
+
+            navigator
+              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkCategoriesController.onPageLoad(NormalMode)) //TODO - Change to HallmarkAController
+        }
+      }
     }
 
     "in Check mode" - {

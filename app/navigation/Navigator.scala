@@ -16,28 +16,43 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.mvc.Call
 import controllers.routes
-import pages._
+import javax.inject.{Inject, Singleton}
+import models.HallmarkCategories.CategoryA
 import models._
+import pages._
+import play.api.mvc.Call
 
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => routes.IndexController.onPageLoad()
+  private val normalRoutes: Page => UserAnswers => Option[Call] = {
+    case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
+    case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
+  private val checkRouteMap: Page => UserAnswers => Option[Call] = {
+    case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
+
+  private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkCategoriesPage) map {
+      case set: Set[HallmarkCategories] if set.head == CategoryA =>
+        routes.HallmarkCategoriesController.onPageLoad(mode) //TODO - call Hallmark A Controller
+
+    }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)
+      normalRoutes(page)(userAnswers) match {
+        case Some(call) => call
+        case None => routes.SessionExpiredController.onPageLoad()
+      }
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)
+      checkRouteMap(page)(userAnswers) match {
+        case Some(call) => call
+        case None => routes.SessionExpiredController.onPageLoad()
+
+      }
   }
 }

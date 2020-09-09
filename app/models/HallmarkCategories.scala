@@ -24,29 +24,29 @@ sealed trait HallmarkCategories
 
 object HallmarkCategories extends Enumerable.Implicits {
 
-  case object Option1 extends WithName("option1") with HallmarkCategories
-  case object Option2 extends WithName("option2") with HallmarkCategories
-  case object Option3 extends WithName("option3") with HallmarkCategories
-  case object Option4 extends WithName("option4") with HallmarkCategories
-  case object Option5 extends WithName("option5") with HallmarkCategories
+  case object CategoryA extends WithName("categoryA") with HallmarkCategories
+  case object CategoryB extends WithName("categoryB") with HallmarkCategories
+  case object CategoryC extends WithName("categoryC") with HallmarkCategories
+  case object CategoryD extends WithName("categoryD") with HallmarkCategories
+  case object CategoryE extends WithName("categoryE") with HallmarkCategories
 
   val values: Seq[HallmarkCategories] = Seq(
-    Option1,
-    Option2,
-    Option3,
-    Option4,
-    Option5
+    CategoryA,
+    CategoryB,
+    CategoryC,
+    CategoryD,
+    CategoryE
   )
 
   def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
 
     val field = form("value")
     val items = Seq(
-      Checkboxes.Checkbox(msg"hallmarkCategories.option1", Option1.toString),
-      Checkboxes.Checkbox(msg"hallmarkCategories.option2", Option2.toString),
-      Checkboxes.Checkbox(msg"hallmarkCategories.option3", Option3.toString),
-      Checkboxes.Checkbox(msg"hallmarkCategories.option4", Option4.toString),
-      Checkboxes.Checkbox(msg"hallmarkCategories.option5", Option5.toString)
+      Checkboxes.Checkbox(msg"hallmarkCategories.option1", CategoryA.toString),
+      Checkboxes.Checkbox(msg"hallmarkCategories.option2", CategoryB.toString),
+      Checkboxes.Checkbox(msg"hallmarkCategories.option3", CategoryC.toString),
+      Checkboxes.Checkbox(msg"hallmarkCategories.option4", CategoryD.toString),
+      Checkboxes.Checkbox(msg"hallmarkCategories.option5", CategoryE.toString)
     )
 
     Checkboxes.set(field, items)

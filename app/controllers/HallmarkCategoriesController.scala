@@ -86,7 +86,6 @@ class HallmarkCategoriesController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, mode, updatedAnswers))
 
-
         }
       )
   }
