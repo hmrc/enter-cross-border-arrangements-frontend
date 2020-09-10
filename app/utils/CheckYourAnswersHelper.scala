@@ -30,7 +30,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
   def mainBenefitTest: Option[Row] = userAnswers.get(MainBenefitTestPage) map {
     answer =>
       Row(
-        key     = Key(msg"mainBenefitTest.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(
@@ -45,8 +45,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
   def hallmarkA: Option[Row] = userAnswers.get(HallmarkAPage) map {
     answer =>
       Row(
-        key     = Key(msg"hallmarkA.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"hallmarkA.$a".resolve).mkString(",<br>"))),
+        key     = Key(msg"hallmarkA.checkYourAnswersLabel", classes = Seq()),
+        value   = Value(Html(answer.map(a => msg"$a".resolve).mkString(", "))),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -60,7 +60,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
   def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
     answer =>
       Row(
-        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
         value   = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
         actions = List(
           Action(

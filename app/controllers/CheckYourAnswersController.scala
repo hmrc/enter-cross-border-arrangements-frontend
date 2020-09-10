@@ -42,11 +42,24 @@ class CheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val answers: Seq[SummaryList.Row] = Seq()
+      val answers: Seq[SummaryList.Row] = buildAnswers(helper)
 
       renderer.render(
         "check-your-answers.njk",
         Json.obj("list" -> answers)
       ).map(Ok(_))
   }
+
+  private def buildAnswers(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple2(
+      helper.hallmarkA,
+      helper.mainBenefitTest
+    )
+
+    pagesToCheck match {
+      case (Some(_),Some(_)) => Seq(helper.hallmarkA, helper.mainBenefitTest).flatten  // hallmarks A with Benefit test answer
+    }
+  }
+
 }

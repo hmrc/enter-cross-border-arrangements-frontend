@@ -70,16 +70,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA1").toSet)
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("A1").toSet)
                 .success
                 .value
-              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA2a").toSet)
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("A2a").toSet)
                 .success
                 .value
-              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA2b").toSet)
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("A2b").toSet)
                 .success
                 .value
-              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("hallmarkA3").toSet)
+              answers.set(HallmarkAPage, HallmarkA.enumerable.withName("A3").toSet)
                 .success
                 .value
 
