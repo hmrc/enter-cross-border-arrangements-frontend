@@ -6,6 +6,13 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
+{% macro hintText() %}
+    <p class='govuk-body govuk-!-margin-top-4'>
+        {{ messages("hallmarkCategories.p1") }}
+    </p>
+        {{messages('hallmarkCategories.hint')}}
+{% endmacro %}
+
 {% block pageTitle %}
   {{ title(messages("hallmarkCategories.title"), form.errors) }}
 {% endblock %}
@@ -41,7 +48,7 @@
               }
             },
             hint: {
-              text: messages('hallmarkCategories.hint')
+                html: hintText()
             },
             items: checkboxes,
             errorMessage: form.value.error

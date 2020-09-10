@@ -141,7 +141,8 @@ hallmarkCategories.option4 =D: specific hallmarks concerning automatic exchange 
 hallmarkCategories.option5 =E: specific hallmarks concerning transfer pricing
 hallmarkCategories.checkYourAnswersLabel =Hallmarks that apply to this arrangement
 hallmarkCategories.error.required =Select which categories of hallmarks are relevant to this arrangement
-hallmarkCategories.hint=Hallmarks are designed to identify arrangements that are reportable. Select all that apply.
+hallmarkCategories.hint=Select all that apply.
+hallmarkCategories.p1=Hallmarks are designed to identify arrangements that are reportable.
 
 hallmarkA.title = Which parts of hallmark A apply to this arrangement?
 hallmarkA.heading = Which parts of hallmark A apply to this arrangement?

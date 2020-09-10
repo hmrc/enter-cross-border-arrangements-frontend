@@ -45,7 +45,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
   def hallmarkA: Option[Row] = userAnswers.get(HallmarkAPage) map {
     answer =>
       Row(
-        key     = Key(msg"hallmarkA.checkYourAnswersLabel", classes = Seq()),
+        key     = Key(msg"hallmarkA.checkYourAnswersLabel"),
         value   = Value(Html(answer.map(a => msg"$a".resolve).mkString(", "))),
         actions = List(
           Action(
@@ -81,6 +81,5 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 }
 
 object CheckYourAnswersHelper {
-
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }
