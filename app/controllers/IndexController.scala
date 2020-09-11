@@ -18,13 +18,12 @@ package controllers
 
 import controllers.actions.IdentifierAction
 import javax.inject.Inject
-import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IndexController @Inject()(
     identify: IdentifierAction,
@@ -33,10 +32,6 @@ class IndexController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-
-    Future.successful(Redirect(routes.HallmarkCategoriesController.onPageLoad(NormalMode)))
-    //TODO - Remove the temporary Redirect above once hallmark journey has finished development
-
-//      renderer.render("index.njk").map(Ok(_))
+      renderer.render("index.njk").map(Ok(_))
   }
 }
