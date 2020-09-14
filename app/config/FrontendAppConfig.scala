@@ -21,11 +21,14 @@ import controllers.routes
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  private val contactHost = configuration.get[String]("contact-frontend.host")
+//  private val contactHost = configuration.get[String]("contact-frontend.host")
+  private val contactHost = servicesConfig.baseUrl("contact-frontend")
+  private val feedbackFrontend = servicesConfig.baseUrl("feedback-frontend")
   private val contactFormServiceIdentifier = "DAC6"
 
   val analyticsToken: String = configuration.get[String](s"google-analytics.token")
@@ -38,8 +41,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String             = configuration.get[String]("urls.logout")
-
+  val signOutUrl: String             = s"$feedbackFrontend/feedback/enter-for-cross-border-arrangements"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
