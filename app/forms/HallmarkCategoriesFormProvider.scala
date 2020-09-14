@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.data.Forms.set
+import models.HallmarkCategories
 
-  implicit lazy val arbitraryMeetMainBenefitTestPage: Arbitrary[MainBenefitTestPage.type] =
-    Arbitrary(MainBenefitTestPage)
+class HallmarkCategoriesFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryHallmarkAPage: Arbitrary[HallmarkAPage.type] =
-    Arbitrary(HallmarkAPage)
-
-  implicit lazy val arbitraryHallmarkCategoriesPage: Arbitrary[HallmarkCategoriesPage.type] =
-    Arbitrary(HallmarkCategoriesPage)
+  def apply(): Form[Set[HallmarkCategories]] =
+    Form(
+      "value" -> set(enumerable[HallmarkCategories]("hallmarkCategories.error.required"))
+        .verifying(nonEmptySet("hallmarkCategories.error.required"))
+    )
 }

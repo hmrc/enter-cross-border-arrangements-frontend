@@ -1,5 +1,7 @@
 {% extends "govuk/template.njk" %}
+{% from "macros/hmrc-header/macro.njk"            import hmrcHeader %}
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
+{% from "includes/get-help-link.njk" import hmrcReportTechnicalIssue %}
 {%- set htmlLang = request.language -%}
 
 {% block head %}
@@ -7,22 +9,30 @@
 {% endblock %}
 
 {% block header %}
-  {{ govukHeader({
-    homepageUrl: "/enter-cross-border-arrangements-frontend",
+  {% macro phaseBanner() %}
+      {{ messages("phaseBanner.1") }} <a class="govuk-link" href="{{ config.betaFeedbackUnauthenticatedUrl }}">{{ messages("phaseBanner.2") }}</a> {{ messages("phaseBanner.3") }}
+  {% endmacro %}
+
+  {{ hmrcHeader({
+    homepageUrl: "https://www.gov.uk",
     serviceName: messages("site.service_name"),
-    serviceUrl: "/enter-cross-border-arrangements-frontend",
+    serviceUrl: "/enter-cross-border-arrangements",
     containerClasses: "govuk-width-container",
-    assetsPath: "/assets"
+    assetsPath: "/assets",
+    signOutHref: routes.controllers.SignOutController.signOut().url
   }) }}
 {% endblock %}
 
 {% block beforeContent %}
-  {% include "includes/phase-banner.njk" %}
 {% endblock %}
 
 {% block content %}
-  {% include "includes/language-toggles.njk" %}
   {% block mainContent %}{% endblock %}
+    {{ hmrcReportTechnicalIssue({
+      id: "getHelpWithThisPage",
+      link: config.reportAProblemNonJSUrl,
+      messageKey: messages("site.getHelpWithThisPage")
+    }) }}
 {% endblock %}
 
 {% block bodyEnd %}

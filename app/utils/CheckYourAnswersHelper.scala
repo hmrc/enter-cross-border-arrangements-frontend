@@ -22,12 +22,55 @@ import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages._
 import play.api.i18n.Messages
-import CheckYourAnswersHelper._
-import uk.gov.hmrc.viewmodels._
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+
+  def mainBenefitTest: Option[Row] = userAnswers.get(MainBenefitTestPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.MainBenefitTestController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def hallmarkA: Option[Row] = userAnswers.get(HallmarkAPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"hallmarkA.checkYourAnswersLabel"),
+        value   = Value(Html(answer.map(a => msg"$a".resolve).mkString(", "))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.HallmarkAController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkA.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
+        value   = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
@@ -38,6 +81,5 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 }
 
 object CheckYourAnswersHelper {
-
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }

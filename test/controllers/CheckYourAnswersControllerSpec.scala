@@ -17,14 +17,15 @@
 package controllers
 
 import base.SpecBase
+import models.{HallmarkA, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import play.api.libs.json.{JsObject, Json}
+import pages.{HallmarkAPage, MainBenefitTestPage}
+import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.SummaryList
 
 import scala.concurrent.Future
 
@@ -37,7 +38,15 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(HallmarkAPage, HallmarkA.enumerable.withName("A1").toSet)
+        .success
+        .value
+        .set(MainBenefitTestPage, true)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
