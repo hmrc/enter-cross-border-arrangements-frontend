@@ -1,6 +1,7 @@
 # enter-cross-border-arrangements-frontend
 
-This is a placeholder README.md for a new repository
+This is the repository for the Enter cross border arrangements frontend project.
+
 
 ### License
 
