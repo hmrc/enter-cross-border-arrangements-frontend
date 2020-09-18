@@ -26,6 +26,11 @@ POST       /hallmarks/hallmark-category-a                           controllers.
 GET        /hallmarks/change-hallmark-category-a                    controllers.HallmarkAController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-category-a                    controllers.HallmarkAController.onSubmit(mode: Mode = CheckMode)
 
+GET        /hallmarks/hallmark-category-b                           controllers.HallmarkBController.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-category-b                           controllers.HallmarkBController.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-category-b                    controllers.HallmarkBController.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-category-b                    controllers.HallmarkBController.onSubmit(mode: Mode = CheckMode)
+
 GET        /hallmarks/main-benefit-test                             controllers.MainBenefitTestController.onPageLoad(mode: Mode = NormalMode)
 POST       /hallmarks/main-benefit-test                             controllers.MainBenefitTestController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-main-benefit-test                      controllers.MainBenefitTestController.onPageLoad(mode: Mode = CheckMode)

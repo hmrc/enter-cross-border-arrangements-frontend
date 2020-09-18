@@ -18,7 +18,7 @@ package navigation
 
 import controllers.routes
 import javax.inject.{Inject, Singleton}
-import models.HallmarkCategories.CategoryA
+import models.HallmarkCategories.{CategoryA, CategoryB}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -29,11 +29,16 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Option[Call] = {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => _ => Some(routes.MainBenefitTestController.onPageLoad(NormalMode))
+    case HallmarkBPage => _ => Some(routes.MainBenefitTestController.onPageLoad(NormalMode))
     case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
+    case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
+    case HallmarkAPage => _ => Some(routes.MainBenefitTestController.onPageLoad(CheckMode))
+    case HallmarkBPage => _ => Some(routes.MainBenefitTestController.onPageLoad(CheckMode))
+    case MainBenefitTestPage => mainBenefitTestRoutes(CheckMode)
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -41,6 +46,8 @@ class Navigator @Inject()() {
     ua.get(HallmarkCategoriesPage) map {
       case set: Set[HallmarkCategories] if set.head == CategoryA =>
         routes.HallmarkAController.onPageLoad(mode)
+      case set: Set[HallmarkCategories] if set.head == CategoryB =>
+        routes.HallmarkBController.onPageLoad(mode)
     }
 
   private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =

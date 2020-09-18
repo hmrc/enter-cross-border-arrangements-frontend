@@ -14,22 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import forms.behaviours.CheckboxFieldBehaviours
+import models.HallmarkB
+import play.api.data.FormError
 
-trait PageGenerators {
+class HallmarkBFormProviderSpec extends CheckboxFieldBehaviours {
 
-  implicit lazy val arbitraryHallmarkBPage: Arbitrary[HallmarkBPage.type] =
-    Arbitrary(HallmarkBPage)
+  val form = new HallmarkBFormProvider()()
 
-  implicit lazy val arbitraryMeetMainBenefitTestPage: Arbitrary[MainBenefitTestPage.type] =
-    Arbitrary(MainBenefitTestPage)
+  ".value" - {
 
-  implicit lazy val arbitraryHallmarkAPage: Arbitrary[HallmarkAPage.type] =
-    Arbitrary(HallmarkAPage)
+    val fieldName = "value"
+    val requiredKey = "hallmarkB.error.required"
 
-  implicit lazy val arbitraryHallmarkCategoriesPage: Arbitrary[HallmarkCategoriesPage.type] =
-    Arbitrary(HallmarkCategoriesPage)
+    behave like checkboxField[HallmarkB](
+      form,
+      fieldName,
+      validValues  = HallmarkB.values,
+      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+    )
+
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
+  }
 }
