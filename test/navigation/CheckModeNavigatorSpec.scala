@@ -52,7 +52,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
                   .success
                   .value
 
@@ -70,7 +70,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
                 .success
                 .value
 
@@ -88,7 +88,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
                 .success.value
                 .set(HallmarkAPage, HallmarkA.values.toSet)
                 .success.value
@@ -107,8 +107,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("categoryA").get,
-                                         HallmarkCategories.enumerable.withName("categoryB").get)
+            val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("A").get,
+                                         HallmarkCategories.enumerable.withName("B").get)
 
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, hallmarkCategories)
@@ -130,7 +130,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
                 .success.value
                 .set(HallmarkBPage, HallmarkB.values.toSet)
                 .success.value
@@ -171,10 +171,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
-              .mustBe(routes.HallmarkCategoriesController.onPageLoad(CheckMode))
+              .mustBe(routes.MainBenefitProblemController.onPageLoad())
         }
       }
     }
-
   }
 }

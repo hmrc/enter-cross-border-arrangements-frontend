@@ -36,7 +36,7 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
           val result = answers
             .set(HallmarkBPage, HallmarkB.values.toSet)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
             .success.value
 
           result.get(HallmarkBPage) must not be defined
@@ -49,7 +49,7 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
           val result = answers
             .set(HallmarkAPage, HallmarkA.values.toSet)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
             .success.value
 
           result.get(HallmarkAPage) must not be defined
@@ -64,7 +64,7 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
             .success.value
             .set(MainBenefitTestPage, true)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
             .success.value
 
           result.get(HallmarkAPage) must not be defined
@@ -80,7 +80,7 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
             .success.value
             .set(MainBenefitTestPage, true)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
             .success.value
 
           result.get(HallmarkBPage) must not be defined
