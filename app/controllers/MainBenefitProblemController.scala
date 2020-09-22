@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
+import models.NormalMode
 import pages.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -25,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class MainBenefitProblemController @Inject()(
     override val messagesApi: MessagesApi,
@@ -39,15 +40,17 @@ class MainBenefitProblemController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      //TODO - change below to take category & benefit Answer for check
-      val hallmarkCategory = request.userAnswers.get(HallmarkCategoriesPage) match {
-        case None => ""
-        case Some(value) => value.head.toString
-      }
+      request.userAnswers.get(HallmarkCategoriesPage) match {
+        case None => Future.successful(Redirect(routes.HallmarkCategoriesController.onPageLoad(NormalMode)))
+        case Some(hallmarkCategories) =>
 
-      val json = Json.obj(
-        "hallmark" -> hallmarkCategory
-      )
+        val json = Json.obj(
+          "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(NormalMode).url,
+          "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(NormalMode).url,
+        "hallmarkCategory" -> hallmarkCategories.head.toString
+        )
+
       renderer.render("mainBenefitProblem.njk", json).map(Ok(_))
+    }
   }
 }

@@ -17,10 +17,12 @@
 package controllers
 
 import base.SpecBase
+import models.{HallmarkCategories, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.HallmarkCategoriesPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,7 +38,8 @@ class MainBenefitProblemControllerSpec extends SpecBase with MockitoSugar {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(HallmarkCategoriesPage, HallmarkCategories.values.toSet).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -47,6 +50,18 @@ class MainBenefitProblemControllerSpec extends SpecBase with MockitoSugar {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "mainBenefitProblem.njk"
+
+      application.stop()
+    }
+
+    "redirect to Hallmarks Category page if hallmark category is empty" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad().url)
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.HallmarkCategoriesController.onPageLoad(NormalMode).url
 
       application.stop()
     }

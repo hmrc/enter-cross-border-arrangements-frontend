@@ -24,11 +24,11 @@
         <div class="govuk-body">
           <p>{{ messages("mainBenefitProblem.p1", hallmarkCategory) }}</p>
 
-          <p><a href="{{ routes.controllers.HallmarkCategoriesController.onPageLoad.url }}" class="govuk-link" id="hallmarkLink" >
+          <p><a href="{{ hallmarkCategoryPageLink }}" class="govuk-link" id="hallmarkLink" >
               {{ messages("mainBenefitProblem.link1") }}
           </a></p>
 
-          <p><a href="{{ routes.controllers.MainBenefitTestController.onPageLoad.url }}" class="govuk-link" id="confirmBenefitLink" >
+          <p><a href="{{ mainBenefitTestPageLink }}" class="govuk-link" id="confirmBenefitLink" >
               {{ messages("mainBenefitProblem.link2") }}
           </a></p>
 
