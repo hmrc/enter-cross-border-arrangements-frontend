@@ -27,21 +27,6 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
-  def hallmarkB: Option[Row] = userAnswers.get(HallmarkBPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkB.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"hallmarkB.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.HallmarkBController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkB.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def mainBenefitTest: Option[Row] = userAnswers.get(MainBenefitTestPage) map {
     answer =>
       Row(
@@ -52,21 +37,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
             content            = msg"site.edit",
             href               = routes.MainBenefitTestController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def hallmarkA: Option[Row] = userAnswers.get(HallmarkAPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkA.checkYourAnswersLabel"),
-        value   = Value(Html(answer.map(a => msg"$a".resolve).mkString(", "))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.HallmarkAController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkA.checkYourAnswersLabel"))
           )
         )
       )
@@ -94,12 +64,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       ua.get(HallmarkBPage)
     )
 
-    val selectedHallmarks = hallmarkPages.collect{ case Some(value) => value }
+    val selectedHallmarkParts = hallmarkPages.collect{ case Some(value) => value }
 
     val hallmarksList = for {
-      sh <- selectedHallmarks
+      selectedHallmark <- selectedHallmarkParts
     } yield {
-      sh.map(hm => msg"$hm".resolve).mkString(", ")
+      selectedHallmark.map(hallmark => msg"$hallmark".resolve).mkString(", ")
     }
 
     Row(
