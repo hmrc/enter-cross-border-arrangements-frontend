@@ -171,3 +171,10 @@ hallmarkB.checkYourAnswersLabel = Hallmarks that apply to this arrangement
 hallmarkB.error.required = Select which parts of hallmark B apply to this arrangement
 
 checkYourAnswers.selectedHallmarks.label = Hallmarks that apply to this arrangement
+
+mainBenefitProblem.title = There is a problem
+mainBenefitProblem.heading = There is a problem
+mainBenefitProblem.p1 = Hallmark {0} can only apply if the arrangement meets the Main Benefit Test.
+mainBenefitProblem.link1 = Go back to select hallmarks
+mainBenefitProblem.link2 = Confirm if the arrangement meets the Main Benefit Test
+

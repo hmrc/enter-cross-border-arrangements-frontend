@@ -30,7 +30,7 @@ class Navigator @Inject()() {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
     case HallmarkBPage => hallmarkBRoutes(NormalMode)
-    case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
+    case MainBenefitTestPage => mainBenefitTestRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -38,7 +38,7 @@ class Navigator @Inject()() {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
     case HallmarkBPage => hallmarkBRoutes(CheckMode)
-    case MainBenefitTestPage => mainBenefitTestRoutes(CheckMode)
+    case MainBenefitTestPage => mainBenefitTestRoutes
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -66,10 +66,10 @@ class Navigator @Inject()() {
         routes.MainBenefitTestController.onPageLoad(mode)
     }
 
-  private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def mainBenefitTestRoutes(ua: UserAnswers): Option[Call] =
     ua.get(MainBenefitTestPage) map {
       case true => routes.CheckYourAnswersController.onPageLoad()
-      case false => routes.HallmarkCategoriesController.onPageLoad(mode) //TODO - change to there is a problem page
+      case false => routes.MainBenefitProblemController.onPageLoad()
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

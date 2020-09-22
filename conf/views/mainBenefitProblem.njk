@@ -1,0 +1,41 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+
+{% block pageTitle %}
+  {{ title(messages("mainBenefitProblem.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("mainBenefitProblem.heading") }}
+        </h1>
+
+        <div class="govuk-body">
+          <p>{{ messages("mainBenefitProblem.p1", hallmarkCategory) }}</p>
+
+          <p><a href="{{ routes.controllers.HallmarkCategoriesController.onPageLoad.url }}" class="govuk-link" id="hallmarkLink" >
+              {{ messages("mainBenefitProblem.link1") }}
+          </a></p>
+
+          <p><a href="{{ routes.controllers.MainBenefitTestController.onPageLoad.url }}" class="govuk-link" id="confirmBenefitLink" >
+              {{ messages("mainBenefitProblem.link2") }}
+          </a></p>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

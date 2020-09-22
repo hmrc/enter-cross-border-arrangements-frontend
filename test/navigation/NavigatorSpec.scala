@@ -52,7 +52,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
                   .success
                   .value
 
@@ -170,7 +170,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkCategoriesController.onPageLoad(NormalMode)) // TODO - change to There is a problem page
+              .mustBe(routes.MainBenefitProblemController.onPageLoad())
         }
       }
     }

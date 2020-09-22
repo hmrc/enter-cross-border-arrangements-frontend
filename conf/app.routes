@@ -35,3 +35,5 @@ GET        /hallmarks/main-benefit-test                             controllers.
 POST       /hallmarks/main-benefit-test                             controllers.MainBenefitTestController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-main-benefit-test                      controllers.MainBenefitTestController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-main-benefit-test                      controllers.MainBenefitTestController.onSubmit(mode: Mode = CheckMode)
+
+GET        /hallmarks/there-is-a-problem                            controllers.MainBenefitProblemController.onPageLoad
