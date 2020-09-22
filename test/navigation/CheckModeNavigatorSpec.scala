@@ -88,13 +88,37 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkAPage, HallmarkA.values.toSet)
-                .success
-                .value
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+                .success.value
+                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .success.value
+
 
             navigator
               .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
               .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
+        }
+      }
+
+      "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
+        "to 'Which parts of hallmark B apply to this arrangement?' page " +
+        "if Hallmark B was also selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("categoryA").get,
+                                         HallmarkCategories.enumerable.withName("categoryB").get)
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, hallmarkCategories)
+                .success.value
+                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .success.value
+
+            navigator
+              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
+              .mustBe(routes.HallmarkBController.onPageLoad(CheckMode))
         }
       }
 
@@ -106,12 +130,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkBPage, HallmarkB.values.toSet)
-                .success
-                .value
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+                .success.value
+                .set(HallmarkBPage, HallmarkB.values.toSet)
+                .success.value
 
             navigator
-              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
+              .nextPage(HallmarkBPage, CheckMode, updatedAnswers)
               .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
         }
       }

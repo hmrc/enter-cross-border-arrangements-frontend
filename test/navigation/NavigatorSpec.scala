@@ -19,10 +19,10 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import pages._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -88,13 +88,36 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkAPage, HallmarkA.values.toSet)
-                .success
-                .value
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+                .success.value
+                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .success.value
 
             navigator
               .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
               .mustBe(routes.MainBenefitTestController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
+        "to 'Which parts of hallmark B apply to this arrangement?' page " +
+        "if Hallmark B was also selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("categoryA").get,
+                                         HallmarkCategories.enumerable.withName("categoryB").get)
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, hallmarkCategories)
+                .success.value
+                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .success.value
+
+            navigator
+              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkBController.onPageLoad(NormalMode))
         }
       }
 
@@ -106,12 +129,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkBPage, HallmarkB.values.toSet)
-                .success
-                .value
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+                .success.value
+                .set(HallmarkBPage, HallmarkB.values.toSet)
+                .success.value
 
             navigator
-              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
+              .nextPage(HallmarkBPage, NormalMode, updatedAnswers)
               .mustBe(routes.MainBenefitTestController.onPageLoad(NormalMode))
         }
       }

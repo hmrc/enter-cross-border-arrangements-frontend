@@ -28,16 +28,16 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[Call] = {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
-    case HallmarkAPage => _ => Some(routes.MainBenefitTestController.onPageLoad(NormalMode))
-    case HallmarkBPage => _ => Some(routes.MainBenefitTestController.onPageLoad(NormalMode))
+    case HallmarkAPage => hallmarkARoutes(NormalMode)
+    case HallmarkBPage => hallmarkBRoutes(NormalMode)
     case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
-    case HallmarkAPage => _ => Some(routes.MainBenefitTestController.onPageLoad(CheckMode))
-    case HallmarkBPage => _ => Some(routes.MainBenefitTestController.onPageLoad(CheckMode))
+    case HallmarkAPage => hallmarkARoutes(CheckMode)
+    case HallmarkBPage => hallmarkBRoutes(CheckMode)
     case MainBenefitTestPage => mainBenefitTestRoutes(CheckMode)
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
@@ -48,6 +48,22 @@ class Navigator @Inject()() {
         routes.HallmarkAController.onPageLoad(mode)
       case set: Set[HallmarkCategories] if set.head == CategoryB =>
         routes.HallmarkBController.onPageLoad(mode)
+    }
+
+  private def hallmarkARoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkCategoriesPage) map {
+      case set: Set[HallmarkCategories] if set.contains(CategoryB) =>
+        routes.HallmarkBController.onPageLoad(mode)
+      case _ =>
+        routes.MainBenefitTestController.onPageLoad(mode)
+    }
+
+  private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkCategoriesPage) map {
+      case set: Set[HallmarkCategories] if set.contains(CategoryA) => //TODO Route to Category C page when ready. Add UT
+        routes.MainBenefitTestController.onPageLoad(mode)
+      case _ =>
+        routes.MainBenefitTestController.onPageLoad(mode)
     }
 
   private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =

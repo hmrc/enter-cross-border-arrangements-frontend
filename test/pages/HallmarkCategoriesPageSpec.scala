@@ -16,7 +16,8 @@
 
 package pages
 
-import models.HallmarkCategories
+import models.{HallmarkA, HallmarkB, HallmarkCategories, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class HallmarkCategoriesPageSpec extends PageBehaviours {
@@ -28,5 +29,63 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
     beSettable[Set[HallmarkCategories]](HallmarkCategoriesPage)
 
     beRemovable[Set[HallmarkCategories]](HallmarkCategoriesPage)
+
+    "must remove HallmarkBPage if user only selects HallmarkA" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(HallmarkBPage, HallmarkB.values.toSet)
+            .success.value
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+            .success.value
+
+          result.get(HallmarkBPage) must not be defined
+      }
+    }
+
+    "must remove HallmarkAPage if user only selects HallmarkB" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(HallmarkAPage, HallmarkA.values.toSet)
+            .success.value
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+            .success.value
+
+          result.get(HallmarkAPage) must not be defined
+      }
+    }
+
+    "must remove HallmarkAPage and MainBenefitTestPage if user changes from HallmarkA to HallmarkB" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(HallmarkAPage, HallmarkA.values.toSet)
+            .success.value
+            .set(MainBenefitTestPage, true)
+            .success.value
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryB").toSet)
+            .success.value
+
+          result.get(HallmarkAPage) must not be defined
+          result.get(MainBenefitTestPage) must not be defined
+      }
+    }
+
+    "must remove HallmarkBPage and MainBenefitTestPage if user changes from HallmarkB to HallmarkA" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(HallmarkBPage, HallmarkB.values.toSet)
+            .success.value
+            .set(MainBenefitTestPage, true)
+            .success.value
+            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("categoryA").toSet)
+            .success.value
+
+          result.get(HallmarkBPage) must not be defined
+          result.get(MainBenefitTestPage) must not be defined
+      }
+    }
   }
 }
