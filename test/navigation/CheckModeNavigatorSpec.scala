@@ -24,23 +24,23 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
-class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
 
   "Navigator" - {
 
-    "in Normal mode" - {
+    "in Check mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "must go from a page that doesn't exist in the route map to Check your answers page" in {
 
         case object UnknownPage extends Page
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            navigator.nextPage(UnknownPage, NormalMode, answers)
-              .mustBe(routes.IndexController.onPageLoad())
+            navigator.nextPage(UnknownPage, CheckMode, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -57,8 +57,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                   .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkAController.onPageLoad(NormalMode))
+              .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
+              .mustBe(routes.HallmarkAController.onPageLoad(CheckMode))
         }
       }
 
@@ -75,8 +75,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkBController.onPageLoad(NormalMode))
+              .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
+              .mustBe(routes.HallmarkBController.onPageLoad(CheckMode))
         }
       }
 
@@ -93,9 +93,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(HallmarkAPage, HallmarkA.values.toSet)
                 .success.value
 
+
             navigator
-              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
-              .mustBe(routes.MainBenefitTestController.onPageLoad(NormalMode))
+              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
+              .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
         }
       }
 
@@ -116,8 +117,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .success.value
 
             navigator
-              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkBController.onPageLoad(NormalMode))
+              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
+              .mustBe(routes.HallmarkBController.onPageLoad(CheckMode))
         }
       }
 
@@ -135,8 +136,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .success.value
 
             navigator
-              .nextPage(HallmarkBPage, NormalMode, updatedAnswers)
-              .mustBe(routes.MainBenefitTestController.onPageLoad(NormalMode))
+              .nextPage(HallmarkBPage, CheckMode, updatedAnswers)
+              .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
         }
       }
 
@@ -152,13 +153,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
+              .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
       "must go from 'Does the arrangement meet the Main Benefit Test?' page " +
-        "to 'There is a problem' page when No is selected" in {
+        "to Index page when No is selected" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -169,11 +170,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(routes.HallmarkCategoriesController.onPageLoad(NormalMode)) // TODO - change to There is a problem page
+              .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
+              .mustBe(routes.HallmarkCategoriesController.onPageLoad(CheckMode))
         }
       }
     }
-    
+
   }
 }

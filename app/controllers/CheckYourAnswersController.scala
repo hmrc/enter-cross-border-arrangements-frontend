@@ -42,7 +42,8 @@ class CheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val answers: Seq[SummaryList.Row] = Seq(helper.hallmarkA.get, helper.mainBenefitTest.get)
+      val hallmarks = helper.buildHallmarksRow(request.userAnswers)
+      val answers: Seq[SummaryList.Row] = Seq(hallmarks, helper.mainBenefitTest.get)
 
       renderer.render(
         "check-your-answers.njk",

@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import play.api.libs.json.JsPath
 
-trait PageGenerators {
+case object HallmarkPagePlaceholder extends QuestionPage[String] {
+//TODO Delete once all HallmarkPages have been created
+  override def path: JsPath = JsPath \ toString
 
-  implicit lazy val arbitraryHallmarkBPage: Arbitrary[HallmarkBPage.type] =
-    Arbitrary(HallmarkBPage)
-
-  implicit lazy val arbitraryMeetMainBenefitTestPage: Arbitrary[MainBenefitTestPage.type] =
-    Arbitrary(MainBenefitTestPage)
-
-  implicit lazy val arbitraryHallmarkAPage: Arbitrary[HallmarkAPage.type] =
-    Arbitrary(HallmarkAPage)
-
-  implicit lazy val arbitraryHallmarkCategoriesPage: Arbitrary[HallmarkCategoriesPage.type] =
-    Arbitrary(HallmarkCategoriesPage)
+  override def toString: String = "hallmarkPagePlaceholder"
 }
