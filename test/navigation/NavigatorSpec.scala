@@ -19,6 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
+import models.HallmarkD.D2
+import models.HallmarkD1.D1other
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -77,6 +79,24 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
               .mustBe(routes.HallmarkBController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which categories of hallmarks are relevant to this arrangement' page " +
+        "to 'Which parts of hallmark D apply to this arrangement?' page " +
+        "when checkbox D is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                .success
+                .value
+
+            navigator
+              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkDController.onPageLoad(NormalMode))
         }
       }
 
@@ -173,7 +193,102 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.MainBenefitProblemController.onPageLoad())
         }
       }
+
+      "must go from 'Which parts of hallmark D apply to this arrangement?' page " +
+        "to 'Check your answers' page when D2 only is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                .success.value
+                .set(HallmarkDPage, HallmarkD.values.toSet.filter(_ == D2))
+                .success.value
+
+            navigator
+              .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from 'Which parts of hallmark D apply to this arrangement?' page " +
+        "to 'Which parts of hallmark D1 apply to this arrangement?' page " +
+        "if Hallmark D1 was also selected" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers =
+                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                  .success.value
+                  .set(HallmarkDPage, HallmarkD.values.toSet)
+                  .success.value
+
+              navigator
+                .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
+                .mustBe(routes.HallmarkD1Controller.onPageLoad(NormalMode))
+          }
+        }
+
+      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
+        "to 'Check your answers' page if D1: Other is not selected" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers =
+                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                  .success.value
+                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
+                  .success.value
+
+              navigator
+                .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
+          }
+        }
+      }
+
+    "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
+        "to D1: Other page if D1: Other is selected" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers =
+                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                  .success.value
+                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                  .success.value
+
+              navigator
+                .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
+                .mustBe(routes.HallmarkD1OtherController.onPageLoad(NormalMode))
+          }
+        }
+
+      "must go from 'Which parts of hallmark D1 apply to this arrangement? D1: Other' page " +
+        "to 'Check your answers'" in {
+
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers =
+                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                  .success.value
+                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                  .success.value
+                  .set(HallmarkD1OtherPage, "")
+                  .success.value
+
+              navigator
+                .nextPage(HallmarkD1OtherPage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
+          }
+        }
+      }
     }
     
-  }
-}
+
+

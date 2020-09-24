@@ -37,3 +37,18 @@ GET        /hallmarks/change-main-benefit-test                      controllers.
 POST       /hallmarks/change-main-benefit-test                      controllers.MainBenefitTestController.onSubmit(mode: Mode = CheckMode)
 
 GET        /hallmarks/there-is-a-problem                            controllers.MainBenefitProblemController.onPageLoad
+
+GET        /hallmarks/hallmark-category-d                           controllers.HallmarkDController.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-category-d                           controllers.HallmarkDController.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-category-d                    controllers.HallmarkDController.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-category-d                    controllers.HallmarkDController.onSubmit(mode: Mode = CheckMode)
+
+GET        /hallmarks/hallmark-category-d1                          controllers.HallmarkD1Controller.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-category-d1                          controllers.HallmarkD1Controller.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-category-d1                   controllers.HallmarkD1Controller.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-category-d1                   controllers.HallmarkD1Controller.onSubmit(mode: Mode = CheckMode)
+
+GET        /hallmarks/hallmark-d1-other                             controllers.HallmarkD1OtherController.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-d1-other                             controllers.HallmarkD1OtherController.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-d1-other                      controllers.HallmarkD1OtherController.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-d1-other                      controllers.HallmarkD1OtherController.onSubmit(mode: Mode = CheckMode)

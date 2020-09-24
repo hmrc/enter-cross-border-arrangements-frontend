@@ -55,7 +55,7 @@ case object HallmarkCategoriesPage extends QuestionPage[Set[HallmarkCategories]]
                 .flatMap(_.remove(MainBenefitTestPage))
             case CategoryB => userAnswers.remove(HallmarkBPage)
             case CategoryC => userAnswers.remove(HallmarkPagePlaceholder)
-            case CategoryD => userAnswers.remove(HallmarkPagePlaceholder)
+            case CategoryD => userAnswers.remove(HallmarkDPage).flatMap(_.remove(HallmarkD1Page)).flatMap(_.remove(HallmarkD1OtherPage))
             case CategoryE => userAnswers.remove(HallmarkPagePlaceholder)
           }
 
