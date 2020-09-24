@@ -177,4 +177,5 @@ mainBenefitProblem.heading = There is a problem
 mainBenefitProblem.p1 = Hallmark {0} can only apply if the arrangement meets the Main Benefit Test.
 mainBenefitProblem.link1 = Go back to select hallmarks
 mainBenefitProblem.link2 = Confirm if the arrangement meets the Main Benefit Test
+mainBenefitProblem.list = These hallmarks can only apply if the arrangement meets the Main Benefit Test:
 

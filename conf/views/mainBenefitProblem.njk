@@ -22,7 +22,19 @@
         </h1>
 
         <div class="govuk-body">
-          <p>{{ messages("mainBenefitProblem.p1", hallmarkCategory) }}</p>
+
+         {% if hallmarkSet|length > 1 %}
+            <p>{{ messages("mainBenefitProblem.list")}}</p>
+             <ul class="govuk-list govuk-list--bullet" id="hallmarkMultiple">
+               {% for hallmark in hallmarkSet %}
+                     <li>{{ hallmark }}</li>
+               {% endfor %}
+              </ul>
+         {% else %}
+             {% for hallmark in hallmarkSet %}
+                 <p id="hallmarkSingle">{{ messages("mainBenefitProblem.p1", hallmark)}}</p>
+             {% endfor %}
+         {% endif %}
 
           <p><a href="{{ hallmarkCategoryPageLink }}" class="govuk-link" id="hallmarkLink" >
               {{ messages("mainBenefitProblem.link1") }}

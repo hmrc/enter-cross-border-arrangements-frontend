@@ -18,13 +18,14 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.NormalMode
+import models.{HallmarkCategories, NormalMode}
 import pages.HallmarkCategoriesPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +48,7 @@ class MainBenefitProblemController @Inject()(
         val json = Json.obj(
           "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(NormalMode).url,
           "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(NormalMode).url,
-        "hallmarkCategory" -> hallmarkCategories.head.toString
+          "hallmarkSet"-> hallmarkCategories
         )
 
       renderer.render("mainBenefitProblem.njk", json).map(Ok(_))
