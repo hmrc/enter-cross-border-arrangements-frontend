@@ -24,8 +24,8 @@
         <div class="govuk-body">
 
          {% if hallmarkSet|length > 1 %}
-            <p>{{ messages("mainBenefitProblem.list")}}</p>
-             <ul class="govuk-list govuk-list--bullet" id="hallmarkMultiple">
+            <p id="hallmarkMultiple">{{ messages("mainBenefitProblem.list")}}</p>
+             <ul class="govuk-list govuk-list--bullet" id="hallmarkList">
                {% for hallmark in hallmarkSet %}
                      <li>{{ hallmark }}</li>
                {% endfor %}

@@ -18,14 +18,13 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.{HallmarkCategories, NormalMode}
+import models.NormalMode
 import pages.HallmarkCategoriesPage
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.Html
 
 import scala.concurrent.{ExecutionContext, Future}
 
