@@ -19,13 +19,38 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{CheckMode, HallmarkA, HallmarkB, UserAnswers}
+import models.HallmarkD.D1
+import models.HallmarkD1.D1other
+import models.{CheckMode, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+
+  val d1OtherVisibleCharacters = 100
+  val ellipsis = " ..."
+
+  def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
+    answer => userAnswers.get(HallmarkD1Page) match {
+      case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
+        Some(Row(
+          key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(lit"${
+            if (answer.length > 100) answer.take(d1OtherVisibleCharacters) + ellipsis else answer
+          }"),
+          actions = List(
+            Action(
+              content = msg"site.edit",
+              href = routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
+            )
+          )
+        ))
+      case _ => None
+    }
+  }
 
   def mainBenefitTest: Option[Row] = userAnswers.get(MainBenefitTestPage) map {
     answer =>
@@ -59,9 +84,17 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 
   def buildHallmarksRow(ua: UserAnswers): Row = {
 
+    val hallmarkDPage = ua.get(HallmarkDPage)  match {
+      case Some(set) if set.contains(D1) && set.size == 1 => None
+      case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
+      case hallmarkSet => hallmarkSet
+    }
+
     val hallmarkPages = Seq(
       ua.get(HallmarkAPage),
-      ua.get(HallmarkBPage)
+      ua.get(HallmarkBPage),
+      ua.get(HallmarkD1Page),
+      hallmarkDPage
     )
 
     val selectedHallmarkParts = hallmarkPages.collect{ case Some(value) => value }
@@ -69,7 +102,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     val hallmarksList = for {
       selectedHallmark <- selectedHallmarkParts
     } yield {
-      selectedHallmark.map(hallmark => msg"$hallmark".resolve).mkString(", ")
+      selectedHallmark.map(_.toString).toList.sorted.map(hallmark => msg"$hallmark".resolve).mkString(", ")
     }
 
     Row(

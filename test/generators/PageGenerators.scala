@@ -21,6 +21,15 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryHallmarkD1OtherPage: Arbitrary[HallmarkD1OtherPage.type] =
+    Arbitrary(HallmarkD1OtherPage)
+
+  implicit lazy val arbitraryHallmarkD1Page: Arbitrary[HallmarkD1Page.type] =
+    Arbitrary(HallmarkD1Page)
+
+  implicit lazy val arbitraryHallmarkDPage: Arbitrary[HallmarkDPage.type] =
+    Arbitrary(HallmarkDPage)
+
   implicit lazy val arbitraryHallmarkBPage: Arbitrary[HallmarkBPage.type] =
     Arbitrary(HallmarkBPage)
 

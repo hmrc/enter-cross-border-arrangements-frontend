@@ -18,7 +18,9 @@ package navigation
 
 import controllers.routes
 import javax.inject.{Inject, Singleton}
-import models.HallmarkCategories.{CategoryA, CategoryB}
+import models.HallmarkCategories.{CategoryA, CategoryB, CategoryD, CategoryE}
+import models.HallmarkD.D1
+import models.HallmarkD1.D1other
 import models._
 import pages._
 import play.api.mvc.Call
@@ -30,7 +32,10 @@ class Navigator @Inject()() {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
     case HallmarkBPage => hallmarkBRoutes(NormalMode)
-    case MainBenefitTestPage => mainBenefitTestRoutes
+    case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
+    case HallmarkDPage => hallmarkDRoutes(NormalMode)
+    case HallmarkD1Page => hallmarkD1Routes(NormalMode)
+    case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -38,7 +43,10 @@ class Navigator @Inject()() {
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
     case HallmarkBPage => hallmarkBRoutes(CheckMode)
-    case MainBenefitTestPage => mainBenefitTestRoutes
+    case MainBenefitTestPage => mainBenefitTestRoutes(CheckMode)
+    case HallmarkDPage => hallmarkDRoutes(CheckMode)
+    case HallmarkD1Page => hallmarkD1Routes(CheckMode)
+    case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -48,6 +56,8 @@ class Navigator @Inject()() {
         routes.HallmarkAController.onPageLoad(mode)
       case set: Set[HallmarkCategories] if set.head == CategoryB =>
         routes.HallmarkBController.onPageLoad(mode)
+      case set: Set[HallmarkCategories] if set.head == CategoryD =>
+        routes.HallmarkDController.onPageLoad(mode)
     }
 
   private def hallmarkARoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -66,11 +76,34 @@ class Navigator @Inject()() {
         routes.MainBenefitTestController.onPageLoad(mode)
     }
 
-  private def mainBenefitTestRoutes(ua: UserAnswers): Option[Call] =
+  private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(MainBenefitTestPage) map {
-      case true => routes.CheckYourAnswersController.onPageLoad()
+      case true =>
+        ua.get(HallmarkCategoriesPage) match {
+          case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
+          case _ => routes.CheckYourAnswersController.onPageLoad()
+        }
       case false => routes.MainBenefitProblemController.onPageLoad()
     }
+
+  private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkDPage) map {
+      case set: Set[HallmarkD] if set.contains(D1) => routes.HallmarkD1Controller.onPageLoad(mode)
+       case  _ => routes.CheckYourAnswersController.onPageLoad()
+    }
+
+   private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkD1Page) map {
+      case set: Set[HallmarkD1] if set.contains(D1other) => routes.HallmarkD1OtherController.onPageLoad(mode) //got to other page
+      case  _ => routes.CheckYourAnswersController.onPageLoad()
+    }
+
+   private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+     ua.get(HallmarkCategoriesPage) map {
+       case set: Set[HallmarkCategories] if set.contains(CategoryE) => //TODO Route to Category E page when ready. Add UT
+         routes.HallmarkCategoriesController.onPageLoad(mode)
+       case _ => routes.CheckYourAnswersController.onPageLoad()
+     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

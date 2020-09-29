@@ -179,3 +179,28 @@ mainBenefitProblem.link1 = Go back to select hallmarks
 mainBenefitProblem.link2 = Confirm if the arrangement meets the Main Benefit Test
 mainBenefitProblem.list = These hallmarks can only apply if the arrangement meets the Main Benefit Test:
 
+hallmarkD.title = Which parts of hallmark D apply to this arrangement?
+hallmarkD.heading = Which parts of hallmark D apply to this arrangement?
+hallmarkD.hint = Select all that apply.
+hallmarkD.d1 = D1: undermining reporting obligations including the Common Reporting Standard (CRS)
+hallmarkD.d2 = D2: obscuring beneficial ownership
+hallmarkD.checkYourAnswersLabel = Hallmarks that apply to this arrangement
+hallmarkD.error.required = Select which parts of hallmark D apply to this arrangement
+
+hallmarkD1.title = Which parts of hallmark D1 apply to this arrangement?
+hallmarkD1.heading = Which parts of hallmark D1 apply to this arrangement?
+hallmarkD1.hint = Select all parts that apply.
+hallmarkD1.d1a = D1a: involves use of an account, product or investment that is not a Financial Account
+hallmarkD1.d1b = D1b: involves the transfer to or use of countries that are not bound by the automatic exchange of financial information
+hallmarkD1.d1c = D1c: involves reclassifying income and capital so they are not reportable
+hallmarkD1.d1d = D1d: involves transferring or converting assets so they are not reportable
+hallmarkD1.d1e = D1e: involves using arrangements or structures that avoid, or claim to avoid, the need to report a person or organisation
+hallmarkD1.d1f = D1f: involves the use of loopholes to avoid the need to report, including using countries that do not enforce legislation as strongly
+hallmarkD1.d1other = D1: other
+hallmarkD1.checkYourAnswersLabel =  Hallmarks that apply to this arrangement
+hallmarkD1.error.required = Select which parts of hallmark D1 apply to this arrangement
+
+hallmarkD1Other.title = Tell us about the parts of hallmark D1 that apply to this arrangement
+hallmarkD1Other.heading = Tell us about the parts of hallmark D1 that apply to this arrangement
+hallmarkD1Other.checkYourAnswersLabel = Parts of hallmark D1 that apply to this arrangement
+hallmarkD1Other.error.required = Enter the parts of hallmark D1 that apply to this arrangement
