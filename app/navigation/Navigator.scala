@@ -85,6 +85,7 @@ class Navigator @Inject()() {
       case true =>
         ua.get(HallmarkCategoriesPage) match {
           case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
+          case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
           case _ => routes.CheckYourAnswersController.onPageLoad()
         }
       case false => routes.MainBenefitProblemController.onPageLoad()
