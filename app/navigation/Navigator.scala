@@ -78,7 +78,7 @@ class Navigator @Inject()() {
 
   private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
-      case set: Set[HallmarkCategories] if set.contains(CategoryA) =>
+      case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
         routes.HallmarkCController.onPageLoad(mode)
       case _ =>
         routes.MainBenefitTestController.onPageLoad(mode)

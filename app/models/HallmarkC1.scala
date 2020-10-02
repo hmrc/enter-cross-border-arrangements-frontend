@@ -24,11 +24,11 @@ sealed trait HallmarkC1
 
 object HallmarkC1 extends Enumerable.Implicits {
 
-  case object C1a extends WithName("c1a") with HallmarkC1
-  case object C1bi extends WithName("c1bi") with HallmarkC1
-  case object C1bii extends WithName("c1bii") with HallmarkC1
-  case object C1c extends WithName("c1c") with HallmarkC1
-  case object C1d extends WithName("c1d") with HallmarkC1
+  case object C1a extends WithName("C1a") with HallmarkC1
+  case object C1bi extends WithName("C1bi") with HallmarkC1
+  case object C1bii extends WithName("C1bii") with HallmarkC1
+  case object C1c extends WithName("C1c") with HallmarkC1
+  case object C1d extends WithName("C1d") with HallmarkC1
 
   val values: Seq[HallmarkC1] = Seq(
     C1a,
