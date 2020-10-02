@@ -22,6 +22,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryHallmarkC: Arbitrary[HallmarkC] =
+    Arbitrary {
+      Gen.oneOf(HallmarkC.values.toSeq)
+    }
+
   implicit lazy val arbitraryHallmarkD1: Arbitrary[HallmarkD1] =
     Arbitrary {
       Gen.oneOf(HallmarkD1.values.toSeq)
