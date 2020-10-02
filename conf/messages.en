@@ -224,3 +224,12 @@ hallmarkD1Other.title = Tell us about the parts of hallmark D1 that apply to thi
 hallmarkD1Other.heading = Tell us about the parts of hallmark D1 that apply to this arrangement
 hallmarkD1Other.checkYourAnswersLabel = Parts of hallmark D1 that apply to this arrangement
 hallmarkD1Other.error.required = Enter the parts of hallmark D1 that apply to this arrangement
+
+hallmarkE.title = Which category E hallmarks apply to this arrangement?
+hallmarkE.heading = Which category E hallmarks apply to this arrangement?
+hallmarkE.hint = Select all that apply.
+hallmarkE.hallmarkE1 = E1: the arrangement involves use of a unilateral safe harbour
+hallmarkE.hallmarkE2 = E2: the arrangement involves the transfer of hard-to-value intangibles
+hallmarkE.hallmarkE3 = E3: the arrangement involves companies in the same group making a cross-border transfer of functions, risks or assets
+hallmarkE.checkYourAnswersLabel = Hallmarks that apply to this arrangement
+hallmarkE.error.required = Select which parts of hallmark E apply to this arrangement
