@@ -19,7 +19,7 @@ package navigation
 import controllers.routes
 import javax.inject.{Inject, Singleton}
 import models.HallmarkC.C1
-import models.HallmarkC1.{C1a, C1bii}
+import models.HallmarkC1.{C1a, C1bi, C1bii, C1c, C1d}
 import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
@@ -107,8 +107,13 @@ class Navigator @Inject()() {
 
   private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkC1Page) map {
-      case set: Set[HallmarkC1] if set.contains(C1a) || set.contains(C1bii) => routes.CheckYourAnswersController.onPageLoad()
-      case  _ => routes.MainBenefitTestController.onPageLoad(mode)
+      case set: Set[HallmarkC1] if set.contains(C1c) || set.contains(C1bi) || set.contains(C1d) => routes.MainBenefitTestController.onPageLoad(mode)
+      case  _ =>
+        ua.get(HallmarkCategoriesPage) match {
+          case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
+          case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
+          case _ => routes.CheckYourAnswersController.onPageLoad()
+        }
     }
 
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
