@@ -23,40 +23,40 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import play.api.libs.json.{JsError, JsString, Json}
 
-class HallmarkCSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class HallmarkC1Spec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "HallmarkC" - {
+  "HallmarkC1" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[HallmarkC]
+      val gen = arbitrary[HallmarkC1]
 
       forAll(gen) {
-        hallmarkC =>
+        hallmarkC1 =>
 
-          JsString(hallmarkC.toString).validate[HallmarkC].asOpt.value mustEqual hallmarkC
+          JsString(hallmarkC1.toString).validate[HallmarkC1].asOpt.value mustEqual hallmarkC1
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!HallmarkC.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!HallmarkC1.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[HallmarkC] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[HallmarkC1] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = arbitrary[HallmarkC]
+      val gen = arbitrary[HallmarkC1]
 
       forAll(gen) {
-        hallmarkC =>
+        hallmarkC1 =>
 
-          Json.toJson(hallmarkC) mustEqual JsString(hallmarkC.toString)
+          Json.toJson(hallmarkC1) mustEqual JsString(hallmarkC1.toString)
       }
     }
   }

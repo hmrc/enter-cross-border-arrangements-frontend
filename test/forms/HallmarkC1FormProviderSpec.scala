@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.HallmarkC
-import pages.behaviours.PageBehaviours
+import forms.behaviours.CheckboxFieldBehaviours
+import models.HallmarkC1
+import play.api.data.FormError
 
-class HallmarkCPageSpec extends PageBehaviours {
+class HallmarkC1FormProviderSpec extends CheckboxFieldBehaviours {
 
-  "HallmarkCPage" - {
+  val form = new HallmarkC1FormProvider()()
 
-    beRetrievable[Set[HallmarkC]](HallmarkCPage)
+  ".value" - {
 
-    beSettable[Set[HallmarkC]](HallmarkCPage)
+    val fieldName = "value"
+    val requiredKey = "hallmarkC1.error.required"
 
-    beRemovable[Set[HallmarkC]](HallmarkCPage)
+    behave like checkboxField[HallmarkC1](
+      form,
+      fieldName,
+      validValues  = HallmarkC1.values,
+      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+    )
+
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
   }
 }

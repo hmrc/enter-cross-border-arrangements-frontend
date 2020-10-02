@@ -43,6 +43,11 @@ POST       /hallmarks/hallmark-category-c                           controllers.
 GET        /hallmarks/change-hallmark-category-c                    controllers.HallmarkCController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-category-c                    controllers.HallmarkCController.onSubmit(mode: Mode = CheckMode)
 
+GET        /hallmarks/hallmark-category-c1                          controllers.HallmarkC1Controller.onPageLoad(mode: Mode = NormalMode)
+POST       /hallmarks/hallmark-category-c1                          controllers.HallmarkC1Controller.onSubmit(mode: Mode = NormalMode)
+GET        /hallmarks/change-hallmark-category-c1                   controllers.HallmarkC1Controller.onPageLoad(mode: Mode = CheckMode)
+POST       /hallmarks/change-hallmark-category-c1                   controllers.HallmarkC1Controller.onSubmit(mode: Mode = CheckMode)
+
 GET        /hallmarks/hallmark-category-d                           controllers.HallmarkDController.onPageLoad(mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-category-d                           controllers.HallmarkDController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-category-d                    controllers.HallmarkDController.onPageLoad(mode: Mode = CheckMode)
@@ -57,5 +62,3 @@ GET        /hallmarks/hallmark-d1-other                             controllers.
 POST       /hallmarks/hallmark-d1-other                             controllers.HallmarkD1OtherController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-d1-other                      controllers.HallmarkD1OtherController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-d1-other                      controllers.HallmarkD1OtherController.onSubmit(mode: Mode = CheckMode)
-
-

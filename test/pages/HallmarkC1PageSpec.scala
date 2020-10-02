@@ -16,17 +16,17 @@
 
 package pages
 
-import models.HallmarkC
+import models.HallmarkC1
 import pages.behaviours.PageBehaviours
 
-class HallmarkCPageSpec extends PageBehaviours {
+class HallmarkC1PageSpec extends PageBehaviours {
 
-  "HallmarkCPage" - {
+  "HallmarkC1Page" - {
 
-    beRetrievable[Set[HallmarkC]](HallmarkCPage)
+    beRetrievable[Set[HallmarkC1]](HallmarkC1Page)
 
-    beSettable[Set[HallmarkC]](HallmarkCPage)
+    beSettable[Set[HallmarkC1]](HallmarkC1Page)
 
-    beRemovable[Set[HallmarkC]](HallmarkCPage)
+    beRemovable[Set[HallmarkC1]](HallmarkC1Page)
   }
 }

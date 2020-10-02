@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import models.HallmarkC
-import pages.behaviours.PageBehaviours
+import javax.inject.Inject
 
-class HallmarkCPageSpec extends PageBehaviours {
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.data.Forms.set
+import models.HallmarkC1
 
-  "HallmarkCPage" - {
+class HallmarkC1FormProvider @Inject() extends Mappings {
 
-    beRetrievable[Set[HallmarkC]](HallmarkCPage)
-
-    beSettable[Set[HallmarkC]](HallmarkCPage)
-
-    beRemovable[Set[HallmarkC]](HallmarkCPage)
-  }
+  def apply(): Form[Set[HallmarkC1]] =
+    Form(
+      "value" -> set(enumerable[HallmarkC1]("hallmarkC1.error.required")).verifying(nonEmptySet("hallmarkC1.error.required"))
+    )
 }

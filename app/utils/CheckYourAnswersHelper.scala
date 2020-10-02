@@ -29,6 +29,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def hallmarkC1: Option[Row] = userAnswers.get(HallmarkC1Page) map {
+    answer =>
+      Row(
+        key     = Key(msg"hallmarkC1.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Html(answer.map(a => msg"hallmarkC1.$a".resolve).mkString(",<br>"))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.HallmarkC1Controller.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkC1.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def hallmarkC: Option[Row] = userAnswers.get(HallmarkCPage) map {
     answer =>
       Row(

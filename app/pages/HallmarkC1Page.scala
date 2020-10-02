@@ -16,17 +16,12 @@
 
 package pages
 
-import models.HallmarkC
-import pages.behaviours.PageBehaviours
+import models.HallmarkC1
+import play.api.libs.json.JsPath
 
-class HallmarkCPageSpec extends PageBehaviours {
+case object HallmarkC1Page extends QuestionPage[Set[HallmarkC1]] {
 
-  "HallmarkCPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Set[HallmarkC]](HallmarkCPage)
-
-    beSettable[Set[HallmarkC]](HallmarkCPage)
-
-    beRemovable[Set[HallmarkC]](HallmarkCPage)
-  }
+  override def toString: String = "hallmarkC1"
 }
