@@ -55,8 +55,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
-                  .success
-                  .value
+                .success
+                .value
 
             navigator
               .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
@@ -127,7 +127,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("A").get,
-                                         HallmarkCategories.enumerable.withName("B").get)
+              HallmarkCategories.enumerable.withName("B").get)
 
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, hallmarkCategories)
@@ -216,79 +216,116 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         "to 'Which parts of hallmark D1 apply to this arrangement?' page " +
         "if Hallmark D1 was also selected" in {
 
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
 
-              val updatedAnswers =
-                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
-                  .success.value
-                  .set(HallmarkDPage, HallmarkD.values.toSet)
-                  .success.value
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                .success.value
+                .set(HallmarkDPage, HallmarkD.values.toSet)
+                .success.value
 
-              navigator
-                .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
-                .mustBe(routes.HallmarkD1Controller.onPageLoad(NormalMode))
-          }
-        }
-
-      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
-        "to 'Check your answers' page if D1: Other is not selected" in {
-
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-
-              val updatedAnswers =
-                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
-                  .success.value
-                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
-                  .success.value
-
-              navigator
-                .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
-          }
+            navigator
+              .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkD1Controller.onPageLoad(NormalMode))
         }
       }
 
-    "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
+      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
+        "to 'Which parts of hallmark E apply to this arrangement?' page if D1: Other is not selected and categories contains E" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
+                .success.value
+                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
+                .success.value
+
+            navigator
+              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkEController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
+        "to 'Which parts of hallmark E apply to this arrangement?' page if D1: Other is not selected and categories does not contain E" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                .success.value
+                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
+                .success.value
+
+            navigator
+              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+
+      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
         "to D1: Other page if D1: Other is selected" in {
 
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
 
-              val updatedAnswers =
-                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
-                  .success.value
-                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
-                  .success.value
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+                .success.value
+                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                .success.value
 
-              navigator
-                .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-                .mustBe(routes.HallmarkD1OtherController.onPageLoad(NormalMode))
-          }
+            navigator
+              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkD1OtherController.onPageLoad(NormalMode))
         }
+      }
 
       "must go from 'Which parts of hallmark D1 apply to this arrangement? D1: Other' page " +
-        "to 'Check your answers'" in {
+        "to 'Which parts of hallmark E apply to this arrangement?' if category E is selected" in {
 
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
 
-              val updatedAnswers =
-                answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
-                  .success.value
-                  .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
-                  .success.value
-                  .set(HallmarkD1OtherPage, "")
-                  .success.value
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
+                .success.value
+                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                .success.value
+                .set(HallmarkD1OtherPage, "")
+                .success.value
 
-              navigator
-                .nextPage(HallmarkD1OtherPage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
-          }
+            navigator
+              .nextPage(HallmarkD1OtherPage, NormalMode, updatedAnswers)
+              .mustBe(routes.HallmarkEController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which category E hallmarks apply to this arrangement?' page " +
+        "to 'check your answers' if category E is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
+                .success.value
+                .set(HallmarkEPage, HallmarkE.values.toSet)
+                .success.value
+
+
+            navigator
+              .nextPage(HallmarkEPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
-    
+  }
+}
 
 
