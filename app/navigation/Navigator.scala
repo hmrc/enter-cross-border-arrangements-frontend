@@ -18,7 +18,9 @@ package navigation
 
 import controllers.routes
 import javax.inject.{Inject, Singleton}
-import models.HallmarkCategories.{CategoryA, CategoryB, CategoryD, CategoryE}
+import models.HallmarkC.C1
+import models.HallmarkC1.{C1a, C1bii}
+import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models._
@@ -33,6 +35,8 @@ class Navigator @Inject()() {
     case HallmarkAPage => hallmarkARoutes(NormalMode)
     case HallmarkBPage => hallmarkBRoutes(NormalMode)
     case MainBenefitTestPage => mainBenefitTestRoutes(NormalMode)
+    case HallmarkCPage => hallmarkCRoutes(NormalMode)
+    case HallmarkC1Page => hallmarkC1Routes(NormalMode)
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
@@ -44,6 +48,8 @@ class Navigator @Inject()() {
     case HallmarkAPage => hallmarkARoutes(CheckMode)
     case HallmarkBPage => hallmarkBRoutes(CheckMode)
     case MainBenefitTestPage => mainBenefitTestRoutes(CheckMode)
+    case HallmarkCPage => hallmarkCRoutes(CheckMode)
+    case HallmarkC1Page => hallmarkC1Routes(CheckMode)
     case HallmarkDPage => hallmarkDRoutes(CheckMode)
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
@@ -56,6 +62,8 @@ class Navigator @Inject()() {
         routes.HallmarkAController.onPageLoad(mode)
       case set: Set[HallmarkCategories] if set.head == CategoryB =>
         routes.HallmarkBController.onPageLoad(mode)
+      case set: Set[HallmarkCategories] if set.head == CategoryC =>
+        routes.HallmarkCController.onPageLoad(mode)
       case set: Set[HallmarkCategories] if set.head == CategoryD =>
         routes.HallmarkDController.onPageLoad(mode)
     }
@@ -70,8 +78,8 @@ class Navigator @Inject()() {
 
   private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
-      case set: Set[HallmarkCategories] if set.contains(CategoryA) => //TODO Route to Category C page when ready. Add UT
-        routes.MainBenefitTestController.onPageLoad(mode)
+      case set: Set[HallmarkCategories] if set.contains(CategoryA) =>
+        routes.HallmarkCController.onPageLoad(mode)
       case _ =>
         routes.MainBenefitTestController.onPageLoad(mode)
     }
@@ -84,6 +92,18 @@ class Navigator @Inject()() {
           case _ => routes.CheckYourAnswersController.onPageLoad()
         }
       case false => routes.MainBenefitProblemController.onPageLoad()
+    }
+
+  private def hallmarkCRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkCPage) map {
+      case set: Set[HallmarkC] if set.contains(C1) => routes.HallmarkC1Controller.onPageLoad(mode)
+      case  _ => routes.CheckYourAnswersController.onPageLoad()
+    }
+
+  private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(HallmarkC1Page) map {
+      case set: Set[HallmarkC1] if set.contains(C1a) || set.contains(C1bii) => routes.CheckYourAnswersController.onPageLoad()
+      case  _ => routes.MainBenefitTestController.onPageLoad(mode)
     }
 
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =

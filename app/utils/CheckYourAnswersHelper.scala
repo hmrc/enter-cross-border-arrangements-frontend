@@ -19,6 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
+import models.HallmarkC.C1
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
@@ -28,36 +29,6 @@ import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
-
-  def hallmarkC1: Option[Row] = userAnswers.get(HallmarkC1Page) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkC1.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"hallmarkC1.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.HallmarkC1Controller.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkC1.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def hallmarkC: Option[Row] = userAnswers.get(HallmarkCPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkC.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"hallmarkC.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.HallmarkCController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkC.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   val d1OtherVisibleCharacters = 100
   val ellipsis = " ..."
@@ -114,6 +85,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 
   def buildHallmarksRow(ua: UserAnswers): Row = {
 
+    val hallmarkCPage = ua.get(HallmarkCPage)  match {
+      case Some(set) if set.contains(C1) && set.size == 1 => None
+      case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
+      case hallmarkSet => hallmarkSet
+    }
+
     val hallmarkDPage = ua.get(HallmarkDPage)  match {
       case Some(set) if set.contains(D1) && set.size == 1 => None
       case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
@@ -123,7 +100,9 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
     val hallmarkPages = Seq(
       ua.get(HallmarkAPage),
       ua.get(HallmarkBPage),
+      ua.get(HallmarkC1Page),
       ua.get(HallmarkD1Page),
+      hallmarkCPage,
       hallmarkDPage
     )
 

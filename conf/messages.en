@@ -196,7 +196,7 @@ hallmarkC1.c1bii = C1bii: is on a list of non-cooperative countries
 hallmarkC1.c1c = C1c: is exempt from tax
 hallmarkC1.c1d = C1d: is taxed at a preferential rate
 hallmarkC1.checkYourAnswersLabel = Hallmarks that apply to this arrangement
-hallmarkC1.error.required = Select which parts of hallmark C apply to this arrangement
+hallmarkC1.error.required = Select which parts of hallmark C1 apply to this arrangement
 hallmarkC1.hint= Select all parts that apply.
 
 hallmarkD.title = Which parts of hallmark D apply to this arrangement?
@@ -224,10 +224,3 @@ hallmarkD1Other.title = Tell us about the parts of hallmark D1 that apply to thi
 hallmarkD1Other.heading = Tell us about the parts of hallmark D1 that apply to this arrangement
 hallmarkD1Other.checkYourAnswersLabel = Parts of hallmark D1 that apply to this arrangement
 hallmarkD1Other.error.required = Enter the parts of hallmark D1 that apply to this arrangement
-
-hallmarkC1.title = HallmarkC1
-hallmarkC1.heading = HallmarkC1
-hallmarkC1.c1a = C1a
-hallmarkC1.c1b = C1b
-hallmarkC1.checkYourAnswersLabel = HallmarkC1
-hallmarkC1.error.required = Select hallmarkC1

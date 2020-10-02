@@ -27,6 +27,7 @@ class HallmarkC1FormProvider @Inject() extends Mappings {
 
   def apply(): Form[Set[HallmarkC1]] =
     Form(
-      "value" -> set(enumerable[HallmarkC1]("hallmarkC1.error.required")).verifying(nonEmptySet("hallmarkC1.error.required"))
+      "value" -> set(enumerable[HallmarkC1]("hallmarkC1.error.required"))
+        .verifying(nonEmptySet("hallmarkC1.error.required"))
     )
 }
