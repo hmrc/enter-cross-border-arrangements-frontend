@@ -17,6 +17,7 @@
 package navigation
 
 import controllers.routes
+import handlers.ErrorHandler
 import javax.inject.{Inject, Singleton}
 import models.HallmarkC.C1
 import models.HallmarkC1.{C1a, C1bi, C1bii, C1c, C1d}
@@ -58,18 +59,19 @@ class Navigator @Inject()() {
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
+ def catRoutes(key: HallmarkCategories, mode: Mode) = key match {
+   case CategoryA => routes.HallmarkAController.onPageLoad(mode)
+   case CategoryB => routes.HallmarkBController.onPageLoad(mode)
+   case CategoryC => routes.HallmarkCController.onPageLoad(mode)
+   case CategoryD => routes.HallmarkDController.onPageLoad(mode)
+   case CategoryE => routes.HallmarkEController.onPageLoad(mode)
+ }
+
   private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
-      case set: Set[HallmarkCategories] if set.head == CategoryA =>
-        routes.HallmarkAController.onPageLoad(mode)
-      case set: Set[HallmarkCategories] if set.head == CategoryB =>
-        routes.HallmarkBController.onPageLoad(mode)
-      case set: Set[HallmarkCategories] if set.head == CategoryC =>
-        routes.HallmarkCController.onPageLoad(mode)
-      case set: Set[HallmarkCategories] if set.head == CategoryD =>
-        routes.HallmarkDController.onPageLoad(mode)
-      case set: Set[HallmarkCategories] if set.head == CategoryE =>
-        routes.HallmarkEController.onPageLoad(mode)
+      case catSet  =>
+        catRoutes(catSet.min, mode)
+      case _ => routes.IndexController.onPageLoad()
     }
 
   private def hallmarkARoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -110,6 +112,7 @@ class Navigator @Inject()() {
       case set: Set[HallmarkC1] if set.contains(C1c) || set.contains(C1bi) || set.contains(C1d) => routes.MainBenefitTestController.onPageLoad(mode)
       case  _ =>
         ua.get(HallmarkCategoriesPage) match {
+          case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
           case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
           case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
           case _ => routes.CheckYourAnswersController.onPageLoad()
