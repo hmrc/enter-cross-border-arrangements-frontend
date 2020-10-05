@@ -21,7 +21,7 @@ import handlers.ErrorHandler
 import javax.inject.{Inject, Singleton}
 import models.HallmarkC.C1
 import models.HallmarkC1.{C1a, C1bi, C1bii, C1c, C1d}
-import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
+import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models._
@@ -59,18 +59,17 @@ class Navigator @Inject()() {
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
- def catRoutes(key: HallmarkCategories, mode: Mode) = key match {
-   case CategoryA => routes.HallmarkAController.onPageLoad(mode)
-   case CategoryB => routes.HallmarkBController.onPageLoad(mode)
-   case CategoryC => routes.HallmarkCController.onPageLoad(mode)
-   case CategoryD => routes.HallmarkDController.onPageLoad(mode)
-   case CategoryE => routes.HallmarkEController.onPageLoad(mode)
+ def catRoutes(key: HallmarkCategories): Mode => Call = key match {
+   case CategoryA => routes.HallmarkAController.onPageLoad
+   case CategoryB => routes.HallmarkBController.onPageLoad
+   case CategoryC => routes.HallmarkCController.onPageLoad
+   case CategoryD => routes.HallmarkDController.onPageLoad
+   case CategoryE => routes.HallmarkEController.onPageLoad
  }
 
   private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
-      case catSet  =>
-        catRoutes(catSet.min, mode)
+      case catSet  =>  catRoutes(catSet.min(orderingByName))(mode)
       case _ => routes.IndexController.onPageLoad()
     }
 
@@ -106,6 +105,7 @@ class Navigator @Inject()() {
       case set: Set[HallmarkC] if set.contains(C1) => routes.HallmarkC1Controller.onPageLoad(mode)
       case  _ => routes.CheckYourAnswersController.onPageLoad()
     }
+
 
   private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkC1Page) map {
