@@ -17,15 +17,16 @@
 package controllers
 
 import base.SpecBase
-import models.{HallmarkA, HallmarkB, HallmarkD1, UserAnswers}
+import models.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.{HallmarkAPage, HallmarkBPage, HallmarkD1OtherPage, HallmarkD1Page, MainBenefitTestPage}
+import pages.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, MainBenefitTestPage}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import views.html.helper
 
 import scala.concurrent.Future
 
@@ -171,6 +172,82 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       application.stop()
 
+    }
+
+    "must include 'Main Benefit' if C1bi selected" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(HallmarkC1Page, HallmarkC1.enumerable.withName("C1bi").toSet)
+        .success
+        .value
+        .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("C").toSet)
+        .success
+        .value
+        .set(MainBenefitTestPage, true)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val json = jsonCaptor.getValue
+
+      val list = (json \ "list").toString
+
+      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      list.contains("C1bi") mustBe true
+      list.contains("Does the arrangement meet the Main Benefit Test?") mustBe true
+
+      application.stop()
+    }
+
+    "must not include 'Main Benefit' if C1a selected" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(HallmarkC1Page, HallmarkC1.enumerable.withName("C1a").toSet)
+        .success
+        .value
+        .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("C").toSet)
+        .success
+        .value
+        .set(MainBenefitTestPage, true)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val json = jsonCaptor.getValue
+
+      val list = (json \ "list").toString
+
+      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      list.contains("C1a") mustBe true
+      list.contains("Does the arrangement meet the Main Benefit Test?") mustBe false
+
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

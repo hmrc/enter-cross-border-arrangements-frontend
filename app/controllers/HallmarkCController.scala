@@ -19,9 +19,10 @@ package controllers
 import controllers.actions._
 import forms.HallmarkCFormProvider
 import javax.inject.Inject
-import models.{Mode, HallmarkC}
+import models.HallmarkC.C1
+import models.{HallmarkC, Mode, UserAnswers}
 import navigation.Navigator
-import pages.HallmarkCPage
+import pages.{HallmarkC1Page, HallmarkCPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class HallmarkCController @Inject()(
     override val messagesApi: MessagesApi,
@@ -79,9 +81,16 @@ class HallmarkCController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkCPage, value))
+            userAnswers <- Future.fromTry(removeC1Parts(request.userAnswers, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HallmarkCPage, mode, updatedAnswers))
       )
   }
+
+  private def removeC1Parts(userAnswers: UserAnswers, values: Set[HallmarkC]) =
+    userAnswers.get(HallmarkC1Page) match {
+      case Some(_) if !values.contains(C1) => userAnswers.remove(HallmarkC1Page)
+      case _ => Success(userAnswers)
+    }
 }

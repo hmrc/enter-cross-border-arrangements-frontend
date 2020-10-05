@@ -25,7 +25,7 @@ sealed trait HallmarkCategories
 object HallmarkCategories extends Enumerable.Implicits {
 
   implicit def orderingByName[A <: HallmarkCategories]: Ordering[A] =
-    Ordering.by(e => (e.toString))
+    Ordering.by(e => e.toString)
 
   case object CategoryA extends WithName("A") with HallmarkCategories
   case object CategoryB extends WithName("B") with HallmarkCategories

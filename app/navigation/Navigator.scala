@@ -17,10 +17,9 @@
 package navigation
 
 import controllers.routes
-import handlers.ErrorHandler
 import javax.inject.{Inject, Singleton}
 import models.HallmarkC.C1
-import models.HallmarkC1.{C1a, C1bi, C1bii, C1c, C1d}
+import models.HallmarkC1.{C1bi, C1c, C1d}
 import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
@@ -77,6 +76,8 @@ class Navigator @Inject()() {
     ua.get(HallmarkCategoriesPage) map {
       case set: Set[HallmarkCategories] if set.contains(CategoryB) =>
         routes.HallmarkBController.onPageLoad(mode)
+      case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
+        routes.HallmarkCController.onPageLoad(mode)
       case _ =>
         routes.MainBenefitTestController.onPageLoad(mode)
     }
@@ -103,9 +104,13 @@ class Navigator @Inject()() {
   private def hallmarkCRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkCPage) map {
       case set: Set[HallmarkC] if set.contains(C1) => routes.HallmarkC1Controller.onPageLoad(mode)
-      case  _ => routes.CheckYourAnswersController.onPageLoad()
+      case  _ =>  ua.get(HallmarkCategoriesPage) match {
+        case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
+        case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
+        case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
+        case _ => routes.CheckYourAnswersController.onPageLoad()
+      }
     }
-
 
   private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(HallmarkC1Page) map {

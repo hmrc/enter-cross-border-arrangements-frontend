@@ -88,7 +88,7 @@ class HallmarkDController @Inject()(
       )
   }
 
-private  def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]) =
+private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]) =
   userAnswers.get(HallmarkD1Page) match {
     case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page)
     case _ => Success(userAnswers)
