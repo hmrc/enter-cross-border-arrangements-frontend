@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions._
-import forms.HallmarkDFormProvider
+import forms.HallmarkCFormProvider
 import javax.inject.Inject
-import models.HallmarkD.D1
-import models.{HallmarkD, Mode, UserAnswers}
+import models.HallmarkC.C1
+import models.{HallmarkC, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{HallmarkD1Page, HallmarkDPage}
+import pages.{HallmarkC1Page, HallmarkCPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,14 +34,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
 
-class HallmarkDController @Inject()(
+class HallmarkCController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: HallmarkDFormProvider,
+    formProvider: HallmarkCFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -51,7 +51,7 @@ class HallmarkDController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkDPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkCPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,10 +59,10 @@ class HallmarkDController @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "checkboxes" -> HallmarkD.checkboxes(preparedForm)
+        "checkboxes" -> HallmarkC.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkD.njk", json).map(Ok(_))
+      renderer.render("hallmarkC.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -74,24 +74,23 @@ class HallmarkDController @Inject()(
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
-            "checkboxes" -> HallmarkD.checkboxes(formWithErrors)
+            "checkboxes" -> HallmarkC.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkD.njk", json).map(BadRequest(_))
+          renderer.render("hallmarkC.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            userAnswers <- Future.fromTry(removeD1Parts(request.userAnswers, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, value))
+            userAnswers <- Future.fromTry(removeC1Parts(request.userAnswers, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkDPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkCPage, mode, updatedAnswers))
       )
   }
 
-private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]) =
-  userAnswers.get(HallmarkD1Page) match {
-    case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page)
-    case _ => Success(userAnswers)
-  }
-
+  private def removeC1Parts(userAnswers: UserAnswers, values: Set[HallmarkC]) =
+    userAnswers.get(HallmarkC1Page) match {
+      case Some(_) if !values.contains(C1) => userAnswers.remove(HallmarkC1Page)
+      case _ => Success(userAnswers)
+    }
 }

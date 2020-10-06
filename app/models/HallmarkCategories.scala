@@ -24,6 +24,9 @@ sealed trait HallmarkCategories
 
 object HallmarkCategories extends Enumerable.Implicits {
 
+  implicit def orderingByName[A <: HallmarkCategories]: Ordering[A] =
+    Ordering.by(e => e.toString)
+
   case object CategoryA extends WithName("A") with HallmarkCategories
   case object CategoryB extends WithName("B") with HallmarkCategories
   case object CategoryC extends WithName("C") with HallmarkCategories
@@ -38,7 +41,7 @@ object HallmarkCategories extends Enumerable.Implicits {
     CategoryE
   )
 
-  def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
+   def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
 
     val field = form("value")
     val items = Seq(

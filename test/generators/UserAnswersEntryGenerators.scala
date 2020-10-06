@@ -32,6 +32,23 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
+  implicit lazy val arbitraryHallmarkC1UserAnswersEntry: Arbitrary[(HallmarkC1Page.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HallmarkC1Page.type]
+        value <- arbitrary[HallmarkC1].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryHallmarkCUserAnswersEntry: Arbitrary[(HallmarkCPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[HallmarkCPage.type]
+        value <- arbitrary[HallmarkC].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryHallmarkD1OtherUserAnswersEntry: Arbitrary[(HallmarkD1OtherPage.type, JsValue)] =
     Arbitrary {
       for {

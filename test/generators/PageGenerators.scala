@@ -24,6 +24,12 @@ trait PageGenerators {
   implicit lazy val arbitraryHallmarkEPage: Arbitrary[HallmarkEPage.type] =
     Arbitrary(HallmarkEPage)
 
+  implicit lazy val arbitraryHallmarkC1Page: Arbitrary[HallmarkC1Page.type] =
+    Arbitrary(HallmarkC1Page)
+
+  implicit lazy val arbitraryHallmarkCPage: Arbitrary[HallmarkCPage.type] =
+    Arbitrary(HallmarkCPage)
+
   implicit lazy val arbitraryHallmarkD1OtherPage: Arbitrary[HallmarkD1OtherPage.type] =
     Arbitrary(HallmarkD1OtherPage)
 

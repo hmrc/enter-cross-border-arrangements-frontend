@@ -154,7 +154,6 @@ hallmarkA.checkYourAnswersLabel = Hallmarks that apply to this arrangement
 hallmarkA.error.required = Select which parts of hallmark A apply to this arrangement
 hallmarkA.hint=Select all parts that apply.
 
-
 mainBenefitTest.title = Does the arrangement meet the Main Benefit Test?
 mainBenefitTest.heading = Does the arrangement meet the Main Benefit Test?
 mainBenefitTest.checkYourAnswersLabel = Does the arrangement meet the Main Benefit Test?
@@ -178,6 +177,27 @@ mainBenefitProblem.p1 = Hallmark {0} can only apply if the arrangement meets the
 mainBenefitProblem.link1 = Go back to select hallmarks
 mainBenefitProblem.link2 = Confirm if the arrangement meets the Main Benefit Test
 mainBenefitProblem.list = These hallmarks can only apply if the arrangement meets the Main Benefit Test:
+
+hallmarkC.title = Which parts of hallmark C apply to this arrangement?
+hallmarkC.heading = Which parts of hallmark C apply to this arrangement?
+hallmarkC.c1 = C1: involves a deductible cross-border payment between at least two associated enterprises
+hallmarkC.c2 = C2: involves claiming a tax deduction for depreciation in more than one country
+hallmarkC.c3 = C3: involves claiming double tax relief in multiple countries
+hallmarkC.c4 = C4: involves a transfer of assets
+hallmarkC.checkYourAnswersLabel = Hallmarks that apply to this arrangement
+hallmarkC.error.required = Select which parts of hallmark C apply to this arrangement
+hallmarkC.hint= Select all parts that apply.
+
+hallmarkC1.title = Which parts of hallmark C1 apply to this arrangement?
+hallmarkC1.heading = Which parts of hallmark C1 apply to this arrangement?
+hallmarkC1.c1a = C1a: is not resident for tax purposes in any jurisdiction
+hallmarkC1.c1bi = C1bi: is resident for tax purposes in a country that imposes no corporation tax or corporation tax at a rate under 1%
+hallmarkC1.c1bii = C1bii: is on a list of non-cooperative countries
+hallmarkC1.c1c = C1c: is exempt from tax
+hallmarkC1.c1d = C1d: is taxed at a preferential rate
+hallmarkC1.checkYourAnswersLabel = Hallmarks that apply to this arrangement
+hallmarkC1.error.required = Select which parts of hallmark C1 apply to this arrangement
+hallmarkC1.hint= Select all parts that apply.
 
 hallmarkD.title = Which parts of hallmark D apply to this arrangement?
 hallmarkD.heading = Which parts of hallmark D apply to this arrangement?

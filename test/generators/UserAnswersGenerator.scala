@@ -28,6 +28,8 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(HallmarkEPage.type, JsValue)] ::
+    arbitrary[(HallmarkC1Page.type, JsValue)] ::
+    arbitrary[(HallmarkCPage.type, JsValue)] ::
     arbitrary[(HallmarkD1OtherPage.type, JsValue)] ::
     arbitrary[(HallmarkD1Page.type, JsValue)] ::
     arbitrary[(HallmarkDPage.type, JsValue)] ::
