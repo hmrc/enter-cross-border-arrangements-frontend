@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
+import models.HallmarkCategories.{CategoryD, CategoryE}
 import models.NormalMode
 import pages.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +48,7 @@ class MainBenefitProblemController @Inject()(
         val json = Json.obj(
           "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(NormalMode).url,
           "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(NormalMode).url,
-          "hallmarkSet"-> hallmarkCategories
+          "hallmarkSet"-> hallmarkCategories.diff(Set(CategoryD, CategoryE)).toSeq.sorted
         )
 
       renderer.render("mainBenefitProblem.njk", json).map(Ok(_))
