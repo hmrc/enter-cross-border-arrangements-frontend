@@ -87,3 +87,13 @@ GET        /organisation/address                        controllers.Organisation
 POST       /organisation/address                        controllers.OrganisationAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-address                 controllers.OrganisationAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-address                 controllers.OrganisationAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/postcode                                   controllers.PostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/postcode                                   controllers.PostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-postcode                            controllers.PostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-postcode                            controllers.PostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/select-address                        controllers.SelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/select-address                        controllers.SelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-select-address                  controllers.SelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-select-address                  controllers.SelectAddressController.onSubmit(mode: Mode = CheckMode)

@@ -93,6 +93,36 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
+  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"selectAddress.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.SelectAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.PostcodeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   val d1OtherVisibleCharacters = 100
   val ellipsis = " ..."
 

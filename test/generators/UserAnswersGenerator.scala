@@ -31,6 +31,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(OrganisationNamePage.type, JsValue)] ::
     arbitrary[(IsOrganisationAddressKnownPage.type, JsValue)] ::
     arbitrary[(IsOrganisationAddressUkPage.type, JsValue)] ::
+    arbitrary[(PostcodePage.type, JsValue)] ::
     arbitrary[(HallmarkEPage.type, JsValue)] ::
     arbitrary[(HallmarkC1Page.type, JsValue)] ::
     arbitrary[(HallmarkCPage.type, JsValue)] ::

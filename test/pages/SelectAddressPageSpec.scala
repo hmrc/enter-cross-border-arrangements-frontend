@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
+import pages.behaviours.PageBehaviours
 
-import config.FrontendAppConfig
-import play.api.mvc.Call
-import pages._
-import models.{Mode, NormalMode, UserAnswers}
+class SelectAddressSpec extends PageBehaviours {
+  "SelectAddressPage" - {
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+    beRetrievable[String](SelectAddressPage)
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+    beSettable[String](SelectAddressPage)
+
+    beRemovable[String](SelectAddressPage)
+
+  }
 }

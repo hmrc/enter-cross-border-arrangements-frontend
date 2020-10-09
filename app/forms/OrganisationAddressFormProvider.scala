@@ -59,7 +59,7 @@ class OrganisationAddressFormProvider @Inject() extends Mappings with RegexConst
 
 
       "country" ->  text("organisationAddress.error.country.required")
-        .verifying("organisationAddress.error.country.required", value => countryList.exists(_.code == value))
+        .verifying("organisationAddress.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)
   )

@@ -26,11 +26,12 @@ trait Formatters {
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       data.get(key) match {
         case None | Some("") => Left(Seq(FormError(key, errorKey)))
         case Some(s) => Right(s)
       }
+    }
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
@@ -154,6 +155,22 @@ trait Formatters {
         .right.flatMap {
         case str if !str.matches(regex) => Left(Seq(FormError(key, invalidKey)))
         case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
+        case str => Right(str)
+      }
+    }
+    override def unbind(key: String, value: String): Map[String, String] = {
+      Map(key -> value)
+    }
+  }
+  protected def requiredRegexOnly(requiredKey: String,
+                                  invalidKey: String,
+                                  validFormatRegex: String) = new Formatter[String] {
+    private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      dataFormatter
+        .bind(key, data)
+        .right.flatMap {
+        case str if !str.matches(validFormatRegex) => Left(Seq(FormError(key, invalidKey)))
         case str => Right(str)
       }
     }

@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.OrganisationNameFormProvider
+import forms.PostcodeFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DisplayNamePage, OrganisationNamePage}
+import pages.{DisplayNamePage, PostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,58 +32,66 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationNameController @Inject()(
+class PostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    formProvider: OrganisationNameFormProvider,
+    requireData: DataRequiredAction,
+    formProvider: PostcodeFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm =  request.userAnswers.flatMap(_.get(OrganisationNamePage)) match {
+
+      val preparedForm = request.userAnswers.get(PostcodePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-
       val json = Json.obj(
         "form" -> preparedForm,
+        "usersName" -> getUsersName(request.userAnswers),
+        "manualAddressURL" -> manualAddressURL(mode),
         "mode" -> mode
       )
 
-      renderer.render("organisationName.njk", json).map(Ok(_))
+      renderer.render("postcode.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
-
           val json = Json.obj(
             "form" -> formWithErrors,
+            "usersName" -> getUsersName(request.userAnswers),
+            "manualAddressURL" -> manualAddressURL(mode),
             "mode" -> mode
           )
 
-          renderer.render("organisationName.njk", json).map(BadRequest(_))
+          renderer.render("postcode.njk", json).map(BadRequest(_))
         },
-        value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
+        value =>
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
-            updatedAnswers2 <- Future.fromTry(updatedAnswers.set(DisplayNamePage, value))
-            _ <- sessionRepository.set(updatedAnswers2)
-          } yield Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
-        }
-     )
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
+      )
   }
+
+  private def getUsersName(userAnswers: UserAnswers): String =
+      userAnswers.get(DisplayNamePage) match {
+        case Some(displayName) => displayName
+        case _ => "organisation name"
+      }
+
 }
