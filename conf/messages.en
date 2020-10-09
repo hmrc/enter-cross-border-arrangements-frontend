@@ -233,3 +233,20 @@ hallmarkE.hallmarkE2 = E2: the arrangement involves the transfer of hard-to-valu
 hallmarkE.hallmarkE3 = E3: the arrangement involves companies in the same group making a cross-border transfer of functions, risks or assets
 hallmarkE.checkYourAnswersLabel = Hallmarks that apply to this arrangement
 hallmarkE.error.required = Select which parts of hallmark E apply to this arrangement
+
+isOrganisationAddressUk.title = Is main address in the United Kingdom?
+isOrganisationAddressUk.heading = Is {0}’s main address in the United Kingdom?
+isOrganisationAddressUk.checkYourAnswersLabel = Is main address in the United Kingdom?
+isOrganisationAddressUk.error.required = Select yes if the main address for the organisation is in the United Kingdom
+
+isOrganisationAddressKnown.title = Do you know address?
+isOrganisationAddressKnown.heading = Do you know {0}’s Address
+isOrganisationAddressKnown.checkYourAnswersLabel = Do you know address?
+isOrganisationAddressKnown.error.required = Select yes if you know the address for the organisation
+
+organisationName.title = What is the name of the organisation?
+organisationName.heading = What is the name of the organisation?
+organisationName.checkYourAnswersLabel = What is the name of the organisation?
+organisationName.error.required = Enter the name of the organisation
+organisationName.error.length = Organisation name must be 35 characters or less
+organisationName.error.invalid = Organisation name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces

@@ -33,6 +33,51 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def organisationName: Option[Row] = userAnswers.get(OrganisationNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"organisationName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.OrganisationNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationName.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def isOrganisationAddressKnown: Option[Row] = userAnswers.get(IsOrganisationAddressKnownPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isOrganisationAddressKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationAddressKnown.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def iIsOrganisationAddressUk: Option[Row] = userAnswers.get(IsOrganisationAddressUkPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"iIsOrganisationAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"iIsOrganisationAddressUk.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   val d1OtherVisibleCharacters = 100
   val ellipsis = " ..."
 

@@ -67,3 +67,18 @@ GET        /hallmarks/hallmark-category-e                       controllers.Hall
 POST       /hallmarks/hallmark-category-e                        controllers.HallmarkEController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-category-e                  controllers.HallmarkEController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-category-e                  controllers.HallmarkEController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/main-address-in-uk             controllers.IsOrganisationAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/main-address-in-uk             controllers.IsOrganisationAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-main-address-in-uk      controllers.IsOrganisationAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-main-address-in-uk      controllers.IsOrganisationAddressUkController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/do-you-know-address            controllers.IsOrganisationAddressKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/do-you-know-address            controllers.IsOrganisationAddressKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-do-you-know-address     controllers.IsOrganisationAddressKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-do-you-know-address     controllers.IsOrganisationAddressKnownController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/name                        controllers.OrganisationNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/name                        controllers.OrganisationNameController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-name                 controllers.OrganisationNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-name                 controllers.OrganisationNameController.onSubmit(mode: Mode = CheckMode)
