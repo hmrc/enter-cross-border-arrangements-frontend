@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json._
 
+case class Address(
+                    addressLine1: Option[String],
+                    addressLine2: Option[String],
+                    addressLine3: Option[String],
+                    city: String,
+                    postCode: Option[String],
+                    country: Country
+                  ){
 
-class OrganisationNamePageSpec extends PageBehaviours {
+  def lines : Seq[String] = Seq(
+    addressLine1,
+    addressLine2,
+    addressLine3,
+    Some(city),
+    postCode,
+    Some(country.description)
+  ).flatten
+}
 
-  "OrganisationNamePage" - {
-
-    beRetrievable[String](OrganisationNamePage)
-
-    beSettable[String](OrganisationNamePage)
-
-    beRemovable[String](OrganisationNamePage)
-  }
+object Address {
+  implicit val format = Json.format[Address]
 }

@@ -33,6 +33,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def organisationAddress: Option[Row] = userAnswers.get(OrganisationAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"organisationAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.OrganisationAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def organisationName: Option[Row] = userAnswers.get(OrganisationNamePage) map {
     answer =>
       Row(

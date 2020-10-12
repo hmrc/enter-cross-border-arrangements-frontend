@@ -21,7 +21,7 @@ import forms.IsOrganisationAddressUkFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{IsOrganisationAddressUkPage, OrganisationNamePage, SecondaryContactNamePage}
+import pages.{IsOrganisationAddressUkPage, OrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,8 +55,8 @@ class IsOrganisationAddressUkController @Inject()(
       }
 
       val organisationName = request.userAnswers.get(OrganisationNamePage) match {
-        case None => "organisation"
-        case Some(organisationName) => s"${organisationName}"
+        case None => "the organisation"
+        case Some(organisationName) => s"$organisationName"
       }
 
       val json = Json.obj(
@@ -75,10 +75,16 @@ class IsOrganisationAddressUkController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val organisationName = request.userAnswers.get(OrganisationNamePage) match {
+            case None => "the organisation"
+            case Some(organisationName) => s"$organisationName"
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "organisationName" -> organisationName
           )
 
           renderer.render("isOrganisationAddressUk.njk", json).map(BadRequest(_))

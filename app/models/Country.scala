@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{Json, OFormat}
 
+case class Country(state: String, code: String, description: String)
 
-class OrganisationNamePageSpec extends PageBehaviours {
-
-  "OrganisationNamePage" - {
-
-    beRetrievable[String](OrganisationNamePage)
-
-    beSettable[String](OrganisationNamePage)
-
-    beRemovable[String](OrganisationNamePage)
-  }
+object Country {
+  implicit val format: OFormat[Country] = Json.format[Country]
 }

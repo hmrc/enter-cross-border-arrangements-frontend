@@ -1,0 +1,110 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("organisationAddress.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+         <form action="{{ routes.controllers.OrganisationAddressController.onSubmit(mode).url }}" method="post">
+
+                  {{ csrf() | safe }}
+
+                <h1 class="govuk-heading-xl">
+                  {{ messages("organisationAddress.heading", organisationName) }}
+                </h1>
+
+                  {{ govukInput({
+                    label: {
+                      text: messages('organisationAddress.addressLine1')
+                    },
+                    id: "addressLine1",
+                    name: "addressLine1",
+                    value: form.addressLine1.value,
+                    errorMessage: form.addressLine1.error
+                  }) }}
+
+                  {{ govukInput({
+                    label: {
+                      text: messages('organisationAddress.addressLine2')
+                    },
+                    id: "addressLine2",
+                    name: "addressLine2",
+                    value: form.addressLine2.value,
+                    errorMessage: form.addressLine2.error
+                  }) }}
+
+                  {{ govukInput({
+                    label: {
+                      text: messages('organisationAddress.addressLine3')
+                    },
+                    id: "addressLine3",
+                    name: "addressLine3",
+                    value: form.addressLine3.value,
+                    errorMessage: form.addressLine3.error
+                  }) }}
+
+                  {{ govukInput({
+                    label: {
+                      text: messages('organisationAddress.city')
+                    },
+                    id: "addressLine4",
+                    name: "addressLine4",
+                    value: form.addressLine4.value,
+                    errorMessage: form.addressLine4.error
+                  }) }}
+
+                  {{ govukInput({
+                   label: {
+                      text: messages('organisationAddress.postcode.optional')
+                   },
+                   id: "postCode",
+                   name: "postCode",
+                   value: form.postCode.value,
+                   errorMessage: form.postCode.error
+                  }) }}
+
+                  {{ govukSelect({
+                    classes: "govuk-input--width-20 autocomplete",
+                    label: {
+                      text: messages('organisationAddress.country')
+                    },
+                    id: "country",
+                    name: "country",
+                    errorMessage: form.country.error,
+                    items: countries
+                  }) }}
+
+                  {{ govukButton({
+                    text: messages("site.continue")
+                  }) }}
+
+                </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

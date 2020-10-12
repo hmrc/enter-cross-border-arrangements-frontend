@@ -240,7 +240,7 @@ isOrganisationAddressUk.checkYourAnswersLabel = Is main address in the United Ki
 isOrganisationAddressUk.error.required = Select yes if the main address for the organisation is in the United Kingdom
 
 isOrganisationAddressKnown.title = Do you know address?
-isOrganisationAddressKnown.heading = Do you know {0}’s Address
+isOrganisationAddressKnown.heading = Do you know {0}’s address
 isOrganisationAddressKnown.checkYourAnswersLabel = Do you know address?
 isOrganisationAddressKnown.error.required = Select yes if you know the address for the organisation
 
@@ -250,3 +250,25 @@ organisationName.checkYourAnswersLabel = What is the name of the organisation?
 organisationName.error.required = Enter the name of the organisation
 organisationName.error.length = Organisation name must be 35 characters or less
 organisationName.error.invalid = Organisation name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+
+organisationAddress.title = What is the organisation’s main address?
+organisationAddress.heading = What is {0}’s main address?
+organisationAddress.checkYourAnswersLabel = What is organisation’s main address?
+organisationAddress.addressLine1 = Address line 1 (optional)
+organisationAddress.addressLine2 = Address line 2 (optional)
+organisationAddress.addressLine3 = Address line 3 (optional)
+organisationAddress.city = City
+organisationAddress.postcode.optional = Postal code (optional)
+organisationAddress.country = Country
+organisationAddress.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
+organisationAddress.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
+organisationAddress.error.addressLine3.length = Address line 3 (optional) must be 35 characters or less
+organisationAddress.error.city.length = City must be 35 characters or less
+organisationAddress.error.postcode.optional.length = Postal code (optional) must be 10 characters or less
+organisationAddress.error.addressLine1.invalid = Address line 1 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+organisationAddress.error.addressLine2.invalid = Address line 2 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+organisationAddress.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+organisationAddress.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+organisationAddress.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+organisationAddress.error.city.required = Enter city
+organisationAddress.error.country.required = Select country

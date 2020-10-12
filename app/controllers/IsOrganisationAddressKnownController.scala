@@ -21,7 +21,7 @@ import forms.IsOrganisationAddressKnownFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{IsOrganisationAddressKnownPage, OrganisationNamePage, SecondaryContactNamePage}
+import pages.{IsOrganisationAddressKnownPage, OrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,8 +55,8 @@ class IsOrganisationAddressKnownController @Inject()(
       }
 
       val organisationName = request.userAnswers.get(OrganisationNamePage) match {
-        case None => "organisation"
-        case Some(organisationName) => s"${organisationName}"
+        case None => "the organisation"
+        case Some(organisationName) => s"$organisationName"
       }
 
       val json = Json.obj(
@@ -75,10 +75,16 @@ class IsOrganisationAddressKnownController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val organisationName = request.userAnswers.get(OrganisationNamePage) match {
+            case None => "the organisation"
+            case Some(organisationName) => s"$organisationName"
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "organisationName" -> organisationName
           )
 
           renderer.render("isOrganisationAddressKnown.njk", json).map(BadRequest(_))

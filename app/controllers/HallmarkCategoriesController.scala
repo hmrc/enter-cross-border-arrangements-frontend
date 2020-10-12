@@ -38,7 +38,6 @@ class HallmarkCategoriesController @Inject()(
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: HallmarkCategoriesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
