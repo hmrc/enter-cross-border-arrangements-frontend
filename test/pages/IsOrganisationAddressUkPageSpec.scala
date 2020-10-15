@@ -20,7 +20,7 @@ import pages.behaviours.PageBehaviours
 
 class IsOrganisationAddressUkPageSpec extends PageBehaviours {
 
-  "iIsOrganisationAddressUkPage" - {
+  "isOrganisationAddressUkPage" - {
 
     beRetrievable[Boolean](IsOrganisationAddressUkPage)
 

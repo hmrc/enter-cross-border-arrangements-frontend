@@ -78,16 +78,16 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def iIsOrganisationAddressUk: Option[Row] = userAnswers.get(IsOrganisationAddressUkPage) map {
+  def isOrganisationAddressUk: Option[Row] = userAnswers.get(IsOrganisationAddressUkPage) map {
     answer =>
       Row(
-        key     = Key(msg"iIsOrganisationAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"isOrganisationAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"iIsOrganisationAddressUk.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationAddressUk.checkYourAnswersLabel"))
           )
         )
       )

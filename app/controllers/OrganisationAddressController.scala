@@ -48,7 +48,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getWithoutUKCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(OrganisationAddressPage) match {
@@ -89,7 +89,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getWithoutUKCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       form.bindFromRequest().fold(

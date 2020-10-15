@@ -48,7 +48,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryiIsOrganisationAddressUkUserAnswersEntry: Arbitrary[(IsOrganisationAddressUkPage.type, JsValue)] =
+  implicit lazy val arbitraryIsOrganisationAddressUkUserAnswersEntry: Arbitrary[(IsOrganisationAddressUkPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[IsOrganisationAddressUkPage.type]

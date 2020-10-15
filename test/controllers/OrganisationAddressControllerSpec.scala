@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.OrganisationAddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
-import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -50,9 +50,9 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
   val formProvider = new OrganisationAddressFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid","GB","United Kingdom")))
+  val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
   val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-    Country("valid","GB","United Kingdom"))
+    Country("valid","FR","France"))
 
   lazy val organisationAddressRoute: String = routes.OrganisationAddressController.onPageLoad(NormalMode).url
 
@@ -68,7 +68,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[CountryListFactory].toInstance(mockCountryFactory)).build()
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
+      when(mockCountryFactory.getWithoutUKCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
       val request = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -95,7 +95,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getWithoutUKCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
       val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address).success.value
 
@@ -117,7 +117,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
           "addressLine3" -> "value 3",
           "city" -> "value 4",
           "postCode" -> "XX9 9XX",
-          "country" -> "GB"
+          "country" -> "FR"
         )
       )
 
@@ -148,7 +148,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       val request =
         FakeRequest(POST, organisationAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
-            ("postcode", "XX9 9XX"),("country", "GB"))
+            ("postcode", "XX9 9XX"),("country", "FR"))
 
       val result = route(application, request).value
 
