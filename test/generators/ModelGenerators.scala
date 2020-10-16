@@ -77,9 +77,9 @@ trait ModelGenerators {
       addressLine1 <- Gen.option(arbitrary[String])
       addressLine2 <- Gen.option(arbitrary[String])
       addressLine3 <- Gen.option(arbitrary[String])
-      addressLine4 <- arbitrary[String]
+      city <- arbitrary[String]
       postalCode <- Gen.option(arbitrary[String])
       countryCode <- arbitrary[Country]
-    } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
+    } yield Address(addressLine1, addressLine2, addressLine3, city, postalCode, countryCode)
   }
 }
