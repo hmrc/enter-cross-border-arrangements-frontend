@@ -37,15 +37,18 @@
               isPageHeading: true,
               classes: "govuk-label--xl"
             },
-            id: "value",
+            id: "organisataionName",
             name: "value",
             value: form.value.value,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue")
-          }) }}
+              text: messages("site.saveAndContinue"),
+              attributes: {
+                  "id": "submit"
+              }
+           }) }}
 
         </form>
 

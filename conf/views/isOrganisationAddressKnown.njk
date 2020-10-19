@@ -46,8 +46,11 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue")
-          }) }}
+              text: messages("site.saveAndContinue"),
+              attributes: {
+                  "id": "submit"
+              }
+           }) }}
 
         </form>
 

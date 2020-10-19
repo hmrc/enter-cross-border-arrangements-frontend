@@ -23,6 +23,8 @@ class OrganisationNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "organisationName.error.required"
   val lengthKey = "organisationName.error.length"
+  val invalidKey = "organisationName.error.invalid"
+
   val maxLength = 35
 
   val form = new OrganisationNameFormProvider()()
@@ -34,20 +36,33 @@ class OrganisationNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validNonApiName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

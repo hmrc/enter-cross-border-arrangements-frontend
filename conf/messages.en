@@ -240,7 +240,7 @@ isOrganisationAddressUk.checkYourAnswersLabel = Is main address in the United Ki
 isOrganisationAddressUk.error.required = Select yes if the main address for the organisation is in the United Kingdom
 
 isOrganisationAddressKnown.title = Do you know address?
-isOrganisationAddressKnown.heading = Do you know {0}’s address
+isOrganisationAddressKnown.heading = Do you know {0}’s address?
 isOrganisationAddressKnown.checkYourAnswersLabel = Do you know address?
 isOrganisationAddressKnown.error.required = Select yes if you know the address for the organisation
 
@@ -249,7 +249,7 @@ organisationName.heading = What is the name of the organisation?
 organisationName.checkYourAnswersLabel = What is the name of the organisation?
 organisationName.error.required = Enter the name of the organisation
 organisationName.error.length = Organisation name must be 35 characters or less
-organisationName.error.invalid = Organisation name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+organisationName.error.invalid = Organisation name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 
 organisationAddress.title = What is the organisation’s main address?
 organisationAddress.heading = What is {0}’s main address?
