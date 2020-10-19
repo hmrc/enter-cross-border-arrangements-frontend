@@ -61,4 +61,25 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(HallmarkCategories.values.toSeq)
     }
+
+  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
+    Arbitrary {
+      for {
+        state <- Gen.oneOf(Seq("Valid", "Invalid"))
+        code  <- Gen.pick(2, 'A' to 'Z')
+        name  <- arbitrary[String]
+      } yield Country(state, code.mkString, name)
+    }
+  }
+
+  implicit val arbitraryAddress: Arbitrary[Address] = Arbitrary {
+    for {
+      addressLine1 <- Gen.option(arbitrary[String])
+      addressLine2 <- Gen.option(arbitrary[String])
+      addressLine3 <- Gen.option(arbitrary[String])
+      city <- arbitrary[String]
+      postalCode <- Gen.option(arbitrary[String])
+      countryCode <- arbitrary[Country]
+    } yield Address(addressLine1, addressLine2, addressLine3, city, postalCode, countryCode)
+  }
 }

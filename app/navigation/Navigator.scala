@@ -31,6 +31,12 @@ import play.api.mvc.Call
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[Call] = {
+
+    //TODO: Make the urls dynamic for each organisation when available
+    case OrganisationNamePage => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
+    case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(NormalMode)
+    case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(NormalMode)
+
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
     case HallmarkBPage => hallmarkBRoutes(NormalMode)
@@ -45,6 +51,10 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
+    case OrganisationNamePage => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode))
+    case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(CheckMode)
+    case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(CheckMode)
+
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
     case HallmarkBPage => hallmarkBRoutes(CheckMode)
@@ -150,6 +160,18 @@ class Navigator @Inject()() {
          routes.HallmarkEController.onPageLoad(mode)
        case _ => routes.CheckYourAnswersController.onPageLoad()
      }
+
+  private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsOrganisationAddressKnownPage) map {
+      case true  => routes.IsOrganisationAddressUkController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() // TODO: Send to email address page
+    }
+
+  private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsOrganisationAddressUkPage) map {
+      case true  => routes.IndexController.onPageLoad()   // TODO: Send to postcode page when ready
+      case false => routes.OrganisationAddressController.onPageLoad(mode)
+    }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

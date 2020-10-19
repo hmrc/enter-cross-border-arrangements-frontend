@@ -17,75 +17,83 @@
 package controllers
 
 import controllers.actions._
-import forms.HallmarkCategoriesFormProvider
+import forms.IsOrganisationAddressKnownFormProvider
 import javax.inject.Inject
-import models.{HallmarkCategories, Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.HallmarkCategoriesPage
+import pages.{IsOrganisationAddressKnownPage, OrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HallmarkCategoriesController @Inject()(
+class IsOrganisationAddressKnownController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    formProvider: HallmarkCategoriesFormProvider,
+    requireData: DataRequiredAction,
+    formProvider: IsOrganisationAddressKnownFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkCategoriesPage)) match {
+      val preparedForm = request.userAnswers.get(IsOrganisationAddressKnownPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
+      val organisationName = request.userAnswers.get(OrganisationNamePage) match {
+        case None => "the organisation"
+        case Some(organisationName) => s"$organisationName"
+      }
+
       val json = Json.obj(
-        "form"       -> preparedForm,
-        "mode"       -> mode,
-        "checkboxes" -> HallmarkCategories.checkboxes(preparedForm)
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "organisationName" -> organisationName
       )
 
-      renderer.render("hallmarkCategories.njk", json).map(Ok(_))
+      renderer.render("isOrganisationAddressKnown.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val organisationName = request.userAnswers.get(OrganisationNamePage) match {
+            case None => "the organisation"
+            case Some(organisationName) => s"$organisationName"
+          }
+
           val json = Json.obj(
-            "form"       -> formWithErrors,
-            "mode"       -> mode,
-            "checkboxes" -> HallmarkCategories.checkboxes(formWithErrors)
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "organisationName" -> organisationName
           )
 
-          renderer.render("hallmarkCategories.njk", json).map(BadRequest(_))
+          renderer.render("isOrganisationAddressKnown.njk", json).map(BadRequest(_))
         },
-        value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
+        value =>
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCategoriesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, mode, updatedAnswers))
-
-        }
+          } yield Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
       )
   }
 }

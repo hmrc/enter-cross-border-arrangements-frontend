@@ -324,6 +324,81 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
+
+      "must go from What is the name of the organisation? page to Do you know {0}’s Address page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(OrganisationNamePage, NormalMode, answers)
+              .mustBe(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the Do you know {0}’s Address page to the Is {0}’s main address in the United Kingdom? when answer is 'Yes' " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsOrganisationAddressKnownPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the Do you know {0}’s Address page to the Is {0}’s main address in the United Kingdom? when answer is 'No' " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsOrganisationAddressKnownPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from the Is {0}’s main address in the United Kingdom? page to the Index page when answer is 'Yes' " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsOrganisationAddressUkPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from the Is {0}’s main address in the United Kingdom? page to What is {0}’s main address? " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsOrganisationAddressUkPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
+              .mustBe(routes.OrganisationAddressController.onPageLoad(NormalMode))
+        }
+      }
+
     }
   }
 }
