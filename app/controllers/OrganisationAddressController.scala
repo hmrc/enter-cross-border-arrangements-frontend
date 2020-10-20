@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.OrganisationAddressFormProvider
 import javax.inject.Inject
-import models.{Country, Mode}
+import models.{Country, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{OrganisationAddressPage, OrganisationNamePage}
+import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage, OrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,7 +48,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getWithoutUKCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(OrganisationAddressPage) match {
@@ -64,7 +64,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "countries" -> countryJsonList(preparedForm.data, countries),
+        "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
+        "isUkAddress" -> isUkAddress(request.userAnswers),
         "organisationName" -> organisationName
       )
 
@@ -89,7 +90,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getWithoutUKCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       form.bindFromRequest().fold(
@@ -104,7 +105,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "countries" -> countryJsonList(formWithErrors.data, countries),
+            "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
+            "isUkAddress" -> isUkAddress(request.userAnswers),
             "organisationName" -> organisationName
           )
 
@@ -116,5 +118,10 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
       )
+  }
+
+  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsOrganisationAddressUkPage) match {
+    case Some(true) => true
+    case _ => false
   }
 }

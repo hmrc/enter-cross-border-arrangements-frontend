@@ -44,6 +44,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl: String             = s"$feedbackFrontend/feedback/enter-for-cross-border-arrangements"
 
+  lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 

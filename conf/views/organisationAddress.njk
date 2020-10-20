@@ -78,7 +78,7 @@
 
                   {{ govukInput({
                    label: {
-                      text: messages('organisationAddress.postcode.optional')
+                      text: messages('organisationAddress.postcodeUk.optional' if isUkAddress else 'organisationAddress.postcode.optional' )
                    },
                    id: "postCode",
                    name: "postCode",
@@ -86,16 +86,26 @@
                    errorMessage: form.postCode.error
                   }) }}
 
-                  {{ govukSelect({
-                    classes: "govuk-input--width-20 autocomplete",
-                    label: {
-                      text: messages('organisationAddress.country')
-                    },
-                    id: "country",
-                    name: "country",
-                    errorMessage: form.country.error,
-                    items: countries
-                  }) }}
+                {% if isUkAddress %}
+                        {{ govukInput ({
+                            name: "country",
+                            value: "GB",
+                            attributes: {
+                                "hidden": "true"
+                            }
+                        }) }}
+                {% else %}
+                      {{ govukSelect({
+                                 classes: "govuk-input--width-20 autocomplete",
+                                 label: {
+                                   text: messages('organisationAddress.country')
+                                 },
+                                 id: "country",
+                                 name: "country",
+                                 errorMessage: form.country.error,
+                                 items: countries
+                               }) }}
+                {% endif %}
 
                   {{ govukButton({
                       text: messages("site.saveAndContinue"),

@@ -259,6 +259,7 @@ organisationAddress.addressLine2 = Address line 2 (optional)
 organisationAddress.addressLine3 = Address line 3 (optional)
 organisationAddress.city = City
 organisationAddress.postcode.optional = Postal code (optional)
+organisationAddress.postcodeUk.optional = Postcode (optional)
 organisationAddress.country = Country
 organisationAddress.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
 organisationAddress.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
@@ -272,3 +273,18 @@ organisationAddress.error.city.invalid = City must only include letters a to z, 
 organisationAddress.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 organisationAddress.error.city.required = Enter city
 organisationAddress.error.country.required = Select country
+
+postcode.title = What is the organisation’s postcode?
+postcode.heading = What is the {0}’s postcode?
+postcode.checkYourAnswersLabel = What is the {0}’s postcode?
+postcode.error.required = Enter postcode
+postcode.error.invalid = Enter a postcode, like AA1 1AA
+postcode.submit = Find address
+postcode.hint = Or enter the address manually
+
+selectAddress.title = What is the Organisations main address?
+selectAddress.heading = What is {0}’s main address?
+selectAddress.hint.part1 = Select from the list or
+selectAddress.hint.part2 = enter the address manually
+selectAddress.checkYourAnswersLabel = What is {0}’s main address??
+selectAddress.error.required = Select address

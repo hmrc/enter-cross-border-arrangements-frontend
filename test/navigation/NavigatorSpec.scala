@@ -379,7 +379,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.PostcodeController.onPageLoad(NormalMode))
         }
       }
 
@@ -399,8 +399,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Postcode page to What is your main address page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(PostcodePage, "ZZ1 ZZ4")
+                .success.value
+                .set(HallmarkEPage, HallmarkE.values.toSet)
+                .success.value
+
+
+            navigator
+              .nextPage(PostcodePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }
-
 

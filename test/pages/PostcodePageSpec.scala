@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import config.FrontendAppConfig
-import play.api.mvc.Call
-import pages._
-import models.{Mode, NormalMode, UserAnswers}
+import pages.behaviours.PageBehaviours
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+class PostcodePageSpec extends PageBehaviours {
+
+  "PostcodePage" - {
+
+    beRetrievable[String](PostcodePage)
+
+    beSettable[String](PostcodePage)
+
+    beRemovable[String](PostcodePage)
+  }
 }

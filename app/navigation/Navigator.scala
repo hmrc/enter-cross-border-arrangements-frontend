@@ -46,6 +46,7 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
+    case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -65,6 +66,7 @@ class Navigator @Inject()() {
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -169,7 +171,7 @@ class Navigator @Inject()() {
 
   private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsOrganisationAddressUkPage) map {
-      case true  => routes.IndexController.onPageLoad()   // TODO: Send to postcode page when ready
+      case true  => routes.PostcodeController.onPageLoad(mode)   // TODO: Send to postcode page when ready
       case false => routes.OrganisationAddressController.onPageLoad(mode)
     }
 

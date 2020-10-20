@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package navigation
+package forms
 
-import config.FrontendAppConfig
-import play.api.mvc.Call
-import pages._
-import models.{Mode, NormalMode, UserAnswers}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class PostcodeFormProvider @Inject() extends Mappings with RegexConstants {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+  def apply(): Form[String] =
+    Form(
+      "value" -> requiredRegexOnlyText("postcode.error.required",
+        "postcode.error.invalid",
+        regexPostcode)
+    )
 }

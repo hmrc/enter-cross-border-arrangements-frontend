@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package navigation
+package forms
 
-import config.FrontendAppConfig
-import play.api.mvc.Call
-import pages._
-import models.{Mode, NormalMode, UserAnswers}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class SelectAddressFormProvider @Inject() extends Mappings {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("selectAddress.error.required")
+    )
 }
