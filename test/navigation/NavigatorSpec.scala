@@ -325,6 +325,69 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from What is their name? page to What is {0}'s date of birth?" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(IndividualNamePage, NormalMode, answers)
+              .mustBe(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from What is {0}'s date of birth? page to Do you know where {0} was born?" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(IndividualDateOfBirthPage, NormalMode, answers)
+              .mustBe(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+        }
+      }
+
+
+      "must go from the Do you know where {0} was born?  page to the Where was {0} born? when answer is 'Yes' " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsIndividualPlaceOfBirthKnownPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the Do you know where {0} was born?  page to the Do you know {0}'s address? when answer is 'No' " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsIndividualPlaceOfBirthKnownPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Where was {0} born? page to Do you know {0}'s address?" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(IndividualPlaceOfBirthPage, NormalMode, answers)
+              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from What is the name of the organisation? page to Do you know {0}’s Address page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
