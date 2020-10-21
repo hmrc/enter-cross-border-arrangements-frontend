@@ -107,3 +107,8 @@ GET        /organisation/what-is-email-address                  controllers.Emai
 POST       /organisation/what-is-email-address                  controllers.EmailAddressForOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-what-is-email-address           controllers.EmailAddressForOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-what-is-email-address           controllers.EmailAddressForOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/which-country-tax                      controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/which-country-tax                      controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = CheckMode)
