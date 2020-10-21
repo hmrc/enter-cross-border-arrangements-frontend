@@ -36,6 +36,9 @@ class Navigator @Inject()() {
     case OrganisationNamePage => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
     case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(NormalMode)
     case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(NormalMode)
+    case SelectAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+    case OrganisationAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
@@ -55,6 +58,9 @@ class Navigator @Inject()() {
     case OrganisationNamePage => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode))
     case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(CheckMode)
     case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(CheckMode)
+    case SelectAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+    case OrganisationAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+    case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(CheckMode)
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
@@ -173,6 +179,12 @@ class Navigator @Inject()() {
     ua.get(IsOrganisationAddressUkPage) map {
       case true  => routes.PostcodeController.onPageLoad(mode)   // TODO: Send to postcode page when ready
       case false => routes.OrganisationAddressController.onPageLoad(mode)
+    }
+
+  private def emailAddressQuestionRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(EmailAddressQuestionForOrganisationPage) map {
+      case true  => routes.EmailAddressForOrganisationController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() //TODO: Send to /organisation/which-country-tax when ready
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

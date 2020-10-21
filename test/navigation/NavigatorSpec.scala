@@ -415,6 +415,54 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from What is the organisation's main address page (/select-address) to " +
+        "Do you know the email address for a main contact at the organisation? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(SelectAddressPage, "25 Testing Close, Othertown, Z9 3WW")
+                .success.value
+
+            navigator
+              .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from What is the organisation's main address page (/address) to " +
+        "Do you know the email address for a main contact at the organisation? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
+              Country("valid","FR","France"))
+
+            val updatedAnswers =
+              answers.set(OrganisationAddressPage, address)
+                .success.value
+
+            navigator
+              .nextPage(OrganisationAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Do you know the email address for a main contact at the organisation? page to " +
+        "What is the email address for a main contact at the organisation? page if the answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(EmailAddressQuestionForOrganisationPage, true)
+                .success.value
+
+            navigator
+              .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }
