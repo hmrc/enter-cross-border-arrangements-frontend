@@ -172,7 +172,7 @@ class Navigator @Inject()() {
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsOrganisationAddressKnownPage) map {
       case true  => routes.IsOrganisationAddressUkController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() // TODO: Send to email address page
+      case false => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
     }
 
   private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -184,7 +184,7 @@ class Navigator @Inject()() {
   private def emailAddressQuestionRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(EmailAddressQuestionForOrganisationPage) map {
       case true  => routes.EmailAddressForOrganisationController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //TODO: Send to /organisation/which-country-tax when ready
+      case false => routes.IndexController.onPageLoad() //TODO: Send to /organisation/which-country-tax when ready. Add UT
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

@@ -351,7 +351,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Do you know {0}’s Address page to the Is {0}’s main address in the United Kingdom? when answer is 'No' " in {
+      "must go from the Do you know {0}’s Address page to " +
+        "Do you know the email address for a main contact at the organisation? page when answer is 'No' " in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -363,7 +364,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
       }
 
