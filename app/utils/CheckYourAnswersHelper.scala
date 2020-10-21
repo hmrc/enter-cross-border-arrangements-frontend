@@ -25,13 +25,28 @@ import models.HallmarkC1._
 import models.HallmarkCategories.{CategoryA, CategoryB}
 import models.HallmarkD.D1
 import models.HallmarkD1.D1other
-import models.{CheckMode, HallmarkA, HallmarkB, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+
+  def doYouKnowAnyUTRNumbersOfUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyUTRNumbersOfUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def whichCountryTaxForOrganisation: Option[Row] = userAnswers.get(WhichCountryTaxForOrganisationPage) map {
     answer =>

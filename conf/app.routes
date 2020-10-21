@@ -112,3 +112,8 @@ GET        /organisation/which-country-tax                      controllers.Whic
 POST       /organisation/which-country-tax                      controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/uk-tin-known                           controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/uk-tin-known                           controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onSubmit(mode: Mode = CheckMode)
