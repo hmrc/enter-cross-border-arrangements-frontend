@@ -61,7 +61,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk))
+        "countries" -> countryJsonList(preparedForm.data, countries)
       )
 
       renderer.render("whichCountryTaxForOrganisation.njk", json).map(Ok(_))
@@ -77,7 +77,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk))
+            "countries" -> countryJsonList(formWithErrors.data, countries)
           )
 
           renderer.render("whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
