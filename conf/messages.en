@@ -288,3 +288,16 @@ selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter the address manually
 selectAddress.checkYourAnswersLabel = What is {0}’s main address??
 selectAddress.error.required = Select address
+
+emailAddressQuestionForOrganisation.title = Do you know the email address for a main contact at the organisation?
+emailAddressQuestionForOrganisation.heading = Do you know the email address for a main contact at {0}?
+emailAddressQuestionForOrganisation.checkYourAnswersLabel = emailAddressQuestionForOrganisation
+emailAddressQuestionForOrganisation.error.required = Select yes if you know the email address for a main contact at the organisation
+
+emailAddressForOrganisation.title = What is the email address for a main contact at the organisation?
+emailAddressForOrganisation.heading = What is the email address for a main contact at {0}?
+emailAddressForOrganisation.hint = We will only use this to get in contact if we have any questions about the arrangement.
+emailAddressForOrganisation.checkYourAnswersLabel = emailAddressForOrganisation
+emailAddressForOrganisation.error.required = Enter an email address
+emailAddressForOrganisation.error.invalid = Enter an email address in the correct format, like name@example.com
+emailAddressForOrganisation.error.length = Email address must be 254 characters or less
