@@ -56,7 +56,7 @@ class IsIndividualAddressKnownController @Inject()(
 
       val name = request.userAnswers.get(IndividualNamePage) match {
         case None => "their"
-        case Some(name) => s"${name.firstName + " " + name.secondName}"
+        case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       }
 
       val json = Json.obj(
@@ -77,7 +77,7 @@ class IsIndividualAddressKnownController @Inject()(
 
           val name = request.userAnswers.get(IndividualNamePage) match {
             case None => "their"
-            case Some(name) => s"${name.firstName + " " + name.secondName}"
+            case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
           }
 
           val json = Json.obj(

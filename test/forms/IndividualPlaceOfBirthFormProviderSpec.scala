@@ -23,7 +23,7 @@ class IndividualPlaceOfBirthFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "individualPlaceOfBirth.error.required"
   val lengthKey = "individualPlaceOfBirth.error.length"
-  val maxLength = 100
+  val maxLength = 200
 
   val form = new IndividualPlaceOfBirthFormProvider()()
 

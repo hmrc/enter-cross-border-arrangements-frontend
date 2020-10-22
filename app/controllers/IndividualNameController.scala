@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.IndividualNameFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.IndividualNamePage
+import pages.{HallmarkCategoriesPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +38,6 @@ class IndividualNameController @Inject()(
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: IndividualNameFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -46,10 +45,10 @@ class IndividualNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualNamePage) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(IndividualNamePage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +61,7 @@ class IndividualNameController @Inject()(
       renderer.render("individualName.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,11 +74,17 @@ class IndividualNameController @Inject()(
 
           renderer.render("individualName.njk", json).map(BadRequest(_))
         },
-        value =>
+
+        value => {
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualNamePage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IndividualNamePage, mode, updatedAnswers))
+
+        }
       )
   }
 }

@@ -17,15 +17,17 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.IndividualNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.IndividualNamePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
@@ -39,12 +41,17 @@ import scala.concurrent.Future
 
 class IndividualNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new IndividualNameFormProvider()
-  val form = formProvider()
+  val form: Form[Name] = formProvider()
+  val firstName: String = "First"
+  val lastName: String = "Last"
 
-  lazy val individualNameRoute = routes.IndividualNameController.onPageLoad(NormalMode).url
+  lazy val individualNameRoute: String = routes.IndividualNameController.onPageLoad(NormalMode).url
 
   "IndividualName Controller" - {
 
@@ -80,7 +87,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, Name("Mel", "Brooks")).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, individualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -92,7 +99,10 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map(
+        "firstName" -> "Mel",
+        "secondName" -> "Brooks"
+      ))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -107,8 +117,6 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -121,7 +129,8 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val request =
         FakeRequest(POST, individualNameRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("firstName", "Mel"),
+            ("secondName", "Brooks"))
 
       val result = route(application, request).value
 
@@ -137,8 +146,8 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, individualNameRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, individualNameRoute).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "")
+      val boundForm = form.bind(Map("firstName" -> "", "lastName" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -155,38 +164,6 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       templateCaptor.getValue mustEqual "individualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, individualNameRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, individualNameRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

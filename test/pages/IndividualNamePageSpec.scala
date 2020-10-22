@@ -16,6 +16,7 @@
 
 package pages
 
+import models.Name
 import pages.behaviours.PageBehaviours
 
 
@@ -23,10 +24,10 @@ class IndividualNamePageSpec extends PageBehaviours {
 
   "IndividualNamePage" - {
 
-    beRetrievable[String](IndividualNamePage)
+    beRetrievable[Name](IndividualNamePage)
 
-    beSettable[String](IndividualNamePage)
+    beSettable[Name](IndividualNamePage)
 
-    beRemovable[String](IndividualNamePage)
+    beRemovable[Name](IndividualNamePage)
   }
 }

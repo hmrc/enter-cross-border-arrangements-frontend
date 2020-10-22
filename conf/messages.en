@@ -289,17 +289,6 @@ selectAddress.hint.part2 = enter the address manually
 selectAddress.checkYourAnswersLabel = What is {0}’s main address??
 selectAddress.error.required = Select address
 
-individualDateOfBirth.title = Their date of birth?
-individualDateOfBirth.heading = What is {0}’s date of birth?
-individualDateOfBirth.hint = For example, 12 11 2007
-individualDateOfBirth.checkYourAnswersLabel = What is {0}’s date of birth?
-individualDateOfBirth.error.required.all = Enter a date of birth
-individualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
-individualDateOfBirth.error.required = Date of birth must include {0}
-individualDateOfBirth.error.invalid = Enter a valid date of birth
-individualDateOfBirth.error.futureDate = Date of birth must be before {0}
-individualDateOfBirth.error.pastDate = Date of birth must be after 1903
-
 individualName.title = What is their name?
 individualName.heading = What is their name?
 individualName.firstName = First name
@@ -312,6 +301,23 @@ individualName.error.secondName.invalid = Last name must only include letters a 
 individualName.error.firstName.length = First name must be 35 characters or less
 individualName.error.secondName.length = Last name must be 35 characters or less
 
+individualDateOfBirth.title = Their date of birth?
+individualDateOfBirth.heading = What is {0} date of birth?
+individualDateOfBirth.hint = For example, 31 3 1980
+individualDateOfBirth.checkYourAnswersLabel = What is {0}’s date of birth?
+individualDateOfBirth.error.required.all = Enter a date of birth
+individualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+individualDateOfBirth.error.required = Date of birth must include {0}
+individualDateOfBirth.error.invalid = Enter a valid date of birth
+individualDateOfBirth.error.futureDate = Date of birth must be before {0}
+individualDateOfBirth.error.pastDate = Date of birth must be after 1903
+individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
+
+isIndividualPlaceOfBirthKnown.title = Do you know the country where they were born?
+isIndividualPlaceOfBirthKnown.heading = Do you know the country where {0} born?
+isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know the country where {0} was born?
+isIndividualPlaceOfBirthKnown.error.required = Select yes if you know the country where they were born
+
 individualPlaceOfBirth.title = Where were they born?
 individualPlaceOfBirth.heading = Where was {0} born?
 individualPlaceOfBirth.checkYourAnswersLabel = Where was {0} born?
@@ -322,11 +328,6 @@ isIndividualAddressKnown.title = Do you know their address?
 isIndividualAddressKnown.heading = Do you know {0}’s address?
 isIndividualAddressKnown.checkYourAnswersLabel = Do you know {0}’s address?
 isIndividualAddressKnown.error.required = Select yes if you know their address
-
-isIndividualPlaceOfBirthKnown.title = Do you know the country where they were born?
-isIndividualPlaceOfBirthKnown.heading = Do you know the country where {0} was born?
-isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know the country where {0} was born?
-isIndividualPlaceOfBirthKnown.error.required = Select yes if you know where they were born
 
 emailAddressQuestionForOrganisation.title = Do you know the email address for a main contact at the organisation?
 emailAddressQuestionForOrganisation.heading = Do you know the email address for a main contact at {0}?

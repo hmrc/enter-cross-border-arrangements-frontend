@@ -21,7 +21,7 @@ import forms.IsIndividualPlaceOfBirthKnownFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.IsIndividualPlaceOfBirthKnownPage
+import pages.{IndividualNamePage, IsIndividualPlaceOfBirthKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,10 +54,16 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
         case Some(value) => form.fill(value)
       }
 
+      val name = request.userAnswers.get(IndividualNamePage) match {
+        case None => "they were"
+        case Some(name) => s"${name.firstName + " " + name.secondName + " was"}"
+      }
+
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "name" -> name
       )
 
       renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
@@ -69,10 +75,16 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val name = request.userAnswers.get(IndividualNamePage) match {
+            case None => "they were"
+            case Some(name) => s"${name.firstName + " " + name.secondName + " was"}"
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "name" -> name
           )
 
           renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))

@@ -56,7 +56,7 @@ class IndividualDateOfBirthController @Inject()(
 
       val name = request.userAnswers.get(IndividualNamePage) match {
         case None => "their"
-        case Some(name) => s"${name.firstName + " " + name.secondName}"
+        case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       }
 
       val viewModel = DateInput.localDate(preparedForm("value"))

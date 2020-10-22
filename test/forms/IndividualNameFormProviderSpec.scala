@@ -21,15 +21,15 @@ import play.api.data.FormError
 
 class IndividualNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "individualName.error.required"
-  val lengthKey = "individualName.error.length"
   val maxLength = 35
-
   val form = new IndividualNameFormProvider()()
 
-  ".value" - {
+  ".firstName" - {
+    val requiredKey = "individualName.error.firstName.required"
+    val invalidKey = "individualName.error.firstName.invalid"
+    val lengthKey = "individualName.error.firstName.length"
 
-    val fieldName = "value"
+    val fieldName = "firstName"
 
     behave like fieldThatBindsValidData(
       form,
@@ -37,17 +37,58 @@ class IndividualNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".secondName" - {
+    val requiredKey = "individualName.error.secondName.required"
+    val invalidKey = "individualName.error.secondName.invalid"
+    val lengthKey = "individualName.error.secondName.length"
+
+    val fieldName = "secondName"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }
