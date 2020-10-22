@@ -8,7 +8,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("organisationAddress.title"), form.errors) }}
+  {{ title(messages("individualAddress.title") if individual else messages("organisationAddress.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -28,17 +28,17 @@
           }) }}
         {% endif %}
 
-         <form action="{{ routes.controllers.OrganisationAddressController.onSubmit(mode).url }}" method="post">
+         <form action="{{ actionUrl }}" method="post">
 
                   {{ csrf() | safe }}
 
                 <h1 class="govuk-heading-xl">
-                  {{ messages("organisationAddress.heading", organisationName) }}
+                  {{ messages("individualAddress.heading", usersName) if individual else messages("organisationAddress.heading", usersName) }}
                 </h1>
 
                   {{ govukInput({
                     label: {
-                      text: messages('organisationAddress.addressLine1')
+                      text: messages('address.addressLine1')
                     },
                     id: "addressLine1",
                     name: "addressLine1",
@@ -48,7 +48,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('organisationAddress.addressLine2')
+                      text: messages('address.addressLine2')
                     },
                     id: "addressLine2",
                     name: "addressLine2",
@@ -58,7 +58,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('organisationAddress.addressLine3')
+                      text: messages('address.addressLine3')
                     },
                     id: "addressLine3",
                     name: "addressLine3",
@@ -68,7 +68,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('organisationAddress.city')
+                      text: messages('address.city')
                     },
                     id: "city",
                     name: "city",
@@ -78,7 +78,7 @@
 
                   {{ govukInput({
                    label: {
-                      text: messages('organisationAddress.postcodeUk.optional' if isUkAddress else 'organisationAddress.postcode.optional' )
+                      text: messages('address.postcodeUk.optional' if isUkAddress else 'address.postcode.optional' )
                    },
                    id: "postCode",
                    name: "postCode",
@@ -98,7 +98,7 @@
                       {{ govukSelect({
                                  classes: "govuk-input--width-20 autocomplete",
                                  label: {
-                                   text: messages('organisationAddress.country')
+                                   text: messages('address.country')
                                  },
                                  id: "country",
                                  name: "country",

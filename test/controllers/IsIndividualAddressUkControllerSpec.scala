@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.IsOrganisationAddressUkFormProvider
+import forms.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,8 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsOrganisationAddressUkPage
+import pages.IsIndividualAddressUkPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +38,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new IsOrganisationAddressUkFormProvider()
-  val form = formProvider()
+  val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val isOrganisationAddressUkRoute = routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
+  lazy val isIndividualAddressUkRoute: String = routes.IsIndividualAddressUkController.onPageLoad(NormalMode).url
 
-  "IsOrganisationAddressUk Controller" - {
+  "IsIndividualAddressUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +55,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -67,11 +68,10 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value")),
-        "organisationName" -> "the organisation"
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +82,9 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressUkPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsIndividualAddressUkPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -99,11 +99,10 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value")),
-        "organisationName" -> "the organisation"
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -124,7 +123,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
+        FakeRequest(POST, isIndividualAddressUkRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
@@ -142,7 +141,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationAddressUkRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, isIndividualAddressUkRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -159,7 +158,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -169,7 +168,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, isIndividualAddressUkRoute)
 
       val result = route(application, request).value
 
@@ -185,7 +184,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
+        FakeRequest(POST, isIndividualAddressUkRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
@@ -197,4 +196,5 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       application.stop()
     }
   }
+
 }

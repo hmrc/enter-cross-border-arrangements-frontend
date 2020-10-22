@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("selectAddress.individual.title") if individual else messages("selectAddress.title"), form.errors) }}
+  {{ title(messages("isIndividualAddressUk.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,32 +27,29 @@
           }) }}
         {% endif %}
 
-        <form action="{{ actionUrl }}" method="post">
+        <form action="{{ routes.controllers.IsIndividualAddressUkController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
-            {{ messages("selectAddress.individual.heading", usersName) if individual else messages("selectAddress.heading", usersName) }}
-          </h1>
-
-          <span id="select-address-hint" class="govuk-hint">
-            {{ messages("selectAddress.hint.part1") }}
-            <a id="manualAddress" class="govuk-link" href="{{manualAddressURL}}">
-                {{ messages("selectAddress.hint.part2") }}
-            </a>.
-          </span>
           {{ govukRadios({
             name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('isIndividualAddressUk.heading', displayName),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+            },
             items: radios,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue"),
-            attributes: {
-               "id": "submit"
-            }
-          }) }}
+              text: messages("site.saveAndContinue"),
+              attributes: {
+                  "id": "submit"
+              }
+           }) }}
 
         </form>
 

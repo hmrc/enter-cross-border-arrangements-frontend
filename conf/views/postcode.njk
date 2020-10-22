@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("postcode.title"), form.errors) }}
+  {{ title(messages("postcode.individual.title")  if individual else messages("postcode.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.PostcodeController.onSubmit(mode).url }}" method="post">
+        <form action="{{ actionUrl }}" method="post">
 
           {{ csrf() | safe }}
 

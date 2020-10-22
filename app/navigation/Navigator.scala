@@ -41,6 +41,7 @@ class Navigator @Inject()() {
     case IndividualDateOfBirthPage => _ => _ => Some(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
     case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(NormalMode)
     case IndividualPlaceOfBirthPage => _ => _ => Some(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
     case SelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case OrganisationAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
@@ -63,8 +64,10 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
-    case PostcodePage => _ => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
+    case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
+    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -96,7 +99,11 @@ class Navigator @Inject()() {
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case PostcodePage => _ => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
+    case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+
+    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
+    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
     case _ => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -199,6 +206,13 @@ class Navigator @Inject()() {
       case false => routes.IsIndividualAddressKnownController.onPageLoad(mode)
     }
 
+  private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(IsIndividualAddressKnownPage) map {
+      case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() //ToDo route to email page
+    }
+
+
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsOrganisationAddressKnownPage) map {
       case true  => routes.IsOrganisationAddressUkController.onPageLoad(mode)
@@ -207,8 +221,14 @@ class Navigator @Inject()() {
 
   private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsOrganisationAddressUkPage) map {
-      case true  => routes.PostcodeController.onPageLoad(mode)   // TODO: Send to postcode page when ready
+      case true  => routes.OrganisationPostcodeController.onPageLoad(mode)   // TODO: Send to postcode page when ready
       case false => routes.OrganisationAddressController.onPageLoad(mode)
+    }
+
+  private def isIndividualAddressUKRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(IsIndividualAddressUkPage) map {
+      case true  => routes.IndividualPostcodeController.onPageLoad(mode)
+      case false => routes.IndividualAddressController.onPageLoad(mode)
     }
 
   private def emailAddressQuestionRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =

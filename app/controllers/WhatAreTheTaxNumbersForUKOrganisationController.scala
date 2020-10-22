@@ -35,17 +35,17 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    appConfig: FrontendAppConfig,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatAreTheTaxNumbersForUKOrganisationFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                                                 override val messagesApi: MessagesApi,
+                                                                 sessionRepository: SessionRepository,
+                                                                 appConfig: FrontendAppConfig,
+                                                                 navigator: Navigator,
+                                                                 identify: IdentifierAction,
+                                                                 getData: DataRetrievalAction,
+                                                                 requireData: DataRequiredAction,
+                                                                 formProvider: WhatAreTheTaxNumbersForUKOrganisationFormProvider,
+                                                                 val controllerComponents: MessagesControllerComponents,
+                                                                 renderer: Renderer
+                                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 

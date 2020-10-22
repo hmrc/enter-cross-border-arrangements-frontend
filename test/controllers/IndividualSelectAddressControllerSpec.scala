@@ -17,15 +17,17 @@
 package controllers
 
 import base.SpecBase
-import forms.IsOrganisationAddressUkFormProvider
+import config.FrontendAppConfig
+import connectors.AddressLookupConnector
+import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsOrganisationAddressUkPage
+import pages.{IndividualUkPostcodePage, IndividualSelectAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,24 +39,49 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+
+  val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsOrganisationAddressUkFormProvider()
+  lazy val selectAddressRoute = routes.IndividualSelectAddressController.onPageLoad(NormalMode).url
+  lazy val manualAddressURL: String = routes.IndividualAddressController.onPageLoad(NormalMode).canonical()
+
+  val formProvider = new SelectAddressFormProvider()
   val form = formProvider()
 
-  lazy val isOrganisationAddressUkRoute = routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
+  val addresses: Seq[AddressLookup] = Seq(
+    AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
+    AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
+  )
+  val addressRadios: Seq[Radios.Radio] = Seq(
+    Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
+    Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
+  )
 
-  "IsOrganisationAddressUk Controller" - {
+  "SelectAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val answers = UserAnswers(userAnswersId)
+        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(answers)).overrides(
+        bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+        ).build()
+
+      val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -67,11 +94,12 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value")),
-        "organisationName" -> "the organisation"
+        "manualAddressURL" -> manualAddressURL,
+        "usersName" -> "the individual's",
+        "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +110,19 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressUkPage, true).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(IndividualSelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
+        .success
+        .value
+        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+        ).build()
+      val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,16 +132,17 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("value" -> addressRadios.head.value))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value")),
-        "organisationName" -> "the organisation"
+        "manualAddressURL" -> manualAddressURL,
+        "usersName" -> "the individual's",
+        "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -111,21 +150,27 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
+
+      val answers = UserAnswers(userAnswersId)
+        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .success
+        .value
+
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(answers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+          ).build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, selectAddressRoute)
+          .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
       val result = route(application, request).value
 
@@ -140,9 +185,20 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationAddressUkRoute).withFormUrlEncodedBody(("value", ""))
+      val answers = UserAnswers(userAnswersId)
+        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(
+          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+        ).build()
+
+      val request = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -156,10 +212,11 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "manualAddressURL" -> manualAddressURL,
+        "radios" -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -169,12 +226,11 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, selectAddressRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -185,8 +241,8 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, selectAddressRoute)
+          .withFormUrlEncodedBody(("value", addressRadios.head.value))
 
       val result = route(application, request).value
 

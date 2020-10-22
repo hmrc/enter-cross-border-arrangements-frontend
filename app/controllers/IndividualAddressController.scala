@@ -22,7 +22,7 @@ import helpers.JourneyHelpers.{countryJsonList, getUsersName}
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage}
+import pages.{IndividualAddressPage, IsIndividualAddressUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,21 +34,21 @@ import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
-                                              countryListFactory: CountryListFactory,
-                                              sessionRepository: SessionRepository,
-                                              navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: AddressFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              renderer: Renderer
+class IndividualAddressController @Inject()(override val messagesApi: MessagesApi,
+                                            countryListFactory: CountryListFactory,
+                                            sessionRepository: SessionRepository,
+                                            navigator: Navigator,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            formProvider: AddressFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            renderer: Renderer
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
+  private def actionUrl(mode: Mode) = routes.IndividualAddressController.onSubmit(mode).url
 
-  implicit val alternativeText: String = "the organisation"
+  implicit val alternativeText: String = "the individual's"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -56,7 +56,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(OrganisationAddressPage) match {
+      val preparedForm = request.userAnswers.get(IndividualAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
-        "individual" -> false,
+        "individual" -> true,
         "usersName" -> getUsersName(request.userAnswers)
       )
 
@@ -89,7 +89,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
-            "individual" -> false,
+            "individual" -> true,
             "usersName" -> getUsersName(request.userAnswers)
           )
 
@@ -97,13 +97,13 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IndividualAddressPage, mode, updatedAnswers))
       )
   }
 
-  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsOrganisationAddressUkPage) match {
+  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsIndividualAddressUkPage) match {
     case Some(true) => true
     case _ => false
   }

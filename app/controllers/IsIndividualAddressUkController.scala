@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions._
-import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
+import forms.IsIndividualAddressUkFormProvider
 import helpers.JourneyHelpers.getUsersName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.DoYouKnowAnyTINForUKOrganisationPage
+import pages.IsIndividualAddressUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,26 +33,26 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouKnowAnyTINForUKOrganisationController @Inject()(
-                                                            override val messagesApi: MessagesApi,
-                                                            sessionRepository: SessionRepository,
-                                                            navigator: Navigator,
-                                                            identify: IdentifierAction,
-                                                            getData: DataRetrievalAction,
-                                                            requireData: DataRequiredAction,
-                                                            formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
-                                                            val controllerComponents: MessagesControllerComponents,
-                                                            renderer: Renderer
+class IsIndividualAddressUkController @Inject()(
+                                                    override val messagesApi: MessagesApi,
+                                                    sessionRepository: SessionRepository,
+                                                    navigator: Navigator,
+                                                    identify: IdentifierAction,
+                                                    getData: DataRetrievalAction,
+                                                    requireData: DataRequiredAction,
+                                                    formProvider: IsIndividualAddressUkFormProvider,
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  implicit val alternativeText: String = "the organisation"
+  implicit val alternativeText: String = "the individual's"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(IsIndividualAddressUkPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,11 +60,11 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "organisationName" -> getUsersName(request.userAnswers)
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "displayName" -> getUsersName(request.userAnswers)
       )
 
-      renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
+      renderer.render("isIndividualAddressUk.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -76,17 +76,17 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "organisationName" -> getUsersName(request.userAnswers)
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "displayName" -> getUsersName(request.userAnswers)
           )
 
-          renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("isIndividualAddressUk.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IsIndividualAddressUkPage, mode, updatedAnswers))
       )
   }
 }

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json.Json
+import models.Address
+import play.api.libs.json.JsPath
 
-//strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
-case class Name(firstName: String, secondName: String) {
-  def displayName: String = s"$firstName $secondName"
-}
+case object IndividualAddressPage extends QuestionPage[Address] {
 
-object Name {
-  implicit val format = Json.format[Name]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "individualAddress"
 }
