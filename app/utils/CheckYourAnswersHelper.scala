@@ -33,6 +33,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def whatAreTheTaxNumbersForUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def doYouKnowAnyUTRNumbersOfUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyUTRNumbersOfUKOrganisationPage) map {
     answer =>
       Row(

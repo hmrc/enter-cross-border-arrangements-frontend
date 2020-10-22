@@ -312,3 +312,15 @@ doYouKnowAnyUTRNumbersOfUKOrganisation.heading = Do you know any of {0}’s tax 
 doYouKnowAnyUTRNumbersOfUKOrganisation.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
 doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel = doYouKnowAnyUTRNumbersOfUKOrganisation
 doYouKnowAnyUTRNumbersOfUKOrganisation.error.required = Select yes if you know the National Insurance number for the organisation
+
+whatAreTheTaxNumbersForUKOrganisation.title = What are the organisation’s tax reference numbers?
+whatAreTheTaxNumbersForUKOrganisation.heading = What are {0}’s tax reference numbers for the United Kingdom?
+whatAreTheTaxNumbersForUKOrganisation.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
+whatAreTheTaxNumbersForUKOrganisation.hintLink = find a lost UTR number
+whatAreTheTaxNumbersForUKOrganisation.label1 = UK tax number 1
+whatAreTheTaxNumbersForUKOrganisation.label2 = UK tax number 2 (optional)
+whatAreTheTaxNumbersForUKOrganisation.label3 = UK tax number 3 (optional)
+whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbersForUKOrganisation
+whatAreTheTaxNumbersForUKOrganisation.error.required = Enter tax identification number 1
+whatAreTheTaxNumbersForUKOrganisation.error.invalid = Enter a National Insurance number in the correct format
+whatAreTheTaxNumbersForUKOrganisation.error.length = Tax identification number must be 13 characters or less

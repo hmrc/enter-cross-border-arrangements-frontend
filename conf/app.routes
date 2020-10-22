@@ -117,3 +117,8 @@ GET        /organisation/uk-tin-known                           controllers.DoYo
 POST       /organisation/uk-tin-known                           controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
