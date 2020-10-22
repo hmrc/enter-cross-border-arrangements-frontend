@@ -59,6 +59,9 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
+    case IndividualUkPostcodePage => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -85,6 +88,9 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
+
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
+    case IndividualUkPostcodePage => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -195,8 +201,14 @@ class Navigator @Inject()() {
 
   private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsOrganisationAddressUkPage) map {
-      case true  => routes.PostcodeController.onPageLoad(mode)   // TODO: Send to postcode page when ready
+      case true  => routes.PostcodeController.onPageLoad(mode)
       case false => routes.OrganisationAddressController.onPageLoad(mode)
+    }
+
+  private def isIndividualAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsIndividualAddressUkPage) map {
+      case true  => routes.IndividualPostcodeController.onPageLoad(mode)
+      case false => routes.IndividualAddressController.onPageLoad(mode)
     }
 
   private def emailAddressQuestionRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =

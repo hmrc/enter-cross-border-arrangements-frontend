@@ -18,35 +18,37 @@ package controllers
 
 import controllers.actions._
 import forms.OrganisationAddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.{Country, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage}
+import pages.{DisplayNamePage, IndividualAddressPage, IsIndividualAddressUkPage, OrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
+import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
-                                              countryListFactory: CountryListFactory,
-                                              sessionRepository: SessionRepository,
-                                              navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: OrganisationAddressFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              renderer: Renderer
+class IndividualAddressController @Inject()(override val messagesApi: MessagesApi,
+                                            countryListFactory: CountryListFactory,
+                                            sessionRepository: SessionRepository,
+                                            navigator: Navigator,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            formProvider: OrganisationAddressFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            renderer: Renderer
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
+  private def actionUrl(mode: Mode) = routes.IndividualAddressController.onSubmit(mode).url
+
+  implicit val alternativeText: String = "the individuals"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -54,7 +56,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(OrganisationAddressPage) match {
+      val preparedForm = request.userAnswers.get(IndividualAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -65,11 +67,26 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
-        "individual" -> false,
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "individual" -> true,
+        "organisationName" -> getUsersName(request.userAnswers)
       )
 
       renderer.render("organisationAddress.njk", json).map(Ok(_))
+  }
+
+  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
+    def containsCountry(country: Country): Boolean =
+      value.get("country") match {
+        case Some(countrycode) => countrycode == country.code
+        case _ => false
+      }
+
+    val countryJsonList = countries.map {
+      country =>
+        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
+    }
+
+    Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -87,21 +104,21 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
-            "individual" -> false,
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "individual" -> true,
+            "organisationName" -> getUsersName(request.userAnswers)
           )
 
           renderer.render("organisationAddress.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IndividualAddressPage, mode, updatedAnswers))
       )
   }
 
-  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsOrganisationAddressUkPage) match {
+  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsIndividualAddressUkPage) match {
     case Some(true) => true
     case _ => false
   }

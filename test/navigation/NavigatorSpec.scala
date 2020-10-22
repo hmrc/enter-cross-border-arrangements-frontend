@@ -617,6 +617,54 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from 'Does the individual live in the United Kingdom? No to 'what is the individuals address'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsIndividualAddressUkPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Does the individual live in the United Kingdom? yes to 'what is the individuals post code'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsIndividualAddressUkPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualPostcodeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from select 'What is the individuals postcode? to 'What is the individuals address?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IndividualUkPostcodePage, "A99 AA9")
+                .success
+                .value
+
+            navigator
+              .nextPage(IndividualUkPostcodePage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }

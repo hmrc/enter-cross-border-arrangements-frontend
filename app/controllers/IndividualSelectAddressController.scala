@@ -22,7 +22,7 @@ import forms.SelectAddressFormProvider
 import javax.inject.Inject
 import models.{AddressLookup, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DisplayNamePage, PostcodePage, SelectAddressPage}
+import pages.{DisplayNamePage, IndividualUkPostcodePage, IndividualSelectAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +33,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectAddressController @Inject()(
+class IndividualSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -48,14 +48,15 @@ class SelectAddressController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url
 
-  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onPageLoad(mode).url
+  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = request.userAnswers.get(PostcodePage) match {
+
+      val postCode = request.userAnswers.get(IndividualUkPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
       }
@@ -64,7 +65,7 @@ class SelectAddressController @Inject()(
         case Nil => Future.successful(Redirect(manualAddressURL(mode))) //ToDo handle no addresses found
         case addresses =>
 
-            val preparedForm = request.userAnswers.get(SelectAddressPage) match {
+            val preparedForm = request.userAnswers.get(IndividualSelectAddressPage) match {
               case None => form
               case Some(value) => form.fill(value)
             }
@@ -78,7 +79,7 @@ class SelectAddressController @Inject()(
               "manualAddressURL" -> manualAddressURL(mode),
               "usersName" -> getUsersName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "individual" -> false,
+              "individual" -> true,
               "radios" -> radios
             )
 
@@ -91,7 +92,7 @@ class SelectAddressController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = request.userAnswers.get(PostcodePage) match {
+      val postCode = request.userAnswers.get(IndividualUkPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
       }
@@ -114,7 +115,7 @@ class SelectAddressController @Inject()(
               "manualAddressURL" -> manualAddressURL(mode),
               "usersName" -> getUsersName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "individual" -> false,
+              "individual" -> true,
               "radios" -> radios
             )
 
@@ -122,9 +123,9 @@ class SelectAddressController @Inject()(
           },
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, value))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IndividualSelectAddressPage, mode, updatedAnswers))
         )
       }
   }
@@ -136,9 +137,10 @@ class SelectAddressController @Inject()(
     s"$lines, ${address.town}, $county${address.postcode}"
   }
 
+  //ToDo write displayname when individuals name is entered
   private def getUsersName(userAnswers: UserAnswers): String =
     userAnswers.get(DisplayNamePage) match {
       case Some(displayName) => displayName
-      case _ => "organisation name"
+      case _ => "the individuals"
     }
 }

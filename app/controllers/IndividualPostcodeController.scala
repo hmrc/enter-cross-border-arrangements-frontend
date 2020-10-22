@@ -21,7 +21,7 @@ import forms.PostcodeFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DisplayNamePage, PostcodePage}
+import pages.{DisplayNamePage, IndividualUkPostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +32,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PostcodeController @Inject()(
+class IndividualPostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -46,24 +46,25 @@ class PostcodeController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url //Todo update to correct value
 
-  private def actionUrl(mode: Mode) = routes.PostcodeController.onSubmit(mode).url
+  private def actionUrl(mode: Mode) = routes.IndividualPostcodeController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val preparedForm = request.userAnswers.get(PostcodePage) match {
+      val preparedForm = request.userAnswers.get(IndividualUkPostcodePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
+
       val json = Json.obj(
         "form" -> preparedForm,
         "usersName" -> getUsersName(request.userAnswers),
         "manualAddressURL" -> manualAddressURL(mode),
         "actionUrl" -> actionUrl(mode),
-        "individual" -> false,
+        "individual" -> true,
         "mode" -> mode
       )
 
@@ -80,7 +81,7 @@ class PostcodeController @Inject()(
             "usersName" -> getUsersName(request.userAnswers),
             "manualAddressURL" -> manualAddressURL(mode),
             "actionUrl" -> actionUrl(mode),
-            "individual" -> false,
+            "individual" -> true,
             "mode" -> mode
           )
 
@@ -88,16 +89,17 @@ class PostcodeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUkPostcodePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IndividualUkPostcodePage, mode, updatedAnswers))
       )
   }
 
+  //ToDo write displayname when individuals name is entered
   private def getUsersName(userAnswers: UserAnswers): String =
       userAnswers.get(DisplayNamePage) match {
         case Some(displayName) => displayName
-        case _ => "organisation name"
+        case _ => "individuals name"
       }
 
 }
