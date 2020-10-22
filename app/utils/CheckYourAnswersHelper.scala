@@ -33,6 +33,21 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def isOrganisationResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def whatAreTheTaxNumbersForUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) map {
     answer =>
       Row(

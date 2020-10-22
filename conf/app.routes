@@ -122,3 +122,8 @@ GET        /organisation/uk-tax-numbers                         controllers.What
 POST       /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/tax-other-countries                    controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/tax-other-countries                    controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-tax-other-countries             controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-tax-other-countries             controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode)

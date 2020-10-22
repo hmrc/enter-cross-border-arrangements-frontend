@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.WhichCountryTaxForOrganisationPage
+import pages.{OrganisationNamePage, WhichCountryTaxForOrganisationPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -59,7 +59,8 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers))
         .overrides(
           bind[CountryListFactory].toInstance(mockCountryFactory)
         ).build()

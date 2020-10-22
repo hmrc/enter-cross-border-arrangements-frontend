@@ -324,3 +324,8 @@ whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbe
 whatAreTheTaxNumbersForUKOrganisation.error.required = Enter tax identification number 1
 whatAreTheTaxNumbersForUKOrganisation.error.invalid = Enter a National Insurance number in the correct format
 whatAreTheTaxNumbersForUKOrganisation.error.length = Tax identification number must be 13 characters or less
+
+isOrganisationResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
+isOrganisationResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
+isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
+isOrganisationResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries
