@@ -22,10 +22,7 @@ import play.api.data.FormError
 class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "whatAreTheTaxNumbersForUKOrganisation.error.required"
-  val invalidKey = "whatAreTheTaxNumbersForUKOrganisation.error.invalid"
-  val lengthKey = "whatAreTheTaxNumbersForUKOrganisation.error.length"
-  val maxLength = 13
-  val invalidTaxNumber = "Invalid"
+  val maxLength = 10
 
   val form = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()()
 
@@ -37,13 +34,6 @@ class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldB
       form,
       fieldName,
       stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidTaxNumber,
-      FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
@@ -62,13 +52,6 @@ class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldB
       fieldName,
       stringsWithMaxLength(maxLength)
     )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidTaxNumber,
-      FormError(fieldName, invalidKey)
-    )
   }
 
   ".thirdTaxNumber" - {
@@ -79,13 +62,6 @@ class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldB
       form,
       fieldName,
       stringsWithMaxLength(maxLength)
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidTaxNumber,
-      FormError(fieldName, invalidKey)
     )
   }
 }

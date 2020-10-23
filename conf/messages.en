@@ -322,8 +322,6 @@ whatAreTheTaxNumbersForUKOrganisation.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKOrganisation.label3 = UK tax number 3 (optional)
 whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbersForUKOrganisation
 whatAreTheTaxNumbersForUKOrganisation.error.required = Enter tax number 1
-whatAreTheTaxNumbersForUKOrganisation.error.invalid = Enter a tax number in the correct format
-whatAreTheTaxNumbersForUKOrganisation.error.length = Tax number must be 13 characters or less
 
 isOrganisationResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
 isOrganisationResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?

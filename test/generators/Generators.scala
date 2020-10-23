@@ -128,7 +128,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validAddressLine: Gen[String] = RegexpGen.from(apiAddressRegex)
 
-  def validOrganisationName: Gen[String] = RegexpGen.from(apiOrganisationNameRegex)
+  def validOrganisationName: Gen[String] = RegexpGen.from(orgNameRegex)
 
   def validPersonalName: Gen[String] = RegexpGen.from(apiNameRegex)
 
