@@ -29,7 +29,7 @@ trait UserAnswersGenerator extends TryValues {
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(IsOrganisationResidentForTaxOtherCountriesPage.type, JsValue)] ::
     arbitrary[(WhatAreTheTaxNumbersForUKOrganisationPage.type, JsValue)] ::
-    arbitrary[(DoYouKnowAnyUTRNumbersOfUKOrganisationPage.type, JsValue)] ::
+    arbitrary[(DoYouKnowAnyTINForUKOrganisationPage.type, JsValue)] ::
     arbitrary[(WhichCountryTaxForOrganisationPage.type, JsValue)] ::
     arbitrary[(EmailAddressForOrganisationPage.type, JsValue)] ::
     arbitrary[(EmailAddressQuestionForOrganisationPage.type, JsValue)] ::

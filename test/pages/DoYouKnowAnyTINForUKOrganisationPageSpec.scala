@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
 
-class DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider @Inject() extends Mappings {
+  "DoYouKnowAnyTINForUKOrganisationPage" - {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("doYouKnowAnyUTRNumbersOfUKOrganisation.error.required")
-    )
+    beRetrievable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+
+    beSettable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+
+    beRemovable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+  }
 }

@@ -41,7 +41,7 @@ class Navigator @Inject()() {
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
     case EmailAddressForOrganisationPage => _ => Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(NormalMode)
-    case DoYouKnowAnyUTRNumbersOfUKOrganisationPage => doYouKnowAnyUTRNumbersOfUKOrganisationRoutes(NormalMode)
+    case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(NormalMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => _ => Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
@@ -67,7 +67,7 @@ class Navigator @Inject()() {
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(CheckMode)
     case EmailAddressForOrganisationPage => _ => Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(CheckMode)
-    case DoYouKnowAnyUTRNumbersOfUKOrganisationPage => doYouKnowAnyUTRNumbersOfUKOrganisationRoutes(CheckMode)
+    case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(CheckMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => _ => Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode))
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
@@ -198,13 +198,13 @@ class Navigator @Inject()() {
   private def whichCountryTaxForOrganisationRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(WhichCountryTaxForOrganisationPage) map {
       _.code match {
-        case "GB" => routes.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(mode)
+        case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode)
         case _ => routes.IndexController.onPageLoad() //TODO Redirect to /organisation/non-uk-tin-known when ready. Add UT
       }
     }
 
-  private def doYouKnowAnyUTRNumbersOfUKOrganisationRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouKnowAnyUTRNumbersOfUKOrganisationPage) map {
+  private def doYouKnowAnyTINForUKOrganisationRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouKnowAnyTINForUKOrganisationPage) map {
       case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode)
       case false => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode)
     }

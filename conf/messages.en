@@ -307,11 +307,11 @@ whichCountryTaxForOrganisation.heading = Which country is {0} resident in for ta
 whichCountryTaxForOrganisation.checkYourAnswersLabel = whichCountryTaxForOrganisation
 whichCountryTaxForOrganisation.error.required = Select country
 
-doYouKnowAnyUTRNumbersOfUKOrganisation.title = Do you know the organisation’s tax reference numbers?
-doYouKnowAnyUTRNumbersOfUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?
-doYouKnowAnyUTRNumbersOfUKOrganisation.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
-doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel = doYouKnowAnyUTRNumbersOfUKOrganisation
-doYouKnowAnyUTRNumbersOfUKOrganisation.error.required = Select yes if you know the National Insurance number for the organisation
+doYouKnowAnyTINForUKOrganisation.title = Do you know the organisation’s tax reference numbers?
+doYouKnowAnyTINForUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?
+doYouKnowAnyTINForUKOrganisation.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
+doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel = doYouKnowAnyTINForUKOrganisation
+doYouKnowAnyTINForUKOrganisation.error.required = Select yes if you know any tax numbers for the organisation
 
 whatAreTheTaxNumbersForUKOrganisation.title = What are the organisation’s tax reference numbers?
 whatAreTheTaxNumbersForUKOrganisation.heading = What are {0}’s tax reference numbers for the United Kingdom?

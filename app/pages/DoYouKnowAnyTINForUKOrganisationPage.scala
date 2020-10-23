@@ -16,16 +16,11 @@
 
 package pages
 
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class DoYouKnowAnyUTRNumbersOfUKOrganisationPageSpec extends PageBehaviours {
+case object DoYouKnowAnyTINForUKOrganisationPage extends QuestionPage[Boolean] {
 
-  "DoYouKnowAnyUTRNumbersOfUKOrganisationPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](DoYouKnowAnyUTRNumbersOfUKOrganisationPage)
-
-    beSettable[Boolean](DoYouKnowAnyUTRNumbersOfUKOrganisationPage)
-
-    beRemovable[Boolean](DoYouKnowAnyUTRNumbersOfUKOrganisationPage)
-  }
+  override def toString: String = "doYouKnowAnyTINForUKOrganisation"
 }

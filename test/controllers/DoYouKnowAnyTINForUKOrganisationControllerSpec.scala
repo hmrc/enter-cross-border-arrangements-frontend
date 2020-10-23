@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider
+import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{DoYouKnowAnyUTRNumbersOfUKOrganisationPage, OrganisationNamePage}
+import pages.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +37,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider()
+  val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val doYouKnowAnyUTRNumbersOfUKOrganisationRoute = routes.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(NormalMode).url
+  lazy val doYouKnowAnyTINForUKOrganisationRoute = routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode).url
 
-  "DoYouKnowAnyUTRNumbersOfUKOrganisation Controller" - {
+  "DoYouKnowAnyTINForUKOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +55,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
 
       val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
-      val request = FakeRequest(GET, doYouKnowAnyUTRNumbersOfUKOrganisationRoute)
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -71,7 +71,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyUTRNumbersOfUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +82,9 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(DoYouKnowAnyTINForUKOrganisationPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, doYouKnowAnyUTRNumbersOfUKOrganisationRoute)
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -102,7 +102,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyUTRNumbersOfUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -123,7 +123,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
           .build()
 
       val request =
-        FakeRequest(POST, doYouKnowAnyUTRNumbersOfUKOrganisationRoute)
+        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
@@ -141,7 +141,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, doYouKnowAnyUTRNumbersOfUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val request = FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
       val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -158,7 +158,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyUTRNumbersOfUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -168,7 +168,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, doYouKnowAnyUTRNumbersOfUKOrganisationRoute)
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
 
       val result = route(application, request).value
 
@@ -184,7 +184,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationControllerSpec extends SpecBase with
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, doYouKnowAnyUTRNumbersOfUKOrganisationRoute)
+        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value

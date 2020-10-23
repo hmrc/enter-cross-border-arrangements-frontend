@@ -506,7 +506,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(NormalMode))
+              .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode))
         }
       }
 
@@ -516,11 +516,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, true)
+              answers.set(DoYouKnowAnyTINForUKOrganisationPage, true)
                 .success.value
 
             navigator
-              .nextPage(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, NormalMode, updatedAnswers)
+              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
               .mustBe(routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode))
         }
       }
@@ -531,11 +531,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, false)
+              answers.set(DoYouKnowAnyTINForUKOrganisationPage, false)
                 .success.value
 
             navigator
-              .nextPage(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, NormalMode, updatedAnswers)
+              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
               .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
         }
       }

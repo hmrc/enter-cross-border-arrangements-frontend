@@ -19,12 +19,12 @@ package forms
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class DoYouKnowAnyUTRNumbersOfUKOrganisationFormProviderSpec extends BooleanFieldBehaviours {
+class DoYouKnowAnyTINForUKOrganisationFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "doYouKnowAnyUTRNumbersOfUKOrganisation.error.required"
+  val requiredKey = "doYouKnowAnyTINForUKOrganisation.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider()()
+  val form = new DoYouKnowAnyTINForUKOrganisationFormProvider()()
 
   ".confirm" - {
 

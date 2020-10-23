@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions._
-import forms.DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider
+import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.DoYouKnowAnyUTRNumbersOfUKOrganisationPage
+import pages.DoYouKnowAnyTINForUKOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,16 +33,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouKnowAnyUTRNumbersOfUKOrganisationController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+class DoYouKnowAnyTINForUKOrganisationController @Inject()(
+                                                            override val messagesApi: MessagesApi,
+                                                            sessionRepository: SessionRepository,
+                                                            navigator: Navigator,
+                                                            identify: IdentifierAction,
+                                                            getData: DataRetrievalAction,
+                                                            requireData: DataRequiredAction,
+                                                            formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -50,7 +50,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DoYouKnowAnyUTRNumbersOfUKOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +62,7 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationController @Inject()(
         "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
-      renderer.render("doYouKnowAnyUTRNumbersOfUKOrganisation.njk", json).map(Ok(_))
+      renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -78,13 +78,13 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationController @Inject()(
             "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
-          renderer.render("doYouKnowAnyUTRNumbersOfUKOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, updatedAnswers))
       )
   }
 }

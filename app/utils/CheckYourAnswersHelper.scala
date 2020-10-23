@@ -63,16 +63,16 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def doYouKnowAnyUTRNumbersOfUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyUTRNumbersOfUKOrganisationPage) map {
+  def doYouKnowAnyTINForUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) map {
     answer =>
       Row(
-        key     = Key(msg"doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.DoYouKnowAnyUTRNumbersOfUKOrganisationController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyUTRNumbersOfUKOrganisation.checkYourAnswersLabel"))
+            href               = routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel"))
           )
         )
       )
