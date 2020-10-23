@@ -443,7 +443,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.PostcodeController.onPageLoad(NormalMode))
+              .mustBe(routes.OrganisationPostcodeController.onPageLoad(NormalMode))
         }
       }
 
@@ -476,7 +476,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(PostcodePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
+              .mustBe(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
         }
       }
 

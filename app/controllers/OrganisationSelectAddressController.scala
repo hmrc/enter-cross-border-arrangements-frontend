@@ -30,10 +30,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectAddressController @Inject()(
+class OrganisationSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -47,6 +48,8 @@ class SelectAddressController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
+
+  implicit val alternativeText: String = "organisation's name"
 
   private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
 
@@ -135,10 +138,4 @@ class SelectAddressController @Inject()(
 
     s"$lines, ${address.town}, $county${address.postcode}"
   }
-
-  private def getUsersName(userAnswers: UserAnswers): String =
-    userAnswers.get(DisplayNamePage) match {
-      case Some(displayName) => displayName
-      case _ => "organisation name"
-    }
 }

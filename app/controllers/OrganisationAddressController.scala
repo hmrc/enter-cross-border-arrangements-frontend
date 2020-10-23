@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import forms.OrganisationAddressFormProvider
+import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
@@ -41,7 +41,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
-                                              formProvider: OrganisationAddressFormProvider,
+                                              formProvider: AddressFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               renderer: Renderer
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -69,7 +69,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
-      renderer.render("organisationAddress.njk", json).map(Ok(_))
+      renderer.render("address.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -91,7 +91,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
-          renderer.render("organisationAddress.njk", json).map(BadRequest(_))
+          renderer.render("address.njk", json).map(BadRequest(_))
         },
         value =>
           for {

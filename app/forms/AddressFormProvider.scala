@@ -23,43 +23,43 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import utils.RegexConstants
 
-class OrganisationAddressFormProvider @Inject() extends Mappings with RegexConstants {
+class AddressFormProvider @Inject() extends Mappings with RegexConstants {
 
   val addressLineLength = 35
   val postCodeLength = 10
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
       "addressLine1" ->  validatedOptionalText(
-        "organisationAddress.error.addressLine1.invalid",
-        "organisationAddress.error.addressLine1.length",
+        "address.error.addressLine1.invalid",
+        "address.error.addressLine1.length",
         apiAddressRegex,
         addressLineLength
       ),
 
       "addressLine2" ->  validatedOptionalText(
-        "organisationAddress.error.addressLine2.invalid",
-        "organisationAddress.error.addressLine2.length",
+        "address.error.addressLine2.invalid",
+        "address.error.addressLine2.length",
         apiAddressRegex,
         addressLineLength
       ),
 
-      "addressLine3" -> validatedOptionalText("organisationAddress.error.addressLine3.invalid",
-        "organisationAddress.error.addressLine3.length",
+      "addressLine3" -> validatedOptionalText("address.error.addressLine3.invalid",
+        "address.error.addressLine3.length",
         apiAddressRegex,
         addressLineLength),
 
-      "city" -> validatedText("organisationAddress.error.city.required", "organisationAddress.error.city.invalid", "organisationAddress.error.city.length",
+      "city" -> validatedText("address.error.city.required", "address.error.city.invalid", "address.error.city.length",
         apiAddressRegex,
         addressLineLength),
 
-      "postCode" -> validatedOptionalText("organisationAddress.error.postcode.optional.invalid",
-        "organisationAddress.error.postcode.optional.length",
+      "postCode" -> validatedOptionalText("address.error.postcode.optional.invalid",
+        "address.error.postcode.optional.length",
         apiAddressRegex,
         postCodeLength),
 
 
-      "country" ->  text("organisationAddress.error.country.required")
-        .verifying("organisationAddress.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
+      "country" ->  text("address.error.country.required")
+        .verifying("address.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)
   )

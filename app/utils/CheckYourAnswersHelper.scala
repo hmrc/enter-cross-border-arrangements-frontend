@@ -268,7 +268,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.SelectAddressController.onPageLoad(CheckMode).url,
+            href               = routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
           )
         )
@@ -283,7 +283,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.PostcodeController.onPageLoad(CheckMode).url,
+            href               = routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )

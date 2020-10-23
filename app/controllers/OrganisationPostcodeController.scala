@@ -30,9 +30,11 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import utils.ViewHelpers._
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class PostcodeController @Inject()(
+class OrganisationPostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -46,9 +48,11 @@ class PostcodeController @Inject()(
 
   private val form = formProvider()
 
+  implicit val alternativeText: String = "organisation's name"
+
   private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
 
-  private def actionUrl(mode: Mode) = routes.PostcodeController.onSubmit(mode).url
+  private def actionUrl(mode: Mode) = routes.OrganisationPostcodeController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -93,11 +97,4 @@ class PostcodeController @Inject()(
           } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
       )
   }
-
-  private def getUsersName(userAnswers: UserAnswers): String =
-      userAnswers.get(DisplayNamePage) match {
-        case Some(displayName) => displayName
-        case _ => "organisation name"
-      }
-
 }

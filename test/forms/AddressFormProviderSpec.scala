@@ -20,17 +20,17 @@ import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
 
-class OrganisationAddressFormProviderSpec extends StringFieldBehaviours {
+class AddressFormProviderSpec extends StringFieldBehaviours {
   val countries = Seq(Country("valid", "AD", "Andorra"))
-  val form = new OrganisationAddressFormProvider()(countries)
+  val form = new AddressFormProvider()(countries)
 
   val addressLineMaxLength = 35
 
   ".addressLine1" - {
 
     val fieldName = "addressLine1"
-    val invalidKey = "organisationAddress.error.addressLine1.invalid"
-    val lengthKey = "organisationAddress.error.addressLine1.length"
+    val invalidKey = "address.error.addressLine1.invalid"
+    val lengthKey = "address.error.addressLine1.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -56,8 +56,8 @@ class OrganisationAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
 
     val fieldName = "addressLine2"
-    val invalidKey = "organisationAddress.error.addressLine2.invalid"
-    val lengthKey = "organisationAddress.error.addressLine2.length"
+    val invalidKey = "address.error.addressLine2.invalid"
+    val lengthKey = "address.error.addressLine2.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -83,8 +83,8 @@ class OrganisationAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine3" - {
 
     val fieldName = "addressLine3"
-    val invalidKey = "organisationAddress.error.addressLine3.invalid"
-    val lengthKey = "organisationAddress.error.addressLine3.length"
+    val invalidKey = "address.error.addressLine3.invalid"
+    val lengthKey = "address.error.addressLine3.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -110,8 +110,8 @@ class OrganisationAddressFormProviderSpec extends StringFieldBehaviours {
   ".city" - {
 
     val fieldName = "city"
-    val invalidKey = "organisationAddress.error.city.invalid"
-    val lengthKey = "organisationAddress.error.city.length"
+    val invalidKey = "address.error.city.invalid"
+    val lengthKey = "address.error.city.length"
 
     behave like fieldThatBindsValidData(
       form,

@@ -57,7 +57,7 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
-    case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
+    case PostcodePage => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
 
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
@@ -87,7 +87,7 @@ class Navigator @Inject()() {
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case PostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
+    case PostcodePage => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
     case IndividualUkPostcodePage => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
@@ -201,7 +201,7 @@ class Navigator @Inject()() {
 
   private def isOrganisationAddressUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsOrganisationAddressUkPage) map {
-      case true  => routes.PostcodeController.onPageLoad(mode)
+      case true  => routes.OrganisationPostcodeController.onPageLoad(mode)
       case false => routes.OrganisationAddressController.onPageLoad(mode)
     }
 

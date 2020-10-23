@@ -29,6 +29,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,6 +46,8 @@ class IsIndividualAddressUkController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
+
+  implicit val alternativeText: String = "the individual's"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -86,11 +89,4 @@ class IsIndividualAddressUkController @Inject()(
           } yield Redirect(navigator.nextPage(IsIndividualAddressUkPage, mode, updatedAnswers))
       )
   }
-
-  //ToDo write displayname when individuals name is entered
-  private def getUsersName(userAnswers: UserAnswers): String =
-    userAnswers.get(DisplayNamePage) match {
-      case Some(displayName) => displayName
-      case _ => "the individual"
-    }
 }

@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.OrganisationAddressFormProvider
+import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
 import models.{Address, Country, NormalMode, UserAnswers}
@@ -49,7 +49,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
-  val formProvider = new OrganisationAddressFormProvider()
+  val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
   val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
     Country("valid","FR","France"))
@@ -84,7 +84,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationAddress.njk"
+      templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -126,7 +126,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationAddress.njk"
+      templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -181,7 +181,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
         "mode"   -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationAddress.njk"
+      templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

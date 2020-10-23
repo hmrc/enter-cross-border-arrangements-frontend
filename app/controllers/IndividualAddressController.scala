@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import forms.OrganisationAddressFormProvider
+import forms.AddressFormProvider
 import javax.inject.Inject
 import models.{Country, Mode, UserAnswers}
 import navigation.Navigator
@@ -41,14 +41,14 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            formProvider: OrganisationAddressFormProvider,
+                                            formProvider: AddressFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private def actionUrl(mode: Mode) = routes.IndividualAddressController.onSubmit(mode).url
 
-  implicit val alternativeText: String = "the individuals"
+  implicit val alternativeText: String = "the individual's"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -71,7 +71,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         "organisationName" -> getUsersName(request.userAnswers)
       )
 
-      renderer.render("organisationAddress.njk", json).map(Ok(_))
+      renderer.render("address.njk", json).map(Ok(_))
   }
 
   private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
@@ -108,7 +108,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
             "organisationName" -> getUsersName(request.userAnswers)
           )
 
-          renderer.render("organisationAddress.njk", json).map(BadRequest(_))
+          renderer.render("address.njk", json).map(BadRequest(_))
         },
         value =>
           for {
