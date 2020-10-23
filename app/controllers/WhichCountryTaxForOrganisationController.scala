@@ -18,12 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.WhichCountryTaxForOrganisationFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Country, Mode, UserAnswers}
+import models.{Country, Mode}
 import navigation.Navigator
-import pages.{OrganisationNamePage, WhichCountryTaxForOrganisationPage}
+import pages.WhichCountryTaxForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -88,28 +89,5 @@ class WhichCountryTaxForOrganisationController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswers))
       )
-  }
-
-  //TODO Move to a helper? Another one in OrganisationAddressController
-  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
-        case _ => false
-      }
-
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
-  }
-
-  private def getOrganisationName(userAnswers: UserAnswers): String = {
-    userAnswers.get(OrganisationNamePage) match {
-      case Some(name) => name
-      case None => "the organisation"
-    }
   }
 }

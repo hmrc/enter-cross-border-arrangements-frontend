@@ -25,8 +25,6 @@ import utils.RegexConstants
 
 class WhatAreTheTaxNumbersForUKOrganisationFormProvider @Inject() extends Mappings with RegexConstants {
 
-  //TODO Error for text fields
-
   val taxNumberLength = 13
 
   def apply(): Form[TaxReferenceNumbers] =
@@ -36,17 +34,17 @@ class WhatAreTheTaxNumbersForUKOrganisationFormProvider @Inject() extends Mappin
         "whatAreTheTaxNumbersForUKOrganisation.error.required",
         "whatAreTheTaxNumbersForUKOrganisation.error.invalid",
         "whatAreTheTaxNumbersForUKOrganisation.error.length",
-        utrRegex,
+        taxNumberRegex,
         taxNumberLength),
       "secondTaxNumber" -> validatedOptionalText(
         "whatAreTheTaxNumbersForUKOrganisation.error.invalid",
         "whatAreTheTaxNumbersForUKOrganisation.error.length",
-        utrRegex,
+        taxNumberRegex,
         taxNumberLength),
       "thirdTaxNumber" -> validatedOptionalText(
         "whatAreTheTaxNumbersForUKOrganisation.error.invalid",
         "whatAreTheTaxNumbersForUKOrganisation.error.length",
-        utrRegex,
+        taxNumberRegex,
         taxNumberLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )

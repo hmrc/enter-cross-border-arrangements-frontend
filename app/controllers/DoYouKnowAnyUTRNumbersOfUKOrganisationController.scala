@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouKnowAnyUTRNumbersOfUKOrganisationFormProvider
+import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{DoYouKnowAnyUTRNumbersOfUKOrganisationPage, OrganisationNamePage}
+import pages.DoYouKnowAnyUTRNumbersOfUKOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -85,12 +86,5 @@ class DoYouKnowAnyUTRNumbersOfUKOrganisationController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DoYouKnowAnyUTRNumbersOfUKOrganisationPage, mode, updatedAnswers))
       )
-  }
-
-  private def getOrganisationName(userAnswers: UserAnswers): String = {
-    userAnswers.get(OrganisationNamePage) match {
-      case Some(name) => name
-      case None => "the organisation"
-    }
   }
 }
