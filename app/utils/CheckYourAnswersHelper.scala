@@ -35,6 +35,21 @@ import utils.CheckYourAnswersHelper.dateFormatter
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def whatAreTheTaxNumbersForNonUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def doYouKnowTINForNonUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowTINForNonUKOrganisationPage) map {
     answer =>
       Row(

@@ -162,3 +162,8 @@ GET        /organisation/resident-country-tin                   controllers.DoYo
 POST       /organisation/resident-country-tin                   controllers.DoYouKnowTINForNonUKOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-resident-country-tin            controllers.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-resident-country-tin            controllers.DoYouKnowTINForNonUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/non-uk-tax-numbers                     controllers.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/non-uk-tax-numbers                     controllers.WhatAreTheTaxNumbersForNonUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-non-uk-tax-numbers              controllers.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-non-uk-tax-numbers              controllers.WhatAreTheTaxNumbersForNonUKOrganisationController.onSubmit(mode: Mode = CheckMode)
