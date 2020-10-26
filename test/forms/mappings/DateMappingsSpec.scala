@@ -105,11 +105,7 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         )
 
         val result = form.bind(data)
-
-        println(field)
-        println(invalidField)
-        println(nonNumericField)
-
+        
         result.errors must contain(
           FormError("value", "error.invalid", List.empty)
         )
