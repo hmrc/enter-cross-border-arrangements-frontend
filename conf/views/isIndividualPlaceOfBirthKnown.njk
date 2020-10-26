@@ -22,7 +22,7 @@
 
         {% if form.errors.length > 0 %}
           {{ govukErrorSummary({
-            "titleText": messages("error.summary.heading", name),
+            "titleText": messages("error.summary.title"),
             "errorList": form.errors
           }) }}
         {% endif %}
@@ -46,7 +46,8 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

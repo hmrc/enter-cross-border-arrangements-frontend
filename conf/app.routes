@@ -108,10 +108,15 @@ POST       /individual/name                                        controllers.I
 GET        /individual/change-name                                 controllers.IndividualNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-name                                 controllers.IndividualNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/do-you-know-birthplace                      controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/do-you-know-birthplace                      controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-do-you-know-birthplace               controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-do-you-know-birthplace               controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/do-you-know-birthplace                      controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/do-you-know-birthplace                      controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-do-you-know-birthplace               controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-do-you-know-birthplace               controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individual/birthplace                                  controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/birthplace                                  controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-birthplace                           controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-birthplace                           controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /individual/do-you-know-address                         controllers.IsIndividualAddressKnownController.onPageLoad(mode: Mode = NormalMode)
 POST       /individual/do-you-know-address                         controllers.IsIndividualAddressKnownController.onSubmit(mode: Mode = NormalMode)

@@ -39,11 +39,12 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
   )
 
   val validData = datesBetween(
-    min = LocalDate.of(2000, 1, 1),
-    max = LocalDate.of(3000, 1, 1)
+    min = LocalDate.of(1903, 1, 1),
+    max = LocalDate.of(2020, 1, 1)
   )
 
-  val invalidField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
+  val nonNumericField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
+  val invalidField: Gen[String] = Gen.oneOf("33", "100", "1000")
 
   val missingField: Gen[Option[String]] = Gen.option(Gen.const(""))
 
@@ -105,8 +106,32 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
         val result = form.bind(data)
 
+        println(field)
+        println(invalidField)
+        println(nonNumericField)
+
         result.errors must contain(
           FormError("value", "error.invalid", List.empty)
+        )
+
+    }
+  }
+
+  "must fail to bind a date with a non-numeric day" in {
+
+    forAll(validData -> "valid date", nonNumericField -> "non-numeric field") {
+      (date, field) =>
+
+        val data = Map(
+          "value.day" -> field,
+          "value.month" -> date.getMonthValue.toString,
+          "value.year" -> date.getYear.toString
+        )
+
+        val result = form.bind(data)
+
+        result.errors must contain(
+          FormError("value", "error.nonNumeric", List.empty)
         )
     }
   }
@@ -151,6 +176,25 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     }
   }
 
+  "must fail to bind a date with an non-numeric month" in {
+
+    forAll(validData -> "valid data", nonNumericField -> "non-numeric field") {
+      (date, field) =>
+
+        val data = Map(
+          "value.day" -> date.getDayOfMonth.toString,
+          "value.month" -> field,
+          "value.year" -> date.getYear.toString
+        )
+
+        val result = form.bind(data)
+
+        result.errors must contain(
+          FormError("value", "error.nonNumeric", List.empty)
+        )
+    }
+  }
+
   "must fail to bind a date with a missing year" in {
 
     forAll(validData -> "valid date", missingField -> "missing field") {
@@ -172,9 +216,9 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     }
   }
 
-  "must fail to bind a date with an invalid year" in {
+  "must fail to bind a date with an nonNumeric year" in {
 
-    forAll(validData -> "valid data", invalidField -> "invalid field") {
+    forAll(validData -> "valid data", nonNumericField -> "non-numeric field") {
       (date, field) =>
 
         val data = Map(
@@ -186,7 +230,7 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
+          FormError("value", "error.nonNumeric", List.empty)
         )
     }
   }
@@ -283,9 +327,26 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     }
   }
 
-  "must fail to bind an invalid day and year" in {
+  "must fail to bind an nonNumeric day and month" in {
 
-    forAll(validData -> "valid date", invalidField -> "invalid day", invalidField -> "invalid year") {
+    forAll(validData -> "valid date", nonNumericField -> "nonNumeric day", nonNumericField -> "nonNumeric month") {
+      (date, day, month) =>
+
+        val data = Map(
+          "value.day" -> day,
+          "value.month" -> month,
+          "value.year" -> date.getYear.toString
+        )
+
+        val result = form.bind(data)
+
+        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
+    }
+  }
+
+  "must fail to bind an nonNumeric day and year" in {
+
+    forAll(validData -> "valid date", nonNumericField -> "nonNumeric day", nonNumericField -> "nonNumeric year") {
       (date, day, year) =>
 
         val data = Map(
@@ -296,13 +357,13 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
     }
   }
 
-  "must fail to bind an invalid month and year" in {
+  "must fail to bind an nonNumeric month and year" in {
 
-    forAll(validData -> "valid date", invalidField -> "invalid month", invalidField -> "invalid year") {
+    forAll(validData -> "valid date", nonNumericField -> "nonNumeric month", nonNumericField -> "nonNumeric year") {
       (date, month, year) =>
 
         val data = Map(
@@ -313,40 +374,25 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
     }
   }
 
-  "must fail to bind an invalid day, month and year" in {
+  "must fail to bind an nonNumeric day, month and year" in {
 
-    forAll(invalidField -> "valid day", invalidField -> "invalid month", invalidField -> "invalid year") {
+    forAll(invalidField -> "valid day", nonNumericField -> "nonNumeric month", nonNumericField -> "nonNumeric year") {
       (day, month, year) =>
 
         val data = Map(
-          "value.day" -> day,
+          "value.day" -> month,
           "value.month" -> month,
           "value.year" -> year
         )
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
     }
-  }
-
-  "must fail to bind an invalid date" in {
-
-    val data = Map(
-      "value.day" -> "30",
-      "value.month" -> "2",
-      "value.year" -> "2018"
-    )
-
-    val result = form.bind(data)
-
-    result.errors must contain(
-      FormError("value", "error.invalid", List.empty)
-    )
   }
 
   "must unbind a date" in {

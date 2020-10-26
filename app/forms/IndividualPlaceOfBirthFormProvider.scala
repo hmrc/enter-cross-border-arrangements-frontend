@@ -17,15 +17,19 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class IndividualPlaceOfBirthFormProvider @Inject() extends Mappings {
-
+class IndividualPlaceOfBirthFormProvider @Inject() extends Mappings with RegexConstants {
+  private val length = 200
   def apply(): Form[String] =
     Form(
-      "value" -> text("individualPlaceOfBirth.error.required")
-        .verifying(maxLength(200, "individualPlaceOfBirth.error.length"))
+      "value" ->  validatedText("individualPlaceOfBirth.error.required",
+        "individualPlaceOfBirth.error.invalid",
+        "individualPlaceOfBirth.error.length",
+        apiAddressRegex,
+        length)
     )
 }
+

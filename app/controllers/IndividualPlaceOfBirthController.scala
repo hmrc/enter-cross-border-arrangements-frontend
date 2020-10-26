@@ -73,9 +73,10 @@ class IndividualPlaceOfBirthController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors => {
+
           val name = request.userAnswers.get(IndividualNamePage) match {
-            case None => "their"
-            case Some(name) => s"${name.firstName + " " + name.secondName}"
+            case None => "were they"
+            case Some(name) => s"${"was " + name.firstName + " " + name.secondName}"
           }
 
           val json = Json.obj(
