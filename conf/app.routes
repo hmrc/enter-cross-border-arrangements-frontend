@@ -157,3 +157,8 @@ GET        /organisation/tax-resident-countries                 controllers.IsOr
 POST       /organisation/tax-resident-countries                 controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/resident-country-tin                   controllers.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/resident-country-tin                   controllers.DoYouKnowTINForNonUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-resident-country-tin            controllers.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-resident-country-tin            controllers.DoYouKnowTINForNonUKOrganisationController.onSubmit(mode: Mode = CheckMode)

@@ -35,6 +35,21 @@ import utils.CheckYourAnswersHelper.dateFormatter
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def doYouKnowTINForNonUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowTINForNonUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def isIndividualPlaceOfBirthKnown: Option[Row] = userAnswers.get(IsIndividualPlaceOfBirthKnownPage) map {
     answer =>
       Row(

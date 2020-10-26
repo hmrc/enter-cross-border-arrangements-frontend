@@ -366,3 +366,9 @@ isOrganisationResidentForTaxOtherCountries.title = Is the organisation resident 
 isOrganisationResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
 isOrganisationResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries
+
+doYouKnowTINForNonUKOrganisation.title = Do you know the organisation’s tax identification numbers?
+doYouKnowTINForNonUKOrganisation.heading = Do you know {0}’s tax identification numbers for {1}?
+doYouKnowTINForNonUKOrganisation.hint = This is a number given by the tax administration in the country where the organisation is resident for tax purposes. It is used to identify individual taxpayers.
+doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel = doYouKnowTINForNonUKOrganisation
+doYouKnowTINForNonUKOrganisation.error.required = Select yes if you know the tax identification numbers for the organisation
