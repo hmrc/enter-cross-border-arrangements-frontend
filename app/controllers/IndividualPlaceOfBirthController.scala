@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IndividualPlaceOfBirthFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{IndividualNamePage, IndividualPlaceOfBirthPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,15 +54,10 @@ class IndividualPlaceOfBirthController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val name = request.userAnswers.get(IndividualNamePage) match {
-        case None => "were they"
-        case Some(name) => s"${"was " + name.firstName + " " + name.secondName}"
-      }
-
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "name" -> name
+        "name" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("individualPlaceOfBirth.njk", json).map(Ok(_))
@@ -74,15 +69,10 @@ class IndividualPlaceOfBirthController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val name = request.userAnswers.get(IndividualNamePage) match {
-            case None => "were they"
-            case Some(name) => s"${"was " + name.firstName + " " + name.secondName}"
-          }
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "name" -> name
+            "name" -> getIndividualName(request.userAnswers)
 
           )
 
@@ -91,8 +81,16 @@ class IndividualPlaceOfBirthController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualPlaceOfBirthPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IndividualPlaceOfBirthPage, mode, updatedAnswers))
       )
+  }
+
+  private def getIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match {
+      case Some(name) => s"${"was " + name.firstName + " " + name.secondName}"
+      case None => "were they"
+    }
+
   }
 }

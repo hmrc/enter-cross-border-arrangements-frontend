@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IndividualDateOfBirthFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{IndividualDateOfBirthPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,18 +54,13 @@ class IndividualDateOfBirthController @Inject()(
         case None        => form
       }
 
-      val name = request.userAnswers.get(IndividualNamePage) match {
-        case None => "their"
-        case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
-      }
-
       val viewModel = DateInput.localDate(preparedForm("value"))
 
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
         "date" -> viewModel,
-        "name" -> name
+        "name" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("individualDateOfBirth.njk", json).map(Ok(_))
@@ -79,16 +74,11 @@ class IndividualDateOfBirthController @Inject()(
 
           val viewModel = DateInput.localDate(formWithErrors("value"))
 
-          val name = request.userAnswers.get(IndividualNamePage) match {
-            case None => "their"
-            case Some(name) => s"${name.firstName + " " + name.secondName}"
-          }
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
             "date" -> viewModel,
-            "name" -> name
+            "name" -> getIndividualName(request.userAnswers)
           )
 
           renderer.render("individualDateOfBirth.njk", json).map(BadRequest(_))
@@ -99,5 +89,12 @@ class IndividualDateOfBirthController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IndividualDateOfBirthPage, mode, updatedAnswers))
       )
+  }
+
+  private def getIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match {
+      case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
+      case None => "their"
+    }
   }
 }

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IsIndividualAddressKnownFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{IndividualNamePage, IsIndividualAddressKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,16 +54,11 @@ class IsIndividualAddressKnownController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val name = request.userAnswers.get(IndividualNamePage) match {
-        case None => "their"
-        case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
-      }
-
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
+        "form" -> preparedForm,
+        "mode" -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "name" -> name
+        "name" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("isIndividualAddressKnown.njk", json).map(Ok(_))
@@ -75,16 +70,11 @@ class IsIndividualAddressKnownController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val name = request.userAnswers.get(IndividualNamePage) match {
-            case None => "their"
-            case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
-          }
-
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
+            "form" -> formWithErrors,
+            "mode" -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "name" -> name
+            "name" -> getIndividualName(request.userAnswers)
           )
 
           renderer.render("isIndividualAddressKnown.njk", json).map(BadRequest(_))
@@ -92,8 +82,15 @@ class IsIndividualAddressKnownController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressKnownPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IsIndividualAddressKnownPage, mode, updatedAnswers))
       )
+  }
+
+  private def getIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match {
+      case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
+      case None => "their"
+    }
   }
 }

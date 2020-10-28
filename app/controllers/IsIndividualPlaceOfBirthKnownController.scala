@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.IsIndividualPlaceOfBirthKnownFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.{IndividualNamePage, IsIndividualPlaceOfBirthKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,16 +54,11 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val name = request.userAnswers.get(IndividualNamePage) match {
-        case None => "they were"
-        case Some(name) => s"${name.firstName + " " + name.secondName + " was"}"
-      }
-
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "name" -> name
+        "name" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
@@ -75,16 +70,11 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val name = request.userAnswers.get(IndividualNamePage) match {
-            case None => "they were"
-            case Some(name) => s"${name.firstName + " " + name.secondName + " was"}"
-          }
-
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "name" -> name
+            "name" -> getIndividualName(request.userAnswers)
           )
 
           renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))
@@ -95,5 +85,12 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IsIndividualPlaceOfBirthKnownPage, mode, updatedAnswers))
       )
+  }
+
+  private def getIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match {
+      case Some(name) => s"${name.firstName + " " + name.secondName + " was"}"
+      case None => "they were"
+    }
   }
 }
