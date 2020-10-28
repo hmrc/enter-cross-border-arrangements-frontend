@@ -301,3 +301,29 @@ emailAddressForOrganisation.checkYourAnswersLabel = emailAddressForOrganisation
 emailAddressForOrganisation.error.required = Enter an email address
 emailAddressForOrganisation.error.invalid = Enter an email address in the correct format, like name@example.com
 emailAddressForOrganisation.error.length = Email address must be 254 characters or less
+
+whichCountryTaxForOrganisation.title = Which country is Carlson and Leonard Ltd resident in for tax purposes?
+whichCountryTaxForOrganisation.heading = Which country is {0} resident in for tax purposes?
+whichCountryTaxForOrganisation.checkYourAnswersLabel = whichCountryTaxForOrganisation
+whichCountryTaxForOrganisation.error.required = Select country
+
+doYouKnowAnyTINForUKOrganisation.title = Do you know the organisation’s tax reference numbers?
+doYouKnowAnyTINForUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?
+doYouKnowAnyTINForUKOrganisation.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
+doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel = doYouKnowAnyTINForUKOrganisation
+doYouKnowAnyTINForUKOrganisation.error.required = Select yes if you know any tax numbers for the organisation
+
+whatAreTheTaxNumbersForUKOrganisation.title = What are the organisation’s tax reference numbers?
+whatAreTheTaxNumbersForUKOrganisation.heading = What are {0}’s tax reference numbers for the United Kingdom?
+whatAreTheTaxNumbersForUKOrganisation.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
+whatAreTheTaxNumbersForUKOrganisation.hintLink = find a lost UTR number
+whatAreTheTaxNumbersForUKOrganisation.label1 = UK tax number 1
+whatAreTheTaxNumbersForUKOrganisation.label2 = UK tax number 2 (optional)
+whatAreTheTaxNumbersForUKOrganisation.label3 = UK tax number 3 (optional)
+whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbersForUKOrganisation
+whatAreTheTaxNumbersForUKOrganisation.error.required = Enter tax number 1
+
+isOrganisationResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
+isOrganisationResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
+isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
+isOrganisationResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries

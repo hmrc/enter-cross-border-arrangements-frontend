@@ -107,3 +107,23 @@ GET        /organisation/what-is-email-address                  controllers.Emai
 POST       /organisation/what-is-email-address                  controllers.EmailAddressForOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-what-is-email-address           controllers.EmailAddressForOrganisationController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-what-is-email-address           controllers.EmailAddressForOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/which-country-tax                      controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/which-country-tax                      controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-which-country-tax               controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/uk-tin-known                           controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/uk-tin-known                           controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /organisation/tax-resident-countries                 controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = NormalMode)
+POST       /organisation/tax-resident-countries                 controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode)
+GET        /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode)
+POST       /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode)

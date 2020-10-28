@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions._
-import forms.EmailAddressForOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import forms.WhichCountryTaxForOrganisationFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.Mode
+import models.{Country, Mode}
 import navigation.Navigator
-import pages.EmailAddressForOrganisationPage
+import pages.WhichCountryTaxForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,38 +30,42 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailAddressForOrganisationController @Inject()(
+class WhichCountryTaxForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
+    countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: EmailAddressForOrganisationFormProvider,
+    formProvider: WhichCountryTaxForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private val form = formProvider()
+  val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+  private val form = formProvider(countries)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressForOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(WhichCountryTaxForOrganisationPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "mode" -> mode
+        "countries" -> countryJsonList(preparedForm.data, countries)
       )
 
-      renderer.render("emailAddressForOrganisation.njk", json).map(Ok(_))
+      renderer.render("whichCountryTaxForOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,17 +76,18 @@ class EmailAddressForOrganisationController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "mode" -> mode
+            "countries" -> countryJsonList(formWithErrors.data, countries)
           )
 
-          renderer.render("emailAddressForOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForOrganisationPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswers))
       )
   }
 }

@@ -18,12 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.OrganisationAddressFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Country, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage, OrganisationNamePage}
+import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -56,35 +57,15 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         case Some(value) => form.fill(value)
       }
 
-      val organisationName = request.userAnswers.get(OrganisationNamePage) match {
-        case None => "the organisation"
-        case Some(organisationName) => s"$organisationName"
-      }
-
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers),
-        "organisationName" -> organisationName
+        "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
       renderer.render("organisationAddress.njk", json).map(Ok(_))
-  }
-
-  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
-        case _ => false
-      }
-
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -96,18 +77,12 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       form.bindFromRequest().fold(
         formWithErrors => {
 
-
-          val organisationName = request.userAnswers.get(OrganisationNamePage) match {
-            case None => "the organisation"
-            case Some(organisationName) => s"$organisationName"
-          }
-
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers),
-            "organisationName" -> organisationName
+            "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
           renderer.render("organisationAddress.njk", json).map(BadRequest(_))

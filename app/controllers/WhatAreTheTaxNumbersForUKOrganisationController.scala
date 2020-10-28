@@ -16,13 +16,14 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
-import forms.EmailAddressForOrganisationFormProvider
+import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.EmailAddressForOrganisationPage
+import pages.WhatAreTheTaxNumbersForUKOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,14 +34,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailAddressForOrganisationController @Inject()(
+class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    appConfig: FrontendAppConfig,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: EmailAddressForOrganisationFormProvider,
+    formProvider: WhatAreTheTaxNumbersForUKOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -50,18 +52,19 @@ class EmailAddressForOrganisationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressForOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "mode" -> mode
+        "lostUTRUrl" -> appConfig.lostUTRUrl
       )
 
-      renderer.render("emailAddressForOrganisation.njk", json).map(Ok(_))
+      renderer.render("whatAreTheTaxNumbersForUKOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,17 +75,18 @@ class EmailAddressForOrganisationController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "mode" -> mode
+            "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 
-          renderer.render("emailAddressForOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("whatAreTheTaxNumbersForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKOrganisationPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, mode, updatedAnswers))
       )
   }
 }

@@ -464,6 +464,96 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from Do you know the email address for a main contact at the organisation? page to " +
+        "Which country is the organisation resident in for tax purposes? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(EmailAddressQuestionForOrganisationPage, false)
+                .success.value
+
+            navigator
+              .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from What is the email address for a main contact at the organisation? page to " +
+        "Which country is the organisation resident in for tax purposes? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(EmailAddressForOrganisationPage, "email@email.com")
+                .success.value
+
+            navigator
+              .nextPage(EmailAddressForOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Which country is the organisation resident in for tax purposes? page to " +
+        "Do you know any of the organisation’s tax reference numbers for the United Kingdom? page if the answer is GB" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhichCountryTaxForOrganisationPage, Country("valid", "GB", "United Kingdom"))
+                .success.value
+
+            navigator
+              .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Do you know any of the organisation’s tax reference numbers for the United Kingdom? page " +
+        "to What are the organisation’s tax reference numbers for the United Kingdom? page if the answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowAnyTINForUKOrganisationPage, true)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Do you know any of the organisation’s tax reference numbers for the United Kingdom? page " +
+        "to Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowAnyTINForUKOrganisationPage, false)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from What are the organisation’s tax reference numbers for the United Kingdom? " +
+        "to Is the organisation resident for tax purposes in any other countries? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatAreTheTaxNumbersForUKOrganisationPage, TaxReferenceNumbers("1234567890", None, None))
+                .success.value
+
+            navigator
+              .nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }

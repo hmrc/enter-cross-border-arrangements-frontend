@@ -82,4 +82,12 @@ trait ModelGenerators {
       countryCode <- arbitrary[Country]
     } yield Address(addressLine1, addressLine2, addressLine3, city, postalCode, countryCode)
   }
+
+  implicit val arbitraryTaxReferenceNumbers: Arbitrary[TaxReferenceNumbers] = Arbitrary {
+    for {
+      firstTaxNumber <- arbitrary[String]
+      secondTaxNumber <- Gen.option(arbitrary[String])
+      thirdTaxNumber <- Gen.option(arbitrary[String])
+    } yield TaxReferenceNumbers(firstTaxNumber, secondTaxNumber, thirdTaxNumber)
+  }
 }
