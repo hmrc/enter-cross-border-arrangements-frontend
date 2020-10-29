@@ -57,7 +57,7 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
+        "radios" -> Radios.yesNo(preparedForm("confirm")),
         "name" -> getIndividualName(request.userAnswers)
       )
 
@@ -73,7 +73,7 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "name" -> getIndividualName(request.userAnswers)
           )
 

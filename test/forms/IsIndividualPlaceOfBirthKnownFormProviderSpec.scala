@@ -26,9 +26,9 @@ class IsIndividualPlaceOfBirthKnownFormProviderSpec extends BooleanFieldBehaviou
 
   val form = new IsIndividualPlaceOfBirthKnownFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

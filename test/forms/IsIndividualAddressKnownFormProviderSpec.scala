@@ -26,9 +26,9 @@ class IsIndividualAddressKnownFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new IsIndividualAddressKnownFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

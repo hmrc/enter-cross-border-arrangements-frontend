@@ -25,6 +25,6 @@ class IsIndividualPlaceOfBirthKnownFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("isIndividualPlaceOfBirthKnown.error.required")
+      "confirm" -> boolean("isIndividualPlaceOfBirthKnown.error.required")
     )
 }

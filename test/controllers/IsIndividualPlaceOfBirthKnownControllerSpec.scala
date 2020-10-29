@@ -67,7 +67,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
       templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
@@ -93,12 +93,12 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
       templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
@@ -123,7 +123,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
 
       val request =
         FakeRequest(POST, isIndividualPlaceOfBirthKnownRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -140,8 +140,8 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isIndividualPlaceOfBirthKnownRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, isIndividualPlaceOfBirthKnownRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -154,7 +154,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
       templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
@@ -184,7 +184,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
 
       val request =
         FakeRequest(POST, isIndividualPlaceOfBirthKnownRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
