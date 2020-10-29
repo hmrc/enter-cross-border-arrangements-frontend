@@ -158,10 +158,10 @@ POST       /organisation/tax-resident-countries                 controllers.IsOr
 GET        /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-tax-resident-countries          controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/live-in-uk                        controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/live-in-uk             controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-live-in-uk                        controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-live-in-uk             controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/live-in-uk                                 controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/live-in-uk                                 controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-live-in-uk                          controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-live-in-uk                          controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = CheckMode)
 
 GET        /individual/postcode                                   controllers.IndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
 POST       /individual/postcode                                   controllers.IndividualPostcodeController.onSubmit(mode: Mode = NormalMode)

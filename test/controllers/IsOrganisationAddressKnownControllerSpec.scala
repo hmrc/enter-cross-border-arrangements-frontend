@@ -67,7 +67,8 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios" -> Radios.yesNo(form("value")),
+        "organisationName" -> "the organisation"
       )
 
       templateCaptor.getValue mustEqual "isOrganisationAddressKnown.njk"
@@ -98,7 +99,8 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "radios" -> Radios.yesNo(filledForm("value")),
+        "organisationName" -> "the organisation"
       )
 
       templateCaptor.getValue mustEqual "isOrganisationAddressKnown.njk"

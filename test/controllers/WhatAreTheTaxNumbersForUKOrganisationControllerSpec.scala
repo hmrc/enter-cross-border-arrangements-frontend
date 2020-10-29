@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OrganisationNamePage, WhatAreTheTaxNumbersForUKOrganisationPage}
+import pages.{DisplayNamePage, WhatAreTheTaxNumbersForUKOrganisationPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -58,7 +58,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(DisplayNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -72,7 +72,9 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "Paper Org",
+        "lostUTRUrl" -> "https://www.gov.uk/find-lost-utr-number"
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"
@@ -109,7 +111,9 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "the organisation",
+        "lostUTRUrl" -> "https://www.gov.uk/find-lost-utr-number"
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"

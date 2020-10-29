@@ -33,7 +33,7 @@
                   {{ csrf() | safe }}
 
                 <h1 class="govuk-heading-xl">
-                  {{ messages("individualAddress.heading", organisationName) if individual else messages("organisationAddress.heading", organisationName) }}
+                  {{ messages("individualAddress.heading", usersName) if individual else messages("organisationAddress.heading", usersName) }}
                 </h1>
 
                   {{ govukInput({

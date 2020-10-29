@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.WhichCountryTaxForOrganisationFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
+import helpers.JourneyHelpers.{countryJsonList, getUsersName}
 import javax.inject.Inject
 import models.{Country, Mode}
 import navigation.Navigator
@@ -49,6 +49,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
+  implicit val alternativeText: String = "the organisation"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -61,7 +62,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getUsersName(request.userAnswers),
         "countries" -> countryJsonList(preparedForm.data, countries)
       )
 
@@ -77,7 +78,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getUsersName(request.userAnswers),
             "countries" -> countryJsonList(formWithErrors.data, countries)
           )
 

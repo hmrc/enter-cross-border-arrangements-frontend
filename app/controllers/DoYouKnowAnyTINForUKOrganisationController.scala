@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers.getUsersName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -47,6 +47,8 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
 
   private val form = formProvider()
 
+  implicit val alternativeText: String = "the organisation"
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -59,7 +61,7 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "organisationName" -> getUsersName(request.userAnswers)
       )
 
       renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
@@ -75,7 +77,7 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "organisationName" -> getUsersName(request.userAnswers)
           )
 
           renderer.render("doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))

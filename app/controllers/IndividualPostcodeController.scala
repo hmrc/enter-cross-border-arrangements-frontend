@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.PostcodeFormProvider
+import helpers.JourneyHelpers.getUsersName
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{DisplayNamePage, IndividualUkPostcodePage}
+import pages.IndividualUkPostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,7 +30,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 

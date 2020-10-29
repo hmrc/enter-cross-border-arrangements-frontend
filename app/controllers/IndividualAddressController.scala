@@ -18,19 +18,19 @@ package controllers
 
 import controllers.actions._
 import forms.AddressFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getUsersName}
 import javax.inject.Inject
-import models.{Country, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DisplayNamePage, IndividualAddressPage, IsIndividualAddressUkPage, OrganisationNamePage}
+import pages.{IndividualAddressPage, IsIndividualAddressUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
-import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -68,25 +68,10 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
         "individual" -> true,
-        "organisationName" -> getUsersName(request.userAnswers)
+        "usersName" -> getUsersName(request.userAnswers)
       )
 
       renderer.render("address.njk", json).map(Ok(_))
-  }
-
-  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
-        case _ => false
-      }
-
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -105,7 +90,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
             "individual" -> true,
-            "organisationName" -> getUsersName(request.userAnswers)
+            "usersName" -> getUsersName(request.userAnswers)
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))

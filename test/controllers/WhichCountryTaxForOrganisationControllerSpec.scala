@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OrganisationNamePage, WhichCountryTaxForOrganisationPage}
+import pages.{DisplayNamePage, WhichCountryTaxForOrganisationPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -59,7 +59,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(DisplayNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers))
         .overrides(
           bind[CountryListFactory].toInstance(mockCountryFactory)
@@ -76,7 +76,13 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "Paper Org",
+        "countries" -> Seq(
+          Json.obj("text" -> "", "value" -> ""),
+          Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> false),
+          Json.obj("text" -> "France", "value" -> "FR", "selected" -> false)
+        )
       )
 
       templateCaptor.getValue mustEqual "whichCountryTaxForOrganisation.njk"
@@ -111,7 +117,13 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "the organisation",
+        "countries" -> Seq(
+          Json.obj("text" -> "", "value" -> ""),
+          Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> false),
+          Json.obj("text" -> "France", "value" -> "FR", "selected" -> true)
+        )
       )
 
       templateCaptor.getValue mustEqual "whichCountryTaxForOrganisation.njk"

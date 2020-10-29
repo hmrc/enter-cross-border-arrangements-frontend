@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers.getUsersName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -49,6 +49,8 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
 
   private val form = formProvider()
 
+  implicit val alternativeText: String = "the organisation"
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -60,7 +62,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getUsersName(request.userAnswers),
         "lostUTRUrl" -> appConfig.lostUTRUrl
       )
 
@@ -76,7 +78,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getUsersName(request.userAnswers),
             "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 

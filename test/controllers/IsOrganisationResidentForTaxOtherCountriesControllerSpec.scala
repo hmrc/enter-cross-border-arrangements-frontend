@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationNamePage}
+import pages.{DisplayNamePage, IsOrganisationResidentForTaxOtherCountriesPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -53,7 +53,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(DisplayNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -68,6 +68,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
+        "organisationName" -> "Paper Org",
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
@@ -99,6 +100,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
+        "organisationName" -> "the organisation",
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 

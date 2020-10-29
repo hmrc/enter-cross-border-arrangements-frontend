@@ -66,6 +66,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
 
       val expectedJson = Json.obj(
         "form"   -> form,
+        "organisationName" -> "the organisation",
         "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(form("confirm"))
       )
@@ -97,6 +98,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
+        "organisationName" -> "the organisation",
         "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )

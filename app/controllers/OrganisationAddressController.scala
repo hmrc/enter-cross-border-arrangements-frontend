@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
+import helpers.JourneyHelpers.{countryJsonList, getUsersName}
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -48,6 +48,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
   private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
 
+  implicit val alternativeText: String = "the organisation"
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -66,7 +68,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
         "individual" -> false,
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "usersName" -> getUsersName(request.userAnswers)
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -88,7 +90,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
             "individual" -> false,
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "usersName" -> getUsersName(request.userAnswers)
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))

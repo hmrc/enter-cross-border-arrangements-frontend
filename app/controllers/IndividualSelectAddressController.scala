@@ -19,10 +19,11 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
+import helpers.JourneyHelpers.getUsersName
 import javax.inject.Inject
-import models.{AddressLookup, Mode, UserAnswers}
+import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{DisplayNamePage, IndividualUkPostcodePage, IndividualSelectAddressPage}
+import pages.{IndividualSelectAddressPage, IndividualUkPostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +31,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import utils.ViewHelpers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
