@@ -32,8 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
                 text: messages('isIndividualAddressKnown.heading', name),
@@ -46,7 +45,7 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue"),
+            text: messages("site.saveAndContinue"),
             attributes:{"id": "submit"}
           }) }}
 
