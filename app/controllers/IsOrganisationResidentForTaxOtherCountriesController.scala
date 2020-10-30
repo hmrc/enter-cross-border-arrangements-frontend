@@ -20,9 +20,9 @@ import controllers.actions._
 import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OrganisationLoopDetails}
 import navigation.Navigator
-import pages.IsOrganisationResidentForTaxOtherCountriesPage
+import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,25 +47,33 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) if value.lift(index).isDefined =>
+          val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
+          if (taxResidentOtherCountries.isDefined) {
+            form.fill(taxResidentOtherCountries.get)
+          } else {
+            form
+          }
+        case Some(_) => form
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "radios" -> Radios.yesNo(preparedForm("confirm"))
+        "radios" -> Radios.yesNo(preparedForm("confirm")),
+        "index" -> index
       )
 
       renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,16 +83,32 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "radios" -> Radios.yesNo(formWithErrors("confirm"))
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "index" -> index
           )
 
           renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+            case None =>
+              val newOrganisationLoop = OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
+              IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(taxResidentOtherCountries = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
+          }
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswers))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+        }
       )
   }
 }

@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.WhichCountryTaxForOrganisationController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.WhichCountryTaxForOrganisationController.onSubmit(mode, index).url }}" method="post">
 
           {{ csrf() | safe }}
 

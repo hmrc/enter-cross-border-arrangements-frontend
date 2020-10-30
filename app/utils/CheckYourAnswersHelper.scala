@@ -35,6 +35,7 @@ import utils.CheckYourAnswersHelper.dateFormatter
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  //TODO Update start indexes of change links
   def whatAreTheTaxNumbersForNonUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage) map {
     answer =>
       Row(
@@ -43,7 +44,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode).url,
+            href               = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel"))
           )
         )
@@ -58,7 +59,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode).url,
+            href               = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel"))
           )
         )
@@ -148,7 +149,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode).url,
+            href               = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel"))
           )
         )
@@ -193,7 +194,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode).url,
+            href               = routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel"))
           )
         )

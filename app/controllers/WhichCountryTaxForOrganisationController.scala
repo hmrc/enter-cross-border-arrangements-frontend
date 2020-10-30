@@ -20,9 +20,9 @@ import controllers.actions._
 import forms.WhichCountryTaxForOrganisationFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Country, Mode}
+import models.{Country, Mode, OrganisationLoopDetails}
 import navigation.Navigator
-import pages.WhichCountryTaxForOrganisationPage
+import pages.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,25 +50,33 @@ class WhichCountryTaxForOrganisationController @Inject()(
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhichCountryTaxForOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) if value.lift(index).isDefined =>
+          val country = value.lift(index).get.whichCountry
+          if (country.isDefined) {
+            form.fill(country.get)
+          } else {
+            form
+          }
+        case Some(_) => form
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "countries" -> countryJsonList(preparedForm.data, countries)
+        "countries" -> countryJsonList(preparedForm.data, countries),
+        "index" -> index
       )
 
       renderer.render("whichCountryTaxForOrganisation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -78,16 +86,35 @@ class WhichCountryTaxForOrganisationController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "countries" -> countryJsonList(formWithErrors.data, countries)
+            "countries" -> countryJsonList(formWithErrors.data, countries),
+            "index" -> index
           )
 
           renderer.render("whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+            case None =>
+              val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None)
+              IndexedSeq(newOrganisationLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                //Update value
+                val updatedLoop = list.lift(index).get.copy(whichCountry = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                //Add to loop
+                val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None)
+                list :+ newOrganisationLoop
+              }
+          }
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForOrganisationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswers))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForOrganisationPage, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswersWithLoopDetails))
+        }
       )
   }
 }
