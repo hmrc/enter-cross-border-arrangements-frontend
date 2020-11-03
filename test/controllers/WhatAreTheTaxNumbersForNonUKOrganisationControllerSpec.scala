@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import forms.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, NormalMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
+import pages.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -43,10 +43,13 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
 
   val formProvider = new WhatAreTheTaxNumbersForNonUKOrganisationFormProvider()
   val form = formProvider()
+  val index: Int = 0
 
   val taxNumber: String = "123ABC"
+  val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
+  val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val whatAreTheTaxNumbersForNonUKOrganisationRoute = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode).url
+  lazy val whatAreTheTaxNumbersForNonUKOrganisationRoute = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForNonUKOrganisation Controller" - {
 
@@ -55,7 +58,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value //TODO Add country list
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -70,7 +73,9 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       val expectedJson = Json.obj(
         "form" -> form,
         "mode" -> NormalMode,
-        "organisationName" -> "Paper Org"
+        "organisationName" -> "Paper Org",
+        "country" -> "the country",
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
@@ -84,9 +89,12 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val taxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .success.value
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -106,7 +114,10 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "the organisation",
+        "country" -> "France",
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
@@ -137,6 +148,39 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

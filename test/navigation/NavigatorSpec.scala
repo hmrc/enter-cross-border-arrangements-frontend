@@ -25,10 +25,15 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
+  val country: Country = Country("valid", "GB", "United Kingdom")
+  val index: Int = 0
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
   "Navigator" - {
 
@@ -539,7 +544,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -554,7 +559,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -564,12 +569,27 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhichCountryTaxForOrganisationPage, Country("valid", "GB", "United Kingdom"))
+              answers.set(WhichCountryTaxForOrganisationPage, country)
                 .success.value
 
             navigator
               .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
               .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Which country is the organisation resident in for tax purposes? page to " +
+        "Do you know the organisation’s tax identification numbers for the country? page if the answer is not GB" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhichCountryTaxForOrganisationPage, Country("valid", "FR", "France"))
+                .success.value
+
+            navigator
+              .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -599,7 +619,37 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+        }
+      }
+
+      "must go from Do you know the organisation’s tax identification numbers for the country? page " +
+        "to What are the organisation’s tax identification numbers for the country? page if the answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowTINForNonUKOrganisationPage, true)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
+        }
+      }
+
+      "must go from Do you know the organisation’s tax identification numbers for the country? page " +
+        "to Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowTINForNonUKOrganisationPage, false)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -614,7 +664,52 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+        }
+      }
+
+      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
+        "Which country is the organisation resident in for tax purposes? page if the answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+                .success.value
+
+            navigator
+              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+        }
+      }
+
+      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
+        "??? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, false)
+                .success.value
+
+            navigator
+              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from What are the organisation’s tax identification numbers for the country? page to " +
+        "Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, TaxReferenceNumbers("1234567890", None, None))
+                .success.value
+
+            navigator
+              .nextPage(WhatAreTheTaxNumbersForNonUKOrganisationPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
     }

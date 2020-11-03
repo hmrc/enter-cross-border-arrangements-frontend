@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import forms.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, UserAnswers}
+import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OrganisationNamePage, WhichCountryTaxForOrganisationPage}
+import pages.{OrganisationLoopPage, OrganisationNamePage, WhichCountryTaxForOrganisationPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -47,8 +47,10 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
   val formProvider = new WhichCountryTaxForOrganisationFormProvider()
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
   val form: Form[Country] = formProvider(countriesSeq)
+  val selectedCountry: Country = Country("valid", "FR", "France")
+  val index: Int = 0
 
-  lazy val whichCountryTaxForOrganisationRoute: String = routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode).url
+  lazy val whichCountryTaxForOrganisationRoute: String = routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index).url
 
   "WhichCountryTaxForOrganisation Controller" - {
 
@@ -92,7 +94,12 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhichCountryTaxForOrganisationPage, Country("valid", "FR", "France")).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhichCountryTaxForOrganisationPage, selectedCountry)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None)))
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[CountryListFactory].toInstance(mockCountryFactory)
@@ -141,6 +148,38 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhichCountryTaxForOrganisationPage, selectedCountry)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None)))
+        .success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      val request =
+        FakeRequest(POST, whichCountryTaxForOrganisationRoute)
+          .withFormUrlEncodedBody(("country", "FR"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

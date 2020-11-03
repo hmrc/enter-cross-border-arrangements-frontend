@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import forms.DoYouKnowTINForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.DoYouKnowTINForNonUKOrganisationPage
+import pages.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +44,10 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val doYouKnowTINForNonUKOrganisationRoute = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode).url
+  val selectedCountry: Country = Country("valid", "FR", "France")
+  val index: Int = 0
+
+  lazy val doYouKnowTINForNonUKOrganisationRoute = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "DoYouKnowTINForNonUKOrganisation Controller" - {
 
@@ -67,7 +70,10 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("confirm"))
+        "radios" -> Radios.yesNo(form("confirm")),
+        "organisationName" -> "the organisation",
+        "country" -> "the country",
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "doYouKnowTINForNonUKOrganisation.njk"
@@ -81,7 +87,12 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(DoYouKnowTINForNonUKOrganisationPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouKnowTINForNonUKOrganisationPage, true)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -98,7 +109,10 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm"))
+        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "organisationName" -> "the organisation",
+        "country" -> "France",
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "doYouKnowTINForNonUKOrganisation.njk"
@@ -130,6 +144,39 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouKnowTINForNonUKOrganisationPage, true)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

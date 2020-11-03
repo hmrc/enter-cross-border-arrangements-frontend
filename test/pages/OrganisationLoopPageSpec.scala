@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import models.{Mode, NormalMode, UserAnswers}
-import pages._
-import play.api.mvc.{AnyContent, Call, Request}
+import models.OrganisationLoopDetails
+import pages.behaviours.PageBehaviours
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class OrganisationLoopPageSpec extends PageBehaviours {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call =
-    desiredRoute
+  "OrganisationLoopPage" - {
+
+    beRetrievable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+
+    beSettable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+
+    beRemovable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+  }
+
 }

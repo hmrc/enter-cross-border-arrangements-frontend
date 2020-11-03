@@ -22,7 +22,12 @@ import play.api.data.FormError
 class WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "whatAreTheTaxNumbersForNonUKOrganisation.error.required"
-  val maxLength = 10
+  val invalidKey = ""
+  val lengthKeyLabel1 = "whatAreTheTaxNumbersForNonUKOrganisation.label1.error.length"
+  val lengthKeyLabel2 = "whatAreTheTaxNumbersForNonUKOrganisation.label2.error.length"
+  val lengthKeyLabel3 = "whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length"
+  val maxLength = 200
+  val acceptAllRegex = "^.*"
 
   val form = new WhatAreTheTaxNumbersForNonUKOrganisationFormProvider()()
 
@@ -34,6 +39,13 @@ class WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec extends StringFie
       form,
       fieldName,
       stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKeyLabel1)
     )
 
     behave like mandatoryField(
@@ -52,6 +64,13 @@ class WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec extends StringFie
       fieldName,
       stringsWithMaxLength(maxLength)
     )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKeyLabel2)
+    )
   }
 
   ".thirdTaxNumber" - {
@@ -62,6 +81,13 @@ class WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec extends StringFie
       form,
       fieldName,
       stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKeyLabel3)
     )
   }
 }

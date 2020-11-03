@@ -45,9 +45,9 @@ object JourneyHelpers {
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
-  def nextPageIndexOrganisation(ua: UserAnswers, request: Request[AnyContent]): Int = {
+  def incrementIndexOrganisation(ua: UserAnswers, request: Request[AnyContent]): Int = {
     (ua.get(OrganisationLoopPage), ua.get(DoYouKnowAnyTINForUKOrganisationPage)) match {
-      case (Some(countryList), Some(_)) if countryList.size == 1 => 1 //Setup first index for Non-UK TIN pages after UK TIN pages
+      case (Some(organisationDetailsList), Some(_)) if organisationDetailsList.size == 1 => 1 //First index for Non-UK TIN pages after visiting UK TIN pages
       case (Some(_), _) =>
         val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
         val uriPattern(_, index) = request.uri
