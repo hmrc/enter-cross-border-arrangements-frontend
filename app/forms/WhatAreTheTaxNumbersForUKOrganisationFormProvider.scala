@@ -25,26 +25,19 @@ import play.api.data.Forms.mapping
 class WhatAreTheTaxNumbersForUKOrganisationFormProvider @Inject() extends Mappings {
 
   val maxLength: Int = 200
-  val acceptAllRegex = "^.*"
 
   def apply(): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-      "firstTaxNumber" -> validatedText(
+      "firstTaxNumber" -> validatedTextMaxLength(
         "whatAreTheTaxNumbersForUKOrganisation.error.required",
-        "",
         "whatAreTheTaxNumbersForUKOrganisation.label1.error.length",
-        acceptAllRegex,
         maxLength),
-      "secondTaxNumber" -> validatedOptionalText(
-        "",
+      "secondTaxNumber" -> validatedOptionalTextMaxLength(
         "whatAreTheTaxNumbersForUKOrganisation.label2.error.length",
-        acceptAllRegex,
         maxLength),
-      "thirdTaxNumber" -> validatedOptionalText(
-        "",
+      "thirdTaxNumber" -> validatedOptionalTextMaxLength(
         "whatAreTheTaxNumbersForUKOrganisation.label3.error.length",
-        acceptAllRegex,
         maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )

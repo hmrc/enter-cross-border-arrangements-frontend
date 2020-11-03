@@ -37,10 +37,10 @@ class Navigator @Inject()() {
     case OrganisationNamePage => _ => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
     case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(NormalMode)
     case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(NormalMode)
-    case IndividualNamePage => _ => Some(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
-    case IndividualDateOfBirthPage => _ => Some(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+    case IndividualNamePage => _ => _ => Some(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+    case IndividualDateOfBirthPage => _ => _ => Some(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
     case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(NormalMode)
-    case IndividualPlaceOfBirthPage => _ => Some(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+    case IndividualPlaceOfBirthPage => _ => _ => Some(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
     case SelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case OrganisationAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
@@ -194,7 +194,7 @@ class Navigator @Inject()() {
        case _ => routes.CheckYourAnswersController.onPageLoad()
      }
 
-  private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {
       case true  => routes.IndividualPlaceOfBirthController.onPageLoad(mode)
       case false => routes.IsIndividualAddressKnownController.onPageLoad(mode)
@@ -241,7 +241,7 @@ class Navigator @Inject()() {
 
   private def isOrganisationResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
-      case true => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, incrementIndexOrganisation(ua, request))
+      case true => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false => routes.IndexController.onPageLoad() //TODO Redirect to correct page when ready
     }
   }
