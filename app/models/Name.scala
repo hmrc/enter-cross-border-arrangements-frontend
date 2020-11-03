@@ -19,7 +19,9 @@ package models
 import play.api.libs.json.Json
 
 //strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
-case class Name(firstName: String, secondName: String)
+case class Name(firstName: String, secondName: String) {
+  def displayName: String = s"$firstName $secondName"
+}
 
 object Name {
   implicit val format = Json.format[Name]
