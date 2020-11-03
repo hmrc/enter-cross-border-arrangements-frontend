@@ -388,6 +388,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from Do you know {0} address yes to 'Does the individual live in the United Kingdom?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsIndividualAddressKnownPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from What is the name of the organisation? page to Do you know {0}’s Address page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

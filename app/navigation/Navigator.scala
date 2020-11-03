@@ -39,6 +39,7 @@ class Navigator @Inject()() {
     case IndividualNamePage => _ => Some(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
     case IndividualDateOfBirthPage => _ => Some(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
     case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(NormalMode)
+    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
     case IndividualPlaceOfBirthPage => _ => Some(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
     case SelectAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case OrganisationAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
@@ -89,6 +90,7 @@ class Navigator @Inject()() {
     case HallmarkEPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case PostcodePage => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
+    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
     case IndividualUkPostcodePage => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
@@ -191,6 +193,12 @@ class Navigator @Inject()() {
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {
       case true  => routes.IndividualPlaceOfBirthController.onPageLoad(mode)
       case false => routes.IsIndividualAddressKnownController.onPageLoad(mode)
+    }
+
+  private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsIndividualAddressKnownPage) map {
+      case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() //ToDo route to email page
     }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
