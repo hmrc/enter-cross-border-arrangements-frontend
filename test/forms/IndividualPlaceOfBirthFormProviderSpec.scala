@@ -23,7 +23,6 @@ class IndividualPlaceOfBirthFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "individualPlaceOfBirth.error.required"
   val lengthKey = "individualPlaceOfBirth.error.length"
-  val invalidKey = "individualPlaceOfBirth.error.invalid"
   val maxLength = 200
 
   val form = new IndividualPlaceOfBirthFormProvider()()
@@ -55,13 +54,6 @@ class IndividualPlaceOfBirthFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKey)
     )
   }
 }

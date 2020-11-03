@@ -296,12 +296,10 @@ individualName.secondName = Last name
 individualName.checkYourAnswersLabel = What is their name?
 individualName.error.firstName.required = Enter a first name
 individualName.error.secondName.required = Enter a last name
-individualName.error.firstName.invalid = First name must only include letters a to z, spaces and punctuation
-individualName.error.secondName.invalid = Last name must only include letters a to z, spaces and punctuation
-individualName.error.firstName.length = First name must be 35 characters or less
-individualName.error.secondName.length = Last name must be 35 characters or less
+individualName.error.firstName.length = First name must be 200 characters or less
+individualName.error.secondName.length = Last name must be 200 characters or less
 
-individualDateOfBirth.title = Their date of birth?
+individualDateOfBirth.title = What is their date of birth?
 individualDateOfBirth.heading = What is {0} date of birth?
 individualDateOfBirth.hint = For example, 31 3 1980
 individualDateOfBirth.checkYourAnswersLabel = What is {0}’s date of birth?
@@ -313,17 +311,16 @@ individualDateOfBirth.error.futureDate = Date of birth must be before {0}
 individualDateOfBirth.error.pastDate = Date of birth must be after 1903
 individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
 
-isIndividualPlaceOfBirthKnown.title = Do you know the country where they were born?
-isIndividualPlaceOfBirthKnown.heading = Do you know the country where {0} born?
-isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know the country where {0} was born?
-isIndividualPlaceOfBirthKnown.error.required = Select yes if you know the country where they were born
+isIndividualPlaceOfBirthKnown.title = Do you know where they were born?
+isIndividualPlaceOfBirthKnown.heading = Do you know where {0} born?
+isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know where they were born?
+isIndividualPlaceOfBirthKnown.error.required = Select yes if you know where they were born
 
 individualPlaceOfBirth.title = Where were they born?
-individualPlaceOfBirth.heading = Where was {0} born?
-individualPlaceOfBirth.checkYourAnswersLabel = Where was {0} born?
+individualPlaceOfBirth.heading = Where {0} born?
+individualPlaceOfBirth.checkYourAnswersLabel = Where were they born?
 individualPlaceOfBirth.error.required = Enter their birthplace
 individualPlaceOfBirth.error.length = Birthplace must be 200 characters or less
-individualPlaceOfBirth.error.invalid = Birthplace must only include letters a to z, numbers 0 to 9, spaces and punctuation
 individualPlaceOfBirth.error.required = Enter their birthplace
 
 isIndividualAddressKnown.title = Do you know their address?

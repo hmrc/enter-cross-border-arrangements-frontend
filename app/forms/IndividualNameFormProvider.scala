@@ -25,15 +25,17 @@ import utils.RegexConstants
 
 class IndividualNameFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 35
+  private val maxLength = 200
 
   def apply(): Form[Name] =
     Form(
       mapping(
-        "firstName" -> validatedText("individualName.error.firstName.required",
-          "individualName.error.firstName.invalid", "individualName.error.firstName.length", individualNameRegex, maxLength),
-        "secondName" -> validatedText("individualName.error.secondName.required",
-          "individualName.error.secondName.invalid","individualName.error.secondName.length", individualNameRegex, maxLength)
+        "firstName" -> validatedTextMaxLength("individualName.error.firstName.required",
+          "individualName.error.firstName.length", maxLength),
+
+        "secondName" -> validatedTextMaxLength("individualName.error.secondName.required",
+          "individualName.error.secondName.length", maxLength),
+
       )(Name.apply)(Name.unapply)
     )
 }

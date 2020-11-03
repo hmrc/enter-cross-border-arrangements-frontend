@@ -57,6 +57,10 @@ trait Mappings extends Formatters with Constraints {
     of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, maxLength))
   }
 
+  protected def validatedTextMaxLength(requiredKey: String, lengthKey: String, maxLength: Int): FieldMapping[String] = {
+    of(textMaxLengthFormatter(requiredKey, lengthKey, maxLength))
+  }
+
   protected def validatedOptionalText(invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[Option[String]] = {
     of(validatedOptionalTextFormatter(invalidKey, lengthKey, regex, length))
   }

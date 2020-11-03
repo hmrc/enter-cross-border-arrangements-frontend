@@ -21,12 +21,11 @@ import play.api.data.FormError
 
 class IndividualNameFormProviderSpec extends StringFieldBehaviours {
 
-  val maxLength = 35
+  val maxLength = 200
   val form = new IndividualNameFormProvider()()
 
   ".firstName" - {
     val requiredKey = "individualName.error.firstName.required"
-    val invalidKey = "individualName.error.firstName.invalid"
     val lengthKey = "individualName.error.firstName.length"
 
     val fieldName = "firstName"
@@ -49,18 +48,10 @@ class IndividualNameFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKey)
-    )
   }
 
   ".secondName" - {
     val requiredKey = "individualName.error.secondName.required"
-    val invalidKey = "individualName.error.secondName.invalid"
     val lengthKey = "individualName.error.secondName.length"
 
     val fieldName = "secondName"
@@ -84,11 +75,5 @@ class IndividualNameFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKey)
-    )
   }
 }

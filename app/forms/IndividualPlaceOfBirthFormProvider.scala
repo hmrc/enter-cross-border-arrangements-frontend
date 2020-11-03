@@ -22,14 +22,12 @@ import play.api.data.Form
 import utils.RegexConstants
 
 class IndividualPlaceOfBirthFormProvider @Inject() extends Mappings with RegexConstants {
-  private val length = 200
+
+  private val maxLength = 200
+
   def apply(): Form[String] =
     Form(
-      "value" ->  validatedText("individualPlaceOfBirth.error.required",
-        "individualPlaceOfBirth.error.invalid",
-        "individualPlaceOfBirth.error.length",
-        apiAddressRegex,
-        length)
-    )
+      "value" -> validatedTextMaxLength("individualPlaceOfBirth.error.required",
+        "individualPlaceOfBirth.error.length", maxLength)
+  )
 }
-
