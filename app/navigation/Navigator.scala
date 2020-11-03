@@ -32,10 +32,14 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Option[Call] = {
 
-    //TODO: Make the urls dynamic for each organisation when available
+    //TODO: Make the urls dynamic for each organisation and individual type when available
     case OrganisationNamePage => _ => Some(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
     case IsOrganisationAddressKnownPage => isOrganisationAddressKnownRoutes(NormalMode)
     case IsOrganisationAddressUkPage => isOrganisationAddressUKRoutes(NormalMode)
+    case IndividualNamePage => _ => Some(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+    case IndividualDateOfBirthPage => _ => Some(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+    case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(NormalMode)
+    case IndividualPlaceOfBirthPage => _ => Some(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
     case SelectAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case OrganisationAddressPage => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
@@ -176,6 +180,12 @@ class Navigator @Inject()() {
          routes.HallmarkEController.onPageLoad(mode)
        case _ => routes.CheckYourAnswersController.onPageLoad()
      }
+
+  private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsIndividualPlaceOfBirthKnownPage) map {
+      case true  => routes.IndividualPlaceOfBirthController.onPageLoad(mode)
+      case false => routes.IsIndividualAddressKnownController.onPageLoad(mode)
+    }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsOrganisationAddressKnownPage) map {

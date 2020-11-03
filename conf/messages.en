@@ -289,6 +289,45 @@ selectAddress.hint.part2 = enter the address manually
 selectAddress.checkYourAnswersLabel = What is {0}’s main address??
 selectAddress.error.required = Select address
 
+individualName.title = What is their name?
+individualName.heading = What is their name?
+individualName.firstName = First name
+individualName.secondName = Last name
+individualName.checkYourAnswersLabel = What is their name?
+individualName.error.firstName.required = Enter a first name
+individualName.error.secondName.required = Enter a last name
+individualName.error.firstName.length = First name must be 200 characters or less
+individualName.error.secondName.length = Last name must be 200 characters or less
+
+individualDateOfBirth.title = What is their date of birth?
+individualDateOfBirth.heading = What is {0} date of birth?
+individualDateOfBirth.hint = For example, 31 3 1980
+individualDateOfBirth.checkYourAnswersLabel = What is {0}’s date of birth?
+individualDateOfBirth.error.required.all = Enter a date of birth
+individualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+individualDateOfBirth.error.required = Date of birth must include {0}
+individualDateOfBirth.error.invalid = Enter a valid date of birth
+individualDateOfBirth.error.futureDate = Date of birth must be before {0}
+individualDateOfBirth.error.pastDate = Date of birth must be after 1903
+individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
+
+isIndividualPlaceOfBirthKnown.title = Do you know where they were born?
+isIndividualPlaceOfBirthKnown.heading = Do you know where {0} born?
+isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know where they were born?
+isIndividualPlaceOfBirthKnown.error.required = Select yes if you know where they were born
+
+individualPlaceOfBirth.title = Where were they born?
+individualPlaceOfBirth.heading = Where {0} born?
+individualPlaceOfBirth.checkYourAnswersLabel = Where were they born?
+individualPlaceOfBirth.error.required = Enter their birthplace
+individualPlaceOfBirth.error.length = Birthplace must be 200 characters or less
+individualPlaceOfBirth.error.required = Enter their birthplace
+
+isIndividualAddressKnown.title = Do you know their address?
+isIndividualAddressKnown.heading = Do you know {0} address?
+isIndividualAddressKnown.checkYourAnswersLabel = Do you know their address?
+isIndividualAddressKnown.error.required = Select yes if you know their address
+
 emailAddressQuestionForOrganisation.title = Do you know the email address for a main contact at the organisation?
 emailAddressQuestionForOrganisation.heading = Do you know the email address for a main contact at {0}?
 emailAddressQuestionForOrganisation.checkYourAnswersLabel = emailAddressQuestionForOrganisation

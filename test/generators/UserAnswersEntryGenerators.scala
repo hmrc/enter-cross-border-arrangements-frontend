@@ -72,6 +72,46 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryIsIndividualPlaceOfBirthKnownUserAnswersEntry: Arbitrary[(IsIndividualPlaceOfBirthKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsIndividualPlaceOfBirthKnownPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsIndividualAddressKnownUserAnswersEntry: Arbitrary[(IsIndividualAddressKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsIndividualAddressKnownPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIndividualPlaceOfBirthUserAnswersEntry: Arbitrary[(IndividualPlaceOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IndividualPlaceOfBirthPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIndividualNameUserAnswersEntry: Arbitrary[(IndividualNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IndividualNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIndividualDateOfBirthUserAnswersEntry: Arbitrary[(IndividualDateOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IndividualDateOfBirthPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryOrganisationAddressUserAnswersEntry: Arbitrary[(OrganisationAddressPage.type, JsValue)] =
     Arbitrary {
       for {

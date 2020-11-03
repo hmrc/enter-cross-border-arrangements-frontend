@@ -83,6 +83,13 @@ trait ModelGenerators {
     } yield Address(addressLine1, addressLine2, addressLine3, city, postalCode, countryCode)
   }
 
+  implicit val arbitraryName: Arbitrary[Name] = Arbitrary {
+    for {
+      firstName <- arbitrary[String]
+      secondName <- arbitrary[String]
+    } yield Name(firstName, secondName)
+  }
+
   implicit val arbitraryTaxReferenceNumbers: Arbitrary[TaxReferenceNumbers] = Arbitrary {
     for {
       firstTaxNumber <- arbitrary[String]
