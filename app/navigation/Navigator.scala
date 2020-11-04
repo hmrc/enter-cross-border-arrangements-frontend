@@ -48,6 +48,9 @@ class Navigator @Inject()() {
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(NormalMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(NormalMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => _ => Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+    case IndividualAddressPage => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case IndividualSelectAddressPage => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForIndividualPage => _ => Some(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
@@ -198,7 +201,7 @@ class Navigator @Inject()() {
   private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //ToDo route to email page
+      case false => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
     }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =

@@ -376,3 +376,16 @@ isIndividualAddressUk.error.required = Select yes if they live in the United Kin
 
 individualAddress.heading = What is {0}’s address?
 individualAddress.title = What is their address?
+
+emailAddressQuestionForIndividual.title = Do you know their email address?
+emailAddressQuestionForIndividual.heading = Do you know {0}’s email address?
+emailAddressQuestionForIndividual.checkYourAnswersLabel = Do you know their email address?
+emailAddressQuestionForIndividual.error.required = Select yes if you know their email address
+
+emailAddressForIndividual.title = What is their email address?
+emailAddressForIndividual.heading = What is {0}’s email address?
+emailAddressForIndividual.hint = We will only use this to get in contact if we have any questions about the arrangement.
+emailAddressForIndividual.checkYourAnswersLabel = What is their email address?
+emailAddressForIndividual.error.required = Enter an email address
+emailAddressForIndividual.error.invalid = Enter an email address in the correct format, like name@example.com
+emailAddressForIndividual.error.length = Email address must be 254 characters or less

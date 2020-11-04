@@ -21,6 +21,12 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryEmailAddressQuestionForIndividualPage: Arbitrary[EmailAddressQuestionForIndividualPage.type] =
+    Arbitrary(EmailAddressQuestionForIndividualPage)
+
+  implicit lazy val arbitraryEmailAddressForIndividualPage: Arbitrary[EmailAddressForIndividualPage.type] =
+    Arbitrary(EmailAddressForIndividualPage)
+
   implicit lazy val arbitraryIsIndividualPlaceOfBirthKnownPage: Arbitrary[IsIndividualPlaceOfBirthKnownPage.type] =
     Arbitrary(IsIndividualPlaceOfBirthKnownPage)
 

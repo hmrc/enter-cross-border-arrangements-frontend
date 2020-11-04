@@ -32,7 +32,7 @@
 
                   {{ csrf() | safe }}
 
-                <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-xl name-overflow">
                   {{ messages("individualAddress.heading", usersName) if individual else messages("organisationAddress.heading", usersName) }}
                 </h1>
 
