@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isIndividualResidentForTaxOtherCountries.title"), form.errors) }}
+  {{ title(messages("doYouKnowTINForNonUKIndividual.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode, index).url }}" method="post">
+        <form action="{{ routes.controllers.DoYouKnowTINForNonUKIndividualController.onSubmit(mode, index).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -35,13 +35,16 @@
             name: 'confirm',
             fieldset: {
               legend: {
-                text: messages('isIndividualResidentForTaxOtherCountries.heading', individualName),
+                text: messages('doYouKnowTINForNonUKIndividual.heading', individualName, country),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
             },
+            hint: {
+              text: messages('doYouKnowTINForNonUKIndividual.hint')
+            },
             items: radios,
-            errorMessage: form.confirm.error
+            errorMessage: form.value.error
           }) }}
 
           {{ govukButton({

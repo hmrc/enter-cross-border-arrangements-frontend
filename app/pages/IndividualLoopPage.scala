@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import models.IndividualLoopDetails
+import play.api.libs.json.JsPath
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+case object IndividualLoopPage extends QuestionPage[IndexedSeq[IndividualLoopDetails]] {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "individualLoop"
 }

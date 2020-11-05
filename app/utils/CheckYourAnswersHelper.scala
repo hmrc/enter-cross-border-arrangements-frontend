@@ -43,7 +43,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode).url,
+            href               = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForIndividual.checkYourAnswersLabel"))
           )
         )
@@ -73,7 +73,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode).url,
+            href               = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel"))
           )
         )

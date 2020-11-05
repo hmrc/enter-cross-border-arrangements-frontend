@@ -194,20 +194,11 @@ POST       /individual/uk-tin-known                             controllers.DoYo
 GET        /individual/change-uk-tin-known                      controllers.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-uk-tin-known                      controllers.DoYouKnowAnyTINForUKIndividualController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/tax-resident-countries                   controllers.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/tax-resident-countries                   controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-tax-resident-countries            controllers.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-tax-resident-countries            controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode)
-
 GET        /individual/uk-tax-numbers                           controllers.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /individual/uk-tax-numbers                           controllers.WhatAreTheTaxNumbersForUKIndividualController.onSubmit(mode: Mode = NormalMode)
 GET        /individual/change-uk-tax-numbers                    controllers.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-uk-tax-numbers                    controllers.WhatAreTheTaxNumbersForUKIndividualController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/which-country-tax                        controllers.WhichCountryTaxForIndividualController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/which-country-tax                        controllers.WhichCountryTaxForIndividualController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-which-country-tax                 controllers.WhichCountryTaxForIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-which-country-tax                 controllers.WhichCountryTaxForIndividualController.onSubmit(mode: Mode = CheckMode)
 
 GET        /individual/email-address                            controllers.EmailAddressQuestionForIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /individual/email-address                            controllers.EmailAddressQuestionForIndividualController.onSubmit(mode: Mode = NormalMode)
@@ -218,3 +209,23 @@ GET        /individual/what-is-email-address                    controllers.Emai
 POST       /individual/what-is-email-address                    controllers.EmailAddressForIndividualController.onSubmit(mode: Mode = NormalMode)
 GET        /individual/change-what-is-email-address             controllers.EmailAddressForIndividualController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-what-is-email-address             controllers.EmailAddressForIndividualController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individual/which-country-tax-:index                 controllers.WhichCountryTaxForIndividualController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /individual/which-country-tax-:index                 controllers.WhichCountryTaxForIndividualController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /individual/change-which-country-tax-:index          controllers.WhichCountryTaxForIndividualController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /individual/change-which-country-tax-:index          controllers.WhichCountryTaxForIndividualController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /individual/resident-country-tin-:index                     controllers.DoYouKnowTINForNonUKIndividualController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /individual/resident-country-tin-:index                     controllers.DoYouKnowTINForNonUKIndividualController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /individual/change-resident-country-tin-:index              controllers.DoYouKnowTINForNonUKIndividualController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /individual/change-resident-country-tin-:index              controllers.DoYouKnowTINForNonUKIndividualController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /individual/non-uk-tax-numbers-:index              controllers.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /individual/non-uk-tax-numbers-:index              controllers.WhatAreTheTaxNumbersForNonUKIndividualController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /individual/change-non-uk-tax-numbers-:index       controllers.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /individual/change-non-uk-tax-numbers-:index       controllers.WhatAreTheTaxNumbersForNonUKIndividualController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /individual/tax-resident-countries-:index          controllers.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /individual/tax-resident-countries-:index          controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /individual/change-tax-resident-countries-:index   controllers.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /individual/change-tax-resident-countries-:index   controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode, index: Int)

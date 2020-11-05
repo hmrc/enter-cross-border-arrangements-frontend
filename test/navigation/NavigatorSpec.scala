@@ -933,7 +933,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -948,7 +948,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -996,7 +996,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -1012,7 +1012,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -1029,10 +1029,38 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
+        }
+      }
+      "must go from Is the individuals resident for tax purposes in any other countries? page to " +
+        "??? page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsIndividualResidentForTaxOtherCountriesPage, false)
+                .success.value
+
+            navigator
+              .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())
         }
       }
 
+      "must go from What are the individuals’s tax identification numbers for the country? page to " +
+        "Is the individual resident for tax purposes in any other countries?" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, TaxReferenceNumbers("1234567890", None, None))
+                .success.value
+
+            navigator
+              .nextPage(WhatAreTheTaxNumbersForNonUKIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+        }
+      }
     }
   }
 }

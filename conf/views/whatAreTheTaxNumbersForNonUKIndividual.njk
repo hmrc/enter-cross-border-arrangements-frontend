@@ -1,0 +1,84 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("whatAreTheTaxNumbersForNonUKIndividual.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.WhatAreTheTaxNumbersForNonUKIndividualController.onSubmit(mode, index).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+          <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
+            {{ messages("whatAreTheTaxNumbersForNonUKIndividual.heading", individualName, country) }}
+          </h1>
+
+          <p class="govuk-hint">{{ messages("whatAreTheTaxNumbersForNonUKIndividual.hint") }}</p>
+
+          {{ govukInput({
+            label: {
+              text: messages('whatAreTheTaxNumbersForNonUKIndividual.label1')
+            },
+            classes: "govuk-input--width-10",
+            id: "firstTaxNumber",
+            name: "firstTaxNumber",
+            value: form.firstTaxNumber.value,
+            errorMessage: form.firstTaxNumber.error
+          }) }}
+
+          {{ govukInput({
+            label: {
+              text: messages('whatAreTheTaxNumbersForNonUKIndividual.label2')
+            },
+            classes: "govuk-input--width-10",
+            id: "secondTaxNumber",
+            name: "secondTaxNumber",
+            value: form.secondTaxNumber.value,
+            errorMessage: form.secondTaxNumber.error
+          }) }}
+
+          {{ govukInput({
+            label: {
+              text: messages('whatAreTheTaxNumbersForNonUKIndividual.label3')
+            },
+            classes: "govuk-input--width-10",
+            id: "thirdTaxNumber",
+            name: "thirdTaxNumber",
+            value: form.thirdTaxNumber.value,
+            errorMessage: form.thirdTaxNumber.error
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {"id": "submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

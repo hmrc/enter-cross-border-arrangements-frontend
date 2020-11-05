@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import pages.behaviours.PageBehaviours
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+class DoYouKnowTINForNonUKIndividualPageSpec extends PageBehaviours {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+  "DoYouKnowTINForNonUKIndividualPage" - {
+
+    beRetrievable[Boolean](DoYouKnowTINForNonUKIndividualPage)
+
+    beSettable[Boolean](DoYouKnowTINForNonUKIndividualPage)
+
+    beRemovable[Boolean](DoYouKnowTINForNonUKIndividualPage)
+  }
 }

@@ -108,4 +108,13 @@ trait ModelGenerators {
       taxNumbersUK <- Gen.option(arbitrary[TaxReferenceNumbers])
     } yield IndexedSeq(OrganisationLoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
+
+  implicit val arbitraryIndividualLoopDetails: Arbitrary[IndexedSeq[IndividualLoopDetails]] = Arbitrary {
+    for {
+      taxResidentOtherCountries <- Gen.option(arbitrary[Boolean])
+      whichCountry <- Gen.option(arbitrary[Country])
+      doYouKnowTIN <- Gen.option(arbitrary[Boolean])
+      taxNumbersNonUK <- Gen.option(arbitrary[TaxReferenceNumbers])
+    } yield IndexedSeq(IndividualLoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK))
+  }
 }

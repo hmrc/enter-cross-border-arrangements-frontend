@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import play.api.libs.json.{Json, OFormat}
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+case class IndividualLoopDetails (taxResidentOtherCountries: Option[Boolean],
+                                   whichCountry: Option[Country],
+                                   doYouKnowTIN: Option[Boolean],
+                                   taxNumbersNonUK: Option[TaxReferenceNumbers])
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+object IndividualLoopDetails {
+  implicit val format: OFormat[IndividualLoopDetails] = Json.format[IndividualLoopDetails]
 }
