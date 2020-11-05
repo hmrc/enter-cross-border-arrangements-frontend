@@ -19,15 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldBehaviours {
+class WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatAreTheTaxNumbersForUKOrganisation.error.required"
-  val lengthKeyLabel1 = "whatAreTheTaxNumbersForUKOrganisation.label1.error.length"
-  val lengthKeyLabel2 = "whatAreTheTaxNumbersForUKOrganisation.label2.error.length"
-  val lengthKeyLabel3 = "whatAreTheTaxNumbersForUKOrganisation.label3.error.length"
+  val requiredKey = "whatAreTheTaxNumbersForNonUKOrganisation.error.required"
+  val lengthKeyLabel1 = "whatAreTheTaxNumbersForNonUKOrganisation.label1.error.length"
+  val lengthKeyLabel2 = "whatAreTheTaxNumbersForNonUKOrganisation.label2.error.length"
+  val lengthKeyLabel3 = "whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length"
   val maxLength = 200
 
-  val form = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()()
+  val form = new WhatAreTheTaxNumbersForNonUKOrganisationFormProvider()()
 
   ".firstTaxNumber" - {
 

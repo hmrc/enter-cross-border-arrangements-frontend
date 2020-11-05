@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("whatAreTheTaxNumbersForUKOrganisation.title"), form.errors) }}
+  {{ title(messages("whatAreTheTaxNumbersForNonUKOrganisation.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,23 +27,19 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.WhatAreTheTaxNumbersForNonUKOrganisationController.onSubmit(mode, index).url }}" method="post">
 
           {{ csrf() | safe }}
 
           <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
-            {{ messages("whatAreTheTaxNumbersForUKOrganisation.heading", organisationName) }}
+            {{ messages("whatAreTheTaxNumbersForNonUKOrganisation.heading", organisationName, country) }}
           </h1>
 
-          <div class="govuk-!-margin-bottom-6">
-            <p class="govuk-hint">{{ messages("whatAreTheTaxNumbersForUKOrganisation.hint") }}
-              <a href="{{lostUTRUrl}}" class="govuk-link">{{ messages("whatAreTheTaxNumbersForUKOrganisation.hintLink") }}</a>.
-            </p>
-          </div>
+          <p class="govuk-hint">{{ messages("whatAreTheTaxNumbersForNonUKOrganisation.hint") }}</p>
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForUKOrganisation.label1')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label1')
             },
             classes: "govuk-input--width-10",
             id: "firstTaxNumber",
@@ -54,7 +50,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForUKOrganisation.label2')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label2')
             },
             classes: "govuk-input--width-10",
             id: "secondTaxNumber",
@@ -65,7 +61,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForUKOrganisation.label3')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label3')
             },
             classes: "govuk-input--width-10",
             id: "thirdTaxNumber",

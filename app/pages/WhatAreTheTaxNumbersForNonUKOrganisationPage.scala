@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import models.{Mode, NormalMode, UserAnswers}
-import pages._
-import play.api.mvc.{AnyContent, Call, Request}
+import models.TaxReferenceNumbers
+import play.api.libs.json.JsPath
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+case object WhatAreTheTaxNumbersForNonUKOrganisationPage extends QuestionPage[TaxReferenceNumbers] {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call =
-    desiredRoute
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "whatAreTheTaxNumbersForNonUKOrganisation"
 }

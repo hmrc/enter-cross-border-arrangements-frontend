@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/select/macro.njk"        import govukSelect %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("whichCountryTaxForOrganisation.title"), form.errors) }}
+  {{ title(messages("doYouKnowTINForNonUKOrganisation.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,26 +27,25 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.WhichCountryTaxForOrganisationController.onSubmit(mode, index).url }}" method="post">
+        <form action="{{ routes.controllers.DoYouKnowTINForNonUKOrganisationController.onSubmit(mode, index).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          {{ govukSelect({
-            classes: "govuk-input--width-20 autocomplete",
-            label: {
-              text: messages('whichCountryTaxForOrganisation.heading', organisationName),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
-            },
-            id: "country",
-            name: "country",
-            errorMessage: form.country.error,
-            items: countries
+          <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
+            {{ messages("doYouKnowTINForNonUKOrganisation.heading", organisationName, country) }}
+          </h1>
+
+          <p class="govuk-hint">{{ messages("doYouKnowTINForNonUKOrganisation.hint") }}</p>
+
+          {{ govukRadios({
+            name: 'confirm',
+            items: radios,
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({
             text: messages("site.saveAndContinue"),
-            attributes: {id:"submit"}
+            attributes: {"id": "submit"}
           }) }}
 
         </form>

@@ -23,10 +23,14 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
+  val index: Int = 0
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
   "Navigator" - {
 

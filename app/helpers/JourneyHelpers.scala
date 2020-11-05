@@ -17,8 +17,9 @@
 package helpers
 
 import models.{Country, UserAnswers}
-import pages.OrganisationNamePage
+import pages.{OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContent, Request}
 
 object JourneyHelpers {
 
@@ -42,6 +43,28 @@ object JourneyHelpers {
     }
 
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
+  }
+
+  def incrementIndexOrganisation(ua: UserAnswers, request: Request[AnyContent]): Int = {
+    ua.get(OrganisationLoopPage) match {
+      case Some(_) =>
+        try {
+          val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
+          val uriPattern(_, index) = request.uri
+
+          index.toInt + 1
+        } catch {
+          case _: Exception => 1 //First index for Non-UK TIN pages after visiting UK TIN pages. UK tin pages will not match uri pattern
+        }
+      case _ => 0
+    }
+  }
+
+  def currentIndexInsideLoop(request: Request[AnyContent]): Int = {
+    val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
+    val uriPattern(_, index) = request.uri
+
+    index.toInt
   }
 
 }

@@ -72,7 +72,8 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "organisationName" -> "Paper Org"
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"

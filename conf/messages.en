@@ -361,8 +361,29 @@ whatAreTheTaxNumbersForUKOrganisation.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKOrganisation.label3 = UK tax number 3 (optional)
 whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbersForUKOrganisation
 whatAreTheTaxNumbersForUKOrganisation.error.required = Enter tax number 1
+whatAreTheTaxNumbersForUKOrganisation.label1.error.length = UK tax number 1 must be 200 characters or less
+whatAreTheTaxNumbersForUKOrganisation.label2.error.length = UK tax number 2 (optional) must be 200 characters or less
+whatAreTheTaxNumbersForUKOrganisation.label3.error.length = UK tax number 3 (optional) must be 200 characters or less
 
 isOrganisationResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
 isOrganisationResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
 isOrganisationResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries
+
+doYouKnowTINForNonUKOrganisation.title = Do you know the organisation’s tax identification numbers?
+doYouKnowTINForNonUKOrganisation.heading = Do you know {0}’s tax identification numbers for {1}?
+doYouKnowTINForNonUKOrganisation.hint = This is a number given by the tax administration in the country where the organisation is resident for tax purposes. It is used to identify individual taxpayers.
+doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel = doYouKnowTINForNonUKOrganisation
+doYouKnowTINForNonUKOrganisation.error.required = Select yes if you know the tax identification numbers for the organisation in {0}
+
+whatAreTheTaxNumbersForNonUKOrganisation.title = What are the organisation’s tax identification numbers?
+whatAreTheTaxNumbersForNonUKOrganisation.heading = What are {0}’s tax identification numbers for {1}?
+whatAreTheTaxNumbersForNonUKOrganisation.hint = Provide up to 3.
+whatAreTheTaxNumbersForNonUKOrganisation.label1 = Tax identification number 1
+whatAreTheTaxNumbersForNonUKOrganisation.label2 = Tax identification number 2 (optional)
+whatAreTheTaxNumbersForNonUKOrganisation.label3 = Tax identification number 3 (optional)
+whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel = whatAreTheTaxNumbersForNonUKOrganisation
+whatAreTheTaxNumbersForNonUKOrganisation.error.required = Enter tax identification number 1
+whatAreTheTaxNumbersForNonUKOrganisation.label1.error.length = Tax identification number 1 must be 200 characters or less
+whatAreTheTaxNumbersForNonUKOrganisation.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
+whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length = Tax identification number 3 (optional) must be 200 characters or less

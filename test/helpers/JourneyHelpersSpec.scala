@@ -18,11 +18,13 @@ package helpers
 
 import base.SpecBase
 import generators.Generators
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
-import models.{Country, UserAnswers}
+import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getOrganisationName, incrementIndexOrganisation}
+import models.{Country, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.OrganisationNamePage
+import pages.{OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
 class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -57,6 +59,49 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         )
 
         countryJsonList(value, countriesSeq) mustBe expectedJsonList
+      }
+    }
+
+    "incrementIndexOrganisation" - {
+      val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
+
+      "must return index as 1 if user previously visited UK tin pages and they know TIN for another country (matching URI pattern failed)" in {
+        val organisationLoopDetails = IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), Some(false), None))
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(OrganisationLoopPage, organisationLoopDetails)
+          .success
+          .value
+
+        incrementIndexOrganisation(userAnswers, request) mustBe 1
+      }
+
+      "must add 1 to index from uri if users go through the loop more than once" in {
+        val organisationLoopDetails = IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), Some(false), None),
+          OrganisationLoopDetails(None, Some(selectedCountry), None, None))
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/1")
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(OrganisationLoopPage, organisationLoopDetails)
+          .success
+          .value
+
+        incrementIndexOrganisation(userAnswers, request) mustBe 2
+      }
+
+      "must return 0 if it's the first iteration in the loop" in {
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
+
+        incrementIndexOrganisation(emptyUserAnswers, request) mustBe 0
+      }
+    }
+
+    "currentIndexInsideLoop" - {
+      "must return the current index in the URI" in {
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/3")
+
+        currentIndexInsideLoop(request) mustBe 3
       }
     }
   }

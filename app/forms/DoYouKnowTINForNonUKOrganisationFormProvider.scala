@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package navigation
+package forms
 
-import models.{Mode, NormalMode, UserAnswers}
-import pages._
-import play.api.mvc.{AnyContent, Call, Request}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
+import play.api.i18n.Messages
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class DoYouKnowTINForNonUKOrganisationFormProvider @Inject() extends Mappings {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call =
-    desiredRoute
+  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
+    Form(
+      "confirm" -> boolean(messages("doYouKnowTINForNonUKOrganisation.error.required", country))
+    )
 }

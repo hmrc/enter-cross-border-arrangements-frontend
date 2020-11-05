@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import models.{Mode, NormalMode, UserAnswers}
-import pages._
-import play.api.mvc.{AnyContent, Call, Request}
+import models.TaxReferenceNumbers
+import pages.behaviours.PageBehaviours
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call =
-    desiredRoute
+class WhatAreTheTaxNumbersForNonUKOrganisationPageSpec extends PageBehaviours {
+
+  "WhatAreTheTaxNumbersForNonUKOrganisationPage" - {
+
+    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
+
+    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
+
+    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
+  }
 }

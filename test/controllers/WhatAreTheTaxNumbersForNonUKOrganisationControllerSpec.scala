@@ -17,15 +17,15 @@
 package controllers
 
 import base.SpecBase
-import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
+import forms.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{Country, NormalMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,22 +33,25 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsOrganisationResidentForTaxOtherCountriesFormProvider()
+  val formProvider = new WhatAreTheTaxNumbersForNonUKOrganisationFormProvider()
   val form = formProvider()
   val index: Int = 0
+
+  val taxNumber: String = "123ABC"
+  val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val isOrganisationResidentForTaxOtherCountriesRoute = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForNonUKOrganisationRoute = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
-  "IsOrganisationResidentForTaxOtherCountries Controller" - {
+  "WhatAreTheTaxNumbersForNonUKOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -57,7 +60,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,14 +71,14 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
+        "form" -> form,
+        "mode" -> NormalMode,
         "organisationName" -> "Paper Org",
-        "radios" -> Radios.yesNo(form("confirm")),
+        "country" -> "the country",
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -87,13 +90,13 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -103,17 +106,21 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("confirm" -> "true"))
+      val filledForm = form.bind(Map(
+        "firstTaxNumber" -> taxNumber,
+        "secondTaxNumber" -> "",
+        "thirdTaxNumber" -> ""
+      ))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
+        "form" -> filledForm,
+        "mode" -> NormalMode,
         "organisationName" -> "the organisation",
-        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "country" -> "France",
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -134,13 +141,12 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -153,9 +159,9 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
         .success.value
 
       val application =
@@ -167,8 +173,8 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 
@@ -185,8 +191,8 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request = FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -197,12 +203,11 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("confirm"))
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -212,7 +217,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKOrganisationRoute)
 
       val result = route(application, request).value
 
@@ -228,8 +233,8 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 

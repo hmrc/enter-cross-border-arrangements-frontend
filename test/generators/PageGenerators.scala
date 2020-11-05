@@ -21,6 +21,15 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryOrganisationLoopPage: Arbitrary[OrganisationLoopPage.type] =
+    Arbitrary(OrganisationLoopPage)
+
+  implicit lazy val arbitraryWhatAreTheTaxNumbersForNonUKOrganisationPage: Arbitrary[WhatAreTheTaxNumbersForNonUKOrganisationPage.type] =
+    Arbitrary(WhatAreTheTaxNumbersForNonUKOrganisationPage)
+
+  implicit lazy val arbitraryDoYouKnowTINForNonUKOrganisationPage: Arbitrary[DoYouKnowTINForNonUKOrganisationPage.type] =
+    Arbitrary(DoYouKnowTINForNonUKOrganisationPage)
+
   implicit lazy val arbitraryIsIndividualPlaceOfBirthKnownPage: Arbitrary[IsIndividualPlaceOfBirthKnownPage.type] =
     Arbitrary(IsIndividualPlaceOfBirthKnownPage)
 

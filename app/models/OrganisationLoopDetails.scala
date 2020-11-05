@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package navigation
+package models
 
-import models.{Mode, NormalMode, UserAnswers}
-import pages._
-import play.api.mvc.{AnyContent, Call, Request}
+import play.api.libs.json.{Json, OFormat}
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call =
-    desiredRoute
+case class OrganisationLoopDetails(taxResidentOtherCountries: Option[Boolean],
+                                   whichCountry: Option[Country],
+                                   doYouKnowTIN: Option[Boolean],
+                                   taxNumbersNonUK: Option[TaxReferenceNumbers])
+object OrganisationLoopDetails {
+  implicit val format: OFormat[OrganisationLoopDetails] = Json.format[OrganisationLoopDetails]
 }
+
