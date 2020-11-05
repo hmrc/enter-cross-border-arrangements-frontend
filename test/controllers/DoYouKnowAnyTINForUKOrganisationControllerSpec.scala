@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{DisplayNamePage, DoYouKnowAnyTINForUKOrganisationPage}
+import pages.{DisplayNamePage, DoYouKnowAnyTINForUKOrganisationPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -53,7 +53,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(DisplayNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -68,8 +68,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("confirm")),
-        "organisationName" -> "Paper Org"
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
       templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKOrganisation.njk"
@@ -100,8 +99,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm")),
-        "organisationName" -> "the organisation"
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
       templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKOrganisation.njk"

@@ -69,7 +69,8 @@ class WhichCountryTaxForOrganisationController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "countries" -> countryJsonList(preparedForm.data, countries)
+        "countries" -> countryJsonList(preparedForm.data, countries),
+         "index" -> index
       )
 
       renderer.render("whichCountryTaxForOrganisation.njk", json).map(Ok(_))

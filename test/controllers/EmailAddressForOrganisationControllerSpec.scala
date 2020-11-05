@@ -66,7 +66,6 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "organisationName" -> "the organisation",
         "mode" -> NormalMode
       )
 
@@ -97,7 +96,6 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "organisationName" -> "the organisation",
         "mode" -> NormalMode
       )
 

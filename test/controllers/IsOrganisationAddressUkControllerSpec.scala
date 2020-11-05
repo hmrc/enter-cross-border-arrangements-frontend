@@ -67,8 +67,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value")),
-        "organisationName" -> "the organisation"
+        "radios" -> Radios.yesNo(form("value"))
       )
 
       templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
@@ -99,8 +98,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value")),
-        "organisationName" -> "the organisation"
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
       templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"

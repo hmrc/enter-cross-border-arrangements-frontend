@@ -95,8 +95,7 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
         "form"   -> form,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "organisation's name",
-        "radios" -> Radios(field = form("value"), items = addressRadios)
+         "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
@@ -138,7 +137,6 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "organisation's name",
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 

@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.EmailAddressQuestionForOrganisationFormProvider
-import helpers.JourneyHelpers.getUsersName
+import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -47,8 +47,6 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  implicit val alternativeText: String = "the organisation"
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -59,7 +57,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "organisationName" -> getUsersName(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers),
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
@@ -75,7 +73,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "organisationName" -> getUsersName(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers),
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )

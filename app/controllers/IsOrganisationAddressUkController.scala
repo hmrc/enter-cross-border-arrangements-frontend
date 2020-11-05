@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.IsOrganisationAddressUkFormProvider
-import helpers.JourneyHelpers.getUsersName
+import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -47,8 +47,6 @@ class IsOrganisationAddressUkController @Inject()(
 
   private val form = formProvider()
 
-  implicit val alternativeText: String = "the organisation"
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -61,7 +59,7 @@ class IsOrganisationAddressUkController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getUsersName(request.userAnswers)
+        "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
       renderer.render("isOrganisationAddressUk.njk", json).map(Ok(_))
@@ -77,7 +75,7 @@ class IsOrganisationAddressUkController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getUsersName(request.userAnswers)
+            "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
           renderer.render("isOrganisationAddressUk.njk", json).map(BadRequest(_))

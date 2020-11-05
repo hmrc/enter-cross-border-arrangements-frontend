@@ -82,8 +82,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode,
-        "usersName" -> "the organisation"
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "address.njk"
@@ -125,8 +124,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode,
-        "usersName" -> "the organisation"
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "address.njk"

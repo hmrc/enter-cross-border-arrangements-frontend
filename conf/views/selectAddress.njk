@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           <h1 class="govuk-heading-xl">
-            {{ messages("selectAddress.individual.heading", usersName) if individual else messages("selectAddress.heading", usersName) }}
+            {{ messages("selectAddress.individual.heading", displayName) if individual else messages("selectAddress.heading", displayName) }}
           </h1>
 
           <span id="select-address-hint" class="govuk-hint">
