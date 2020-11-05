@@ -521,8 +521,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-              Country("valid","FR","France"))
+            val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
+              Country("valid", "FR", "France"))
 
             val updatedAnswers =
               answers.set(OrganisationAddressPage, address)
@@ -921,6 +921,88 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
         }
       }
+
+
+      "must go from 'Which country is the individual resident in for tax purposes?' to" +
+        "'Do you know the individuals tax identification numbers for the United Kingdom' when the country is GB" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhichCountryTaxForIndividualPage, country)
+                .success
+                .value
+
+            navigator
+              .nextPage(WhichCountryTaxForIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Do you know the individuals tax identification numbers for the United Kingdom' to" +
+        "'What are the individuals tax identification numbers for the United Kingdom when true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowAnyTINForUKIndividualPage, true)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Do you know the individuals tax identification numbers for the United Kingdom' to" +
+        "'Is the individuals resident for tax purposes in any other countries?' when false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowAnyTINForUKIndividualPage, false)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'What are the individuals tax identification numbers for the United Kingdom to" +
+        "'Is the individuals resident for tax purposes in any other countries?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatAreTheTaxNumbersForUKIndividualPage, TaxReferenceNumbers("1234567890", None, None))
+                .success.value
+
+            navigator
+              .nextPage(WhatAreTheTaxNumbersForUKIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+
+        }
+      }
+
+
+      "must go from Is the individuals resident for tax purposes in any other countries? page to " +
+        "Which country is the individuals resident in for tax purposes? page if the answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsIndividualResidentForTaxOtherCountriesPage, true)
+                .success.value
+
+            navigator
+              .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+        }
+      }
+
     }
   }
 }
