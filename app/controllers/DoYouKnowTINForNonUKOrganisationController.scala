@@ -45,10 +45,11 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val country = getCountry(request.userAnswers)
+      val form = formProvider(country)
 
       val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
@@ -67,7 +68,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "country" -> getCountry(request.userAnswers),
+        "country" -> country,
         "index" -> index
       )
 
@@ -77,6 +78,9 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val country = getCountry(request.userAnswers)
+      val form = formProvider(country)
+
       form.bindFromRequest().fold(
         formWithErrors => {
 
@@ -85,7 +89,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "country" -> getCountry(request.userAnswers),
+            "country" -> country,
             "index" -> index
           )
 

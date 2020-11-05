@@ -42,7 +42,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
-  val form = formProvider()
+  val form = formProvider("the country")
 
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0

@@ -17,14 +17,23 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.data.{Form, FormError}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
-class DoYouKnowTINForNonUKOrganisationFormProviderSpec extends BooleanFieldBehaviours {
+class DoYouKnowTINForNonUKOrganisationFormProviderSpec extends BooleanFieldBehaviours with GuiceOneAppPerSuite {
 
-  val requiredKey = "doYouKnowTINForNonUKOrganisation.error.required"
+  val requiredMessage = "Select yes if you know the tax identification numbers for the organisation in United Kingdom"
   val invalidKey = "error.boolean"
 
-  val form = new DoYouKnowTINForNonUKOrganisationFormProvider()()
+  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val defaultMessagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  val messages: Messages = defaultMessagesApi.preferred(request)
+
+  val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
+  val form: Form[Boolean] = formProvider("United Kingdom")(messages)
 
   ".confirm" - {
 
@@ -39,7 +48,7 @@ class DoYouKnowTINForNonUKOrganisationFormProviderSpec extends BooleanFieldBehav
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredMessage)
     )
   }
 }

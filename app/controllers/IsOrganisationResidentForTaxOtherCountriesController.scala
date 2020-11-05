@@ -96,10 +96,13 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
               IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
+                //Update value
                 val updatedLoop = list.lift(index).get.copy(taxResidentOtherCountries = Some(value))
                 list.updated(index, updatedLoop)
               } else {
-                list
+                //Add to loop
+                val newOrganisationLoop = OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
+                list :+ newOrganisationLoop
               }
           }
 

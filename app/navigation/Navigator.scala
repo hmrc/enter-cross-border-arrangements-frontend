@@ -44,8 +44,7 @@ class Navigator @Inject()() {
     case SelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case OrganisationAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
-    case EmailAddressForOrganisationPage => ua => request =>
-      Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, incrementIndexOrganisation(ua, request)))
+    case EmailAddressForOrganisationPage => _ => _ => Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, 0))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(NormalMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(NormalMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(NormalMode)
@@ -77,7 +76,7 @@ class Navigator @Inject()() {
     case OrganisationAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(CheckMode)
     case EmailAddressForOrganisationPage => ua => request =>
-      Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, incrementIndexOrganisation(ua, request)))
+      Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(CheckMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(CheckMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(CheckMode)
@@ -215,7 +214,7 @@ class Navigator @Inject()() {
   private def emailAddressQuestionRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(EmailAddressQuestionForOrganisationPage) map {
       case true  => routes.EmailAddressForOrganisationController.onPageLoad(mode)
-      case false => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, incrementIndexOrganisation(ua, request))
+      case false => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
     }
 
   private def whichCountryTaxForOrganisationRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
