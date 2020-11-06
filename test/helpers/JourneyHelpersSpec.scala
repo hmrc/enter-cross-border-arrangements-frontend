@@ -18,10 +18,10 @@ package helpers
 
 import base.SpecBase
 import generators.Generators
-import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getOrganisationName, getUsersName, incrementIndexOrganisation}
+import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getOrganisationName, getIndividualName, incrementIndexOrganisation}
 import models.{Country, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{DisplayNamePage, OrganisationLoopPage, OrganisationNamePage}
+import pages.{OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -29,27 +29,6 @@ import play.api.test.FakeRequest
 class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "JourneyHelpers" - {
-
-    "getUsersName" - {
-      "must return the user's name if it's available" in {
-        forAll(validPersonalName) {
-          userName =>
-            implicit val alternativeText: String = "the individual's"
-            val userAnswers = UserAnswers(userAnswersId)
-              .set(DisplayNamePage, userName)
-              .success
-              .value
-
-            getUsersName(userAnswers) mustBe userName
-        }
-      }
-
-      "must return the alternative text if display name isn't available" in {
-        implicit val alternativeText: String = "the individual's"
-
-        getUsersName(emptyUserAnswers) mustBe alternativeText
-      }
-    }
 
     "getOrganisationName" - {
       "must return the organisation name if it's available" in {

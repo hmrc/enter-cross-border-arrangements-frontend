@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.IsIndividualAddressUkFormProvider
-import helpers.JourneyHelpers.getUsersName
+import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -61,7 +61,7 @@ class IsIndividualAddressUkController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "displayName" -> getUsersName(request.userAnswers)
+        "displayName" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("isIndividualAddressUk.njk", json).map(Ok(_))
@@ -77,7 +77,7 @@ class IsIndividualAddressUkController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "displayName" -> getUsersName(request.userAnswers)
+            "displayName" -> getIndividualName(request.userAnswers)
           )
 
           renderer.render("isIndividualAddressUk.njk", json).map(BadRequest(_))

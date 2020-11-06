@@ -95,7 +95,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         "form"   -> form,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "the individual's",
         "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
@@ -138,7 +137,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "the individual's",
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 

@@ -19,7 +19,7 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.getUsersName
+import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
@@ -80,7 +80,7 @@ class IndividualSelectAddressController @Inject()(
               "form" -> preparedForm,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "usersName" -> getUsersName(request.userAnswers),
+              "displayName" -> getIndividualName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
               "individual" -> true,
               "radios" -> radios
@@ -116,7 +116,7 @@ class IndividualSelectAddressController @Inject()(
               "form" -> formWithErrors,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "usersName" -> getUsersName(request.userAnswers),
+              "displayName" -> getIndividualName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
               "individual" -> true,
               "radios" -> radios

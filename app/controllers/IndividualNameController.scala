@@ -21,7 +21,7 @@ import forms.IndividualNameFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DisplayNamePage, IndividualNamePage}
+import pages.IndividualNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -81,8 +81,7 @@ class IndividualNameController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, value))
-            updatedAnswers2 <- Future.fromTry(updatedAnswers.set(DisplayNamePage, value.displayName))
-            _              <- sessionRepository.set(updatedAnswers2)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IndividualNamePage, mode, updatedAnswers))
 
         }

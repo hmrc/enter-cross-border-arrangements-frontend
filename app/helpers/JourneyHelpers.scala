@@ -17,16 +17,16 @@
 package helpers
 
 import models.{Country, UserAnswers}
-import pages.{DisplayNamePage, OrganisationLoopPage, OrganisationNamePage}
+import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContent, Request}
 
 object JourneyHelpers {
 
-  def getUsersName(userAnswers: UserAnswers)(implicit alternativeText: String): String = {
-    userAnswers.get(DisplayNamePage) match {
-      case Some(displayName) => displayName
-      case _ => alternativeText
+  def getIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match {
+      case Some(indName) => indName.displayName
+      case _ => "the individual"
     }
   }
 

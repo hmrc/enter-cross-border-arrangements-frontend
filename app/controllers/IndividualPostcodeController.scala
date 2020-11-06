@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.PostcodeFormProvider
-import helpers.JourneyHelpers.getUsersName
+import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -64,7 +64,7 @@ class IndividualPostcodeController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "usersName" -> getUsersName(request.userAnswers),
+        "displayName" -> getIndividualName(request.userAnswers),
         "manualAddressURL" -> manualAddressURL(mode),
         "actionUrl" -> actionUrl(mode),
         "individual" -> true,
@@ -81,7 +81,7 @@ class IndividualPostcodeController @Inject()(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
-            "usersName" -> getUsersName(request.userAnswers),
+            "displayName" -> getIndividualName(request.userAnswers),
             "manualAddressURL" -> manualAddressURL(mode),
             "actionUrl" -> actionUrl(mode),
             "individual" -> true,

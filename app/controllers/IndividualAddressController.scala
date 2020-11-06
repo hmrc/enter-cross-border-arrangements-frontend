@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getUsersName}
+import helpers.JourneyHelpers.{countryJsonList, getIndividualName}
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -68,7 +68,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
         "individual" -> true,
-        "usersName" -> getUsersName(request.userAnswers)
+        "displayName" -> getIndividualName(request.userAnswers)
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -90,7 +90,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
             "individual" -> true,
-            "usersName" -> getUsersName(request.userAnswers)
+            "displayName" -> getIndividualName(request.userAnswers)
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))
