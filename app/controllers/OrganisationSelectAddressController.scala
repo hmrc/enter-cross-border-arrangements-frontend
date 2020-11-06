@@ -51,7 +51,7 @@ class OrganisationSelectAddressController @Inject()(
 
   private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
 
-  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onPageLoad(mode).url
+  private def actionUrl(mode: Mode): String = routes.OrganisationSelectAddressController.onPageLoad(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -77,7 +77,7 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> preparedForm,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "usersName" -> getOrganisationName(request.userAnswers),
+              "displayName" -> getOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
               "individual" -> false,
               "radios" -> radios
@@ -113,7 +113,7 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> formWithErrors,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "usersName" -> getOrganisationName(request.userAnswers),
+              "displayName" -> getOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
               "individual" -> false,
               "radios" -> radios
