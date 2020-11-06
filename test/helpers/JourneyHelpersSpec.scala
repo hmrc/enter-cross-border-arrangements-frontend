@@ -18,10 +18,10 @@ package helpers
 
 import base.SpecBase
 import generators.Generators
-import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getOrganisationName, getIndividualName, incrementIndexOrganisation}
-import models.{Country, OrganisationLoopDetails, UserAnswers}
+import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getIndividualName, getOrganisationName, incrementIndexOrganisation}
+import models.{Country, Name, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{OrganisationLoopPage, OrganisationNamePage}
+import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -29,6 +29,17 @@ import play.api.test.FakeRequest
 class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "JourneyHelpers" - {
+
+    "getIndividualName" - {
+      "must return the individuals name if it's available" in {
+            val userAnswers = UserAnswers(userAnswersId)
+              .set(IndividualNamePage, Name("firstName", "lastName"))
+                .success
+                .value
+
+            getIndividualName(userAnswers) mustBe ("firstName lastName")
+        }
+    }
 
     "getOrganisationName" - {
       "must return the organisation name if it's available" in {
