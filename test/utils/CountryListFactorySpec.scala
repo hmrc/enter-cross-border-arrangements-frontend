@@ -24,16 +24,23 @@ import models.Country
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.Environment
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, Json}
 
 class CountryListFactorySpec extends SpecBase {
+
+  val countries: JsArray = Json.arr(
+    Json.obj("state" -> "valid", "code" -> "GA", "description" -> "Gabon"),
+    Json.obj("state" -> "valid", "code" -> "GB", "description" -> "United Kingdom"),
+    Json.obj("state" -> "valid", "code" -> "BA", "description" -> "Bosnia and Herzegovina"),
+    Json.obj("state" -> "valid", "code" -> "ST", "description" -> "Sao Tome and Principe"),
+    Json.obj("state" -> "valid", "code" -> "BR", "description" -> "Brazil")
+  )
+
   "Factory must " - {
-    "return option of country sequence when given a valid json file" in {
+    "return option of country sequence in alphabetical order when given a valid json file" in {
 
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
       val env = mock[Environment]
-
-      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Somewhere"))
 
       when(conf.countryCodeJson).thenReturn("countries.json")
 
@@ -42,16 +49,20 @@ class CountryListFactorySpec extends SpecBase {
 
       val factory = sut(env, conf)
 
-      factory.getCountryList() mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
+      factory.getCountryList() mustBe Some(
+        Seq(
+          Country("valid", "BA", "Bosnia and Herzegovina"),
+          Country("valid", "BR", "Brazil"),
+          Country("valid", "GA", "Gabon"),
+          Country("valid", "ST", "Sao Tome and Principe"),
+          Country("valid", "GB", "United Kingdom")
+        ))
     }
 
-    "return country sequence without United Kingdom when given a valid json file" in {
+    "return country sequence in alphabetical order without United Kingdom when given a valid json file" in {
 
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
       val env = mock[Environment]
-
-      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Somewhere"),
-                        Json.obj("state" -> "valid", "code" -> "GB", "description" -> "United Kingdom"))
 
       when(conf.countryCodeJson).thenReturn("countries.json")
 
@@ -60,7 +71,13 @@ class CountryListFactorySpec extends SpecBase {
 
       val factory = sut(env, conf)
 
-      factory.getWithoutUKCountryList() mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
+      factory.getWithoutUKCountryList() mustBe Some(
+        Seq(
+          Country("valid", "BA", "Bosnia and Herzegovina"),
+          Country("valid", "BR", "Brazil"),
+          Country("valid", "GA", "Gabon"),
+          Country("valid", "ST", "Sao Tome and Principe")
+        ))
     }
 
     "return None when country list cannot be loaded from environment" in {
