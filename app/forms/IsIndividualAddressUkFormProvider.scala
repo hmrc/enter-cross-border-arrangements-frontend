@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import play.api.libs.json.Json
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-//strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
-case class Name(firstName: String, secondName: String) {
-  def displayName: String = s"$firstName $secondName"
-}
+class IsIndividualAddressUkFormProvider @Inject() extends Mappings {
 
-object Name {
-  implicit val format = Json.format[Name]
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("isIndividualAddressUk.error.required")
+    )
 }

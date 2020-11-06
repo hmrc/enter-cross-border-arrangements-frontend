@@ -90,6 +90,18 @@ trait Formatters {
       Map(key -> value.getOrElse(""))
   }
 
+  private[mappings] val optionalMaxLengthStringFormatter: Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+      Right(
+        data
+          .get(key)
+          .filter(_.lengthCompare(0) > 0)
+      )
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
 
   private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit ev: Enumerable[A]): Formatter[A] =
     new Formatter[A] {

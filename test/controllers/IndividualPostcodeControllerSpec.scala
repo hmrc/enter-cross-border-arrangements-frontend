@@ -17,60 +17,45 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import forms.AddressFormProvider
+import forms.PostcodeFormProvider
 import matchers.JsonMatchers
-import models.Address._
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.OrganisationAddressPage
-import play.api.data.Form
+import pages.IndividualUkPostcodePage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CountryListFactory
+
 
 import scala.concurrent.Future
 
-class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
+  def onwardRoute = Call("GET", "/foo")
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val formProvider = new PostcodeFormProvider()
+  val form = formProvider()
 
-  val formProvider = new AddressFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
-  val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-    Country("valid","FR","France"))
+  lazy val postcodeRoute = routes.IndividualPostcodeController.onPageLoad(NormalMode).url
 
-  lazy val organisationAddressRoute: String = routes.OrganisationAddressController.onPageLoad(NormalMode).url
-
-  "OrganisationAddress Controller" - {
-
-    //TODO: Add test for redirect to check-your-answers when page is created
+  "Postcode Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CountryListFactory].toInstance(mockCountryFactory)).build()
-
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -85,7 +70,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "address.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -96,12 +81,9 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-
-      val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualUkPostcodePage, "AA1 1AA").success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -111,29 +93,22 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(
-        Map(
-          "addressLine1" -> "value 1",
-          "addressLine2" -> "value 2",
-          "addressLine3" -> "value 3",
-          "city" -> "value 4",
-          "postCode" -> "XX9 9XX",
-          "country" -> "FR"
-        )
-      )
+      val filledForm = form.bind(Map("value" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "address.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -145,16 +120,13 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
           )
           .build()
 
-
       val request =
-        FakeRequest(POST, organisationAddressRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
-            ("postcode", "XX9 9XX"),("country", "FR"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("value", "AA1 1AA"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -166,8 +138,8 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, organisationAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -178,11 +150,11 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "address.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -192,11 +164,12 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request = FakeRequest(GET, postcodeRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -207,8 +180,8 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, organisationAddressRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 

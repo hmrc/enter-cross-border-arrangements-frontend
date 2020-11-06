@@ -27,7 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.OrganisationAddressPage
+import pages.IndividualAddressPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -41,7 +41,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -54,7 +54,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
   val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
     Country("valid","FR","France"))
 
-  lazy val organisationAddressRoute: String = routes.OrganisationAddressController.onPageLoad(NormalMode).url
+  lazy val individualAddressRoute: String = routes.IndividualAddressController.onPageLoad(NormalMode).url
 
   "OrganisationAddress Controller" - {
 
@@ -70,7 +70,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[CountryListFactory].toInstance(mockCountryFactory)).build()
 
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request = FakeRequest(GET, individualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -98,10 +98,10 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
-      val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressPage, address).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request = FakeRequest(GET, individualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -147,7 +147,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
 
       val request =
-        FakeRequest(POST, organisationAddressRoute)
+        FakeRequest(POST, individualAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
             ("postcode", "XX9 9XX"),("country", "FR"))
 
@@ -166,7 +166,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, organisationAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request = FakeRequest(POST, individualAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -192,7 +192,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request = FakeRequest(GET, individualAddressRoute)
 
       val result = route(application, request).value
 
@@ -207,7 +207,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, organisationAddressRoute)
+        FakeRequest(POST, individualAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"))
 
       val result = route(application, request).value

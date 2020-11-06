@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.PostcodeFormProvider
+import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{DisplayNamePage, PostcodePage}
+import pages.IndividualUkPostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PostcodeController @Inject()(
+class IndividualPostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -46,20 +47,27 @@ class PostcodeController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+  implicit val alternativeText: String = "the individual's"
+
+  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url //Todo update to correct value
+
+  private def actionUrl(mode: Mode) = routes.IndividualPostcodeController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val preparedForm = request.userAnswers.get(PostcodePage) match {
+      val preparedForm = request.userAnswers.get(IndividualUkPostcodePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
+
       val json = Json.obj(
         "form" -> preparedForm,
-        "usersName" -> getUsersName(request.userAnswers),
+        "displayName" -> getIndividualName(request.userAnswers),
         "manualAddressURL" -> manualAddressURL(mode),
+        "actionUrl" -> actionUrl(mode),
+        "individual" -> true,
         "mode" -> mode
       )
 
@@ -73,8 +81,10 @@ class PostcodeController @Inject()(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
-            "usersName" -> getUsersName(request.userAnswers),
+            "displayName" -> getIndividualName(request.userAnswers),
             "manualAddressURL" -> manualAddressURL(mode),
+            "actionUrl" -> actionUrl(mode),
+            "individual" -> true,
             "mode" -> mode
           )
 
@@ -82,16 +92,9 @@ class PostcodeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUkPostcodePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IndividualUkPostcodePage, mode, updatedAnswers))
       )
   }
-
-  private def getUsersName(userAnswers: UserAnswers): String =
-      userAnswers.get(DisplayNamePage) match {
-        case Some(displayName) => displayName
-        case _ => "organisation name"
-      }
-
 }

@@ -39,7 +39,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class SelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -48,7 +48,7 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectAddressRoute = routes.SelectAddressController.onPageLoad(NormalMode).url
+  lazy val selectAddressRoute = routes.OrganisationSelectAddressController.onPageLoad(NormalMode).url
   lazy val manualAddressURL: String = routes.OrganisationAddressController.onPageLoad(NormalMode).canonical()
 
   val formProvider = new SelectAddressFormProvider()
@@ -95,8 +95,7 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         "form"   -> form,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "organisation name",
-        "radios" -> Radios(field = form("value"), items = addressRadios)
+         "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
@@ -138,7 +137,6 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar with Nunjuc
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "usersName" -> "organisation name",
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
