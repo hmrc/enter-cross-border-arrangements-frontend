@@ -187,3 +187,13 @@ GET        /individual/address                        controllers.IndividualAddr
 POST       /individual/address                        controllers.IndividualAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /individual/change-address                 controllers.IndividualAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-address                 controllers.IndividualAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individual/email-address                            controllers.EmailAddressForIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/email-address                            controllers.EmailAddressForIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-email-address                     controllers.EmailAddressForIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-email-address                     controllers.EmailAddressForIndividualController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individual/what-is-email-address                    controllers.EmailAddressQuestionForIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/what-is-email-address                    controllers.EmailAddressQuestionForIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-what-is-email-address             controllers.EmailAddressQuestionForIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-what-is-email-address             controllers.EmailAddressQuestionForIndividualController.onSubmit(mode: Mode = CheckMode)

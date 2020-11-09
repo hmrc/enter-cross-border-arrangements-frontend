@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isIndividualAddressUk.title"), form.errors) }}
+  {{ title(messages("emailAddressForIndividual.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,29 +27,26 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.IsIndividualAddressUkController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.EmailAddressForIndividualController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          {{ govukRadios({
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('isIndividualAddressUk.heading', displayName),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl name-overflow"
-              }
+          {{ govukInput({
+            label: {
+              text: messages('emailAddressForIndividual.heading', displayName),
+              isPageHeading: true,
+              classes: "govuk-label--xl name-overflow"
             },
-            items: radios,
-            errorMessage: form.value.error
+            id: "email",
+            name: "email",
+            value: form.email.value,
+            errorMessage: form.email.error
           }) }}
 
           {{ govukButton({
-              text: messages("site.saveAndContinue"),
-              attributes: {
-                  "id": "submit"
-              }
-           }) }}
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+          }) }}
 
         </form>
 
@@ -57,4 +54,4 @@
     </div>
   </div>
 
-{% endblock %}
+{% endblock %} 
