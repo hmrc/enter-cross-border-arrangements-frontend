@@ -54,6 +54,11 @@ class Navigator @Inject()() {
     case IsOrganisationResidentForTaxOtherCountriesPage => isOrganisationResidentForTaxOtherCountriesRoutes(NormalMode)
     case WhatAreTheTaxNumbersForNonUKOrganisationPage => ua => request =>
       Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, incrementIndexOrganisation(ua, request)))
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
+    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+    case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForIndividualPage => _ => _ => Some(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
@@ -66,8 +71,6 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
-    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -209,9 +212,8 @@ class Navigator @Inject()() {
   private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //ToDo route to email page
+      case false => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
     }
-
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsOrganisationAddressKnownPage) map {
