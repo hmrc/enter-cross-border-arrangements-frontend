@@ -403,5 +403,4 @@ emailAddressForIndividual.heading = What is {0}’s email address?
 emailAddressForIndividual.hint = We will only use this to get in contact if we have any questions about the arrangement.
 emailAddressForIndividual.checkYourAnswersLabel = What is their email address?
 emailAddressForIndividual.error.required = Enter an email address
-emailAddressForIndividual.error.invalid = Enter an email address in the correct format, like name@example.com
-emailAddressForIndividual.error.length = Email address must be 254 characters or less
+emailAddressForIndividual.error.length = Email address must be 400 characters or less
