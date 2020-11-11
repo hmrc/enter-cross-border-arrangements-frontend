@@ -95,7 +95,7 @@ class WhichCountryTaxForIndividualController @Inject()(
   private def getIndividualName(userAnswers: UserAnswers): String = {
     userAnswers.get(IndividualNamePage) match {
       case Some(name) => s"${"is " + name.firstName + " " + name.secondName}"
-      case None => "their"
+      case None => "are they"
     }
   }
 }

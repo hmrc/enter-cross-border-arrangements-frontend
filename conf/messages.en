@@ -399,7 +399,7 @@ doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel = Do you know their tax ide
 doYouKnowAnyTINForUKIndividual.error.required =  Select yes if you know any tax numbers for the individual
 
 isIndividualResidentForTaxOtherCountries.title = Is the individual resident for tax purposes in any other countries?
-isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.heading = {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = Is the individual resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in any other countries
 

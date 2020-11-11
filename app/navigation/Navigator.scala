@@ -58,7 +58,8 @@ class Navigator @Inject()() {
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
     case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case EmailAddressQuestionForIndividualPage => _ => _ => Some(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
+    case EmailAddressForIndividualPage => _ => _ => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
     case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(NormalMode)
     case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(NormalMode)
     case WhatAreTheTaxNumbersForUKIndividualPage=> _ => _ => Some(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
@@ -223,6 +224,12 @@ class Navigator @Inject()() {
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
       case false => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
+    }
+
+  private def emailAddressQuestionForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(EmailAddressQuestionForIndividualPage) map {
+      case true  => routes.EmailAddressForIndividualController.onPageLoad(mode)
+      case false => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
     }
 
   private def whichCountryTaxForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =

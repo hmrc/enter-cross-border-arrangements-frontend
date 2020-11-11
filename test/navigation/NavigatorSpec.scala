@@ -922,6 +922,36 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from 'Do you know individuals email address' " +
+        "to 'What is individuals email address?' page if the answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(EmailAddressQuestionForIndividualPage, false)
+                .success.value
+
+            navigator
+              .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is individuals email address?' to" +
+        "'Which country is the individual resident in for tax purposes?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(EmailAddressForIndividualPage, "test@email.com")
+                .success.value
+
+            navigator
+              .nextPage(EmailAddressForIndividualPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+
+        }
+      }
 
       "must go from 'Which country is the individual resident in for tax purposes?' to" +
         "'Do you know the individuals tax identification numbers for the United Kingdom' when the country is GB" in {
