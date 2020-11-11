@@ -68,7 +68,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "name" -> "First Last",
+        "name" -> "Is First Last",
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
