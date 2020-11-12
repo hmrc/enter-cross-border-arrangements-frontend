@@ -89,7 +89,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val userAnswers = UserAnswers(userAnswersId)
         .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -155,7 +155,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val userAnswers = UserAnswers(userAnswersId)
         .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None, None , None)))
         .success.value
 
       val application =

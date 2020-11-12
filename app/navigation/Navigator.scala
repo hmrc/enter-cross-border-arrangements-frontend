@@ -281,14 +281,14 @@ class Navigator @Inject()() {
     ua.get(WhichCountryTaxForOrganisationPage) map {
       countryList =>
         countryList.code match {
-          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode)
+          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
           case _ => routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
         }
     }
 
   private def doYouKnowAnyTINForUKOrganisationRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(DoYouKnowAnyTINForUKOrganisationPage) map {
-      case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode)
+      case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, incrementIndexOrganisation(ua, request))
     }
 

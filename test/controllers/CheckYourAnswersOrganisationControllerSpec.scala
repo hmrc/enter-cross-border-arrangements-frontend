@@ -49,9 +49,9 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
     val selectedNonUK: Country = Country("valid", "FR", "France")
 
     val organisationLoop: IndexedSeq[OrganisationLoopDetails] = IndexedSeq(OrganisationLoopDetails(
-      Some(true), Some(selectedUK), Some(true), Some(referencesUK)
+      Some(true), Some(selectedUK), Some(true), Some(referencesNonUK), Some(true), Some(referencesUK)
     ), OrganisationLoopDetails(
-      Some(true), Some(selectedNonUK), Some(true), Some(referencesNonUK)
+      Some(true), Some(selectedNonUK), Some(true), Some(referencesNonUK), Some(true), Some(referencesUK)
     ))
 
 

@@ -97,7 +97,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhichCountryTaxForOrganisationPage, selectedCountry)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -161,7 +161,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhichCountryTaxForOrganisationPage, selectedCountry)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application =

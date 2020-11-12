@@ -104,6 +104,8 @@ trait ModelGenerators {
       whichCountry <- Gen.option(arbitrary[Country])
       doYouKnowTIN <- Gen.option(arbitrary[Boolean])
       taxNumbersNonUK <- Gen.option(arbitrary[TaxReferenceNumbers])
-    } yield IndexedSeq(OrganisationLoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK))
+      doYouKnowUTR <- Gen.option(arbitrary[Boolean])
+      taxNumbersUK <- Gen.option(arbitrary[TaxReferenceNumbers])
+    } yield IndexedSeq(OrganisationLoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
 }

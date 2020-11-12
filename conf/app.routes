@@ -144,15 +144,15 @@ POST       /organisation/which-country-tax-:index               controllers.Whic
 GET        /organisation/change-which-country-tax-:index        controllers.WhichCountryTaxForOrganisationController.onPageLoad(mode: Mode = CheckMode, index: Int)
 POST       /organisation/change-which-country-tax-:index        controllers.WhichCountryTaxForOrganisationController.onSubmit(mode: Mode = CheckMode, index: Int)
 
-GET        /organisation/uk-tin-known                           controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
-POST       /organisation/uk-tin-known                           controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
-GET        /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
-POST       /organisation/change-uk-tin-known                    controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+GET        /organisation/uk-tin-known-:index                           controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /organisation/uk-tin-known-:index                           controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /organisation/change-uk-tin-known-:index                    controllers.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /organisation/change-uk-tin-known-:index                    controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode: Mode = CheckMode, index: Int)
 
-GET        /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = NormalMode)
-POST       /organisation/uk-tax-numbers                         controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = NormalMode)
-GET        /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = CheckMode)
-POST       /organisation/change-uk-tax-numbers                  controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = CheckMode)
+GET        /organisation/uk-tax-numbers-:index                           controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /organisation/uk-tax-numbers-:index                           controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /organisation/change-uk-tax-numbers-:index                    controllers.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /organisation/change-uk-tax-numbers-:index                    controllers.WhatAreTheTaxNumbersForUKOrganisationController.onSubmit(mode: Mode = CheckMode, index: Int)
 
 GET        /organisation/tax-resident-countries-:index          controllers.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = NormalMode, index: Int)
 POST       /organisation/tax-resident-countries-:index          controllers.IsOrganisationResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode, index: Int)
