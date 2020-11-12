@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.WhichCountryTaxForOrganisationFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Country, Mode, OrganisationLoopDetails}
+import models.{CheckMode, Country, Mode, OrganisationLoopDetails}
 import navigation.Navigator
 import pages.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

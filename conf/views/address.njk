@@ -38,7 +38,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('address.addressLine1')
+                      text: messages('organisationAddress.addressLine1')
                     },
                     id: "addressLine1",
                     name: "addressLine1",
@@ -48,7 +48,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('address.addressLine2')
+                      text: messages('organisationAddress.addressLine2')
                     },
                     id: "addressLine2",
                     name: "addressLine2",
@@ -58,7 +58,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('address.addressLine3')
+                      text: messages('organisationAddress.addressLine3')
                     },
                     id: "addressLine3",
                     name: "addressLine3",
@@ -68,7 +68,7 @@
 
                   {{ govukInput({
                     label: {
-                      text: messages('address.city')
+                      text: messages('organisationAddress.city')
                     },
                     id: "city",
                     name: "city",
@@ -78,7 +78,7 @@
 
                   {{ govukInput({
                    label: {
-                      text: messages('address.postcodeUk.optional' if isUkAddress else 'address.postcode.optional' )
+                      text: messages('organisationAddress.postcodeUk.optional' if isUkAddress else 'organisationAddress.postcode.optional' )
                    },
                    id: "postCode",
                    name: "postCode",
