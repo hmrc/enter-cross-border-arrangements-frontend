@@ -31,6 +31,10 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(EmailAddressForIndividualPage.type, JsValue)] ::
     arbitrary[(WhatAreTheTaxNumbersForNonUKOrganisationPage.type, JsValue)] ::
     arbitrary[(DoYouKnowTINForNonUKOrganisationPage.type, JsValue)] ::
+    arbitrary[(WhichCountryTaxForIndividualPage.type, JsValue)] ::
+    arbitrary[(WhatAreTheTaxNumbersForUKIndividualPage.type, JsValue)] ::
+    arbitrary[(IsIndividualResidentForTaxOtherCountriesPage.type, JsValue)] ::
+    arbitrary[(DoYouKnowAnyTINForUKIndividualPage.type, JsValue)] ::
     arbitrary[(IsOrganisationResidentForTaxOtherCountriesPage.type, JsValue)] ::
     arbitrary[(WhatAreTheTaxNumbersForUKOrganisationPage.type, JsValue)] ::
     arbitrary[(DoYouKnowAnyTINForUKOrganisationPage.type, JsValue)] ::

@@ -58,7 +58,12 @@ class Navigator @Inject()() {
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
     case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case EmailAddressQuestionForIndividualPage => _ => _ => Some(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
+    case EmailAddressForIndividualPage => _ => _ => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode))
+    case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(NormalMode)
+    case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(NormalMode)
+    case WhatAreTheTaxNumbersForUKIndividualPage=> _ => _ => Some(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode))
+    case IsIndividualResidentForTaxOtherCountriesPage => isIndividualResidentForTaxOtherCountriesRoutes(NormalMode)
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
@@ -71,6 +76,8 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
+    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -84,6 +91,9 @@ class Navigator @Inject()() {
     case EmailAddressForOrganisationPage => ua => request =>
       Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(CheckMode)
+    case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(CheckMode)
+    case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(CheckMode)
+    case IsIndividualResidentForTaxOtherCountriesPage => isIndividualResidentForTaxOtherCountriesRoutes(CheckMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(CheckMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(CheckMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => ua => request =>
@@ -91,6 +101,7 @@ class Navigator @Inject()() {
     case IsOrganisationResidentForTaxOtherCountriesPage => isOrganisationResidentForTaxOtherCountriesRoutes(CheckMode)
     case WhatAreTheTaxNumbersForNonUKOrganisationPage => ua => request =>
       Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, incrementIndexOrganisation(ua, request)))
+    case WhatAreTheTaxNumbersForUKIndividualPage=> _ => _ => Some(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode))
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
@@ -213,6 +224,33 @@ class Navigator @Inject()() {
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
       case false => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
+    }
+
+  private def emailAddressQuestionForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(EmailAddressQuestionForIndividualPage) map {
+      case true  => routes.EmailAddressForIndividualController.onPageLoad(mode)
+      case false => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+    }
+
+  private def whichCountryTaxForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(WhichCountryTaxForIndividualPage) map {
+      countryList =>
+        countryList.code match {
+          case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode)
+          case _ => routes.IndexController.onPageLoad() // TODO: Send to nonUk page when ready
+        }
+    }
+
+  private def doYouKnowAnyTINForUKIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(DoYouKnowAnyTINForUKIndividualPage) map {
+      case true  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode)
+      case false => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode)
+    }
+
+  private def isIndividualResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
+      case true  => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() //TODO: Route to confirmation page
     }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =

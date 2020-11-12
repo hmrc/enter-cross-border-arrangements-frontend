@@ -56,6 +56,38 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryWhichCountryTaxForIndividualUserAnswersEntry: Arbitrary[(WhichCountryTaxForIndividualPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhichCountryTaxForIndividualPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatAreTheTaxNumbersForUKIndividualUserAnswersEntry: Arbitrary[(WhatAreTheTaxNumbersForUKIndividualPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatAreTheTaxNumbersForUKIndividualPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsIndividualResidentForTaxOtherCountriesUserAnswersEntry: Arbitrary[(IsIndividualResidentForTaxOtherCountriesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsIndividualResidentForTaxOtherCountriesPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryDoYouKnowAnyTINForUKIndividualUserAnswersEntry: Arbitrary[(DoYouKnowAnyTINForUKIndividualPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[DoYouKnowAnyTINForUKIndividualPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryIsOrganisationResidentForTaxOtherCountriesUserAnswersEntry: Arbitrary[(IsOrganisationResidentForTaxOtherCountriesPage.type, JsValue)] =
     Arbitrary {
       for {

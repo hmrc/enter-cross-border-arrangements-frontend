@@ -393,6 +393,34 @@ isIndividualAddressUk.error.required = Select yes if they live in the United Kin
 individualAddress.heading = What is {0}’s address?
 individualAddress.title = What is their address?
 
+doYouKnowAnyTINForUKIndividual.title = Do you know their tax identification numbers for the United Kingdom?
+doYouKnowAnyTINForUKIndividual.heading = Do you know {0} tax identification numbers for the United Kingdom?
+doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel = Do you know their tax identification numbers for the United Kingdom?
+doYouKnowAnyTINForUKIndividual.error.required =  Select yes if you know any tax numbers for the individual
+
+isIndividualResidentForTaxOtherCountries.title = Is the individual resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.heading = {0} resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = Is the individual resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in any other countries
+
+whatAreTheTaxNumbersForUKIndividual.title = What are their tax reference numbers?
+whatAreTheTaxNumbersForUKIndividual.heading = What are {0} tax reference numbers for the United Kingdom?
+whatAreTheTaxNumbersForUKIndividual.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
+whatAreTheTaxNumbersForUKIndividual.hintLink = find a lost UTR number
+whatAreTheTaxNumbersForUKIndividual.label1 = UK tax number 1
+whatAreTheTaxNumbersForUKIndividual.label2 = UK tax number 2 (optional)
+whatAreTheTaxNumbersForUKIndividual.label3 = UK tax number 3 (optional)
+whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel = What are the individuals’s tax reference numbers?
+whatAreTheTaxNumbersForUKIndividual.error.required = Enter tax number 1
+whatAreTheTaxNumbersForUKIndividual.label1.error.length = Tax identification number 1 must be 200 characters or less
+whatAreTheTaxNumbersForUKIndividual.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
+whatAreTheTaxNumbersForUKIndividual.label3.error.length = Tax identification number 3 (optional) must be 200 characters or less
+
+whichCountryTaxForIndividual.title = Which country are they resident in for tax purposes?
+whichCountryTaxForIndividual.heading = Which country {0} resident in for tax purposes?
+whichCountryTaxForIndividual.checkYourAnswersLabel = Which country are they resident in for tax purposes?
+whichCountryTaxForIndividual.error.required = Select country
+
 emailAddressQuestionForIndividual.title = Do you know their email address?
 emailAddressQuestionForIndividual.heading = Do you know {0}’s email address?
 emailAddressQuestionForIndividual.checkYourAnswersLabel = Do you know their email address?
