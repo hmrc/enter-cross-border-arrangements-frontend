@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes
-import models.{CheckMode, OrganisationLoopDetails, UserAnswers}
+import models.{CheckMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -139,7 +139,6 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
       displayAddressQuestionWithAddress,
       displayEmailQuestionWithEmail
     ).flatten
-
   }
 
   //TODO Update start indexes of change links
@@ -155,36 +154,32 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel"))
           )
         )
-      ))
+      )
+    )
   }
 
-  def whatAreTheTaxNumbersForNonUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, 1).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   def isOrganisationResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
     answer =>
       Row(
         key     = Key(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(yesOrNo(answer))
+      )
+  }
+
+  def doYouKnowAnyTINForUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer))
+      )
+  }
+
+  def doYouKnowTINForNonUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowTINForNonUKOrganisationPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer))
       )
   }
 
@@ -192,57 +187,53 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     answer =>
       Seq(Row(
         key     = Key(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(lit"${formatReferenceNumbers(answer)}")
       ))
   }
 
-  def buildCountryWithTaxReferenceDetails(taxResidentCountriesLoop: IndexedSeq[OrganisationLoopDetails])= {
+  def whatAreTheTaxNumbersForNonUKOrganisation(country: String, taxReferenceNumbers: TaxReferenceNumbers): Seq[Row] = {
+      Seq(Row(
+        key     = Key(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel".withArgs(country), classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}")
+      ))
+  }
 
-    //TODO - WORK OUT WHY UK WONT DISPLAY IN LOOP
+  def countryRow(country: String, index: Int): Seq[SummaryList.Row] = {
+    Seq(Row(
+      key     = Key(msg"whichCountryTaxForOrganisation.countryKey".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")),
+      value   = Value(lit"$country")
+    ))
+  }
 
-    for {
-      taxResidentCountry <- taxResidentCountriesLoop
-      country <- taxResidentCountry.whichCountry
-      taxReference <- taxResidentCountry.taxNumbersNonUK
-    } yield {
+  def buildTaxResidencySummary(taxResidentCountriesLoop: IndexedSeq[OrganisationLoopDetails]): Seq[SummaryList.Row] = {
 
-      val displayUTRorTinKey: Text.Message =
-        if (country.code.contains("UK")) {
-          msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel"
-        } else {
-          msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel".withArgs(country.description)
+    val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
+      case (organisationLoopDetail, index) =>
+
+        val countryName: String = organisationLoopDetail.whichCountry.fold("")(_.description)
+        val test = organisationLoopDetail.taxNumbersNonUK match {
+          case Some(value) => value
+          case _ => TaxReferenceNumbers("", None, None)
         }
 
-      //TODO - REFACTOR BELOW IF COUNT DOES NOT WORK
-
-      val rows: Iterable[Seq[SummaryList.Row]] = taxResidentCountry.whichCountry.zipWithIndex.map {
-        case (country, count) =>
-          Seq(
-            Row(
-              key = Key(msg"whichCountryTaxForOrganisation.countryKey".withArgs(count), classes = Seq("govuk-!-width-one-half")),
-              value = Value(lit"${country.description}")
-            ),
-            Row(
-              key = Key(displayUTRorTinKey, classes = Seq("govuk-!-width-one-half")),
-              value = Value(lit"${taxReference.firstTaxNumber}"))
-          )
-      }
-      rows
+        countryName match {
+          case "United Kingdom" =>
+            if (userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage).contains(true)) {
+              countryRow(countryName, index) ++ whatAreTheTaxNumbersForUKOrganisation.get
+            } else {
+              countryRow(countryName, index)
+            }
+          case _ =>
+            if (userAnswers.get(DoYouKnowTINForNonUKOrganisationPage).contains(true)) {
+              countryRow(countryName, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(countryName, test)
+            } else {
+              countryRow(countryName, index)
+            }
+        }
     }
+    whichCountryTaxForOrganisation.get ++ rows
   }
 
-  def buildCountryWithReferenceSummary(taxResidentCountriesLoop: IndexedSeq[OrganisationLoopDetails]) = {
-
-    //TODO - REFACTOR
-    whichCountryTaxForOrganisation.get ++ buildCountryWithTaxReferenceDetails(taxResidentCountriesLoop).flatMap(x => x.flatten)
-  }
 
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
@@ -250,6 +241,16 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     } else {
       msg"site.no"
     }
+
+  private def formatReferenceNumbers(referenceNumber: TaxReferenceNumbers): String = {
+    val first = referenceNumber.firstTaxNumber
+    (referenceNumber.secondTaxNumber, referenceNumber.thirdTaxNumber) match {
+      case (Some(second), Some(third)) => s"$first, $second, $third"
+      case (Some(second), None) => s"$first, $second"
+      case (None, Some(third)) => s"$first, $third"
+      case _ => s"$first"
+    }
+  }
 }
 
 

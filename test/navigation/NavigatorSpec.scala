@@ -178,7 +178,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -213,7 +213,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -268,7 +268,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -326,7 +326,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkEPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 

@@ -45,42 +45,18 @@ class CheckYourAnswersOrganisationController @Inject()(
       request.userAnswers.get(OrganisationLoopPage) match {
         case Some(taxResidentCountriesLoop) =>
           val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-          val orgDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
-          val countryDetails: Seq[SummaryList.Row] = helper.buildCountryWithReferenceSummary(taxResidentCountriesLoop)
+          val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
+          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary(taxResidentCountriesLoop)
 
           renderer.render(
             "check-your-answers-organisation.njk",
-            Json.obj("orgSummary" -> orgDetails,
-              "countrySummary" -> countryDetails)
+            Json.obj("organisationSummary" -> organisationDetails,
+              "countrySummary" -> countryDetails
+            )
           ).map(Ok(_))
 
         case _ => errorHandler.onServerError(request, throw new Exception("OrganisationLoop is missing"))
 
       }
   }
-
-
-//  private def buildDetails(helper: CheckYourAnswersOrganisationHelper): Seq[SummaryList.Row] = {
-//
-//    val pagesToCheck = helper.displayAddressQuestionWithAddress
-//
-////    val pagesToCheck = Tuple5(
-////      helper.organisationName,
-////      helper.displayAddressQuestionWithAddress,
-////      helper.emailAddressQuestionForOrganisation,
-////      helper.emailAddressForOrganisation,
-////      helper.isOrganisationResidentForTaxOtherCountries
-////    )
-//
-////    val questionAndAddress =
-////      helper.isOrganisationAddressKnown
-//
-////    questionAndAddress match {
-////      case Some(yesOrNo) if yesOrNo.value.equals(true) =>
-////        Seq(helper.isOrganisationAddressKnown, helper.organisationAddress).flatten
-////      case _ => Seq()
-////    }
-//
-//  }
-//
 }
