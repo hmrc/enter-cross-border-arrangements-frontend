@@ -92,7 +92,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -161,7 +161,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
       val application =
