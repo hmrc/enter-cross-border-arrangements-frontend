@@ -412,6 +412,9 @@ whatAreTheTaxNumbersForUKIndividual.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKIndividual.label3 = UK tax number 3 (optional)
 whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel = What are the individuals’s tax reference numbers?
 whatAreTheTaxNumbersForUKIndividual.error.required = Enter tax number 1
+whatAreTheTaxNumbersForUKIndividual.label1.error.length = Tax identification number 1 must be 200 characters or less
+whatAreTheTaxNumbersForUKIndividual.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
+whatAreTheTaxNumbersForUKIndividual.label3.error.length = Tax identification number 3 (optional) must be 200 characters or less
 
 whichCountryTaxForIndividual.title = Which country are they resident in for tax purposes?
 whichCountryTaxForIndividual.heading = Which country {0} resident in for tax purposes?
