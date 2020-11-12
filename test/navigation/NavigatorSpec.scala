@@ -700,7 +700,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "??? page if the answer is false" in {
+        "Check your answers for organisation page if the answer is false" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -710,7 +710,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersOrganisationController.onPageLoad())
         }
       }
 

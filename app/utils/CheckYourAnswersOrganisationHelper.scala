@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes
-import models.{CheckMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{CheckMode, Country, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -210,30 +210,33 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
       case (organisationLoopDetail, index) =>
 
-        val countryName: String = organisationLoopDetail.whichCountry.fold("")(_.description)
-        val test = organisationLoopDetail.taxNumbersNonUK match {
-          case Some(value) => value
-          case _ => TaxReferenceNumbers("", None, None)
-        }
+        organisationLoopDetail.whichCountry match {
+          case Some(countryName) =>
 
-        countryName match {
-          case "United Kingdom" =>
-            if (userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage).contains(true)) {
-              countryRow(countryName, index) ++ whatAreTheTaxNumbersForUKOrganisation.get
-            } else {
-              countryRow(countryName, index)
+            val taxRef = organisationLoopDetail.taxNumbersNonUK match {
+              case Some(value) => value
+              case _ => TaxReferenceNumbers("", None, None)
             }
-          case _ =>
-            if (userAnswers.get(DoYouKnowTINForNonUKOrganisationPage).contains(true)) {
-              countryRow(countryName, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(countryName, test)
-            } else {
-              countryRow(countryName, index)
+
+            countryName match {
+              case Country(_, "GB", "United Kingdom") =>
+                if (userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage).contains(true)) {
+                  countryRow(countryName.description, index) ++ whatAreTheTaxNumbersForUKOrganisation.get
+                } else {
+                  countryRow(countryName.description, index)
+                }
+              case _ =>
+                if (userAnswers.get(DoYouKnowTINForNonUKOrganisationPage).contains(true)) {
+                  countryRow(countryName.description, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(countryName.description, taxRef)
+                } else {
+                  countryRow(countryName.description, index)
+                }
             }
+          case _ => None
         }
     }
     whichCountryTaxForOrganisation.get ++ rows
   }
-
 
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {
