@@ -33,13 +33,14 @@
 
           {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
+            id: "country",
+            name: "country",
             label: {
               text: messages('whichCountryTaxForIndividual.heading', name),
               isPageHeading: true,
               classes: "govuk-label--xl name-overflow"
             },
-            id: "country",
-            name: "country",
+            attributes: {"aria-labelledby": "country"},
             errorMessage: form.country.error,
             items: countries
           }) }}

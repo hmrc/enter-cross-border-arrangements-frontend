@@ -403,7 +403,7 @@ isIndividualResidentForTaxOtherCountries.heading = {0} resident for tax purposes
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = Is the individual resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in any other countries
 
-whatAreTheTaxNumbersForUKIndividual.title = What are the organisation’s tax reference numbers?
+whatAreTheTaxNumbersForUKIndividual.title = What are their tax reference numbers?
 whatAreTheTaxNumbersForUKIndividual.heading = What are {0} tax reference numbers for the United Kingdom?
 whatAreTheTaxNumbersForUKIndividual.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
 whatAreTheTaxNumbersForUKIndividual.hintLink = find a lost UTR number
