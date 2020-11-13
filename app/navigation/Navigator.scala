@@ -115,10 +115,17 @@ class Navigator @Inject()() {
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
-    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
-    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
-    case _ => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
+    case IndividualNamePage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
+    case IndividualDateOfBirthPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
+    case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(CheckMode)
+    case IndividualPlaceOfBirthPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
+    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(CheckMode)
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode) // TODO is necessary ?
+    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))  // TODO is necessary ?
+    case IndividualAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
+    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
+    case EmailAddressForIndividualPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
+    case _ => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
  def catRoutes(key: HallmarkCategories): Mode => Call = key match {
@@ -217,19 +224,22 @@ class Navigator @Inject()() {
   private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {
       case true  => routes.IndividualPlaceOfBirthController.onPageLoad(mode)
-      case false => routes.IsIndividualAddressKnownController.onPageLoad(mode)
+      case false if mode == NormalMode => routes.IsIndividualAddressKnownController.onPageLoad(mode)
+      case _ => routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
-      case false => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
+      case false if mode == NormalMode => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
+      case _ => routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def emailAddressQuestionForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(EmailAddressQuestionForIndividualPage) map {
       case true  => routes.EmailAddressForIndividualController.onPageLoad(mode)
-      case false => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+      case false if mode == NormalMode => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+      case _ => routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def whichCountryTaxForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -250,7 +260,7 @@ class Navigator @Inject()() {
   private def isIndividualResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
       case true  => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //TODO: Route to confirmation page
+      case false => routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =

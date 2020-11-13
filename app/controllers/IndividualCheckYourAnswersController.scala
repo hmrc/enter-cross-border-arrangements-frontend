@@ -42,14 +42,16 @@ class IndividualCheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val hallmarks = helper.buildHallmarksRow(request.userAnswers)
-      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest, helper.hallmarkD1Other).flatten
-
-      //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
+      val rows: Seq[SummaryList.Row] =
+        Seq(helper.individualName, helper.individualDateOfBirth).flatten ++
+        helper.individualPlaceOfBirthGroup ++
+        helper.individualAddressGroup ++
+        helper.individualEmailAddressGroup ++
+        helper.individualTINGroup
 
       renderer.render(
         "individual/check-your-answers.njk",
-        Json.obj("list" -> answers)
+        Json.obj("list" -> rows)
       ).map(Ok(_))
   }
 

@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import forms.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -47,6 +47,13 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
   def onwardRoute = Call("GET", "/foo")
 
   val validAnswer: LocalDate = LocalDate.now().minusDays(1)
+
+  val validData =
+    Map(
+      "value.day"   -> validAnswer.getDayOfMonth.toString,
+      "value.month" -> validAnswer.getMonthValue.toString,
+      "value.year"  -> validAnswer.getYear.toString
+    )
 
   lazy val individualDateOfBirthRoute = routes.IndividualDateOfBirthController.onPageLoad(NormalMode).url
 
@@ -110,13 +117,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(
-        Map(
-          "value.day"   -> validAnswer.getDayOfMonth.toString,
-          "value.month" -> validAnswer.getMonthValue.toString,
-          "value.year"  -> validAnswer.getYear.toString
-        )
-      )
+      val filledForm = form.bind(validData)
 
       val viewModel = DateInput.localDate(filledForm("value"))
 
@@ -210,5 +211,35 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       application.stop()
     }
+
+    "must redirect to the Check your answers page when user change their answer" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val individualDateOfBirthRouteCheck = routes.IndividualDateOfBirthController.onPageLoad(CheckMode)
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualDateOfBirthPage, validAnswer).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, individualDateOfBirthRouteCheck.url)
+          .withFormUrlEncodedBody(validData.toList:_*)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
   }
 }
