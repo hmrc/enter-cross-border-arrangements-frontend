@@ -25,7 +25,6 @@ import uk.gov.hmrc.viewmodels._
 
 trait IndividualRows extends RowBuilder {
 
-  // 1 /individual/name
   def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map { answer =>
     toRow(
       msgKey  = "individualName",
@@ -34,8 +33,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-
-  // 2 /individual/date-of-birth
   def individualDateOfBirth: Option[Row] = userAnswers.get(IndividualDateOfBirthPage) map { answer =>
     toRow(
       msgKey  = "individualDateOfBirth",
@@ -44,7 +41,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  // 3 /individual/do-you-know-birthplace
   def isIndividualPlaceOfBirthKnown: Option[Row] = userAnswers.get(IsIndividualPlaceOfBirthKnownPage) map { answer =>
     toRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
@@ -53,7 +49,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  // 4 /individual/birthplace
   def individualPlaceOfBirth: Option[Row] = userAnswers.get(IndividualPlaceOfBirthPage) map { answer =>
       toRow(
         msgKey  = "individualPlaceOfBirth",
@@ -62,7 +57,6 @@ trait IndividualRows extends RowBuilder {
       )
     }
 
-  // 5 /individual/do-you-know-address
   def isIndividualAddressKnown: Option[Row] = userAnswers.get(IsIndividualAddressKnownPage) map { answer =>
       toRow(
         msgKey  = "isIndividualAddressKnown",
@@ -116,7 +110,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  // 11 /individual/email-address
   def emailAddressForIndividual: Option[Row] = userAnswers.get(EmailAddressForIndividualPage) map { answer =>
     toRow(
       msgKey  = "emailAddressForIndividual",
