@@ -210,28 +210,13 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
       case (organisationLoopDetail, index) =>
 
-        organisationLoopDetail.whichCountry match {
-          case Some(countryName) =>
-
-            val taxRef = organisationLoopDetail.taxNumbersNonUK match {
-              case Some(value) => value
-              case _ => TaxReferenceNumbers("", None, None)
-            }
-
-            countryName match {
-              case Country(_, "GB", "United Kingdom") =>
-                if (userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage).contains(true)) {
-                  countryRow(countryName.description, index) ++ whatAreTheTaxNumbersForUKOrganisation.get
-                } else {
-                  countryRow(countryName.description, index)
-                }
-              case _ =>
-                if (userAnswers.get(DoYouKnowTINForNonUKOrganisationPage).contains(true)) {
-                  countryRow(countryName.description, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(countryName.description, taxRef)
-                } else {
-                  countryRow(countryName.description, index)
-                }
-            }
+        (organisationLoopDetail.whichCountry, organisationLoopDetail.doYouKnowUTR, organisationLoopDetail.doYouKnowTIN) match {
+          case (Some(Country(_,"GB",_)), Some(true), _) =>
+            countryRow("United Kingdom", index) ++ whatAreTheTaxNumbersForUKOrganisation.get
+          case (Some(country), _, Some(true)) =>
+            countryRow(country.description, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
+          case (Some(country), _, _) =>
+            countryRow(country.description, index)
           case _ => None
         }
     }
