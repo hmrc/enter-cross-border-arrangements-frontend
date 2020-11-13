@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.individual
+package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
