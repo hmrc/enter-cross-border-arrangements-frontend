@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes
-import models.{CheckMode, Country, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{CheckMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -34,7 +34,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           Action(
             content            = msg"site.edit",
             href               = routes.OrganisationNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-org-name")
           )
         )
       ))
@@ -49,7 +50,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           Action(
             content            = msg"site.edit",
             href               = routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationAddressKnown.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationAddressKnown.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-know-address")
           )
         )
       )
@@ -78,7 +80,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
             Action(
               content            = msg"site.edit",
               href               = routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
-              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationAddress.checkYourAnswersLabel"))
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationAddress.checkYourAnswersLabel")),
+              attributes         = Map("id" -> "change-address")
             )
           )
       )
@@ -93,7 +96,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           Action(
             content            = msg"site.edit",
             href               = routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressQuestionForOrganisation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressQuestionForOrganisation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-know-email-address")
           )
         )
       )
@@ -108,7 +112,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           Action(
             content            = msg"site.edit",
             href               = routes.EmailAddressForOrganisationController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressForOrganisation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressForOrganisation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-email-address")
           )
         )
       )
@@ -141,7 +146,6 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     ).flatten
   }
 
-  //TODO Update start indexes of change links
   def whichCountryTaxForOrganisation: Option[Seq[Row]] = userAnswers.get(WhichCountryTaxForOrganisationPage) map {
     answer =>
       Seq(Row(
@@ -151,43 +155,18 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           Action(
             content            = msg"site.edit",
             href               = routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-tax-residency")
           )
         )
       )
     )
   }
 
-
-  def isOrganisationResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isOrganisationResidentForTaxOtherCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer))
-      )
-  }
-
-  def doYouKnowAnyTINForUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer))
-      )
-  }
-
-  def doYouKnowTINForNonUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowTINForNonUKOrganisationPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"doYouKnowTINForNonUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer))
-      )
-  }
-
-  def whatAreTheTaxNumbersForUKOrganisation: Option[Seq[Row]] = userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) map {
-    answer =>
+  def whatAreTheTaxNumbersForUKOrganisation(taxReferenceNumbers: TaxReferenceNumbers): Seq[Row] = {
       Seq(Row(
         key     = Key(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${formatReferenceNumbers(answer)}")
+        value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}")
       ))
   }
 
@@ -211,8 +190,8 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
       case (organisationLoopDetail, index) =>
 
         (organisationLoopDetail.whichCountry, organisationLoopDetail.doYouKnowUTR, organisationLoopDetail.doYouKnowTIN) match {
-          case (Some(Country(_,"GB",_)), Some(true), _) =>
-            countryRow("United Kingdom", index) ++ whatAreTheTaxNumbersForUKOrganisation.get
+          case (Some(country), Some(true), _) if country.code == "GB" =>
+            countryRow(country.description, index) ++ whatAreTheTaxNumbersForUKOrganisation(organisationLoopDetail.taxNumbersUK.get)
           case (Some(country), _, Some(true)) =>
             countryRow(country.description, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
           case (Some(country), _, _) =>
