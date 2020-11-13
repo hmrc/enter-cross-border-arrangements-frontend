@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.{DoYouKnowAnyTINForUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IsIndividualAddressKnownPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
+import pages.{EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualAddressPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualNonUkTaxNumbersPage, IndividualPlaceOfBirthPage, IndividualSelectAddressPage, IndividualTaxOtherCountriesQuestionPage, IndividualUkPostcodePage, IndividualUkTaxNumbersPage, IndividualUkTinQuestionPage, IndividualWhichCountryTaxPage, IndividulaResidentCountryTinQuestionPage, IsIndividualAddressKnownPage, IsIndividualAddressUkPage, IsIndividualPlaceOfBirthKnownPage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -12,6 +12,7 @@ import uk.gov.hmrc.viewmodels._
 
 trait IndividualRows extends RowBuilder {
 
+  // 1
   def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map { answer =>
     toRow(
       msgKey  = "individualName",
@@ -20,6 +21,8 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
+
+  // 2
   def individualDateOfBirth: Option[Row] = userAnswers.get(IndividualDateOfBirthPage) map { answer =>
     toRow(
       msgKey  = "individualDateOfBirth",
@@ -28,6 +31,7 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
+  // 3
   def isIndividualPlaceOfBirthKnown: Option[Row] = userAnswers.get(IsIndividualPlaceOfBirthKnownPage) map { answer =>
     toRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
@@ -36,6 +40,7 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
+  // 4
   def individualPlaceOfBirth: Option[Row] = userAnswers.get(IndividualPlaceOfBirthPage) map { answer =>
       toRow(
         msgKey  = "individualPlaceOfBirth",
@@ -44,6 +49,7 @@ trait IndividualRows extends RowBuilder {
       )
     }
 
+  // 5
   def isIndividualAddressKnown: Option[Row] = userAnswers.get(IsIndividualAddressKnownPage) map { answer =>
       toRow(
         msgKey  = "isIndividualAddressKnown",
@@ -52,6 +58,43 @@ trait IndividualRows extends RowBuilder {
       )
     }
 
+  // 6
+  def isIndividualAddressUk: Option[Row] = userAnswers.get(IsIndividualAddressUkPage) map { answer =>
+      toRow(
+        msgKey  = "isIndividualAddressUk",
+        content = yesOrNo(answer),
+        href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 7
+  def individualUkPostcode: Option[Row] = userAnswers.get(IndividualUkPostcodePage) map { answer =>
+      toRow(
+        msgKey  = "individualUkPostcode",
+        content = lit"$answer",
+        href    = routes.IndividualPostcodeController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 8
+  def individualSelectAddress: Option[Row] = userAnswers.get(IndividualSelectAddressPage) map { answer =>
+      toRow(
+        msgKey  = "selectAddress",
+        content = lit"$answer",
+        href    = routes.IndividualSelectAddressController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 9
+  def individualAddress: Option[Row] = userAnswers.get(IndividualAddressPage) map { answer =>
+      toRow(
+        msgKey  = "individualAddress",
+        content = lit"$answer",
+        href    = routes.IndividualAddressController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 10
   def emailAddressQuestionForIndividual: Option[Row] = userAnswers.get(EmailAddressQuestionForIndividualPage) map { answer =>
     toRow(
       msgKey  = "emailAddressQuestionForIndividual",
@@ -60,6 +103,7 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
+  // 11
   def emailAddressForIndividual: Option[Row] = userAnswers.get(EmailAddressForIndividualPage) map { answer =>
     toRow(
       msgKey  = "emailAddressForIndividual",
@@ -67,6 +111,60 @@ trait IndividualRows extends RowBuilder {
       href    = routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url
     )
   }
+
+  //12
+  def individualWhichCountryTax: Option[Row] = userAnswers.get(IndividualWhichCountryTaxPage) map { answer =>
+      toRow(
+        msgKey  = "whichCountryTaxForIndividual",
+        content = yesOrNo(answer),
+        href    = routes.IndividualWhichCountryTaxController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 13
+  def individulaResidentCountryTinQuestion: Option[Row] = userAnswers.get(IndividulaResidentCountryTinQuestionPage) map { answer =>
+      toRow(
+        msgKey  = "individulaResidentCountryTinQuestion",
+        content = yesOrNo(answer),
+        href    = routes.IndividulaResidentCountryTinQuestionController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 14
+  def individualNonUkTaxNumbers: Option[Row] = userAnswers.get(IndividualNonUkTaxNumbersPage) map { answer =>
+    toRow(
+      msgKey  = "individualNonUkTaxNumbers",
+      content = lit"$answer",
+      href    = routes.IndividualNonUkTaxNumbersController.onPageLoad(CheckMode).url
+    )
+  }
+
+  // 15
+  def individualUkTinQuestion: Option[Row] = userAnswers.get(IndividualUkTinQuestionPage) map { answer =>
+      toRow(
+        msgKey  = "individualUkTinQuestion",
+        content = yesOrNo(answer),
+        href    = routes.IndividualUkTinQuestionController.onPageLoad(CheckMode).url
+      )
+    }
+
+  // 16
+  def individualUkTaxNumbers: Option[Row] = userAnswers.get(IndividualUkTaxNumbersPage) map { answer =>
+    toRow(
+      msgKey  = "individualUkTaxNumbers",
+      content = lit"$answer",
+      href    = routes.IndividualUkTaxNumbersController.onPageLoad(CheckMode).url
+    )
+  }
+
+  // 17
+  def individualTaxOtherCountries: Option[Row] = userAnswers.get(IndividualTaxOtherCountriesQuestionPage) map { answer =>
+      toRow(
+        msgKey  = "individualTaxOtherCountries",
+        content = yesOrNo(answer),
+        href    = routes.IndividualTaxOtherCountriesController.onPageLoad(CheckMode).url
+      )
+    }
 
 }
 
