@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.EmailAddressForOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers.{getOrganisationName, redirectToSummary}
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -78,11 +78,21 @@ class EmailAddressForOrganisationController @Inject()(
 
           renderer.render("emailAddressForOrganisation.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val redirectUsers = redirectToSummary(value, EmailAddressForOrganisationPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

@@ -18,8 +18,8 @@ package helpers
 
 import base.SpecBase
 import generators.Generators
-import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getIndividualName, getOrganisationName, incrementIndexOrganisation}
-import models.{Country, Name, OrganisationLoopDetails, UserAnswers}
+import helpers.JourneyHelpers._
+import models.{CheckMode, Country, Name, NormalMode, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
@@ -115,8 +115,29 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         currentIndexInsideLoop(request) mustBe 3
       }
     }
+
+    "calling redirectToSummary" - {
+      "must return true if mode is CheckMode and user answer is the same" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(OrganisationNamePage, "Organisation")
+          .success
+          .value
+
+        val result = redirectToSummary("Organisation", OrganisationNamePage, CheckMode, userAnswers)
+
+        result mustBe true
+      }
+
+      "must return false if user answer is changed (NormalMode or CheckMode)" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(OrganisationNamePage, "Organisation")
+          .success
+          .value
+
+        val result = redirectToSummary("New Organisation", OrganisationNamePage, NormalMode, userAnswers)
+
+        result mustBe false
+      }
+    }
   }
-
-
-
 }
