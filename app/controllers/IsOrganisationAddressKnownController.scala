@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.IsOrganisationAddressKnownFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers.{getOrganisationName, redirectToSummary}
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -80,11 +80,21 @@ class IsOrganisationAddressKnownController @Inject()(
 
           renderer.render("isOrganisationAddressKnown.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val redirectUsers = redirectToSummary(value, IsOrganisationAddressKnownPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }
