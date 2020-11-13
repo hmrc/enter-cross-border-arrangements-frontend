@@ -54,105 +54,6 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       Some(true), Some(selectedNonUK), Some(true), Some(referencesNonUK), Some(true), Some(referencesUK)
     ))
 
-
-    "must return OK and the correct view for a GET when organisation name is provided" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
-        .success
-        .value
-        .set(IsOrganisationAddressKnownPage, false)
-        .success
-        .value
-        .set(EmailAddressQuestionForOrganisationPage, false)
-        .success
-        .value
-        .set(OrganisationLoopPage, organisationLoop)
-        .success
-        .value
-        .set(WhichCountryTaxForOrganisationPage, selectedUK)
-        .success
-        .value
-
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val json = jsonCaptor.getValue
-      val organisationDetails = (json \ "organisationSummary").toString
-
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
-      organisationDetails.contains("What is the name of the organisation?") mustBe true
-      organisationDetails.contains("Do you know their address?") mustBe true
-      organisationDetails.contains("Do you know their email address?") mustBe true
-
-      application.stop()
-    }
-
-    "must return OK and the correct view for a GET when all organisation details are provided" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
-        .success
-        .value
-        .set(IsOrganisationAddressKnownPage, true)
-        .success
-        .value
-        .set(OrganisationAddressPage, organisationAddress)
-        .success
-        .value
-        .set(EmailAddressQuestionForOrganisationPage, true)
-        .success
-        .value
-        .set(EmailAddressForOrganisationPage, "test@test.com")
-        .success
-        .value
-        .set(OrganisationLoopPage, organisationLoop)
-        .success
-        .value
-        .set(WhichCountryTaxForOrganisationPage, selectedUK)
-        .success
-        .value
-
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val json = jsonCaptor.getValue
-      val organisationDetails = (json \ "organisationSummary").toString
-
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
-      organisationDetails.contains("What is the name of the organisation?") mustBe true
-      organisationDetails.contains("Do you know their address?") mustBe true
-      organisationDetails.contains("What is the organisation’s main address?") mustBe true
-      organisationDetails.contains("Do you know their email address?") mustBe true
-      organisationDetails.contains("Email address") mustBe true
-
-      application.stop()
-    }
-
     "must return OK and the correct view for a GET when all organisation details are provided " +
       "and a country for tax residency for tax purposes is selected but no tax references provided" in {
 
@@ -316,7 +217,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
         .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success
         .value
-        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, referencesUK)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, referencesNonUK)
         .success
         .value
 
