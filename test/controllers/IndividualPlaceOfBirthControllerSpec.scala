@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.IndividualPlaceOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -27,7 +27,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.IndividualPlaceOfBirthPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -43,6 +43,8 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
   val formProvider = new IndividualPlaceOfBirthFormProvider()
   val form = formProvider()
+  val validAnswer: String = "answer"
+  val validData = Map("value" -> validAnswer)
 
   lazy val individualPlaceOfBirthRoute = routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode).url
 
@@ -92,7 +94,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(validData)
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -121,7 +123,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
       val request =
         FakeRequest(POST, individualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -180,7 +182,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
       val request =
         FakeRequest(POST, individualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -190,5 +192,35 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
       application.stop()
     }
+
+    "must redirect to the Check your answers page when user change their answer" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val individualDateOfBirthRouteCheck = routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualPlaceOfBirthPage, validAnswer).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, individualDateOfBirthRouteCheck.url)
+          .withFormUrlEncodedBody(validData.toList:_*)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
   }
 }
