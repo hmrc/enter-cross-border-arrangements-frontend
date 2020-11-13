@@ -176,6 +176,8 @@ POST       /individual/change-tax-resident-countries            controllers.IsIn
 
 GET        /individual/check-answers                              controllers.IndividualCheckYourAnswersController.onPageLoad
 
+GET        /individual/check-answers                               controllers.IndividualCheckYourAnswersController.onPageLoad
+
 GET        /organisation/email-address                          controllers.EmailAddressQuestionForOrganisationController.onPageLoad(mode: Mode = NormalMode)
 POST       /organisation/email-address                          controllers.EmailAddressQuestionForOrganisationController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-email-address                   controllers.EmailAddressQuestionForOrganisationController.onPageLoad(mode: Mode = CheckMode)
