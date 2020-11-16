@@ -146,8 +146,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     ).flatten
   }
 
-  def whichCountryTaxForOrganisation: Option[Seq[Row]] = userAnswers.get(WhichCountryTaxForOrganisationPage) map {
-    answer =>
+  def whichCountryTaxForOrganisation: Seq[Row] = {
       Seq(Row(
         key     = Key(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(lit""),
@@ -164,22 +163,40 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
   }
 
   def whatAreTheTaxNumbersForUKOrganisation(taxReferenceNumbers: TaxReferenceNumbers): Seq[Row] = {
+    val taxRefLabelUK = if (taxReferenceNumbers.secondTaxNumber.isDefined || taxReferenceNumbers.thirdTaxNumber.isDefined) {
+        msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel".withArgs("s")
+      } else {
+        msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel".withArgs("")
+      }
+
       Seq(Row(
-        key     = Key(msg"whatAreTheTaxNumbersForUKOrganisation.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(taxRefLabelUK, classes = Seq("govuk-!-width-one-half")),
         value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}")
       ))
   }
 
   def whatAreTheTaxNumbersForNonUKOrganisation(country: String, taxReferenceNumbers: TaxReferenceNumbers): Seq[Row] = {
+    val taxRefLabelOther = if (taxReferenceNumbers.secondTaxNumber.isDefined || taxReferenceNumbers.thirdTaxNumber.isDefined) {
+      msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel".withArgs("s",country)
+    } else {
+      msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel".withArgs("", country)
+    }
+
       Seq(Row(
-        key     = Key(msg"whatAreTheTaxNumbersForNonUKOrganisation.checkYourAnswersLabel".withArgs(country), classes = Seq("govuk-!-width-one-half")),
+        key     = Key(taxRefLabelOther, classes = Seq("govuk-!-width-one-half")),
         value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}")
       ))
   }
 
-  def countryRow(country: String, index: Int): Seq[SummaryList.Row] = {
+  def countryRow(country: String, index: Int, loopSize: Int): Seq[SummaryList.Row] = {
+    val countryCounterDisplay = if (loopSize == 1) {
+      msg"whichCountryTaxForOrganisation.countryCounter".withArgs("")
+    } else {
+      msg"whichCountryTaxForOrganisation.countryCounter".withArgs(index + 1)
+    }
+
     Seq(Row(
-      key     = Key(msg"whichCountryTaxForOrganisation.countryKey".withArgs(index + 1), classes = Seq("govuk-!-width-one-half")),
+      key     = Key(countryCounterDisplay, classes = Seq("govuk-!-width-one-half")),
       value   = Value(lit"$country")
     ))
   }
@@ -188,18 +205,18 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
 
     val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
       case (organisationLoopDetail, index) =>
-
+        val loopSize = taxResidentCountriesLoop.size
         (organisationLoopDetail.whichCountry, organisationLoopDetail.doYouKnowUTR, organisationLoopDetail.doYouKnowTIN) match {
           case (Some(country), Some(true), _) if country.code == "GB" =>
-            countryRow(country.description, index) ++ whatAreTheTaxNumbersForUKOrganisation(organisationLoopDetail.taxNumbersUK.get)
+            countryRow(country.description, index, loopSize) ++ whatAreTheTaxNumbersForUKOrganisation(organisationLoopDetail.taxNumbersUK.get)
           case (Some(country), _, Some(true)) =>
-            countryRow(country.description, index) ++ whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
+            countryRow(country.description, index, loopSize) ++ whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
           case (Some(country), _, _) =>
-            countryRow(country.description, index)
+            countryRow(country.description, index, loopSize)
           case _ => None
         }
     }
-    whichCountryTaxForOrganisation.get ++ rows
+    whichCountryTaxForOrganisation ++ rows
   }
 
   private def yesOrNo(answer: Boolean): Content =

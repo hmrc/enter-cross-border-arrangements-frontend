@@ -114,7 +114,80 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
     }
 
     "must return OK and the correct view for a GET when all organisation details are provided " +
-      "and United Kingdom for tax residency for tax purposes is selected with UTR's provided" in {
+      "and United Kingdom for tax residency for tax purposes is selected with a single UTR provided" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
+        .success
+        .value
+        .set(IsOrganisationAddressKnownPage, true)
+        .success
+        .value
+        .set(OrganisationAddressPage, organisationAddress)
+        .success
+        .value
+        .set(EmailAddressQuestionForOrganisationPage, true)
+        .success
+        .value
+        .set(EmailAddressForOrganisationPage, "test@test.com")
+        .success
+        .value
+        .set(OrganisationLoopPage, organisationLoop)
+        .success
+        .value
+        .set(WhichCountryTaxForOrganisationPage, selectedUK)
+        .success
+        .value
+        .set(DoYouKnowAnyTINForUKOrganisationPage, true)
+        .success
+        .value
+        .set(WhatAreTheTaxNumbersForUKOrganisationPage, TaxReferenceNumbers("UTR12345678", None, None))
+        .success
+        .value
+        .set(WhichCountryTaxForOrganisationPage, selectedNonUK)
+        .success
+        .value
+        .set(DoYouKnowTINForNonUKOrganisationPage, true)
+        .success
+        .value
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, TaxReferenceNumbers("TIN12345678", None, None))
+        .success
+        .value
+
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val json = jsonCaptor.getValue
+      val organisationDetails = (json \ "organisationSummary").toString
+      val residentCountryDetails = (json \ "countrySummary").toString
+
+      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
+      organisationDetails.contains("What is the name of the organisation?") mustBe true
+      organisationDetails.contains("Do you know their address?") mustBe true
+      organisationDetails.contains("What is the organisation’s main address?") mustBe true
+      organisationDetails.contains("Do you know their email address?") mustBe true
+      organisationDetails.contains("Email address") mustBe true
+      residentCountryDetails.contains("Tax resident countries") mustBe true
+      residentCountryDetails.contains("Country 1") mustBe true
+      residentCountryDetails.contains("UK tax number") mustBe true
+
+      application.stop()
+    }
+
+    "must return OK and the correct view for a GET when all organisation details are provided " +
+      "and United Kingdom for tax residency for tax purposes is selected with multiple UTR's provided" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -171,13 +244,13 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       organisationDetails.contains("Email address") mustBe true
       residentCountryDetails.contains("Tax resident countries") mustBe true
       residentCountryDetails.contains("Country 1") mustBe true
-      residentCountryDetails.contains("Unique Taxpayer Reference (UTR)") mustBe true
+      residentCountryDetails.contains("UK tax numbers") mustBe true
 
       application.stop()
     }
 
     "must return OK and the correct view for a GET when all organisation details are provided " +
-      "and United Kingdom for tax residency for tax purposes is selected with UTR's provided" +
+      "and United Kingdom for tax residency for tax purposes is selected with UTR's provided " +
       "and is resident for tax purposes in another country with TIN's provided" in {
 
       when(mockRenderer.render(any(), any())(any()))
@@ -244,9 +317,9 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       organisationDetails.contains("Email address") mustBe true
       residentCountryDetails.contains("Tax resident countries") mustBe true
       residentCountryDetails.contains("Country 1") mustBe true
-      residentCountryDetails.contains("Unique Taxpayer Reference (UTR)") mustBe true
+      residentCountryDetails.contains("UK tax numbers") mustBe true
       residentCountryDetails.contains("Country 2") mustBe true
-      residentCountryDetails.contains(s"Tax identification number for ${selectedNonUK.description}") mustBe true
+      residentCountryDetails.contains(s"Tax identification numbers for ${selectedNonUK.description}") mustBe true
 
       application.stop()
     }

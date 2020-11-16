@@ -70,10 +70,8 @@ object JourneyHelpers {
   def currentIndexInsideLoop(request: Request[AnyContent]): Int = {
     val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
     val uriPattern(_, index) = request.uri
-
     index.toInt
   }
-
 
   def redirectToSummary[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
                           (implicit rds: Reads[T]): Boolean = {
@@ -83,4 +81,11 @@ object JourneyHelpers {
     }
   }
 
+  def hasValueChanged[T, B](value: T, page: QuestionPage[B], ua: UserAnswers)
+                                  (implicit rds: Reads[B]) = {
+    ua.get(page) match {
+      case Some(answer) if (answer != value) => true
+      case _ => false
+    }
+  }
 }

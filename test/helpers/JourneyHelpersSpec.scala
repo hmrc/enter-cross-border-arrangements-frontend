@@ -21,7 +21,7 @@ import generators.Generators
 import helpers.JourneyHelpers._
 import models.{CheckMode, Country, Name, NormalMode, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
+import pages.{IndividualNamePage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -135,6 +135,30 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .value
 
         val result = redirectToSummary("New Organisation", OrganisationNamePage, NormalMode, userAnswers)
+
+        result mustBe false
+      }
+    }
+
+    "calling hasValueChanged" - {
+      "must return true if mode is CheckMode and user answer has changed" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+          .success
+          .value
+
+        val result = hasValueChanged(false, IsOrganisationResidentForTaxOtherCountriesPage, userAnswers)
+
+        result mustBe true
+      }
+
+      "must return false if user answer has not changed" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+          .success
+          .value
+
+        val result = hasValueChanged(true, IsOrganisationResidentForTaxOtherCountriesPage, userAnswers)
 
         result mustBe false
       }

@@ -21,9 +21,9 @@ import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.inject.bind
@@ -142,39 +142,6 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
-        .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None, None , None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }
