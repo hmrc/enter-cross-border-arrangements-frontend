@@ -73,18 +73,10 @@ object JourneyHelpers {
     index.toInt
   }
 
-  def redirectToSummary[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
-                          (implicit rds: Reads[T]): Boolean = {
+  def hasValueChanged[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
+                        (implicit rds: Reads[T]): Boolean = {
     ua.get(page) match {
       case Some(ans) if (ans == value) && (mode == CheckMode) => true
-      case _ => false
-    }
-  }
-
-  def hasValueChanged[T, B](value: T, page: QuestionPage[B], ua: UserAnswers)
-                                  (implicit rds: Reads[B]) = {
-    ua.get(page) match {
-      case Some(answer) if (answer != value) => true
       case _ => false
     }
   }

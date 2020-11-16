@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.EmailAddressQuestionForOrganisationFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, redirectToSummary}
+import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -82,7 +82,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
         },
         value => {
 
-          val redirectUsers = redirectToSummary(value, EmailAddressQuestionForOrganisationPage, mode, request.userAnswers)
+          val redirectUsers = hasValueChanged(value, EmailAddressQuestionForOrganisationPage, mode, request.userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, value))

@@ -90,16 +90,14 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
-
           val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage), mode) match {
-            case (Some(list), NormalMode) => // Add to Loop in Normal Mode
+            case (Some(list), NormalMode) => // Add to Loop in NormalMode
                 list :+ OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-
             case (Some(list), CheckMode) =>
-                if (hasValueChanged(value, OrganisationLoopPage, request.userAnswers)) {
-                  list.slice(0, currentIndexInsideLoop(request)) //Return loop with only the new answers
+                if (value.equals(false)) {
+                  list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
                 } else {
-                  list.updated(index,  list.lift(index).get.copy(taxResidentOtherCountries = Some(value))) //Update loop in Check Mode
+                  list :+ OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
                 }
             case (None, _) => // Start new Loop in Normal Mode
               IndexedSeq[OrganisationLoopDetails](OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
