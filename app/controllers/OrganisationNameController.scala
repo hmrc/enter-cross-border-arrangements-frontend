@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.OrganisationNameFormProvider
-import helpers.JourneyHelpers.redirectToSummary
+import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -79,7 +79,7 @@ class OrganisationNameController @Inject()(
 
           val initialUserAnswers = UserAnswers(request.internalId)
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = redirectToSummary(value, OrganisationNamePage, mode, userAnswers)
+          val redirectUsers = hasValueChanged(value, OrganisationNamePage, mode, userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
