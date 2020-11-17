@@ -92,7 +92,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "AA1 1AA"))
+      val filledForm = form.bind(Map("postcode" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -121,7 +121,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       val request =
         FakeRequest(POST, postcodeRoute)
-          .withFormUrlEncodedBody(("value", "AA1 1AA"))
+          .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
 
       val result = route(application, request).value
 
