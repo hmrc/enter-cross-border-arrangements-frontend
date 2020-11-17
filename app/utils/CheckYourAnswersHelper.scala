@@ -50,20 +50,20 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
+//  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
+//    answer =>
+//      Row(
+//        key     = Key(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+//        value   = Value(lit"$answer"),
+//        actions = List(
+//          Action(
+//            content            = msg"site.edit",
+//            href               = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url,
+//            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel"))
+//          )
+//        )
+//      )
+//  }
 
   def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
     answer =>

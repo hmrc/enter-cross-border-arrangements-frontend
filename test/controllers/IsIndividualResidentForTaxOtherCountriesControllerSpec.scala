@@ -146,39 +146,6 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(IsIndividualResidentForTaxOtherCountriesPage, true)
-        .success.value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isIndividualResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
-
-      application.stop()
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))

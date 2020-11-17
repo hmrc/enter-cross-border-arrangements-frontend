@@ -980,7 +980,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode))
+              .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index))
 
         }
       }

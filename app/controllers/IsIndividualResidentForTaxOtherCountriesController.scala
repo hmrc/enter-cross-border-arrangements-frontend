@@ -18,11 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
-import helpers.JourneyHelpers.getIndividualName
+import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
-import models.{Mode, LoopDetails}
+import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator
-import pages.{IsIndividualResidentForTaxOtherCountriesPage, IndividualLoopPage}
+import pages.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -90,25 +90,22 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
           renderer.render("isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(IndividualLoopPage) match {
-            case None =>
-              val newIndividualLoop = LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-              IndexedSeq[LoopDetails](newIndividualLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                //Update value
-                val updatedLoop = list.lift(index).get.copy(taxResidentOtherCountries = Some(value))
-                list.updated(index, updatedLoop)
+          val individualLoopList = (request.userAnswers.get(IndividualLoopPage), mode) match {
+            case (Some(list), NormalMode) => // Add to Loop in NormalMode
+              list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
+            case (Some(list), CheckMode) =>
+              if (value.equals(false)) {
+                list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
               } else {
-                //Add to loop
-                val newIndividualLoop = LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-                list :+ newIndividualLoop
+                list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
               }
+            case (None, _) => // Start new Loop in Normal Mode
+              IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
           }
 
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, organisationLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
           } yield Redirect(navigator.nextPage(IsIndividualResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
         }
