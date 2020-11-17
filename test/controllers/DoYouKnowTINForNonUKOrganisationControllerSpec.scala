@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.DoYouKnowTINForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -90,7 +90,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -148,7 +148,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -157,7 +157,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application =

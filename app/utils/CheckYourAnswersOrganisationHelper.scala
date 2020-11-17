@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes
-import models.{CheckMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{CheckMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -216,7 +216,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     ))
   }
 
-  def buildTaxResidencySummary(taxResidentCountriesLoop: IndexedSeq[OrganisationLoopDetails]): Seq[SummaryList.Row] = {
+  def buildTaxResidencySummary(taxResidentCountriesLoop: IndexedSeq[LoopDetails]): Seq[SummaryList.Row] = {
 
     val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
       case (organisationLoopDetail, index) =>

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.DoYouKnowTINForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
-import models.{IndividualLoopDetails, Mode, UserAnswers}
+import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
 import pages.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -99,8 +99,8 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
         value => {
           val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
             case None =>
-              val newIndividualLoop = IndividualLoopDetails(None, None, doYouKnowTIN = Some(value), None)
-              IndexedSeq[IndividualLoopDetails](newIndividualLoop)
+              val newIndividualLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
+              IndexedSeq[LoopDetails](newIndividualLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
                 val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))

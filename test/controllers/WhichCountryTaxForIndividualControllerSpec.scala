@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, IndividualLoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -91,7 +91,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
         .set(WhichCountryTaxForIndividualPage, country)
         .success
         .value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(None, Some(country), None, None)))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()

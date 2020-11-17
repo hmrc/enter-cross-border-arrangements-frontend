@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, IndividualLoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -92,7 +92,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -161,7 +161,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhatAreTheTaxNumbersForNonUKIndividualPage, taxReferenceNumbers)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers))))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
       val application =

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.DoYouKnowTINForNonUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, IndividualLoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.mockito.Matchers.any
@@ -87,7 +87,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKIndividualPage, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -145,7 +145,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -154,7 +154,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKIndividualPage, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application =

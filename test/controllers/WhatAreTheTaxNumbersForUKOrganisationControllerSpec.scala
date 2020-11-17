@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -96,7 +96,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         .success
         .value
         .set(OrganisationLoopPage, IndexedSeq(
-          OrganisationLoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
+          LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
         )
         .success
         .value

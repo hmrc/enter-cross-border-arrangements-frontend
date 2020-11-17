@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.WhichCountryTaxForOrganisationFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Country, Mode, OrganisationLoopDetails}
+import models.{Country, Mode, LoopDetails}
 import navigation.Navigator
 import pages.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -95,7 +95,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None, None, None)
+              val newOrganisationLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
               IndexedSeq(newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
@@ -104,7 +104,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
                 list.updated(index, updatedLoop)
               } else {
                 //Add to loop
-                val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None, None, None)
+                val newOrganisationLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
                 list :+ newOrganisationLoop
               }
           }

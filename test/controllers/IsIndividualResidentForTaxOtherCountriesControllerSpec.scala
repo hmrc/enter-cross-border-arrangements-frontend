@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{Country, IndividualLoopDetails, Name, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -89,7 +89,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val userAnswers = UserAnswers(userAnswersId)
         .set(IsIndividualResidentForTaxOtherCountriesPage, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -146,7 +146,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -155,7 +155,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val userAnswers = UserAnswers(userAnswersId)
         .set(IsIndividualResidentForTaxOtherCountriesPage, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(IndividualLoopDetails(Some(true), Some(selectedCountry), None, None)))
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application =

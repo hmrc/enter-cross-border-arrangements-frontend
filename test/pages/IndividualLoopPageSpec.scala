@@ -16,17 +16,17 @@
 
 package pages
 
-import models.IndividualLoopDetails
+import models.LoopDetails
 import pages.behaviours.PageBehaviours
 
 class IndividualLoopPageSpec extends PageBehaviours {
 
   "IndividualLoopPage" - {
 
-    beRetrievable[IndexedSeq[IndividualLoopDetails]](IndividualLoopPage)
+    beRetrievable[IndexedSeq[LoopDetails]](IndividualLoopPage)
 
-    beSettable[IndexedSeq[IndividualLoopDetails]](IndividualLoopPage)
+    beSettable[IndexedSeq[LoopDetails]](IndividualLoopPage)
 
-    beRemovable[IndexedSeq[IndividualLoopDetails]](IndividualLoopPage)
+    beRemovable[IndexedSeq[LoopDetails]](IndividualLoopPage)
   }
 }

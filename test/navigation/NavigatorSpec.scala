@@ -965,7 +965,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode))
+              .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index))
         }
       }
 

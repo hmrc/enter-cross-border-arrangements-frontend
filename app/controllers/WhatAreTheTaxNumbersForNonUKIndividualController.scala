@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
-import models.{IndividualLoopDetails, Mode, UserAnswers}
+import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
 import pages.{IndividualLoopPage, WhatAreTheTaxNumbersForNonUKIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -92,8 +92,8 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
         value => {
           val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
             case None =>
-              val newIndividualLoop = IndividualLoopDetails(None, None, None, taxNumbersNonUK = Some(value))
-              IndexedSeq[IndividualLoopDetails](newIndividualLoop)
+              val newIndividualLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
+              IndexedSeq[LoopDetails](newIndividualLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
                 val updatedLoop = list.lift(index).get.copy(taxNumbersNonUK = Some(value))

@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.JourneyHelpers._
-import models.{CheckMode, Country, Name, OrganisationLoopDetails, UserAnswers}
+import models.{CheckMode, Country, Name, NormalMode, LoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
@@ -77,7 +77,7 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
 
       "must return index as 1 if user previously visited UK tin pages and they know TIN for another country (matching URI pattern failed)" in {
-        val organisationLoopDetails = IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
+        val organisationLoopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
 
         val userAnswers = UserAnswers(userAnswersId)
@@ -89,8 +89,8 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       }
 
       "must add 1 to index from uri if users go through the loop more than once" in {
-        val organisationLoopDetails = IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None),
-          OrganisationLoopDetails(None, Some(selectedCountry), None, None, None, None))
+        val organisationLoopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None),
+          LoopDetails(None, Some(selectedCountry), None, None, None, None))
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/1")
 
         val userAnswers = UserAnswers(userAnswersId)
@@ -123,7 +123,7 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        val result = hasValueChanged("new Organisation", OrganisationNamePage, CheckMode, userAnswers)
+        val result = hasValueChanged("Organisation", OrganisationNamePage, CheckMode, userAnswers)
 
         result mustBe true
       }

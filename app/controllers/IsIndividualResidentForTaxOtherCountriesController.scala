@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
-import models.{Mode, IndividualLoopDetails}
+import models.{Mode, LoopDetails}
 import navigation.Navigator
 import pages.{IsIndividualResidentForTaxOtherCountriesPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -92,8 +92,8 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(IndividualLoopPage) match {
             case None =>
-              val newIndividualLoop = IndividualLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
-              IndexedSeq[IndividualLoopDetails](newIndividualLoop)
+              val newIndividualLoop = LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
+              IndexedSeq[LoopDetails](newIndividualLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
                 //Update value
@@ -101,7 +101,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
                 list.updated(index, updatedLoop)
               } else {
                 //Add to loop
-                val newIndividualLoop = IndividualLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
+                val newIndividualLoop = LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
                 list :+ newIndividualLoop
               }
           }

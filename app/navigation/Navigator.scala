@@ -242,7 +242,7 @@ class Navigator @Inject()() {
     ua.get(WhichCountryTaxForIndividualPage) map {
       countryList =>
         countryList.code match {
-          case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode)
+          case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
           case _ => routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(mode, currentIndexInsideLoop(request)) // TODO: Send to nonUk page when ready
         }
     }
