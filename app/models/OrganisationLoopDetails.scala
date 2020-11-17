@@ -18,13 +18,14 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-
 case class OrganisationLoopDetails(taxResidentOtherCountries: Option[Boolean],
                                    whichCountry: Option[Country],
                                    doYouKnowTIN: Option[Boolean],
                                    taxNumbersNonUK: Option[TaxReferenceNumbers],
                                    doYouKnowUTR: Option[Boolean],
                                    taxNumbersUK: Option[TaxReferenceNumbers])
+
+
 object OrganisationLoopDetails {
   implicit val format: OFormat[OrganisationLoopDetails] = Json.format[OrganisationLoopDetails]
 }

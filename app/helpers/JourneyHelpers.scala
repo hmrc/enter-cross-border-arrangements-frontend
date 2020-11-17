@@ -16,9 +16,9 @@
 
 package helpers
 
-import models.{Country, UserAnswers}
-import pages.{IndividualLoopPage, IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
-import play.api.libs.json.{JsObject, Json}
+import models.{CheckMode, Country, Mode, UserAnswers}
+import pages._
+import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
 
 object JourneyHelpers {

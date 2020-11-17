@@ -235,7 +235,7 @@ class Navigator @Inject()() {
   private def emailAddressQuestionForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(EmailAddressQuestionForIndividualPage) map {
       case true  => routes.EmailAddressForIndividualController.onPageLoad(mode)
-      case false => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+      case false => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, 0)
     }
 
   private def whichCountryTaxForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -250,12 +250,12 @@ class Navigator @Inject()() {
   private def doYouKnowAnyTINForUKIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(DoYouKnowAnyTINForUKIndividualPage) map {
       case true  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode)
-      case false => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode)
+      case false => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode,  incrementIndexIndividual(ua, request))
     }
 
   private def isIndividualResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
-      case true  => routes.WhichCountryTaxForIndividualController.onPageLoad(mode)
+      case true  => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false => routes.IndexController.onPageLoad() //TODO: Route to confirmation page
     }
 
