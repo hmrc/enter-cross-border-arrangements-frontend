@@ -27,14 +27,13 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.IndividualUkPostcodePage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
 
 import scala.concurrent.Future
 
@@ -93,7 +92,7 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "AA1 1AA"))
+      val filledForm = form.bind(Map("postcode" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -122,7 +121,7 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
 
       val request =
         FakeRequest(POST, postcodeRoute)
-          .withFormUrlEncodedBody(("value", "AA1 1AA"))
+          .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
 
       val result = route(application, request).value
 

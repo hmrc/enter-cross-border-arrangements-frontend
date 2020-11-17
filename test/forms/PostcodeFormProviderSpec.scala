@@ -27,9 +27,9 @@ class PostcodeFormProviderSpec extends StringFieldBehaviours {
 
   val form = new PostcodeFormProvider()()
 
-  ".value" - {
+  ".postcode" - {
 
-    val fieldName = "value"
+    val fieldName = "postcode"
 
     behave like fieldThatBindsValidData(
       form,
