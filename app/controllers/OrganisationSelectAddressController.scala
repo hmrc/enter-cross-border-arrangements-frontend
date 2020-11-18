@@ -62,7 +62,7 @@ class OrganisationSelectAddressController @Inject()(
       }
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-        case Nil => Future.successful(Redirect(manualAddressURL(mode))) //ToDo handle no addresses found
+        case Nil => Future.successful(Redirect(manualAddressURL(mode)))
         case addresses =>
 
             val preparedForm = request.userAnswers.get(SelectAddressPage) match {
@@ -85,7 +85,7 @@ class OrganisationSelectAddressController @Inject()(
 
             renderer.render("selectAddress.njk", json).map(Ok(_))
       } recover {
-        case _: Exception => Redirect(manualAddressURL(mode)) //ToDo handle failure to lookup addresses
+        case _: Exception => Redirect(manualAddressURL(mode))
       }
   }
 

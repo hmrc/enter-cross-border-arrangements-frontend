@@ -55,7 +55,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
       val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
-          val taxNumbersUK = value.lift(index).get.taxNumbersUK //TODO - change this and add UKTaxNumbersToModel
+          val taxNumbersUK = value.lift(index).get.taxNumbersUK
           if (taxNumbersUK.isDefined) {
             form.fill(taxNumbersUK.get)
           } else {
