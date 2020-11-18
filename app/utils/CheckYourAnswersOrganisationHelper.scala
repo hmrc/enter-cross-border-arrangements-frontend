@@ -57,53 +57,40 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
       )
   }
 
+  def organisationAddress: Row = {
 
+      val displayCountryNonUk = userAnswers.get(OrganisationAddressPage) match {
+        case Some(address) if userAnswers.get(IsOrganisationAddressUkPage).contains(true) => address.country.description
+        case _ => ""
+      }
 
-  def organisationAddress: Option[Row] = userAnswers.get(OrganisationAddressPage) map {
-    answer =>
-
-      val displayCountryNonUk =
-        if (userAnswers.get(IsOrganisationAddressUkPage).contains(true)) "" else answer.country.description
-
-      Row(
-        key     = Key(msg"organisationAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(
+      val formattedAddress = (userAnswers.get(OrganisationAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
+        case (Some(manualAddress), None) =>
           Html(s"""
-              ${answer.addressLine1.fold("")(address => s"$address<br>")}
-              ${answer.addressLine2.fold("")(address => s"$address<br>")}
-              ${answer.addressLine3.fold("")(address => s"$address<br>")}
-              ${answer.city}<br>
-              ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
+              ${manualAddress.addressLine1.fold("")(address => s"$address<br>")}
+              ${manualAddress.addressLine2.fold("")(address => s"$address<br>")}
+              ${manualAddress.addressLine3.fold("")(address => s"$address<br>")}
+              ${manualAddress.city}<br>
+              ${manualAddress.postCode.fold("")(postcode => s"$postcode<br>")}
               $displayCountryNonUk
               """)
-        ),
-        actions =
-          List(
-            Action(
-              content            = msg"site.edit",
-              href               = routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
-              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationAddress.checkYourAnswersLabel")),
-              attributes         = Map("id" -> "change-address")
-            )
-          )
-      )
-  }
 
-  def organisationAddressFromLookup: Option[Row] = userAnswers.get(SelectedAddressLookupPage) map {
-    answer =>
+        case (None, Some(addressLookup)) =>
+          Html(s"""
+              ${addressLookup.addressLine1.fold("")(address => s"$address<br>")}
+              ${addressLookup.addressLine2.fold("")(address => s"$address<br>")}
+              ${addressLookup.addressLine3.fold("")(address => s"$address<br>")}
+              ${addressLookup.addressLine4.fold("")(address => s"$address<br>")}
+              ${s"${addressLookup.town}<br>"}
+              ${addressLookup.county.fold("")(county => s"$county<br>")}
+              ${addressLookup.postcode}
+              """)
+      }
 
       Row(
         key     = Key(msg"organisationAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(
-          Html(s"""
-              ${answer.addressLine1.fold("")(address => s"$address<br>")}
-              ${answer.addressLine2.fold("")(address => s"$address<br>")}
-              ${answer.addressLine3.fold("")(address => s"$address<br>")}
-              ${answer.addressLine4.fold("")(address => s"$address<br>")}
-              ${s"${answer.town}<br>"}
-              ${answer.county.fold("")(county => s"$county<br>")}
-              ${answer.postcode}
-              """)
+          formattedAddress
         ),
         actions =
           List(
@@ -151,21 +138,10 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
 
   def buildOrganisationDetails: Seq[SummaryList.Row] = {
 
-    //TODO - fix displaying of addresss on change 
-    val displayManualOrLookupAddress = (userAnswers.get(OrganisationAddressPage), userAnswers.get(SelectAddressPage)) match {
-      case (Some(_), _) =>
-        userAnswers.remove(SelectAddressPage)
-        organisationAddress.get
-      case (_, Some(_)) =>
-        userAnswers.remove(OrganisationAddressPage)
-        organisationAddressFromLookup.get
-    }
-
     val displayAddressQuestionWithAddress: Seq[Row] = {
       if (userAnswers.get(IsOrganisationAddressKnownPage).contains(true)) {
-        Seq(isOrganisationAddressKnown.get, displayManualOrLookupAddress)
+        Seq(isOrganisationAddressKnown.get, organisationAddress)
       } else {
-        userAnswers.remove(OrganisationAddressPage)
         Seq(isOrganisationAddressKnown.get)
       }
     }
@@ -174,7 +150,6 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
       if (userAnswers.get(EmailAddressQuestionForOrganisationPage).contains(true)) {
         Seq(emailAddressQuestionForOrganisation.get, emailAddressForOrganisation.get)
       } else {
-        userAnswers.remove(EmailAddressForOrganisationPage)
         Seq(emailAddressQuestionForOrganisation.get)
       }
     }

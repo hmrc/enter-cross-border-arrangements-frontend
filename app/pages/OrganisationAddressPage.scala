@@ -16,12 +16,22 @@
 
 package pages
 
-import models.Address
+import models.{Address, UserAnswers}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object OrganisationAddressPage extends QuestionPage[Address] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "organisationAddress"
+
+  override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(_) =>
+        userAnswers.remove(SelectedAddressLookupPage)
+        userAnswers.remove(PostcodePage)
+      case None => super.cleanup(value, userAnswers)
+    }
 }
