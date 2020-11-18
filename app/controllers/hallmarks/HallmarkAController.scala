@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import controllers.actions._
-import forms.HallmarkD1FormProvider
+import forms.HallmarkAFormProvider
 import javax.inject.Inject
-import models.{Mode, HallmarkD1}
+import models.{HallmarkA, Mode}
 import navigation.Navigator
-import pages.HallmarkD1Page
+import pages.HallmarkAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,14 +32,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HallmarkD1Controller @Inject()(
+class HallmarkAController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: HallmarkD1FormProvider,
+    formProvider: HallmarkAFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,7 +49,7 @@ class HallmarkD1Controller @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkD1Page) match {
+      val preparedForm = request.userAnswers.get(HallmarkAPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -57,10 +57,10 @@ class HallmarkD1Controller @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "checkboxes" -> HallmarkD1.checkboxes(preparedForm)
+        "checkboxes" -> HallmarkA.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkD1.njk", json).map(Ok(_))
+      renderer.render("hallmarkA.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,16 +72,16 @@ class HallmarkD1Controller @Inject()(
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
-            "checkboxes" -> HallmarkD1.checkboxes(formWithErrors)
+            "checkboxes" -> HallmarkA.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkD1.njk", json).map(BadRequest(_))
+          renderer.render("hallmarkA.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1Page, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkAPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkD1Page, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkAPage, mode, updatedAnswers))
       )
   }
 }

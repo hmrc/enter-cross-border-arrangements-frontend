@@ -104,6 +104,9 @@ class Navigator @Inject()() {
     case EmailAddressForOrganisationPage => ua => request =>
       Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(CheckMode)
+    case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(CheckMode)
+    case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(CheckMode)
+    case IsIndividualResidentForTaxOtherCountriesPage => isIndividualResidentForTaxOtherCountriesRoutes(CheckMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(CheckMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(CheckMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => ua => request =>
@@ -130,7 +133,7 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(CheckMode)
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
-    case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
+    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
     case IndividualNamePage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
@@ -156,11 +159,11 @@ class Navigator @Inject()() {
   }
 
  def catRoutes(key: HallmarkCategories): Mode => Call = key match {
-   case CategoryA => routes.HallmarkAController.onPageLoad
-   case CategoryB => routes.HallmarkBController.onPageLoad
-   case CategoryC => routes.HallmarkCController.onPageLoad
-   case CategoryD => routes.HallmarkDController.onPageLoad
-   case CategoryE => routes.HallmarkEController.onPageLoad
+   case CategoryA => controllers.hallmarks.routes.HallmarkAController.onPageLoad
+   case CategoryB => controllers.hallmarks.routes.HallmarkBController.onPageLoad
+   case CategoryC => controllers.hallmarks.routes.HallmarkCController.onPageLoad
+   case CategoryD => controllers.hallmarks.routes.HallmarkDController.onPageLoad
+   case CategoryE => controllers.hallmarks.routes.HallmarkEController.onPageLoad
  }
 
   private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -169,81 +172,83 @@ class Navigator @Inject()() {
   private def hallmarkARoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
       case set: Set[HallmarkCategories] if set.contains(CategoryB) =>
-        routes.HallmarkBController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkBController.onPageLoad(mode)
       case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
-        routes.HallmarkCController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkCController.onPageLoad(mode)
       case _ =>
-        routes.MainBenefitTestController.onPageLoad(mode)
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
     }
 
   private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
       case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
-        routes.HallmarkCController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkCController.onPageLoad(mode)
       case _ =>
-        routes.MainBenefitTestController.onPageLoad(mode)
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
     }
 
   private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(MainBenefitTestPage) map {
       case true =>
         ua.get(HallmarkCategoriesPage) match {
-          case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-          case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
+          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
+          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
         }
-      case false => routes.MainBenefitProblemController.onPageLoad()
+      case false => controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad()
     }
 
   private def hallmarkCRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkCPage) map {
-      case set: Set[HallmarkC] if set.contains(C1) => routes.HallmarkC1Controller.onPageLoad(mode)
+      case set: Set[HallmarkC] if set.contains(C1) => controllers.hallmarks.routes.HallmarkC1Controller.onPageLoad(mode)
       case  _ =>  ua.get(HallmarkCategoriesPage) match {
-        case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
-        case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
-        case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-        case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
+        case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
+        case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
+        case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
       }
     }
 
   private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkC1Page) map {
-      case set: Set[HallmarkC1] if set.contains(C1c) || set.contains(C1bi) || set.contains(C1d) => routes.MainBenefitTestController.onPageLoad(mode)
+      case set: Set[HallmarkC1] if set.contains(C1c) || set.contains(C1bi) || set.contains(C1d) =>
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
       case  _ =>
         ua.get(HallmarkCategoriesPage) match {
-          case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-          case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
+          case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) =>
+            controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
+          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
+          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
         }
     }
 
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkDPage) flatMap  {
-      case set: Set[HallmarkD] if set.contains(D1) => Some(routes.HallmarkD1Controller.onPageLoad(mode))
-      case  _ => ua.get(HallmarkCategoriesPage).map {
-        case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-          routes.HallmarkEController.onPageLoad(mode)
-        case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
-      }
+      case set: Set[HallmarkD] if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(mode))
+       case  _ => ua.get(HallmarkCategoriesPage).map {
+         case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
+           controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+         case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+       }
     }
 
   private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkD1Page) flatMap  {
-      case set: Set[HallmarkD1] if set.contains(D1other) => Some(routes.HallmarkD1OtherController.onPageLoad(mode))
+      case set: Set[HallmarkD1] if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(mode))
       case  _ => ua.get(HallmarkCategoriesPage).map {
         case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-          routes.HallmarkEController.onPageLoad(mode)
-        case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
+          controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
       }
     }
 
-  private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map {
-      case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-        routes.HallmarkEController.onPageLoad(mode)
-      case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
-    }
+   private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+     ua.get(HallmarkCategoriesPage) map {
+       case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
+         controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
+       case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+     }
 
   private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {

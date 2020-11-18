@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import controllers.actions._
 import forms.HallmarkD1OtherFormProvider

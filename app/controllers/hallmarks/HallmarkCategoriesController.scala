@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import controllers.actions._
-import forms.HallmarkDFormProvider
+import forms.HallmarkCategoriesFormProvider
 import javax.inject.Inject
-import models.HallmarkD.D1
-import models.{HallmarkD, Mode, UserAnswers}
+import models.{HallmarkCategories, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{HallmarkD1Page, HallmarkDPage}
+import pages.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,26 +31,24 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
-class HallmarkDController @Inject()(
+class HallmarkCategoriesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: HallmarkDFormProvider,
+    formProvider: HallmarkCategoriesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkDPage) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkCategoriesPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,13 +56,13 @@ class HallmarkDController @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "checkboxes" -> HallmarkD.checkboxes(preparedForm)
+        "checkboxes" -> HallmarkCategories.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkD.njk", json).map(Ok(_))
+      renderer.render("hallmarkCategories.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -74,24 +71,21 @@ class HallmarkDController @Inject()(
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
-            "checkboxes" -> HallmarkD.checkboxes(formWithErrors)
+            "checkboxes" -> HallmarkCategories.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkD.njk", json).map(BadRequest(_))
+          renderer.render("hallmarkCategories.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
           for {
-            userAnswers <- Future.fromTry(removeD1Parts(request.userAnswers, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCategoriesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkDPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, mode, updatedAnswers))
+
+        }
       )
   }
-
-private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]) =
-  userAnswers.get(HallmarkD1Page) match {
-    case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page)
-    case _ => Success(userAnswers)
-  }
-
 }

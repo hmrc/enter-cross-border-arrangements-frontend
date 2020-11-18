@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import base.SpecBase
 import models.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1, UserAnswers}
@@ -259,7 +259,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

@@ -14,46 +14,47 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import base.SpecBase
-import forms.HallmarkC1FormProvider
+import forms.MainBenefitTestFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, HallmarkC1, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HallmarkC1Page
+import pages.MainBenefitTestPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class MainBenefitTestControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val hallmarkC1Route = routes.HallmarkC1Controller.onPageLoad(NormalMode).url
-
-  val formProvider = new HallmarkC1FormProvider()
+  val formProvider = new MainBenefitTestFormProvider()
   val form = formProvider()
 
-  "HallmarkC1 Controller" - {
+  lazy val mainBenefitTestRoute = routes.MainBenefitTestController.onPageLoad(NormalMode).url
+
+  "MeetMainBenefitTest Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, hallmarkC1Route)
+      val request = FakeRequest(GET, mainBenefitTestRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -64,12 +65,12 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkC1.checkboxes(form)
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "hallmarkC1.njk"
+      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -77,11 +78,12 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(HallmarkC1Page, HallmarkC1.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(MainBenefitTestPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, hallmarkC1Route)
+      val request = FakeRequest(GET, mainBenefitTestRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -91,15 +93,15 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(HallmarkC1.values.toSet)
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
-        "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkC1.checkboxes(filledForm)
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "hallmarkC1.njk"
+      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,8 +122,8 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
           .build()
 
       val request =
-        FakeRequest(POST, hallmarkC1Route)
-          .withFormUrlEncodedBody(("value[0]", HallmarkC1.values.head.toString))
+        FakeRequest(POST, mainBenefitTestRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -138,8 +140,8 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request =  FakeRequest(POST, hallmarkC1Route).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, mainBenefitTestRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -150,12 +152,12 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> boundForm,
-        "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkC1.checkboxes(boundForm)
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "hallmarkC1.njk"
+      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -164,12 +166,14 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(GET, hallmarkC1Route)
+
+      val request = FakeRequest(GET, mainBenefitTestRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -177,13 +181,16 @@ class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksS
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, hallmarkC1Route).withFormUrlEncodedBody(("value[0]", HallmarkC1.values.head.toString))
+
+      val request =
+        FakeRequest(POST, mainBenefitTestRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

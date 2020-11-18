@@ -200,7 +200,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content = msg"site.edit",
-              href = routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
+              href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
             )
           )
@@ -231,7 +231,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = routes.MainBenefitTestController.onPageLoad(CheckMode).url,
+              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
             )
           )
@@ -249,7 +249,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
           )
         )
@@ -294,7 +294,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       actions = List(
         Action(
           content            = msg"site.edit",
-          href               = routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+          href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
         )
       )

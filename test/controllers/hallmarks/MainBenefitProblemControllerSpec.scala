@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import base.SpecBase
 import models.{HallmarkCategories, NormalMode, UserAnswers}

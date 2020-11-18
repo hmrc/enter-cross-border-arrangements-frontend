@@ -14,44 +14,43 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
-import controllers.actions._
-import javax.inject.Inject
-import models.HallmarkCategories.{CategoryD, CategoryE}
-import models.NormalMode
-import pages.HallmarkCategoriesPage
+import com.google.inject.Inject
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
+import utils.CheckYourAnswersHelper
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class MainBenefitProblemController @Inject()(
+class CheckYourAnswersHallmarksController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      request.userAnswers.get(HallmarkCategoriesPage) match {
-        case None => Future.successful(Redirect(routes.HallmarkCategoriesController.onPageLoad(NormalMode)))
-        case Some(hallmarkCategories) =>
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-        val json = Json.obj(
-          "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(NormalMode).url,
-          "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(NormalMode).url,
-          "hallmarkSet"-> hallmarkCategories.diff(Set(CategoryD, CategoryE)).toSeq.sorted
-        )
+      val hallmarks = helper.buildHallmarksRow(request.userAnswers)
+      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest, helper.hallmarkD1Other).flatten
 
-      renderer.render("mainBenefitProblem.njk", json).map(Ok(_))
-    }
+      //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
+
+      renderer.render(
+        "check-your-answers.njk",
+        Json.obj("list" -> answers)
+      ).map(Ok(_))
   }
+
 }

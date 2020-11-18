@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import controllers.actions._
-import forms.HallmarkCFormProvider
+import forms.HallmarkC1FormProvider
 import javax.inject.Inject
-import models.HallmarkC.C1
-import models.{HallmarkC, Mode, UserAnswers}
+import models.{HallmarkC1, Mode}
 import navigation.Navigator
-import pages.{HallmarkC1Page, HallmarkCPage}
+import pages.HallmarkC1Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,16 +31,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
-class HallmarkCController @Inject()(
+class HallmarkC1Controller @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: HallmarkCFormProvider,
+    formProvider: HallmarkC1FormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -51,7 +49,7 @@ class HallmarkCController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkCPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkC1Page) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,10 +57,10 @@ class HallmarkCController @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "checkboxes" -> HallmarkC.checkboxes(preparedForm)
+        "checkboxes" -> HallmarkC1.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkC.njk", json).map(Ok(_))
+      renderer.render("hallmarkC1.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -74,23 +72,16 @@ class HallmarkCController @Inject()(
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
-            "checkboxes" -> HallmarkC.checkboxes(formWithErrors)
+            "checkboxes" -> HallmarkC1.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkC.njk", json).map(BadRequest(_))
+          renderer.render("hallmarkC1.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            userAnswers <- Future.fromTry(removeC1Parts(request.userAnswers, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkC1Page, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkCPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkC1Page, mode, updatedAnswers))
       )
   }
-
-  private def removeC1Parts(userAnswers: UserAnswers, values: Set[HallmarkC]) =
-    userAnswers.get(HallmarkC1Page) match {
-      case Some(_) if !values.contains(C1) => userAnswers.remove(HallmarkC1Page)
-      case _ => Success(userAnswers)
-    }
 }

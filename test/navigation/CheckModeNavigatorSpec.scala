@@ -50,7 +50,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
-              .mustBe(routes.HallmarkAController.onPageLoad(CheckMode))
+              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(CheckMode))
         }
       }
 
@@ -68,7 +68,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
-              .mustBe(routes.HallmarkBController.onPageLoad(CheckMode))
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(CheckMode))
         }
       }
 
@@ -88,7 +88,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
-              .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode))
         }
       }
 
@@ -110,7 +110,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
-              .mustBe(routes.HallmarkBController.onPageLoad(CheckMode))
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(CheckMode))
         }
       }
 
@@ -129,7 +129,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(HallmarkBPage, CheckMode, updatedAnswers)
-              .mustBe(routes.MainBenefitTestController.onPageLoad(CheckMode))
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode))
         }
       }
 
@@ -146,7 +146,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -163,7 +163,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
-              .mustBe(routes.MainBenefitProblemController.onPageLoad())
+              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad())
         }
       }
 

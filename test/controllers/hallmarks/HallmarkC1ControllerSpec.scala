@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.hallmarks
 
 import base.SpecBase
-import forms.HallmarkBFormProvider
+import forms.HallmarkC1FormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, HallmarkB, UserAnswers}
+import models.{HallmarkC1, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HallmarkBPage
+import pages.HallmarkC1Page
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,23 +37,23 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class HallmarkC1ControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val hallmarkBRoute = routes.HallmarkBController.onPageLoad(NormalMode).url
+  lazy val hallmarkC1Route = routes.HallmarkC1Controller.onPageLoad(NormalMode).url
 
-  val formProvider = new HallmarkBFormProvider()
+  val formProvider = new HallmarkC1FormProvider()
   val form = formProvider()
 
-  "HallmarkB Controller" - {
+  "HallmarkC1 Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, hallmarkBRoute)
+      val request = FakeRequest(GET, hallmarkC1Route)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -66,10 +66,10 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkB.checkboxes(form)
+        "checkboxes" -> HallmarkC1.checkboxes(form)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkB.njk"
+      templateCaptor.getValue mustEqual "hallmarkC1.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -79,9 +79,9 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(HallmarkBPage, HallmarkB.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(HallmarkC1Page, HallmarkC1.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, hallmarkBRoute)
+      val request = FakeRequest(GET, hallmarkC1Route)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -91,15 +91,15 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(HallmarkB.values.toSet)
+      val filledForm = form.fill(HallmarkC1.values.toSet)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkB.checkboxes(filledForm)
+        "checkboxes" -> HallmarkC1.checkboxes(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkB.njk"
+      templateCaptor.getValue mustEqual "hallmarkC1.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,8 +120,8 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
           .build()
 
       val request =
-        FakeRequest(POST, hallmarkBRoute)
-          .withFormUrlEncodedBody(("value[0]", HallmarkB.values.head.toString))
+        FakeRequest(POST, hallmarkC1Route)
+          .withFormUrlEncodedBody(("value[0]", HallmarkC1.values.head.toString))
 
       val result = route(application, request).value
 
@@ -138,7 +138,7 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request =  FakeRequest(POST, hallmarkBRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request =  FakeRequest(POST, hallmarkC1Route).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -152,10 +152,10 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> HallmarkB.checkboxes(boundForm)
+        "checkboxes" -> HallmarkC1.checkboxes(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkB.njk"
+      templateCaptor.getValue mustEqual "hallmarkC1.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -164,12 +164,12 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(GET, hallmarkBRoute)
+      val request = FakeRequest(GET, hallmarkC1Route)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -177,13 +177,13 @@ class HallmarkBControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, hallmarkBRoute).withFormUrlEncodedBody(("value[0]", HallmarkB.values.head.toString))
+      val request = FakeRequest(POST, hallmarkC1Route).withFormUrlEncodedBody(("value[0]", HallmarkC1.values.head.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
