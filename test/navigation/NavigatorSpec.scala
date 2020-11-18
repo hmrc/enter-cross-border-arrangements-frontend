@@ -19,15 +19,14 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.HallmarkD.D2
-import models.HallmarkD1.D1other
-import models.WhyAreYouReportingThisArrangementNow.Dac6701
 import models._
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement.UnitedKingdom
+import models.hallmarks.HallmarkD.D2
+import models.hallmarks.HallmarkD1._
+import models.hallmarks._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import pages.hallmarks._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -248,7 +247,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
                 .success.value
-                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
+                .set(HallmarkD1Page, values.toSet.filter(_ != D1other))
                 .success.value
 
             navigator
@@ -266,7 +265,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ != D1other))
+                .set(HallmarkD1Page, values.toSet.filter(_ != D1other))
                 .success.value
 
             navigator
@@ -285,7 +284,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                .set(HallmarkD1Page, values.toSet.filter(_ == D1other))
                 .success.value
 
             navigator
@@ -303,7 +302,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
                 .success.value
-                .set(HallmarkD1Page, HallmarkD1.values.toSet.filter(_ == D1other))
+                .set(HallmarkD1Page, values.toSet.filter(_ == D1other))
                 .success.value
                 .set(HallmarkD1OtherPage, "")
                 .success.value

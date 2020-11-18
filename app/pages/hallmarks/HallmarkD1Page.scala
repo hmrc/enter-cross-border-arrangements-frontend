@@ -16,7 +16,7 @@
 
 package pages.hallmarks
 
-import models.HallmarkD1
+import models.hallmarks.HallmarkD1
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

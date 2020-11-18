@@ -16,7 +16,8 @@
 
 package pages.hallmarks
 
-import models.{HallmarkA, HallmarkB, HallmarkCategories, UserAnswers}
+import models.UserAnswers
+import models.hallmarks.{HallmarkA, HallmarkB, HallmarkCategories}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 

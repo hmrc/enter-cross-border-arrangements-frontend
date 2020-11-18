@@ -17,7 +17,8 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import models.{HallmarkCategories, NormalMode, UserAnswers}
+import models.hallmarks.HallmarkCategories
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}

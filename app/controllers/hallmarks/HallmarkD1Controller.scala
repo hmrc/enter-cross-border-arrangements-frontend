@@ -19,7 +19,8 @@ package controllers.hallmarks
 import controllers.actions._
 import forms.HallmarkD1FormProvider
 import javax.inject.Inject
-import models.{HallmarkD1, Mode}
+import models.Mode
+import models.hallmarks.HallmarkD1
 import navigation.Navigator
 import pages.hallmarks.HallmarkD1Page
 import play.api.i18n.{I18nSupport, MessagesApi}

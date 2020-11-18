@@ -18,8 +18,8 @@ package controllers.hallmarks
 
 import controllers.actions._
 import javax.inject.Inject
-import models.HallmarkCategories.{CategoryD, CategoryE}
 import models.NormalMode
+import models.hallmarks.HallmarkCategories.{CategoryD, CategoryE}
 import pages.hallmarks.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

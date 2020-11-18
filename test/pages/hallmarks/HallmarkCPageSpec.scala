@@ -16,7 +16,7 @@
 
 package pages.hallmarks
 
-import models.HallmarkC
+import models.hallmarks.HallmarkC
 import pages.behaviours.PageBehaviours
 
 class HallmarkCPageSpec extends PageBehaviours {

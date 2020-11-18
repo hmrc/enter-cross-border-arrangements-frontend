@@ -16,8 +16,9 @@
 
 package pages.hallmarks
 
-import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
-import models.{HallmarkCategories, UserAnswers}
+import models.UserAnswers
+import models.hallmarks.HallmarkCategories
+import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

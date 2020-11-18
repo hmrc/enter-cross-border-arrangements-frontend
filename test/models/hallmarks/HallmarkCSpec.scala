@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.hallmarks
 
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
 class HallmarkCSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {

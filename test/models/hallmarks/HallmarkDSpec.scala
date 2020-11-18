@@ -14,49 +14,48 @@
  * limitations under the License.
  */
 
-package models
+package models.hallmarks
 
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class HallmarkD1Spec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class HallmarkDSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "HallmarkD1" - {
+  "HallmarkD" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[HallmarkD1]
+      val gen = arbitrary[HallmarkD]
 
       forAll(gen) {
-        hallmarkD1 =>
+        hallmarkD =>
 
-          JsString(hallmarkD1.toString).validate[HallmarkD1].asOpt.value mustEqual hallmarkD1
+          JsString(hallmarkD.toString).validate[HallmarkD].asOpt.value mustEqual hallmarkD
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!HallmarkD1.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!HallmarkD.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[HallmarkD1] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[HallmarkD] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = arbitrary[HallmarkD1]
+      val gen = arbitrary[HallmarkD]
 
       forAll(gen) {
-        hallmarkD1 =>
+        hallmarkD =>
 
-          Json.toJson(hallmarkD1) mustEqual JsString(hallmarkD1.toString)
+          Json.toJson(hallmarkD) mustEqual JsString(hallmarkD.toString)
       }
     }
   }

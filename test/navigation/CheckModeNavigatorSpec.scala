@@ -17,7 +17,6 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
 import generators.Generators
 import models._
 import org.scalacheck.Arbitrary.arbitrary

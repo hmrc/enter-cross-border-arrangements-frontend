@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.hallmarks
 
+import models.{Enumerable, WithName}
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._

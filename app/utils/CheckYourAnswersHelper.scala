@@ -17,16 +17,15 @@
 package utils
 
 import controllers.routes
-import models.HallmarkA._
-import models.HallmarkC.C1
-import models.HallmarkC1._
-import models.HallmarkCategories.{CategoryA, CategoryB}
-import models.HallmarkD.D1
-import models.HallmarkD1.D1other
+import models.hallmarks.HallmarkA._
+import models.hallmarks.HallmarkC.C1
+import models.hallmarks.HallmarkC1._
+import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
+import models.hallmarks.HallmarkD.D1
+import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
-import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
+import pages.hallmarks._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal

@@ -19,14 +19,15 @@ package navigation
 import controllers.routes
 import helpers.JourneyHelpers.{currentIndexInsideLoop, incrementIndexIndividual, incrementIndexOrganisation}
 import javax.inject.{Inject, Singleton}
-import models.HallmarkC.C1
-import models.HallmarkC1.{C1bi, C1c, C1d}
-import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
-import models.HallmarkD.D1
-import models.HallmarkD1.D1other
 import models._
+import models.hallmarks.HallmarkC.C1
+import models.hallmarks.HallmarkC1.{C1bi, C1c, C1d}
+import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
+import models.hallmarks.HallmarkD.D1
+import models.hallmarks.HallmarkD1.D1other
+import models.hallmarks._
 import pages._
-import pages.hallmarks.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCPage, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage, HallmarkEPage, MainBenefitTestPage}
+import pages.hallmarks._
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
 

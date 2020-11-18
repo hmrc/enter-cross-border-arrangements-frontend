@@ -17,7 +17,8 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import models.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1, UserAnswers}
+import models.UserAnswers
+import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}

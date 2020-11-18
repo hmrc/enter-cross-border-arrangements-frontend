@@ -14,41 +14,39 @@
  * limitations under the License.
  */
 
-package models
+package models.hallmarks
 
+import models.{Enumerable, WithName}
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-sealed trait HallmarkA
+sealed trait HallmarkB
 
-object HallmarkA extends Enumerable.Implicits {
+object HallmarkB extends Enumerable.Implicits {
 
-  case object HallmarkA1 extends WithName("A1") with HallmarkA
-  case object HallmarkA2a extends WithName("A2a") with HallmarkA
-  case object HallmarkA2b extends WithName("A2b") with HallmarkA
-  case object HallmarkA3 extends WithName("A3") with HallmarkA
+  case object HallmarkB1 extends WithName("B1") with HallmarkB
+  case object HallmarkB2 extends WithName("B2") with HallmarkB
+  case object HallmarkB3 extends WithName("B3") with HallmarkB
 
-  val values: Seq[HallmarkA] = Seq(
-    HallmarkA1,
-    HallmarkA2a,
-    HallmarkA2b,
-    HallmarkA3
+  val values: Seq[HallmarkB] = Seq(
+    HallmarkB1,
+    HallmarkB2,
+    HallmarkB3
   )
 
   def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
 
     val field = form("value")
     val items = Seq(
-      Checkboxes.Checkbox(msg"hallmarkA.option1", HallmarkA1.toString),
-      Checkboxes.Checkbox(msg"hallmarkA.option2", HallmarkA2a.toString),
-      Checkboxes.Checkbox(msg"hallmarkA.option3", HallmarkA2b.toString),
-      Checkboxes.Checkbox(msg"hallmarkA.option4", HallmarkA3.toString)
+      Checkboxes.Checkbox(msg"hallmarkB.b1", HallmarkB1.toString),
+      Checkboxes.Checkbox(msg"hallmarkB.b2", HallmarkB2.toString),
+      Checkboxes.Checkbox(msg"hallmarkB.b3", HallmarkB3.toString)
     )
 
     Checkboxes.set(field, items)
   }
 
-  implicit val enumerable: Enumerable[HallmarkA] =
+  implicit val enumerable: Enumerable[HallmarkB] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

@@ -17,11 +17,10 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.hallmarks.HallmarkE
 import play.api.data.Form
 import play.api.data.Forms.set
-import models.HallmarkE
 
 class HallmarkEFormProvider @Inject() extends Mappings {
 

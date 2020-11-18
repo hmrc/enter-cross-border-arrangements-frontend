@@ -17,7 +17,7 @@
 package generators
 
 import models._
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC, HallmarkC1, HallmarkCategories, HallmarkD, HallmarkD1, HallmarkE}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._

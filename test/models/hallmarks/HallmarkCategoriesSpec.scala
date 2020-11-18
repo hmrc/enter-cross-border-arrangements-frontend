@@ -14,49 +14,48 @@
  * limitations under the License.
  */
 
-package models
+package models.hallmarks
 
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class HallmarkASpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class HallmarkCategoriesSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "HallmarkA" - {
+  "HallmarkCategories" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[HallmarkA]
+      val gen = arbitrary[HallmarkCategories]
 
       forAll(gen) {
-        hallmarkA =>
+        hallmarkCategories =>
 
-          JsString(hallmarkA.toString).validate[HallmarkA].asOpt.value mustEqual hallmarkA
+          JsString(hallmarkCategories.toString).validate[HallmarkCategories].asOpt.value mustEqual hallmarkCategories
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!HallmarkA.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!HallmarkCategories.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[HallmarkA] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[HallmarkCategories] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = arbitrary[HallmarkA]
+      val gen = arbitrary[HallmarkCategories]
 
       forAll(gen) {
-        hallmarkA =>
+        hallmarkCategories =>
 
-          Json.toJson(hallmarkA) mustEqual JsString(hallmarkA.toString)
+          Json.toJson(hallmarkCategories) mustEqual JsString(hallmarkCategories.toString)
       }
     }
   }

@@ -19,7 +19,8 @@ package controllers.hallmarks
 import base.SpecBase
 import forms.HallmarkBFormProvider
 import matchers.JsonMatchers
-import models.{HallmarkB, NormalMode, UserAnswers}
+import models.hallmarks.HallmarkB
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

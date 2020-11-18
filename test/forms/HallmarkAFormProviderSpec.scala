@@ -17,7 +17,7 @@
 package forms
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.HallmarkA
+import models.hallmarks.HallmarkA
 import play.api.data.FormError
 
 class HallmarkAFormProviderSpec extends CheckboxFieldBehaviours {

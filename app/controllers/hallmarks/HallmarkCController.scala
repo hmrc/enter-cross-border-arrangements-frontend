@@ -19,8 +19,9 @@ package controllers.hallmarks
 import controllers.actions._
 import forms.HallmarkCFormProvider
 import javax.inject.Inject
-import models.HallmarkC.C1
-import models.{HallmarkC, Mode, UserAnswers}
+import models.hallmarks.HallmarkC.C1
+import models.hallmarks.HallmarkC
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.hallmarks.{HallmarkC1Page, HallmarkCPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
