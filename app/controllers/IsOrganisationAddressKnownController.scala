@@ -18,9 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.IsOrganisationAddressKnownFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
+import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.IsOrganisationAddressKnownPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -67,7 +67,6 @@ class IsOrganisationAddressKnownController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors => {
 
@@ -82,13 +81,17 @@ class IsOrganisationAddressKnownController @Inject()(
         },
         value => {
 
-          val redirectUsers = hasValueChanged(value, IsOrganisationAddressKnownPage, mode, request.userAnswers)
+          val determineRoute = (value, mode) match {
+            case (true, CheckMode) => false
+            case (false, CheckMode) => true
+            case  _ => false
+          }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (redirectUsers) {
+            if (determineRoute) {
               Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
