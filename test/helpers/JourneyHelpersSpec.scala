@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.JourneyHelpers._
-import models.{CheckMode, Country, Name, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{CheckMode, Country, Name, OrganisationLoopDetails, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
@@ -117,24 +117,24 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
     }
 
     "calling hasValueChanged" - {
-      "must return true if mode is CheckMode and user answer is the same" in {
+      "must return true if mode is CheckMode and user answer has changed" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(OrganisationNamePage, "Organisation")
+          .success
+          .value
+
+        val result = hasValueChanged("new Organisation", OrganisationNamePage, CheckMode, userAnswers)
+
+        result mustBe true
+      }
+
+      "must return false if user answer has not changed (NormalMode or CheckMode)" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(OrganisationNamePage, "Organisation")
           .success
           .value
 
         val result = hasValueChanged("Organisation", OrganisationNamePage, CheckMode, userAnswers)
-
-        result mustBe true
-      }
-
-      "must return false if user answer is changed (NormalMode or CheckMode)" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(OrganisationNamePage, "Organisation")
-          .success
-          .value
-
-        val result = hasValueChanged("New Organisation", OrganisationNamePage, NormalMode, userAnswers)
 
         result mustBe false
       }

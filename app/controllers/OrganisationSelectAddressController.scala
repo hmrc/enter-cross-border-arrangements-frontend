@@ -19,11 +19,11 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
 import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{PostcodePage, SelectAddressPage}
+import pages.{PostcodePage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -91,7 +91,6 @@ class OrganisationSelectAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val postCode = request.userAnswers.get(PostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
@@ -99,14 +98,12 @@ class OrganisationSelectAddressController @Inject()(
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         addresses =>
-
         val addressItems: Seq[Radios.Radio] = addresses.map(address =>
           Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
           )
 
         form.bindFromRequest().fold(
           formWithErrors => {
-
             val radios = Radios(field = formWithErrors("value"), items = addressItems)
 
             val json = Json.obj(
@@ -121,12 +118,26 @@ class OrganisationSelectAddressController @Inject()(
 
             renderer.render("selectAddress.njk", json).map(BadRequest(_))
           },
-          value =>
+          value => {
+            val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
+
+            val redirectUsers = hasValueChanged(value, SelectAddressPage, mode, request.userAnswers)
+
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+              _ <- sessionRepository.set(updatedAnswersWithAddress)
+            } yield {
+              if (redirectUsers) {
+                Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+              } else {
+                Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithAddress))
+              }
+            }
+          }
         )
+      } recover {
+        case _: Exception => Redirect(manualAddressURL(mode))
       }
   }
 

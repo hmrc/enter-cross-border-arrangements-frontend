@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged}
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -93,11 +93,20 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
           renderer.render("address.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = hasValueChanged(value, OrganisationAddressPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 
