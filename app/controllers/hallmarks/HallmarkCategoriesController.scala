@@ -21,7 +21,7 @@ import forms.HallmarkCategoriesFormProvider
 import javax.inject.Inject
 import models.{HallmarkCategories, Mode, UserAnswers}
 import navigation.Navigator
-import pages.HallmarkCategoriesPage
+import pages.hallmarks.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,7 +59,7 @@ class HallmarkCategoriesController @Inject()(
         "checkboxes" -> HallmarkCategories.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkCategories.njk", json).map(Ok(_))
+      renderer.render("hallmarks/hallmarkCategories.njk",json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
@@ -74,7 +74,7 @@ class HallmarkCategoriesController @Inject()(
             "checkboxes" -> HallmarkCategories.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkCategories.njk", json).map(BadRequest(_))
+          renderer.render("hallmarks/hallmarkCategories.njk",json).map(BadRequest(_))
         },
         value => {
           val initialUserAnswers = UserAnswers(request.internalId)

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
-import models.HallmarkE
+import models.HallmarkD
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object HallmarkEPage extends QuestionPage[Set[HallmarkE]] {
+case object HallmarkDPage extends QuestionPage[Set[HallmarkD]] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "hallmarkE"
+  override def toString: String = "hallmarkD"
 }

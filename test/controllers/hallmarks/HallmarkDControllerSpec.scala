@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HallmarkDPage
+import pages.hallmarks.HallmarkDPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -69,7 +69,7 @@ class HallmarkDControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
         "checkboxes" -> HallmarkD.checkboxes(form)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -99,7 +99,7 @@ class HallmarkDControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
         "checkboxes" -> HallmarkD.checkboxes(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -155,7 +155,7 @@ class HallmarkDControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
         "checkboxes" -> HallmarkD.checkboxes(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

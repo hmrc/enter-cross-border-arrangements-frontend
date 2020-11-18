@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
+import models.HallmarkA
 import pages.behaviours.PageBehaviours
 
-class MainBenefitTestPageSpec extends PageBehaviours {
+class HallmarkAPageSpec extends PageBehaviours {
 
-  "MeetMainBenefitTestPage" - {
+  "HallmarkAPage" - {
 
-    beRetrievable[Boolean](MainBenefitTestPage)
+    beRetrievable[Set[HallmarkA]](HallmarkAPage)
 
-    beSettable[Boolean](MainBenefitTestPage)
+    beSettable[Set[HallmarkA]](HallmarkAPage)
 
-    beRemovable[Boolean](MainBenefitTestPage)
+    beRemovable[Set[HallmarkA]](HallmarkAPage)
   }
 }

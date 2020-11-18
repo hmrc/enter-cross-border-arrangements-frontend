@@ -26,6 +26,7 @@ import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models._
 import pages._
+import pages.hallmarks.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCPage, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage, HallmarkEPage, MainBenefitTestPage}
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
 

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
-import models.HallmarkD1
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object HallmarkD1Page extends QuestionPage[Set[HallmarkD1]] {
 
-  override def path: JsPath = JsPath \ toString
+class HallmarkD1OtherPageSpec extends PageBehaviours {
 
-  override def toString: String = "hallmarkD1"
+  "HallmarkD1OtherPage" - {
+
+    beRetrievable[String](HallmarkD1OtherPage)
+
+    beSettable[String](HallmarkD1OtherPage)
+
+    beRemovable[String](HallmarkD1OtherPage)
+  }
 }

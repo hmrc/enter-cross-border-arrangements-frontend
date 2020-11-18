@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object MainBenefitTestPage extends QuestionPage[Boolean] {
+case object HallmarkD1OtherPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "mainBenefitTest"
+  override def toString: String = "hallmarkD1Other"
 }

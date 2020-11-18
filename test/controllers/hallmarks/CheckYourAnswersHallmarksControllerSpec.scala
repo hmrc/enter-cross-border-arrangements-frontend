@@ -21,7 +21,7 @@ import models.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1,
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages._
+import pages.hallmarks._
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -59,7 +59,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
 
       application.stop()
     }
@@ -95,7 +95,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       val json = jsonCaptor.getValue
       val list = (json \ "list").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("A1, B2") mustBe true
 
       application.stop()
@@ -129,7 +129,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val list = (json \ "list").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("D1other") mustBe true
       list.contains("Other page text") mustBe true
 
@@ -165,7 +165,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val list = (json \ "list").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("D1a") mustBe true
       list.contains("Other page text") mustBe false
 
@@ -204,7 +204,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val list = (json \ "list").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("C1bi") mustBe true
       list.contains("Does the arrangement meet the Main Benefit Test?") mustBe true
 
@@ -242,7 +242,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val list = (json \ "list").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers.njk"
+      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("C1a") mustBe true
       list.contains("Does the arrangement meet the Main Benefit Test?") mustBe false
 

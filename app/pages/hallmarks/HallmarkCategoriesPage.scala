@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
 import models.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
 import models.{HallmarkCategories, UserAnswers}
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 import scala.annotation.tailrec

@@ -17,11 +17,10 @@
 package controllers.hallmarks
 
 import controllers.actions._
-import controllers.routes
 import javax.inject.Inject
 import models.HallmarkCategories.{CategoryD, CategoryE}
 import models.NormalMode
-import pages.HallmarkCategoriesPage
+import pages.hallmarks.HallmarkCategoriesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -52,7 +51,7 @@ class MainBenefitProblemController @Inject()(
           "hallmarkSet"-> hallmarkCategories.diff(Set(CategoryD, CategoryE)).toSeq.sorted
         )
 
-      renderer.render("mainBenefitProblem.njk", json).map(Ok(_))
+      renderer.render("hallmarks/mainBenefitProblem.njk", json).map(Ok(_))
     }
   }
 }

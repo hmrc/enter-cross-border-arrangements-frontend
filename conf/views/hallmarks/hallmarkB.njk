@@ -1,14 +1,13 @@
 {% extends "includes/layout.njk" %}
 
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk"    import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("hallmarkD1Other.title"), form.errors) }}
+  {{ title(messages("hallmarkB.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -28,28 +27,29 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.HallmarkD1OtherController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.hallmarks.HallmarkBController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          {{ govukTextarea({
-            label: {
-              text: messages('hallmarkD1Other.title'),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
+          {{ govukCheckboxes({
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('hallmarkB.title'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
             },
-            id: "d1-other",
-            name: "value",
-            rows: "15",
-            value: form.value.value,
+            hint: {
+              text: messages('hallmarkB.hint')
+            },
+            items: checkboxes,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue"),
-            attributes: {
-                  "id": "submit"
-              }
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

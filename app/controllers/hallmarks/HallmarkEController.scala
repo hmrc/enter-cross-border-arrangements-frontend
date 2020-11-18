@@ -21,7 +21,7 @@ import forms.HallmarkEFormProvider
 import javax.inject.Inject
 import models.{HallmarkE, Mode}
 import navigation.Navigator
-import pages.HallmarkEPage
+import pages.hallmarks.HallmarkEPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -60,7 +60,7 @@ class HallmarkEController @Inject()(
         "checkboxes" -> HallmarkE.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkE.njk", json).map(Ok(_))
+      renderer.render("hallmarks/hallmarkE.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,7 +75,7 @@ class HallmarkEController @Inject()(
             "checkboxes" -> HallmarkE.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkE.njk", json).map(BadRequest(_))
+          renderer.render("hallmarks/hallmarkE.njk", json).map(BadRequest(_))
         },
         value =>
           for {

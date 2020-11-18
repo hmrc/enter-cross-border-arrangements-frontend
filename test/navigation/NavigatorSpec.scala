@@ -28,7 +28,6 @@ import models.arrangement.WhichExpectedInvolvedCountriesArrangement.UnitedKingdo
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage, WhyAreYouReportingThisArrangementNowPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 

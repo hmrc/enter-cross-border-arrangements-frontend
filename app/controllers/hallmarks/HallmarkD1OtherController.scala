@@ -21,7 +21,7 @@ import forms.HallmarkD1OtherFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.HallmarkD1OtherPage
+import pages.hallmarks.HallmarkD1OtherPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,7 +59,7 @@ class HallmarkD1OtherController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("hallmarkD1Other.njk", json).map(Ok(_))
+      renderer.render("hallmarks/hallmarkD1Other.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -73,7 +73,7 @@ class HallmarkD1OtherController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("hallmarkD1Other.njk", json).map(BadRequest(_))
+          renderer.render("hallmarks/hallmarkD1Other.njk",json).map(BadRequest(_))
         },
         value =>
           for {

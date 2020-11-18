@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
-import models.HallmarkA
+import models.HallmarkC1
 import pages.behaviours.PageBehaviours
 
-class HallmarkAPageSpec extends PageBehaviours {
+class HallmarkC1PageSpec extends PageBehaviours {
 
-  "HallmarkAPage" - {
+  "HallmarkC1Page" - {
 
-    beRetrievable[Set[HallmarkA]](HallmarkAPage)
+    beRetrievable[Set[HallmarkC1]](HallmarkC1Page)
 
-    beSettable[Set[HallmarkA]](HallmarkAPage)
+    beSettable[Set[HallmarkC1]](HallmarkC1Page)
 
-    beRemovable[Set[HallmarkA]](HallmarkAPage)
+    beRemovable[Set[HallmarkC1]](HallmarkC1Page)
   }
 }

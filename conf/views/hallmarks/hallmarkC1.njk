@@ -6,15 +6,8 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
-{% macro hintText() %}
-    <p class='govuk-body govuk-!-margin-top-4'>
-        {{ messages("hallmarkCategories.p1") }}
-    </p>
-        {{messages('hallmarkCategories.hint')}}
-{% endmacro %}
-
 {% block pageTitle %}
-  {{ title(messages("hallmarkCategories.title"), form.errors) }}
+  {{ title(messages("hallmarkC1.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -34,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.HallmarkCategoriesController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.hallmarks.HallmarkC1Controller.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -42,24 +35,24 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('hallmarkCategories.title'),
+                text: messages('hallmarkC1.heading'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
             },
             hint: {
-                html: hintText()
+                text: messages('hallmarkC1.hint')
             },
             items: checkboxes,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue"),
-            attributes: {
-                "id": "submit"
-            }
-          }) }}
+              text: messages("site.saveAndContinue"),
+              attributes: {
+                  "id": "submit"
+              }
+           }) }}
 
         </form>
 

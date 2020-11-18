@@ -48,7 +48,7 @@ class CheckYourAnswersHallmarksController @Inject()(
       //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
 
       renderer.render(
-        "check-your-answers.njk",
+        "hallmarks/check-your-answers-hallmarks.njk",
         Json.obj("list" -> answers)
       ).map(Ok(_))
   }

@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HallmarkD1OtherPage
+import pages.hallmarks.HallmarkD1OtherPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -69,7 +69,7 @@ class HallmarkD1OtherControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD1Other.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD1Other.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -99,7 +99,7 @@ class HallmarkD1OtherControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD1Other.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD1Other.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -153,7 +153,7 @@ class HallmarkD1OtherControllerSpec extends SpecBase with MockitoSugar with Nunj
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "hallmarkD1Other.njk"
+      templateCaptor.getValue mustEqual "hallmarks/hallmarkD1Other.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

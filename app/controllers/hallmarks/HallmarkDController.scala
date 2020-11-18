@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.HallmarkD.D1
 import models.{HallmarkD, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{HallmarkD1Page, HallmarkDPage}
+import pages.hallmarks.{HallmarkD1Page, HallmarkDPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -62,7 +62,7 @@ class HallmarkDController @Inject()(
         "checkboxes" -> HallmarkD.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarkD.njk", json).map(Ok(_))
+      renderer.render("hallmarks/hallmarkD.njk",json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -77,7 +77,7 @@ class HallmarkDController @Inject()(
             "checkboxes" -> HallmarkD.checkboxes(formWithErrors)
           )
 
-          renderer.render("hallmarkD.njk", json).map(BadRequest(_))
+          renderer.render("hallmarks/hallmarkD.njk", json).map(BadRequest(_))
         },
         value =>
           for {

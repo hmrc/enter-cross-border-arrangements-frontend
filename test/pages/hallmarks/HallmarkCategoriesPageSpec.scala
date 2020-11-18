@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
 import models.{HallmarkA, HallmarkB, HallmarkCategories, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary

@@ -21,7 +21,7 @@ import forms.MainBenefitTestFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.MainBenefitTestPage
+import pages.hallmarks.MainBenefitTestPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -60,7 +60,7 @@ class MainBenefitTestController @Inject()(
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
 
-      renderer.render("mainBenefitTest.njk", json).map(Ok(_))
+      renderer.render("hallmarks/mainBenefitTest.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,7 +75,7 @@ class MainBenefitTestController @Inject()(
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
-          renderer.render("mainBenefitTest.njk", json).map(BadRequest(_))
+          renderer.render("hallmarks/mainBenefitTest.njk", json).map(BadRequest(_))
         },
         value =>
           for {

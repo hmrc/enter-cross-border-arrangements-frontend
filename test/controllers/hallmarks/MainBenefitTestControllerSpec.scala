@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.MainBenefitTestPage
+import pages.hallmarks.MainBenefitTestPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -70,7 +70,7 @@ class MainBenefitTestControllerSpec extends SpecBase with MockitoSugar with Nunj
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
+      templateCaptor.getValue mustEqual "hallmarks/mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class MainBenefitTestControllerSpec extends SpecBase with MockitoSugar with Nunj
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
+      templateCaptor.getValue mustEqual "hallmarks/mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class MainBenefitTestControllerSpec extends SpecBase with MockitoSugar with Nunj
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "mainBenefitTest.njk"
+      templateCaptor.getValue mustEqual "hallmarks/mainBenefitTest.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

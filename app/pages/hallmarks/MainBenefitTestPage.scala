@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.hallmarks
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
+case object MainBenefitTestPage extends QuestionPage[Boolean] {
 
-class HallmarkD1OtherPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "HallmarkD1OtherPage" - {
-
-    beRetrievable[String](HallmarkD1OtherPage)
-
-    beSettable[String](HallmarkD1OtherPage)
-
-    beRemovable[String](HallmarkD1OtherPage)
-  }
+  override def toString: String = "mainBenefitTest"
 }
