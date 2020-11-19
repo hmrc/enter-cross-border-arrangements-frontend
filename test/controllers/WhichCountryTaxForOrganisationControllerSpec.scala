@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.WhichCountryTaxForOrganisationFormProvider
+import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

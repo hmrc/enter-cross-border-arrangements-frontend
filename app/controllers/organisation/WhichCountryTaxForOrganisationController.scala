@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.WhichCountryTaxForOrganisationFormProvider
+import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
 import models.{Country, Mode, LoopDetails}

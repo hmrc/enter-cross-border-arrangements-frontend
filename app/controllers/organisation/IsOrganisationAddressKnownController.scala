@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.IsOrganisationAddressKnownFormProvider
+import forms.organisation.IsOrganisationAddressKnownFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{CheckMode, Mode}

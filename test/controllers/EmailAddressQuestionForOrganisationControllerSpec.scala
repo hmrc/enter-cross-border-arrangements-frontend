@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.EmailAddressQuestionForOrganisationFormProvider
+import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

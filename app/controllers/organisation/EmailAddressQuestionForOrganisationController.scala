@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.EmailAddressQuestionForOrganisationFormProvider
+import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{CheckMode, Mode}

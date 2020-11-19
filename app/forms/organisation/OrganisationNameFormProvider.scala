@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.organisation
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class IsOrganisationResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+class OrganisationNameFormProvider @Inject() extends Mappings with RegexConstants{
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[String] =
     Form(
-      "confirm" -> boolean("isOrganisationResidentForTaxOtherCountries.error.required")
+      "value" -> validatedText("organisationName.error.required",
+        "organisationName.error.invalid",
+        "organisationName.error.length", orgNameRegex, 35)
     )
 }

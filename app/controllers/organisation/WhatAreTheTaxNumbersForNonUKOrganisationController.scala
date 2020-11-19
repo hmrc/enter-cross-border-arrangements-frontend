@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
+import forms.organisation.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
 import javax.inject.Inject
 import models.{Mode, LoopDetails, UserAnswers}

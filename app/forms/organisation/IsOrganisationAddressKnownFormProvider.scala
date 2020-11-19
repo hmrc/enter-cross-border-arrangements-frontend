@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.organisation
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
-class EmailAddressQuestionForOrganisationFormProvider @Inject() extends Mappings {
+class IsOrganisationAddressKnownFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "confirm" -> boolean("emailAddressQuestionForOrganisation.error.required")
+      "value" -> boolean("isOrganisationAddressKnown.error.required")
     )
 }

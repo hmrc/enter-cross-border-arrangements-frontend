@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.IsOrganisationAddressUkFormProvider
+import forms.organisation.IsOrganisationAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

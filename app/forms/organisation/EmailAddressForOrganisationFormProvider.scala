@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 import utils.RegexConstants
 
-class OrganisationNameFormProvider @Inject() extends Mappings with RegexConstants{
+class EmailAddressForOrganisationFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 254
 
   def apply(): Form[String] =
-    Form(
-      "value" -> validatedText("organisationName.error.required",
-        "organisationName.error.invalid",
-        "organisationName.error.length", orgNameRegex, 35)
-    )
+  Form(
+    "email" -> validatedText(
+      "emailAddressForOrganisation.error.required",
+      "emailAddressForOrganisation.error.invalid",
+      "emailAddressForOrganisation.error.length",
+      emailRegex,
+      maxLength)
+  )
 }

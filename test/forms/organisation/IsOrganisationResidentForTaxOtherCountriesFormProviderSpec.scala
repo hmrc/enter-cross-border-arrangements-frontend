@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class IsOrganisationAddressKnownFormProviderSpec extends BooleanFieldBehaviours {
+class IsOrganisationResidentForTaxOtherCountriesFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "isOrganisationAddressKnown.error.required"
+  val requiredKey = "isOrganisationResidentForTaxOtherCountries.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new IsOrganisationAddressKnownFormProvider()()
+  val form = new IsOrganisationResidentForTaxOtherCountriesFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

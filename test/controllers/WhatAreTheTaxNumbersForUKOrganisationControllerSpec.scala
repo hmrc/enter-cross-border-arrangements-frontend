@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
+import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

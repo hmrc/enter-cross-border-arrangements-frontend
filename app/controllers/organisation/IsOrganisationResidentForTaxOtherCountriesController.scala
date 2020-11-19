@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
+import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers._
 import javax.inject.Inject
 import models.{CheckMode, Mode, NormalMode, LoopDetails}

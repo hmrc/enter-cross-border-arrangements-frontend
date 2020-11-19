@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.OrganisationNameFormProvider
+import forms.organisation.OrganisationNameFormProvider
 import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
 import models.{Mode, UserAnswers}

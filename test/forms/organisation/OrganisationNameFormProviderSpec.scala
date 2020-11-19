@@ -14,38 +14,32 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class EmailAddressForOrganisationFormProviderSpec extends StringFieldBehaviours {
+class OrganisationNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "emailAddressForOrganisation.error.required"
-  val invalidKey = "emailAddressForOrganisation.error.invalid"
-  val lengthKey = "emailAddressForOrganisation.error.length"
-  val maxLength = 254
+  val requiredKey = "organisationName.error.required"
+  val lengthKey = "organisationName.error.length"
+  val invalidKey = "organisationName.error.invalid"
 
-  val form = new EmailAddressForOrganisationFormProvider()()
+  val maxLength = 35
 
-  ".email" - {
+  val form = new OrganisationNameFormProvider()()
 
-    val fieldName = "email"
+  ".value" - {
+
+    val fieldName = "value"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validEmailAddress
+      validNonApiName
     )
 
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidString = "not a valid email",
-      error = FormError(fieldName, invalidKey)
-    )
-
-    behave like fieldWithMaxLengthEmail(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
@@ -56,6 +50,19 @@ class EmailAddressForOrganisationFormProviderSpec extends StringFieldBehaviours 
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class IsIndividualAddressUkFormProviderSpec extends BooleanFieldBehaviours {
+class IsOrganisationResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
 
-  val requiredKey = "isOrganisationAddressUk.error.required"
-  val invalidKey = "error.boolean"
-
-  val form = new IsOrganisationAddressUkFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+  def apply(): Form[Boolean] =
+    Form(
+      "confirm" -> boolean("isOrganisationResidentForTaxOtherCountries.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }

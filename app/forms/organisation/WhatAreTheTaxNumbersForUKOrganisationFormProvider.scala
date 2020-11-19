@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
 import forms.mappings.Mappings
 import javax.inject.Inject
@@ -22,22 +22,23 @@ import models.TaxReferenceNumbers
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
-class WhatAreTheTaxNumbersForNonUKOrganisationFormProvider @Inject() extends Mappings {
+class WhatAreTheTaxNumbersForUKOrganisationFormProvider @Inject() extends Mappings {
 
   val maxLength: Int = 200
 
   def apply(): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-        "firstTaxNumber" -> validatedTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKOrganisation.error.required",
-          "whatAreTheTaxNumbersForNonUKOrganisation.label1.error.length", maxLength),
-        "secondTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKOrganisation.label2.error.length",
-          maxLength),
-        "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length",
-          maxLength)
+      "firstTaxNumber" -> validatedTextMaxLength(
+        "whatAreTheTaxNumbersForUKOrganisation.error.required",
+        "whatAreTheTaxNumbersForUKOrganisation.label1.error.length",
+        maxLength),
+      "secondTaxNumber" -> validatedOptionalTextMaxLength(
+        "whatAreTheTaxNumbersForUKOrganisation.label2.error.length",
+        maxLength),
+      "thirdTaxNumber" -> validatedOptionalTextMaxLength(
+        "whatAreTheTaxNumbersForUKOrganisation.label3.error.length",
+        maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.organisation
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class IsOrganisationAddressUkFormProvider @Inject() extends Mappings {
+class DoYouKnowTINForNonUKOrganisationFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("isOrganisationAddressUk.error.required")
+      "confirm" -> boolean(messages("doYouKnowTINForNonUKOrganisation.error.required", country))
     )
 }

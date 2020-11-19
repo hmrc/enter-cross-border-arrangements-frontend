@@ -18,7 +18,7 @@ package controllers.organisation
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
+import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{Mode, LoopDetails}

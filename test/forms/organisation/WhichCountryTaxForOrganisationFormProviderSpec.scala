@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package forms
+package forms.organisation
 
-import forms.behaviours.BooleanFieldBehaviours
+import forms.behaviours.StringFieldBehaviours
+import models.Country
+import org.scalacheck.Gen
 import play.api.data.FormError
 
-class IsOrganisationResidentForTaxOtherCountriesFormProviderSpec extends BooleanFieldBehaviours {
+class WhichCountryTaxForOrganisationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "isOrganisationResidentForTaxOtherCountries.error.required"
-  val invalidKey = "error.boolean"
+  val requiredKey = "whichCountryTaxForOrganisation.error.required"
+  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
 
-  val form = new IsOrganisationResidentForTaxOtherCountriesFormProvider()()
+  val form = new WhichCountryTaxForOrganisationFormProvider()(countriesSeq)
 
-  ".confirm" - {
+  ".country" - {
 
-    val fieldName = "confirm"
+    val fieldName = "country"
 
-    behave like booleanField(
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      Gen.oneOf(Seq("GB", "FR"))
     )
 
     behave like mandatoryField(

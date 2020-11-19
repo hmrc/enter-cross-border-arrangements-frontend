@@ -17,7 +17,7 @@
 package controllers.organisation
 
 import controllers.actions._
-import forms.DoYouKnowTINForNonUKOrganisationFormProvider
+import forms.organisation.DoYouKnowTINForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
 import javax.inject.Inject
 import models.{Mode, LoopDetails, UserAnswers}
