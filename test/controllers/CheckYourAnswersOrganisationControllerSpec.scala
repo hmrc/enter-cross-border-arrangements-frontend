@@ -87,7 +87,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual OK
@@ -101,7 +101,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       val organisationDetails = (json \ "organisationSummary").toString
       val residentCountryDetails = (json \ "countrySummary").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
+      templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"
       organisationDetails.contains("What is the name of the organisation?") mustBe true
       organisationDetails.contains("Do you know their address?") mustBe true
       organisationDetails.contains("What is the organisation’s main address?") mustBe true
@@ -159,7 +159,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
 
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual OK
@@ -173,7 +173,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       val organisationDetails = (json \ "organisationSummary").toString
       val residentCountryDetails = (json \ "countrySummary").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
+      templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"
       organisationDetails.contains("What is the name of the organisation?") mustBe true
       organisationDetails.contains("Do you know their address?") mustBe true
       organisationDetails.contains("What is the organisation’s main address?") mustBe true
@@ -222,7 +222,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual OK
@@ -236,7 +236,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       val organisationDetails = (json \ "organisationSummary").toString
       val residentCountryDetails = (json \ "countrySummary").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
+      templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"
       organisationDetails.contains("What is the name of the organisation?") mustBe true
       organisationDetails.contains("Do you know their address?") mustBe true
       organisationDetails.contains("What is the organisation’s main address?") mustBe true
@@ -295,7 +295,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.CheckYourAnswersOrganisationController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual OK
@@ -309,7 +309,7 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       val organisationDetails = (json \ "organisationSummary").toString
       val residentCountryDetails = (json \ "countrySummary").toString
 
-      templateCaptor.getValue mustEqual "check-your-answers-organisation.njk"
+      templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"
       organisationDetails.contains("What is the name of the organisation?") mustBe true
       organisationDetails.contains("Do you know their address?") mustBe true
       organisationDetails.contains("What is the organisation’s main address?") mustBe true

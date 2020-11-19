@@ -49,7 +49,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val whatAreTheTaxNumbersForNonUKOrganisationRoute = routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForNonUKOrganisationRoute = controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForNonUKOrganisation Controller" - {
 
@@ -78,7 +78,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,7 +120,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -207,7 +207,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

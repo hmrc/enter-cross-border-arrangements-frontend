@@ -54,8 +54,8 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
   val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
     Country("valid","FR","France"))
 
-  lazy val organisationAddressRoute: String = routes.OrganisationAddressController.onPageLoad(NormalMode).url
-  lazy val organisationAddressCheckModeRoute = routes.OrganisationAddressController.onPageLoad(CheckMode).url
+  lazy val organisationAddressRoute: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode).url
+  lazy val organisationAddressCheckModeRoute = controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode).url
 
   "OrganisationAddress Controller" - {
 
@@ -185,7 +185,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersOrganisationController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }

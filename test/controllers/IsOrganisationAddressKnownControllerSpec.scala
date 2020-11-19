@@ -44,8 +44,8 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new IsOrganisationAddressKnownFormProvider()
   val form = formProvider()
 
-  lazy val isOrganisationAddressKnownRoute = routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
-  lazy val isOrganisationAddressKnownCheckModeRoute = routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
+  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
 
   "IsOrganisationAddressKnown Controller" - {
 
@@ -71,7 +71,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -162,7 +162,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersOrganisationController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }
@@ -222,7 +222,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

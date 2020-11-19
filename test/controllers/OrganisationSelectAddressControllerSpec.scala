@@ -48,8 +48,8 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectAddressRoute = routes.OrganisationSelectAddressController.onPageLoad(NormalMode).url
-  lazy val manualAddressURL: String = routes.OrganisationAddressController.onPageLoad(NormalMode).canonical()
+  lazy val selectAddressRoute = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode).url
+  lazy val manualAddressURL: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode).canonical()
 
   val formProvider = new SelectAddressFormProvider()
   val form = formProvider()

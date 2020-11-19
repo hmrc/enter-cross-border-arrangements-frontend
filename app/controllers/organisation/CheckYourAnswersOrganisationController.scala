@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -49,7 +49,7 @@ class CheckYourAnswersOrganisationController @Inject()(
           val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary(taxResidentCountriesLoop)
 
           renderer.render(
-            "check-your-answers-organisation.njk",
+            "organisation/check-your-answers-organisation.njk",
             Json.obj("organisationSummary" -> organisationDetails,
               "countrySummary" -> countryDetails
             )

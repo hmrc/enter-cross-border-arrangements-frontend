@@ -163,7 +163,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
           )
         )
@@ -178,7 +178,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )

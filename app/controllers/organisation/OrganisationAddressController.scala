@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
 import forms.AddressFormProvider

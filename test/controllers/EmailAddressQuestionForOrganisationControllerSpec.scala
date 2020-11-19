@@ -44,8 +44,8 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
   val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val contactEmailAddressForOrganisationRoute = routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode).url
-  lazy val contactEmailAddressForOrganisationCheckModeRoute = routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url
+  lazy val contactEmailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode).url
+  lazy val contactEmailAddressForOrganisationCheckModeRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url
 
   "ContactEmailAddressForOrganisation Controller" - {
 
@@ -71,7 +71,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -162,7 +162,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersOrganisationController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }
@@ -222,7 +222,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
 import forms.IsOrganisationAddressUkFormProvider
@@ -62,7 +62,7 @@ class IsOrganisationAddressUkController @Inject()(
         "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
-      renderer.render("isOrganisationAddressUk.njk", json).map(Ok(_))
+      renderer.render("organisation/isOrganisationAddressUk.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -78,7 +78,7 @@ class IsOrganisationAddressUkController @Inject()(
             "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
-          renderer.render("isOrganisationAddressUk.njk", json).map(BadRequest(_))
+          renderer.render("organisation/isOrganisationAddressUk.njk", json).map(BadRequest(_))
         },
         value =>
           for {

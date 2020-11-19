@@ -44,7 +44,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
   val formProvider = new EmailAddressForOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val emailAddressForOrganisationRoute = routes.EmailAddressForOrganisationController.onPageLoad(NormalMode).url
+  lazy val emailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode).url
 
   "EmailAddressForOrganisation Controller" - {
 
@@ -69,7 +69,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -99,7 +99,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -153,7 +153,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

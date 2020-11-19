@@ -51,7 +51,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
   val index = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKOrganisation Controller" - {
 
@@ -78,7 +78,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         "organisationName" -> "Paper Org"
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -125,7 +125,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -180,7 +180,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -14,49 +14,51 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
-import forms.DoYouKnowTINForNonUKOrganisationFormProvider
-import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
+import forms.WhichCountryTaxForOrganisationFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
 import javax.inject.Inject
-import models.{Mode, LoopDetails, UserAnswers}
+import models.{Country, Mode, LoopDetails}
 import navigation.Navigator
-import pages.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
+import pages.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouKnowTINForNonUKOrganisationController @Inject()(
+class WhichCountryTaxForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
+    countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: DoYouKnowTINForNonUKOrganisationFormProvider,
+    formProvider: WhichCountryTaxForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
+  val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+  private val form = formProvider(countries)
+
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      val country = getCountry(request.userAnswers)
-      val form = formProvider(country)
 
       val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
-          val doYouKnowTIN = value.lift(index).get.doYouKnowTIN
-          if (doYouKnowTIN.isDefined) {
-            form.fill(doYouKnowTIN.get)
+          val country = value.lift(index).get.whichCountry
+          if (country.isDefined) {
+            form.fill(country.get)
           } else {
             form
           }
@@ -64,70 +66,55 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("confirm")),
+        "form" -> preparedForm,
+        "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "country" -> country,
-        "index" -> index
+        "countries" -> countryJsonList(preparedForm.data, countries),
+         "index" -> index
       )
 
-      renderer.render("doYouKnowTINForNonUKOrganisation.njk", json).map(Ok(_))
+      renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers)
-      val form = formProvider(country)
-
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "form" -> formWithErrors,
+            "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "country" -> country,
+            "countries" -> countryJsonList(formWithErrors.data, countries),
             "index" -> index
           )
 
-          renderer.render("doYouKnowTINForNonUKOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
-              IndexedSeq[LoopDetails](newOrganisationLoop)
+              val newOrganisationLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+              IndexedSeq(newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))
+                //Update value
+                val updatedLoop = list.lift(index).get.copy(whichCountry = Some(value))
                 list.updated(index, updatedLoop)
               } else {
-                list
+                //Add to loop
+                val newOrganisationLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+                list :+ newOrganisationLoop
               }
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKOrganisationPage, value))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForOrganisationPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(DoYouKnowTINForNonUKOrganisationPage, mode, updatedAnswersWithLoopDetails))
+          } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswersWithLoopDetails))
         }
       )
-  }
-
-  private def getCountry(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): String = {
-    userAnswers.get(OrganisationLoopPage) match {
-      case Some(loopDetailsSeq) =>
-        val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
-        if (whichCountry.isDefined) {
-          whichCountry.get.description
-        } else {
-          "the country"
-        }
-      case None => "the country"
-    }
   }
 }

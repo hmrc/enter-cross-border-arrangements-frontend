@@ -44,7 +44,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new IsOrganisationAddressUkFormProvider()
   val form = formProvider()
 
-  lazy val isOrganisationAddressUkRoute = routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressUkRoute = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
 
   "IsOrganisationAddressUk Controller" - {
 
@@ -70,7 +70,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

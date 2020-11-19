@@ -14,89 +14,84 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
-import forms.IsOrganisationAddressKnownFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import forms.OrganisationNameFormProvider
+import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.IsOrganisationAddressKnownPage
+import pages.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsOrganisationAddressKnownController @Inject()(
+class OrganisationNameController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsOrganisationAddressKnownFormProvider,
+    formProvider: OrganisationNameFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsOrganisationAddressKnownPage) match {
+      val preparedForm =  request.userAnswers.flatMap(_.get(OrganisationNamePage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "form" -> preparedForm,
+        "mode" -> mode
       )
 
-      renderer.render("isOrganisationAddressKnown.njk", json).map(Ok(_))
+      renderer.render("organisation/organisationName.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "form" -> formWithErrors,
+            "mode" -> mode
           )
 
-          renderer.render("isOrganisationAddressKnown.njk", json).map(BadRequest(_))
+          renderer.render("organisation/organisationName.njk", json).map(BadRequest(_))
         },
         value => {
 
-          val determineRoute = (value, mode) match {
-            case (false, CheckMode) => true
-            case  _ => false
-          }
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+          val redirectUsers = hasValueChanged(value, OrganisationNamePage, mode, userAnswers)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (determineRoute) {
+            if (redirectUsers) {
               Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
             } else {
-              Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
             }
           }
         }
-      )
+     )
   }
 }

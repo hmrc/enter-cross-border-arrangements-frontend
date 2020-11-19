@@ -46,7 +46,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
   val index: Int = 0
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val isOrganisationResidentForTaxOtherCountriesRoute = routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+  lazy val isOrganisationResidentForTaxOtherCountriesRoute = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
 
   "IsOrganisationResidentForTaxOtherCountries Controller" - {
 
@@ -75,7 +75,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -113,7 +113,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -169,7 +169,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
-import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
-import helpers.JourneyHelpers._
+import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
+import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.{CheckMode, Mode, NormalMode, LoopDetails}
+import models.{Mode, LoopDetails}
 import navigation.Navigator
-import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
+import pages.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,16 +33,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsOrganisationResidentForTaxOtherCountriesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+class DoYouKnowAnyTINForUKOrganisationController @Inject()(
+                                                            override val messagesApi: MessagesApi,
+                                                            sessionRepository: SessionRepository,
+                                                            navigator: Navigator,
+                                                            identify: IdentifierAction,
+                                                            getData: DataRetrievalAction,
+                                                            requireData: DataRequiredAction,
+                                                            formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -53,9 +53,9 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
       val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
-          val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
-          if (taxResidentOtherCountries.isDefined) {
-            form.fill(taxResidentOtherCountries.get)
+          val doYouKnowUTR = value.lift(index).get.doYouKnowUTR
+          if (doYouKnowUTR.isDefined) {
+            form.fill(doYouKnowUTR.get)
           } else {
             form
           }
@@ -65,12 +65,12 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
         "radios" -> Radios.yesNo(preparedForm("confirm")),
+        "organisationName" -> getOrganisationName(request.userAnswers),
         "index" -> index
       )
 
-      renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(Ok(_))
+      renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -82,32 +82,32 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "organisationName" -> getOrganisationName(request.userAnswers),
             "index" -> index
           )
 
-          renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
+          renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage), mode) match {
-            case (Some(list), NormalMode) => // Add to Loop in NormalMode
-                list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-            case (Some(list), CheckMode) =>
-                if (value.equals(false)) {
-                  list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
-                } else {
-                  list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
-                }
-            case (None, _) => // Start new Loop in Normal Mode
-              IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+            case None =>
+              val newOrganisationLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
+              IndexedSeq[LoopDetails](newOrganisationLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(doYouKnowUTR = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+          } yield Redirect(navigator.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, updatedAnswersWithLoopDetails))
         }
       )
   }

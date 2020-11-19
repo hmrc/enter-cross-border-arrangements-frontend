@@ -47,7 +47,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val doYouKnowTINForNonUKOrganisationRoute = routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowTINForNonUKOrganisationRoute = controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "DoYouKnowTINForNonUKOrganisation Controller" - {
 
@@ -76,7 +76,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -115,7 +115,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -204,7 +204,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

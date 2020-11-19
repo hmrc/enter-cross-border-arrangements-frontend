@@ -44,7 +44,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()
 
-  lazy val postcodeRoute = routes.OrganisationPostcodeController.onPageLoad(NormalMode).url
+  lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode).url
 
   "Postcode Controller" - {
 

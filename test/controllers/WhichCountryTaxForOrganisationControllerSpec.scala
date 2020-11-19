@@ -50,7 +50,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val whichCountryTaxForOrganisationRoute: String = routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val whichCountryTaxForOrganisationRoute: String = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index).url
 
   "WhichCountryTaxForOrganisation Controller" - {
 
@@ -81,7 +81,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -121,7 +121,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForOrganisation.njk"
+        templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -206,7 +206,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

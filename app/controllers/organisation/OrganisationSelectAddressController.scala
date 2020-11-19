@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import connectors.AddressLookupConnector
 import controllers.actions._

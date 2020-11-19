@@ -44,7 +44,7 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider = new OrganisationNameFormProvider()
   val form = formProvider()
 
-  lazy val organisationNameRoute = routes.OrganisationNameController.onPageLoad(NormalMode).url
+  lazy val organisationNameRoute = controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode).url
 
   "OrganisationName Controller" - {
 
@@ -69,7 +69,7 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -99,7 +99,7 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -153,7 +153,7 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

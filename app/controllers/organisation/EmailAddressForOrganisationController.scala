@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
 import forms.EmailAddressForOrganisationFormProvider
@@ -61,7 +61,7 @@ class EmailAddressForOrganisationController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("emailAddressForOrganisation.njk", json).map(Ok(_))
+      renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -76,7 +76,7 @@ class EmailAddressForOrganisationController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("emailAddressForOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("organisation/emailAddressForOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
 

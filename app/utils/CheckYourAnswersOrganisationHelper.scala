@@ -33,7 +33,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.OrganisationNameController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationName.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-org-name")
           )
@@ -49,7 +49,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isOrganisationAddressKnown.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-do-you-know-address")
           )
@@ -96,7 +96,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
           List(
             Action(
               content            = msg"site.edit",
-              href               = routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
+              href               = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"organisationAddress.checkYourAnswersLabel")),
               attributes         = Map("id" -> "change-address")
             )
@@ -112,7 +112,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressQuestionForOrganisation.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-do-you-know-email-address")
           )
@@ -128,7 +128,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.EmailAddressForOrganisationController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressForOrganisation.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-email-address")
           )
@@ -168,7 +168,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0).url,
+            href               = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForOrganisation.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-tax-residency")
           )

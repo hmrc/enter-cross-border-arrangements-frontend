@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("doYouKnowAnyTINForUKOrganisation.title"), form.errors) }}
+  {{ title(messages("emailAddressQuestionForOrganisation.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.DoYouKnowAnyTINForUKOrganisationController.onSubmit(mode, index).url }}" method="post">
+        <form action="{{ routes.controllers.organisation.EmailAddressQuestionForOrganisationController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -35,13 +35,10 @@
             name: 'confirm',
             fieldset: {
               legend: {
-                text: messages('doYouKnowAnyTINForUKOrganisation.heading', organisationName),
+                text: messages('emailAddressQuestionForOrganisation.heading', organisationName),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
-            },
-            hint: {
-              text: messages('doYouKnowAnyTINForUKOrganisation.hint')
             },
             items: radios,
             errorMessage: form.confirm.error
@@ -49,7 +46,7 @@
 
           {{ govukButton({
             text: messages("site.saveAndContinue"),
-            attributes: {"id": "submit"}
+            attributes: {id:"submit"}
           }) }}
 
         </form>

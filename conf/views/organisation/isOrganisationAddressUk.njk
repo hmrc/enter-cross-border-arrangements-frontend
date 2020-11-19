@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isOrganisationAddressKnown.title"), form.errors) }}
+  {{ title(messages("isOrganisationAddressUk.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.IsOrganisationAddressKnownController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.organisation.IsOrganisationAddressUkController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -36,7 +36,7 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('isOrganisationAddressKnown.heading', organisationName),
+                text: messages('isOrganisationAddressUk.heading', organisationName),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }

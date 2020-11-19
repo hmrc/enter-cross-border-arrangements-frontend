@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import controllers.actions._
-import forms.EmailAddressQuestionForOrganisationFormProvider
+import forms.IsOrganisationAddressKnownFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.EmailAddressQuestionForOrganisationPage
+import pages.IsOrganisationAddressKnownPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,16 +33,16 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailAddressQuestionForOrganisationController @Inject()(
-                                                               override val messagesApi: MessagesApi,
-                                                               sessionRepository: SessionRepository,
-                                                               navigator: Navigator,
-                                                               identify: IdentifierAction,
-                                                               getData: DataRetrievalAction,
-                                                               requireData: DataRequiredAction,
-                                                               formProvider: EmailAddressQuestionForOrganisationFormProvider,
-                                                               val controllerComponents: MessagesControllerComponents,
-                                                               renderer: Renderer
+class IsOrganisationAddressKnownController @Inject()(
+    override val messagesApi: MessagesApi,
+    sessionRepository: SessionRepository,
+    navigator: Navigator,
+    identify: IdentifierAction,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
+    formProvider: IsOrganisationAddressKnownFormProvider,
+    val controllerComponents: MessagesControllerComponents,
+    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -50,35 +50,34 @@ class EmailAddressQuestionForOrganisationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressQuestionForOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(IsOrganisationAddressKnownPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "organisationName" -> getOrganisationName(request.userAnswers),
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("confirm"))
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "organisationName" -> getOrganisationName(request.userAnswers)
       )
 
-      renderer.render("emailAddressQuestionForOrganisation.njk", json).map(Ok(_))
+      renderer.render("organisation/isOrganisationAddressKnown.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "organisationName" -> getOrganisationName(request.userAnswers),
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "organisationName" -> getOrganisationName(request.userAnswers)
           )
 
-          renderer.render("emailAddressQuestionForOrganisation.njk", json).map(BadRequest(_))
+          renderer.render("organisation/isOrganisationAddressKnown.njk", json).map(BadRequest(_))
         },
         value => {
 
@@ -88,13 +87,13 @@ class EmailAddressQuestionForOrganisationController @Inject()(
           }
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (determineRoute) {
               Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
             } else {
-              Redirect(navigator.nextPage(EmailAddressQuestionForOrganisationPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
             }
           }
         }

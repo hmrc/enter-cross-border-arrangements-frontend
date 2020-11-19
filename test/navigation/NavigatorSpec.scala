@@ -417,7 +417,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(OrganisationNamePage, NormalMode, answers)
-              .mustBe(routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -433,7 +433,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
         }
       }
 
@@ -450,7 +450,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
       }
 
@@ -466,7 +466,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.OrganisationPostcodeController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode))
         }
       }
 
@@ -482,7 +482,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.OrganisationAddressController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -499,7 +499,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(PostcodePage, NormalMode, updatedAnswers)
-              .mustBe(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -514,7 +514,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
       }
 
@@ -532,7 +532,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(OrganisationAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
       }
 
@@ -547,7 +547,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
+              .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
         }
       }
 
@@ -562,7 +562,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -577,7 +577,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -592,7 +592,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -607,7 +607,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -622,7 +622,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -637,7 +637,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -652,7 +652,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -667,7 +667,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -682,7 +682,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -697,7 +697,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -712,7 +712,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersOrganisationController.onPageLoad())
+              .mustBe(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
         }
       }
 
@@ -727,7 +727,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
