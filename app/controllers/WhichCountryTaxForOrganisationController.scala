@@ -95,7 +95,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None)
+              val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None, None, None)
               IndexedSeq(newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
@@ -104,7 +104,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
                 list.updated(index, updatedLoop)
               } else {
                 //Add to loop
-                val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None)
+                val newOrganisationLoop = OrganisationLoopDetails(None, whichCountry = Some(value), None, None, None, None)
                 list :+ newOrganisationLoop
               }
           }

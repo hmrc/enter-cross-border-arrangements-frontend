@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.EmailAddressQuestionForOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.EmailAddressQuestionForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -80,11 +80,24 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
           renderer.render("emailAddressQuestionForOrganisation.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val determineRoute = (value, mode) match {
+            case (false, CheckMode) => true
+            case  _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailAddressQuestionForOrganisationPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (determineRoute) {
+              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(EmailAddressQuestionForOrganisationPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

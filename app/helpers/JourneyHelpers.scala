@@ -16,9 +16,9 @@
 
 package helpers
 
-import models.{Country, UserAnswers}
-import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
-import play.api.libs.json.{JsObject, Json}
+import models.{CheckMode, Country, Mode, UserAnswers}
+import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage, QuestionPage}
+import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
 
 object JourneyHelpers {
@@ -70,8 +70,14 @@ object JourneyHelpers {
   def currentIndexInsideLoop(request: Request[AnyContent]): Int = {
     val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
     val uriPattern(_, index) = request.uri
-
     index.toInt
   }
 
+  def hasValueChanged[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
+                        (implicit rds: Reads[T]): Boolean = {
+    ua.get(page) match {
+      case Some(ans) if (ans != value) && (mode == CheckMode) => true
+      case _ => false
+    }
+  }
 }

@@ -75,9 +75,9 @@ class Navigator @Inject()() {
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
-    case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+    case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -112,13 +112,13 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(CheckMode)
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
-    case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
     case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
-    case _ => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _ => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 
  def catRoutes(key: HallmarkCategories): Mode => Call = key match {
@@ -159,7 +159,7 @@ class Navigator @Inject()() {
         ua.get(HallmarkCategoriesPage) match {
           case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
           case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-          case _ => routes.CheckYourAnswersController.onPageLoad()
+          case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
         }
       case false => routes.MainBenefitProblemController.onPageLoad()
     }
@@ -171,7 +171,7 @@ class Navigator @Inject()() {
         case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
         case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
         case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-        case _ => routes.CheckYourAnswersController.onPageLoad()
+        case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
       }
     }
 
@@ -183,7 +183,7 @@ class Navigator @Inject()() {
           case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => routes.MainBenefitTestController.onPageLoad(mode)
           case Some(set) if set.contains(CategoryD) => routes.HallmarkDController.onPageLoad(mode)
           case Some(set) if set.contains(CategoryE) => routes.HallmarkEController.onPageLoad(mode)
-          case _ => routes.CheckYourAnswersController.onPageLoad()
+          case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
         }
     }
 
@@ -193,7 +193,7 @@ class Navigator @Inject()() {
        case  _ => ua.get(HallmarkCategoriesPage).map {
          case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
            routes.HallmarkEController.onPageLoad(mode)
-         case _ => routes.CheckYourAnswersController.onPageLoad()
+         case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
        }
     }
 
@@ -203,7 +203,7 @@ class Navigator @Inject()() {
       case  _ => ua.get(HallmarkCategoriesPage).map {
         case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
           routes.HallmarkEController.onPageLoad(mode)
-        case _ => routes.CheckYourAnswersController.onPageLoad()
+        case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
       }
     }
 
@@ -211,7 +211,7 @@ class Navigator @Inject()() {
      ua.get(HallmarkCategoriesPage) map {
        case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
          routes.HallmarkEController.onPageLoad(mode)
-       case _ => routes.CheckYourAnswersController.onPageLoad()
+       case _ => routes.CheckYourAnswersHallmarksController.onPageLoad()
      }
 
   private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -281,14 +281,14 @@ class Navigator @Inject()() {
     ua.get(WhichCountryTaxForOrganisationPage) map {
       countryList =>
         countryList.code match {
-          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode)
+          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
           case _ => routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
         }
     }
 
   private def doYouKnowAnyTINForUKOrganisationRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(DoYouKnowAnyTINForUKOrganisationPage) map {
-      case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode)
+      case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, incrementIndexOrganisation(ua, request))
     }
 
@@ -301,7 +301,7 @@ class Navigator @Inject()() {
   private def isOrganisationResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
-      case false => routes.IndexController.onPageLoad() //TODO Redirect to correct page when ready
+      case false => routes.CheckYourAnswersOrganisationController.onPageLoad()
     }
   }
 

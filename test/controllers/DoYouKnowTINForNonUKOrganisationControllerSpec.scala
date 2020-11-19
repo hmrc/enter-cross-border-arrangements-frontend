@@ -90,7 +90,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -157,7 +157,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None)))
+        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application =

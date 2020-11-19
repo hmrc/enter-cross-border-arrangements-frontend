@@ -21,9 +21,9 @@ import controllers.actions._
 import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OrganisationLoopDetails}
 import navigation.Navigator
-import pages.WhatAreTheTaxNumbersForUKOrganisationPage
+import pages.{OrganisationLoopPage, WhatAreTheTaxNumbersForUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,25 +49,33 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) if value.lift(index).isDefined =>
+          val taxNumbersUK = value.lift(index).get.taxNumbersUK
+          if (taxNumbersUK.isDefined) {
+            form.fill(taxNumbersUK.get)
+          } else {
+            form
+          }
+        case Some(_) => form
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers),
-        "lostUTRUrl" -> appConfig.lostUTRUrl
+        "lostUTRUrl" -> appConfig.lostUTRUrl,
+        "index" -> index
       )
 
       renderer.render("whatAreTheTaxNumbersForUKOrganisation.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,16 +85,32 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers),
-            "lostUTRUrl" -> appConfig.lostUTRUrl
+            "lostUTRUrl" -> appConfig.lostUTRUrl,
+            "index" -> index
           )
 
           renderer.render("whatAreTheTaxNumbersForUKOrganisation.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+            case None =>
+              val newOrganisationLoop = OrganisationLoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
+              IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKOrganisationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, mode, updatedAnswers))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, mode, updatedAnswersWithLoopDetails))
+        }
       )
   }
 }

@@ -21,16 +21,15 @@ import models.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1,
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, MainBenefitTestPage}
+import pages._
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import views.html.helper
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase {
+class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
   "Check Your Answers Controller" - {
 
@@ -49,7 +48,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -83,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -116,7 +115,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -152,7 +151,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -191,7 +190,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -229,7 +228,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 
@@ -254,7 +253,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
 
       val result = route(application, request).value
 

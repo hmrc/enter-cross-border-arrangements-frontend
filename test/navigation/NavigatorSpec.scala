@@ -178,7 +178,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -213,7 +213,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -268,7 +268,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -326,7 +326,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(HallmarkEPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
 
@@ -590,7 +590,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode))
+              .mustBe(routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -620,7 +620,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode))
+              .mustBe(routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -700,7 +700,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "??? page if the answer is false" in {
+        "Check your answers for organisation page if the answer is false" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -710,7 +710,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.CheckYourAnswersOrganisationController.onPageLoad())
         }
       }
 

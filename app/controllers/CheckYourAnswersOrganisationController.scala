@@ -18,39 +18,45 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import handlers.ErrorHandler
+import pages.OrganisationLoopPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.CheckYourAnswersHelper
+import utils.CheckYourAnswersOrganisationHelper
 
 import scala.concurrent.ExecutionContext
 
-class CheckYourAnswersController @Inject()(
+class CheckYourAnswersOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      request.userAnswers.get(OrganisationLoopPage) match {
+        case Some(taxResidentCountriesLoop) =>
+          val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+          val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
+          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary(taxResidentCountriesLoop)
 
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
+          renderer.render(
+            "check-your-answers-organisation.njk",
+            Json.obj("organisationSummary" -> organisationDetails,
+              "countrySummary" -> countryDetails
+            )
+          ).map(Ok(_))
 
-      val hallmarks = helper.buildHallmarksRow(request.userAnswers)
-      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest, helper.hallmarkD1Other).flatten
+        case _ => errorHandler.onServerError(request, throw new Exception("OrganisationLoop is missing"))
 
-      //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
-
-      renderer.render(
-        "check-your-answers.njk",
-        Json.obj("list" -> answers)
-      ).map(Ok(_))
+      }
   }
-
 }

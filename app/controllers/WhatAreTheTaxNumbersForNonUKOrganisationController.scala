@@ -92,7 +92,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, None, None, taxNumbersNonUK = Some(value))
+              val newOrganisationLoop = OrganisationLoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
               IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {

@@ -29,7 +29,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine1" - {
 
     val fieldName = "addressLine1"
-    val lengthKey = "address.error.addressLine1.length"
+    val lengthKey = "organisationAddress.error.addressLine1.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -48,7 +48,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
 
     val fieldName = "addressLine2"
-    val lengthKey = "address.error.addressLine2.length"
+    val lengthKey = "organisationAddress.error.addressLine2.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -67,7 +67,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine3" - {
 
     val fieldName = "addressLine3"
-    val lengthKey = "address.error.addressLine3.length"
+    val lengthKey = "organisationAddress.error.addressLine3.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -86,8 +86,8 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".city" - {
 
     val fieldName = "city"
-    val lengthKey = "address.error.city.length"
-    val requiredKey = "address.error.city.required"
+    val lengthKey = "organisationAddress.error.city.length"
+    val requiredKey = "organisationAddress.error.city.required"
 
     behave like fieldThatBindsValidData(
       form,
@@ -112,7 +112,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".postCode" - {
 
     val fieldName = "postCode"
-    val lengthKey = "address.error.postcode.optional.length"
+    val lengthKey = "organisationAddress.error.postcode.optional.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -131,7 +131,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   ".country" - {
 
     val fieldName = "country"
-    val requiredKey = "address.error.country.required"
+    val requiredKey = "organisationAddress.error.country.required"
 
       behave like mandatoryField(
       form,

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -55,10 +55,9 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
     Country("valid","FR","France"))
 
   lazy val organisationAddressRoute: String = routes.OrganisationAddressController.onPageLoad(NormalMode).url
+  lazy val organisationAddressCheckModeRoute = routes.OrganisationAddressController.onPageLoad(CheckMode).url
 
   "OrganisationAddress Controller" - {
-
-    //TODO: Add test for redirect to check-your-answers when page is created
 
     "must return OK and the correct view for a GET" in {
 
@@ -145,7 +144,6 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
           )
           .build()
 
-
       val request =
         FakeRequest(POST, organisationAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
@@ -156,6 +154,38 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to check answers page when in CheckMode and data is changed and then submitted" in {
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+
+      val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address)
+        .success
+        .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CountryListFactory].toInstance(mockCountryFactory)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, organisationAddressCheckModeRoute)
+          .withFormUrlEncodedBody(("addressLine1", "value 11"), ("addressLine2", "value 22"),("addressLine3", "value 33"), ("city", "value 44"),
+            ("postcode", "XXX XXX"),("country", "FR"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }

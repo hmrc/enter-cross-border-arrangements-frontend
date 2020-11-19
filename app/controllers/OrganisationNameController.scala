@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.OrganisationNameFormProvider
+import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -75,13 +76,21 @@ class OrganisationNameController @Inject()(
           renderer.render("organisationName.njk", json).map(BadRequest(_))
         },
         value => {
+
           val initialUserAnswers = UserAnswers(request.internalId)
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+          val redirectUsers = hasValueChanged(value, OrganisationNamePage, mode, userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
+            }
+          }
         }
      )
   }

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -45,6 +45,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
   val form = formProvider()
 
   lazy val isOrganisationAddressKnownRoute = routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressKnownCheckModeRoute = routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
 
   "IsOrganisationAddressKnown Controller" - {
 
@@ -123,6 +124,70 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       val request =
         FakeRequest(POST, isOrganisationAddressKnownRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the check your answers page when in 'CheckMode' and 'no' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersOrganisationController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to next page when in 'CheckMode' and 'yes' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, false)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value

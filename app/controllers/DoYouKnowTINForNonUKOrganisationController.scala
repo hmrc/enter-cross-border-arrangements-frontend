@@ -98,7 +98,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, None, doYouKnowTIN = Some(value), None)
+              val newOrganisationLoop = OrganisationLoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
               IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {

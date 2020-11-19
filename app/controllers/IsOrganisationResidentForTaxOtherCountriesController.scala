@@ -18,9 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers._
 import javax.inject.Inject
-import models.{Mode, OrganisationLoopDetails}
+import models.{CheckMode, Mode, NormalMode, OrganisationLoopDetails}
 import navigation.Navigator
 import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -90,20 +90,17 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           renderer.render("isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
-            case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
-              IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                //Update value
-                val updatedLoop = list.lift(index).get.copy(taxResidentOtherCountries = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                //Add to loop
-                val newOrganisationLoop = OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None)
-                list :+ newOrganisationLoop
-              }
+          val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage), mode) match {
+            case (Some(list), NormalMode) => // Add to Loop in NormalMode
+                list :+ OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
+            case (Some(list), CheckMode) =>
+                if (value.equals(false)) {
+                  list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
+                } else {
+                  list :+ OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
+                }
+            case (None, _) => // Start new Loop in Normal Mode
+              IndexedSeq[OrganisationLoopDetails](OrganisationLoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
           }
 
           for {
