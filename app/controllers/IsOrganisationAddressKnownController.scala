@@ -82,7 +82,6 @@ class IsOrganisationAddressKnownController @Inject()(
         value => {
 
           val determineRoute = (value, mode) match {
-            case (true, CheckMode) => false
             case (false, CheckMode) => true
             case  _ => false
           }

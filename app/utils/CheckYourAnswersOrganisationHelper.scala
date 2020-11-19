@@ -60,12 +60,12 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
   def organisationAddress: Row = {
 
       val displayCountryNonUk = userAnswers.get(OrganisationAddressPage) match {
-        case Some(address) if userAnswers.get(IsOrganisationAddressUkPage).contains(true) => address.country.description
+        case Some(address) if userAnswers.get(IsOrganisationAddressUkPage).contains(false) => address.country.description
         case _ => ""
       }
 
       val formattedAddress = (userAnswers.get(OrganisationAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
-        case (Some(manualAddress), None) =>
+        case (Some(manualAddress), _) =>
           Html(s"""
               ${manualAddress.addressLine1.fold("")(address => s"$address<br>")}
               ${manualAddress.addressLine2.fold("")(address => s"$address<br>")}
@@ -75,7 +75,7 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
               $displayCountryNonUk
               """)
 
-        case (None, Some(addressLookup)) =>
+        case (_, Some(addressLookup)) =>
           Html(s"""
               ${addressLookup.addressLine1.fold("")(address => s"$address<br>")}
               ${addressLookup.addressLine2.fold("")(address => s"$address<br>")}
