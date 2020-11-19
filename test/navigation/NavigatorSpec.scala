@@ -27,6 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+ import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage}
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -1059,6 +1060,47 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(WhatAreTheTaxNumbersForNonUKIndividualPage, NormalMode, updatedAnswers)
               .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+        }
+      }
+
+      "must go from What is the arrangement called? page to " +
+        "what is the implementation date?" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatIsThisArrangementCalledPage, "an arrangement")
+                .success.value
+
+            navigator
+              .nextPage(WhatIsThisArrangementCalledPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from What is the implementation date? page to " +
+        "Do you know the reason Do you know the reason this arrangement must be reported now? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(WhatIsTheImplementationDatePage, NormalMode, answers)
+              .mustBe(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
+        }
+      }
+
+      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+        "Why are you reporting this arrangement now? page when the answer is yes" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowTheReasonToReportArrangementNowPage, true)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(NormalMode))
         }
       }
     }

@@ -20,9 +20,42 @@ import models._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryWhyAreYouReportingThisArrangementNowUserAnswersEntry: Arbitrary[(WhyAreYouReportingThisArrangementNowPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhyAreYouReportingThisArrangementNowPage.type]
+        value <- arbitrary[WhyAreYouReportingThisArrangementNow].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryDoYouKnowTheReasonToReportArrangementNowUserAnswersEntry: Arbitrary[(DoYouKnowTheReasonToReportArrangementNowPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[DoYouKnowTheReasonToReportArrangementNowPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatIsTheImplementationDateUserAnswersEntry: Arbitrary[(WhatIsTheImplementationDatePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatIsTheImplementationDatePage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatIsThisArrangementCalledUserAnswersEntry: Arbitrary[(WhatIsThisArrangementCalledPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatIsThisArrangementCalledPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryDoYouKnowTINForNonUKIndividualUserAnswersEntry: Arbitrary[(DoYouKnowTINForNonUKIndividualPage.type, JsValue)] =
     Arbitrary {

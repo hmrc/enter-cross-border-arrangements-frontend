@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package helpers
+package pages.arrangement
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-object DateHelper {
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+case object WhatIsTheImplementationDatePage extends QuestionPage[LocalDate] {
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+  override def path: JsPath = JsPath \ toString
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
-
+  override def toString: String = "whatIsTheImplementationDate"
 }

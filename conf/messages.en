@@ -466,3 +466,36 @@ isIndividualResidentForTaxOtherCountries.title = Is the organisation resident fo
 isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
 isIndividualResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries
+
+whatIsThisArrangementCalled.title = What is this arrangement called?
+whatIsThisArrangementCalled.heading = What is this arrangement called?
+whatIsThisArrangementCalled.hint = Provide a name to help you identify this arrangement.
+whatIsThisArrangementCalled.checkYourAnswersLabel = whatIsThisArrangementCalled
+whatIsThisArrangementCalled.error.required = Provide a name for this arrangement
+whatIsThisArrangementCalled.error.length = Arrangement name must be 400 characters or less
+
+whatIsTheImplementationDate.title = What is the implementation date?
+whatIsTheImplementationDate.heading = What is the implementation date?
+whatIsTheImplementationDate.part1.hint = This is when the first step of the arrangement was or will be made.
+whatIsTheImplementationDate.part2.hint = For example, {0}
+whatIsTheImplementationDate.checkYourAnswersLabel = WhatIsTheImplementationDate
+whatIsTheImplementationDate.error.required.all = Provide a date
+whatIsTheImplementationDate.error.required.two = The implementation date must include {0} and {1}
+whatIsTheImplementationDate.error.required = The implementation date must include {0}
+whatIsTheImplementationDate.error.invalid = Provide a date
+whatIsTheImplementationDate.error.pastDate = Provide a valid date after 25 06 2018
+whatIsTheImplementationDate.error.nonNumericKey = Provide a date
+
+doYouKnowTheReasonToReportArrangementNow.title = Do you know the reason this arrangement must be reported now?
+oYouKnowTheReasonToReportArrangementNow.heading = Do you know the reason this arrangement must be reported now?
+doYouKnowTheReasonToReportArrangementNow.checkYourAnswersLabel = doYouKnowTheReasonToReportArrangementNow
+doYouKnowTheReasonToReportArrangementNow.error.required = Select yes if you know the reason
+
+whyAreYouReportingThisArrangementNow.title = Why are you reporting this arrangement now?
+whyAreYouReportingThisArrangementNow.heading = Why are you reporting this arrangement now?
+whyAreYouReportingThisArrangementNow.dAC6701 = The arrangement is available for implementation
+whyAreYouReportingThisArrangementNow.dAC6702 = Arrangement is ready for implementation
+whyAreYouReportingThisArrangementNow.dAC6703 = The first step in the implementation has been or will be made
+whyAreYouReportingThisArrangementNow.dAC6704 = Aid, assistance or advice has been provided
+whyAreYouReportingThisArrangementNow.checkYourAnswersLabel = Why are you reporting this arrangement now?
+whyAreYouReportingThisArrangementNow.error.required = Select a reason for reporting now

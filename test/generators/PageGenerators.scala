@@ -19,7 +19,21 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 
+import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
+
 trait PageGenerators {
+
+  implicit lazy val arbitraryWhyAreYouReportingThisArrangementNowPage: Arbitrary[WhyAreYouReportingThisArrangementNowPage.type] =
+    Arbitrary(WhyAreYouReportingThisArrangementNowPage)
+
+  implicit lazy val arbitraryDoYouKnowTheReasonToReportArrangementNowPage: Arbitrary[DoYouKnowTheReasonToReportArrangementNowPage.type] =
+    Arbitrary(DoYouKnowTheReasonToReportArrangementNowPage)
+
+  implicit lazy val arbitraryWhatIsTheImplementationDatePage: Arbitrary[WhatIsTheImplementationDatePage.type] =
+    Arbitrary(WhatIsTheImplementationDatePage)
+
+  implicit lazy val arbitraryWhatIsThisArrangementCalledPage: Arbitrary[WhatIsThisArrangementCalledPage.type] =
+    Arbitrary(WhatIsThisArrangementCalledPage)
 
   implicit lazy val arbitraryDoYouKnowTINForNonUKIndividualPage: Arbitrary[DoYouKnowTINForNonUKIndividualPage.type] =
     Arbitrary(DoYouKnowTINForNonUKIndividualPage)
