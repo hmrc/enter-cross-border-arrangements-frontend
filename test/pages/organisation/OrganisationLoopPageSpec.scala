@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import play.api.libs.json.JsPath
+import models.LoopDetails
+import pages.behaviours.PageBehaviours
 
-case object EmailAddressForOrganisationPage extends QuestionPage[String] {
+class OrganisationLoopPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "OrganisationLoopPage" - {
 
-  override def toString: String = "emailAddressForOrganisation"
+    beRetrievable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+
+    beSettable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+
+    beRemovable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+  }
+
 }

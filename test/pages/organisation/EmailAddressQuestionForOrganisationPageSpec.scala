@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
 import pages.behaviours.PageBehaviours
 
+class EmailAddressQuestionForOrganisationPageSpec extends PageBehaviours {
 
-class OrganisationNamePageSpec extends PageBehaviours {
+  "EmailAddressQuestionForOrganisationPage" - {
 
-  "OrganisationNamePage" - {
+    beRetrievable[Boolean](EmailAddressQuestionForOrganisationPage)
 
-    beRetrievable[String](OrganisationNamePage)
+    beSettable[Boolean](EmailAddressQuestionForOrganisationPage)
 
-    beSettable[String](OrganisationNamePage)
-
-    beRemovable[String](OrganisationNamePage)
+    beRemovable[Boolean](EmailAddressQuestionForOrganisationPage)
   }
 }

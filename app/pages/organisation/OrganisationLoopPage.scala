@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
+import models.LoopDetails
 import play.api.libs.json.JsPath
 
-case object DoYouKnowTINForNonUKOrganisationPage extends QuestionPage[Boolean] {
+case object OrganisationLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "doYouKnowTINForNonUKOrganisation"
+  override def toString: String = "organisationLoop"
 }

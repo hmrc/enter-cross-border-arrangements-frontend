@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
 
-class WhatAreTheTaxNumbersForUKOrganisationPageSpec extends PageBehaviours {
+class EmailAddressForOrganisationPageSpec extends PageBehaviours {
 
-  "WhatAreTheTaxNumbersForUKOrganisationPage" - {
+  "EmailAddressForOrganisationPage" - {
 
-    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
+    beRetrievable[String](EmailAddressForOrganisationPage)
 
-    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
+    beSettable[String](EmailAddressForOrganisationPage)
 
-    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
+    beRemovable[String](EmailAddressForOrganisationPage)
   }
 }

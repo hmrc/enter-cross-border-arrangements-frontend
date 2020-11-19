@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
+import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
-class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
 
-  "DoYouKnowAnyTINForUKOrganisationPage" - {
+class WhatAreTheTaxNumbersForUKOrganisationPageSpec extends PageBehaviours {
 
-    beRetrievable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+  "WhatAreTheTaxNumbersForUKOrganisationPage" - {
 
-    beSettable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
 
-    beRemovable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
+
+    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
   }
 }

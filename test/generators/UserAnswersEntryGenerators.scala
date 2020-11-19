@@ -21,6 +21,8 @@ import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC, HallmarkC1, HallmarkCa
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.hallmarks.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCPage, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage, HallmarkEPage, MainBenefitTestPage}
+import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
 import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
 import play.api.libs.json.{JsValue, Json}

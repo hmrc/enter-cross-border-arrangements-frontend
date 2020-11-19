@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object IsOrganisationResidentForTaxOtherCountriesPage extends QuestionPage[Boolean] {
+class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "DoYouKnowAnyTINForUKOrganisationPage" - {
 
-  override def toString: String = "isOrganisationResidentForTaxOtherCountries"
+    beRetrievable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+
+    beSettable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+
+    beRemovable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+  }
 }

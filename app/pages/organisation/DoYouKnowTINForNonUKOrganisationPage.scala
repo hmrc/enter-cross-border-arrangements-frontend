@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class IsOrganisationAddressKnownPageSpec extends PageBehaviours {
+case object DoYouKnowTINForNonUKOrganisationPage extends QuestionPage[Boolean] {
 
-  "IsOrganisationAddressKnownPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](IsOrganisationAddressKnownPage)
-
-    beSettable[Boolean](IsOrganisationAddressKnownPage)
-
-    beRemovable[Boolean](IsOrganisationAddressKnownPage)
-  }
+  override def toString: String = "doYouKnowTINForNonUKOrganisation"
 }

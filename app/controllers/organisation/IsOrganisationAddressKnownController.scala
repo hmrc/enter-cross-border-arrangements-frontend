@@ -22,7 +22,7 @@ import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.IsOrganisationAddressKnownPage
+import pages.organisation.IsOrganisationAddressKnownPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

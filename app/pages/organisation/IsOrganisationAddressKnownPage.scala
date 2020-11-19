@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.{Address, UserAnswers}
+import models.UserAnswers
+import pages.{QuestionPage, SelectedAddressLookupPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object OrganisationAddressPage extends QuestionPage[Address] {
+case object IsOrganisationAddressKnownPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "organisationAddress"
+  override def toString: String = "isOrganisationAddressKnown"
 
-  override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(_) =>
-        userAnswers
-          .remove(SelectedAddressLookupPage)
-          .flatMap(_.remove(PostcodePage))
-      case None => super.cleanup(value, userAnswers)
+      case Some(false) =>
+        userAnswers.remove(OrganisationAddressPage)
+        userAnswers.remove(SelectedAddressLookupPage)
+      case _ => super.cleanup(value, userAnswers)
+
     }
 }

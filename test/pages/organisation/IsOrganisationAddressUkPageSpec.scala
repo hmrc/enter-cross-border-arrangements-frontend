@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.LoopDetails
 import pages.behaviours.PageBehaviours
 
-class OrganisationLoopPageSpec extends PageBehaviours {
+class IsOrganisationAddressUkPageSpec extends PageBehaviours {
 
-  "OrganisationLoopPage" - {
+  "isOrganisationAddressUkPage" - {
 
-    beRetrievable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+    beRetrievable[Boolean](IsOrganisationAddressUkPage)
 
-    beSettable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+    beSettable[Boolean](IsOrganisationAddressUkPage)
 
-    beRemovable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
+    beRemovable[Boolean](IsOrganisationAddressUkPage)
   }
-
 }

@@ -22,7 +22,7 @@ import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueCha
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IsOrganisationAddressUkPage, OrganisationAddressPage}
+import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

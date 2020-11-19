@@ -22,7 +22,8 @@ import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
 import javax.inject.Inject
 import models.{Mode, LoopDetails, UserAnswers}
 import navigation.Navigator
-import pages.{OrganisationLoopPage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
+import pages.organisation.WhatAreTheTaxNumbersForNonUKOrganisationPage
+import pages.organisation.{OrganisationLoopPage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}

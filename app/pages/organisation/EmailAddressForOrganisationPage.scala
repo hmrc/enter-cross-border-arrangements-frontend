@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class IsOrganisationAddressUkPageSpec extends PageBehaviours {
+case object EmailAddressForOrganisationPage extends QuestionPage[String] {
 
-  "isOrganisationAddressUkPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](IsOrganisationAddressUkPage)
-
-    beSettable[Boolean](IsOrganisationAddressUkPage)
-
-    beRemovable[Boolean](IsOrganisationAddressUkPage)
-  }
+  override def toString: String = "emailAddressForOrganisation"
 }

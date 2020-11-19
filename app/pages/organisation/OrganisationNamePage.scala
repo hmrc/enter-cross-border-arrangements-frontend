@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.TaxReferenceNumbers
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object WhatAreTheTaxNumbersForUKOrganisationPage extends QuestionPage[TaxReferenceNumbers] {
+case object OrganisationNamePage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "whatAreTheTaxNumbersForUKOrganisation"
+  override def toString: String = "organisationName"
 }

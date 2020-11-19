@@ -22,7 +22,7 @@ import helpers.JourneyHelpers._
 import javax.inject.Inject
 import models.{CheckMode, Mode, NormalMode, LoopDetails}
 import navigation.Navigator
-import pages.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
+import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

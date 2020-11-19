@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
 import models.TaxReferenceNumbers
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
+case object WhatAreTheTaxNumbersForUKOrganisationPage extends QuestionPage[TaxReferenceNumbers] {
 
-class WhatAreTheTaxNumbersForNonUKOrganisationPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "WhatAreTheTaxNumbersForNonUKOrganisationPage" - {
-
-    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
-
-    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
-
-    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKOrganisationPage)
-  }
+  override def toString: String = "whatAreTheTaxNumbersForUKOrganisation"
 }

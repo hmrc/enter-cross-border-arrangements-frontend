@@ -22,7 +22,7 @@ import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
 import models.{Mode, LoopDetails}
 import navigation.Navigator
-import pages.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
+import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

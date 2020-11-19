@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class IsOrganisationResidentForTaxOtherCountriesPageSpec extends PageBehaviours {
 
-case object IsOrganisationAddressKnownPage extends QuestionPage[Boolean] {
+  "IsOrganisationResidentForTaxOtherCountriesPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
 
-  override def toString: String = "isOrganisationAddressKnown"
+    beSettable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(false) =>
-        userAnswers.remove(OrganisationAddressPage)
-        userAnswers.remove(SelectedAddressLookupPage)
-      case _ => super.cleanup(value, userAnswers)
-
-    }
+    beRemovable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
+  }
 }

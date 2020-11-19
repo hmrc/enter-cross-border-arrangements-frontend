@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-import scala.util.Try
+class DoYouKnowTINForNonUKOrganisationPageSpec extends PageBehaviours {
 
-case object EmailAddressQuestionForOrganisationPage extends QuestionPage[Boolean] {
+  "DoYouKnowTINForNonUKOrganisationPage" - {
 
-  override def path: JsPath = JsPath \ toString
+    beRetrievable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
 
-  override def toString: String = "emailAddressQuestionForOrganisation"
+    beSettable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(false) => userAnswers.remove(EmailAddressForOrganisationPage)
-      case _ =>  super.cleanup(value, userAnswers)
-    }
+    beRemovable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
+  }
 }

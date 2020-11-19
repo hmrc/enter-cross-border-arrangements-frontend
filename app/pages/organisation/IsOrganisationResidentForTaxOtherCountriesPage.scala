@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.Address
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
+case object IsOrganisationResidentForTaxOtherCountriesPage extends QuestionPage[Boolean] {
 
-class OrganisationAddressPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "OrganisationAddressPage" - {
-
-    beRetrievable[Address](OrganisationAddressPage)
-
-    beSettable[Address](OrganisationAddressPage)
-
-    beRemovable[Address](OrganisationAddressPage)
-  }
+  override def toString: String = "isOrganisationResidentForTaxOtherCountries"
 }

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import pages.behaviours.PageBehaviours
+import models.TaxReferenceNumbers
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class DoYouKnowTINForNonUKOrganisationPageSpec extends PageBehaviours {
+case object WhatAreTheTaxNumbersForNonUKOrganisationPage extends QuestionPage[TaxReferenceNumbers] {
 
-  "DoYouKnowTINForNonUKOrganisationPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
-
-    beSettable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
-
-    beRemovable[Boolean](DoYouKnowTINForNonUKOrganisationPage)
-  }
+  override def toString: String = "whatAreTheTaxNumbersForNonUKOrganisation"
 }

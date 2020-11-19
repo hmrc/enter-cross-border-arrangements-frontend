@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
+import models.Country
 import pages.behaviours.PageBehaviours
 
-class IsOrganisationResidentForTaxOtherCountriesPageSpec extends PageBehaviours {
 
-  "IsOrganisationResidentForTaxOtherCountriesPage" - {
+class WhichCountryTaxForOrganisationPageSpec extends PageBehaviours {
 
-    beRetrievable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
+  "WhichCountryTaxForOrganisationPage" - {
 
-    beSettable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
+    beRetrievable[Country](WhichCountryTaxForOrganisationPage)
 
-    beRemovable[Boolean](IsOrganisationResidentForTaxOtherCountriesPage)
+    beSettable[Country](WhichCountryTaxForOrganisationPage)
+
+    beRemovable[Country](WhichCountryTaxForOrganisationPage)
   }
 }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object OrganisationNamePage extends QuestionPage[String] {
+case object IsOrganisationAddressUkPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "organisationName"
+  override def toString: String = "isOrganisationAddressUk"
 }

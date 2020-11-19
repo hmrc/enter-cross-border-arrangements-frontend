@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
+import models.UserAnswers
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object DoYouKnowAnyTINForUKOrganisationPage extends QuestionPage[Boolean] {
+import scala.util.Try
+
+case object EmailAddressQuestionForOrganisationPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "doYouKnowAnyTINForUKOrganisation"
+  override def toString: String = "emailAddressQuestionForOrganisation"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(false) => userAnswers.remove(EmailAddressForOrganisationPage)
+      case _ =>  super.cleanup(value, userAnswers)
+    }
 }

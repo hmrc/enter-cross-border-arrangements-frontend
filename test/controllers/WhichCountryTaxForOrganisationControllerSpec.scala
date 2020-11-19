@@ -25,7 +25,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OrganisationLoopPage, OrganisationNamePage, WhichCountryTaxForOrganisationPage}
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhichCountryTaxForOrganisationPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}

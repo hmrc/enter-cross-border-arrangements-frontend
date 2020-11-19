@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.organisation
 
-import models.LoopDetails
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object OrganisationLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
+class IsOrganisationAddressKnownPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "IsOrganisationAddressKnownPage" - {
 
-  override def toString: String = "organisationLoop"
+    beRetrievable[Boolean](IsOrganisationAddressKnownPage)
+
+    beSettable[Boolean](IsOrganisationAddressKnownPage)
+
+    beRemovable[Boolean](IsOrganisationAddressKnownPage)
+  }
 }

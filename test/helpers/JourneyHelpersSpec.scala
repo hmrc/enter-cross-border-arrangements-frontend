@@ -21,7 +21,8 @@ import generators.Generators
 import helpers.JourneyHelpers._
 import models.{CheckMode, Country, Currency, LoopDetails, Name, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
+import pages.IndividualNamePage
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
