@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import forms.MainBenefitTestFormProvider
+import forms.hallmarks.MainBenefitTestFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

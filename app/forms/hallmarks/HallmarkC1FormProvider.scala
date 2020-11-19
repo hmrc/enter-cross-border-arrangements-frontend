@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package forms.hallmarks
 
-import forms.behaviours.CheckboxFieldBehaviours
-import models.hallmarks.HallmarkE
-import play.api.data.FormError
+import forms.mappings.Mappings
+import javax.inject.Inject
+import models.hallmarks.HallmarkC1
+import play.api.data.Form
+import play.api.data.Forms.set
 
-class HallmarkEFormProviderSpec extends CheckboxFieldBehaviours {
+class HallmarkC1FormProvider @Inject() extends Mappings {
 
-  val form = new HallmarkEFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-    val requiredKey = "hallmarkE.error.required"
-
-    behave like checkboxField[HallmarkE](
-      form,
-      fieldName,
-      validValues  = HallmarkE.values,
-      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+  def apply(): Form[Set[HallmarkC1]] =
+    Form(
+      "value" -> set(enumerable[HallmarkC1]("hallmarkC1.error.required"))
+        .verifying(nonEmptySet("hallmarkC1.error.required"))
     )
-
-    behave like mandatoryCheckboxField(
-      form,
-      fieldName,
-      requiredKey
-    )
-  }
 }

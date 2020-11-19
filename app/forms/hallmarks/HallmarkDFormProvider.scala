@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package forms.hallmarks
 
-import javax.inject.Inject
 import forms.mappings.Mappings
-import models.hallmarks.HallmarkCategories
+import javax.inject.Inject
+import models.hallmarks.HallmarkD
 import play.api.data.Form
 import play.api.data.Forms.set
 
-class HallmarkCategoriesFormProvider @Inject() extends Mappings {
+class HallmarkDFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[HallmarkCategories]] =
+  def apply(): Form[Set[HallmarkD]] =
     Form(
-      "value" -> set(enumerable[HallmarkCategories]("hallmarkCategories.error.required"))
-        .verifying(nonEmptySet("hallmarkCategories.error.required"))
+      "value" -> set(enumerable[HallmarkD]("hallmarkD.error.required"))
+        .verifying(nonEmptySet("hallmarkD.error.required"))
     )
 }

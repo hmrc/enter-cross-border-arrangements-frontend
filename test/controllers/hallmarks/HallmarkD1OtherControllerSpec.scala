@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import forms.HallmarkD1OtherFormProvider
+import forms.hallmarks.HallmarkD1OtherFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

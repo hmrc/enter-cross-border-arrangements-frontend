@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import controllers.actions._
-import forms.HallmarkDFormProvider
+import forms.hallmarks.HallmarkDFormProvider
 import javax.inject.Inject
 import models.hallmarks.HallmarkD
 import models.hallmarks.HallmarkD.D1

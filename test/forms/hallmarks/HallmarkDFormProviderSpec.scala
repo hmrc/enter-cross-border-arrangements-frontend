@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package forms
+package forms.hallmarks
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.hallmarks.HallmarkC
+import models.hallmarks.HallmarkD
 import play.api.data.FormError
 
-class HallmarkCFormProviderSpec extends CheckboxFieldBehaviours {
+class HallmarkDFormProviderSpec extends CheckboxFieldBehaviours {
 
-  val form = new HallmarkCFormProvider()()
+  val form = new HallmarkDFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "hallmarkC.error.required"
+    val requiredKey = "hallmarkD.error.required"
 
-    behave like checkboxField[HallmarkC](
+    behave like checkboxField[HallmarkD](
       form,
       fieldName,
-      validValues  = HallmarkC.values,
+      validValues  = HallmarkD.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package forms.hallmarks
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class MainBenefitTestFormProviderSpec extends BooleanFieldBehaviours {
+class HallmarkD1OtherFormProvider @Inject() extends Mappings {
 
-  val requiredKey = "mainBenefitTest.error.required"
-  val invalidKey = "error.boolean"
-
-  val form = new MainBenefitTestFormProvider()()
-
-  ".confirm" - {
-
-    val fieldName = "confirm"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("hallmarkD1Other.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }

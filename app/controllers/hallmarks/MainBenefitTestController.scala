@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import controllers.actions._
-import forms.MainBenefitTestFormProvider
+import forms.hallmarks.MainBenefitTestFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator

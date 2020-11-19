@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-package forms
+package forms.hallmarks
 
-import forms.behaviours.CheckboxFieldBehaviours
-import models.hallmarks.HallmarkC1
+import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class HallmarkC1FormProviderSpec extends CheckboxFieldBehaviours {
+class HallmarkD1OtherFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new HallmarkC1FormProvider()()
+  val requiredKey = "hallmarkD1Other.error.required"
+  val lengthKey = "hallmarkD1Other.error.length"
+  val maxLength = 100
+
+  val form = new HallmarkD1OtherFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "hallmarkC1.error.required"
 
-    behave like checkboxField[HallmarkC1](
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validValues  = HallmarkC1.values,
-      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+      stringsWithMaxLength(maxLength)
     )
 
-    behave like mandatoryCheckboxField(
+    behave like mandatoryField(
       form,
       fieldName,
-      requiredKey
+      requiredError = FormError(fieldName, requiredKey)
     )
   }
 }

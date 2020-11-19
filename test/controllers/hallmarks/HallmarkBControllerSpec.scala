@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import forms.HallmarkBFormProvider
+import forms.hallmarks.HallmarkBFormProvider
 import matchers.JsonMatchers
 import models.hallmarks.HallmarkB
 import models.{NormalMode, UserAnswers}
