@@ -18,6 +18,10 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /sign-out                                    controllers.SignOutController.signOut
 
+
+# HALLMARK ROUTES
+
+
 GET        /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmarks-categories                   controllers.hallmarks.HallmarkCategoriesController.onPageLoad(mode: Mode = CheckMode)
@@ -70,6 +74,10 @@ POST       /hallmarks/hallmark-category-e                           controllers.
 GET        /hallmarks/change-hallmark-category-e                    controllers.hallmarks.HallmarkEController.onPageLoad(mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-category-e                    controllers.hallmarks.HallmarkEController.onSubmit(mode: Mode = CheckMode)
 
+
+# ORGANISATION ROUTES
+
+
 GET        /organisation/main-address-in-uk                         controllers.organisation.IsOrganisationAddressUkController.onPageLoad(mode: Mode = NormalMode)
 POST       /organisation/main-address-in-uk                         controllers.organisation.IsOrganisationAddressUkController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-main-address-in-uk                  controllers.organisation.IsOrganisationAddressUkController.onPageLoad(mode: Mode = CheckMode)
@@ -99,36 +107,6 @@ GET        /organisation/select-address                            controllers.o
 POST       /organisation/select-address                            controllers.organisation.OrganisationSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /organisation/change-select-address                     controllers.organisation.OrganisationSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /organisation/change-select-address                     controllers.organisation.OrganisationSelectAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/date-of-birth                               controllers.IndividualDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/date-of-birth                               controllers.IndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-date-of-birth                        controllers.IndividualDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-date-of-birth                        controllers.IndividualDateOfBirthController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/name                                        controllers.IndividualNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/name                                        controllers.IndividualNameController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-name                                 controllers.IndividualNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-name                                 controllers.IndividualNameController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/do-you-know-birthplace                      controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/do-you-know-birthplace                      controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-do-you-know-birthplace               controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-do-you-know-birthplace               controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/birthplace                                  controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/birthplace                                  controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-birthplace                           controllers.IndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-birthplace                           controllers.IndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/do-you-know-address                         controllers.IsIndividualAddressKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/do-you-know-address                         controllers.IsIndividualAddressKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-do-you-know-address                  controllers.IsIndividualAddressKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-do-you-know-address                  controllers.IsIndividualAddressKnownController.onSubmit(mode: Mode = CheckMode)
-
-GET        /individual/birthplace                                  controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/birthplace                                  controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-birthplace                           controllers.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-birthplace                           controllers.IsIndividualPlaceOfBirthKnownController.onSubmit(mode: Mode = CheckMode)
 
 GET        /organisation/email-address                          controllers.organisation.EmailAddressQuestionForOrganisationController.onPageLoad(mode: Mode = NormalMode)
 POST       /organisation/email-address                          controllers.organisation.EmailAddressQuestionForOrganisationController.onSubmit(mode: Mode = NormalMode)
@@ -170,25 +148,19 @@ POST       /organisation/non-uk-tax-numbers-:index              controllers.orga
 GET        /organisation/change-non-uk-tax-numbers-:index       controllers.organisation.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(mode: Mode = CheckMode, index: Int)
 POST       /organisation/change-non-uk-tax-numbers-:index       controllers.organisation.WhatAreTheTaxNumbersForNonUKOrganisationController.onSubmit(mode: Mode = CheckMode, index: Int)
 
-GET        /individual/live-in-uk                                 controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/live-in-uk                                 controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-live-in-uk                          controllers.IsIndividualAddressUkController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-live-in-uk                          controllers.IsIndividualAddressUkController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/postcode                                   controllers.IndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/postcode                                   controllers.IndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-postcode                            controllers.IndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-postcode                            controllers.IndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
+# INDIVIDUAL ROUTES
 
-GET        /individual/select-address                        controllers.IndividualSelectAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/select-address                        controllers.IndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-select-address                  controllers.IndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-select-address                  controllers.IndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/address                        controllers.IndividualAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/address                        controllers.IndividualAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-address                 controllers.IndividualAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-address                 controllers.IndividualAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/date-of-birth                               controllers.individual.IndividualDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/date-of-birth                               controllers.individual.IndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-date-of-birth                        controllers.individual.IndividualDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-date-of-birth                        controllers.individual.IndividualDateOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individual/name                                        controllers.individual.IndividualNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/name                                        controllers.individual.IndividualNameController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-name                                 controllers.individual.IndividualNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-name                                 controllers.individual.IndividualNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /individual/uk-tin-known-:index                             controllers.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode: Mode = NormalMode, index: Int)
 POST       /individual/uk-tin-known-:index                             controllers.DoYouKnowAnyTINForUKIndividualController.onSubmit(mode: Mode = NormalMode, index: Int)

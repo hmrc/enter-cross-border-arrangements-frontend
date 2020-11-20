@@ -339,7 +339,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualNamePage, NormalMode, answers)
-              .mustBe(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
         }
       }
 
@@ -349,7 +349,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualDateOfBirthPage, NormalMode, answers)
-              .mustBe(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -366,7 +366,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
         }
       }
 
@@ -382,7 +382,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -392,7 +392,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualPlaceOfBirthPage, NormalMode, answers)
-              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -408,7 +408,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
         }
       }
 
@@ -738,7 +738,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualNamePage, NormalMode, answers)
-              .mustBe(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
         }
       }
 
@@ -748,7 +748,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualDateOfBirthPage, NormalMode, answers)
-              .mustBe(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -765,7 +765,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
         }
       }
 
@@ -781,7 +781,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -791,7 +791,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualPlaceOfBirthPage, NormalMode, answers)
-              .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
         }
       }
 
@@ -808,7 +808,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
         }
       }
 
@@ -825,7 +825,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
         }
       }
 
@@ -841,7 +841,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualAddressController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -857,7 +857,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualPostcodeController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualPostcodeController.onPageLoad(NormalMode))
         }
       }
 
@@ -873,7 +873,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualUkPostcodePage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -889,7 +889,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualSelectAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
         }
       }
 
@@ -906,7 +906,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IndividualAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
         }
       }
 
@@ -921,7 +921,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
+              .mustBe(controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
         }
       }
 
@@ -936,7 +936,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -951,7 +951,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(EmailAddressForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -968,7 +968,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhichCountryTaxForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index))
         }
       }
 
@@ -983,7 +983,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -999,7 +999,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -1015,7 +1015,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
 
         }
       }
@@ -1032,7 +1032,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
         }
       }
       "must go from Is the individuals resident for tax purposes in any other countries? page to " +
@@ -1061,7 +1061,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatAreTheTaxNumbersForNonUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
         }
       }
 
