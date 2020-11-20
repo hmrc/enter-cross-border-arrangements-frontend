@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.JourneyHelpers._
-import models.{CheckMode, Country, Name, NormalMode, LoopDetails, UserAnswers}
+import models.{CheckMode, Country, LoopDetails, Name, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
@@ -123,7 +123,7 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        val result = hasValueChanged("Organisation", OrganisationNamePage, CheckMode, userAnswers)
+        val result = hasValueChanged("new Organisation", OrganisationNamePage, CheckMode, userAnswers)
 
         result mustBe true
       }

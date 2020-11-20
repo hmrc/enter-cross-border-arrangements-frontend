@@ -137,10 +137,7 @@ class Navigator @Inject()() {
  }
 
   private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map {
-      case catSet  =>  catRoutes(catSet.min(orderingByName))(mode)
-      case _ => routes.IndexController.onPageLoad()
-    }
+    ua.get(HallmarkCategoriesPage) map  {catSet  =>  catRoutes(catSet.min(orderingByName))(mode)}
 
   private def hallmarkARoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
