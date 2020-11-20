@@ -125,7 +125,7 @@ class Navigator @Inject()() {
     case IndividualAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
     case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
     case EmailAddressForIndividualPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
-    case _ => _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _ => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 
  def catRoutes(key: HallmarkCategories): Mode => Call = key match {
