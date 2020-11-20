@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.individual
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
-class EmailAddressQuestionForIndividualFormProvider @Inject() extends Mappings {
+class IsIndividualPlaceOfBirthKnownFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "confirm" -> boolean("emailAddressQuestionForIndividual.error.required")
+      "confirm" -> boolean("isIndividualPlaceOfBirthKnown.error.required")
     )
 }

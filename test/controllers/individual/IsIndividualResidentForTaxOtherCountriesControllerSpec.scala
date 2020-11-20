@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
+import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -46,7 +46,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
   val index: Int = 0
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val isIndividualResidentForTaxOtherCountriesRoute = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+  lazy val isIndividualResidentForTaxOtherCountriesRoute = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
 
   "IsIndividualResidentForTaxOtherCountries Controller" - {
 
@@ -75,7 +75,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isIndividualResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -113,7 +113,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "isIndividualResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -169,7 +169,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -18,7 +18,7 @@ package controllers.individual
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.WhatAreTheTaxNumbersForUKIndividualFormProvider
+import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
@@ -71,7 +71,7 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
         "index" -> index
       )
 
-      renderer.render("whatAreTheTaxNumbersForUKIndividual.njk", json).map(Ok(_))
+      renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -87,7 +87,7 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
             "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 
-          renderer.render("whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
+          renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
           val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {

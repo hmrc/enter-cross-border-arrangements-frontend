@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.EmailAddressForIndividualFormProvider
+import forms.individual.EmailAddressForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -48,7 +48,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
   val validData = Map("email" -> validAnswer)
 
-  lazy val emailAddressForIndividualRoute = routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
+  lazy val emailAddressForIndividualRoute = controllers.individual.EmailAddressForIndividualController.onPageLoad(NormalMode).url
 
   "EmailAddressForIndividual Controller" - {
 
@@ -73,7 +73,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -103,7 +103,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "emailAddressForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.IsIndividualAddressUkFormProvider
+import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -45,7 +45,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val isIndividualAddressUkRoute: String = routes.IsIndividualAddressUkController.onPageLoad(NormalMode).url
+  lazy val isIndividualAddressUkRoute: String = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode).url
 
   "IsIndividualAddressUk Controller" - {
 
@@ -71,7 +71,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressUk.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

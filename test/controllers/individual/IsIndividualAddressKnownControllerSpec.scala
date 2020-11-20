@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.IsIndividualAddressKnownFormProvider
+import forms.individual.IsIndividualAddressKnownFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -44,7 +44,7 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
   val formProvider = new IsIndividualAddressKnownFormProvider()
   val form = formProvider()
 
-  lazy val isIndividualAddressKnownRoute = routes.IsIndividualAddressKnownController.onPageLoad(NormalMode).url
+  lazy val isIndividualAddressKnownRoute = controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode).url
 
   "IsIndividualAddressKnown Controller" - {
 
@@ -70,7 +70,7 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualAddressKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

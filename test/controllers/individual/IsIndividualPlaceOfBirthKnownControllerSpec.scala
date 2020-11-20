@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.IsIndividualPlaceOfBirthKnownFormProvider
+import forms.individual.IsIndividualPlaceOfBirthKnownFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -44,7 +44,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
   val formProvider = new IsIndividualPlaceOfBirthKnownFormProvider()
   val form = formProvider()
 
-  lazy val isIndividualPlaceOfBirthKnownRoute = routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode).url
+  lazy val isIndividualPlaceOfBirthKnownRoute = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode).url
 
   "IsIndividualPlaceOfBirthKnown Controller" - {
 
@@ -70,7 +70,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualPlaceOfBirthKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualPlaceOfBirthKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isIndividualPlaceOfBirthKnown.njk"
+      templateCaptor.getValue mustEqual "individual/isIndividualPlaceOfBirthKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

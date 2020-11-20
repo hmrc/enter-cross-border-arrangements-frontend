@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.EmailAddressQuestionForIndividualFormProvider
+import forms.individual.EmailAddressQuestionForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -44,7 +44,7 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Mock
   val formProvider = new EmailAddressQuestionForIndividualFormProvider()
   val form = formProvider()
 
-  lazy val emailAddressQuestionForIndividualRoute = routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode).url
+  lazy val emailAddressQuestionForIndividualRoute = controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode).url
 
   "EmailAddressQuestionForIndividual Controller" - {
 
@@ -70,7 +70,7 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Mock
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressQuestionForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Mock
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressQuestionForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Mock
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "emailAddressQuestionForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/emailAddressQuestionForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

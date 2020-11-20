@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.DoYouKnowAnyTINForUKIndividualFormProvider
+import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -46,7 +46,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
   val form = formProvider()
 
-  lazy val doYouKnowAnyTINForUKIndividualRoute = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowAnyTINForUKIndividualRoute = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index).url
 
   "DoYouKnowAnyTINForUKIndividual Controller" - {
 
@@ -72,7 +72,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowAnyTINForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -113,7 +113,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowAnyTINForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -169,7 +169,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowAnyTINForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

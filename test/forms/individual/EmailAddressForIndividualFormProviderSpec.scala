@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
-import forms.behaviours.BooleanFieldBehaviours
+import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class IsIndividualResidentForTaxOtherCountriesFormProviderSpec extends BooleanFieldBehaviours {
+class EmailAddressForIndividualFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "isIndividualResidentForTaxOtherCountries.error.required"
-  val invalidKey = "error.boolean"
+  val requiredKey = "emailAddressForIndividual.error.required"
+  val lengthKey = "emailAddressForIndividual.error.length"
 
-  val form = new IsIndividualResidentForTaxOtherCountriesFormProvider()()
+  val maxLength = 400
 
-  ".confirm" - {
+  val form = new EmailAddressForIndividualFormProvider()()
 
-    val fieldName = "confirm"
+  ".email" - {
 
-    behave like booleanField(
+    val fieldName = "email"
+
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      validEmailAddress
+    )
+
+    behave like fieldWithMaxLengthEmail(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(

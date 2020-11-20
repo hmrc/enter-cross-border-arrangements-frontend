@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.DoYouKnowAnyTINForUKIndividualFormProvider
+import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
 import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
@@ -69,7 +69,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         "index" -> index
       )
 
-      renderer.render("doYouKnowAnyTINForUKIndividual.njk", json).map(Ok(_))
+      renderer.render("individual/doYouKnowAnyTINForUKIndividual.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -86,7 +86,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
             "index" -> index
           )
 
-          renderer.render("doYouKnowAnyTINForUKIndividual.njk", json).map(BadRequest(_))
+          renderer.render("individual/doYouKnowAnyTINForUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
 

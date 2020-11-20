@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class IsIndividualAddressUkFormProvider @Inject() extends Mappings {
+class EmailAddressForIndividualFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[Boolean] =
+  private val maxLength = 400
+
+  def apply(): Form[String] =
     Form(
-      "value" -> boolean("isIndividualAddressUk.error.required")
+      "email" -> validatedTextMaxLength(
+        "emailAddressForIndividual.error.required",
+        "emailAddressForIndividual.error.length",
+        maxLength)
     )
 }

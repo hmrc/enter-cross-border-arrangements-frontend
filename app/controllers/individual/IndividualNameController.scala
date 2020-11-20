@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IndividualNameFormProvider
+import forms.individual.IndividualNameFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -58,7 +58,7 @@ class IndividualNameController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("individualName.njk", json).map(Ok(_))
+      renderer.render("individual/individualName.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
@@ -72,7 +72,7 @@ class IndividualNameController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("individualName.njk", json).map(BadRequest(_))
+          renderer.render("individual/individualName.njk", json).map(BadRequest(_))
         },
 
         value => {

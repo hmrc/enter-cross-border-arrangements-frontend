@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IsIndividualAddressKnownFormProvider
+import forms.individual.IsIndividualAddressKnownFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -61,7 +61,7 @@ class IsIndividualAddressKnownController @Inject()(
         "name" -> getIndividualName(request.userAnswers)
       )
 
-      renderer.render("isIndividualAddressKnown.njk", json).map(Ok(_))
+      renderer.render("individual/isIndividualAddressKnown.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -77,7 +77,7 @@ class IsIndividualAddressKnownController @Inject()(
             "name" -> getIndividualName(request.userAnswers)
           )
 
-          renderer.render("isIndividualAddressKnown.njk", json).map(BadRequest(_))
+          renderer.render("individual/isIndividualAddressKnown.njk", json).map(BadRequest(_))
         },
         value =>
           for {

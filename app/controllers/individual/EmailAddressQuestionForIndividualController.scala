@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.EmailAddressQuestionForIndividualFormProvider
+import forms.individual.EmailAddressQuestionForIndividualFormProvider
 import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.Mode
@@ -62,7 +62,7 @@ class EmailAddressQuestionForIndividualController @Inject()(
         "displayName" -> getIndividualName(request.userAnswers)
       )
 
-      renderer.render("emailAddressQuestionForIndividual.njk", json).map(Ok(_))
+      renderer.render("individual/emailAddressQuestionForIndividual.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -78,7 +78,7 @@ class EmailAddressQuestionForIndividualController @Inject()(
             "displayName" -> getIndividualName(request.userAnswers)
           )
 
-          renderer.render("emailAddressQuestionForIndividual.njk", json).map(BadRequest(_))
+          renderer.render("individual/emailAddressQuestionForIndividual.njk", json).map(BadRequest(_))
         },
         value =>
           for {

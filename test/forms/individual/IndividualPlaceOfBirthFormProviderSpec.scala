@@ -14,26 +14,40 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
-import forms.behaviours.BooleanFieldBehaviours
+import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class DoYouKnowAnyTINForUKIndividualFormProviderSpec extends BooleanFieldBehaviours {
+class IndividualPlaceOfBirthFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "doYouKnowAnyTINForUKIndividual.error.required"
-  val invalidKey = "error.boolean"
+  val requiredKey = "individualPlaceOfBirth.error.required"
+  val lengthKey = "individualPlaceOfBirth.error.length"
+  val maxLength = 200
 
-  val form = new DoYouKnowAnyTINForUKIndividualFormProvider()()
+  val form = new IndividualPlaceOfBirthFormProvider()()
 
-  ".confirm" - {
+  ".value" - {
 
-    val fieldName = "confirm"
+    val fieldName = "value"
 
-    behave like booleanField(
+    behave like fieldThatBindsValidData(
       form,
       fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+      validOrganisationName
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like mandatoryField(

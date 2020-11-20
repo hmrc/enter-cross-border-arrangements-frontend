@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IsIndividualPlaceOfBirthKnownFormProvider
+import forms.individual.IsIndividualPlaceOfBirthKnownFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -61,7 +61,7 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
         "name" -> getIndividualName(request.userAnswers)
       )
 
-      renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
+      renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -77,7 +77,7 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
             "name" -> getIndividualName(request.userAnswers)
           )
 
-          renderer.render("isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))
+          renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))
         },
         value =>
           for {

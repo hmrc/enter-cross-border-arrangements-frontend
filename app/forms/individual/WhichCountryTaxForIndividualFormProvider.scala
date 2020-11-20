@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.individual
 
 import forms.mappings.Mappings
+import javax.inject.Inject
+import models.Country
 import play.api.data.Form
 
-class IsIndividualPlaceOfBirthKnownFormProvider @Inject() extends Mappings {
+class WhichCountryTaxForIndividualFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(countryList: Seq[Country]): Form[Country] =
     Form(
-      "confirm" -> boolean("isIndividualPlaceOfBirthKnown.error.required")
+      "country" -> text("whichCountryTaxForIndividual.error.required")
+        .verifying("whichCountryTaxForIndividual.error.country.required", value => countryList.exists(_.code == value))
+        .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )
 }

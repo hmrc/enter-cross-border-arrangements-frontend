@@ -18,7 +18,7 @@ package controllers.individual
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.WhatAreTheTaxNumbersForUKIndividualFormProvider
+import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -52,7 +52,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
 
-  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKIndividual Controller" - {
 
@@ -79,7 +79,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
         "name" -> "First Last’s"
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -124,7 +124,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -179,7 +179,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -17,8 +17,8 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.WhichCountryTaxForIndividualFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getCountry}
+import forms.individual.WhichCountryTaxForIndividualFormProvider
 import javax.inject.Inject
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
@@ -67,7 +67,7 @@ class WhichCountryTaxForIndividualController @Inject()(
         "index" -> index
       )
 
-      renderer.render("whichCountryTaxForIndividual.njk", json).map(Ok(_))
+      renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -84,7 +84,7 @@ class WhichCountryTaxForIndividualController @Inject()(
             "index" -> index
           )
 
-          renderer.render("whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
+          renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
         },
         value => {
 

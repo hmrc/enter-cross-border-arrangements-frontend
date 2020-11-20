@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError

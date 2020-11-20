@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
 import java.time.LocalDate
 
 import forms.mappings.Mappings
+import helpers.DateHelper._
 import javax.inject.Inject
 import play.api.data.Form
-import helpers.DateHelper._
 
 class IndividualDateOfBirthFormProvider @Inject() extends Mappings {
 

@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IsIndividualAddressUkFormProvider
+import forms.individual.IsIndividualAddressUkFormProvider
 import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.Mode
@@ -64,7 +64,7 @@ class IsIndividualAddressUkController @Inject()(
         "displayName" -> getIndividualName(request.userAnswers)
       )
 
-      renderer.render("isIndividualAddressUk.njk", json).map(Ok(_))
+      renderer.render("individual/isIndividualAddressUk.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -80,7 +80,7 @@ class IsIndividualAddressUkController @Inject()(
             "displayName" -> getIndividualName(request.userAnswers)
           )
 
-          renderer.render("isIndividualAddressUk.njk", json).map(BadRequest(_))
+          renderer.render("individual/isIndividualAddressUk.njk", json).map(BadRequest(_))
         },
         value =>
           for {

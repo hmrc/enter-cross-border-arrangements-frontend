@@ -18,7 +18,7 @@ package controllers.individual
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.IndividualNameFormProvider
+import forms.individual.IndividualNameFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -56,7 +56,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
     "secondName" -> lastName
   )
 
-  lazy val individualNameRoute: String = routes.IndividualNameController.onPageLoad(NormalMode).url
+  lazy val individualNameRoute: String = controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode).url
 
   "IndividualName Controller" - {
 
@@ -81,7 +81,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualName.njk"
+      templateCaptor.getValue mustEqual "individual/individualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -111,7 +111,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualName.njk"
+      templateCaptor.getValue mustEqual "individual/individualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +163,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualName.njk"
+      templateCaptor.getValue mustEqual "individual/individualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

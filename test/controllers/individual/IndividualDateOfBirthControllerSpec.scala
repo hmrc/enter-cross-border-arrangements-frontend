@@ -19,7 +19,7 @@ package controllers.individual
 import java.time.LocalDate
 
 import base.SpecBase
-import forms.IndividualDateOfBirthFormProvider
+import forms.individual.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -55,7 +55,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
       "value.year"  -> validAnswer.getYear.toString
     )
 
-  lazy val individualDateOfBirthRoute = routes.IndividualDateOfBirthController.onPageLoad(NormalMode).url
+  lazy val individualDateOfBirthRoute = controllers.individual.IndividualDateOfBirthController.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
 
@@ -95,7 +95,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "individualDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -127,7 +127,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "individualDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -181,7 +181,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "individualDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

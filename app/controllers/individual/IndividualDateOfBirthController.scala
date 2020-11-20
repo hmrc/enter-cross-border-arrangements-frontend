@@ -17,7 +17,7 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IndividualDateOfBirthFormProvider
+import forms.individual.IndividualDateOfBirthFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -63,7 +63,7 @@ class IndividualDateOfBirthController @Inject()(
         "name" -> getIndividualName(request.userAnswers)
       )
 
-      renderer.render("individualDateOfBirth.njk", json).map(Ok(_))
+      renderer.render("individual/individualDateOfBirth.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -81,7 +81,7 @@ class IndividualDateOfBirthController @Inject()(
             "name" -> getIndividualName(request.userAnswers)
           )
 
-          renderer.render("individualDateOfBirth.njk", json).map(BadRequest(_))
+          renderer.render("individual/individualDateOfBirth.njk", json).map(BadRequest(_))
         },
         value =>
           for {

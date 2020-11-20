@@ -44,7 +44,7 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()
 
-  lazy val postcodeRoute = routes.IndividualPostcodeController.onPageLoad(NormalMode).url
+  lazy val postcodeRoute = controllers.individual.routes.IndividualPostcodeController.onPageLoad(NormalMode).url
 
   "Postcode Controller" - {
 

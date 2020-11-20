@@ -17,8 +17,8 @@
 package controllers.individual
 
 import controllers.actions._
-import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
+import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator
@@ -70,7 +70,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
         "index" -> index
       )
 
-      renderer.render("isIndividualResidentForTaxOtherCountries.njk", json).map(Ok(_))
+      renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -87,7 +87,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
             "index" -> index
           )
 
-          renderer.render("isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
+          renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
           val individualLoopList = (request.userAnswers.get(IndividualLoopPage), mode) match {

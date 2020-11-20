@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms
+package forms.individual
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class IsIndividualAddressKnownFormProviderSpec extends BooleanFieldBehaviours {
+class IsIndividualPlaceOfBirthKnownFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "isIndividualAddressKnown.error.required"
+  val requiredKey = "isIndividualPlaceOfBirthKnown.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new IsIndividualAddressKnownFormProvider()()
+  val form = new IsIndividualPlaceOfBirthKnownFormProvider()()
 
   ".confirm" - {
 

@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.WhichCountryTaxForIndividualFormProvider
+import forms.individual.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -49,7 +49,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
   val index: Int = 0
 
-  lazy val whichCountryTaxForIndividualRoute: String = routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index).url
+  lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index).url
 
   "WhichCountryTaxForIndividual Controller" - {
 
@@ -116,7 +116,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -170,7 +170,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

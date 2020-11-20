@@ -65,7 +65,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       "country"      -> "FR"
     )
 
-  lazy val individualAddressRoute: String = routes.IndividualAddressController.onPageLoad(NormalMode).url
+  lazy val individualAddressRoute: String = controllers.individual.IndividualAddressController.onPageLoad(NormalMode).url
 
   "OrganisationAddress Controller" - {
 

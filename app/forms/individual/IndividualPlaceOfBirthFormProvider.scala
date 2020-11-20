@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.individual
 
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class DoYouKnowAnyTINForUKIndividualFormProvider @Inject() extends Mappings {
+class IndividualPlaceOfBirthFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[Boolean] =
+  private val maxLength = 200
+
+  def apply(): Form[String] =
     Form(
-      "confirm" -> boolean("doYouKnowAnyTINForUKIndividual.error.required")
-    )
+      "value" -> validatedTextMaxLength("individualPlaceOfBirth.error.required",
+        "individualPlaceOfBirth.error.length", maxLength)
+  )
 }

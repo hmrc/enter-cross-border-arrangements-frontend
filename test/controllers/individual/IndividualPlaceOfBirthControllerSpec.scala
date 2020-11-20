@@ -17,7 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
-import forms.IndividualPlaceOfBirthFormProvider
+import forms.individual.IndividualPlaceOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -46,7 +46,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
   val validAnswer: String = "answer"
   val validData = Map("value" -> validAnswer)
 
-  lazy val individualPlaceOfBirthRoute = routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode).url
+  lazy val individualPlaceOfBirthRoute = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode).url
 
   "IndividualPlaceOfBirth Controller" - {
 
@@ -71,7 +71,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualPlaceOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualPlaceOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -155,7 +155,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "individualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "individual/individualPlaceOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
