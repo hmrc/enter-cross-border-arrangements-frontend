@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.WhichCountryTaxForOrganisationFormProvider
+import forms.organisation.DoYouKnowTINForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,8 +25,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhichCountryTaxForOrganisationPage}
-import play.api.data.Form
+import pages.organisation.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -34,39 +33,31 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CountryListFactory
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
-  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new WhichCountryTaxForOrganisationFormProvider()
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val form: Form[Country] = formProvider(countriesSeq)
+  val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
+  val form = formProvider("the country")
+
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val whichCountryTaxForOrganisationRoute: String = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowTINForNonUKOrganisationRoute = controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index).url
 
-  "WhichCountryTaxForOrganisation Controller" - {
+  "DoYouKnowTINForNonUKOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
-
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
-      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers))
-        .overrides(
-          bind[CountryListFactory].toInstance(mockCountryFactory)
-        ).build()
-      val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -77,11 +68,15 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("confirm")),
+        "organisationName" -> "the organisation",
+        "country" -> "the country",
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -92,19 +87,14 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
-
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhichCountryTaxForOrganisationPage, selectedCountry)
+        .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[CountryListFactory].toInstance(mockCountryFactory)
-        ).build()
-      val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -114,14 +104,18 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("country" -> "FR"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "organisationName" -> "the organisation",
+        "country" -> "France",
+        "index" -> index
       )
 
-        templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -138,15 +132,17 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+          )
+          .build()
 
       val request =
-        FakeRequest(POST, whichCountryTaxForOrganisationRoute)
-          .withFormUrlEncodedBody(("country", "FR"))
+        FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -159,9 +155,9 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhichCountryTaxForOrganisationPage, selectedCountry)
+        .set(DoYouKnowTINForNonUKOrganisationPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application =
@@ -169,11 +165,12 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+          )
+          .build()
 
       val request =
-        FakeRequest(POST, whichCountryTaxForOrganisationRoute)
-          .withFormUrlEncodedBody(("country", "FR"))
+        FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -190,8 +187,8 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whichCountryTaxForOrganisationRoute).withFormUrlEncodedBody(("country", ""))
-      val boundForm = form.bind(Map("country" -> ""))
+      val request = FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -202,11 +199,12 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -216,13 +214,13 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
+      val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -232,14 +230,14 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, whichCountryTaxForOrganisationRoute)
-          .withFormUrlEncodedBody(("value", "FR"))
+        FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

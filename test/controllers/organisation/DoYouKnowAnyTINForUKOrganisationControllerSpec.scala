@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.IsOrganisationAddressUkFormProvider
+import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.IsOrganisationAddressUkPage
+import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,24 +37,27 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsOrganisationAddressUkFormProvider()
+  val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
   val form = formProvider()
+  val index = 0
+  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val isOrganisationAddressUkRoute = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
+  lazy val doYouKnowAnyTINForUKOrganisationRoute = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index).url
 
-  "IsOrganisationAddressUk Controller" - {
+  "DoYouKnowAnyTINForUKOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -67,10 +70,10 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +84,18 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressUkPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouKnowAnyTINForUKOrganisationPage, true)
+        .success
+        .value
+        .set(OrganisationLoopPage, IndexedSeq(
+          LoopDetails(None, selectedCountry, None,None, Some(true), None))
+        )
+        .success
+        .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -93,15 +105,16 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,8 +135,8 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -140,8 +153,8 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationAddressUkRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -154,10 +167,10 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
+      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -167,13 +180,13 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
+      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -183,14 +196,14 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressUkRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

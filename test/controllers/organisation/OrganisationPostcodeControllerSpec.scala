@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
+import forms.PostcodeFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.PostcodePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,31 +33,28 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
+  val formProvider = new PostcodeFormProvider()
   val form = formProvider()
-  val index = 0
-  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val doYouKnowAnyTINForUKOrganisationRoute = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode).url
 
-  "DoYouKnowAnyTINForUKOrganisation Controller" - {
+  "Postcode Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
-      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
-      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,12 +65,11 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("confirm"))
+        "form" -> form,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -84,18 +80,9 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowAnyTINForUKOrganisationPage, true)
-        .success
-        .value
-        .set(OrganisationLoopPage, IndexedSeq(
-          LoopDetails(None, selectedCountry, None,None, Some(true), None))
-        )
-        .success
-        .value
-
+      val userAnswers = UserAnswers(userAnswersId).set(PostcodePage, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -105,16 +92,14 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("confirm" -> "true"))
+      val filledForm = form.bind(Map("postcode" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm")),
-        "index" -> index
+        "form" -> filledForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -135,13 +120,12 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
           .build()
 
       val request =
-        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -153,8 +137,8 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -165,12 +149,11 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("confirm"))
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -180,13 +163,13 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
+      val request = FakeRequest(GET, postcodeRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -196,14 +179,14 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

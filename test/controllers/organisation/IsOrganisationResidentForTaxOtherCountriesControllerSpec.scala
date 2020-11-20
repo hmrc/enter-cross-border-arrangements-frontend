@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.OrganisationNameFormProvider
+import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.OrganisationNamePage
+import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,28 +33,31 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new OrganisationNameFormProvider()
+  val formProvider = new IsOrganisationResidentForTaxOtherCountriesFormProvider()
   val form = formProvider()
+  val index: Int = 0
+  val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val organisationNameRoute = controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode).url
+  lazy val isOrganisationResidentForTaxOtherCountriesRoute = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
 
-  "OrganisationName Controller" - {
+  "IsOrganisationResidentForTaxOtherCountries Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, organisationNameRoute)
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
+      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,11 +68,14 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "organisationName" -> "Paper Org",
+        "radios" -> Radios.yesNo(form("confirm")),
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +86,14 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+        .success.value
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, organisationNameRoute)
+      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +103,17 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "organisationName" -> "the organisation",
+        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,12 +134,13 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
           .build()
 
       val request =
-        FakeRequest(POST, organisationNameRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -137,8 +152,8 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, organisationNameRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -149,15 +164,47 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to Session Expired for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request =
+        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
   }
 }

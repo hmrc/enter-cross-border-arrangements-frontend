@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.IsOrganisationAddressKnownFormProvider
+import config.FrontendAppConfig
+import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.IsOrganisationAddressKnownPage
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForUKOrganisationPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,29 +35,34 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val formProvider = new IsOrganisationAddressKnownFormProvider()
-  val form = formProvider()
+  val formProvider = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
+  val form: Form[TaxReferenceNumbers] = formProvider()
 
-  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
-  lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
+  val utr: String = "1234567890"
+  val index = 0
+  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  "IsOrganisationAddressKnown Controller" - {
+  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index).url
+
+  "WhatAreTheTaxNumbersForUKOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
+      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -66,12 +73,12 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value"))
+        "form" -> form,
+        "mode" -> NormalMode,
+        "organisationName" -> "Paper Org"
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +89,20 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true).success.value
+      val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhatAreTheTaxNumbersForUKOrganisationPage, taxReferenceNumbers)
+        .success
+        .value
+        .set(OrganisationLoopPage, IndexedSeq(
+          LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
+        )
+        .success
+        .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,15 +112,20 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(
+        Map(
+          "firstTaxNumber" -> utr,
+          "secondTaxNumber" -> "",
+          "thirdTaxNumber" -> ""
+        ))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "form" -> filledForm,
+        "mode" -> NormalMode,
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -123,77 +146,12 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressKnownRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", utr), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the check your answers page when in 'CheckMode' and 'no' is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers =
-        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true)
-          .success
-          .value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
-          .withFormUrlEncodedBody(("value", "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to next page when in 'CheckMode' and 'yes' is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers =
-        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, false)
-          .success
-          .value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -205,8 +163,9 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationAddressKnownRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
+        .withFormUrlEncodedBody(("value", utr))
+      val boundForm = form.bind(Map("value" -> utr))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -217,12 +176,11 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
+      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -232,13 +190,13 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
+      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -248,14 +206,14 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationAddressKnownRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+        FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", utr), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

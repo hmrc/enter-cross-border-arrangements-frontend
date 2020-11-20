@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.PostcodeFormProvider
+import forms.organisation.OrganisationNameFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PostcodePage
+import pages.organisation.OrganisationNamePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +37,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new PostcodeFormProvider()
+  val formProvider = new OrganisationNameFormProvider()
   val form = formProvider()
 
-  lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode).url
+  lazy val organisationNameRoute = controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode).url
 
-  "Postcode Controller" - {
+  "OrganisationName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +54,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, postcodeRoute)
+      val request = FakeRequest(GET, organisationNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -69,7 +69,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "postcode.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +80,9 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(PostcodePage, "AA1 1AA").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, postcodeRoute)
+      val request = FakeRequest(GET, organisationNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +92,14 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("postcode" -> "AA1 1AA"))
+      val filledForm = form.bind(Map("value" -> "answer"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "postcode.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,8 +120,8 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
           .build()
 
       val request =
-        FakeRequest(POST, postcodeRoute)
-          .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
+        FakeRequest(POST, organisationNameRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 
@@ -137,7 +137,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, organisationNameRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -153,42 +153,11 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "postcode.njk"
+      templateCaptor.getValue mustEqual "organisation/organisationName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, postcodeRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, postcodeRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
   }
 }

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
+import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.organisation.EmailAddressQuestionForOrganisationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,27 +37,25 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsOrganisationResidentForTaxOtherCountriesFormProvider()
+  val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
   val form = formProvider()
-  val index: Int = 0
-  val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val isOrganisationResidentForTaxOtherCountriesRoute = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+  lazy val contactEmailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode).url
+  lazy val contactEmailAddressForOrganisationCheckModeRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url
 
-  "IsOrganisationResidentForTaxOtherCountries Controller" - {
+  "ContactEmailAddressForOrganisation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
-      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -70,12 +68,10 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "organisationName" -> "Paper Org",
-        "radios" -> Radios.yesNo(form("confirm")),
-        "index" -> index
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -86,14 +82,9 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
-        .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
-        .success.value
-
+      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -108,12 +99,10 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "organisationName" -> "the organisation",
-        "radios" -> Radios.yesNo(filledForm("confirm")),
-        "index" -> index
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -134,7 +123,71 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
           .build()
 
       val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
+        FakeRequest(POST, contactEmailAddressForOrganisationRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the check your answers page when in 'CheckMode' and 'no' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, true)
+        .success
+        .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, contactEmailAddressForOrganisationCheckModeRoute)
+          .withFormUrlEncodedBody(("confirm", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to next page when in 'CheckMode' and 'yes' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, false)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, contactEmailAddressForOrganisationCheckModeRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
@@ -152,7 +205,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute).withFormUrlEncodedBody(("confirm", ""))
+      val request = FakeRequest(POST, contactEmailAddressForOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
       val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -169,7 +222,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
+      templateCaptor.getValue mustEqual "organisation/emailAddressQuestionForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -179,13 +232,13 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isOrganisationResidentForTaxOtherCountriesRoute)
+      val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -195,14 +248,14 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
+        FakeRequest(POST, contactEmailAddressForOrganisationRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

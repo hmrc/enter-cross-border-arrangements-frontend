@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import forms.organisation.EmailAddressForOrganisationFormProvider
+import forms.organisation.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.EmailAddressForOrganisationPage
+import pages.organisation.IsOrganisationAddressKnownPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,20 +33,21 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new EmailAddressForOrganisationFormProvider()
+  val formProvider = new IsOrganisationAddressKnownFormProvider()
   val form = formProvider()
 
-  lazy val emailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
 
-  "EmailAddressForOrganisation Controller" - {
+  "IsOrganisationAddressKnown Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +55,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, emailAddressForOrganisationRoute)
+      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,11 +66,12 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +82,9 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressForOrganisationPage, "email@email.com").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, emailAddressForOrganisationRoute)
+      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +94,15 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("email" -> "email@email.com"))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,12 +123,77 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
           .build()
 
       val request =
-        FakeRequest(POST, emailAddressForOrganisationRoute)
-          .withFormUrlEncodedBody(("email", "email@email.com"))
+        FakeRequest(POST, isOrganisationAddressKnownRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the check your answers page when in 'CheckMode' and 'no' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to next page when in 'CheckMode' and 'yes' is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, false)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isOrganisationAddressKnownCheckModeRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -137,8 +205,8 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, emailAddressForOrganisationRoute).withFormUrlEncodedBody(("email", ""))
-      val boundForm = form.bind(Map("email" -> ""))
+      val request = FakeRequest(POST, isOrganisationAddressKnownRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -149,11 +217,12 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/emailAddressForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,13 +232,13 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, emailAddressForOrganisationRoute)
+      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -179,14 +248,14 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, emailAddressForOrganisationRoute)
-          .withFormUrlEncodedBody(("email", "answer"))
+        FakeRequest(POST, isOrganisationAddressKnownRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

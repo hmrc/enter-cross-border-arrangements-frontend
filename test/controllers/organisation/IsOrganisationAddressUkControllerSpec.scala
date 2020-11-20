@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.organisation
 
 import base.SpecBase
-import config.FrontendAppConfig
-import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
+import forms.organisation.IsOrganisationAddressUkFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForUKOrganisationPage}
-import play.api.data.Form
+import pages.organisation.IsOrganisationAddressUkPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,34 +33,28 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
-  val form: Form[TaxReferenceNumbers] = formProvider()
+  val formProvider = new IsOrganisationAddressUkFormProvider()
+  val form = formProvider()
 
-  val utr: String = "1234567890"
-  val index = 0
-  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
+  lazy val isOrganisationAddressUkRoute = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
 
-  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index).url
-
-  "WhatAreTheTaxNumbersForUKOrganisation Controller" - {
+  "IsOrganisationAddressUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
-      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -73,12 +65,12 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode,
-        "organisationName" -> "Paper Org"
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -89,20 +81,9 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatAreTheTaxNumbersForUKOrganisationPage, taxReferenceNumbers)
-        .success
-        .value
-        .set(OrganisationLoopPage, IndexedSeq(
-          LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
-        )
-        .success
-        .value
-
+      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressUkPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
+      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -112,20 +93,15 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(
-        Map(
-          "firstTaxNumber" -> utr,
-          "secondTaxNumber" -> "",
-          "thirdTaxNumber" -> ""
-        ))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode,
-        "index" -> index
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -146,12 +122,13 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
           .build()
 
       val request =
-        FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
-          .withFormUrlEncodedBody(("firstTaxNumber", utr), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
+        FakeRequest(POST, isOrganisationAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
@@ -163,9 +140,8 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
-        .withFormUrlEncodedBody(("value", utr))
-      val boundForm = form.bind(Map("value" -> utr))
+      val request = FakeRequest(POST, isOrganisationAddressUkRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -176,11 +152,12 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForUKOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/isOrganisationAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -190,13 +167,13 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
+      val request = FakeRequest(GET, isOrganisationAddressUkRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -206,14 +183,14 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
-          .withFormUrlEncodedBody(("firstTaxNumber", utr), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
+        FakeRequest(POST, isOrganisationAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
