@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object IndividualUkPostcodePage extends QuestionPage[String] {
-  override def path: JsPath = JsPath \ toString
+class IsIndividualAddressKnownPageSpec extends PageBehaviours {
 
-  override def toString: String = "individualUkPostCode"
+  "IsIndividualAddressKnownPage" - {
+
+    beRetrievable[Boolean](IsIndividualAddressKnownPage)
+
+    beSettable[Boolean](IsIndividualAddressKnownPage)
+
+    beRemovable[Boolean](IsIndividualAddressKnownPage)
+  }
 }

@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.TaxReferenceNumbers
+import java.time.LocalDate
+
+import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
+class IndividualDateOfBirthPageSpec extends PageBehaviours {
 
-class WhatAreTheTaxNumbersForUKIndividualPageSpec extends PageBehaviours {
+  "IndividualDateOfBirthPage" - {
 
-  "WhatAreTheTaxNumbersForUKIndividualPage" - {
+    implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
+      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
+    }
 
-    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKIndividualPage)
+    beRetrievable[LocalDate](IndividualDateOfBirthPage)
 
-    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKIndividualPage)
+    beSettable[LocalDate](IndividualDateOfBirthPage)
 
-    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKIndividualPage)
+    beRemovable[LocalDate](IndividualDateOfBirthPage)
   }
 }

@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import java.time.LocalDate
+import models.Name
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import org.scalacheck.Arbitrary
-import pages.behaviours.PageBehaviours
+case object IndividualNamePage extends QuestionPage[Name] {
 
-class IndividualDateOfBirthPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "IndividualDateOfBirthPage" - {
-
-    implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
-      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
-    }
-
-    beRetrievable[LocalDate](IndividualDateOfBirthPage)
-
-    beSettable[LocalDate](IndividualDateOfBirthPage)
-
-    beRemovable[LocalDate](IndividualDateOfBirthPage)
-  }
+  override def toString: String = "individualName"
 }

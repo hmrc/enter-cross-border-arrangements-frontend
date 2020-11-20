@@ -21,7 +21,7 @@ import forms.individual.IndividualDateOfBirthFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualDateOfBirthPage, IndividualNamePage}
+import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

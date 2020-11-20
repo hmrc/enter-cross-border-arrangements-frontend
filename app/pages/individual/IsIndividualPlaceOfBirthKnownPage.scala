@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class IsIndividualResidentForTaxOtherCountriesPageSpec extends PageBehaviours {
+case object IsIndividualPlaceOfBirthKnownPage extends QuestionPage[Boolean] {
 
-  "IsIndividualResidentForTaxOtherCountriesPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](IsIndividualResidentForTaxOtherCountriesPage)
-
-    beSettable[Boolean](IsIndividualResidentForTaxOtherCountriesPage)
-
-    beRemovable[Boolean](IsIndividualResidentForTaxOtherCountriesPage)
-  }
+  override def toString: String = "isIndividualPlaceOfBirthKnown"
 }

@@ -21,7 +21,7 @@ import forms.individual.IsIndividualPlaceOfBirthKnownFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualNamePage, IsIndividualPlaceOfBirthKnownPage}
+import pages.individual.{IndividualNamePage, IsIndividualPlaceOfBirthKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import play.api.libs.json.JsPath
+import models.Country
+import pages.behaviours.PageBehaviours
 
-case object IndividualSelectAddressPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
 
-  override def toString: String = "individualSelectAddress"
+  "WhichCountryTaxForIndividualPage" - {
+
+    beRetrievable[Country](WhichCountryTaxForIndividualPage)
+
+    beSettable[Country](WhichCountryTaxForIndividualPage)
+
+    beRemovable[Country](WhichCountryTaxForIndividualPage)
+  }
 }

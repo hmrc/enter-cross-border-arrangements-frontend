@@ -22,7 +22,7 @@ import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
+import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

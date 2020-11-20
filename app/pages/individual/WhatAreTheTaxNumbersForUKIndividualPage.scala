@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
+import models.TaxReferenceNumbers
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object EmailAddressForIndividualPage extends QuestionPage[String] {
+case object WhatAreTheTaxNumbersForUKIndividualPage extends QuestionPage[TaxReferenceNumbers] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "emailAddressForIndividual"
+  override def toString: String = "whatAreTheTaxNumbersForUKIndividual"
 }

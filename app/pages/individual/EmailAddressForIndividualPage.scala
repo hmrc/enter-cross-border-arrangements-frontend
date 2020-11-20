@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.Country
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object WhichCountryTaxForIndividualPage extends QuestionPage[Country] {
+case object EmailAddressForIndividualPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "whichCountryTaxForIndividual"
+  override def toString: String = "emailAddressForIndividual"
 }

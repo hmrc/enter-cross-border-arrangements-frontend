@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object DoYouKnowAnyTINForUKIndividualPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+class EmailAddressForIndividualPageSpec extends PageBehaviours {
 
-  override def toString: String = "doYouKnowAnyTINForUKIndividual"
+  "EmailAddressForIndividualPage" - {
+
+    beRetrievable[String](EmailAddressForIndividualPage)
+
+    beSettable[String](EmailAddressForIndividualPage)
+
+    beRemovable[String](EmailAddressForIndividualPage)
+  }
 }

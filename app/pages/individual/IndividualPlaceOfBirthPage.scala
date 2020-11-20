@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.Name
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IndividualNamePage extends QuestionPage[Name] {
+case object IndividualPlaceOfBirthPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "individualName"
+  override def toString: String = "individualPlaceOfBirth"
 }

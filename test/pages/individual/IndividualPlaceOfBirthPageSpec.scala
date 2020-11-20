@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object IndividualPlaceOfBirthPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+class IndividualPlaceOfBirthPageSpec extends PageBehaviours {
 
-  override def toString: String = "individualPlaceOfBirth"
+  "IndividualPlaceOfBirthPage" - {
+
+    beRetrievable[String](IndividualPlaceOfBirthPage)
+
+    beSettable[String](IndividualPlaceOfBirthPage)
+
+    beRemovable[String](IndividualPlaceOfBirthPage)
+  }
 }

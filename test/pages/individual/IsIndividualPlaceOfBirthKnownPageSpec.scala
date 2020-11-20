@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
 import pages.behaviours.PageBehaviours
 
-class EmailAddressQuestionForIndividualPageSpec extends PageBehaviours {
+class IsIndividualPlaceOfBirthKnownPageSpec extends PageBehaviours {
 
-  "EmailAddressQuestionForIndividualPage" - {
+  "IsIndividualPlaceOfBirthKnownPage" - {
 
-    beRetrievable[Boolean](EmailAddressQuestionForIndividualPage)
+    beRetrievable[Boolean](IsIndividualPlaceOfBirthKnownPage)
 
-    beSettable[Boolean](EmailAddressQuestionForIndividualPage)
+    beSettable[Boolean](IsIndividualPlaceOfBirthKnownPage)
 
-    beRemovable[Boolean](EmailAddressQuestionForIndividualPage)
+    beRemovable[Boolean](IsIndividualPlaceOfBirthKnownPage)
   }
 }

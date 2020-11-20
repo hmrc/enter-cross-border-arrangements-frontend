@@ -22,7 +22,7 @@ import forms.individual.WhichCountryTaxForIndividualFormProvider
 import javax.inject.Inject
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
+import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
+import models.Name
 import pages.behaviours.PageBehaviours
 
-class DoYouKnowAnyTINForUKIndividualPageSpec extends PageBehaviours {
 
-  "DoYouKnowAnyTINForUKIndividualPage" - {
+class IndividualNamePageSpec extends PageBehaviours {
 
-    beRetrievable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+  "IndividualNamePage" - {
 
-    beSettable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+    beRetrievable[Name](IndividualNamePage)
 
-    beRemovable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+    beSettable[Name](IndividualNamePage)
+
+    beRemovable[Name](IndividualNamePage)
   }
 }

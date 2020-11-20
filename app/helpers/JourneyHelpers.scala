@@ -18,6 +18,9 @@ package helpers
 
 import models.{CheckMode, Country, Currency, Mode, UserAnswers}
 import pages._
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import pages.QuestionPage
+import pages.individual.IndividualNamePage
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
 

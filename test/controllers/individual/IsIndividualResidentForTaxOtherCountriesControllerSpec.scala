@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
+import pages.individual.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -174,6 +174,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
 
       application.stop()
     }
+
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 

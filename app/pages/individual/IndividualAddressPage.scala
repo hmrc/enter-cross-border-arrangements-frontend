@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import pages.behaviours.PageBehaviours
+import models.{Address, UserAnswers}
+import play.api.libs.json.JsPath
 
-class IsIndividualPlaceOfBirthKnownPageSpec extends PageBehaviours {
+import scala.util.Try
 
-  "IsIndividualPlaceOfBirthKnownPage" - {
+case object IndividualAddressPage extends QuestionPage[Address] {
 
-    beRetrievable[Boolean](IsIndividualPlaceOfBirthKnownPage)
+  override def path: JsPath = JsPath \ toString
 
-    beSettable[Boolean](IsIndividualPlaceOfBirthKnownPage)
+  override def toString: String = "individualAddress"
 
-    beRemovable[Boolean](IsIndividualPlaceOfBirthKnownPage)
-  }
+  override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(_) =>
+        userAnswers
+          .remove(SelectedAddressLookupPage)
+          .flatMap(_.remove(PostcodePage))
+      case None => super.cleanup(value, userAnswers)
+    }
+
 }

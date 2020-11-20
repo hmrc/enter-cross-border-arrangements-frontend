@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.TaxReferenceNumbers
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object WhatAreTheTaxNumbersForUKIndividualPage extends QuestionPage[TaxReferenceNumbers] {
+class EmailAddressQuestionForIndividualPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "EmailAddressQuestionForIndividualPage" - {
 
-  override def toString: String = "whatAreTheTaxNumbersForUKIndividual"
+    beRetrievable[Boolean](EmailAddressQuestionForIndividualPage)
+
+    beSettable[Boolean](EmailAddressQuestionForIndividualPage)
+
+    beRemovable[Boolean](EmailAddressQuestionForIndividualPage)
+  }
 }

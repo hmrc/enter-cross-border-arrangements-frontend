@@ -17,13 +17,12 @@
 package controllers.individual
 
 import controllers.actions._
-import controllers.routes
 import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getIndividualName
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.IndividualUkPostcodePage
+import pages.individual.IndividualUkPostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

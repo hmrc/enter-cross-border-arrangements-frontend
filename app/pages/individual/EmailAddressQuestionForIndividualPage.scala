@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.Name
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
+case object EmailAddressQuestionForIndividualPage extends QuestionPage[Boolean] {
 
-class IndividualNamePageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "IndividualNamePage" - {
-
-    beRetrievable[Name](IndividualNamePage)
-
-    beSettable[Name](IndividualNamePage)
-
-    beRemovable[Name](IndividualNamePage)
-  }
+  override def toString: String = "emailAddressQuestionForIndividual"
 }

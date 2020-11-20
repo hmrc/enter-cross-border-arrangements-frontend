@@ -18,14 +18,13 @@ package controllers.individual
 
 import connectors.AddressLookupConnector
 import controllers.actions._
-import controllers.routes
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.{getIndividualName, hasValueChanged}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{IndividualSelectAddressPage, IndividualUkPostcodePage, SelectedAddressLookupPage}
+import pages.individual.{IndividualSelectAddressPage, IndividualUkPostcodePage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

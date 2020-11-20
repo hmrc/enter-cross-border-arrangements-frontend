@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IsIndividualAddressUkPage extends QuestionPage[Boolean] {
-
+case object IndividualUkPostcodePage extends QuestionPage[String] {
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isIndividualAddressUk"
+  override def toString: String = "individualUkPostCode"
 }

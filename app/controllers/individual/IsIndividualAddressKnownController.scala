@@ -21,7 +21,7 @@ import forms.individual.IsIndividualAddressKnownFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualNamePage, IsIndividualAddressKnownPage}
+import pages.individual.{IndividualNamePage, IsIndividualAddressKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

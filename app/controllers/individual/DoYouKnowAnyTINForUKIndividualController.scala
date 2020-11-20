@@ -21,7 +21,7 @@ import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
 import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage, IndividualNamePage}
+import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.Country
 import pages.behaviours.PageBehaviours
 
+class DoYouKnowAnyTINForUKIndividualPageSpec extends PageBehaviours {
 
-class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
+  "DoYouKnowAnyTINForUKIndividualPage" - {
 
-  "WhichCountryTaxForIndividualPage" - {
+    beRetrievable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
 
-    beRetrievable[Country](WhichCountryTaxForIndividualPage)
+    beSettable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
 
-    beSettable[Country](WhichCountryTaxForIndividualPage)
-
-    beRemovable[Country](WhichCountryTaxForIndividualPage)
+    beRemovable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
   }
 }
