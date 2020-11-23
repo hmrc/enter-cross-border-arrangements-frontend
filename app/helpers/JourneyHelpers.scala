@@ -17,7 +17,7 @@
 package helpers
 
 import models.{CheckMode, Country, Mode, UserAnswers}
-import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage, QuestionPage}
+import pages._
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
 
@@ -52,6 +52,21 @@ object JourneyHelpers {
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
+  def incrementIndexIndividual(ua: UserAnswers, request: Request[AnyContent]): Int = {
+    ua.get(IndividualLoopPage) match {
+      case Some(_) =>
+        try {
+          val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
+          val uriPattern(_, index) = request.uri
+
+          index.toInt + 1
+        } catch {
+          case _: Exception => 1 //First index for Non-UK TIN pages after visiting UK TIN pages. UK tin pages will not match uri pattern
+        }
+      case _ => 0
+    }
+  }
+
   def incrementIndexOrganisation(ua: UserAnswers, request: Request[AnyContent]): Int = {
     ua.get(OrganisationLoopPage) match {
       case Some(_) =>
@@ -80,4 +95,10 @@ object JourneyHelpers {
       case _ => false
     }
   }
+
+  def getCountry[A](userAnswers: UserAnswers, index: Int): Option[Country] = for {
+    loopPage <- userAnswers.get(IndividualLoopPage)
+    loopDetails <- loopPage.lift(index)
+    country <- loopDetails.whichCountry
+  } yield country
 }

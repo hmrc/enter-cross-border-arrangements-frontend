@@ -16,14 +16,15 @@
 
 package forms
 
-import forms.mappings.Mappings
 import javax.inject.Inject
+import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+class DoYouKnowTINForNonUKIndividualFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
+      "confirm" -> boolean(messages("doYouKnowTINForNonUKIndividual.error.required", country))
     )
 }

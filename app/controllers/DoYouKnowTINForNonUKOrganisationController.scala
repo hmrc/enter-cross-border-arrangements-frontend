@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.DoYouKnowTINForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
 import javax.inject.Inject
-import models.{Mode, OrganisationLoopDetails, UserAnswers}
+import models.{Mode, LoopDetails, UserAnswers}
 import navigation.Navigator
 import pages.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -98,8 +98,8 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
-              IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
+              val newOrganisationLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
+              IndexedSeq[LoopDetails](newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
                 val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))

@@ -21,6 +21,9 @@ import pages._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryDoYouKnowTINForNonUKIndividualPage: Arbitrary[DoYouKnowTINForNonUKIndividualPage.type] =
+    Arbitrary(DoYouKnowTINForNonUKIndividualPage)
+
   implicit lazy val arbitraryWhichCountryTaxForIndividualPage: Arbitrary[WhichCountryTaxForIndividualPage.type] =
     Arbitrary(WhichCountryTaxForIndividualPage)
 

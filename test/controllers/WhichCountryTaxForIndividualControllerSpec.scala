@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import forms.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.WhichCountryTaxForIndividualPage
+import pages.{IndividualLoopPage, WhichCountryTaxForIndividualPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -47,8 +47,9 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
   val form: Form[Country] = formProvider(Seq(Country("valid","GB","United Kingdom")))
   val country: Country = Country("valid","GB","United Kingdom")
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val index: Int = 0
 
-  lazy val whichCountryTaxForIndividualRoute: String = routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode).url
+  lazy val whichCountryTaxForIndividualRoute: String = routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index).url
 
   "WhichCountryTaxForIndividual Controller" - {
 
@@ -86,7 +87,12 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhichCountryTaxForIndividualPage, country).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhichCountryTaxForIndividualPage, country)
+        .success
+        .value
+        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
+        .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)

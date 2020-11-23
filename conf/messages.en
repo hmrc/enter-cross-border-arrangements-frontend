@@ -253,26 +253,29 @@ organisationName.error.invalid = Organisation name must only include letters a t
 
 organisationAddress.title = What is the organisation’s main address?
 organisationAddress.heading = What is {0}’s main address?
+individualAddress.heading = What is {0}’s address?
+individualAddress.title = What is their address?
+individualAddress.checkYourAnswersLabel = What is the individual’s main address?
 organisationAddress.checkYourAnswersLabel = What is the organisation’s main address?
-organisationAddress.addressLine1 = Address line 1 (optional)
-organisationAddress.addressLine2 = Address line 2 (optional)
-organisationAddress.addressLine3 = Address line 3 (optional)
-organisationAddress.city = City
-organisationAddress.postcode.optional = Postal code (optional)
-organisationAddress.postcodeUk.optional = Postcode (optional)
-organisationAddress.country = Country
-organisationAddress.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
-organisationAddress.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
-organisationAddress.error.addressLine3.length = Address line 3 (optional) must be 35 characters or less
-organisationAddress.error.city.length = City must be 35 characters or less
-organisationAddress.error.postcode.optional.length = Postal code (optional) must be 10 characters or less
-organisationAddress.error.addressLine1.invalid = Address line 1 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-organisationAddress.error.addressLine2.invalid = Address line 2 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-organisationAddress.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-organisationAddress.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-organisationAddress.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-organisationAddress.error.city.required = Enter a city
-organisationAddress.error.country.required = Select a country
+address.addressLine1 = Address line 1 (optional)
+address.addressLine2 = Address line 2 (optional)
+address.addressLine3 = Address line 3 (optional)
+address.city = City
+address.postcode.optional = Postal code (optional)
+address.postcodeUk.optional = Postcode (optional)
+address.country = Country
+address.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
+address.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
+address.error.addressLine3.length = Address line 3 (optional) must be 35 characters or less
+address.error.city.length = City must be 35 characters or less
+address.error.postcode.optional.length = Postal code (optional) must be 10 characters or less
+address.error.addressLine1.invalid = Address line 1 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.addressLine2.invalid = Address line 2 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.city.required = Enter city
+address.error.country.required = Select country
 
 postcode.title = What is the organisation’s postcode?
 postcode.heading = What is {0}’s postcode?
@@ -395,12 +398,23 @@ whatAreTheTaxNumbersForNonUKOrganisation.label1.error.length = Tax identificatio
 whatAreTheTaxNumbersForNonUKOrganisation.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
 whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length = Tax identification number 3 (optional) must be 200 characters or less
 
+whatAreTheTaxNumbersForNonUKIndividual.title = What are the individuals’s tax identification numbers?
+whatAreTheTaxNumbersForNonUKIndividual.heading = What are {0}’s tax identification numbers for {1}?
+whatAreTheTaxNumbersForNonUKIndividual.hint = Provide up to 3.
+whatAreTheTaxNumbersForNonUKIndividual.label1 = Tax identification number 1
+whatAreTheTaxNumbersForNonUKIndividual.label2 = Tax identification number 2 (optional)
+whatAreTheTaxNumbersForNonUKIndividual.label3 = Tax identification number 3 (optional)
+whatAreTheTaxNumbersForNonUKIndividual.checkYourAnswersLabel = whatAreTheTaxNumbersForNonUKIndividual
+whatAreTheTaxNumbersForNonUKIndividual.error.required = Enter tax identification number 1
+whatAreTheTaxNumbersForNonUKIndividual.label1.error.length = Tax identification number 1 must be 200 characters or less
+whatAreTheTaxNumbersForNonUKIndividual.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
+whatAreTheTaxNumbersForNonUKIndividual.label3.error.length = Tax identification number 3 (optional) must be 200 characters or less
+
 isIndividualAddressUk.title = Do they live in the United Kingdom?
 isIndividualAddressUk.heading = Does {0} live in the United Kingdom?
 isIndividualAddressUk.error.required = Select yes if they live in the United Kingdom
 
-individualAddress.heading = What is {0}’s address?
-individualAddress.title = What is their address?
+
 
 doYouKnowAnyTINForUKIndividual.title = Do you know their tax identification numbers for the United Kingdom?
 doYouKnowAnyTINForUKIndividual.heading = Do you know {0} tax identification numbers for the United Kingdom?
@@ -441,3 +455,14 @@ emailAddressForIndividual.hint = We will only use this to get in contact if we h
 emailAddressForIndividual.checkYourAnswersLabel = What is their email address?
 emailAddressForIndividual.error.required = Enter an email address
 emailAddressForIndividual.error.length = Email address must be 400 characters or less
+
+doYouKnowTINForNonUKIndividual.title = Do you know the individuals’s tax identification numbers?
+doYouKnowTINForNonUKIndividual.heading = Do you know {0}’s tax identification numbers for {1}?
+doYouKnowTINForNonUKIndividual.hint = This is a number given by the tax administration in the country where the individual is resident for tax purposes. It is used to identify individual taxpayers.
+doYouKnowTINForNonUKIndividual.checkYourAnswersLabel = Do you know the individual’s tax identification numbers for tax resident countries?
+doYouKnowTINForNonUKIndividual.error.required = Select yes if you know their tax identification numbers for {0}
+
+isIndividualResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
+isIndividualResidentForTaxOtherCountries.error.required = Select yes if the organisation is resident for tax in any other countries

@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.DoYouKnowAnyTINForUKIndividualFormProvider
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{DoYouKnowAnyTINForUKIndividualPage, IndividualNamePage}
+import pages.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,25 +46,33 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) if value.lift(index).isDefined =>
+          val doYouKnowUTR = value.lift(index).get.doYouKnowUTR
+          if (doYouKnowUTR.isDefined) {
+            form.fill(doYouKnowUTR.get)
+          } else {
+            form
+          }
+        case Some(_) => form
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers)
+        "name" -> getIndividualName(request.userAnswers),
+        "index" -> index
       )
 
       renderer.render("doYouKnowAnyTINForUKIndividual.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -74,17 +82,35 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "name" -> getIndividualName(request.userAnswers)
+            "name" -> getIndividualName(request.userAnswers),
+            "index" -> index
           )
 
           renderer.render("doYouKnowAnyTINForUKIndividual.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+            case None =>
+              val newIndividualLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
+              IndexedSeq[LoopDetails](newIndividualLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(doYouKnowUTR = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKIndividualPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
           } yield Redirect(navigator.nextPage(DoYouKnowAnyTINForUKIndividualPage, mode, updatedAnswers))
+        }
       )
+
   }
 
   private def getIndividualName(userAnswers: UserAnswers): String = {

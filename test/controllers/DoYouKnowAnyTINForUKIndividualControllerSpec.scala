@@ -19,13 +19,13 @@ package controllers
 import base.SpecBase
 import forms.DoYouKnowAnyTINForUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.DoYouKnowAnyTINForUKIndividualPage
+import pages.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -42,9 +42,11 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new DoYouKnowAnyTINForUKIndividualFormProvider()
+  val index = 0
+  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
   val form = formProvider()
 
-  lazy val doYouKnowAnyTINForUKIndividualRoute = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode).url
+  lazy val doYouKnowAnyTINForUKIndividualRoute = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index).url
 
   "DoYouKnowAnyTINForUKIndividual Controller" - {
 
@@ -81,8 +83,17 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(DoYouKnowAnyTINForUKIndividualPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouKnowAnyTINForUKIndividualPage, true)
+        .success
+        .value
+        .set(IndividualLoopPage, IndexedSeq(
+          LoopDetails(None, selectedCountry, None,None, Some(true), None))
+        )
+        .success
+        .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
       val request = FakeRequest(GET, doYouKnowAnyTINForUKIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -98,7 +109,8 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm"))
+        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "doYouKnowAnyTINForUKIndividual.njk"

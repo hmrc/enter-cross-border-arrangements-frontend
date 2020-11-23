@@ -43,27 +43,27 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode).url,
+            href               = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForIndividual.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
+//  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
+//    answer =>
+//      Row(
+//        key     = Key(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+//        value   = Value(lit"$answer"),
+//        actions = List(
+//          Action(
+//            content            = msg"site.edit",
+//            href               = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url,
+//            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel"))
+//          )
+//        )
+//      )
+//  }
 
   def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
     answer =>
@@ -73,27 +73,27 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode).url,
+            href               = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
+//  def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
+//    answer =>
+//      Row(
+//        key     = Key(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+//        value   = Value(yesOrNo(answer)),
+//        actions = List(
+//          Action(
+//            content            = msg"site.edit",
+//            href               = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode).url,
+//            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel"))
+//          )
+//        )
+//      )
+//  }
 
   def emailAddressQuestionForIndividual: Option[Row] = userAnswers.get(EmailAddressQuestionForIndividualPage) map {
     answer =>

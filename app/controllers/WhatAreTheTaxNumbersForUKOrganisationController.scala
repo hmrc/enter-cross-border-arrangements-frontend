@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
 import javax.inject.Inject
-import models.{Mode, OrganisationLoopDetails}
+import models.{Mode, LoopDetails}
 import navigation.Navigator
 import pages.{OrganisationLoopPage, WhatAreTheTaxNumbersForUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -94,8 +94,8 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
         value => {
           val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
             case None =>
-              val newOrganisationLoop = OrganisationLoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
-              IndexedSeq[OrganisationLoopDetails](newOrganisationLoop)
+              val newOrganisationLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
+              IndexedSeq[LoopDetails](newOrganisationLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
                 val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))

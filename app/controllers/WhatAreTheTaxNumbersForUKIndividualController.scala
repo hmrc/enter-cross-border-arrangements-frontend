@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
+import pages.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,25 +48,33 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) if value.lift(index).isDefined =>
+          val taxNumbersUK = value.lift(index).get.taxNumbersUK //TODO - change this and add UKTaxNumbersToModel
+          if (taxNumbersUK.isDefined) {
+            form.fill(taxNumbersUK.get)
+          } else {
+            form
+          }
+        case Some(_) => form
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers),
-        "lostUTRUrl" -> appConfig.lostUTRUrl
+        "lostUTRUrl" -> appConfig.lostUTRUrl,
+        "index" -> index
       )
 
       renderer.render("whatAreTheTaxNumbersForUKIndividual.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -81,11 +89,26 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
           renderer.render("whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+            case None =>
+              val newIndividualLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
+              IndexedSeq[LoopDetails](newIndividualLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
+          }
           for {
+
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
           } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForUKIndividualPage, mode, updatedAnswers))
+        }
       )
   }
 

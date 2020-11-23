@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import models.LoopDetails
+import pages.behaviours.PageBehaviours
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+class IndividualLoopPageSpec extends PageBehaviours {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+  "IndividualLoopPage" - {
+
+    beRetrievable[IndexedSeq[LoopDetails]](IndividualLoopPage)
+
+    beSettable[IndexedSeq[LoopDetails]](IndividualLoopPage)
+
+    beRemovable[IndexedSeq[LoopDetails]](IndividualLoopPage)
+  }
 }

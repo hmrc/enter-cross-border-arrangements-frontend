@@ -18,11 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.WhichCountryTaxForIndividualFormProvider
-import helpers.JourneyHelpers.countryJsonList
+import helpers.JourneyHelpers.{countryJsonList, getCountry}
 import javax.inject.Inject
-import models.{Country, Mode, UserAnswers}
+import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualNamePage, WhichCountryTaxForIndividualPage}
+import pages.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,25 +51,26 @@ class WhichCountryTaxForIndividualController @Inject()(
 
   private val form = formProvider(countries)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhichCountryTaxForIndividualPage) match {
-        case None => form
+      val preparedForm = getCountry(request.userAnswers, index) match {
         case Some(value) => form.fill(value)
+        case _ => form
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers),
-        "countries" -> countryJsonList(preparedForm.data, countries)
+        "countries" -> countryJsonList(preparedForm.data, countries),
+        "index" -> index
       )
 
       renderer.render("whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,16 +80,22 @@ class WhichCountryTaxForIndividualController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "name" -> getIndividualName(request.userAnswers),
-            "countries" -> countryJsonList(formWithErrors.data, countries)
+            "countries" -> countryJsonList(formWithErrors.data, countries),
+            "index" -> index
           )
 
           renderer.render("whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val individualLoopDetails = getIndividualLoopDetails(value, request.userAnswers, index)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhichCountryTaxForIndividualPage, mode, updatedAnswers))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopDetails))
+            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(navigator.nextPage(WhichCountryTaxForIndividualPage, mode, updatedAnswersWithLoopDetails))
+        }
       )
   }
 
@@ -97,5 +104,22 @@ class WhichCountryTaxForIndividualController @Inject()(
       case Some(name) => s"${"is " + name.firstName + " " + name.secondName}"
       case None => "are they"
     }
+  }
+
+  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, index: Int) =
+      userAnswers.get(IndividualLoopPage) match {
+    case None =>
+      val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+      IndexedSeq(newIndividualLoop)
+    case Some(list) =>
+      if (list.lift(index).isDefined) {
+        //Update value
+        val updatedLoop = list.lift(index).get.copy(whichCountry = Some(value))
+        list.updated(index, updatedLoop)
+      } else {
+        //Add to loop
+        val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+        list :+ newIndividualLoop
+      }
   }
 }
