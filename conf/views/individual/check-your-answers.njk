@@ -21,18 +21,22 @@
       <div class="govuk-grid-column-two-thirds">
 
         {{ govukSummaryList({
-          rows: list
+          rows: individualSummary
+        }) }}
+        {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: countrySummary
         }) }}
 
-            {{ csrf() | safe }}
+        {{ csrf() | safe }}
 
-            <div class="govuk-!-margin-top-9">
-                {{ govukButton({
-                    text: messages("site.continue"),
-                    preventDoubleClick: true,
-                    attributes: {id:"submit"}
-                }) }}
-            </div>
+        <div class="govuk-!-margin-top-9">
+            {{ govukButton({
+                text: messages("site.continue"),
+                preventDoubleClick: true,
+                attributes: {id:"submit"}
+            }) }}
+        </div>
 
       </div>
     </div>

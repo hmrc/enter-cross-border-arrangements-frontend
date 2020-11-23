@@ -18,10 +18,10 @@ package utils.rows
 
 import java.time.format.DateTimeFormatter
 
-import models.{Address, AddressLookup, UserAnswers}
+import models.{Address, AddressLookup, TaxReferenceNumbers, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators}
+import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 
 trait RowBuilder {
 
@@ -36,9 +36,14 @@ trait RowBuilder {
       msg"site.no"
     }
 
+  private[utils] def messageWithPluralFormatter(msgKey: String*)(isPlural: Boolean, argIfPlural: String = "s"
+                                                , argIfSingular: String = ""): Text.Message =
+    MessageInterpolators(StringContext.apply(msgKey.head)).msg()
+      .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail):_*)
+
   private[utils] def toRow(msgKey: String, content: Content, href: String)(implicit messages: Messages): Row = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    val idPattern = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
+    val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     Row(
       key     = Key(message, classes = Seq("govuk-!-width-one-half")),
       value   = Value(content),
@@ -47,7 +52,7 @@ trait RowBuilder {
           content            = msg"site.edit",
           href               = href,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
-          attributes         = Map("id" -> msgKey.replaceAll(idPattern, "$1-$2").toLowerCase)
+          attributes         = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
         )
       )
     )
@@ -75,6 +80,16 @@ trait RowBuilder {
         ${addressLookup.county.fold("")(county => s"$county<br>")}
         ${addressLookup.postcode}
      """)
+  }
+
+  private[utils] def formatReferenceNumbers(referenceNumber: TaxReferenceNumbers): String = {
+    val first = referenceNumber.firstTaxNumber
+    (referenceNumber.secondTaxNumber, referenceNumber.thirdTaxNumber) match {
+      case (Some(second), Some(third)) => s"$first, $second, $third"
+      case (Some(second), None) => s"$first, $second"
+      case (None, Some(third)) => s"$first, $third"
+      case _ => s"$first"
+    }
   }
 
 }

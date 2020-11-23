@@ -21,9 +21,9 @@ import forms.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
 import play.api.inject.bind
