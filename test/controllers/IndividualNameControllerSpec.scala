@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.IndividualNameFormProvider
 import matchers.JsonMatchers
-import models.{Name, NormalMode, UserAnswers}
+import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -50,6 +50,11 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
   val form: Form[Name] = formProvider()
   val firstName: String = "First"
   val lastName: String = "Last"
+  val validAnswer: Name = Name(firstName, lastName)
+  val validData = Map(
+    "firstName" -> firstName,
+    "secondName" -> lastName
+  )
 
   lazy val individualNameRoute: String = routes.IndividualNameController.onPageLoad(NormalMode).url
 
@@ -87,7 +92,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, Name(firstName, lastName)).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, individualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -99,10 +104,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map(
-        "firstName" -> firstName,
-        "secondName" -> lastName
-      ))
+      val filledForm = form.bind(validData)
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -129,8 +131,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val request =
         FakeRequest(POST, individualNameRoute)
-          .withFormUrlEncodedBody(("firstName", firstName),
-            ("secondName", lastName))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -164,6 +165,34 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       templateCaptor.getValue mustEqual "individualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user change their answer" in {
+
+      val individualNameRouteCheck = routes.IndividualNameController.onPageLoad(CheckMode)
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, validAnswer).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, individualNameRouteCheck.url)
+          .withFormUrlEncodedBody(validData.toList:_*)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

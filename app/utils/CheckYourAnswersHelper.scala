@@ -16,8 +16,6 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-
 import controllers.routes
 import models.HallmarkA._
 import models.HallmarkC.C1
@@ -32,9 +30,10 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.CheckYourAnswersHelper.dateFormatter
+import utils.rows.IndividualRows
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
+  extends IndividualRows {
 
   def whyAreYouReportingThisArrangementNow: Option[Row] = userAnswers.get(WhyAreYouReportingThisArrangementNowPage) map {
     answer =>
@@ -91,171 +90,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
             content            = msg"site.edit",
             href               = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsThisArrangementCalled.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whichCountryTaxForIndividual: Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whichCountryTaxForIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichCountryTaxForIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-//  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
-//    answer =>
-//      Row(
-//        key     = Key(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-//        value   = Value(lit"$answer"),
-//        actions = List(
-//          Action(
-//            content            = msg"site.edit",
-//            href               = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url,
-//            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel"))
-//          )
-//        )
-//      )
-//  }
-
-  def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-//  def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
-//    answer =>
-//      Row(
-//        key     = Key(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-//        value   = Value(yesOrNo(answer)),
-//        actions = List(
-//          Action(
-//            content            = msg"site.edit",
-//            href               = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode).url,
-//            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel"))
-//          )
-//        )
-//      )
-//  }
-
-  def emailAddressQuestionForIndividual: Option[Row] = userAnswers.get(EmailAddressQuestionForIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"emailAddressQuestionForIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressQuestionForIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def emailAddressForIndividual: Option[Row] = userAnswers.get(EmailAddressForIndividualPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"emailAddressForIndividual.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"emailAddressForIndividual.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def isIndividualPlaceOfBirthKnown: Option[Row] = userAnswers.get(IsIndividualPlaceOfBirthKnownPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isIndividualPlaceOfBirthKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isIndividualPlaceOfBirthKnown.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def isIndividualAddressKnown: Option[Row] = userAnswers.get(IsIndividualAddressKnownPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isIndividualAddressKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IsIndividualAddressKnownController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isIndividualAddressKnown.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def individualPlaceOfBirth: Option[Row] = userAnswers.get(IndividualPlaceOfBirthPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"individualPlaceOfBirth.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"individualPlaceOfBirth.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"individualName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IndividualNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"individualName.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def individualDateOfBirth: Option[Row] = userAnswers.get(IndividualDateOfBirthPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"individualDateOfBirth.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Literal(answer.format(dateFormatter))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.IndividualDateOfBirthController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"individualDateOfBirth.checkYourAnswersLabel"))
           )
         )
       )
@@ -407,14 +241,4 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
 
   }
 
-  private def yesOrNo(answer: Boolean): Content =
-    if (answer) {
-      msg"site.yes"
-    } else {
-      msg"site.no"
-    }
-}
-
-object CheckYourAnswersHelper {
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }

@@ -10,6 +10,7 @@ GET        /this-service-has-been-reset                 controllers.SessionExpir
 
 GET        /hallmarks/check-answers                     controllers.CheckYourAnswersHallmarksController.onPageLoad
 GET        /organisation/check-answers                  controllers.CheckYourAnswersOrganisationController.onPageLoad
+GET        /individual/check-answers                    controllers.IndividualCheckYourAnswersController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
