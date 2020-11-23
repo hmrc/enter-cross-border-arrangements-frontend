@@ -32,6 +32,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   private val contactFormServiceIdentifier = "DAC6"
 
   lazy val countryCodeJson: String = configuration.get[String]("json.countries")
+  lazy val currencyCodeJson: String = configuration.get[String]("json.currencies")
   val analyticsToken: String = configuration.get[String](s"google-analytics.token")
   val analyticsHost: String = configuration.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"

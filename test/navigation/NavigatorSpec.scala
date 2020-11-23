@@ -21,13 +21,16 @@ import controllers.routes
 import generators.Generators
 import models.HallmarkD.D2
 import models.HallmarkD1.D1other
+import models.WhyAreYouReportingThisArrangementNow.Dac6701
 import models._
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.arrangement.WhichExpectedInvolvedCountriesArrangement.UnitedKingdom
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage, WhyAreYouReportingThisArrangementNowPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
- import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage}
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -1101,6 +1104,66 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, NormalMode, updatedAnswers)
               .mustBe(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the 'Why are reporting this arrangement now?' page to " +
+        "'Which of these countries are expected to be involved in this arrangement?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhyAreYouReportingThisArrangementNowPage,Dac6701)
+                .success.value
+
+            navigator
+              .nextPage(WhyAreYouReportingThisArrangementNowPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which of these countries are expected to be involved in this arrangement?' page to " +
+        "'What is the expected value of this arrangement?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhichExpectedInvolvedCountriesArrangementPage,WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+                .success.value
+
+            navigator
+              .nextPage(WhichExpectedInvolvedCountriesArrangementPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is the expected value of this arrangement?' page to " +
+        "'Which national provisions is this arrangement based on?'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatIsTheExpectedValueOfThisArrangementPage,WhatIsTheExpectedValueOfThisArrangement("ALL", 0))
+                .success.value
+
+            navigator
+              .nextPage(WhatIsTheExpectedValueOfThisArrangementPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Which national provisions is this arrangement based on?' page to " +
+        "'Give details of this arrangement'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhichNationalProvisionsIsThisArrangementBasedOnPage,"provisions")
+                .success.value
+
+            navigator
+              .nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
         }
       }
     }

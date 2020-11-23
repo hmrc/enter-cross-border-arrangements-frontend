@@ -17,13 +17,47 @@
 package generators
 
 import models._
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryGiveDetailsOfThisArrangementUserAnswersEntry: Arbitrary[(GiveDetailsOfThisArrangementPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[GiveDetailsOfThisArrangementPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhichNationalProvisionsIsThisArrangementBasedOnUserAnswersEntry: Arbitrary[(WhichNationalProvisionsIsThisArrangementBasedOnPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhichNationalProvisionsIsThisArrangementBasedOnPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangementUserAnswersEntry: Arbitrary[(WhatIsTheExpectedValueOfThisArrangementPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatIsTheExpectedValueOfThisArrangementPage.type]
+        value <- arbitrary[WhatIsTheExpectedValueOfThisArrangement].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangementUserAnswersEntry: Arbitrary[(WhichExpectedInvolvedCountriesArrangementPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhichExpectedInvolvedCountriesArrangementPage.type]
+        value <- arbitrary[WhichExpectedInvolvedCountriesArrangement].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryWhyAreYouReportingThisArrangementNowUserAnswersEntry: Arbitrary[(WhyAreYouReportingThisArrangementNowPage.type, JsValue)] =
     Arbitrary {

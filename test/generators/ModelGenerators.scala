@@ -17,10 +17,24 @@
 package generators
 
 import models._
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[WhatIsTheExpectedValueOfThisArrangement] =
+    Arbitrary {
+      for {
+        currency <- arbitrary[String]
+        amount <- arbitrary[Int]
+      } yield WhatIsTheExpectedValueOfThisArrangement(currency, amount)
+    }
+
+implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[WhichExpectedInvolvedCountriesArrangement] =
+    Arbitrary {
+      Gen.oneOf(WhichExpectedInvolvedCountriesArrangement.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhyAreYouReportingThisArrangementNow: Arbitrary[WhyAreYouReportingThisArrangementNow] =
     Arbitrary {

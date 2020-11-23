@@ -1,0 +1,75 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("whatIsTheExpectedValueOfThisArrangement.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.arrangement.WhatIsTheExpectedValueOfThisArrangementController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("whatIsTheExpectedValueOfThisArrangement.heading") }}
+        </h1>
+
+          {{ govukSelect({
+            classes: "govuk-input--width-20 autocomplete",
+            hint: { text: messages('whatIsTheExpectedValueOfThisArrangement.currency.hint')},
+            id: "currency",
+            name: "currency",
+            label: {
+              text: messages('whatIsTheExpectedValueOfThisArrangement.currency')
+            },
+                attributes: {"aria-labelledby": "currency"},
+                errorMessage: form.currency.error,
+                items: currencies
+          }) }}
+
+          {{ govukInput({
+          classes: "govuk-input govuk-input--width-10",
+            label: {
+              text: messages('whatIsTheExpectedValueOfThisArrangement.amount')
+            },
+            hint: { text: messages('whatIsTheExpectedValueOfThisArrangement.amount.hint')},
+            id: "amount",
+            name: "amount",
+            value: form.amount.value,
+            errorMessage: form.amount.error
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
