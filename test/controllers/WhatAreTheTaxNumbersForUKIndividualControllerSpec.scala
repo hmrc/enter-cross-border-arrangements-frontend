@@ -20,13 +20,13 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Name, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
+import pages.{IndividualLoopPage, IndividualNamePage, OrganisationLoopPage, WhatAreTheTaxNumbersForUKIndividualPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -48,8 +48,11 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
   val form: Form[TaxReferenceNumbers] = formProvider()
 
   val utr: String = "1234567890"
+  val index = 0
+  val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode).url
+
+  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKIndividual Controller" - {
 
@@ -89,7 +92,14 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
 
       val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatAreTheTaxNumbersForUKIndividualPage, taxReferenceNumbers).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(WhatAreTheTaxNumbersForUKIndividualPage, taxReferenceNumbers).success.value
+        .set(IndividualLoopPage, IndexedSeq(
+          LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
+        )
+        .success
+        .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForUKIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -110,7 +120,8 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "index" -> index
       )
 
       templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForUKIndividual.njk"

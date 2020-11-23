@@ -136,7 +136,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "whichCountryTaxForIndividual",
         content = lit"$answer",
-        href    = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode).url
+        href    = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -146,7 +146,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "doYouKnowAnyTINForUKIndividual",
         content = yesOrNo(answer),
-        href    = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode).url
+        href    = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -156,7 +156,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "whatAreTheTaxNumbersForUKIndividual",
         content = lit"$answer",
-        href    = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode).url
+        href    = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -170,7 +170,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "isIndividualResidentForTaxOtherCountries",
         content = yesOrNo(answer),
-        href    = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode).url
+        href    = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
       )
   }
 

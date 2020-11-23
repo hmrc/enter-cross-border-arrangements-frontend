@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import models.TaxReferenceNumbers
+import play.api.libs.json.JsPath
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+case object WhatAreTheTaxNumbersForNonUKIndividualPage extends QuestionPage[TaxReferenceNumbers] {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "whatAreTheTaxNumbersForNonUKIndividual"
 }

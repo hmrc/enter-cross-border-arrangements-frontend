@@ -16,18 +16,18 @@
 
 package pages
 
-import models.OrganisationLoopDetails
+import models.LoopDetails
 import pages.behaviours.PageBehaviours
 
 class OrganisationLoopPageSpec extends PageBehaviours {
 
   "OrganisationLoopPage" - {
 
-    beRetrievable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+    beRetrievable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
 
-    beSettable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+    beSettable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
 
-    beRemovable[IndexedSeq[OrganisationLoopDetails]](OrganisationLoopPage)
+    beRemovable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
   }
 
 }

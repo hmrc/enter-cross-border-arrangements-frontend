@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import play.api.libs.json.JsPath
 
-class IsIndividualResidentForTaxOtherCountriesFormProvider @Inject() extends Mappings {
+case object DoYouKnowTINForNonUKIndividualPage extends QuestionPage[Boolean] {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("isIndividualResidentForTaxOtherCountries.error.required")
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "doYouKnowTINForNonUKIndividual"
 }

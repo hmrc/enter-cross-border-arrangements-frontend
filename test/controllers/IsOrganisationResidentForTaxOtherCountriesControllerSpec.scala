@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -89,7 +89,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val userAnswers = UserAnswers(userAnswersId)
         .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

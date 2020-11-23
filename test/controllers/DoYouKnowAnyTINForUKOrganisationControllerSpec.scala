@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.DoYouKnowAnyTINForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -89,7 +89,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
         .success
         .value
         .set(OrganisationLoopPage, IndexedSeq(
-          OrganisationLoopDetails(None, selectedCountry, None,None, Some(true), None))
+          LoopDetails(None, selectedCountry, None,None, Some(true), None))
         )
         .success
         .value

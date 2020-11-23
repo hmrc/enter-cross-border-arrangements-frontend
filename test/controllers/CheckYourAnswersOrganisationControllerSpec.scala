@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{Address, Country, OrganisationLoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -48,9 +48,9 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
     val selectedUK: Country = Country("valid", "GB", "United Kingdom")
     val selectedNonUK: Country = Country("valid", "FR", "France")
 
-    val organisationLoop: IndexedSeq[OrganisationLoopDetails] = IndexedSeq(OrganisationLoopDetails(
+    val organisationLoop: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(
       Some(true), Some(selectedUK), Some(true), Some(referencesNonUK), Some(true), Some(referencesUK)
-    ), OrganisationLoopDetails(
+    ), LoopDetails(
       Some(true), Some(selectedNonUK), Some(true), Some(referencesNonUK), Some(true), Some(referencesUK)
     ))
 

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, OrganisationLoopDetails, UserAnswers}
+import models.{Country, NormalMode, LoopDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -97,7 +97,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhichCountryTaxForOrganisationPage, selectedCountry)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -152,7 +152,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted and update OrganisationLoopDetails if index 0 exists" in {
+    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -161,7 +161,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhichCountryTaxForOrganisationPage, selectedCountry)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(OrganisationLoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application =
