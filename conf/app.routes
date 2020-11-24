@@ -9,8 +9,8 @@ GET        /language/:lang                              controllers.LanguageSwit
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
 GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
-GET        /organisation/check-answers                  controllers.CheckYourAnswersOrganisationController.onPageLoad
-GET        /individual/check-answers                    controllers.IndividualCheckYourAnswersController.onPageLoad
+GET        /organisation/check-answers                  controllers.organisation.CheckYourAnswersOrganisationController.onPageLoad
+GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 

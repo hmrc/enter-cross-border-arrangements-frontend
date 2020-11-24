@@ -16,9 +16,9 @@
 
 package utils.rows
 
-import controllers.routes
 import models.{Address, AddressLookup, CheckMode, Country, LoopDetails, TaxReferenceNumbers}
 import pages._
+import pages.individual._
 import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
@@ -30,7 +30,7 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey  = "individualName",
       content = lit"${answer.firstName} ${answer.secondName}",
-      href    = routes.IndividualNameController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualNameController.onPageLoad(CheckMode).url
     )
   }
 
@@ -39,7 +39,7 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey  = "individualDateOfBirth",
       content = Literal(answer.format(dateFormatter)),
-      href    = routes.IndividualDateOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(CheckMode).url
     )
   }
 
@@ -56,14 +56,14 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
       content = yesOrNo(isKnown),
-      href    = routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(CheckMode).url
     )
 
   private def individualPlaceOfBirth(placeOfBirth: String): Row =
     toRow(
       msgKey  = "individualPlaceOfBirth",
       content = lit"$placeOfBirth",
-      href    = routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode).url
     )
 
   def buildIndividualAddressGroup: Seq[Row] =
@@ -82,21 +82,21 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey  = "isIndividualAddressKnown",
       content = yesOrNo(addressKnown),
-      href    = routes.IsIndividualAddressKnownController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(CheckMode).url
     )
 
   private def individualAddress(manualAddress: Address): Row =
     toRow(
       msgKey  = "individualAddress",
       content = formatAddress(manualAddress),
-      href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
     )
 
   private def individualAddress(addressLookup: AddressLookup): Row =
     toRow(
       msgKey  = "individualAddress",
       content = formatAddress(addressLookup),
-      href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
     )
 
   def buildIndividualEmailAddressGroup: Seq[Row] =
@@ -114,14 +114,14 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey  = "emailAddressQuestionForIndividual",
       content = yesOrNo(isKnown),
-      href    = routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode).url
     )
 
   private def emailAddressForIndividual(email: String): Row =
     toRow(
       msgKey  = "emailAddressForIndividual",
       content = lit"$email",
-      href    = routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url
     )
 
   def buildTaxResidencySummaryForIndividuals: Seq[Row] = (userAnswers.get(IndividualLoopPage) map { answer =>
@@ -133,7 +133,7 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey = "whichCountryTaxForIndividual",
       content = lit"",
-      href = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 0).url
+      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 0).url
     ) +:
       validDetailsWithIndex.flatMap {
 
@@ -165,7 +165,7 @@ trait IndividualRows extends RowBuilder {
       Seq()
     }
 
-  private def taxNumberRow(msgKey: String, taxReferenceOption: Option[TaxReferenceNumbers], country: Option[Country] = None): Seq[Row] = {
+  private def taxNumberRow(msgKey: String, taxReferenceOption: Option[TaxReferenceNumbers], country: Option[Country]): Seq[Row] = {
 
     val taxReferenceNumber = taxReferenceOption.getOrElse(
       throw new IllegalArgumentException("A tax reference row must have a tax reference number"))
@@ -184,7 +184,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "whichCountryTaxForIndividual",
         content = lit"$answer",
-        href    = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -193,7 +193,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "doYouKnowAnyTINForUKIndividual",
         content = yesOrNo(answer),
-        href    = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -202,7 +202,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "whatAreTheTaxNumbersForUKIndividual",
         content = lit"$answer",
-        href    = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 1).url
       )
   }
 
@@ -211,7 +211,7 @@ trait IndividualRows extends RowBuilder {
       toRow(
         msgKey  = "isIndividualResidentForTaxOtherCountries",
         content = yesOrNo(answer),
-        href    = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
       )
   }
 

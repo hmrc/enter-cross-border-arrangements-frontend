@@ -353,7 +353,7 @@ whichCountryTaxForOrganisation.countryCounter = Country {0}
 whichCountryTaxForOrganisation.countryKey = Country
 whichCountryTaxForOrganisation.utrKey = Unique Taxpayer Reference (UTR)
 whichCountryTaxForOrganisation.tinKey = Tax identification number for {0}
-whichCountryTaxForOrganisation.error.required = Select country
+whichCountryTaxForOrganisation.error.required = Select a country
 
 doYouKnowAnyTINForUKOrganisation.title = Do you know the organisation’s tax reference numbers?
 doYouKnowAnyTINForUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?

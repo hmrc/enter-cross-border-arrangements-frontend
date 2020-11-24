@@ -16,10 +16,9 @@
 
 package utils
 
-import controllers.routes
 import models.{CheckMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages._
-import pages.organisation.{EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, OrganisationAddressPage, OrganisationNamePage}
+import pages.organisation._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._

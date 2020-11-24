@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import forms.individual.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -55,7 +55,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
       "value.year"  -> validAnswer.getYear.toString
     )
 
-  lazy val individualDateOfBirthRoute = controllers.individual.IndividualDateOfBirthController.onPageLoad(NormalMode).url
+  lazy val individualDateOfBirthRoute = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
 

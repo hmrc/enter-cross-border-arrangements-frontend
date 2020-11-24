@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import controllers.arrangement.routes
+
 import scala.concurrent.Future
 
 class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {

@@ -19,7 +19,7 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.EmailAddressQuestionForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

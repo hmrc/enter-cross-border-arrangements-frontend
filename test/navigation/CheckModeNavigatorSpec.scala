@@ -19,9 +19,12 @@ package navigation
 import base.SpecBase
 import generators.Generators
 import models._
+import models.hallmarks._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{QuestionPage, _}
+import pages.QuestionPage
+import pages.hallmarks._
+import pages.individual._
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 
@@ -166,7 +169,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      def assertRedirect[A](page: QuestionPage[A], route: Call = routes.IndividualCheckYourAnswersController.onPageLoad)
+      def assertRedirect[A](page: QuestionPage[A], route: Call = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad)
                            (f: UserAnswers => UserAnswers) = {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -193,7 +196,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 3 + yes
       "must go from the Do you know where {0} was born? page to the Where was {0} born? when answer is 'Yes' " in {
 
-        assertRedirect(IsIndividualPlaceOfBirthKnownPage, routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualPlaceOfBirthKnownPage, controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualPlaceOfBirthKnownPage, true)
             .success
@@ -222,7 +225,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 5 + Yes
       "must go from Do you know {0} address to 'Does the individual live in the United Kingdom?' when answer is 'Yes'" in {
 
-        assertRedirect(IsIndividualAddressKnownPage, routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressKnownPage, controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressKnownPage, true)
             .success
@@ -234,7 +237,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 5 + No
       "must go from Do you know {0} address to Check your answers page when answer is 'No'" in {
 
-        assertRedirect(IsIndividualAddressKnownPage, routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressKnownPage, controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressKnownPage, true)
             .success
@@ -246,7 +249,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 6 + Yes
       "must go from Does {0} live in the United Kingdom? to What is {0}’s postcode? when answer is 'Yes'" in {
 
-        assertRedirect(IsIndividualAddressUkPage, routes.IndividualPostcodeController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualPostcodeController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressUkPage, true)
             .success
@@ -258,7 +261,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 6 + No
       "must go from Does {0} live in the United Kingdom? to What is {0}’s address? page when answer is 'No'" in {
 
-        assertRedirect(IsIndividualAddressUkPage, routes.IndividualAddressController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualAddressController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressUkPage, false)
             .success
@@ -287,7 +290,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       // 10 + No
       "must go from Do you know {0}’s email address? to What is {0}’s email address? page when answer is 'Yes'" in {
 
-        assertRedirect(EmailAddressQuestionForIndividualPage, routes.EmailAddressForIndividualController.onPageLoad(CheckMode)) {
+        assertRedirect(EmailAddressQuestionForIndividualPage, controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(CheckMode)) {
           _
             .set(EmailAddressQuestionForIndividualPage, true)
             .success

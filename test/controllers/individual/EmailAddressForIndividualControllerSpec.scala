@@ -19,7 +19,7 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.EmailAddressForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -48,7 +48,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
   val validData = Map("email" -> validAnswer)
 
-  lazy val emailAddressForIndividualRoute = controllers.individual.EmailAddressForIndividualController.onPageLoad(NormalMode).url
+  lazy val emailAddressForIndividualRoute = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
 
   "EmailAddressForIndividual Controller" - {
 

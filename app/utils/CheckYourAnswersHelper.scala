@@ -16,7 +16,6 @@
 
 package utils
 
-import controllers.routes
 import models.hallmarks.HallmarkA._
 import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1._
@@ -25,8 +24,8 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
+import pages.arrangement._
 import pages.hallmarks._
-import pages.individual._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
