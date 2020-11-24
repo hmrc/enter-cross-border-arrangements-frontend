@@ -74,7 +74,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whichCountryTaxForIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

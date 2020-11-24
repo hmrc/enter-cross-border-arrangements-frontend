@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
+import forms.individual.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForNonUKIndividualPage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
+import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForNonUKIndividualPage}
+import pages.organisation.WhatAreTheTaxNumbersForNonUKOrganisationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -49,7 +50,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val whatAreTheTaxNumbersForNonUKIndividualRoute = routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForNonUKIndividualRoute = controllers.individual.routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(NormalMode, index).url
 
   "WhatAreTheTaxNumbersForNonUKIndividual Controller" - {
 
@@ -78,7 +79,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,7 +121,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
         "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -207,7 +208,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatAreTheTaxNumbersForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

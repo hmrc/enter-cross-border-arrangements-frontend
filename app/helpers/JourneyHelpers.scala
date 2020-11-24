@@ -20,7 +20,7 @@ import models.{CheckMode, Country, Currency, Mode, UserAnswers}
 import pages._
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.QuestionPage
-import pages.individual.IndividualNamePage
+import pages.individual.{IndividualLoopPage, IndividualNamePage}
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
 
@@ -63,8 +63,6 @@ object JourneyHelpers {
 
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
-
-
 
   def incrementIndexIndividual(ua: UserAnswers, request: Request[AnyContent]): Int = {
     ua.get(IndividualLoopPage) match {

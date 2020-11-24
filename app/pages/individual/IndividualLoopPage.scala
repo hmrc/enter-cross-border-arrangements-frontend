@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.TaxReferenceNumbers
+import models.LoopDetails
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object WhatAreTheTaxNumbersForNonUKIndividualPage extends QuestionPage[TaxReferenceNumbers] {
+case object IndividualLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "whatAreTheTaxNumbersForNonUKIndividual"
+  override def toString: String = "individualLoop"
 }

@@ -14,48 +14,50 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.individual
 
 import controllers.actions._
-import forms.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
+import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.{IndividualLoopPage, WhatAreTheTaxNumbersForNonUKIndividualPage}
+import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
+class DoYouKnowTINForNonUKIndividualController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: WhatAreTheTaxNumbersForNonUKIndividualFormProvider,
+    formProvider: DoYouKnowTINForNonUKIndividualFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val country = getCountry(request.userAnswers)
+      val form = formProvider(country)
+
       val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
-          val taxNumbers = value.lift(index).get.taxNumbersNonUK
-          if (taxNumbers.isDefined) {
-            form.fill(taxNumbers.get)
+          val doYouKnowTIN = value.lift(index).get.doYouKnowTIN
+          if (doYouKnowTIN.isDefined) {
+            form.fill(doYouKnowTIN.get)
           } else {
             form
           }
@@ -63,18 +65,22 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode,
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios" -> Radios.yesNo(preparedForm("confirm")),
         "individualName" -> getIndividualName(request.userAnswers),
-        "country" -> getCountry(request.userAnswers),
+        "country" -> country,
         "index" -> index
       )
 
-      renderer.render("whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(Ok(_))
+      renderer.render("individual/doYouKnowTINForNonUKIndividual.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val country = getCountry(request.userAnswers)
+      val form = formProvider(country)
 
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -82,21 +88,22 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "individualName" -> getIndividualName(request.userAnswers),
-            "country" -> getCountry(request.userAnswers),
+            "country" -> country,
             "index" -> index
           )
 
-          renderer.render("whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(BadRequest(_))
+          renderer.render("individual/doYouKnowTINForNonUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
           val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
             case None =>
-              val newIndividualLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
+              val newIndividualLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
               IndexedSeq[LoopDetails](newIndividualLoop)
             case Some(list) =>
               if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(taxNumbersNonUK = Some(value))
+                val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))
                 list.updated(index, updatedLoop)
               } else {
                 list
@@ -104,10 +111,10 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForNonUKIndividualPage, mode, updatedAnswersWithLoopDetails))
+            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(navigator.nextPage(DoYouKnowTINForNonUKIndividualPage, mode, updatedAnswersWithLoopDetails))
         }
       )
   }

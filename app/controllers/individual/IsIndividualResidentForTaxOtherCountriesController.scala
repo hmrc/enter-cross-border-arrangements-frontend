@@ -17,8 +17,8 @@
 package controllers.individual
 
 import controllers.actions._
-import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
+import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator

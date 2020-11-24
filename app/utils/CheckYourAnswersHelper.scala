@@ -26,7 +26,7 @@ import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
 import pages.hallmarks._
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IsIndividualAddressKnownPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
+import pages.individual._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal

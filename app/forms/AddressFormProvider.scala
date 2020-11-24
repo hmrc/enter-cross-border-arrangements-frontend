@@ -29,19 +29,19 @@ class AddressFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
-      "addressLine1" ->  optionalText().verifying(maxLengthOption(fieldLength,"organisationAddress.error.addressLine1.length")),
+      "addressLine1" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine1.length")),
 
-      "addressLine2" ->  optionalText().verifying(maxLengthOption(fieldLength,"organisationAddress.error.addressLine2.length")),
+      "addressLine2" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine2.length")),
 
-      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength,"organisationAddress.error.addressLine3.length")),
+      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine3.length")),
 
-      "city" -> text("organisationAddress.error.city.required").verifying(maxLength(fieldLength,"organisationAddress.error.city.length")),
+      "city" -> text("address.error.city.required").verifying(maxLength(fieldLength,"address.error.city.length")),
 
-      "postCode" -> optionalText().verifying(maxLengthOption(fieldLength,"organisationAddress.error.postcode.optional.length")),
+      "postCode" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.postcode.optional.length")),
 
 
-      "country" ->  text("organisationAddress.error.country.required")
-        .verifying("organisationAddress.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
+      "country" ->  text("address.error.country.required")
+        .verifying("address.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)
   )

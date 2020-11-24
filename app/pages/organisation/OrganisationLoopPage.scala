@@ -17,6 +17,7 @@
 package pages.organisation
 
 import models.LoopDetails
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object OrganisationLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {

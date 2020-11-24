@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages
+package pages.individual
 
-import models.LoopDetails
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IndividualLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
+case object DoYouKnowTINForNonUKIndividualPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "individualLoop"
+  override def toString: String = "doYouKnowTINForNonUKIndividual"
 }

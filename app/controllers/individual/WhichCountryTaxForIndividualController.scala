@@ -17,12 +17,12 @@
 package controllers.individual
 
 import controllers.actions._
-import helpers.JourneyHelpers.{countryJsonList, getCountry}
 import forms.individual.WhichCountryTaxForIndividualFormProvider
+import helpers.JourneyHelpers.{countryJsonList, getCountry}
 import javax.inject.Inject
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
+import pages.individual.{IndividualNamePage, WhichCountryTaxForIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
