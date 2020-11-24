@@ -88,7 +88,7 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSug
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheImplementationDate.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -126,7 +126,7 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSug
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheImplementationDate.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -180,7 +180,7 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSug
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheImplementationDate.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

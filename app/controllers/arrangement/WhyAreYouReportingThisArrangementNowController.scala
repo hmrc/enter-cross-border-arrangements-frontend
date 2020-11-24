@@ -60,7 +60,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
         "radios"  -> WhyAreYouReportingThisArrangementNow.radios(preparedForm)
       )
 
-      renderer.render("whyAreYouReportingThisArrangementNow.njk", json).map(Ok(_))
+      renderer.render("arrangement/whyAreYouReportingThisArrangementNow.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,7 +75,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
             "radios" -> WhyAreYouReportingThisArrangementNow.radios(formWithErrors)
           )
 
-          renderer.render("whyAreYouReportingThisArrangementNow.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/whyAreYouReportingThisArrangementNow.njk", json).map(BadRequest(_))
         },
         value =>
           for {

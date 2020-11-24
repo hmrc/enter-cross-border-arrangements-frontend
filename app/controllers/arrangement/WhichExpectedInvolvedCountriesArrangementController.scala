@@ -61,7 +61,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
         "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(preparedForm)
       )
 
-      renderer.render("whichExpectedInvolvedCountriesArrangement.njk", json).map(Ok(_))
+      renderer.render("arrangement/whichExpectedInvolvedCountriesArrangement.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -76,7 +76,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
             "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(formWithErrors)
           )
 
-          renderer.render("whichExpectedInvolvedCountriesArrangement.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/whichExpectedInvolvedCountriesArrangement.njk", json).map(BadRequest(_))
         },
         value =>
           for {

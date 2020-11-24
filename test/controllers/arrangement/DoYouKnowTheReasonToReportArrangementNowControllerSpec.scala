@@ -70,7 +70,7 @@ class DoYouKnowTheReasonToReportArrangementNowControllerSpec extends SpecBase wi
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTheReasonToReportArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/doYouKnowTheReasonToReportArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class DoYouKnowTheReasonToReportArrangementNowControllerSpec extends SpecBase wi
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTheReasonToReportArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/doYouKnowTheReasonToReportArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class DoYouKnowTheReasonToReportArrangementNowControllerSpec extends SpecBase wi
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTheReasonToReportArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/doYouKnowTheReasonToReportArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

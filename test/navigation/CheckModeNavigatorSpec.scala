@@ -22,9 +22,10 @@ import models._
 import models.hallmarks._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.QuestionPage
+import pages.arrangement._
 import pages.hallmarks._
 import pages.individual._
+import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 
@@ -169,11 +170,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      def assertRedirect[A](page: QuestionPage[A], route: Call = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad)
+      def assertRedirect[A](page: QuestionPage[A], route: Call)
                            (f: UserAnswers => UserAnswers) = {
+
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
+            val navigator = new Navigator
             navigator
               .nextPage(page, CheckMode, f(answers))
               .mustBe(route)
@@ -181,22 +184,25 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       }
 
-      // 1
+      val x  = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
+
+
       "must go from What is their name? page to Check your answers page" in {
 
-        assertRedirect(IndividualNamePage) _
+        assertRedirect(IndividualNamePage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
-      // 2
       "must go from What is {0}'s date of birth? page to Check your answers page" in {
 
-        assertRedirect(IndividualDateOfBirthPage) _
+        assertRedirect(IndividualDateOfBirthPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
-      // 3 + yes
       "must go from the Do you know where {0} was born? page to the Where was {0} born? when answer is 'Yes' " in {
 
-        assertRedirect(IsIndividualPlaceOfBirthKnownPage, controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualPlaceOfBirthKnownPage
+          , controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualPlaceOfBirthKnownPage, true)
             .success
@@ -205,9 +211,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 3 + No
       "must go from the Do you know where {0} was born? page to the Check your answers page when answer is 'No' " in {
-        assertRedirect(IsIndividualPlaceOfBirthKnownPage) {
+        assertRedirect(IsIndividualPlaceOfBirthKnownPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
           _
             .set(IsIndividualPlaceOfBirthKnownPage, false)
             .success
@@ -216,16 +222,16 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 4
       "must go from Where was {0} born? page to Check your answers page" in {
 
-        assertRedirect(IndividualPlaceOfBirthPage) _
+        assertRedirect(IndividualPlaceOfBirthPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
-      // 5 + Yes
       "must go from Do you know {0} address to 'Does the individual live in the United Kingdom?' when answer is 'Yes'" in {
 
-        assertRedirect(IsIndividualAddressKnownPage, controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressKnownPage
+          , controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressKnownPage, true)
             .success
@@ -234,10 +240,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 5 + No
       "must go from Do you know {0} address to Check your answers page when answer is 'No'" in {
 
-        assertRedirect(IsIndividualAddressKnownPage, controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+        assertRedirect(IsIndividualAddressKnownPage
+          , controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
           _
             .set(IsIndividualAddressKnownPage, true)
             .success
@@ -246,7 +252,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 6 + Yes
       "must go from Does {0} live in the United Kingdom? to What is {0}’s postcode? when answer is 'Yes'" in {
 
         assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualPostcodeController.onPageLoad(CheckMode)) {
@@ -258,7 +263,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 6 + No
       "must go from Does {0} live in the United Kingdom? to What is {0}’s address? page when answer is 'No'" in {
 
         assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualAddressController.onPageLoad(CheckMode)) {
@@ -272,13 +276,14 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       "must go from What is {0}’s address? to Check your answers page" in {
 
-        assertRedirect(IndividualAddressPage) _
+        assertRedirect(IndividualAddressPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
-      // 10 + No
       "must go from Do you know {0}’s email address? to Check your answers page when answer is 'No'" in {
 
-        assertRedirect(EmailAddressQuestionForIndividualPage) {
+        assertRedirect(EmailAddressQuestionForIndividualPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
           _
             .set(EmailAddressQuestionForIndividualPage, false)
             .success
@@ -287,7 +292,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 10 + No
       "must go from Do you know {0}’s email address? to What is {0}’s email address? page when answer is 'Yes'" in {
 
         assertRedirect(EmailAddressQuestionForIndividualPage, controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(CheckMode)) {
@@ -299,12 +303,80 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      // 11
-      "must go from What is {0}’s email address? to Check your answers page'" in {
+      "must go from What is {0}’s email address? to Check your answers page" in {
 
-        assertRedirect(EmailAddressForIndividualPage) _
+        assertRedirect(EmailAddressForIndividualPage
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
+      "must go from What is the arrangement called? page to Check your answers page" in {
+
+        assertRedirect(WhatIsThisArrangementCalledPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from What is the implementation date? page to Check your answers page" in {
+
+        assertRedirect(WhatIsTheImplementationDatePage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+        "Why are you reporting this arrangement now? page when the answer is 'Yes'" in {
+
+        assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage,
+          controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(CheckMode)) {
+          _
+            .set(DoYouKnowTheReasonToReportArrangementNowPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+        "Check your answers page when the answer is No" in {
+
+        assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(DoYouKnowTheReasonToReportArrangementNowPage, false)
+            .success
+            .value
+
+        }
+
+      }
+
+      "must go from the 'Why are reporting this arrangement now?' page to Check your answers page" in {
+
+        assertRedirect(WhyAreYouReportingThisArrangementNowPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from 'Which of these countries are expected to be involved in this arrangement?' page to Check your answers page" in {
+
+        assertRedirect(WhichExpectedInvolvedCountriesArrangementPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from 'What is the expected value of this arrangement?' page to Check your answers page" in {
+
+        assertRedirect(WhatIsTheExpectedValueOfThisArrangementPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from 'Which national provisions is this arrangement based on?' page to Check your answers page" in {
+
+        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from Details page to Check your answers page" in {
+
+        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
     }
   }
 }
