@@ -38,6 +38,7 @@ trait RowBuilder {
 
   private[utils] def toRow(msgKey: String, content: Content, href: String)(implicit messages: Messages): Row = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+    val idPattern = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     Row(
       key     = Key(message, classes = Seq("govuk-!-width-one-half")),
       value   = Value(content),
@@ -45,7 +46,8 @@ trait RowBuilder {
         Action(
           content            = msg"site.edit",
           href               = href,
-          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message))
+          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
+          attributes         = Map("id" -> msgKey.replaceAll(idPattern, "$1-$2").toLowerCase)
         )
       )
     )
