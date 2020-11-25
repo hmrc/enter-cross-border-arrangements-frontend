@@ -234,10 +234,6 @@ class Navigator @Inject()() {
     }
 
   private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] ={
-    println(ua)
-    println(mode)
-    println("HEY")
-    println(ua.get(IsIndividualAddressKnownPage))
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => routes.IsIndividualAddressUkController.onPageLoad(mode)
       case false if mode == NormalMode => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
