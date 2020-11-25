@@ -220,34 +220,5 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       application.stop()
     }
 
-    "must redirect to the Check your answers page when user change their answer" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val individualDateOfBirthRouteCheck = routes.IndividualAddressController.onPageLoad(CheckMode)
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressPage, validAnswer).success.value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, individualDateOfBirthRouteCheck.url)
-          .withFormUrlEncodedBody(validData.toList:_*)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
-
-      application.stop()
-    }
-
   }
 }
