@@ -195,34 +195,5 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
       application.stop()
     }
 
-    "must redirect to the Check your answers page when user change their answer to `No`" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val individualDateOfBirthRouteCheck = routes.IsIndividualAddressKnownController.onPageLoad(CheckMode)
-      val userAnswers = UserAnswers(userAnswersId).set(IsIndividualAddressKnownPage, false).success.value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, individualDateOfBirthRouteCheck.url)
-          .withFormUrlEncodedBody(("confirm" -> "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
-
-      application.stop()
-    }
-
   }
 }
