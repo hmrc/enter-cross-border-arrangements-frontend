@@ -169,32 +169,5 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       application.stop()
     }
 
-    "must redirect to the Check your answers page when user change their answer" in {
-
-      val individualNameRouteCheck = routes.IndividualNameController.onPageLoad(CheckMode)
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, validAnswer).success.value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(routes.IndividualCheckYourAnswersController.onPageLoad(), mode = CheckMode)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, individualNameRouteCheck.url)
-          .withFormUrlEncodedBody(validData.toList:_*)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.IndividualCheckYourAnswersController.onPageLoad().url
-
-      application.stop()
-    }
   }
 }
