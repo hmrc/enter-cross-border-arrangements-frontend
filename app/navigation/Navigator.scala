@@ -135,7 +135,7 @@ class Navigator @Inject()() {
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode) // TODO is necessary ?
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))  // TODO is necessary ?
     case IndividualAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
-    case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode))
+    case IndividualSelectAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
     case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
     case EmailAddressForIndividualPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
     case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)

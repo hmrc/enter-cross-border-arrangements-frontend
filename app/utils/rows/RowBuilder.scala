@@ -18,7 +18,7 @@ package utils.rows
 
 import java.time.format.DateTimeFormatter
 
-import models.{Address, UserAnswers}
+import models.{Address, AddressLookup, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators}
@@ -53,13 +53,28 @@ trait RowBuilder {
     )
   }
 
-  private[utils] def formatAddress(answer: Address): Html = {
+  private[utils] def formatAddress(address: Address): Html = {
+
     Html(s"""
-        ${answer.addressLine1.fold("")(address => s"$address<br>")}
-        ${answer.addressLine2.fold("")(address => s"$address<br>")}
-        ${answer.addressLine3.fold("")(address => s"$address<br>")}
-        ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
-        ${answer.country.description}
+        ${address.addressLine1.fold("")(address => s"$address<br>")}
+        ${address.addressLine2.fold("")(address => s"$address<br>")}
+        ${address.addressLine3.fold("")(address => s"$address<br>")}
+        ${address.postCode.fold("")(postcode => s"$postcode<br>")}
+        ${address.country.description}
      """)
   }
+
+  private[utils] def formatAddress(addressLookup: AddressLookup): Html = {
+
+    Html(s"""
+        ${addressLookup.addressLine1.fold("")(address => s"$address<br>")}
+        ${addressLookup.addressLine2.fold("")(address => s"$address<br>")}
+        ${addressLookup.addressLine3.fold("")(address => s"$address<br>")}
+        ${addressLookup.addressLine4.fold("")(address => s"$address<br>")}
+        ${s"${addressLookup.town}<br>"}
+        ${addressLookup.county.fold("")(county => s"$county<br>")}
+        ${addressLookup.postcode}
+     """)
+  }
+
 }
