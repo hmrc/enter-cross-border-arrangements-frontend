@@ -171,7 +171,7 @@ trait IndividualRows extends RowBuilder {
       throw new IllegalArgumentException("A tax reference row must have a tax reference number"))
     val countryLabel = country.map(_.description).getOrElse("")
     val taxRefLabel: Text.Message =
-      messageWithPluralFormatter(msgKey, countryLabel)(taxReferenceNumber.isSingleTaxReferenceNumber)
+      messageWithPluralFormatter(s"$msgKey.checkYourAnswersLabel", countryLabel)(taxReferenceNumber.isSingleTaxReferenceNumber)
 
     Seq(Row(
       key     = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),

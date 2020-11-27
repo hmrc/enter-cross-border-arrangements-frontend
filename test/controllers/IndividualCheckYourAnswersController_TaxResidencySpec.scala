@@ -65,7 +65,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
 
     val json: JsObject = jsonCaptor.getValue
     val list = (json \ "countrySummary" ).toString
-
+println(list)
     templateCaptor.getValue mustEqual "individual/check-your-answers.njk"
     assertFunction(list)
 
@@ -109,7 +109,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
         list.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
         list.contains("/enter-cross-border-arrangements/individual/change-which-country-tax-0") mustBe true
         list.contains("""{"key":{"text":"Country ","classes":"govuk-!-width-one-half"},"value":{"text":"United Kingdom"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890"}}""") mustBe true
+        list.contains("""{"key":{"text":"UTR","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890"}}""") mustBe true
 
       }
     }
@@ -129,7 +129,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
         list.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
         list.contains("/enter-cross-border-arrangements/individual/change-which-country-tax-0") mustBe true
         list.contains("""{"key":{"text":"Country ","classes":"govuk-!-width-one-half"},"value":{"text":"United Kingdom"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
+        list.contains("""{"key":{"text":"UTRs","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
 
       }
     }
@@ -168,7 +168,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
         list.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
         list.contains("/enter-cross-border-arrangements/individual/change-which-country-tax-0") mustBe true
         list.contains("""{"key":{"text":"Country ","classes":"govuk-!-width-one-half"},"value":{"text":"France"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForNonUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890"}}""") mustBe true
+        list.contains("""{"key":{"text":"Tax identification number for France","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890"}}""") mustBe true
 
       }
     }
@@ -188,7 +188,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
         list.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
         list.contains("/enter-cross-border-arrangements/individual/change-which-country-tax-0") mustBe true
         list.contains("""{"key":{"text":"Country ","classes":"govuk-!-width-one-half"},"value":{"text":"France"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForNonUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
+        list.contains("""{"key":{"text":"Tax identification numbers for France","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
 
       }
     }
@@ -216,9 +216,9 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
         list.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
         list.contains("/enter-cross-border-arrangements/individual/change-which-country-tax-0") mustBe true
         list.contains("""{"key":{"text":"Country 1","classes":"govuk-!-width-one-half"},"value":{"text":"United Kingdom"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
+        list.contains("""{"key":{"text":"UTRs","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
         list.contains("""{"key":{"text":"Country 2","classes":"govuk-!-width-one-half"},"value":{"text":"France"}}""") mustBe true
-        list.contains("""{"key":{"text":"whatAreTheTaxNumbersForNonUKIndividual","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
+        list.contains("""{"key":{"text":"Tax identification numbers for France","classes":"govuk-!-width-one-half"},"value":{"text":"1234567890, 2345678901"}}""") mustBe true
 
       }
     }
