@@ -22,6 +22,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryWhyAreYouReportingThisArrangementNow: Arbitrary[WhyAreYouReportingThisArrangementNow] =
+    Arbitrary {
+      Gen.oneOf(WhyAreYouReportingThisArrangementNow.values.toSeq)
+    }
+
   implicit lazy val arbitraryHallmarkE: Arbitrary[HallmarkE] =
     Arbitrary {
       Gen.oneOf(HallmarkE.values.toSeq)

@@ -27,6 +27,7 @@ import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
+import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -34,6 +35,66 @@ import uk.gov.hmrc.viewmodels._
 import utils.CheckYourAnswersHelper.dateFormatter
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+
+  def whyAreYouReportingThisArrangementNow: Option[Row] = userAnswers.get(WhyAreYouReportingThisArrangementNowPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whyAreYouReportingThisArrangementNow.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"whyAreYouReportingThisArrangementNow.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whyAreYouReportingThisArrangementNow.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def doYouKnowTheReasonToReportArrangementNow: Option[Row] = userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"doYouKnowTheReasonToReportArrangementNow.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowTheReasonToReportArrangementNow.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatIsTheImplementationDate.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Literal(answer.format(dateFormatter))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheImplementationDate.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def whatIsThisArrangementCalled: Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatIsThisArrangementCalled.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsThisArrangementCalled.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def whichCountryTaxForIndividual: Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage) map {
     answer =>

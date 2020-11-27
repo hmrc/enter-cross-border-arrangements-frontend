@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package helpers
+package forms.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneOffset}
 
-object DateHelper {
+import forms.behaviours.DateBehaviours
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+class WhatIsTheImplementationDateFormProviderSpec extends DateBehaviours {
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+  val form = new WhatIsTheImplementationDateFormProvider()()
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+  ".value" - {
 
+    val validData = datesBetween(
+      min = LocalDate.of(2018, 6, 26),
+      max = LocalDate.now(ZoneOffset.UTC)
+    )
+
+    behave like dateField(form, "value", validData)
+
+    behave like mandatoryDateField(form, "value", "whatIsTheImplementationDate.error.required.all")
+  }
 }

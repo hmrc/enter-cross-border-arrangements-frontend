@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package helpers
+package pages.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import models.WhyAreYouReportingThisArrangementNow
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-object DateHelper {
+case object WhyAreYouReportingThisArrangementNowPage extends QuestionPage[WhyAreYouReportingThisArrangementNow] {
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  override def path: JsPath = JsPath \ toString
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
-
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
-
+  override def toString: String = "whyAreYouReportingThisArrangementNow"
 }

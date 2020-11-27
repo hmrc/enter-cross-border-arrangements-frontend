@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package helpers
+package pages.arrangement
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-object DateHelper {
+import org.scalacheck.Arbitrary
+import pages.behaviours.PageBehaviours
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+class WhatIsTheImplementationDatePageSpec extends PageBehaviours {
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+  "WhatIsTheImplementationDatePage" - {
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+    implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
+      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
+    }
 
+    beRetrievable[LocalDate](WhatIsTheImplementationDatePage)
+
+    beSettable[LocalDate](WhatIsTheImplementationDatePage)
+
+    beRemovable[LocalDate](WhatIsTheImplementationDatePage)
+  }
 }

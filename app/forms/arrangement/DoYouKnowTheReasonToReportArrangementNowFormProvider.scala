@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package helpers
+package forms.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-object DateHelper {
+class DoYouKnowTheReasonToReportArrangementNowFormProvider @Inject() extends Mappings {
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
-
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("doYouKnowTheReasonToReportArrangementNow.error.required")
+    )
 }

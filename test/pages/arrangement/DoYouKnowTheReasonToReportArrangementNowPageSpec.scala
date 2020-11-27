@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package helpers
+package pages.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import pages.behaviours.PageBehaviours
 
-object DateHelper {
+class DoYouKnowTheReasonToReportArrangementNowPageSpec extends PageBehaviours {
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  "DoYouKnowTheReasonToReportArrangementNowPage" - {
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+    beRetrievable[Boolean](DoYouKnowTheReasonToReportArrangementNowPage)
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+    beSettable[Boolean](DoYouKnowTheReasonToReportArrangementNowPage)
 
+    beRemovable[Boolean](DoYouKnowTheReasonToReportArrangementNowPage)
+  }
 }

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package helpers
+package pages.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import pages.behaviours.PageBehaviours
 
-object DateHelper {
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+class WhatIsThisArrangementCalledPageSpec extends PageBehaviours {
 
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+  "WhatIsThisArrangementCalledPage" - {
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
-  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+    beRetrievable[String](WhatIsThisArrangementCalledPage)
 
+    beSettable[String](WhatIsThisArrangementCalledPage)
+
+    beRemovable[String](WhatIsThisArrangementCalledPage)
+  }
 }

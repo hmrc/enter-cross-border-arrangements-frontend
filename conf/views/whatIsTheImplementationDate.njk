@@ -1,0 +1,62 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/date-input/macro.njk"    import govukDateInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("whatIsTheImplementationDate.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        {% set hintText = messages("whatIsTheImplementationDate.part1.hint") + "<br><br>" + messages("whatIsTheImplementationDate.part2.hint", exampleDate)%}
+
+        <form action="{{ routes.controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+          {{ govukDateInput({
+            fieldset: {
+              legend: {
+                text: messages('whatIsTheImplementationDate.title'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+            },
+            hint: {
+              html: hintText
+            },
+            errorMessage: date.error,
+            items: date.items
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {"id": "submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

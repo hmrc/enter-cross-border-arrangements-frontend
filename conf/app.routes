@@ -229,3 +229,23 @@ GET        /individual/tax-resident-countries-:index          controllers.IsIndi
 POST       /individual/tax-resident-countries-:index          controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = NormalMode, index: Int)
 GET        /individual/change-tax-resident-countries-:index   controllers.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode: Mode = CheckMode, index: Int)
 POST       /individual/change-tax-resident-countries-:index   controllers.IsIndividualResidentForTaxOtherCountriesController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /arrangement/name                        controllers.arrangement.WhatIsThisArrangementCalledController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/name                         controllers.arrangement.WhatIsThisArrangementCalledController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-name                    controllers.arrangement.WhatIsThisArrangementCalledController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-name                    controllers.arrangement.WhatIsThisArrangementCalledController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/implementation-date                  controllers.arrangement.WhatIsTheImplementationDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/implementation-date                  controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-implementation-date                        controllers.arrangement.WhatIsTheImplementationDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-implementation-date                        controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/reporting-reason-known                        controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/reporting-reason-known                        controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-reporting-reason-known                  controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-reporting-reason-known                  controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/reporting-reason                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/reporting-reason                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = CheckMode)
