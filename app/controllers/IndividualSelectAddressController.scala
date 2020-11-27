@@ -19,11 +19,12 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.getIndividualName
+import helpers.JourneyHelpers.{getIndividualName, hasValueChanged}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{IndividualSelectAddressPage, IndividualUkPostcodePage}
+import pages.{IndividualSelectAddressPage, IndividualUkPostcodePage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,29 +52,21 @@ class IndividualSelectAddressController @Inject()(
 
   implicit val alternativeText: String = "the individual's"
 
-  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url
-
-  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onSubmit(mode).url
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
-      val postCode = request.userAnswers.get(IndividualUkPostcodePage) match {
-        case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
-        case None => ""
-      }
+      val postCode = getPostCodeFromRequest(request)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         case Nil => Future.successful(Redirect(manualAddressURL(mode))) //ToDo handle no addresses found
         case addresses =>
 
-            val preparedForm = request.userAnswers.get(IndividualSelectAddressPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
-          val addressItems: Seq[Radios.Radio] = addresses.map(address =>
-            Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}"))
+          val preparedForm = request.userAnswers.get(IndividualSelectAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val addressItems: Seq[Radios.Radio] = getAddressItemsFromAddressLookup(addresses)
           val radios = Radios(field = preparedForm("value"), items = addressItems)
 
             val json = Json.obj(
@@ -95,21 +88,15 @@ class IndividualSelectAddressController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = request.userAnswers.get(IndividualUkPostcodePage) match {
-        case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
-        case None => ""
-      }
+      val postCode = getPostCodeFromRequest(request)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         addresses =>
 
-        val addressItems: Seq[Radios.Radio] = addresses.map(address =>
-          Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
-          )
-
         form.bindFromRequest().fold(
           formWithErrors => {
 
+            val addressItems: Seq[Radios.Radio] = getAddressItemsFromAddressLookup(addresses)
             val radios = Radios(field = formWithErrors("value"), items = addressItems)
 
             val json = Json.obj(
@@ -124,14 +111,40 @@ class IndividualSelectAddressController @Inject()(
 
             renderer.render("selectAddress.njk", json).map(BadRequest(_))
           },
-          value =>
+          value => {
+            val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
+
+            val redirectUsers = hasValueChanged(value, IndividualSelectAddressPage, mode, request.userAnswers)
+
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, value))
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IndividualSelectAddressPage, mode, updatedAnswers))
+              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+              _ <- sessionRepository.set(updatedAnswersWithAddress)
+            } yield {
+              if (redirectUsers) {
+                Redirect(routes.IndividualCheckYourAnswersController.onPageLoad())
+              } else {
+                Redirect(navigator.nextPage(IndividualSelectAddressPage, mode, updatedAnswersWithAddress))
+              }
+            }
+          }
         )
       }
   }
+
+  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url
+
+  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onSubmit(mode).url
+
+  private def getPostCodeFromRequest[A](request: DataRequest[A]): String =
+    request.userAnswers.get(IndividualUkPostcodePage) match {
+      case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
+      case None => ""
+    }
+
+  def getAddressItemsFromAddressLookup(addresses: Seq[AddressLookup]): Seq[Radios.Radio] = addresses.map(address =>
+    Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
+  )
 
   private def formatAddress(address: AddressLookup): String = {
     val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
@@ -139,4 +152,5 @@ class IndividualSelectAddressController @Inject()(
 
     s"$lines, ${address.town}, $county${address.postcode}"
   }
+
 }
