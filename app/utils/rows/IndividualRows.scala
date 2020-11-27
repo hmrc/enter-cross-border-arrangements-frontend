@@ -17,7 +17,7 @@
 package utils.rows
 
 import controllers.routes
-import models.{Address, CheckMode}
+import models.{Address, AddressLookup, CheckMode}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -25,7 +25,6 @@ import uk.gov.hmrc.viewmodels._
 
 trait IndividualRows extends RowBuilder {
 
-  // 1
   def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map { answer =>
     toRow(
       msgKey  = "individualName",
@@ -34,8 +33,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-
-  // 2
   def individualDateOfBirth: Option[Row] = userAnswers.get(IndividualDateOfBirthPage) map { answer =>
     toRow(
       msgKey  = "individualDateOfBirth",
@@ -44,7 +41,6 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  // 3, 4
   def individualPlaceOfBirthGroup: Seq[Row] =
     (userAnswers.get(IsIndividualPlaceOfBirthKnownPage), userAnswers.get(IndividualPlaceOfBirthPage)) match {
       case (Some(true), Some(placeOfBirth)) =>
@@ -53,7 +49,6 @@ trait IndividualRows extends RowBuilder {
         Seq(isIndividualPlaceOfBirthKnown(false))
     }
 
-  // 3 /individual/do-you-know-birthplace
   private def isIndividualPlaceOfBirthKnown(isKnown: Boolean): Row =
     toRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
@@ -61,7 +56,6 @@ trait IndividualRows extends RowBuilder {
       href    = routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(CheckMode).url
     )
 
-  // 4 /individual/birthplace
   private def individualPlaceOfBirth(placeOfBirth: String): Row =
     toRow(
       msgKey  = "individualPlaceOfBirth",
@@ -69,18 +63,18 @@ trait IndividualRows extends RowBuilder {
       href    = routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode).url
     )
 
-  // 5, 9 - 6, 7, 8 are not required because they are facilitators to the address
   def individualAddressGroup: Seq[Row] =
     (userAnswers.get(IsIndividualAddressKnownPage)
-      , userAnswers.get(IndividualAddressPage)) match {
-      case (Some(true), Some(address)) =>
-        Seq(isIndividualAddressKnown(true)
-          , individualAddress(address))
+      , userAnswers.get(IndividualAddressPage)
+      , userAnswers.get(SelectedAddressLookupPage)) match {
+      case (Some(true), Some(manualAddress), _) =>
+        Seq(isIndividualAddressKnown(true), individualAddress(manualAddress))
+      case (Some(true), _, Some(addressLookup)) =>
+        Seq(isIndividualAddressKnown(true), individualAddress(addressLookup))
       case _ =>
         Seq(isIndividualAddressKnown(false))
     }
 
-  // 5 /individual/do-you-know-address
   private def isIndividualAddressKnown(addressKnown: Boolean): Row =
     toRow(
       msgKey  = "isIndividualAddressKnown",
@@ -88,18 +82,20 @@ trait IndividualRows extends RowBuilder {
       href    = routes.IsIndividualAddressKnownController.onPageLoad(CheckMode).url
     )
 
-  // 6 /individual/live-in-uk
-  // 7 /individual/postcode
-  // 8 /individual/select-address
-  // 9 /individual/address
-  private def individualAddress(address: Address): Row =
-      toRow(
-        msgKey  = "individualAddress",
-        content = formatAddress(address),
-        href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
-      )
+  private def individualAddress(manualAddress: Address): Row =
+    toRow(
+      msgKey  = "individualAddress",
+      content = formatAddress(manualAddress),
+      href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+    )
 
-  // 10, 11
+  private def individualAddress(addressLookup: AddressLookup): Row =
+    toRow(
+      msgKey  = "individualAddress",
+      content = formatAddress(addressLookup),
+      href    = routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+    )
+
   def individualEmailAddressGroup: Seq[Row] =
     (userAnswers.get(EmailAddressQuestionForIndividualPage)
       , userAnswers.get(EmailAddressForIndividualPage)) match {
@@ -110,7 +106,6 @@ trait IndividualRows extends RowBuilder {
         Seq(emailAddressQuestionForIndividual(false))
     }
 
-  // 10 /individual/what-is-email-address
   private def emailAddressQuestionForIndividual(isKnown: Boolean): Row =
     toRow(
       msgKey  = "emailAddressQuestionForIndividual",
@@ -118,8 +113,6 @@ trait IndividualRows extends RowBuilder {
       href    = routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode).url
     )
 
-
-  // 11 /individual/email-address
   private def emailAddressForIndividual(email: String): Row =
     toRow(
       msgKey  = "emailAddressForIndividual",
@@ -127,51 +120,6 @@ trait IndividualRows extends RowBuilder {
       href    = routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url
     )
 
-  // 12 - 17
   def individualTINGroup: Seq[Row] = Seq()
-
-  // 12 /individual/which-country-tax
-  def whichCountryTaxForIndividual: Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage) map {
-    answer =>
-      toRow(
-        msgKey  = "whichCountryTaxForIndividual",
-        content = lit"$answer",
-        href    = routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url
-      )
-  }
-
-  // 13 /individual/uk-tin-known
-  def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
-    answer =>
-      toRow(
-        msgKey  = "doYouKnowAnyTINForUKIndividual",
-        content = yesOrNo(answer),
-        href    = routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 1).url
-      )
-  }
-
-  // 14 /individual/uk-tax-numbers
-  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
-    answer =>
-      toRow(
-        msgKey  = "whatAreTheTaxNumbersForUKIndividual",
-        content = lit"$answer",
-        href    = routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 1).url
-      )
-  }
-
-  // Tax resident countries TODO
-  // 15 /individual/non-uk-tin-known
-  // 16 /individual/non-uk-tax-numbers
-
-  // 17 /individual/tax-resident-countries
-  def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
-    answer =>
-      toRow(
-        msgKey  = "isIndividualResidentForTaxOtherCountries",
-        content = yesOrNo(answer),
-        href    = routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
-      )
-  }
 
 }
