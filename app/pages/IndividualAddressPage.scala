@@ -31,8 +31,8 @@ case object IndividualAddressPage extends QuestionPage[Address] {
     value match {
       case Some(_) =>
         userAnswers
-          .remove(OrganisationAddressPage)
-          .flatMap(_.remove(IndividualAddressPage))
+          .remove(SelectedAddressLookupPage)
+          .flatMap(_.remove(PostcodePage))
       case None => super.cleanup(value, userAnswers)
     }
 

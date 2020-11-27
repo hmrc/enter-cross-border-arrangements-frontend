@@ -28,9 +28,9 @@ import pages._
 import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
+import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows.IndividualRows
-import utils.CheckYourAnswersHelper.dateFormatter
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows {
