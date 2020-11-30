@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import forms.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

@@ -179,7 +179,6 @@ trait IndividualRows extends RowBuilder {
     ))
   }
 
-  // 12 /individual/which-country-tax
   def whichCountryTaxForIndividual: Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage) map {
     answer =>
       toRow(
@@ -189,7 +188,6 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  // 13 /individual/uk-tin-known
   def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
     answer =>
       toRow(
@@ -199,7 +197,6 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  // 14 /individual/uk-tax-numbers
   def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
     answer =>
       toRow(
@@ -209,11 +206,6 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  // Tax resident countries TODO
-  // 15 /individual/non-uk-tin-known
-  // 16 /individual/non-uk-tax-numbers
-
-  // 17 /individual/tax-resident-countries
   def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
     answer =>
       toRow(

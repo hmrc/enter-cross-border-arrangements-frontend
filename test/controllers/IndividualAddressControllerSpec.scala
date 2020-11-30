@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

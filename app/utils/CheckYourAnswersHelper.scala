@@ -157,10 +157,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
   def mainBenefitTest: Option[Row] = if(
     mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1bi) ||
-    mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1c) ||
-    mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1d) ||
-    mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryA) ||
-    mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryB)) {
+      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1c) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1d) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryA) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryB)) {
 
     userAnswers.get(MainBenefitTestPage) map {
       answer =>
@@ -177,8 +177,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         )
     }
   } else{
-   None
-}
+    None
+  }
 
   def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
     answer =>

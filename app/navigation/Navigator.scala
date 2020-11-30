@@ -47,11 +47,6 @@ class Navigator @Inject()() {
     case OrganisationAddressPage => _ => _ => Some(routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
     case EmailAddressForOrganisationPage => _ => _ => Some(routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, 0))
-    case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
-    case EmailAddressForIndividualPage =>
-      ua => request => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, incrementIndexIndividual(ua, request)))
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(NormalMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(NormalMode)
 
@@ -63,6 +58,11 @@ class Navigator @Inject()() {
       Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, incrementIndexOrganisation(ua, request)))
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+    case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
+    case EmailAddressForIndividualPage =>
+      ua => request => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, incrementIndexIndividual(ua, request)))
     case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(NormalMode)
     case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(NormalMode)
     case WhatAreTheTaxNumbersForUKIndividualPage=>
