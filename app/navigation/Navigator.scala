@@ -348,7 +348,7 @@ class Navigator @Inject()() {
   private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //ToDo redirect to correct page when ready
+      case false => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode) //ToDo redirect to correct page when ready
     }
   }
 

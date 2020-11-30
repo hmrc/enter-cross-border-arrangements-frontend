@@ -38,6 +38,11 @@
           <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint2")}}</p>
 
           {{ govukTextarea({
+              label: {
+                  classes: "govuk-label govuk-visuall-hidden",
+                  text: "Which national provisions is this arrangement based on?",
+                  isPageHeading: false
+              },
               name: "value",
               id: "value",
               rows: 15,

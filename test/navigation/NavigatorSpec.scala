@@ -1107,6 +1107,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+        "W'Which of these countries are expected to be involved in this arrangement?' page when the answer is No" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DoYouKnowTheReasonToReportArrangementNowPage, false)
+                .success.value
+
+            navigator
+              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from the 'Why are reporting this arrangement now?' page to " +
         "'Which of these countries are expected to be involved in this arrangement?'" in {
         forAll(arbitrary[UserAnswers]) {
