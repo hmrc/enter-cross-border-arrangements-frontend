@@ -63,11 +63,6 @@ class Navigator @Inject()() {
       Some(routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, incrementIndexOrganisation(ua, request)))
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
     case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
-    case IndividualAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case IndividualSelectAddressPage => _ => _ => Some(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
-    case EmailAddressForIndividualPage =>
-      ua => request => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, incrementIndexIndividual(ua, request)))
     case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(NormalMode)
     case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(NormalMode)
     case WhatAreTheTaxNumbersForUKIndividualPage=>
@@ -87,8 +82,6 @@ class Navigator @Inject()() {
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => _ => Some(routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
-    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
 
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
