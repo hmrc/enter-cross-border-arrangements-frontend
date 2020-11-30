@@ -42,16 +42,19 @@ class IndividualCheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val rows: Seq[SummaryList.Row] =
+      val individualSummary: Seq[SummaryList.Row] =
         Seq(helper.individualName, helper.individualDateOfBirth).flatten ++
-        helper.individualPlaceOfBirthGroup ++
-        helper.individualAddressGroup ++
-        helper.individualEmailAddressGroup ++
-        helper.individualTINGroup
+        helper.buildIndividualPlaceOfBirthGroup ++
+        helper.buildIndividualAddressGroup ++
+        helper.buildIndividualEmailAddressGroup
 
-      renderer.render(
+      val countryDetails: Seq[SummaryList.Row] =
+        helper.buildTaxResidencySummaryForIndividuals
+
+        renderer.render(
         "individual/check-your-answers.njk",
-        Json.obj("list" -> rows)
+        Json.obj("individualSummary" -> individualSummary,
+          "countrySummary" -> countryDetails)
       ).map(Ok(_))
   }
 

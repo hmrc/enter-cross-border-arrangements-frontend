@@ -22,7 +22,7 @@ import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator
-import pages.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage, OrganisationLoopPage}
+import pages.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

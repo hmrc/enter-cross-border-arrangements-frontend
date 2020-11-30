@@ -20,7 +20,11 @@ import play.api.libs.json.{Json, OFormat}
 
 case class TaxReferenceNumbers(firstTaxNumber: String,
                                secondTaxNumber: Option[String],
-                               thirdTaxNumber: Option[String])
+                               thirdTaxNumber: Option[String]) {
+
+  val isSingleTaxReferenceNumber: Boolean = secondTaxNumber.isDefined || thirdTaxNumber.isDefined
+
+}
 
 object TaxReferenceNumbers {
   implicit val format: OFormat[TaxReferenceNumbers] = Json.format[TaxReferenceNumbers]

@@ -78,7 +78,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     val json = jsonCaptor.getValue
     import RowJsonReads._
-    val list = (json \ "list" ).get.as[Seq[Row]]
+    val list = (json \ "individualSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "individual/check-your-answers.njk"
     assertFunction(list)

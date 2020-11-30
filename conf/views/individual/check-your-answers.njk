@@ -25,7 +25,11 @@
         </h1>
 
         {{ govukSummaryList({
-          rows: list
+          rows: individualSummary
+        }) }}
+        {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: countrySummary
         }) }}
 
         {{ csrf() | safe }}
