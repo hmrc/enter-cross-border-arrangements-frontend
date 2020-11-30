@@ -137,11 +137,7 @@ class Navigator @Inject()() {
     case IndividualAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
     case IndividualSelectAddressPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
     case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
-    case EmailAddressForIndividualPage =>
-      ua => request => Some(routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, incrementIndexIndividual(ua, request)))
-    case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(NormalMode)
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode)
-    case IndividualUkPostcodePage => _ => _ => Some(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
+    case EmailAddressForIndividualPage => _ => _ => Some(routes.IndividualCheckYourAnswersController.onPageLoad())
 
    case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode))
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode))
