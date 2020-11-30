@@ -51,8 +51,19 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
   val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
-  val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
+
+  val validAnswer: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
     Country("valid","FR","France"))
+
+  val validData =
+    Map(
+      "addressLine1" -> "value 1",
+      "addressLine2" -> "value 2",
+      "addressLine3" -> "value 3",
+      "city"         -> "value 4",
+      "postCode"     -> "XX9 9XX",
+      "country"      -> "FR"
+    )
 
   lazy val individualAddressRoute: String = routes.IndividualAddressController.onPageLoad(NormalMode).url
 
@@ -98,7 +109,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressPage, address).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
       val request = FakeRequest(GET, individualAddressRoute)
@@ -111,16 +122,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(
-        Map(
-          "addressLine1" -> "value 1",
-          "addressLine2" -> "value 2",
-          "addressLine3" -> "value 3",
-          "city" -> "value 4",
-          "postCode" -> "XX9 9XX",
-          "country" -> "FR"
-        )
-      )
+      val filledForm = form.bind(validData)
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -148,8 +150,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       val request =
         FakeRequest(POST, individualAddressRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
-            ("postcode", "XX9 9XX"),("country", "FR"))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -218,5 +219,6 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       application.stop()
     }
+
   }
 }

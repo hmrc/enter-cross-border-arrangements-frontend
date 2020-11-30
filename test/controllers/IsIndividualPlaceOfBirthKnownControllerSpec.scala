@@ -194,5 +194,6 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
 
       application.stop()
     }
+
   }
 }

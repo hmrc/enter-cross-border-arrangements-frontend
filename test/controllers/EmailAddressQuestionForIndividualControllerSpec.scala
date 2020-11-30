@@ -194,5 +194,6 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Mock
 
       application.stop()
     }
+
   }
 }

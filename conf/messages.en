@@ -299,7 +299,7 @@ individualName.title = What is their name?
 individualName.heading = What is their name?
 individualName.firstName = First name
 individualName.secondName = Last name
-individualName.checkYourAnswersLabel = What is their name?
+individualName.checkYourAnswersLabel = Name
 individualName.error.firstName.required = Enter a first name
 individualName.error.secondName.required = Enter a last name
 individualName.error.firstName.length = First name must be 200 characters or less
@@ -308,7 +308,7 @@ individualName.error.secondName.length = Last name must be 200 characters or les
 individualDateOfBirth.title = What is their date of birth?
 individualDateOfBirth.heading = What is {0} date of birth?
 individualDateOfBirth.hint = For example, 31 3 1980
-individualDateOfBirth.checkYourAnswersLabel = What is {0}’s date of birth?
+individualDateOfBirth.checkYourAnswersLabel = Date of birth
 individualDateOfBirth.error.required.all = Enter a date of birth
 individualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 individualDateOfBirth.error.required = Date of birth must include {0}
@@ -324,8 +324,7 @@ isIndividualPlaceOfBirthKnown.error.required = Select yes if you know where they
 
 individualPlaceOfBirth.title = Where were they born?
 individualPlaceOfBirth.heading = Where {0} born?
-individualPlaceOfBirth.checkYourAnswersLabel = Where were they born?
-individualPlaceOfBirth.error.required = Enter their birthplace
+individualPlaceOfBirth.checkYourAnswersLabel = Birthplace
 individualPlaceOfBirth.error.length = Birthplace must be 200 characters or less
 individualPlaceOfBirth.error.required = Enter their birthplace
 
@@ -404,7 +403,7 @@ whatAreTheTaxNumbersForNonUKIndividual.hint = Provide up to 3.
 whatAreTheTaxNumbersForNonUKIndividual.label1 = Tax identification number 1
 whatAreTheTaxNumbersForNonUKIndividual.label2 = Tax identification number 2 (optional)
 whatAreTheTaxNumbersForNonUKIndividual.label3 = Tax identification number 3 (optional)
-whatAreTheTaxNumbersForNonUKIndividual.checkYourAnswersLabel = whatAreTheTaxNumbersForNonUKIndividual
+whatAreTheTaxNumbersForNonUKIndividual.checkYourAnswersLabel = Tax identification number{0} for {1}
 whatAreTheTaxNumbersForNonUKIndividual.error.required = Enter tax identification number 1
 whatAreTheTaxNumbersForNonUKIndividual.label1.error.length = Tax identification number 1 must be 200 characters or less
 whatAreTheTaxNumbersForNonUKIndividual.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
@@ -414,7 +413,9 @@ isIndividualAddressUk.title = Do they live in the United Kingdom?
 isIndividualAddressUk.heading = Does {0} live in the United Kingdom?
 isIndividualAddressUk.error.required = Select yes if they live in the United Kingdom
 
-
+individualAddress.heading = What is {0}’s address?
+individualAddress.title = What is their address?
+individualAddress.checkYourAnswersLabel = Address
 
 doYouKnowAnyTINForUKIndividual.title = Do you know their tax identification numbers for the United Kingdom?
 doYouKnowAnyTINForUKIndividual.heading = Do you know {0} tax identification numbers for the United Kingdom?
@@ -433,7 +434,7 @@ whatAreTheTaxNumbersForUKIndividual.hintLink = find a lost UTR number
 whatAreTheTaxNumbersForUKIndividual.label1 = UK tax number 1
 whatAreTheTaxNumbersForUKIndividual.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKIndividual.label3 = UK tax number 3 (optional)
-whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel = What are the individuals’s tax reference numbers?
+whatAreTheTaxNumbersForUKIndividual.checkYourAnswersLabel = UTR{0}
 whatAreTheTaxNumbersForUKIndividual.error.required = Enter tax number 1
 whatAreTheTaxNumbersForUKIndividual.label1.error.length = Tax identification number 1 must be 200 characters or less
 whatAreTheTaxNumbersForUKIndividual.label2.error.length = Tax identification number 2 (optional) must be 200 characters or less
@@ -441,8 +442,12 @@ whatAreTheTaxNumbersForUKIndividual.label3.error.length = Tax identification num
 
 whichCountryTaxForIndividual.title = Which country are they resident in for tax purposes?
 whichCountryTaxForIndividual.heading = Which country {0} resident in for tax purposes?
-whichCountryTaxForIndividual.checkYourAnswersLabel = Which country are they resident in for tax purposes?
 whichCountryTaxForIndividual.error.required = Select country
+whichCountryTaxForIndividual.checkYourAnswersLabel = Tax resident countries
+whichCountryTaxForIndividual.countryCounter = Country {0}
+whichCountryTaxForIndividual.countryKey = Country
+whichCountryTaxFoIndividual.utrKey = Unique Taxpayer Reference (UTR)
+whichCountryTaxForIndividual.tinKey = Tax identification number for {0}
 
 emailAddressQuestionForIndividual.title = Do you know their email address?
 emailAddressQuestionForIndividual.heading = Do you know {0}’s email address?
@@ -452,7 +457,7 @@ emailAddressQuestionForIndividual.error.required = Select yes if you know their 
 emailAddressForIndividual.title = What is their email address?
 emailAddressForIndividual.heading = What is {0}’s email address?
 emailAddressForIndividual.hint = We will only use this to get in contact if we have any questions about the arrangement.
-emailAddressForIndividual.checkYourAnswersLabel = What is their email address?
+emailAddressForIndividual.checkYourAnswersLabel = Email address
 emailAddressForIndividual.error.required = Enter an email address
 emailAddressForIndividual.error.length = Email address must be 400 characters or less
 

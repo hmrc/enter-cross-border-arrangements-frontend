@@ -48,6 +48,13 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
   val validAnswer: LocalDate = LocalDate.now().minusDays(1)
 
+  val validData =
+    Map(
+      "value.day"   -> validAnswer.getDayOfMonth.toString,
+      "value.month" -> validAnswer.getMonthValue.toString,
+      "value.year"  -> validAnswer.getYear.toString
+    )
+
   lazy val individualDateOfBirthRoute = routes.IndividualDateOfBirthController.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
@@ -110,13 +117,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(
-        Map(
-          "value.day"   -> validAnswer.getDayOfMonth.toString,
-          "value.month" -> validAnswer.getMonthValue.toString,
-          "value.year"  -> validAnswer.getYear.toString
-        )
-      )
+      val filledForm = form.bind(validData)
 
       val viewModel = DateInput.localDate(filledForm("value"))
 
@@ -210,5 +211,6 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       application.stop()
     }
+
   }
 }

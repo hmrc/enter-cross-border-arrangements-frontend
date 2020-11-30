@@ -194,5 +194,6 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
 
       application.stop()
     }
+
   }
 }

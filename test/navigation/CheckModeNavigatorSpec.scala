@@ -22,8 +22,8 @@ import generators.Generators
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages._
-import play.api.mvc.AnyContentAsEmpty
+import pages.{QuestionPage, _}
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -166,6 +166,143 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .mustBe(routes.MainBenefitProblemController.onPageLoad())
         }
       }
+
+      def assertRedirect[A](page: QuestionPage[A], route: Call = routes.IndividualCheckYourAnswersController.onPageLoad)
+                           (f: UserAnswers => UserAnswers) = {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(page, CheckMode, f(answers))
+              .mustBe(route)
+        }
+
+      }
+
+      // 1
+      "must go from What is their name? page to Check your answers page" in {
+
+        assertRedirect(IndividualNamePage) _
+      }
+
+      // 2
+      "must go from What is {0}'s date of birth? page to Check your answers page" in {
+
+        assertRedirect(IndividualDateOfBirthPage) _
+      }
+
+      // 3 + yes
+      "must go from the Do you know where {0} was born? page to the Where was {0} born? when answer is 'Yes' " in {
+
+        assertRedirect(IsIndividualPlaceOfBirthKnownPage, routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
+          _
+            .set(IsIndividualPlaceOfBirthKnownPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      // 3 + No
+      "must go from the Do you know where {0} was born? page to the Check your answers page when answer is 'No' " in {
+        assertRedirect(IsIndividualPlaceOfBirthKnownPage) {
+          _
+            .set(IsIndividualPlaceOfBirthKnownPage, false)
+            .success
+            .value
+
+        }
+      }
+
+      // 4
+      "must go from Where was {0} born? page to Check your answers page" in {
+
+        assertRedirect(IndividualPlaceOfBirthPage) _
+      }
+
+      // 5 + Yes
+      "must go from Do you know {0} address to 'Does the individual live in the United Kingdom?' when answer is 'Yes'" in {
+
+        assertRedirect(IsIndividualAddressKnownPage, routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+          _
+            .set(IsIndividualAddressKnownPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      // 5 + No
+      "must go from Do you know {0} address to Check your answers page when answer is 'No'" in {
+
+        assertRedirect(IsIndividualAddressKnownPage, routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
+          _
+            .set(IsIndividualAddressKnownPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      // 6 + Yes
+      "must go from Does {0} live in the United Kingdom? to What is {0}’s postcode? when answer is 'Yes'" in {
+
+        assertRedirect(IsIndividualAddressUkPage, routes.IndividualPostcodeController.onPageLoad(CheckMode)) {
+          _
+            .set(IsIndividualAddressUkPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      // 6 + No
+      "must go from Does {0} live in the United Kingdom? to What is {0}’s address? page when answer is 'No'" in {
+
+        assertRedirect(IsIndividualAddressUkPage, routes.IndividualAddressController.onPageLoad(CheckMode)) {
+          _
+            .set(IsIndividualAddressUkPage, false)
+            .success
+            .value
+
+        }
+      }
+
+      "must go from What is {0}’s address? to Check your answers page" in {
+
+        assertRedirect(IndividualAddressPage) _
+      }
+
+      // 10 + No
+      "must go from Do you know {0}’s email address? to Check your answers page when answer is 'No'" in {
+
+        assertRedirect(EmailAddressQuestionForIndividualPage) {
+          _
+            .set(EmailAddressQuestionForIndividualPage, false)
+            .success
+            .value
+
+        }
+      }
+
+      // 10 + No
+      "must go from Do you know {0}’s email address? to What is {0}’s email address? page when answer is 'Yes'" in {
+
+        assertRedirect(EmailAddressQuestionForIndividualPage, routes.EmailAddressForIndividualController.onPageLoad(CheckMode)) {
+          _
+            .set(EmailAddressQuestionForIndividualPage, true)
+            .success
+            .value
+
+        }
+      }
+
+      // 11
+      "must go from What is {0}’s email address? to Check your answers page'" in {
+
+        assertRedirect(EmailAddressForIndividualPage) _
+      }
+
     }
   }
 }

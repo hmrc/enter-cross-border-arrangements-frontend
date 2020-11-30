@@ -27,7 +27,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.EmailAddressForIndividualPage
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -43,6 +43,10 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
   val formProvider = new EmailAddressForIndividualFormProvider()
   val form = formProvider()
+
+  val validAnswer: String = "email@email.com"
+
+  val validData = Map("email" -> validAnswer)
 
   lazy val emailAddressForIndividualRoute = routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
 
@@ -80,7 +84,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressForIndividualPage, "email@email.com").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressForIndividualPage, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, emailAddressForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -92,7 +96,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("email" -> "email@email.com"))
+      val filledForm = form.bind(validData)
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -121,7 +125,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       val request =
         FakeRequest(POST, emailAddressForIndividualRoute)
-          .withFormUrlEncodedBody(("email", "email@email.com"))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -180,7 +184,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       val request =
         FakeRequest(POST, emailAddressForIndividualRoute)
-          .withFormUrlEncodedBody(("email", "answer"))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -190,5 +194,6 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       application.stop()
     }
+
   }
 } 

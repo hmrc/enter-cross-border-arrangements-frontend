@@ -50,6 +50,11 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
   val form: Form[Name] = formProvider()
   val firstName: String = "First"
   val lastName: String = "Last"
+  val validAnswer: Name = Name(firstName, lastName)
+  val validData = Map(
+    "firstName" -> firstName,
+    "secondName" -> lastName
+  )
 
   lazy val individualNameRoute: String = routes.IndividualNameController.onPageLoad(NormalMode).url
 
@@ -87,7 +92,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, Name(firstName, lastName)).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, individualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -99,10 +104,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map(
-        "firstName" -> firstName,
-        "secondName" -> lastName
-      ))
+      val filledForm = form.bind(validData)
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -129,8 +131,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val request =
         FakeRequest(POST, individualNameRoute)
-          .withFormUrlEncodedBody(("firstName", firstName),
-            ("secondName", lastName))
+          .withFormUrlEncodedBody(validData.toList:_*)
 
       val result = route(application, request).value
 
@@ -167,5 +168,6 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       application.stop()
     }
+
   }
 }
