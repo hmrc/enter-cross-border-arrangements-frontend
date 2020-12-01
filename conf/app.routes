@@ -250,3 +250,24 @@ GET        /arrangement/reporting-reason                        controllers.arra
 POST       /arrangement/reporting-reason                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = NormalMode)
 GET        /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /arrangement/choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/value                        controllers.arrangement.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/value                        controllers.arrangement.WhatIsTheExpectedValueOfThisArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-value                  controllers.arrangement.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-value                  controllers.arrangement.WhatIsTheExpectedValueOfThisArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/national-provisions                        controllers.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/national-provisions                        controllers.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-national-provisions                  controllers.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-national-provisions                  controllers.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnController.onSubmit(mode: Mode = CheckMode)
+
+GET        /arrangement/details                        controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /arrangement/details                        controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = CheckMode)

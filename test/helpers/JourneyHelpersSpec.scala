@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.JourneyHelpers._
-import models.{CheckMode, Country, LoopDetails, Name, UserAnswers}
+import models.{CheckMode, Country, Currency, LoopDetails, Name, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{IndividualNamePage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
@@ -56,6 +56,23 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return 'the organisation' if organisation name isn't available" in {
         getOrganisationName(emptyUserAnswers) mustBe "the organisation"
+      }
+    }
+
+    "currencyJsonList" - {
+      "must return currency list with selected currency" in {
+        val value = Some("ALL")
+        val currenciesSeq = Seq(Currency("AFN","AFGHANI","AFGHANISTAN","Afghanistan Afghani (AFN)"),
+          Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"),
+          Currency( "AMD", "DRAM", "ARMENIA", "Armenian Dram (AMD)")
+        )
+        val expectedJsonList = Seq(
+            Json.obj("text" -> "", "value" -> ""),
+            Json.obj("text" -> "Afghanistan Afghani (AFN)", "value" -> "AFN", "selected" -> false),
+            Json.obj("text" -> "Albanian Lek (ALL)", "value" -> "ALL", "selected" -> true),
+            Json.obj("text" -> "Armenian Dram (AMD)", "value" -> "AMD", "selected" -> false)
+        )
+        currencyJsonList(value, currenciesSeq) mustBe expectedJsonList
       }
     }
 

@@ -1,0 +1,65 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("giveDetailsOfThisArrangement.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+          <h1 class="govuk-heading-xl">{{messages("giveDetailsOfThisArrangement.title")}}</h1>
+
+          <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint1")}}</p>
+
+          <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint2")}}</p>
+
+          {{ govukTextarea({
+            label: {
+                classes: "govuk-label govuk-visuall-hidden",
+                text: "Give details of this arrangement",
+                isPageHeading: false
+             },
+              name: "value",
+              id: "value",
+              rows: 15,
+              value: form.value.value,
+              errorMessage: form.value.error
+           })
+          }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {"id": "submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

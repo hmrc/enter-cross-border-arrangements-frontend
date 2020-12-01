@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.{CheckMode, Country, Mode, UserAnswers}
+import models.{CheckMode, Country, Currency, Mode, UserAnswers}
 import pages._
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
@@ -37,6 +37,15 @@ object JourneyHelpers {
     }
   }
 
+  def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =
+    Json.obj("value" -> "", "text" -> "") +: currencies.map {
+      currency => Json.obj(
+        "text" -> currency.description,
+        "value" -> currency.code,
+        "selected" -> value.contains(currency.code)
+        )
+    }
+
   def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
@@ -51,6 +60,8 @@ object JourneyHelpers {
 
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
+
+
 
   def incrementIndexIndividual(ua: UserAnswers, request: Request[AnyContent]): Int = {
     ua.get(IndividualLoopPage) match {

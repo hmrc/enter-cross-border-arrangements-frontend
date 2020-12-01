@@ -26,8 +26,8 @@ import models.HallmarkD.D1
 import models.HallmarkD1.D1other
 import models._
 import pages._
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage}
 import play.api.mvc.{AnyContent, Call, Request}
+import pages.arrangement._
 
 @Singleton
 class Navigator @Inject()() {
@@ -87,6 +87,10 @@ class Navigator @Inject()() {
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
     case DoYouKnowTheReasonToReportArrangementNowPage =>  doYouKnowTheReasonToReportArrangementNowRoutes(NormalMode)
+    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
+    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode))
+    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -144,22 +148,23 @@ class Navigator @Inject()() {
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode))
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode))
     case DoYouKnowTheReasonToReportArrangementNowPage => doYouKnowTheReasonToReportArrangementNowRoutes(CheckMode)
+    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(CheckMode))
+    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onSubmit(CheckMode))
+    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode))
     case _ => _ => _ => Some(routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 
-  def catRoutes(key: HallmarkCategories): Mode => Call = key match {
-    case CategoryA => routes.HallmarkAController.onPageLoad
-    case CategoryB => routes.HallmarkBController.onPageLoad
-    case CategoryC => routes.HallmarkCController.onPageLoad
-    case CategoryD => routes.HallmarkDController.onPageLoad
-    case CategoryE => routes.HallmarkEController.onPageLoad
-  }
+ def catRoutes(key: HallmarkCategories): Mode => Call = key match {
+   case CategoryA => routes.HallmarkAController.onPageLoad
+   case CategoryB => routes.HallmarkBController.onPageLoad
+   case CategoryC => routes.HallmarkCController.onPageLoad
+   case CategoryD => routes.HallmarkDController.onPageLoad
+   case CategoryE => routes.HallmarkEController.onPageLoad
+ }
 
   private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map {
-      case catSet  =>  catRoutes(catSet.min(orderingByName))(mode)
-      case _ => routes.IndexController.onPageLoad()
-    }
+    ua.get(HallmarkCategoriesPage) map  {catSet  =>  catRoutes(catSet.min(orderingByName))(mode)}
 
   private def hallmarkARoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkCategoriesPage) map {
@@ -343,7 +348,7 @@ class Navigator @Inject()() {
   private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() //ToDo redirect to correct page when ready
+      case false => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode) //ToDo redirect to correct page when ready
     }
   }
 

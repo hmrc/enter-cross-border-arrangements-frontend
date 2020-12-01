@@ -504,3 +504,67 @@ whyAreYouReportingThisArrangementNow.dAC6703 = The first step in the implementat
 whyAreYouReportingThisArrangementNow.dAC6704 = Aid, assistance or advice has been provided
 whyAreYouReportingThisArrangementNow.checkYourAnswersLabel = Why are you reporting this arrangement now?
 whyAreYouReportingThisArrangementNow.error.required = Select a reason for reporting now
+
+whichExpectedInvolvedCountriesArrangement.title = Which of these countries are expected to be involved in this arrangement?
+whichExpectedInvolvedCountriesArrangement.heading = Which of these countries are expected to be involved in this arrangement?
+whichExpectedInvolvedCountriesArrangement.checkYourAnswersLabel = Which of these countries are expected to be involved in this arrangement?
+whichExpectedInvolvedCountriesArrangement.error.required = Select one or more countries
+whichExpectedInvolvedCountriesArrangement.hint = Select all that apply.
+whichExpectedInvolvedCountriesArrangement.unitedKingdom = United Kingdom
+whichExpectedInvolvedCountriesArrangement.austria = Austria
+whichExpectedInvolvedCountriesArrangement.belgium = Belgium
+whichExpectedInvolvedCountriesArrangement.bulgaria = Bulgaria
+whichExpectedInvolvedCountriesArrangement.croatia = Croatia
+whichExpectedInvolvedCountriesArrangement.cyprus = Cyprus
+whichExpectedInvolvedCountriesArrangement.czechia = Czechia
+whichExpectedInvolvedCountriesArrangement.denmark =  Denmark
+whichExpectedInvolvedCountriesArrangement.estonia =  Estonia
+whichExpectedInvolvedCountriesArrangement.finland =  Finland
+whichExpectedInvolvedCountriesArrangement.france =  France
+whichExpectedInvolvedCountriesArrangement.germany =  Germany
+whichExpectedInvolvedCountriesArrangement.greece =  Greece
+whichExpectedInvolvedCountriesArrangement.hungary =  Hungary
+whichExpectedInvolvedCountriesArrangement.ireland =  Ireland
+whichExpectedInvolvedCountriesArrangement.italy =  Italy
+whichExpectedInvolvedCountriesArrangement.latvia =  Latvia
+whichExpectedInvolvedCountriesArrangement.lithunia =  Lithuania
+whichExpectedInvolvedCountriesArrangement.luxembourg =  Luxembourg
+whichExpectedInvolvedCountriesArrangement.malta =  Malta
+whichExpectedInvolvedCountriesArrangement.netherlands =  Netherlands
+whichExpectedInvolvedCountriesArrangement.poland =  Poland
+whichExpectedInvolvedCountriesArrangement.portugal =  Portugal
+whichExpectedInvolvedCountriesArrangement.romania =  Romania
+whichExpectedInvolvedCountriesArrangement.slovakia =  Slovakia
+whichExpectedInvolvedCountriesArrangement.slovenia =  Slovenia
+whichExpectedInvolvedCountriesArrangement.Spain =  Spain
+whichExpectedInvolvedCountriesArrangement.sweden =  Sweden
+
+whatIsTheExpectedValueOfThisArrangement.title = What is the expected value of this arrangement?
+whatIsTheExpectedValueOfThisArrangement.heading = What is the expected value of this arrangement?
+whatIsTheExpectedValueOfThisArrangement.description = Provide the exact amount or a reasonable estimate in the primary currency of the arrangement. Do not use any punctuation.
+whatIsTheExpectedValueOfThisArrangement.currency = Currency
+whatIsTheExpectedValueOfThisArrangement.currency.hint = Select currency
+whatIsTheExpectedValueOfThisArrangement.amount = Amount
+whatIsTheExpectedValueOfThisArrangement.amount.hint = For example, 10000 or 100000
+whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel = whatIsTheExpectedValueOfThisArrangement
+whatIsTheExpectedValueOfThisArrangement.error.currency.required = Enter a Currency
+whatIsTheExpectedValueOfThisArrangement.error.amount.required = Enter an amount (can be 0)
+
+whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber = Amount must only include numbers 0-9
+whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric = Amount must only include numbers 0-9
+whatIsTheExpectedValueOfThisArrangement.error.amount.outOfRange = Amount must only include numbers 0-9
+
+whichNationalProvisionsIsThisArrangementBasedOn.title = Which national provisions is this arrangement based on?
+whichNationalProvisionsIsThisArrangementBasedOn.heading = Which national provisions is this arrangement based on?
+whichNationalProvisionsIsThisArrangementBasedOn.hint1 = This is the tax legislation the arrangement relies on.
+whichNationalProvisionsIsThisArrangementBasedOn.hint2 = If this will take more than 15 minutes to write, you can prepare your answer offline. Copy and paste it into the box to avoid being timed out of the service.
+whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel = whichNationalProvisionsIsThisArrangementBasedOn
+whichNationalProvisionsIsThisArrangementBasedOn.error.required = Provide details of national provisions
+
+giveDetailsOfThisArrangement.title = Give details of this arrangement
+giveDetailsOfThisArrangement.heading = Give details of this arrangement
+giveDetailsOfThisArrangement.hint1 = Describe how the arrangement works or is expected to work.
+giveDetailsOfThisArrangement.hint2 = If this will take more than 15 minutes to write, you can prepare your answer offline. Copy and paste it into the box to avoid being timed out of the service.
+giveDetailsOfThisArrangement.checkYourAnswersLabel = giveDetailsOfThisArrangement
+giveDetailsOfThisArrangement.error.required = Provide arrangement details
+

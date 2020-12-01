@@ -22,12 +22,17 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(GiveDetailsOfThisArrangementPage.type, JsValue)] ::
+    arbitrary[(WhichNationalProvisionsIsThisArrangementBasedOnPage.type, JsValue)] ::
+    arbitrary[(WhatIsTheExpectedValueOfThisArrangementPage.type, JsValue)] ::
+    arbitrary[(WhichExpectedInvolvedCountriesArrangementPage.type, JsValue)] ::
     arbitrary[(WhyAreYouReportingThisArrangementNowPage.type, JsValue)] ::
     arbitrary[(DoYouKnowTheReasonToReportArrangementNowPage.type, JsValue)] ::
     arbitrary[(WhatIsTheImplementationDatePage.type, JsValue)] ::
