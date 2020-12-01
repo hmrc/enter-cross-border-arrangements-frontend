@@ -541,6 +541,7 @@ whichExpectedInvolvedCountriesArrangement.sweden =  Sweden
 
 whatIsTheExpectedValueOfThisArrangement.title = What is the expected value of this arrangement?
 whatIsTheExpectedValueOfThisArrangement.heading = What is the expected value of this arrangement?
+whatIsTheExpectedValueOfThisArrangement.description = Provide the exact amount or a reasonable estimate in the primary currency of the arrangement. Do not use any punctuation.
 whatIsTheExpectedValueOfThisArrangement.currency = Currency
 whatIsTheExpectedValueOfThisArrangement.currency.hint = Select currency
 whatIsTheExpectedValueOfThisArrangement.amount = Amount
