@@ -239,7 +239,7 @@ GET        /individual/change-address                 controllers.individual.Ind
 POST       /individual/change-address                 controllers.individual.IndividualAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-
+# ARRANGEMENT ROUTES
 
 
 GET        /arrangement/name                        controllers.arrangement.WhatIsThisArrangementCalledController.onPageLoad(mode: Mode = NormalMode)
@@ -282,3 +282,11 @@ GET        /arrangement/details                        controllers.arrangement.G
 POST       /arrangement/details                        controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = CheckMode)
+
+
+# TAXPAYER ROUTES
+
+GET        /taxpayer/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayer/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
+
+

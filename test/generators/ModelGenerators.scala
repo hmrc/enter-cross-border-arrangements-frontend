@@ -19,10 +19,16 @@ package generators
 import models._
 import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC, HallmarkC1, HallmarkCategories, HallmarkD, HallmarkD1, HallmarkE}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryUpdateTaxpayer: Arbitrary[UpdateTaxpayer] =
+    Arbitrary {
+      Gen.oneOf(UpdateTaxpayer.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[WhatIsTheExpectedValueOfThisArrangement] =
     Arbitrary {
