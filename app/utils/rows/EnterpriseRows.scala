@@ -17,6 +17,8 @@
 package utils.rows
 
 import models.CheckMode
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
@@ -29,6 +31,16 @@ trait EnterpriseRows extends RowBuilder {
       msgKey  = "youHaveNotAddedAnyAssociatedEnterprises",
       content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
       href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith: Option[Row] = userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) map { answer =>
+
+    toRow(
+      msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
+      content = msg"selectAnyTaxpayersThisEnterpriseIsAssociatedWith.$answer",
+      href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(CheckMode).url
+
     )
   }
 

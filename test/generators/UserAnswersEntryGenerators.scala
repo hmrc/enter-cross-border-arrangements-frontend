@@ -25,7 +25,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement._
-import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -39,6 +39,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[SelectTypePage.type]
         value <- arbitrary[SelectType].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitrarySelectAnyTaxpayersThisEnterpriseIsAssociatedWithUserAnswersEntry: Arbitrary[(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type]
+        value <- arbitrary[List[String]].map(Json.toJson(_))
       } yield (page, value)
     }
 

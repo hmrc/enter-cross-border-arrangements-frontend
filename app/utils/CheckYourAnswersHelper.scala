@@ -35,7 +35,7 @@ import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows with EnterpriseRows {
-    
+
   def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
     answer =>
       Row(

@@ -1,0 +1,69 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/checkboxes/macro.njk"    import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+            <h1 class="govuk-heading-xl">
+              {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading") }}
+            </h1>
+
+            <p class="govuk-body">{{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1") }}
+              <a href="{{ routes.controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode).url }}" class="govuk-link">
+                {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2") }}
+              </a>
+              {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3") }}
+            </p>
+
+          {{ govukCheckboxes({
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('site.selectAllThatApply'),
+                isPageHeading: false,
+                classes: "govuk-hint"
+              }
+            },
+            items: checkboxes,
+            errorMessage: form.value.error
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

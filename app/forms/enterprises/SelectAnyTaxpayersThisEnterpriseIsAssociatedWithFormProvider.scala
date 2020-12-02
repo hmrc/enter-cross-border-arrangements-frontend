@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package forms.arrangement
+package forms.enterprises
 
 import forms.mappings.Mappings
-import javax.inject.Inject
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
 import play.api.data.Form
-import play.api.data.Forms.set
+import play.api.data.Forms.list
 
-class WhichExpectedInvolvedCountriesArrangementFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[Set[WhichExpectedInvolvedCountriesArrangement]] =
+class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[List[String]] =
     Form(
-      "value" -> set(enumerable[WhichExpectedInvolvedCountriesArrangement]("whichExpectedInvolvedCountriesArrangement.error.required"))
-        .verifying(nonEmptySet("whichExpectedInvolvedCountriesArrangement.error.required"))
+      "value" -> list[String](text("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
     )
 }

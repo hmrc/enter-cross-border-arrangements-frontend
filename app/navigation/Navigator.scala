@@ -36,6 +36,9 @@ import pages.individual._
 import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.{AnyContent, Call, Request}
+import pages.arrangement._
+import pages.enterprises.{SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.taxpayer.UpdateTaxpayerPage
 
 import javax.inject.{Inject, Singleton}
 
@@ -111,6 +114,11 @@ class Navigator @Inject()() {
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
+    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
+    case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesPage(NormalMode)
+    case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage => _ => _ => Some(controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode)) // TODO redirect
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -406,6 +414,16 @@ class Navigator @Inject()() {
       case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
     }
   }
+
+  private def youHaveNotAddedAnyAssociatedEnterprisesPage(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
+      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow  =>
+        controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode)
+      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater =>
+        controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
+      case YouHaveNotAddedAnyAssociatedEnterprises.No =>
+        controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
+    }
 
   private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
