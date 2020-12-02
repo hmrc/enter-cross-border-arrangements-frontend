@@ -56,6 +56,16 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
       // retrieve list of taxpayers TODO get the actual list from page
       import SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
+      val taxpayers: List[Taxpayer] = {
+        List(
+          Taxpayer(
+            Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
+          ),
+          Taxpayer(
+            Organisation("My organisation")
+          )
+        )
+      }
 
       val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
         case None => form
@@ -63,7 +73,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       }
 
       val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.selectType}:${taxpayer.nameAsString}")
       }
       val checkboxes = Checkboxes.set(field = preparedForm("value"), items = items)
 
@@ -96,6 +106,13 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
           } yield Redirect(navigator.nextPage(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, mode, updatedAnswers))
       )
   }
+
+  def toCheckboxes(taxpayers: Set[JsObject]): Seq[Checkboxes.Checkbox] = taxpayers.map { json =>
+    val name = json.validate[Taxpayer].getOrElse(throw new IllegalArgumentException("")).nameAsString
+    Checkboxes.Checkbox(label = Literal(name), value = json.toString())
+  }.toSeq
+
+}
 
 }
 object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {

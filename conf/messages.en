@@ -610,6 +610,13 @@ selectType.individual = Individual
 selectType.checkYourAnswersLabel = Is this an organisation or an individual?
 selectType.error.required = Select the type of taxpayer
 
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1 = If the taxpayer associated with this enterprise is not listed below,
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2 = add the relevant taxpayer
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
 associatedEnterpriseCheckYourAnswers.title = Check your answers for associated enterprise details
 associatedEnterpriseCheckYourAnswers.heading = Check your answers for associated enterprise details
