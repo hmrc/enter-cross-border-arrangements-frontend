@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.DoYouKnowTINForNonUKIndividualFormProvider
+import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.{ArgumentCaptor, Matchers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
+import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -47,7 +47,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val doYouKnowTINForNonUKIndividualRoute = routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowTINForNonUKIndividualRoute = controllers.individual.routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(NormalMode, index).url
 
 
   "DoYouKnowTINForNonUKIndividual Controller" - {
@@ -74,7 +74,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowTINForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -112,7 +112,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowTINForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -201,7 +201,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "doYouKnowTINForNonUKIndividual.njk"
+      templateCaptor.getValue mustEqual "individual/doYouKnowTINForNonUKIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

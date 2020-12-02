@@ -274,8 +274,8 @@ address.error.addressLine2.invalid = Address line 2 (optional) must only include
 address.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-address.error.city.required = Enter city
-address.error.country.required = Select country
+address.error.city.required = Enter a city
+address.error.country.required = Select a country
 
 postcode.title = What is the organisation’s postcode?
 postcode.heading = What is {0}’s postcode?
@@ -353,7 +353,7 @@ whichCountryTaxForOrganisation.countryCounter = Country {0}
 whichCountryTaxForOrganisation.countryKey = Country
 whichCountryTaxForOrganisation.utrKey = Unique Taxpayer Reference (UTR)
 whichCountryTaxForOrganisation.tinKey = Tax identification number for {0}
-whichCountryTaxForOrganisation.error.required = Select country
+whichCountryTaxForOrganisation.error.required = Select a country
 
 doYouKnowAnyTINForUKOrganisation.title = Do you know the organisation’s tax reference numbers?
 doYouKnowAnyTINForUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?

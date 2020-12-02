@@ -16,17 +16,16 @@
 
 package utils
 
-import controllers.routes
-import models.HallmarkA._
-import models.HallmarkC.C1
-import models.HallmarkC1._
-import models.HallmarkCategories.{CategoryA, CategoryB}
-import models.HallmarkD.D1
-import models.HallmarkD1.D1other
+import models.hallmarks.HallmarkA._
+import models.hallmarks.HallmarkC.C1
+import models.hallmarks.HallmarkC1._
+import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
+import models.hallmarks.HallmarkD.D1
+import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
-import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
+import pages.arrangement._
+import pages.hallmarks._
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -164,7 +163,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
           )
         )
@@ -179,7 +178,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )
@@ -200,7 +199,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content = msg"site.edit",
-              href = routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
+              href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
             )
           )
@@ -231,7 +230,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = routes.MainBenefitTestController.onPageLoad(CheckMode).url,
+              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
             )
           )
@@ -249,7 +248,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
           )
         )
@@ -294,7 +293,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       actions = List(
         Action(
           content            = msg"site.edit",
-          href               = routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+          href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
         )
       )

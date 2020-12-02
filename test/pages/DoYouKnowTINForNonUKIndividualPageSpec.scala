@@ -17,6 +17,7 @@
 package pages
 
 import pages.behaviours.PageBehaviours
+import pages.individual.DoYouKnowTINForNonUKIndividualPage
 
 class DoYouKnowTINForNonUKIndividualPageSpec extends PageBehaviours {
 

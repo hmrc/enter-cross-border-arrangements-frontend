@@ -18,6 +18,7 @@ package pages
 
 import models.LoopDetails
 import pages.behaviours.PageBehaviours
+import pages.individual.IndividualLoopPage
 
 class IndividualLoopPageSpec extends PageBehaviours {
 

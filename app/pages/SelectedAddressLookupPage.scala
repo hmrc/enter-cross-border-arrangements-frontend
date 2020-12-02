@@ -17,6 +17,8 @@
 package pages
 
 import models.{AddressLookup, UserAnswers}
+import pages.individual.IndividualAddressPage
+import pages.organisation.OrganisationAddressPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try

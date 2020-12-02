@@ -22,7 +22,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import pages._
+import pages.individual.IndividualLoopPage
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -52,7 +52,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, routes.IndividualCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
 
     val result = route(application, request).value
 
