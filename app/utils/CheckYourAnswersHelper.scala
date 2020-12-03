@@ -26,12 +26,73 @@ import models.{CheckMode, UserAnswers}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
-import pages.taxpayer.UpdateTaxpayerPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows.{ArrangementRows, IndividualRows}
+
+class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages) extends IndividualRows {
+
+  def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"selectType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def giveDetailsOfThisArrangement: Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def whichNationalProvisionsIsThisArrangementBasedOn: Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def whatIsTheExpectedValueOfThisArrangement: Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${answer.currency} ${answer.amount}"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows {
@@ -96,12 +157,17 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
   }
 
+  val d1OtherVisibleCharacters = 100
+  val ellipsis = " ..."
+
   def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
     answer => userAnswers.get(HallmarkD1Page) match {
       case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
         Some(Row(
           key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-          value = Value(formatMaxChars(answer)),
+          value = Value(lit"${
+            if (answer.length > 100) answer.take(d1OtherVisibleCharacters) + ellipsis else answer
+          }"),
           actions = List(
             Action(
               content = msg"site.edit",
