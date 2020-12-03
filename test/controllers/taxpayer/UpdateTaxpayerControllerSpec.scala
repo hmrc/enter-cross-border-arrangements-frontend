@@ -94,7 +94,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> UpdateTaxpayer.values.head.toString))
+      val filledForm = form.bind(Map("confirm" -> UpdateTaxpayer.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
@@ -124,7 +124,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val request =
         FakeRequest(POST, updateTaxpayerRoute)
-          .withFormUrlEncodedBody(("value", UpdateTaxpayer.values.head.toString))
+          .withFormUrlEncodedBody(("confirm", UpdateTaxpayer.values.head.toString))
 
       val result = route(application, request).value
 
@@ -141,8 +141,8 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, updateTaxpayerRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, updateTaxpayerRoute).withFormUrlEncodedBody(("confirm", "invalid value"))
+      val boundForm = form.bind(Map("confirm" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 

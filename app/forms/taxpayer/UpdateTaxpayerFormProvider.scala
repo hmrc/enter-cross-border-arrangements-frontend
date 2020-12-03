@@ -25,6 +25,6 @@ class UpdateTaxpayerFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UpdateTaxpayer] =
     Form(
-      "value" -> enumerable[UpdateTaxpayer]("updateTaxpayer.error.required")
+      "confirm" -> enumerable[UpdateTaxpayer]("updateTaxpayer.error.required")
     )
 }
