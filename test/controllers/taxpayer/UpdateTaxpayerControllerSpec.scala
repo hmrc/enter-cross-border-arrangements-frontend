@@ -71,7 +71,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> UpdateTaxpayer.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "updateTaxpayer.njk"
+      templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> UpdateTaxpayer.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "updateTaxpayer.njk"
+      templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> UpdateTaxpayer.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "updateTaxpayer.njk"
+      templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

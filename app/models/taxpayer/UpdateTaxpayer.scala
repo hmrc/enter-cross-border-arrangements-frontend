@@ -37,7 +37,7 @@ object UpdateTaxpayer extends Enumerable.Implicits {
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
-    val field = form("value")
+    val field = form("confirm")
     val items = Seq(
       Radios.Radio(msg"updateTaxpayer.now", Now.toString),
       Radios.Radio(msg"updateTaxpayer.later", Later.toString),

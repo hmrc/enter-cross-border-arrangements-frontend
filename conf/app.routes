@@ -286,7 +286,7 @@ POST       /arrangement/change-details                  controllers.arrangement.
 
 # TAXPAYER ROUTES
 
-GET        /taxpayer/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
-POST       /taxpayer/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
 

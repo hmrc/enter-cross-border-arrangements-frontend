@@ -61,7 +61,7 @@ class UpdateTaxpayerController @Inject()(
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
       )
 
-      renderer.render("updateTaxpayer.njk", json).map(Ok(_))
+      renderer.render("taxpayer/updateTaxpayer.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
@@ -76,7 +76,7 @@ class UpdateTaxpayerController @Inject()(
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )
 
-          renderer.render("updateTaxpayer.njk", json).map(BadRequest(_))
+          renderer.render("taxpayer/updateTaxpayer.njk", json).map(BadRequest(_))
         },
         value => {
           val initialUserAnswers = UserAnswers(request.internalId)
