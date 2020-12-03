@@ -23,15 +23,18 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
+    Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
 
   implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
     Arbitrary(AssociatedEnterpriseTypePage)
 
-  implicit lazy val arbitrarySelectTypePage: Arbitrary[SelectTypePage.type] =
-    Arbitrary(SelectTypePage)
+  implicit lazy val arbitrarySelectTypePage: Arbitrary[TaxpayerSelectTypePage.type] =
+    Arbitrary(TaxpayerSelectTypePage))
 
   implicit lazy val arbitrarySelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage: Arbitrary[SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type] =
     Arbitrary(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)

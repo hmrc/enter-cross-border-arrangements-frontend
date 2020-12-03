@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package pages
+package pages.taxpayer
 
-import models.SelectType
+import java.time.LocalDate
+import pages._
+
+import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
-class SelectTypeSpec extends PageBehaviours {
+class WhatIsTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
 
-  "SelectTypePage" - {
+  "WhatIsTaxpayersStartDateForImplementingArrangementPage" - {
 
-    beRetrievable[SelectType](SelectTypePage)
+    implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
+      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
+    }
 
-    beSettable[SelectType](SelectTypePage)
+    beRetrievable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
 
-    beRemovable[SelectType](SelectTypePage)
+    beSettable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
+
+    beRemovable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
   }
 }

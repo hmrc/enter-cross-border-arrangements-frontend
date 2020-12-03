@@ -31,11 +31,11 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows}
+import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows with EnterpriseRows {
-
+  extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
+    
   def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
     answer =>
       Row(
@@ -192,4 +192,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
   }
 
+  def buildTaxpayerDetails(taxpayerDetails: Seq[Row], countryDetails: Seq[Row]) : Seq[SummaryList.Row] = {
+    Seq(
+      taxpayerSelectType,
+    ).flatten ++
+      taxpayerDetails ++
+      countryDetails ++
+      Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
+  }
 }
