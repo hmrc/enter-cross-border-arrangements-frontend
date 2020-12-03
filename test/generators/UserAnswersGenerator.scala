@@ -26,15 +26,16 @@ import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayers
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(SelectTypePage.type, JsValue)] ::
     arbitrary[(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type, JsValue)] ::
+    arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] ::
+    arbitrary[(TaxpayerSelectTypePage.type, JsValue)] ::
     arbitrary[(UpdateTaxpayerPage.type, JsValue)] ::
     arbitrary[(IsAssociatedEnterpriseAffectedPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyAssociatedEnterprisesPage.type, JsValue)] ::

@@ -14,7 +14,8 @@ class $className$FormProvider @Inject() extends Mappings {
         invalidKey     = "$className;format="decap"$.error.invalid",
         allRequiredKey = "$className;format="decap"$.error.required.all",
         twoRequiredKey = "$className;format="decap"$.error.required.two",
-        requiredKey    = "$className;format="decap"$.error.required"
+        requiredKey    = "$className;format="decap"$.error.required",
+        nonNumericKey  = "$className;format="decap"$.error.nonNumeric"
       )
     )
 }

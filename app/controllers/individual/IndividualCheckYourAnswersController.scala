@@ -19,6 +19,7 @@ package controllers.individual
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.enterprises.AssociatedEnterpriseTypePage
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -39,6 +39,7 @@ phaseBanner.3 = will help us to improve it.
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
+taxpayerscheckYourAnswers.heading = Check your answers for relevant taxpayer details
 
 index.title = Enter cross-border arrangements for DAC6
 index.heading = Enter cross-border arrangements for DAC6
@@ -607,7 +608,7 @@ selectType.title = Is this an organisation or an individual?
 selectType.heading = Is this an organisation or an individual?
 selectType.organisation = Organisation
 selectType.individual = Individual
-selectType.checkYourAnswersLabel = Is this an organisation or an individual?
+selectType.checkYourAnswersLabel = Organisation or individual
 selectType.error.required = Select the type of taxpayer
 
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
@@ -634,3 +635,15 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
+
+whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.part1.hint = This is when the first step of the arrangement was or will be made.
+whatIsTaxpayersStartDateForImplementingArrangement.part2.hint = For example, {0}
+whatIsTaxpayersStartDateForImplementingArrangement.checkYourAnswersLabel = Implementing date
+whatIsTaxpayersStartDateForImplementingArrangement.error.required.all = Provide a valid date
+whatIsTaxpayersStartDateForImplementingArrangement.error.required.two = The implementation date must include {0} and {1}
+whatIsTaxpayersStartDateForImplementingArrangement.error.required = The implementation date must include {0}
+whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a valid date
+whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
+whatIsTaxpayersStartDateForImplementingArrangement.error.nonNumericKey = Provide a valid date

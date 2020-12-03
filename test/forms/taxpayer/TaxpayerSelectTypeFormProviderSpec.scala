@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package forms.taxpayer
 
 import forms.behaviours.OptionFieldBehaviours
 import models.SelectType
 import play.api.data.FormError
 
-class SelectTypeFormProviderSpec extends OptionFieldBehaviours {
+class TaxpayerSelectTypeFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new SelectTypeFormProvider()()
+  val form = new TaxpayerSelectTypeFormProvider()()
 
   ".selectType" - {
 

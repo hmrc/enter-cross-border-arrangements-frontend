@@ -36,6 +36,7 @@ import pages.individual._
 import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.{AnyContent, Call, Request}
+import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 
 import javax.inject.{Inject, Singleton}
 
@@ -111,6 +112,10 @@ class Navigator @Inject()() {
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+
+    case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -179,6 +184,9 @@ class Navigator @Inject()() {
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+
+    case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
@@ -277,12 +285,12 @@ class Navigator @Inject()() {
 
   private def updateTaxpayerRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(UpdateTaxpayerPage) map {
-      case Now => controllers.routes.SelectTypeController.onPageLoad(mode)
+      case Now => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(mode)
       case Later | No => controllers.routes.IndexController.onPageLoad() // TODO: Link to disclose type page when ready
     }
 
   private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(SelectTypePage) map {
+    ua.get(TaxpayerSelectTypePage) map {
       case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
       case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
     }

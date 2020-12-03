@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.taxpayer
 
 import controllers.actions._
-import forms.SelectTypeFormProvider
-import javax.inject.Inject
+import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import models.{Mode, SelectType}
 import navigation.Navigator
-import pages.SelectTypePage
+
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,16 +30,17 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectTypeController @Inject()(
+class TaxpayerSelectTypeController @Inject()(
                                       override val messagesApi: MessagesApi,
                                       sessionRepository: SessionRepository,
                                       navigator: Navigator,
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      formProvider: SelectTypeFormProvider,
+                                      formProvider: TaxpayerSelectTypeFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       renderer: Renderer
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,7 +50,7 @@ class SelectTypeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(SelectTypePage) match {
+      val preparedForm = request.userAnswers.get(TaxpayerSelectTypePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +61,7 @@ class SelectTypeController @Inject()(
         "radios"  -> SelectType.radios(preparedForm)
       )
 
-      renderer.render("selectType.njk", json).map(Ok(_))
+      renderer.render("taxpayer/selectType.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,13 +76,13 @@ class SelectTypeController @Inject()(
             "radios" -> SelectType.radios(formWithErrors)
           )
 
-          renderer.render("selectType.njk", json).map(BadRequest(_))
+          renderer.render("taxpayer/selectType.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SelectTypePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, mode, updatedAnswers))
       )
   }
 }

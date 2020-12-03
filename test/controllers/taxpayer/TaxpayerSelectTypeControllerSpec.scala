@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.taxpayer
 
 import base.SpecBase
-import forms.SelectTypeFormProvider
+import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SelectTypePage
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,13 +37,13 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TaxpayerSelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectTypeRoute = routes.SelectTypeController.onPageLoad(NormalMode).url
+  lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(NormalMode).url
 
-  val formProvider = new SelectTypeFormProvider()
+  val formProvider = new TaxpayerSelectTypeFormProvider()
   val form = formProvider()
 
   "SelectType Controller" - {
@@ -70,7 +70,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "taxpayer/selectType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,7 +81,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SelectTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerSelectTypePage, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, selectTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -101,7 +101,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "taxpayer/selectType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "taxpayer/selectType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -172,7 +172,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -189,7 +189,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
