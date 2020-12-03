@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.arrangement
+package forms.enterprises
 
 import forms.mappings.Mappings
-import models.arrangement.WhyAreYouReportingThisArrangementNow
-
-import javax.inject.Inject
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import play.api.data.Form
 
-class WhyAreYouReportingThisArrangementNowFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[WhyAreYouReportingThisArrangementNow] =
+class YouHaveNotAddedAnyAssociatedEnterprisesFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[YouHaveNotAddedAnyAssociatedEnterprises] =
     Form(
-      "value" -> enumerable[WhyAreYouReportingThisArrangementNow]("whyAreYouReportingThisArrangementNow.error.required")
+      "value" -> enumerable[YouHaveNotAddedAnyAssociatedEnterprises]("youHaveNotAddedAnyAssociatedEnterprises.error.required")
     )
 }

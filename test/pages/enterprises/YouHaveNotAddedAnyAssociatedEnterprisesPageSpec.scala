@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms.arrangement
+package pages.enterprises
 
-import forms.mappings.Mappings
-import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Inject
-import play.api.data.Form
+class YouHaveNotAddedAnyAssociatedEnterprisesSpec extends PageBehaviours {
 
-class WhyAreYouReportingThisArrangementNowFormProvider @Inject() extends Mappings {
+  "YouHaveNotAddedAnyAssociatedEnterprisesPage" - {
 
-  def apply(): Form[WhyAreYouReportingThisArrangementNow] =
-    Form(
-      "value" -> enumerable[WhyAreYouReportingThisArrangementNow]("whyAreYouReportingThisArrangementNow.error.required")
-    )
+    beRetrievable[YouHaveNotAddedAnyAssociatedEnterprises](YouHaveNotAddedAnyAssociatedEnterprisesPage)
+
+    beSettable[YouHaveNotAddedAnyAssociatedEnterprises](YouHaveNotAddedAnyAssociatedEnterprisesPage)
+
+    beRemovable[YouHaveNotAddedAnyAssociatedEnterprises](YouHaveNotAddedAnyAssociatedEnterprisesPage)
+  }
 }

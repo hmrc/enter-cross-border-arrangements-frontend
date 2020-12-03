@@ -18,11 +18,17 @@ package generators
 
 import models._
 import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC, HallmarkC1, HallmarkCategories, HallmarkD, HallmarkD1, HallmarkE}
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprises: Arbitrary[YouHaveNotAddedAnyAssociatedEnterprises] =
+    Arbitrary {
+      Gen.oneOf(YouHaveNotAddedAnyAssociatedEnterprises.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[WhatIsTheExpectedValueOfThisArrangement] =
     Arbitrary {

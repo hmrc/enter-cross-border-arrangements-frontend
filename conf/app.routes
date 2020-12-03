@@ -282,3 +282,8 @@ GET        /arrangement/details                        controllers.arrangement.G
 POST       /arrangement/details                        controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
+POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
+GET        /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = CheckMode)
+POST       /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = CheckMode)

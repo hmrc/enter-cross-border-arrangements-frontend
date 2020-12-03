@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package forms.arrangement
+package pages.enterprises
 
-import forms.mappings.Mappings
-import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
-import play.api.data.Form
+case object YouHaveNotAddedAnyAssociatedEnterprisesPage extends QuestionPage[YouHaveNotAddedAnyAssociatedEnterprises] {
 
-class WhyAreYouReportingThisArrangementNowFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  def apply(): Form[WhyAreYouReportingThisArrangementNow] =
-    Form(
-      "value" -> enumerable[WhyAreYouReportingThisArrangementNow]("whyAreYouReportingThisArrangementNow.error.required")
-    )
+  override def toString: String = "youHaveNotAddedAnyAssociatedEnterprises"
 }

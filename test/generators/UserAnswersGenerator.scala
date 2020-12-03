@@ -26,12 +26,14 @@ import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonU
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
 import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(YouHaveNotAddedAnyAssociatedEnterprisesPage.type, JsValue)] ::
     arbitrary[(GiveDetailsOfThisArrangementPage.type, JsValue)] ::
     arbitrary[(WhichNationalProvisionsIsThisArrangementBasedOnPage.type, JsValue)] ::
     arbitrary[(WhatIsTheExpectedValueOfThisArrangementPage.type, JsValue)] ::

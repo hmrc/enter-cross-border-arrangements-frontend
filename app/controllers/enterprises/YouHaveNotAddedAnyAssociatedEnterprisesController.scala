@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.arrangement
+package controllers.enterprises
 
 import controllers.actions._
-import forms.arrangement.WhyAreYouReportingThisArrangementNowFormProvider
-
-import javax.inject.Inject
+import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import models.Mode
-import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import navigation.Navigator
-import pages.arrangement.WhyAreYouReportingThisArrangementNowPage
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,26 +30,27 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhyAreYouReportingThisArrangementNowController @Inject()(
+class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: WhyAreYouReportingThisArrangementNowFormProvider,
+    formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhyAreYouReportingThisArrangementNowPage) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(YouHaveNotAddedAnyAssociatedEnterprisesPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,10 +58,10 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios"  -> WhyAreYouReportingThisArrangementNow.radios(preparedForm)
+        "radios"  -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm)
       )
 
-      renderer.render("whyAreYouReportingThisArrangementNow.njk", json).map(Ok(_))
+      renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -74,16 +73,16 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> WhyAreYouReportingThisArrangementNow.radios(formWithErrors)
+            "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors)
           )
 
-          renderer.render("whyAreYouReportingThisArrangementNow.njk", json).map(BadRequest(_))
+          renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyAreYouReportingThisArrangementNowPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhyAreYouReportingThisArrangementNowPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, mode, updatedAnswers))
       )
   }
 }
