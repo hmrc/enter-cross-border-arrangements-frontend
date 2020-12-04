@@ -16,14 +16,15 @@
 
 package generators
 
-import models._
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement._
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -37,6 +38,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[UpdateTaxpayerPage.type]
         value <- arbitrary[UpdateTaxpayer].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprisesUserAnswersEntry: Arbitrary[(YouHaveNotAddedAnyAssociatedEnterprisesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[YouHaveNotAddedAnyAssociatedEnterprisesPage.type]
+        value <- arbitrary[YouHaveNotAddedAnyAssociatedEnterprises].map(Json.toJson(_))
       } yield (page, value)
     }
 

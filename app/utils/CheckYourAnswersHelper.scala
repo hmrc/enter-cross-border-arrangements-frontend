@@ -26,15 +26,14 @@ import models.{CheckMode, UserAnswers}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
-import pages.taxpayer.UpdateTaxpayerPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.rows.{ArrangementRows, IndividualRows}
+import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows {
+  extends IndividualRows with ArrangementRows with EnterpriseRows {
 
   def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
     answer =>

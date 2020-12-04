@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.arrangement
+package controllers.enterprises
 
 import base.SpecBase
-import forms.arrangement.WhyAreYouReportingThisArrangementNowFormProvider
+import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import matchers.JsonMatchers
-import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.arrangement.WhyAreYouReportingThisArrangementNowPage
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -38,16 +38,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val whyAreYouReportingThisArrangementNowRoute = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(NormalMode).url
+  lazy val youHaveNotAddedAnyAssociatedEnterprisesRoute = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode).url
 
-  val formProvider = new WhyAreYouReportingThisArrangementNowFormProvider()
+  val formProvider = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()
   val form = formProvider()
 
-  "WhyAreYouReportingThisArrangementNow Controller" - {
+  "YouHaveNotAddedAnyAssociatedEnterprises Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +55,7 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, whyAreYouReportingThisArrangementNowRoute)
+      val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,10 +68,10 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> WhyAreYouReportingThisArrangementNow.radios(form)
+        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +82,9 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhyAreYouReportingThisArrangementNowPage, WhyAreYouReportingThisArrangementNow.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, whyAreYouReportingThisArrangementNowRoute)
+      val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,15 +94,15 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> WhyAreYouReportingThisArrangementNow.values.head.toString))
+      val filledForm = form.bind(Map("value" -> YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> WhyAreYouReportingThisArrangementNow.radios(filledForm)
+        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -123,8 +123,8 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
           .build()
 
       val request =
-        FakeRequest(POST, whyAreYouReportingThisArrangementNowRoute)
-          .withFormUrlEncodedBody(("value", WhyAreYouReportingThisArrangementNow.values.head.toString))
+        FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute)
+          .withFormUrlEncodedBody(("value", YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
 
       val result = route(application, request).value
 
@@ -141,7 +141,7 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whyAreYouReportingThisArrangementNowRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request = FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -155,25 +155,11 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> WhyAreYouReportingThisArrangementNow.radios(boundForm)
+        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, whyAreYouReportingThisArrangementNowRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -183,8 +169,8 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, whyAreYouReportingThisArrangementNowRoute)
-          .withFormUrlEncodedBody(("value", WhyAreYouReportingThisArrangementNow.values.head.toString))
+        FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute)
+          .withFormUrlEncodedBody(("value", YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
 
       val result = route(application, request).value
 

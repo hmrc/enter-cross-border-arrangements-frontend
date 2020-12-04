@@ -21,11 +21,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
-import pages.hallmarks.{HallmarkAPage, HallmarkBPage, HallmarkC1Page, HallmarkCPage, HallmarkCategoriesPage, HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage, HallmarkEPage, MainBenefitTestPage}
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IsIndividualAddressKnownPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
-import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
+import pages.arrangement._
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.hallmarks._
+import pages.individual._
+import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.libs.json.{JsValue, Json}
 
@@ -34,6 +34,7 @@ trait UserAnswersGenerator extends TryValues {
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(UpdateTaxpayerPage.type, JsValue)] ::
+    arbitrary[(YouHaveNotAddedAnyAssociatedEnterprisesPage.type, JsValue)] ::
     arbitrary[(GiveDetailsOfThisArrangementPage.type, JsValue)] ::
     arbitrary[(WhichNationalProvisionsIsThisArrangementBasedOnPage.type, JsValue)] ::
     arbitrary[(WhatIsTheExpectedValueOfThisArrangementPage.type, JsValue)] ::

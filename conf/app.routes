@@ -290,3 +290,8 @@ GET        /taxpayers/update                               controllers.taxpayer.
 POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
 
+
+GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
+POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
+GET        /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = CheckMode)
+POST       /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = CheckMode)
