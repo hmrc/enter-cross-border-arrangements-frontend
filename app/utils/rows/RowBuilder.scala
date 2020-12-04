@@ -92,8 +92,8 @@ trait RowBuilder {
     }
   }
 
-  private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100, ellipsis: String = "...") = {
-    val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + ellipsis else text
+  private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
+    val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"${label}"
   }
 
