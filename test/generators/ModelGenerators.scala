@@ -25,6 +25,12 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitrarySelectAnyTaxpayersThisEnterpriseIsAssociatedWith: Arbitrary[SelectAnyTaxpayersThisEnterpriseIsAssociatedWith] =
+    Arbitrary {
+      Gen.oneOf(SelectAnyTaxpayersThisEnterpriseIsAssociatedWith.values.toSeq)
+    }
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprises: Arbitrary[YouHaveNotAddedAnyAssociatedEnterprises] =
   implicit lazy val arbitraryUpdateTaxpayer: Arbitrary[UpdateTaxpayer] =
     Arbitrary {
       Gen.oneOf(UpdateTaxpayer.values.toSeq)

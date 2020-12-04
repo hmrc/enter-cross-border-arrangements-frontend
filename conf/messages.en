@@ -568,6 +568,11 @@ giveDetailsOfThisArrangement.hint2 = If this will take more than 15 minutes to w
 giveDetailsOfThisArrangement.checkYourAnswersLabel = Description
 giveDetailsOfThisArrangement.error.required = Provide arrangement details
 
+arrangementCheckYourAnswers.heading = Check your answers
+
+IDType.individual = Individual
+IDType.organisation = Organisation
+
 updateTaxpayer.title = Your taxpayers
 updateTaxpayer.heading = You have not added any taxpayers
 updateTaxpayer.h2 = Do you want to add a taxpayer?
@@ -576,4 +581,8 @@ updateTaxpayer.later = Yes, add later
 updateTaxpayer.no = No
 updateTaxpayer.error.required = Select to add a taxpayer now, later or not at all
 
-arrangementCheckYourAnswers.heading = Check your answers
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
+

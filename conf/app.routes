@@ -283,6 +283,12 @@ POST       /arrangement/details                        controllers.arrangement.G
 GET        /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = CheckMode)
 
+# ASSOCIATED ENTERPRISES
+
+GET        /associated-enterprise/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = NormalMode)
+POST       /associated-enterprise/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = NormalMode)
+GET        /associated-enterprise/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = CheckMode)
+POST       /associated-enterprise/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = CheckMode)
 
 # TAXPAYER ROUTES
 
