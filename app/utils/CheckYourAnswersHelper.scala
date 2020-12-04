@@ -26,15 +26,28 @@ import models.{CheckMode, UserAnswers}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
-import pages.taxpayer.UpdateTaxpayerPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows.{ArrangementRows, IndividualRows}
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows {
+class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages) extends IndividualRows with ArrangementRows {
+
+  def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"selectType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
     answer =>

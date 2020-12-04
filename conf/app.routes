@@ -289,4 +289,7 @@ POST       /arrangement/change-details                  controllers.arrangement.
 GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
-
+GET        /taxpayers/choose-type                        controllers.SelectTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayers/choose-type                        controllers.SelectTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/change-choose-type                 controllers.SelectTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /taxpayers/change-choose-type                 controllers.SelectTypeController.onSubmit(mode: Mode = CheckMode)

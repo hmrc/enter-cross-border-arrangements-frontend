@@ -19,6 +19,7 @@ package navigation
 import controllers.routes
 import helpers.JourneyHelpers.{currentIndexInsideLoop, incrementIndexIndividual, incrementIndexOrganisation}
 import javax.inject.{Inject, Singleton}
+import models.SelectType.{Individual, Organisation}
 import models._
 import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1.{C1bi, C1c, C1d}
@@ -26,12 +27,14 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, Cat
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
+import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
 import pages.hallmarks._
 import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualAddressPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IndividualSelectAddressPage, IndividualUkPostcodePage, IsIndividualAddressKnownPage, IsIndividualAddressUkPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForNonUKIndividualPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
+import pages.taxpayer.UpdateTaxpayerPage
 
 @Singleton
 class Navigator @Inject()() {
@@ -92,6 +95,9 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+
+    case UpdateTaxpayerPage => updateTaxpayerRoutes(NormalMode)
+    case SelectTypePage => selectTypeRoutes(NormalMode)
 
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
@@ -264,6 +270,18 @@ class Navigator @Inject()() {
          controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
      }
+
+  private def updateTaxpayerRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(UpdateTaxpayerPage) map {
+      case Now => controllers.routes.SelectTypeController.onPageLoad(mode)
+      case Later | No => controllers.routes.IndexController.onPageLoad() // TODO: Link to disclose type page when ready
+    }
+
+  private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(SelectTypePage) map {
+      case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
+      case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
+    }
 
   private def isIndividualPlaceOfBirthKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {
