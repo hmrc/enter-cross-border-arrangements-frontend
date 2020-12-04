@@ -51,6 +51,21 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
   }
 
+  def associatedEnterpriseType: Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"associatedEnterpriseType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"associatedEnterpriseType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"associatedEnterpriseType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def isAssociatedEnterpriseAffected: Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage) map {
     answer =>
       Row(
