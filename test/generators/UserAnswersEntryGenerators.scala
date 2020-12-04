@@ -19,6 +19,7 @@ package generators
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks._
+import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -26,9 +27,18 @@ import pages.arrangement._
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.taxpayer.UpdateTaxpayerPage
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryUpdateTaxpayerUserAnswersEntry: Arbitrary[(UpdateTaxpayerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[UpdateTaxpayerPage.type]
+        value <- arbitrary[UpdateTaxpayer].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryGiveDetailsOfThisArrangementUserAnswersEntry: Arbitrary[(GiveDetailsOfThisArrangementPage.type, JsValue)] =
     Arbitrary {

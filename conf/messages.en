@@ -568,3 +568,10 @@ giveDetailsOfThisArrangement.hint2 = If this will take more than 15 minutes to w
 giveDetailsOfThisArrangement.checkYourAnswersLabel = giveDetailsOfThisArrangement
 giveDetailsOfThisArrangement.error.required = Provide arrangement details
 
+updateTaxpayer.title = Your taxpayers
+updateTaxpayer.heading = You have not added any taxpayers
+updateTaxpayer.h2 = Do you want to add a taxpayer?
+updateTaxpayer.now = Yes, add now
+updateTaxpayer.later = Yes, add later
+updateTaxpayer.no = No
+updateTaxpayer.error.required = Select to add a taxpayer now, later or not at all

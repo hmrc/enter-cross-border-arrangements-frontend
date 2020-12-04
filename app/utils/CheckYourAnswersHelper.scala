@@ -26,14 +26,14 @@ import models.{CheckMode, UserAnswers}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
+import pages.taxpayer.UpdateTaxpayerPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows.IndividualRows
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows {
+class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages) extends IndividualRows {
 
   def giveDetailsOfThisArrangement: Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage) map {
     answer =>
