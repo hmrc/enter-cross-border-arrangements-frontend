@@ -27,6 +27,9 @@ import pages.taxpayer.UpdateTaxpayerPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
+    Arbitrary(AssociatedEnterpriseTypePage)
+
   implicit lazy val arbitrarySelectTypePage: Arbitrary[SelectTypePage.type] =
     Arbitrary(SelectTypePage)
 

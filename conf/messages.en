@@ -579,7 +579,7 @@ updateTaxpayer.error.required = Select to add a taxpayer now, later or not at al
 isAssociatedEnterpriseAffected.title = Is this associated enterprise affected by the arrangement?
 isAssociatedEnterpriseAffected.heading = Is {0} also affected by this arrangement?
 isAssociatedEnterpriseAffected.hint = An associated enterprise may be affected by the arrangement if, for example, it is the counterparty to a transaction.
-isAssociatedEnterpriseAffected.checkYourAnswersLabel = isAssociatedEnterpriseAffected
+isAssociatedEnterpriseAffected.checkYourAnswersLabel = Are they affected by the arrangement?
 isAssociatedEnterpriseAffected.error.required = Select Yes if the associated enterprise is also affected by the arrangement
 
 arrangementCheckYourAnswers.heading = Check your answers
@@ -598,3 +598,14 @@ selectType.organisation = Organisation
 selectType.individual = Individual
 selectType.checkYourAnswersLabel = Is this an organisation or an individual?
 selectType.error.required = Select the type of taxpayer
+
+
+associatedEnterpriseCheckYourAnswers.title = Check your answers
+associatedEnterpriseCheckYourAnswers.heading = Check your answers
+
+associatedEnterpriseType.title = Is this an organisation or an individual?
+associatedEnterpriseType.heading = Is this an organisation or an individual?
+associatedEnterpriseType.organisation = Organisation
+associatedEnterpriseType.individual = Individual
+associatedEnterpriseType.checkYourAnswersLabel = associatedEnterprisesType
+associatedEnterpriseType.error.required = Select yes if associatedEnterprisesType

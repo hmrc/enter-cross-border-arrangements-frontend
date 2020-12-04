@@ -43,10 +43,10 @@ class CheckYourAnswersOrganisationController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(OrganisationLoopPage) match {
-        case Some(taxResidentCountriesLoop) =>
+        case Some(_) =>
           val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
           val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
-          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary(taxResidentCountriesLoop)
+          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary
 
           renderer.render(
             "organisation/check-your-answers-organisation.njk",

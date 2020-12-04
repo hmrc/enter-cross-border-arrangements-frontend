@@ -304,3 +304,10 @@ GET        /associated-enterprises/affected-by             controllers.IsAssocia
 POST       /associated-enterprises/affected-by             controllers.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = NormalMode)
 GET        /associated-enterprises/change-affected-by      controllers.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by      controllers.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /associated-enterprises/type                    controllers.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /associated-enterprises/type                    controllers.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /associated-enterprises/change-type             controllers.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /associated-enterprises/change-type             controllers.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
