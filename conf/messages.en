@@ -579,6 +579,12 @@ updateTaxpayer.later = Yes, add later
 updateTaxpayer.no = No
 updateTaxpayer.error.required = Select to add a taxpayer now, later or not at all
 
+isAssociatedEnterpriseAffected.title = Is this associated enterprise affected by the arrangement?
+isAssociatedEnterpriseAffected.heading = Is {0} also affected by this arrangement?
+isAssociatedEnterpriseAffected.hint = An associated enterprise may be affected by the arrangement if, for example, it is the counterparty to a transaction.
+isAssociatedEnterpriseAffected.checkYourAnswersLabel = isAssociatedEnterpriseAffected
+isAssociatedEnterpriseAffected.error.required = Select Yes if the associated enterprise is also affected by the arrangement
+
 arrangementCheckYourAnswers.heading = Check your answers
 
 youHaveNotAddedAnyAssociatedEnterprises.title = You have not added any associated enterprises
