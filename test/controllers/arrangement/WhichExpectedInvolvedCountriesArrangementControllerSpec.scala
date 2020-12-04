@@ -70,7 +70,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
         "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(form)
       )
 
-      templateCaptor.getValue mustEqual "whichExpectedInvolvedCountriesArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -100,7 +100,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
         "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "whichExpectedInvolvedCountriesArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -156,7 +156,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
         "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "whichExpectedInvolvedCountriesArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

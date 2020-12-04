@@ -69,7 +69,7 @@ class WhatIsThisArrangementCalledControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsThisArrangementCalled.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsThisArrangementCalled.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -99,7 +99,7 @@ class WhatIsThisArrangementCalledControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsThisArrangementCalled.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsThisArrangementCalled.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -153,7 +153,7 @@ class WhatIsThisArrangementCalledControllerSpec extends SpecBase with MockitoSug
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsThisArrangementCalled.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsThisArrangementCalled.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

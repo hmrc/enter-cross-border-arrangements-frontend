@@ -59,7 +59,7 @@ class GiveDetailsOfThisArrangementController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("giveDetailsOfThisArrangement.njk", json).map(Ok(_))
+      renderer.render("arrangement/giveDetailsOfThisArrangement.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -73,7 +73,7 @@ class GiveDetailsOfThisArrangementController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("giveDetailsOfThisArrangement.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/giveDetailsOfThisArrangement.njk", json).map(BadRequest(_))
         },
         value =>
           for {

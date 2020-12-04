@@ -67,7 +67,7 @@ class WhatIsTheImplementationDateController @Inject()(
         "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
       )
 
-      renderer.render("whatIsTheImplementationDate.njk", json).map(Ok(_))
+      renderer.render("arrangement/whatIsTheImplementationDate.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -86,7 +86,7 @@ class WhatIsTheImplementationDateController @Inject()(
             "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
           )
 
-          renderer.render("whatIsTheImplementationDate.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/whatIsTheImplementationDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {

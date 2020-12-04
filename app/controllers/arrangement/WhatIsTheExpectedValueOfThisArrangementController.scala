@@ -67,7 +67,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
           request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage).map(_.currency),currencies)
       )
 
-      renderer.render("whatIsTheExpectedValueOfThisArrangement.njk", json).map(Ok(_))
+      renderer.render("arrangement/whatIsTheExpectedValueOfThisArrangement.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -82,7 +82,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
             "currencies" -> currencyJsonList(formWithErrors.data.get("currency"),currencies)
           )
 
-          renderer.render("whatIsTheExpectedValueOfThisArrangement.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/whatIsTheExpectedValueOfThisArrangement.njk", json).map(BadRequest(_))
         },
         value =>
           for {

@@ -59,7 +59,7 @@ class WhatIsThisArrangementCalledController @Inject()(
         "mode" -> mode
       )
 
-      renderer.render("whatIsThisArrangementCalled.njk", json).map(Ok(_))
+      renderer.render("arrangement/whatIsThisArrangementCalled.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
@@ -73,7 +73,7 @@ class WhatIsThisArrangementCalledController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("whatIsThisArrangementCalled.njk", json).map(BadRequest(_))
+          renderer.render("arrangement/whatIsThisArrangementCalled.njk", json).map(BadRequest(_))
         },
         value => {
 

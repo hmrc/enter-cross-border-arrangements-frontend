@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.individual
 
 import base.SpecBase
 import models.{Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
@@ -65,7 +65,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
 
     val json: JsObject = jsonCaptor.getValue
     val list = (json \ "countrySummary" ).toString
-println(list)
+
     templateCaptor.getValue mustEqual "individual/check-your-answers.njk"
     assertFunction(list)
 

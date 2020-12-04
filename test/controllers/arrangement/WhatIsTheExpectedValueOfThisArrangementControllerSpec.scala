@@ -74,7 +74,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheExpectedValueOfThisArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheExpectedValueOfThisArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -115,7 +115,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheExpectedValueOfThisArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheExpectedValueOfThisArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -171,7 +171,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
         "mode"   -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsTheExpectedValueOfThisArrangement.njk"
+      templateCaptor.getValue mustEqual "arrangement/whatIsTheExpectedValueOfThisArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()

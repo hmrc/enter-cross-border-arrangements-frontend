@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
-
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+package controllers.individual
 
 import base.SpecBase
+import controllers.RowJsonReads
 import models.{Address, Country, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -33,6 +31,8 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {

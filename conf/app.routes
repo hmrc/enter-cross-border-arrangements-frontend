@@ -11,6 +11,7 @@ GET        /this-service-has-been-reset                 controllers.SessionExpir
 GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
 GET        /organisation/check-answers                  controllers.organisation.CheckYourAnswersOrganisationController.onPageLoad
 GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
+GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
@@ -261,7 +262,6 @@ GET        /arrangement/reporting-reason                        controllers.arra
 POST       /arrangement/reporting-reason                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = NormalMode)
 GET        /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-reporting-reason                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(mode: Mode = CheckMode)
-
 
 GET        /arrangement/choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /arrangement/choose-countries-involved             controllers.arrangement.WhichExpectedInvolvedCountriesArrangementController.onSubmit(mode: Mode = NormalMode)

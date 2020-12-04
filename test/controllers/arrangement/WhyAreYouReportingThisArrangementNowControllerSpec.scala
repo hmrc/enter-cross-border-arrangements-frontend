@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.arrangement
 
 import base.SpecBase
 import forms.arrangement.WhyAreYouReportingThisArrangementNowFormProvider
@@ -70,7 +70,7 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
         "radios" -> WhyAreYouReportingThisArrangementNow.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
         "radios" -> WhyAreYouReportingThisArrangementNow.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with M
         "radios" -> WhyAreYouReportingThisArrangementNow.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "whyAreYouReportingThisArrangementNow.njk"
+      templateCaptor.getValue mustEqual "arrangement/whyAreYouReportingThisArrangementNow.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

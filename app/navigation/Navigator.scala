@@ -100,6 +100,7 @@ class Navigator @Inject()() {
     case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode))
     case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode))
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
+    case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
     case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
@@ -161,13 +162,14 @@ class Navigator @Inject()() {
     case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
     case EmailAddressForIndividualPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
 
-    case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode))
-    case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode))
+    case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case DoYouKnowTheReasonToReportArrangementNowPage => doYouKnowTheReasonToReportArrangementNowRoutes(CheckMode)
-    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(CheckMode))
-    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onSubmit(CheckMode))
-    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode))
-    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode))
+    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 
@@ -366,7 +368,8 @@ class Navigator @Inject()() {
   private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
-      case false => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode) //ToDo redirect to correct page when ready
+      case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode)
+      case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
     }
   }
 
