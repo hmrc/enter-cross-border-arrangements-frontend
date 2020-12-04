@@ -32,20 +32,23 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
-                text: messages('selectType.title'),
+                text: messages('selectType.heading'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
             },
             items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.saveAndContinue"),
+            attributes: {
+               "id": "submit"
+            }
           }) }}
 
         </form>

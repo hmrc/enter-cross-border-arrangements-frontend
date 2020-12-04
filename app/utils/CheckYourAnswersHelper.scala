@@ -37,12 +37,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
     answer =>
       Row(
-        key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectType.$answer"),
+        key = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(msg"selectType.$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
+            content = msg"site.edit",
+            href = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
           )
         )
@@ -52,12 +52,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   def giveDetailsOfThisArrangement: Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage) map {
     answer =>
       Row(
-        key     = Key(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
+        key = Key(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode).url,
+            content = msg"site.edit",
+            href = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel"))
           )
         )
@@ -67,12 +67,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   def whichNationalProvisionsIsThisArrangementBasedOn: Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) map {
     answer =>
       Row(
-        key     = Key(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
+        key = Key(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode).url,
+            content = msg"site.edit",
+            href = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel"))
           )
         )
@@ -82,194 +82,197 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   def whatIsTheExpectedValueOfThisArrangement: Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) map {
     answer =>
       Row(
-        key     = Key(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.currency} ${answer.amount}"),
+        key = Key(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"${answer.currency} ${answer.amount}"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(CheckMode).url,
+            content = msg"site.edit",
+            href = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows {
+  class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
+    extends IndividualRows with ArrangementRows {
 
-  def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatIsTheImplementationDate.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Literal(answer.format(dateFormatter))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheImplementationDate.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whatIsThisArrangementCalled: Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatIsThisArrangementCalled.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsThisArrangementCalled.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectAddress.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  val d1OtherVisibleCharacters = 100
-  val ellipsis = " ..."
-
-  def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
-    answer => userAnswers.get(HallmarkD1Page) match {
-      case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
-        Some(Row(
-          key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-          value = Value(lit"${
-            if (answer.length > 100) answer.take(d1OtherVisibleCharacters) + ellipsis else answer
-          }"),
+    def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
+      answer =>
+        Row(
+          key = Key(msg"whatIsTheImplementationDate.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(Literal(answer.format(dateFormatter))),
           actions = List(
             Action(
               content = msg"site.edit",
-              href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
-              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
+              href = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheImplementationDate.checkYourAnswersLabel"))
             )
           )
-        ))
-      case _ => None
+        )
     }
-  }
 
-  def mainBenefitPredicate[A](set: Option[Set[A]], elem: A): Boolean = {
-    set match {
-      case Some(hm) => hm.contains(elem)
-      case None => false
-    }
-  }
-
-  def mainBenefitTest: Option[Row] = if(
-    mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1bi) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1c) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1d) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryA) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryB)) {
-
-    userAnswers.get(MainBenefitTestPage) map {
+    def whatIsThisArrangementCalled: Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage) map {
       answer =>
         Row(
-          key     = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
-          value   = Value(yesOrNo(answer)),
+          key = Key(msg"whatIsThisArrangementCalled.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(lit"$answer"),
           actions = List(
             Action(
-              content            = msg"site.edit",
-              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode).url,
-              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
+              content = msg"site.edit",
+              href = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsThisArrangementCalled.checkYourAnswersLabel"))
             )
           )
         )
     }
-  } else{
-    None
-  }
 
-  def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
-    answer =>
+    def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+      answer =>
+        Row(
+          key = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(msg"selectAddress.$answer"),
+          actions = List(
+            Action(
+              content = msg"site.edit",
+              href = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
+            )
+          )
+        )
+    }
+
+    def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
+      answer =>
+        Row(
+          key = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(lit"$answer"),
+          actions = List(
+            Action(
+              content = msg"site.edit",
+              href = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
+            )
+          )
+        )
+    }
+
+    val d1OtherVisibleCharacters = 100
+    val ellipsis = " ..."
+
+    def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
+      answer =>
+        userAnswers.get(HallmarkD1Page) match {
+          case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
+            Some(Row(
+              key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+              value = Value(lit"${
+                if (answer.length > 100) answer.take(d1OtherVisibleCharacters) + ellipsis else answer
+              }"),
+              actions = List(
+                Action(
+                  content = msg"site.edit",
+                  href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
+                  visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
+                )
+              )
+            ))
+          case _ => None
+        }
+    }
+
+    def mainBenefitPredicate[A](set: Option[Set[A]], elem: A): Boolean = {
+      set match {
+        case Some(hm) => hm.contains(elem)
+        case None => false
+      }
+    }
+
+    def mainBenefitTest: Option[Row] = if (
+      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1bi) ||
+        mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1c) ||
+        mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1d) ||
+        mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryA) ||
+        mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryB)) {
+
+      userAnswers.get(MainBenefitTestPage) map {
+        answer =>
+          Row(
+            key = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
+            value = Value(yesOrNo(answer)),
+            actions = List(
+              Action(
+                content = msg"site.edit",
+                href = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode).url,
+                visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
+              )
+            )
+          )
+      }
+    } else {
+      None
+    }
+
+    def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
+      answer =>
+        Row(
+          key = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
+          value = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
+          actions = List(
+            Action(
+              content = msg"site.edit",
+              href = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
+            )
+          )
+        )
+    }
+
+    def buildHallmarksRow(ua: UserAnswers): Row = {
+
+      val hallmarkCPage = ua.get(HallmarkCPage) match {
+        case Some(set) if set.contains(C1) && set.size == 1 => None
+        case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
+        case hallmarkSet => hallmarkSet
+      }
+
+      val hallmarkDPage = ua.get(HallmarkDPage) match {
+        case Some(set) if set.contains(D1) && set.size == 1 => None
+        case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
+        case hallmarkSet => hallmarkSet
+      }
+
+      val hallmarkPages = Seq(
+        ua.get(HallmarkAPage),
+        ua.get(HallmarkBPage),
+        ua.get(HallmarkC1Page),
+        ua.get(HallmarkD1Page),
+        hallmarkCPage,
+        hallmarkDPage,
+        ua.get(HallmarkEPage)
+      )
+
+      val selectedHallmarkParts = hallmarkPages.collect { case Some(value) => value }
+
+      val hallmarksList = for {
+        selectedHallmark <- selectedHallmarkParts
+      } yield {
+        selectedHallmark.map(_.toString).toList.sorted.map(hallmark => msg"$hallmark".resolve).mkString(", ")
+      }
+
       Row(
-        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
-        value   = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
+        key = Key(msg"checkYourAnswers.selectedHallmarks.label"),
+        value = Value(msg"${hallmarksList.mkString(", ")}"),
         actions = List(
           Action(
-            content            = msg"site.edit",
-            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
+            content = msg"site.edit",
+            href = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
           )
         )
       )
-  }
 
-  def buildHallmarksRow(ua: UserAnswers): Row = {
-
-    val hallmarkCPage = ua.get(HallmarkCPage)  match {
-      case Some(set) if set.contains(C1) && set.size == 1 => None
-      case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
-      case hallmarkSet => hallmarkSet
     }
-
-    val hallmarkDPage = ua.get(HallmarkDPage)  match {
-      case Some(set) if set.contains(D1) && set.size == 1 => None
-      case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
-      case hallmarkSet => hallmarkSet
-    }
-
-    val hallmarkPages = Seq(
-      ua.get(HallmarkAPage),
-      ua.get(HallmarkBPage),
-      ua.get(HallmarkC1Page),
-      ua.get(HallmarkD1Page),
-      hallmarkCPage,
-      hallmarkDPage,
-      ua.get(HallmarkEPage)
-    )
-
-    val selectedHallmarkParts = hallmarkPages.collect{ case Some(value) => value }
-
-    val hallmarksList = for {
-      selectedHallmark <- selectedHallmarkParts
-    } yield {
-      selectedHallmark.map(_.toString).toList.sorted.map(hallmark => msg"$hallmark".resolve).mkString(", ")
-    }
-
-    Row(
-      key     = Key(msg"checkYourAnswers.selectedHallmarks.label"),
-      value   = Value(msg"${hallmarksList.mkString(", ")}"),
-      actions = List(
-        Action(
-          content            = msg"site.edit",
-          href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
-          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
-        )
-      )
-    )
 
   }
 

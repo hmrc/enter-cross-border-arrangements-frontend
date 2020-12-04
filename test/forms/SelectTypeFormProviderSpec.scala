@@ -24,9 +24,9 @@ class SelectTypeFormProviderSpec extends OptionFieldBehaviours {
 
   val form = new SelectTypeFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
     val requiredKey = "selectType.error.required"
 
     behave like optionsField[SelectType](

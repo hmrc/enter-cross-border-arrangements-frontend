@@ -26,6 +26,6 @@ class SelectTypeFormProvider @Inject() extends Mappings {
 
   def apply(): Form[SelectType] =
     Form(
-      "value" -> enumerable[SelectType]("selectType.error.required")
+      "confirm" -> enumerable[SelectType]("selectType.error.required")
     )
 }
