@@ -18,8 +18,8 @@ package controllers.enterprises
 
 import controllers.actions._
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
-import models.Mode
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +39,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -64,7 +63,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
       renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -78,11 +77,16 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
           renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, mode, updatedAnswers))
+        }
       )
   }
 }
