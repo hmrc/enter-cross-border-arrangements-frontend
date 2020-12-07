@@ -283,15 +283,20 @@ POST       /arrangement/details                        controllers.arrangement.G
 GET        /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /arrangement/change-details                  controllers.arrangement.GiveDetailsOfThisArrangementController.onSubmit(mode: Mode = CheckMode)
 
-
 # TAXPAYER ROUTES
 
 GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
+GET        /taxpayers/choose-type                        controllers.SelectTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayers/choose-type                        controllers.SelectTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/change-choose-type                 controllers.SelectTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /taxpayers/change-choose-type                 controllers.SelectTypeController.onSubmit(mode: Mode = CheckMode)
 
+# ASSOCIATED ENTERPRISES
 
 GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
 POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
 GET        /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = CheckMode)
+

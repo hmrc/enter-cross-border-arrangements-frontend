@@ -585,3 +585,10 @@ youHaveNotAddedAnyAssociatedEnterprises.yesAddLater = Yes, add later
 youHaveNotAddedAnyAssociatedEnterprises.no = No
 youHaveNotAddedAnyAssociatedEnterprises.checkYourAnswersLabel = Associated enterprises
 youHaveNotAddedAnyAssociatedEnterprises.error.required = Select to add an associated enterprise now, later or not at all
+
+selectType.title = Is this an organisation or an individual?
+selectType.heading = Is this an organisation or an individual?
+selectType.organisation = Organisation
+selectType.individual = Individual
+selectType.checkYourAnswersLabel = Is this an organisation or an individual?
+selectType.error.required = Select the type of taxpayer
