@@ -584,4 +584,4 @@ youHaveNotAddedAnyAssociatedEnterprises.yesAddNow = Yes, add now
 youHaveNotAddedAnyAssociatedEnterprises.yesAddLater = Yes, add later
 youHaveNotAddedAnyAssociatedEnterprises.no = No
 youHaveNotAddedAnyAssociatedEnterprises.checkYourAnswersLabel = Associated enterprises
-youHaveNotAddedAnyAssociatedEnterprises.error.required = Select to add an associated enterprise, now, later, or not at all
+youHaveNotAddedAnyAssociatedEnterprises.error.required = Select to add an associated enterprise now, later or not at all

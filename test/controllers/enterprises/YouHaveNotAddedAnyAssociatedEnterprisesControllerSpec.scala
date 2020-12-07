@@ -164,21 +164,5 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       application.stop()
     }
 
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute)
-          .withFormUrlEncodedBody(("value", YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
   }
 }
