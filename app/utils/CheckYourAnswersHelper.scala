@@ -67,76 +67,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
   def isAssociatedEnterpriseAffected: Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage) map {
     answer =>
-      Row(
-        key     = Key(msg"isAssociatedEnterpriseAffected.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isAssociatedEnterpriseAffected.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def giveDetailsOfThisArrangement: Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"giveDetailsOfThisArrangement.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whichNationalProvisionsIsThisArrangementBasedOn: Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichNationalProvisionsIsThisArrangementBasedOn.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whatIsTheExpectedValueOfThisArrangement: Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.currency} ${answer.amount}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whichExpectedInvolvedCountriesArrangement: Option[Row] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whichExpectedInvolvedCountriesArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"whichExpectedInvolvedCountriesArrangement.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whichExpectedInvolvedCountriesArrangement.checkYourAnswersLabel"))
-          )
-        )
+      toRow(
+        msgKey = "isAssociatedEnterpriseAffected",
+        content = yesOrNo(answer),
+        href = controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(CheckMode).url
       )
   }
 

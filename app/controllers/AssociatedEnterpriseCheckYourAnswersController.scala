@@ -50,7 +50,11 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       }
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
-        (organisationHelper.buildOrganisationDetails, organisationHelper.buildTaxResidencySummary)
+        (
+          helper.associatedEnterpriseType ++
+            organisationHelper.buildOrganisationDetails,
+          organisationHelper.buildTaxResidencySummary
+        )
       } else {
         (
           Seq(helper.individualName, helper.individualDateOfBirth).flatten ++
