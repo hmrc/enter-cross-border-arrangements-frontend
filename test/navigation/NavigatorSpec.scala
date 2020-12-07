@@ -28,6 +28,7 @@ import models.hallmarks.HallmarkD1._
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.arrangement._
@@ -796,12 +797,33 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, false)
+              answers
+                .remove(IsAssociatedEnterpriseAffectedPage)
+                .success.value
+                .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
                 .success.value
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
               .mustBe(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+        }
+      }
+
+      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
+        "Check your answers for associated enterprise page if in the associated enterprise journey" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IsAssociatedEnterpriseAffectedPage, true)
+                .success.value
+                .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
+                .success.value
+
+            navigator
+              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
         }
       }
 
@@ -1123,18 +1145,38 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
         }
       }
+
       "must go from Is the individuals resident for tax purposes in any other countries? page to " +
-        "Check your answers page if the answer is false" in {
+        "Check your answers for an Individual if the answer is false" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             val updatedAnswers =
-              answers.set(IsIndividualResidentForTaxOtherCountriesPage, false)
+              answers.remove(IsAssociatedEnterpriseAffectedPage)
+                .success.value
+                .set(IsIndividualResidentForTaxOtherCountriesPage, false)
                 .success.value
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
               .mustBe(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from Is the individuals resident for tax purposes in any other countries? page to " +
+        "Check your answers for associated enterprise page if in the associated enterprise journey" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsAssociatedEnterpriseAffectedPage, true)
+                .success.value
+                .set(IsIndividualResidentForTaxOtherCountriesPage, false)
+                .success.value
+
+            navigator
+              .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
         }
       }
 
@@ -1266,6 +1308,21 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, NormalMode, updatedAnswers)
               .mustBe(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Is *name* also affected by this arrangement?' page to " +
+        "'Check your answers' page in the associated enterprise journey" in {
+        forAll(arbitrary[UserAnswers], Gen.oneOf(Seq(true, false))) {
+          (answers, affectedPageAnswer) =>
+
+            val updatedAnswers =
+              answers.set(IsAssociatedEnterpriseAffectedPage, affectedPageAnswer)
+                .success.value
+
+            navigator
+              .nextPage(IsAssociatedEnterpriseAffectedPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
         }
       }
     }
