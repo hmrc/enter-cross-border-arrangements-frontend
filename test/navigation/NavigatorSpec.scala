@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.routes
 import generators.Generators
 import models.SelectType.{Individual, Organisation}
-import models.WhyAreYouReportingThisArrangementNow.Dac6701
 import models._
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
