@@ -19,12 +19,14 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
+import models.SelectType.{Individual, Organisation}
 import models.WhyAreYouReportingThisArrangementNow.Dac6701
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
+import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -32,6 +34,7 @@ import pages.arrangement._
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -336,6 +339,87 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
         }
       }
+
+      "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
+        "if 'Yes, add now is selected'" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(UpdateTaxpayerPage, Now)
+                .success.value
+
+            navigator
+              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.SelectTypeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
+        "if 'No, is selected'" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(UpdateTaxpayerPage, No)
+                .success.value
+
+            navigator
+              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
+        "if 'Yes, add later is selected'" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(UpdateTaxpayerPage, Later)
+                .success.value
+
+            navigator
+              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' page to 'What is the name of the organisation?' " +
+        "if 'organisation' is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(SelectTypePage, Organisation)
+                .success.value
+
+            navigator
+              .nextPage(SelectTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' page to 'What is their name?' " +
+        "if 'individual' is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(SelectTypePage, Individual)
+                .success.value
+
+            navigator
+              .nextPage(SelectTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
+        }
+      }
+
 
       "must go from What is their name? page to What is {0}'s date of birth?" in {
         forAll(arbitrary[UserAnswers]) {
@@ -1040,7 +1124,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
       "must go from Is the individuals resident for tax purposes in any other countries? page to " +
-        "??? page if the answer is false" in {
+        "Check your answers page if the answer is false" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -1111,7 +1195,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
-        "W'Which of these countries are expected to be involved in this arrangement?' page when the answer is No" in {
+        "'Which of these countries are expected to be involved in this arrangement?' page when the answer is No" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 

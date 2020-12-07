@@ -577,3 +577,10 @@ updateTaxpayer.no = No
 updateTaxpayer.error.required = Select to add a taxpayer now, later or not at all
 
 arrangementCheckYourAnswers.heading = Check your answers
+
+selectType.title = Is this an organisation or an individual?
+selectType.heading = Is this an organisation or an individual?
+selectType.organisation = Organisation
+selectType.individual = Individual
+selectType.checkYourAnswersLabel = Is this an organisation or an individual?
+selectType.error.required = Select the type of taxpayer
