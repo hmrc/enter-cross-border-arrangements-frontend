@@ -28,13 +28,17 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
+import models.{AssociatedEnterpriseType, _}
 import pages._
 import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.arrangement._
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
+import pages.individual._
+import pages.organisation._
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
 import pages.enterprises.{SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
@@ -412,6 +416,13 @@ class Navigator @Inject()() {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode)
       case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(AssociatedEnterpriseTypePage) map {
+      case AssociatedEnterpriseType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
+      case AssociatedEnterpriseType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
     }
   }
 

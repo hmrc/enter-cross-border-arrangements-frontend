@@ -624,8 +624,8 @@ associatedEnterpriseType.title = Is this an organisation or an individual?
 associatedEnterpriseType.heading = Is this an organisation or an individual?
 associatedEnterpriseType.organisation = Organisation
 associatedEnterpriseType.individual = Individual
-associatedEnterpriseType.checkYourAnswersLabel = associatedEnterprisesType
-associatedEnterpriseType.error.required = Select yes if associatedEnterprisesType
+associatedEnterpriseType.checkYourAnswersLabel = Organisation or individual
+associatedEnterpriseType.error.required = Select the type of taxpayer
 
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
