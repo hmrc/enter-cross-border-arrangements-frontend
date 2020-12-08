@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.{Mode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesStatusPage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,23 +57,11 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
-        case Some(list) =>
-          for {
-            intermediary <- list
-          } yield {
-            //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
-            //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
-            intermediary.nameAsString
-          }
-        case None => IndexedSeq.empty
-      }
-
       val json = Json.obj(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "intermediaryList" -> namesOfIntermediaries,
+        "intermediaryList" -> Json.toJson(toItemList(request.userAnswers, id)),
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
       )
 
@@ -83,29 +71,29 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyIntermediaries]): Call =
     navigator.routeMap(YouHaveNotAddedAnyIntermediariesPage)(checkRoute)(id)(value)(0)
 
+  private[intermediaries] def toItemList(userAnswers: UserAnswers, id: Int): IndexedSeq[ItemList] = userAnswers.get(IntermediaryLoopPage, id) match {
+    case Some(list) =>
+      for {
+        intermediary <- list
+      } yield {
+        val changeUrl = "#" // TODO correct the change url
+        val removeUrl = routes.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id, intermediary.intermediaryId).url
+        ItemList(intermediary.nameAsString, changeUrl, removeUrl)
+      }
+    case None => IndexedSeq.empty
+  }
+
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
-            case Some(list) =>
-              for {
-                intermediary <- list
-              } yield {
-                //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
-                //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
-                intermediary.nameAsString
-              }
-            case None => IndexedSeq.empty
-          }
-
           val json = Json.obj(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
-            "intermediaryList" -> namesOfIntermediaries,
+            "intermediaryList" -> Json.toJson(toItemList(request.userAnswers, id)),
             "radios" -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
           )
 

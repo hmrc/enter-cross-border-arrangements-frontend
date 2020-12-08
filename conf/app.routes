@@ -332,6 +332,9 @@ POST       /associated-enterprises/affected-by/:id             controllers.enter
 GET        /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(id: Int, mode: Mode = CheckMode)
 
+GET        /associated-enterprises/remove/:id/:itemId          controllers.enterprises.AreYouSureYouWantToRemoveEnterpriseController.onPageLoad(id: Int, itemId: String)
+POST       /associated-enterprises/remove/:id/:itemId          controllers.enterprises.AreYouSureYouWantToRemoveEnterpriseController.onSubmit(id: Int, itemId: String)
+
 # INTERMEDIARIES
 
 GET        /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(id: Int, mode: Mode = NormalMode)
@@ -366,6 +369,8 @@ POST       /intermediaries/change-exemption-known/:id           controllers.inte
 GET       /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad(id: Int)
 POST      /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
+GET        /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id: Int, itemId: String)
+POST       /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onSubmit(id: Int, itemId: String)
 
 # DISCLOSURE
 
@@ -610,3 +615,5 @@ POST       /others-affected/change-type/:id                      controllers.aff
 GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
 POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
+GET        /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id: Int, itemId: String)
+POST       /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onSubmit(id: Int, itemId: String)

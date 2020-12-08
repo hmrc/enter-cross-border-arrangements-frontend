@@ -28,11 +28,11 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
+import pages.reporter._
 import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
