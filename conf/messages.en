@@ -1161,3 +1161,7 @@ removeDisclosure.title = Are you sure you want to remove disclosure?
 removeDisclosure.heading = Are you sure you want to remove disclosure {0}?
 removeDisclosure.error.required = Select yes if you want to remove disclosure
 removeDisclosure.error.warning = This will permanently delete all the details you have provided relating to this disclosure.
+
+areYouSureYouWantToRemoveAffected.title = Are you sure you want to remove {0}?
+areYouSureYouWantToRemoveAffected.heading = Are you sure you want to remove {0}?
+areYouSureYouWantToRemoveAffected.error.required = Select yes if you want to remove this affected person
