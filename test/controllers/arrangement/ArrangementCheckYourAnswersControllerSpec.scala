@@ -19,8 +19,8 @@ package controllers.arrangement
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
-import models.{UserAnswers, WhyAreYouReportingThisArrangementNow}
+import models.UserAnswers
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}

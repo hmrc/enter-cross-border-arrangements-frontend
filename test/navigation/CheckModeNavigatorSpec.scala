@@ -184,9 +184,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       }
 
-      val x  = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
-
-
       "must go from What is their name? page to Check your answers page" in {
 
         assertRedirect(IndividualNamePage

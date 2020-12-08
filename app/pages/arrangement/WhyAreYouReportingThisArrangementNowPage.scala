@@ -16,7 +16,7 @@
 
 package pages.arrangement
 
-import models.WhyAreYouReportingThisArrangementNow
+import models.arrangement.WhyAreYouReportingThisArrangementNow
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

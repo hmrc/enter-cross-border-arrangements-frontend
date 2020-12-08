@@ -16,8 +16,8 @@
 
 package utils.rows
 
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
-import models.{CheckMode, WhyAreYouReportingThisArrangementNow}
+import models.CheckMode
+import models.arrangement.{WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import pages._
 import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row

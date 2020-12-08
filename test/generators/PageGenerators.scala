@@ -18,11 +18,11 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
+import pages.arrangement._
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import pages.hallmarks._
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IsIndividualAddressKnownPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
-import pages.arrangement.{WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage}
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.individual._
+import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
 
 trait PageGenerators {
@@ -32,6 +32,9 @@ trait PageGenerators {
 
   implicit lazy val arbitraryUpdateTaxpayerPage: Arbitrary[UpdateTaxpayerPage.type] =
     Arbitrary(UpdateTaxpayerPage)
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprisesPage: Arbitrary[YouHaveNotAddedAnyAssociatedEnterprisesPage.type] =
+    Arbitrary(YouHaveNotAddedAnyAssociatedEnterprisesPage)
 
   implicit lazy val arbitraryGiveDetailsOfThisArrangementPage: Arbitrary[GiveDetailsOfThisArrangementPage.type] =
     Arbitrary(GiveDetailsOfThisArrangementPage)

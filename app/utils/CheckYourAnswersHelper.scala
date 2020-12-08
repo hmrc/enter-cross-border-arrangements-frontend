@@ -30,10 +30,11 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.rows.{ArrangementRows, IndividualRows}
+import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows}
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages) extends IndividualRows with ArrangementRows {
-
+class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
+  extends IndividualRows with ArrangementRows with EnterpriseRows {
+    
   def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
     answer =>
       Row(

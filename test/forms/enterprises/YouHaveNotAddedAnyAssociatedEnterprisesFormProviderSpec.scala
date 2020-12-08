@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package forms.arrangement
+package forms.enterprises
 
 import forms.behaviours.OptionFieldBehaviours
-import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import play.api.data.FormError
 
-class WhyAreYouReportingThisArrangementNowFormProviderSpec extends OptionFieldBehaviours {
+class YouHaveNotAddedAnyAssociatedEnterprisesFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new WhyAreYouReportingThisArrangementNowFormProvider()()
+  val form = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "whyAreYouReportingThisArrangementNow.error.required"
+    val requiredKey = "youHaveNotAddedAnyAssociatedEnterprises.error.required"
 
-    behave like optionsField[WhyAreYouReportingThisArrangementNow](
+    behave like optionsField[YouHaveNotAddedAnyAssociatedEnterprises](
       form,
       fieldName,
-      validValues  = WhyAreYouReportingThisArrangementNow.values,
+      validValues  = YouHaveNotAddedAnyAssociatedEnterprises.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 
