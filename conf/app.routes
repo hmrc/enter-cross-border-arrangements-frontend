@@ -610,3 +610,5 @@ POST       /others-affected/change-type/:id                      controllers.aff
 GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
 POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
+GET        /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id: Int, itemId: String)
+POST       /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onSubmit(id: Int, itemId: String)
