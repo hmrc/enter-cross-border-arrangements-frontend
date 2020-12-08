@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.AssociatedEnterpriseTypeFormProvider
-import models.{AssociatedEnterpriseType, Mode}
+import models.{Mode, SelectType}
 import navigation.Navigator
 import pages.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,7 +57,7 @@ class AssociatedEnterpriseTypeController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> AssociatedEnterpriseType.radios(preparedForm)
+        "radios" -> SelectType.radios(preparedForm)
       )
 
       renderer.render("associatedEnterpriseType.njk", json).map(Ok(_))
@@ -72,7 +72,7 @@ class AssociatedEnterpriseTypeController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> AssociatedEnterpriseType.radios(formWithErrors)
+            "radios" -> SelectType.radios(formWithErrors)
           )
 
           renderer.render("associatedEnterpriseType.njk", json).map(BadRequest(_))

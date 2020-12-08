@@ -17,7 +17,8 @@
 package pages.individual
 
 import models.{Address, UserAnswers}
-import pages.{PostcodePage, QuestionPage, SelectedAddressLookupPage}
+import pages.organisation.PostcodePage
+import pages.{QuestionPage, SelectedAddressLookupPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try

@@ -600,12 +600,10 @@ selectType.checkYourAnswersLabel = Is this an organisation or an individual?
 selectType.error.required = Select the type of taxpayer
 
 
-associatedEnterpriseCheckYourAnswers.title = Check your answers
-associatedEnterpriseCheckYourAnswers.heading = Check your answers
+associatedEnterpriseCheckYourAnswers.title = Check your answers for associated enterprise details
+associatedEnterpriseCheckYourAnswers.heading = Check your answers for associated enterprise details
 
 associatedEnterpriseType.title = Is this an organisation or an individual?
 associatedEnterpriseType.heading = Is this an organisation or an individual?
-associatedEnterpriseType.organisation = Organisation
-associatedEnterpriseType.individual = Individual
 associatedEnterpriseType.checkYourAnswersLabel = Organisation or individual
-associatedEnterpriseType.error.required = Select the type of taxpayer
+associatedEnterpriseType.error.required = Select the type of associated enterprise

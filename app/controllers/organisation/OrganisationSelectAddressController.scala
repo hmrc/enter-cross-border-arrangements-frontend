@@ -20,10 +20,12 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
+
 import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{PostcodePage, SelectAddressPage, SelectedAddressLookupPage}
+import pages.organisation.{PostcodePage, SelectAddressPage}
+import pages.SelectedAddressLookupPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

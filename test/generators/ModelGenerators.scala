@@ -19,6 +19,7 @@ package generators
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
@@ -145,10 +146,5 @@ implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[
       taxNumbersUK <- Gen.option(arbitrary[TaxReferenceNumbers])
     } yield IndexedSeq(LoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
-
-  implicit lazy val arbitraryAssociatedEnterpriseType: Arbitrary[AssociatedEnterpriseType] =
-    Arbitrary {
-      Gen.oneOf(AssociatedEnterpriseType.values)
-    }
 
 }
