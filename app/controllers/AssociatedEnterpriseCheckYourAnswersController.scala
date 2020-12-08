@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import models.AssociatedEnterpriseType
+import models.SelectType
 import pages.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -45,7 +45,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
 
       val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
-        case Some(AssociatedEnterpriseType.Organisation) => true
+        case Some(SelectType.Organisation) => true
         case _ => false
       }
 

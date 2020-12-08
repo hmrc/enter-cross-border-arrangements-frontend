@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{AssociatedEnterpriseType, Name, UserAnswers}
+import models.{Name, SelectType, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -73,7 +73,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     "must return rows for an associated enterprise who is an organisation" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, AssociatedEnterpriseType.Organisation)
+        .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
         .success.value
         .set(OrganisationNamePage, "Name")
         .success.value
@@ -99,7 +99,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, AssociatedEnterpriseType.Individual)
+        .set(AssociatedEnterpriseTypePage, SelectType.Individual)
         .success.value
         .set(IndividualNamePage, Name("First", "Last"))
         .success.value

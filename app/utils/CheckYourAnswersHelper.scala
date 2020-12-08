@@ -55,7 +55,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
     answer =>
       Row(
         key     = Key(msg"associatedEnterpriseType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"associatedEnterpriseType.$answer"),
+        value   = Value(msg"selectType.$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",

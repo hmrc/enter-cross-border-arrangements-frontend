@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.AssociatedEnterpriseTypeFormProvider
 import matchers.JsonMatchers
-import models.{AssociatedEnterpriseType, NormalMode, UserAnswers}
+import models.{NormalMode, SelectType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -43,7 +43,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new AssociatedEnterpriseTypeFormProvider()
-  val form: Form[AssociatedEnterpriseType] = formProvider()
+  val form: Form[SelectType] = formProvider()
 
   lazy val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
 
@@ -68,7 +68,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> AssociatedEnterpriseType.radios(form)
+        "radios" -> SelectType.radios(form)
       )
 
       templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
@@ -82,7 +82,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(AssociatedEnterpriseTypePage, AssociatedEnterpriseType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(AssociatedEnterpriseTypePage, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -94,12 +94,12 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("associatedEnterpriseType" -> AssociatedEnterpriseType.values.head.toString))
+      val filledForm = form.bind(Map("selectType" -> SelectType.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> AssociatedEnterpriseType.radios(filledForm)
+        "radios" -> SelectType.radios(filledForm)
       )
 
       templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
@@ -124,7 +124,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       val request =
         FakeRequest(POST, associatedEnterpriseTypeRoute)
-          .withFormUrlEncodedBody(("associatedEnterpriseType", AssociatedEnterpriseType.values.head.toString))
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
 
@@ -141,8 +141,8 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("associatedEnterpriseType", ""))
-      val boundForm = form.bind(Map("associatedEnterpriseType" -> ""))
+      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
+      val boundForm = form.bind(Map("selectType" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -155,7 +155,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> AssociatedEnterpriseType.radios(boundForm)
+        "radios" -> SelectType.radios(boundForm)
       )
 
       templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
@@ -185,7 +185,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       val request =
         FakeRequest(POST, associatedEnterpriseTypeRoute)
-          .withFormUrlEncodedBody(("associatedEnterpriseType", AssociatedEnterpriseType.values.head.toString))
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
 

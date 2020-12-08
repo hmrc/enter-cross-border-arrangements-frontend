@@ -147,9 +147,4 @@ implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[
     } yield IndexedSeq(LoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
 
-  implicit lazy val arbitraryAssociatedEnterpriseType: Arbitrary[AssociatedEnterpriseType] =
-    Arbitrary {
-      Gen.oneOf(AssociatedEnterpriseType.values)
-    }
-
 }

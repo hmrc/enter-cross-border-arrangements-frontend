@@ -17,7 +17,7 @@
 package forms
 
 import forms.behaviours.OptionFieldBehaviours
-import models.AssociatedEnterpriseType
+import models.SelectType
 import play.api.data.FormError
 
 class AssociatedEnterpriseTypeFormProviderSpec extends OptionFieldBehaviours {
@@ -26,14 +26,14 @@ class AssociatedEnterpriseTypeFormProviderSpec extends OptionFieldBehaviours {
 
   val form = new AssociatedEnterpriseTypeFormProvider()()
 
-  ".associatedEnterpriseType" - {
+  ".selectType" - {
 
-    val fieldName = "associatedEnterpriseType"
+    val fieldName = "selectType"
 
-    behave like optionsField[AssociatedEnterpriseType ](
+    behave like optionsField[SelectType ](
       form,
       fieldName,
-      validValues  = AssociatedEnterpriseType.values,
+      validValues  = SelectType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

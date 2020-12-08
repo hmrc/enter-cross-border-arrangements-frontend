@@ -28,7 +28,6 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
-import models.{AssociatedEnterpriseType, _}
 import pages._
 import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
@@ -43,6 +42,7 @@ import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
 import pages.enterprises.{SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.taxpayer.UpdateTaxpayerPage
+import play.api.mvc.{AnyContent, Call, Request}
 
 import javax.inject.{Inject, Singleton}
 
@@ -421,8 +421,8 @@ class Navigator @Inject()() {
 
   private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(AssociatedEnterpriseTypePage) map {
-      case AssociatedEnterpriseType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
-      case AssociatedEnterpriseType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
+      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
+      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
     }
   }
 
