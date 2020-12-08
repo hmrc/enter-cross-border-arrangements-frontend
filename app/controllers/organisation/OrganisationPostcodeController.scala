@@ -19,10 +19,11 @@ package controllers.organisation
 import controllers.actions._
 import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getOrganisationName
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.PostcodePage
+import pages.organisation.PostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

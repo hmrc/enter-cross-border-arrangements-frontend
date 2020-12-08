@@ -816,7 +816,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
-                .set(IsAssociatedEnterpriseAffectedPage, true)
+                .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
                 .success.value
                 .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
                 .success.value
@@ -1169,7 +1169,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsAssociatedEnterpriseAffectedPage, true)
+              answers.set(AssociatedEnterpriseTypePage, SelectType.Individual)
                 .success.value
                 .set(IsIndividualResidentForTaxOtherCountriesPage, false)
                 .success.value

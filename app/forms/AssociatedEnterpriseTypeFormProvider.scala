@@ -17,15 +17,15 @@
 package forms
 
 import forms.mappings.Mappings
-import models.AssociatedEnterpriseType
+import models.SelectType
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class AssociatedEnterpriseTypeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[AssociatedEnterpriseType] =
+  def apply(): Form[SelectType] =
     Form(
-      "associatedEnterpriseType" -> enumerable[AssociatedEnterpriseType]("associatedEnterpriseType.error.required")
+      "selectType" -> enumerable[SelectType]("associatedEnterpriseType.error.required")
     )
 }

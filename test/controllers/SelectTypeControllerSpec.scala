@@ -93,7 +93,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("confirm" -> SelectType.values.head.toString))
+      val filledForm = form.bind(Map("selectType" -> SelectType.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
@@ -123,7 +123,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val request =
         FakeRequest(POST, selectTypeRoute)
-          .withFormUrlEncodedBody(("confirm", SelectType.values.head.toString))
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
 
@@ -140,8 +140,8 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, selectTypeRoute).withFormUrlEncodedBody(("confirm", "invalid value"))
-      val boundForm = form.bind(Map("confirm" -> "invalid value"))
+      val request = FakeRequest(POST, selectTypeRoute).withFormUrlEncodedBody(("selectType", "invalid value"))
+      val boundForm = form.bind(Map("selectType" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -183,7 +183,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val request =
         FakeRequest(POST, selectTypeRoute)
-          .withFormUrlEncodedBody(("confirm", SelectType.values.head.toString))
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
 

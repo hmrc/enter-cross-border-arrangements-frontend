@@ -26,6 +26,10 @@ import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.arrangement._
+import pages.hallmarks._
+import pages.individual._
+import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.libs.json.{JsValue, Json}
 
@@ -33,7 +37,6 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(AssociatedEnterpriseTypePage.type, JsValue)] ::
     arbitrary[(SelectTypePage.type, JsValue)] ::
     arbitrary[(UpdateTaxpayerPage.type, JsValue)] ::
     arbitrary[(IsAssociatedEnterpriseAffectedPage.type, JsValue)] ::

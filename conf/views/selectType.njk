@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            name: 'confirm',
+            name: 'selectType',
             fieldset: {
               legend: {
                 text: messages('selectType.heading'),
@@ -41,7 +41,7 @@
               }
             },
             items: radios,
-            errorMessage: form.confirm.error
+            errorMessage: form.selectType.error
           }) }}
 
           {{ govukButton({

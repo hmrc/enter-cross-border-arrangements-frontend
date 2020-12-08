@@ -16,17 +16,17 @@
 
 package pages
 
-import models.AssociatedEnterpriseType
+import models.SelectType
 import pages.behaviours.PageBehaviours
 
 class AssociatedEnterpriseTypePageSpec extends PageBehaviours {
 
   "AssociatedEnterpriseTypePage" - {
 
-    beRetrievable[AssociatedEnterpriseType](AssociatedEnterpriseTypePage)
+    beRetrievable[SelectType](AssociatedEnterpriseTypePage)
 
-    beSettable[AssociatedEnterpriseType](AssociatedEnterpriseTypePage)
+    beSettable[SelectType](AssociatedEnterpriseTypePage)
 
-    beRemovable[AssociatedEnterpriseType](AssociatedEnterpriseTypePage)
+    beRemovable[SelectType](AssociatedEnterpriseTypePage)
   }
 }

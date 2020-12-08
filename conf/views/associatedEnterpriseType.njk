@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            name: 'associatedEnterpriseType',
+            name: 'selectType',
             fieldset: {
               legend: {
                 text: messages('associatedEnterpriseType.heading'),
@@ -41,7 +41,7 @@
               }
             },
             items: radios,
-            errorMessage: form.associatedEnterpriseType.error
+            errorMessage: form.selectType.error
           }) }}
 
           {{ govukButton({

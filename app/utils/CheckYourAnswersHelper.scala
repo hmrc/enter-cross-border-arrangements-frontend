@@ -26,6 +26,7 @@ import models.{CheckMode, UserAnswers}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
+import pages.organisation.{PostcodePage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -54,7 +55,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
     answer =>
       Row(
         key     = Key(msg"associatedEnterpriseType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"associatedEnterpriseType.$answer"),
+        value   = Value(msg"selectType.$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",
