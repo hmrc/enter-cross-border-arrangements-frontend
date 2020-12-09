@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.enterprises
 
 import forms.behaviours.OptionFieldBehaviours
 import models.SelectType

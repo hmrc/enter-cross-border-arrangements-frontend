@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+package pages.enterprises
 
 import models.{SelectType, UserAnswers}
+import pages.QuestionPage
 import pages.individual._
 import pages.organisation._
 import play.api.libs.json.JsPath

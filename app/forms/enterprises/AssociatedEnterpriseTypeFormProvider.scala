@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package forms.enterprises
 
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import models.SelectType
+import play.api.data.Form
 
-case object IsAssociatedEnterpriseAffectedPage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class AssociatedEnterpriseTypeFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "isAssociatedEnterpriseAffected"
+  def apply(): Form[SelectType] =
+    Form(
+      "selectType" -> enumerable[SelectType]("associatedEnterpriseType.error.required")
+    )
 }

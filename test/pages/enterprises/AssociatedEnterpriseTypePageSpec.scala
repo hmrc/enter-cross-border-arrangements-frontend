@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages
+package pages.enterprises
 
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
