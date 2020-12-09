@@ -34,7 +34,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
