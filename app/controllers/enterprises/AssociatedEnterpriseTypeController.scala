@@ -60,7 +60,7 @@ class AssociatedEnterpriseTypeController @Inject()(
         "radios" -> SelectType.radios(preparedForm)
       )
 
-      renderer.render("associatedEnterpriseType.njk", json).map(Ok(_))
+      renderer.render("enterprises/associatedEnterpriseType.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,7 +75,7 @@ class AssociatedEnterpriseTypeController @Inject()(
             "radios" -> SelectType.radios(formWithErrors)
           )
 
-          renderer.render("associatedEnterpriseType.njk", json).map(BadRequest(_))
+          renderer.render("enterprises/associatedEnterpriseType.njk", json).map(BadRequest(_))
         },
         value => {
           val redirectUsers = redirectUsersToCYA(value, mode, request.userAnswers)

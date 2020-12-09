@@ -19,10 +19,13 @@ package navigation
 import base.SpecBase
 import generators.Generators
 import models._
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
@@ -373,6 +376,57 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
         assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
           , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+      }
+
+      "must go from 'You have not added any taxpayers' page to " +
+        "'Is this an organisation or an individual?' if answer is 'Yes, add now'" in {
+
+        assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
+          controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode)) {
+          _
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
+        "'What is the name of the organisation?' if answer is Organisation" in {
+
+        assertRedirect(AssociatedEnterpriseTypePage,
+          controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode)) {
+          _
+            .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
+        "'What is their name?' if answer is Individual" in {
+
+        assertRedirect(AssociatedEnterpriseTypePage,
+          controllers.individual.routes.IndividualNameController.onPageLoad(CheckMode)) {
+          _
+            .set(AssociatedEnterpriseTypePage, SelectType.Individual)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Is *name* also affected by this arrangement?' page to " +
+        "'Check your answers' page in the associated enterprise journey" in {
+        forAll(arbitrary[UserAnswers], Gen.oneOf(Seq(true, false))) {
+          (answers, affectedPageAnswer) =>
+
+            val updatedAnswers =
+              answers.set(IsAssociatedEnterpriseAffectedPage, affectedPageAnswer)
+                .success.value
+
+            navigator
+              .nextPage(IsAssociatedEnterpriseAffectedPage, CheckMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
+        }
       }
     }
   }
