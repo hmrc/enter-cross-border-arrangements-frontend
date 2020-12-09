@@ -18,45 +18,86 @@ package controllers.organisation
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import handlers.ErrorHandler
-import pages.organisation.OrganisationLoopPage
+import models.SelectType
+import pages.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.CheckYourAnswersOrganisationHelper
+import utils.{CheckYourAnswersHelper, CheckYourAnswersOrganisationHelper}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers.get(OrganisationLoopPage) match {
-        case Some(_) =>
-          val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-          val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
-          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary
+      val associatedEnterpriseJourney: Boolean = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+        case Some(_) => true
+        case None => false
+      }
 
-          renderer.render(
-            "organisation/check-your-answers-organisation.njk",
-            Json.obj("organisationSummary" -> organisationDetails,
-              "countrySummary" -> countryDetails
-            )
-          ).map(Ok(_))
+      if (associatedEnterpriseJourney) {
+        Future.successful(Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers()))
+      } else {
+        val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+        val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
+        val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary
 
-        case _ => errorHandler.onServerError(request, throw new Exception("OrganisationLoop is missing"))
-
+        renderer.render(
+          "organisation/check-your-answers-organisation.njk",
+          Json.obj("organisationSummary" -> organisationDetails,
+            "countrySummary" -> countryDetails
+          )
+        ).map(Ok(_))
       }
   }
+
+  def associatedEnterpriseCheckAnswers(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
+      val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+
+      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+        case Some(SelectType.Organisation) => true
+        case _ => false
+      }
+
+      val (summaryRows, countrySummary) = if (isOrganisation) {
+        (
+          Seq(helper.associatedEnterpriseType).flatten ++
+            organisationHelper.buildOrganisationDetails,
+          organisationHelper.buildTaxResidencySummary
+        )
+      } else {
+        (
+          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
+            helper.buildIndividualPlaceOfBirthGroup ++
+            helper.buildIndividualAddressGroup ++
+            helper.buildIndividualEmailAddressGroup,
+          helper.buildTaxResidencySummaryForIndividuals
+        )
+      }
+
+      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
+
+      val json = Json.obj(
+        "summaryRows" -> summaryRows,
+        "countrySummary" -> countrySummary,
+        "isEnterpriseAffected" -> isEnterpriseAffected
+      )
+
+      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
+  }
+
 }
