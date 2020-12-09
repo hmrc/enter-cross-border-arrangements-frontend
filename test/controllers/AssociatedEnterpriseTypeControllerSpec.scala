@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.AssociatedEnterpriseTypeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -160,6 +160,38 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
+      val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
+      val mockSessionRepository = mock[SessionRepository]
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AssociatedEnterpriseTypePage, SelectType.values.head)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, associatedEnterpriseTypeRoute)
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual
+        controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }

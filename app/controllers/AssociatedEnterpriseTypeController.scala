@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.AssociatedEnterpriseTypeFormProvider
-import models.{Mode, SelectType}
+import helpers.JourneyHelpers.hasValueChanged
+import models.{CheckMode, Mode, SelectType, UserAnswers}
 import navigation.Navigator
-import pages.AssociatedEnterpriseTypePage
+import pages.{AssociatedEnterpriseTypePage, QuestionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -77,11 +78,27 @@ class AssociatedEnterpriseTypeController @Inject()(
 
           renderer.render("associatedEnterpriseType.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectUsersToCYA(value, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AssociatedEnterpriseTypePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(AssociatedEnterpriseTypePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
+  }
+
+  private def redirectUsersToCYA(value: SelectType, mode: Mode, ua: UserAnswers): Boolean = {
+    ua.get(AssociatedEnterpriseTypePage) match {
+      case Some(ans) if (ans == value) && (mode == CheckMode) => true
+      case _ => false
+    }
   }
 }

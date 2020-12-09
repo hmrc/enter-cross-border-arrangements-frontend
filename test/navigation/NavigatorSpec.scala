@@ -1322,7 +1322,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsAssociatedEnterpriseAffectedPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+              .mustBe(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
         }
       }
     }

@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{CheckMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{CheckMode, TaxReferenceNumbers, UserAnswers}
 import pages._
 import pages.organisation._
 import play.api.i18n.Messages
@@ -140,17 +140,17 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
 
     val displayAddressQuestionWithAddress: Seq[Row] = {
       if (userAnswers.get(IsOrganisationAddressKnownPage).contains(true)) {
-        Seq(isOrganisationAddressKnown.get, organisationAddress)
+        Seq(isOrganisationAddressKnown).flatten :+ organisationAddress
       } else {
-        Seq(isOrganisationAddressKnown.get)
+        Seq(isOrganisationAddressKnown).flatten
       }
     }
 
     val displayEmailQuestionWithEmail: Seq[Row] = {
       if (userAnswers.get(EmailAddressQuestionForOrganisationPage).contains(true)) {
-        Seq(emailAddressQuestionForOrganisation.get, emailAddressForOrganisation.get)
+        Seq(emailAddressQuestionForOrganisation, emailAddressForOrganisation).flatten
       } else {
-        Seq(emailAddressQuestionForOrganisation.get)
+        Seq(emailAddressQuestionForOrganisation).flatten
       }
     }
 

@@ -10,6 +10,7 @@ GET        /this-service-has-been-reset                 controllers.SessionExpir
 
 GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
 GET        /organisation/check-answers                  controllers.organisation.CheckYourAnswersOrganisationController.onPageLoad
+GET        /associated-enterprises/check-answers        controllers.organisation.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers
 GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
 
@@ -293,13 +294,13 @@ POST       /taxpayers/choose-type                        controllers.SelectTypeC
 GET        /taxpayers/change-choose-type                 controllers.SelectTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /taxpayers/change-choose-type                 controllers.SelectTypeController.onSubmit(mode: Mode = CheckMode)
 
+
 # ASSOCIATED ENTERPRISES
 
 GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
 POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
 GET        /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = CheckMode)
-
 
 GET        /associated-enterprises/type                    controllers.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /associated-enterprises/type                    controllers.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = NormalMode)
@@ -311,4 +312,4 @@ POST       /associated-enterprises/affected-by             controllers.IsAssocia
 GET        /associated-enterprises/change-affected-by      controllers.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by      controllers.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)
 
-GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+#GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()

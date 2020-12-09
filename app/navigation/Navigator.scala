@@ -29,6 +29,7 @@ import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
 import pages.arrangement._
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -104,8 +105,11 @@ class Navigator @Inject()() {
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
 
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
-    case IsAssociatedEnterpriseAffectedPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+    case IsAssociatedEnterpriseAffectedPage => _ => _ =>
+      Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
+
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -169,8 +173,11 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
 
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
-    case IsAssociatedEnterpriseAffectedPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+    case IsAssociatedEnterpriseAffectedPage => _ => _ =>
+      Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
+
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 

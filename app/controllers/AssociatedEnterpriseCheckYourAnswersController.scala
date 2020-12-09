@@ -51,13 +51,13 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
-          helper.associatedEnterpriseType ++
+          Seq(helper.associatedEnterpriseType).flatten ++
             organisationHelper.buildOrganisationDetails,
           organisationHelper.buildTaxResidencySummary
         )
       } else {
         (
-          Seq(helper.individualName, helper.individualDateOfBirth).flatten ++
+          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
             helper.buildIndividualPlaceOfBirthGroup ++
             helper.buildIndividualAddressGroup ++
             helper.buildIndividualEmailAddressGroup,
