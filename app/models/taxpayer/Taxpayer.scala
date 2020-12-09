@@ -21,8 +21,33 @@ import models.individual.Individual
 import models.organisation.Organisation
 import play.api.libs.json.{Json, OFormat}
 
-case class Taxpayer(selectType: SelectType, individual: Option[Individual] = None, organisation: Option[Organisation] = None)
+import java.util.UUID
+
+case class Taxpayer(taxpayerId: String, selectType: SelectType, individual: Option[Individual] = None, organisation: Option[Organisation] = None) {
+
+  val nameAsString: String = (individual, organisation) match {
+    case (Some(i), _) => i.nameAsString
+    case (_, Some(o)) => o.organisationName
+    case _            => throw new RuntimeException("Taxpayer must contain either an individual or an organisation.")
+  }
+
+}
 
 object Taxpayer {
+
+  private def generateId = UUID.randomUUID.toString
+
+  def apply(individual: Individual) = new Taxpayer(
+    taxpayerId = generateId
+    , selectType = SelectType.Individual
+    , individual = Some(individual)
+  )
+
+  def apply(organisation: Organisation) = new Taxpayer(
+    taxpayerId = generateId
+    , selectType = SelectType.Individual
+    , organisation = Some(organisation)
+  )
+
   implicit val format: OFormat[Taxpayer] = Json.format[Taxpayer]
 }
