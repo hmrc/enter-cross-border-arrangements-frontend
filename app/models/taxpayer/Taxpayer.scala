@@ -45,7 +45,7 @@ object Taxpayer {
 
   def apply(organisation: Organisation) = new Taxpayer(
     taxpayerId = generateId
-    , selectType = SelectType.Individual
+    , selectType = SelectType.Organisation
     , organisation = Some(organisation)
   )
 
