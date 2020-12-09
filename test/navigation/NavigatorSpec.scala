@@ -23,6 +23,7 @@ import models.SelectType.{Individual, Organisation}
 import models._
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
@@ -32,7 +33,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.arrangement._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -1309,6 +1310,51 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, NormalMode, updatedAnswers)
               .mustBe(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'You have not added any taxpayers' page to " +
+        "'Is this an organisation or an individual?' if answer is 'Yes, add now'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
+        "'What is the name of the organisation?' if answer is Organisation" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+                .success.value
+
+            navigator
+              .nextPage(AssociatedEnterpriseTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
+        "'What is their name?' if answer is Individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(AssociatedEnterpriseTypePage, SelectType.Individual)
+                .success.value
+
+            navigator
+              .nextPage(AssociatedEnterpriseTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
         }
       }
 
