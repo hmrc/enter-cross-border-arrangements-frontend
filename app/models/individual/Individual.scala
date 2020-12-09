@@ -28,7 +28,10 @@ case class Individual(individualName: Name,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
                       resCountryCodes: Seq[String] = Seq.empty
-                     )
+                     ) {
+
+  val nameAsString: String = individualName.displayName
+}
 
 object Individual {
   implicit val format: OFormat[Individual] = Json.format[Individual]
