@@ -24,7 +24,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual._
 import pages.organisation._
-import pages.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
