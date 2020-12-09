@@ -29,7 +29,7 @@ import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
 import pages.arrangement._
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -105,7 +105,7 @@ class Navigator @Inject()() {
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
 
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
@@ -173,7 +173,7 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
 
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode))
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
@@ -329,7 +329,7 @@ class Navigator @Inject()() {
 
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
       case true => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
-      case false if associatedEnterpriseJourney => controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
+      case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
   }
@@ -387,7 +387,7 @@ class Navigator @Inject()() {
 
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
-      case false if associatedEnterpriseJourney => controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
+      case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
     }
   }

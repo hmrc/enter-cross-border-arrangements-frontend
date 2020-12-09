@@ -32,6 +32,7 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.arrangement._
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -823,7 +824,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
+              .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
         }
       }
 
@@ -1176,7 +1177,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
+              .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
         }
       }
 

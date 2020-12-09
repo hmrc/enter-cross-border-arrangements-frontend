@@ -17,8 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
-import pages.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
@@ -38,7 +37,7 @@ trait EnterpriseRows extends RowBuilder {
       toRow(
         msgKey = "associatedEnterpriseType",
         content = msg"selectType.$answer",
-        href = controllers.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
+        href = controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
       )
   }
 
@@ -47,7 +46,7 @@ trait EnterpriseRows extends RowBuilder {
       toRow(
         msgKey = "isAssociatedEnterpriseAffected",
         content = yesOrNo(answer),
-        href = controllers.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(CheckMode).url
+        href = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(CheckMode).url
       )
   }
 

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import base.SpecBase
-import forms.AssociatedEnterpriseTypeFormProvider
+import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, SelectType, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AssociatedEnterpriseTypePage
-import play.api.data.Form
+import pages.enterprises.IsAssociatedEnterpriseAffectedPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -34,20 +33,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
+  def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new AssociatedEnterpriseTypeFormProvider()
-  val form: Form[SelectType] = formProvider()
+  val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
+  val form = formProvider()
 
-  lazy val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
+  lazy val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode).url
 
-  "AssociatedEnterpriseType Controller" - {
+  "IsAssociatedEnterpriseAffected Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +54,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,10 +67,10 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> SelectType.radios(form)
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +81,9 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(AssociatedEnterpriseTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsAssociatedEnterpriseAffectedPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,15 +93,15 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("selectType" -> SelectType.values.head.toString))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> SelectType.radios(filledForm)
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -123,8 +122,8 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
           .build()
 
       val request =
-        FakeRequest(POST, associatedEnterpriseTypeRoute)
-          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
+        FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -141,8 +140,8 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
-      val boundForm = form.bind(Map("selectType" -> ""))
+      val request = FakeRequest(POST, isAssociatedEnterpriseAffectedRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -155,43 +154,11 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> SelectType.radios(boundForm)
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
-      val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
-      val mockSessionRepository = mock[SessionRepository]
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, SelectType.values.head)
-        .success
-        .value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, associatedEnterpriseTypeRoute)
-          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual
-        controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }
@@ -200,13 +167,13 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -216,14 +183,14 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, associatedEnterpriseTypeRoute)
-          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
+        FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

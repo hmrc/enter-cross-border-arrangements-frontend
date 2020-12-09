@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import controllers.actions._
-import forms.IsAssociatedEnterpriseAffectedFormProvider
+import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.IsAssociatedEnterpriseAffectedPage
+import pages.enterprises.IsAssociatedEnterpriseAffectedPage
 import pages.individual.IndividualNamePage
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}

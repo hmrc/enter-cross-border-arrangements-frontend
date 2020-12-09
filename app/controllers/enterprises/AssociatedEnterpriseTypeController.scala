@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import controllers.actions._
-import forms.AssociatedEnterpriseTypeFormProvider
-import helpers.JourneyHelpers.hasValueChanged
+import forms.enterprises.AssociatedEnterpriseTypeFormProvider
 import models.{CheckMode, Mode, SelectType, UserAnswers}
 import navigation.Navigator
-import pages.{AssociatedEnterpriseTypePage, QuestionPage}
+import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository

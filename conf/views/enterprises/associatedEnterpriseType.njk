@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.AssociatedEnterpriseTypeController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

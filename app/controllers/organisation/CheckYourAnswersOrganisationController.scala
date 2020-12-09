@@ -19,7 +19,7 @@ package controllers.organisation
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.SelectType
-import pages.AssociatedEnterpriseTypePage
+import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
