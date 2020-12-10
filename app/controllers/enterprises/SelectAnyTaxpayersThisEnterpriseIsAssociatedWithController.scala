@@ -55,16 +55,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
     implicit request =>
 
       // retrieve list of taxpayers TODO get the actual list from page
-      val taxpayers: List[Taxpayer] = {
-        List(
-          Taxpayer(
-            Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
-          ),
-          Taxpayer(
-            Organisation("My organisation")
-          )
-        )
-      }
+      import SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
 
       val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
         case None => form
@@ -72,7 +63,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       }
 
       val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.selectType}:${taxpayer.nameAsString}")
+        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
       }
       val checkboxes = Checkboxes.set(field = preparedForm("value"), items = items)
 
@@ -110,5 +101,19 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
     val name = json.validate[Taxpayer].getOrElse(throw new IllegalArgumentException("")).nameAsString
     Checkboxes.Checkbox(label = Literal(name), value = json.toString())
   }.toSeq
+
+}
+object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {
+
+  val taxpayers: List[Taxpayer] = {
+    List(
+      Taxpayer(
+        Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
+      ),
+      Taxpayer(
+        Organisation("My organisation")
+      )
+    )
+  }
 
 }

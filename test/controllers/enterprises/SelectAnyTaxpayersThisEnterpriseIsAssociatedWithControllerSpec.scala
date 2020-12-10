@@ -17,6 +17,7 @@
 package controllers.enterprises
 
 import base.SpecBase
+import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
@@ -26,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
+import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -47,10 +49,11 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
   val formProvider = new SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider()
   val form = formProvider()
   // TODO substitute when actual values are available
-  val items = List(
-    Checkboxes.Checkbox(label = Literal("John Smith"), value = "individual:John Smith"),
-    Checkboxes.Checkbox(label = Literal("My organisation"), value = "organisation:My organisation")
-  )
+  val taxpayers = SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
+  val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
+    Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+  }
+
   val checkboxes = Checkboxes.set(field = form("value"), items = items)
 
   "SelectAnyTaxpayersThisEnterpriseIsAssociatedWith Controller" - {
@@ -59,7 +62,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
