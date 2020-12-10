@@ -421,6 +421,13 @@ class Navigator @Inject()() {
     }
   }
 
+  private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
+      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow => controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(mode)
+      case _ => controllers.routes.IndexController.onPageLoad()
+    }
+  }
+
   private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(AssociatedEnterpriseTypePage) map {
       case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
