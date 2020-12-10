@@ -35,16 +35,22 @@
             {{ messages("isAssociatedEnterpriseAffected.heading", associatedEnterprise) }}
           </h1>
 
-          <p class="govuk-body">{{ messages("isAssociatedEnterpriseAffected.hint") }}</p>
-
           {{ govukRadios({
             name: 'confirm',
+            fieldset: {
+              legend: {
+                text: messages('isAssociatedEnterpriseAffected.hint')
+              }
+            },
             items: radios,
             errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue")
+            text: messages("site.saveAndContinue"),
+            attributes: {
+              "id": "submit"
+            }
           }) }}
 
         </form>
