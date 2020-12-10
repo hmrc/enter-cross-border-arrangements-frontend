@@ -108,7 +108,7 @@ class Navigator @Inject()() {
     case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
-      Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
+      Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -176,7 +176,7 @@ class Navigator @Inject()() {
     case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode))
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
-      Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers())
+      Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }

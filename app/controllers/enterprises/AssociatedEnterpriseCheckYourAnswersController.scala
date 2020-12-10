@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import controllers.actions._
 import models.SelectType
@@ -73,6 +73,6 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
         "isEnterpriseAffected" -> isEnterpriseAffected
       )
 
-      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
+      renderer.render("enterprises/associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
   }
 }

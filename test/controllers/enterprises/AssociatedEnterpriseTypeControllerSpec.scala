@@ -71,7 +71,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> SelectType.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> SelectType.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
         "radios" -> SelectType.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "associatedEnterpriseType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
