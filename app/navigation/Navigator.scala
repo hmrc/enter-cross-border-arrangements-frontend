@@ -122,6 +122,9 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
+
+    case CheckYourAnswersOrganisationPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+    case CheckYourAnswersIndividualPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Request[AnyContent] => Option[Call] = {
@@ -198,6 +201,9 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case IntermediariesTypePage => intermediaryTypeRoutes(CheckMode)
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+
+    case CheckYourAnswersOrganisationPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+    case CheckYourAnswersIndividualPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
   }
 
  def catRoutes(key: HallmarkCategories): Mode => Call = key match {

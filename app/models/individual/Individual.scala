@@ -16,13 +16,13 @@
 
 package models.individual
 
+import java.time.LocalDate
+
 import models.{Address, Name, TIN}
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
-
 case class Individual(individualName: Name,
-                      birthDate: LocalDateTime,
+                      birthDate: LocalDate,
                       birthPlace: Option[String] = None,
                       tins: Seq[TIN] = Seq.empty,
                       address: Option[Address] = None,

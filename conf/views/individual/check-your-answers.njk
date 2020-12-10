@@ -24,6 +24,8 @@
           {{ messages("checkYourAnswers.heading") }}
         </h1>
 
+        <form action="{{ routes.controllers.individual.IndividualCheckYourAnswersController.onSubmit(mode).url }}" method="post">
+
         {{ govukSummaryList({
           rows: individualSummary
         }) }}
@@ -41,6 +43,7 @@
                 attributes: {id:"submit"}
             }) }}
         </div>
+       </form>
 
       </div>
     </div>

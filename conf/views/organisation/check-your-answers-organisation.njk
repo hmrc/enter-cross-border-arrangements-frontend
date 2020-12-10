@@ -24,6 +24,8 @@
           {{ messages("checkYourAnswers.heading") }}
         </h1>
 
+        <form action="{{ routes.controllers.organisation.CheckYourAnswersOrganisationController.onSubmit(mode).url }}" method="post">
+
         {{ govukSummaryList({
           classes: 'govuk-!-margin-bottom-0',
           rows: organisationSummary
@@ -35,8 +37,6 @@
         }) }}
 
         <hr>
-
-        <form action="{{ routes.controllers.organisation.CheckYourAnswersOrganisationController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
           <div class="govuk-!-margin-top-9">

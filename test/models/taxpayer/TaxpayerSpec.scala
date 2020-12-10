@@ -16,13 +16,13 @@
 
 package models.taxpayer
 
+import java.time.LocalDate
+
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{Name, SelectType}
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-
-import java.time.LocalDateTime
 
 class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,7 +32,7 @@ class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChe
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  LocalDateTime.now()
+        birthDate =  LocalDate.now()
       )
 
       val taxpayer = Taxpayer(individual)

@@ -18,19 +18,25 @@ package controllers.organisation
 
 import base.SpecBase
 import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.organisation._
+import play.api.inject.bind
 import play.api.libs.json.JsObject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import repositories.SessionRepository
 
 import scala.concurrent.Future
 
 class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAndAfterEach {
+
+  lazy val checkYourAnswersOrganisationRoute: String = controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
   "Check your answers Organisation controller" - {
 
@@ -320,6 +326,39 @@ class CheckYourAnswersOrganisationControllerSpec extends SpecBase with BeforeAnd
       residentCountryDetails.contains("UK tax numbers") mustBe true
       residentCountryDetails.contains("Country 2") mustBe true
       residentCountryDetails.contains(s"Tax identification numbers for ${selectedNonUK.description}") mustBe true
+
+      application.stop()
+    }
+
+    "must redirect to the taxpayers update page when valid data is submitted" in {
+
+      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
+        .success
+        .value
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, checkYourAnswersOrganisationRoute)
+          .withFormUrlEncodedBody(("", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

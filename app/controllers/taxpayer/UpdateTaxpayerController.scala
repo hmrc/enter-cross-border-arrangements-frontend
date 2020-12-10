@@ -19,7 +19,7 @@ package controllers.taxpayer
 import controllers.actions._
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import javax.inject.Inject
-import models.taxpayer.{Taxpayer, UpdateTaxpayer}
+import models.taxpayer.UpdateTaxpayer
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage}
@@ -39,6 +39,7 @@ class UpdateTaxpayerController @Inject()(
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
     formProvider: UpdateTaxpayerFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -50,7 +51,12 @@ class UpdateTaxpayerController @Inject()(
     implicit request =>
 
       val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.flatMap(_.get(TaxpayerLoopPage)) match {
-        case Some(list) => getTaxpayerName(list)
+        case Some(list) =>
+          for {
+            taxpayer <- list
+          } yield {
+            taxpayer.nameAsString
+          }
         case None => IndexedSeq.empty
       }
 
@@ -94,13 +100,5 @@ class UpdateTaxpayerController @Inject()(
 
         }
       )
-  }
-
-  def getTaxpayerName(taxpayerList: IndexedSeq[Taxpayer]) : IndexedSeq[String] = {
-    for {
-      taxpayer <- taxpayerList
-    } yield {
-      taxpayer.individual.fold(taxpayer.organisation.get.organisationName)(_.individualName.displayName)
-    }
   }
 }
