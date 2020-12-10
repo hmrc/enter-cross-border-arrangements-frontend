@@ -19,10 +19,10 @@ package controllers.taxpayer
 import controllers.actions._
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import javax.inject.Inject
+import models.taxpayer.{Taxpayer, UpdateTaxpayer}
 import models.{Mode, UserAnswers}
-import models.taxpayer.UpdateTaxpayer
 import navigation.Navigator
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,14 +49,25 @@ class UpdateTaxpayerController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
+      val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.flatMap(_.get(TaxpayerLoopPage)) match {
+        case Some(list) => getTaxpayerName(list)
+        case None => IndexedSeq.empty
+      }
+
       val preparedForm =  request.userAnswers.flatMap(_.get(UpdateTaxpayerPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
+      val changeURL = controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+      val removeURL = controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "taxpayerList" -> namesOfTaxpayers,
+        "changeURL" -> changeURL,
+        "removeURL" -> removeURL,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
       )
@@ -89,5 +100,13 @@ class UpdateTaxpayerController @Inject()(
 
         }
       )
+  }
+
+  def getTaxpayerName(taxpayerList: IndexedSeq[Taxpayer]) : IndexedSeq[String] = {
+    for {
+      taxpayer <- taxpayerList
+    } yield {
+      taxpayer.individual.fold(taxpayer.organisation.get.organisationName)(_.individualName.displayName)
+    }
   }
 }

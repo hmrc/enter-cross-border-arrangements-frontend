@@ -36,15 +36,17 @@
 
         <hr>
 
-            {{ csrf() | safe }}
+        <form action="{{ routes.controllers.organisation.CheckYourAnswersOrganisationController.onSubmit(mode).url }}" method="post">
 
-            <div class="govuk-!-margin-top-9">
+          {{ csrf() | safe }}
+          <div class="govuk-!-margin-top-9">
                 {{ govukButton({
                     text: messages("site.continue"),
                     preventDoubleClick: true,
                     attributes: {id:"submit"}
                 }) }}
             </div>
+        </form>
 
       </div>
     </div>

@@ -579,6 +579,9 @@ updateTaxpayer.now = Yes, add now
 updateTaxpayer.later = Yes, add later
 updateTaxpayer.no = No
 updateTaxpayer.error.required = Select to add a taxpayer now, later or not at all
+updateTaxpayer.singular = taxpayer
+updateTaxpayer.plural = taxpayers
+updateTaxpayer.emptyList = You have not added any taxpayers
 
 arrangementCheckYourAnswers.heading = Check your answers
 
