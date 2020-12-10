@@ -19,15 +19,13 @@ package controllers.organisation
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.enterprises.AssociatedEnterpriseTypePage
-import models.SelectType
-import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{CheckYourAnswersHelper, CheckYourAnswersOrganisationHelper}
+import utils.CheckYourAnswersOrganisationHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
