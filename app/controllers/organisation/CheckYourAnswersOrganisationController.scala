@@ -18,7 +18,6 @@ package controllers.organisation
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.SelectType
 import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -26,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{CheckYourAnswersHelper, CheckYourAnswersOrganisationHelper}
+import utils.CheckYourAnswersOrganisationHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,44 +61,5 @@ class CheckYourAnswersOrganisationController @Inject()(
         ).map(Ok(_))
       }
   }
-
-  //TODO Below method is temporary until a solution about change routing is found
-//  def associatedEnterpriseCheckAnswers(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-//    implicit request =>
-//
-//      val helper = new CheckYourAnswersHelper(request.userAnswers)
-//      val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-//
-//      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
-//        case Some(SelectType.Organisation) => true
-//        case _ => false
-//      }
-//
-//      val (summaryRows, countrySummary) = if (isOrganisation) {
-//        (
-//          Seq(helper.associatedEnterpriseType).flatten ++
-//            organisationHelper.buildOrganisationDetails,
-//          organisationHelper.buildTaxResidencySummary
-//        )
-//      } else {
-//        (
-//          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
-//            helper.buildIndividualPlaceOfBirthGroup ++
-//            helper.buildIndividualAddressGroup ++
-//            helper.buildIndividualEmailAddressGroup,
-//          helper.buildTaxResidencySummaryForIndividuals
-//        )
-//      }
-//
-//      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
-//
-//      val json = Json.obj(
-//        "summaryRows" -> summaryRows,
-//        "countrySummary" -> countrySummary,
-//        "isEnterpriseAffected" -> isEnterpriseAffected
-//      )
-//
-//      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
-//  }
 
 }
