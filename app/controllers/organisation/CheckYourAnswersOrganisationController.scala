@@ -46,8 +46,9 @@ class CheckYourAnswersOrganisationController @Inject()(
         case None => false
       }
 
+      //TODO Below redirect is temporary until a solution about change routing is found
       if (associatedEnterpriseJourney) {
-        Future.successful(Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers()))
+        Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
       } else {
         val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
         val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
@@ -62,42 +63,43 @@ class CheckYourAnswersOrganisationController @Inject()(
       }
   }
 
-  def associatedEnterpriseCheckAnswers(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
-      val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-
-      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
-        case Some(SelectType.Organisation) => true
-        case _ => false
-      }
-
-      val (summaryRows, countrySummary) = if (isOrganisation) {
-        (
-          Seq(helper.associatedEnterpriseType).flatten ++
-            organisationHelper.buildOrganisationDetails,
-          organisationHelper.buildTaxResidencySummary
-        )
-      } else {
-        (
-          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-          helper.buildTaxResidencySummaryForIndividuals
-        )
-      }
-
-      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
-
-      val json = Json.obj(
-        "summaryRows" -> summaryRows,
-        "countrySummary" -> countrySummary,
-        "isEnterpriseAffected" -> isEnterpriseAffected
-      )
-
-      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
-  }
+  //TODO Below method is temporary until a solution about change routing is found
+//  def associatedEnterpriseCheckAnswers(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+//    implicit request =>
+//
+//      val helper = new CheckYourAnswersHelper(request.userAnswers)
+//      val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+//
+//      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+//        case Some(SelectType.Organisation) => true
+//        case _ => false
+//      }
+//
+//      val (summaryRows, countrySummary) = if (isOrganisation) {
+//        (
+//          Seq(helper.associatedEnterpriseType).flatten ++
+//            organisationHelper.buildOrganisationDetails,
+//          organisationHelper.buildTaxResidencySummary
+//        )
+//      } else {
+//        (
+//          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
+//            helper.buildIndividualPlaceOfBirthGroup ++
+//            helper.buildIndividualAddressGroup ++
+//            helper.buildIndividualEmailAddressGroup,
+//          helper.buildTaxResidencySummaryForIndividuals
+//        )
+//      }
+//
+//      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
+//
+//      val json = Json.obj(
+//        "summaryRows" -> summaryRows,
+//        "countrySummary" -> countrySummary,
+//        "isEnterpriseAffected" -> isEnterpriseAffected
+//      )
+//
+//      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
+//  }
 
 }

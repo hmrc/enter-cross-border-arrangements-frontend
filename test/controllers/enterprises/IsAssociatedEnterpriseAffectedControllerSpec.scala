@@ -70,7 +70,7 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +101,7 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
         "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "isAssociatedEnterpriseAffected.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

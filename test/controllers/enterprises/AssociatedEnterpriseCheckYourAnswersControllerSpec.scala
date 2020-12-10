@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import base.SpecBase
 import models.{Name, SelectType, UserAnswers}
@@ -22,9 +22,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
 import pages.individual._
 import pages.organisation._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,7 +42,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.organisation.routes.CheckYourAnswersOrganisationController.associatedEnterpriseCheckAnswers().url)
+    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad().url)
 
     val result = route(application, request).value
 
@@ -58,7 +58,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
     val countrySummary = (json \ "countrySummary").toString
     val isEnterpriseAffected = (json \ "isEnterpriseAffected").toString
 
-    templateCaptor.getValue mustEqual "associatedEnterpriseCheckYourAnswers.njk"
+    templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseCheckYourAnswers.njk"
     assertFunction(summaryRows + countrySummary + isEnterpriseAffected)
 
     application.stop()
