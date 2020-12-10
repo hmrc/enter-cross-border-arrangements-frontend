@@ -1328,6 +1328,36 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from 'You have not added any taxpayers' page to " +
+        "Index page if answer is 'Yes, add later'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from 'You have not added any taxpayers' page to " +
+        "Index page if answer is 'No'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.No)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
       "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
         "'What is the name of the organisation?' if answer is Organisation" in {
         forAll(arbitrary[UserAnswers]) {

@@ -390,6 +390,29 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
+      "must go from 'You have not added any taxpayers' page to " +
+        "Index page if answer is 'Yes, add later'" in {
+
+        assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
+          controllers.routes.IndexController.onPageLoad()) {
+          _
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'You have not added any taxpayers' page to " +
+        "Index page if answer is 'No'" in {
+        assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
+          controllers.routes.IndexController.onPageLoad()) {
+          _
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.No)
+            .success
+            .value
+        }
+      }
+
       "must go from 'Is this an organisation or an individual?' associated enterprises page to " +
         "'What is the name of the organisation?' if answer is Organisation" in {
 

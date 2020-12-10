@@ -20,6 +20,7 @@ import controllers.routes
 import helpers.JourneyHelpers.{currentIndexInsideLoop, incrementIndexIndividual, incrementIndexOrganisation}
 import models.SelectType.{Individual, Organisation}
 import models._
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1.{C1bi, C1c, C1d}
 import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
@@ -105,7 +106,7 @@ class Navigator @Inject()() {
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
 
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesRoutes(NormalMode)
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
@@ -173,7 +174,7 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
 
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode))
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesRoutes(CheckMode)
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
@@ -403,6 +404,13 @@ class Navigator @Inject()() {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode)
       case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
+      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow => controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(mode)
+      case _ => controllers.routes.IndexController.onPageLoad()
     }
   }
 
