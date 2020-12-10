@@ -59,15 +59,9 @@ class UpdateTaxpayerController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val changeURL = controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
-      val removeURL = controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
-
-
       val json = Json.obj(
         "form"   -> preparedForm,
         "taxpayerList" -> namesOfTaxpayers,
-        "changeURL" -> changeURL,
-        "removeURL" -> removeURL,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
       )
