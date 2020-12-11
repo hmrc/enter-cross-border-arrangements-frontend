@@ -77,25 +77,25 @@ class IndividualCheckYourAnswersController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      //TODO - build full Taxpayer Details to submit
-      val name = request.userAnswers.get(IndividualNamePage)
-      val dob = request.userAnswers.get(IndividualDateOfBirthPage)
-
-      val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
-        case Some(list) => // append to existing list
-          list :+ Taxpayer.apply(Individual(name.get, dob.get))
-        case None => // start new list
-          IndexedSeq[Taxpayer](Taxpayer.apply(Individual(name.get, dob.get)))
-      }
-      for {
-        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
-        _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
-      } yield {
-        Redirect(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
-      }
+    //TODO - build full Taxpayer Details to submit
+    (request.userAnswers.get(IndividualNamePage), request.userAnswers.get(IndividualDateOfBirthPage)) match {
+      case (Some(name), Some(dob)) =>
+        val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
+          case Some(list) => // append to existing list
+            list :+ Taxpayer.apply(Individual(name, dob))
+          case None => // start new list
+            IndexedSeq[Taxpayer](Taxpayer.apply(Individual(name, dob)))
+        }
+        for {
+          userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
+          _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
+        } yield {
+          Redirect(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+        }
+    }
 
   }
 }
