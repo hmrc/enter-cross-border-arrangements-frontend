@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package navigation
+package utils.controllers
 
-import models.Mode
-import pages.Page
-import play.api.mvc.Call
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import play.api.mvc.MessagesControllerComponents
+import renderer.Renderer
+import repositories.SessionRepository
 
-abstract class AbstractNavigator {
+import scala.concurrent.ExecutionContext
 
-  private[navigation] val routeMap:  Page => Mode => Option[Any] => Int => Call
-  private[navigation] val alternativeRouteMap: Page => Call
+trait PageControllerComponents {
 
-  def nextPage[A](page: Page, mode: Mode, value: Option[A], index: Int = 0, alternative: Boolean = false): Call = {
-    if (alternative) {
-      alternativeRouteMap(page)
-    }
-    else {
-      routeMap(page)(mode)(value)(index)
-    }
-  }
-
-  val indexRoute = controllers.routes.IndexController.onPageLoad()
-
-  val checkYourAnswersRoute: Call
+  implicit val ec: ExecutionContext
+  val sessionRepository: SessionRepository
+  val identify: IdentifierAction
+  val getData: DataRetrievalAction
+  val requireData: DataRequiredAction
+  val controllerComponents: MessagesControllerComponents
+  val renderer: Renderer
 
 }

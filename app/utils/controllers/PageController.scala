@@ -14,28 +14,18 @@
  * limitations under the License.
  */
 
-package navigation
+package utils.controllers
 
 import models.Mode
-import pages.Page
-import play.api.mvc.Call
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-abstract class AbstractNavigator {
+trait PageController[A] extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private[navigation] val routeMap:  Page => Mode => Option[Any] => Int => Call
-  private[navigation] val alternativeRouteMap: Page => Call
+  def onPageLoad(mode: Mode): Action[AnyContent]
 
-  def nextPage[A](page: Page, mode: Mode, value: Option[A], index: Int = 0, alternative: Boolean = false): Call = {
-    if (alternative) {
-      alternativeRouteMap(page)
-    }
-    else {
-      routeMap(page)(mode)(value)(index)
-    }
-  }
-
-  val indexRoute = controllers.routes.IndexController.onPageLoad()
-
-  val checkYourAnswersRoute: Call
+  def onSubmit(mode: Mode): Action[AnyContent]
 
 }

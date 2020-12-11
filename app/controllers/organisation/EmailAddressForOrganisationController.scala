@@ -18,81 +18,46 @@ package controllers.organisation
 
 import controllers.actions._
 import forms.organisation.EmailAddressForOrganisationFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
-import javax.inject.Inject
-import models.Mode
-import navigation.Navigator
+import helpers.JourneyHelpers.getOrganisationName
+import models.{Mode, UserAnswers}
+import navigation.NavigatorForOrganisation
 import pages.organisation.EmailAddressForOrganisationPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.controllers.OnSubmitMixIn
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class EmailAddressForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
+    val sessionRepository: SessionRepository,
+    val identify: IdentifierAction,
+    val getData: DataRetrievalAction,
+    val requireData: DataRequiredAction,
     formProvider: EmailAddressForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+    val renderer: Renderer
+)(implicit val ec: ExecutionContext) extends OnSubmitMixIn[String] {
 
-  private val form = formProvider()
+  val template: String = "organisation/emailAddressForOrganisation.njk"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
+  val form: Form[String] = formProvider()
 
-      val preparedForm = request.userAnswers.get(EmailAddressForOrganisationPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  override def pageData(form: Form[String], userAnswers: Option[UserAnswers]): JsObject = Json.obj(
+    "organisationName" -> getOrganisationName(userAnswers.get)
+  )
 
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "organisationName" -> getOrganisationName(request.userAnswers),
-        "mode" -> mode
-      )
+  val getPage = ua => ua.get(EmailAddressForOrganisationPage)
 
-      renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
+  val setPage = ua => value => ua.set(EmailAddressForOrganisationPage, value)
+
+  override def redirect(mode: Mode, value: Option[String], index: Int, alternative: Boolean): Call = {
+    NavigatorForOrganisation.nextPage(EmailAddressForOrganisationPage, mode, value, 0, alternative)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors => {
-
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "organisationName" -> getOrganisationName(request.userAnswers),
-            "mode" -> mode
-          )
-
-          renderer.render("organisation/emailAddressForOrganisation.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          val redirectUsers = hasValueChanged(value, EmailAddressForOrganisationPage, mode, request.userAnswers)
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
-            }
-          }
-        }
-      )
-  }
 }
