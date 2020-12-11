@@ -19,7 +19,6 @@ package controllers.individual
 import controllers.actions._
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
-import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator
 import pages.individual.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage}
@@ -31,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsIndividualResidentForTaxOtherCountriesController @Inject()(
@@ -90,6 +90,11 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
           renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
+          val determineRoute = (value, mode) match {
+            case (false, CheckMode) => true
+            case  _ => false
+          }
+
           val individualLoopList = (request.userAnswers.get(IndividualLoopPage), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
               list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
@@ -107,7 +112,13 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(IsIndividualResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+          } yield {
+            if (determineRoute) {
+              Redirect(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(IsIndividualResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+            }
+          }
         }
       )
   }
