@@ -25,4 +25,5 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "updateTaxpayer"
+
 }

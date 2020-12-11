@@ -70,7 +70,7 @@ class CheckYourAnswersOrganisationController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
     //TODO - build full Taxpayer Details to submit
@@ -86,9 +86,11 @@ class CheckYourAnswersOrganisationController @Inject()(
         for {
           userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
           _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
-        } yield
-          Redirect(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
-    }
+        } yield {
+          Redirect(navigator.nextPage(CheckYourAnswersOrganisationPage, mode, userAnswersWithTaxpayerLoop))
+        }
+      case _ => errorHandler.onServerError(request, throw new Exception("Error submitting - missing required organisation taxpayer details"))
 
+    }
   }
 }
