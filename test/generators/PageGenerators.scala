@@ -34,7 +34,7 @@ trait PageGenerators {
     Arbitrary(AssociatedEnterpriseTypePage)
 
   implicit lazy val arbitrarySelectTypePage: Arbitrary[TaxpayerSelectTypePage.type] =
-    Arbitrary(TaxpayerSelectTypePage))
+    Arbitrary(TaxpayerSelectTypePage)
 
   implicit lazy val arbitrarySelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage: Arbitrary[SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type] =
     Arbitrary(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)

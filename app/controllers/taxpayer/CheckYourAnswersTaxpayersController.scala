@@ -80,7 +80,7 @@ class CheckYourAnswersTaxpayersController @Inject()(
         case Organisation =>
           userAnswers.get(OrganisationLoopPage) match {
             case Some(taxResidentCountriesLoop) =>
-              orgHelper.buildTaxResidencySummary(taxResidentCountriesLoop)
+              orgHelper.buildTaxResidencySummary
             case _ => Nil
           }
         case Individual => helper.buildTaxResidencySummaryForIndividuals

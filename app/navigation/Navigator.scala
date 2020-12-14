@@ -95,7 +95,7 @@ class Navigator @Inject()() {
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
 
     case UpdateTaxpayerPage => updateTaxpayerRoutes(NormalMode)
-    case SelectTypePage => selectTypeRoutes(NormalMode)
+    case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
 
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
@@ -337,9 +337,15 @@ class Navigator @Inject()() {
       case None => false
     }
 
+    val relevantTaxpayerJourney: Boolean =  ua.get(TaxpayerSelectTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
       case true => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
+      case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
       case false => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
   }
@@ -395,9 +401,15 @@ class Navigator @Inject()() {
       case None => false
     }
 
+    val relevantTaxpayerJourney: Boolean = ua.get(TaxpayerSelectTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
+      case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
       case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
     }
   }
