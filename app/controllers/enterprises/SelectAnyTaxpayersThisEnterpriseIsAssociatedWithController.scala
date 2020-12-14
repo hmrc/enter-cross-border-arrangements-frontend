@@ -97,11 +97,6 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       )
   }
 
-  def toCheckboxes(taxpayers: Set[JsObject]): Seq[Checkboxes.Checkbox] = taxpayers.map { json =>
-    val name = json.validate[Taxpayer].getOrElse(throw new IllegalArgumentException("")).nameAsString
-    Checkboxes.Checkbox(label = Literal(name), value = json.toString())
-  }.toSeq
-
 }
 object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {
 
