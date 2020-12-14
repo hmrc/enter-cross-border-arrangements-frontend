@@ -46,10 +46,18 @@ class IndividualCheckYourAnswersController @Inject()(
         case None => false
       }
 
+      val relevantTaxpayerJourney: Boolean = request.userAnswers.get(TaxpayerSelectTypePage) match {
+        case Some(_) => true
+        case None => false
+      }
+
       //TODO Below redirect is temporary until a solution about change routing is found
       if (associatedEnterpriseJourney) {
         Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
-      } else {
+      } else if(relevantTaxpayerJourney) {
+        Future.successful(Redirect(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()))
+      }
+      else {
         val helper = new CheckYourAnswersHelper(request.userAnswers)
 
         val individualSummary: Seq[SummaryList.Row] =

@@ -19,6 +19,7 @@ package controllers.organisation
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.enterprises.AssociatedEnterpriseTypePage
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,9 +46,16 @@ class CheckYourAnswersOrganisationController @Inject()(
         case None => false
       }
 
+      val relevantTaxpayerJourney: Boolean = request.userAnswers.get(TaxpayerSelectTypePage) match {
+        case Some(_) => true
+        case None => false
+      }
+
       //TODO Below redirect is temporary until a solution about change routing is found
       if (associatedEnterpriseJourney) {
         Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
+      } else if (relevantTaxpayerJourney) {
+        Future.successful(Redirect(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()))
       } else {
         val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
         val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails

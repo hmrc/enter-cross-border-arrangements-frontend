@@ -27,6 +27,7 @@ import pages._
 import pages.arrangement._
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -36,7 +37,7 @@ import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
     
-  def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
+  def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
       Row(
         key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -44,7 +45,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
+            href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
           )
         )

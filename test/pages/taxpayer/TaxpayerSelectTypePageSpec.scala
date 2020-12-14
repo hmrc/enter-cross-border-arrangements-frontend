@@ -18,7 +18,6 @@ package pages.taxpayer
 
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
-import pages.{PostcodePage, SelectAddressPage}
 import pages.behaviours.PageBehaviours
 import pages.individual._
 import pages.organisation._
