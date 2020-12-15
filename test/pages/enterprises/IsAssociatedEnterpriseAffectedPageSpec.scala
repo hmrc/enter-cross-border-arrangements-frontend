@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages.enterprises
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import models.SelectType
+class IsAssociatedEnterpriseAffectedPageSpec extends PageBehaviours {
 
-class SelectTypeFormProvider @Inject() extends Mappings {
+  "IsAssociatedEnterpriseAffectedPage" - {
 
-  def apply(): Form[SelectType] =
-    Form(
-      "selectType" -> enumerable[SelectType]("selectType.error.required")
-    )
+    beRetrievable[Boolean](IsAssociatedEnterpriseAffectedPage)
+
+    beSettable[Boolean](IsAssociatedEnterpriseAffectedPage)
+
+    beRemovable[Boolean](IsAssociatedEnterpriseAffectedPage)
+  }
 }

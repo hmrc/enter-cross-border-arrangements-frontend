@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{CheckMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{CheckMode, TaxReferenceNumbers, UserAnswers}
 import pages._
 import pages.organisation._
 import play.api.i18n.Messages
@@ -140,17 +140,17 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
 
     val displayAddressQuestionWithAddress: Seq[Row] = {
       if (userAnswers.get(IsOrganisationAddressKnownPage).contains(true)) {
-        Seq(isOrganisationAddressKnown.get, organisationAddress)
+        Seq(isOrganisationAddressKnown).flatten :+ organisationAddress
       } else {
-        Seq(isOrganisationAddressKnown.get)
+        Seq(isOrganisationAddressKnown).flatten
       }
     }
 
     val displayEmailQuestionWithEmail: Seq[Row] = {
       if (userAnswers.get(EmailAddressQuestionForOrganisationPage).contains(true)) {
-        Seq(emailAddressQuestionForOrganisation.get, emailAddressForOrganisation.get)
+        Seq(emailAddressQuestionForOrganisation, emailAddressForOrganisation).flatten
       } else {
-        Seq(emailAddressQuestionForOrganisation.get)
+        Seq(emailAddressQuestionForOrganisation).flatten
       }
     }
 
@@ -216,23 +216,26 @@ class CheckYourAnswersOrganisationHelper(userAnswers: UserAnswers)(implicit mess
     ))
   }
 
-  def buildTaxResidencySummary(taxResidentCountriesLoop: IndexedSeq[LoopDetails]): Seq[SummaryList.Row] = {
-
-    val rows: Seq[Row] = taxResidentCountriesLoop.zipWithIndex.flatMap {
-      case (organisationLoopDetail, index) =>
-        val loopSize = taxResidentCountriesLoop.size
-        (organisationLoopDetail.whichCountry, organisationLoopDetail.doYouKnowUTR, organisationLoopDetail.doYouKnowTIN) match {
-          case (Some(country), Some(true), _) if country.code == "GB" =>
-            countryRow(country.description, index, loopSize) ++ whatAreTheTaxNumbersForUKOrganisation(organisationLoopDetail.taxNumbersUK.get)
-          case (Some(country), _, Some(true)) =>
-            countryRow(country.description, index, loopSize) ++ whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
-          case (Some(country), _, _) =>
-            countryRow(country.description, index, loopSize)
-          case _ => None
+  def buildTaxResidencySummary: Seq[SummaryList.Row] =
+    (userAnswers.get(OrganisationLoopPage) map {
+      taxResidentCountriesLoop1 =>
+        val rows: Seq[Row] = taxResidentCountriesLoop1.zipWithIndex.flatMap {
+          case (organisationLoopDetail, index) =>
+            val loopSize = taxResidentCountriesLoop1.size
+            (organisationLoopDetail.whichCountry, organisationLoopDetail.doYouKnowUTR, organisationLoopDetail.doYouKnowTIN) match {
+              case (Some(country), Some(true), _) if country.code == "GB" =>
+                countryRow(country.description, index, loopSize) ++ whatAreTheTaxNumbersForUKOrganisation(organisationLoopDetail.taxNumbersUK.get)
+              case (Some(country), _, Some(true)) =>
+                countryRow(country.description, index, loopSize) ++
+                  whatAreTheTaxNumbersForNonUKOrganisation(country.description, organisationLoopDetail.taxNumbersNonUK.get)
+              case (Some(country), _, _) =>
+                countryRow(country.description, index, loopSize)
+              case _ => None
+            }
         }
-    }
-    whichCountryTaxForOrganisation ++ rows
-  }
+
+        whichCountryTaxForOrganisation ++ rows
+  }).getOrElse(Seq[SummaryList.Row]())
 
   private def yesOrNo(answer: Boolean): Content =
     if (answer) {

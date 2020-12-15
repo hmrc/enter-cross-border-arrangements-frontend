@@ -19,7 +19,7 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
+import models.{CheckMode, Country, LoopDetails, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -46,7 +46,8 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
   val index: Int = 0
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val isIndividualResidentForTaxOtherCountriesRoute = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+  lazy val isIndividualResidentForTaxOtherCountriesRoute =
+    controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
 
   "IsIndividualResidentForTaxOtherCountries Controller" - {
 
@@ -171,6 +172,36 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
 
       templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when in CheckMode and loop isn't incremented as users selected 'false'" in {
+
+      lazy val isIndividualResidentForTaxOtherCountriesRoute =
+        controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index).url
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isIndividualResidentForTaxOtherCountriesRoute)
+          .withFormUrlEncodedBody(("confirm", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

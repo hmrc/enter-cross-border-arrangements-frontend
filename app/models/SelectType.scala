@@ -34,7 +34,7 @@ object SelectType extends Enumerable.Implicits {
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
-    val field = form("confirm")
+    val field = form("selectType")
     val items = Seq(
       Radios.Radio(msg"selectType.organisation", Organisation.toString),
       Radios.Radio(msg"selectType.individual", Individual.toString)

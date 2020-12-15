@@ -18,9 +18,9 @@ package navigation
 
 import controllers.routes
 import helpers.JourneyHelpers.{currentIndexInsideLoop, incrementIndexIndividual, incrementIndexOrganisation}
-import javax.inject.{Inject, Singleton}
 import models.SelectType.{Individual, Organisation}
 import models._
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1.{C1bi, C1c, C1d}
 import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
@@ -29,12 +29,15 @@ import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
-import pages.hallmarks._
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualAddressPage, IndividualDateOfBirthPage, IndividualNamePage, IndividualPlaceOfBirthPage, IndividualSelectAddressPage, IndividualUkPostcodePage, IsIndividualAddressKnownPage, IsIndividualAddressUkPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForNonUKIndividualPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
-import play.api.mvc.{AnyContent, Call, Request}
 import pages.arrangement._
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.hallmarks._
+import pages.individual._
+import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
+import play.api.mvc.{AnyContent, Call, Request}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject()() {
@@ -54,11 +57,6 @@ class Navigator @Inject()() {
     case OrganisationAddressPage => _ => _ => Some(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
     case EmailAddressQuestionForOrganisationPage => emailAddressQuestionRoutes(NormalMode)
     case EmailAddressForOrganisationPage => _ => _ => Some(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, 0))
-    case IndividualAddressPage => _ => _ => Some(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case IndividualSelectAddressPage => _ => _ => Some(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-    case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(NormalMode)
-    case EmailAddressForIndividualPage =>
-      ua => request => Some(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, incrementIndexIndividual(ua, request)))
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(NormalMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(NormalMode)
 
@@ -93,7 +91,6 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
-    case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
 
     case UpdateTaxpayerPage => updateTaxpayerRoutes(NormalMode)
@@ -108,9 +105,12 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
-    case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
-    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesRoutes(NormalMode)
+    case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
+    case IsAssociatedEnterpriseAffectedPage => _ => _ =>
+      Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -124,9 +124,6 @@ class Navigator @Inject()() {
     case EmailAddressForOrganisationPage => ua => request =>
       Some(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0))
     case WhichCountryTaxForOrganisationPage => whichCountryTaxForOrganisationRoutes(CheckMode)
-    case WhichCountryTaxForIndividualPage => whichCountryTaxForIndividualRoutes(CheckMode)
-    case DoYouKnowAnyTINForUKIndividualPage =>  doYouKnowAnyTINForUKIndividualRoutes(CheckMode)
-    case IsIndividualResidentForTaxOtherCountriesPage => isIndividualResidentForTaxOtherCountriesRoutes(CheckMode)
     case DoYouKnowAnyTINForUKOrganisationPage => doYouKnowAnyTINForUKOrganisationRoutes(CheckMode)
     case DoYouKnowTINForNonUKOrganisationPage => doYouKnowTINForNonUKOrganisationRoutes(CheckMode)
     case WhatAreTheTaxNumbersForUKOrganisationPage => ua => request =>
@@ -176,6 +173,12 @@ class Navigator @Inject()() {
     case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
+
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesRoutes(CheckMode)
+    case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
+    case IsAssociatedEnterpriseAffectedPage => _ => _ =>
+      Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
 
@@ -319,11 +322,18 @@ class Navigator @Inject()() {
       case false => controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode,  incrementIndexIndividual(ua, request))
     }
 
-  private def isIndividualResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+  private def isIndividualResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    val associatedEnterpriseJourney: Boolean = ua.get(AssociatedEnterpriseTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
-      case true  => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
+      case true => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
+      case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
+  }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsOrganisationAddressKnownPage) map {
@@ -371,8 +381,14 @@ class Navigator @Inject()() {
     }
 
   private def isOrganisationResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    val associatedEnterpriseJourney: Boolean = ua.get(AssociatedEnterpriseTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
+      case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
     }
   }
@@ -388,6 +404,20 @@ class Navigator @Inject()() {
       case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode)
       case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
+      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow => controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(mode)
+      case _ => controllers.routes.IndexController.onPageLoad()
+    }
+  }
+
+  private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(AssociatedEnterpriseTypePage) map {
+      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
+      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
     }
   }
 

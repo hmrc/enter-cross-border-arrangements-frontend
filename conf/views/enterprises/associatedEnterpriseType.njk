@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("selectType.title"), form.errors) }}
+  {{ title(messages("associatedEnterpriseType.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.SelectTypeController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -35,7 +35,7 @@
             name: 'selectType',
             fieldset: {
               legend: {
-                text: messages('selectType.heading'),
+                text: messages('associatedEnterpriseType.heading'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
@@ -47,7 +47,7 @@
           {{ govukButton({
             text: messages("site.saveAndContinue"),
             attributes: {
-               "id": "submit"
+              "id": "submit"
             }
           }) }}
 

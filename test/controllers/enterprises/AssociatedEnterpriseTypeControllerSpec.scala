@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.enterprises
 
 import base.SpecBase
-import forms.SelectTypeFormProvider
+import forms.enterprises.AssociatedEnterpriseTypeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SelectTypePage
+import pages.enterprises.AssociatedEnterpriseTypePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +38,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val selectTypeRoute = routes.SelectTypeController.onPageLoad(NormalMode).url
+  val formProvider = new AssociatedEnterpriseTypeFormProvider()
+  val form: Form[SelectType] = formProvider()
 
-  val formProvider = new SelectTypeFormProvider()
-  val form = formProvider()
+  lazy val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
 
-  "SelectType Controller" - {
+  "AssociatedEnterpriseType Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +55,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, selectTypeRoute)
+      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -70,7 +71,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +82,9 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SelectTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(AssociatedEnterpriseTypePage, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, selectTypeRoute)
+      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -101,7 +102,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,7 +123,7 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
           .build()
 
       val request =
-        FakeRequest(POST, selectTypeRoute)
+        FakeRequest(POST, associatedEnterpriseTypeRoute)
           .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
@@ -140,8 +141,8 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, selectTypeRoute).withFormUrlEncodedBody(("selectType", "invalid value"))
-      val boundForm = form.bind(Map("selectType" -> "invalid value"))
+      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
+      val boundForm = form.bind(Map("selectType" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -157,8 +158,40 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
         "radios" -> SelectType.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "selectType.njk"
+      templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
+      val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
+      val mockSessionRepository = mock[SessionRepository]
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AssociatedEnterpriseTypePage, SelectType.values.head)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, associatedEnterpriseTypeRoute)
+          .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual
+        controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
 
       application.stop()
     }
@@ -167,12 +200,13 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, selectTypeRoute)
+      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -182,14 +216,14 @@ class SelectTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksS
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, selectTypeRoute)
+        FakeRequest(POST, associatedEnterpriseTypeRoute)
           .withFormUrlEncodedBody(("selectType", SelectType.values.head.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.organisation
+package controllers.enterprises
 
 import base.SpecBase
-import config.FrontendAppConfig
-import connectors.AddressLookupConnector
-import forms.SelectAddressFormProvider
+import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.organisation.{PostcodePage, SelectAddressPage}
+import pages.enterprises.IsAssociatedEnterpriseAffectedPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,49 +37,24 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectAddressRoute = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode).url
-  lazy val manualAddressURL: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode).canonical()
-
-  val formProvider = new SelectAddressFormProvider()
+  val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
   val form = formProvider()
 
-  val addresses: Seq[AddressLookup] = Seq(
-    AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
-    AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
-  )
-  val addressRadios: Seq[Radios.Radio] = Seq(
-    Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
-    Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
-  )
+  lazy val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode).url
 
-  "SelectAddress Controller" - {
+  "IsAssociatedEnterpriseAffected Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
-      val answers = UserAnswers(userAnswersId)
-        .set(PostcodePage, "ZZ1 1ZZ")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(answers)).overrides(
-        bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
-      val request = FakeRequest(GET, selectAddressRoute)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,11 +67,10 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
-         "radios" -> Radios(field = form("value"), items = addressRadios)
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -109,19 +81,9 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
-        .success
-        .value
-        .set(PostcodePage, "ZZ1 1ZZ")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-      val request = FakeRequest(GET, selectAddressRoute)
+      val userAnswers = UserAnswers(userAnswersId).set(IsAssociatedEnterpriseAffectedPage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -131,16 +93,15 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> addressRadios.head.value))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = filledForm("value"), items = addressRadios)
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -148,27 +109,21 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val mockSessionRepository = mock[SessionRepository]
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
-
-      val answers = UserAnswers(userAnswersId)
-        .set(PostcodePage, "ZZ1 1ZZ")
-        .success
-        .value
-
 
       val application =
-        applicationBuilder(userAnswers = Some(answers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-          ).build()
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
 
       val request =
-        FakeRequest(POST, selectAddressRoute)
-          .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
+        FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -183,21 +138,10 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
-      val answers = UserAnswers(userAnswersId)
-        .set(PostcodePage, "ZZ1 1ZZ")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
-      val request = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, isAssociatedEnterpriseAffectedRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -210,11 +154,10 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = boundForm("value"), items = addressRadios)
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -224,11 +167,12 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, selectAddressRoute)
+      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -239,8 +183,8 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, selectAddressRoute)
-          .withFormUrlEncodedBody(("value", addressRadios.head.value))
+        FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 

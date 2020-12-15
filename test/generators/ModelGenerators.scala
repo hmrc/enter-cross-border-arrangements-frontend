@@ -19,6 +19,7 @@ package generators
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary

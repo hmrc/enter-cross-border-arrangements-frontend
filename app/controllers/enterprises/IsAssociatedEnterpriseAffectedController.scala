@@ -14,62 +14,56 @@
  * limitations under the License.
  */
 
-package controllers.organisation
+package controllers.enterprises
 
 import controllers.actions._
-import forms.PostcodeFormProvider
-import helpers.JourneyHelpers.getOrganisationName
-
-import javax.inject.Inject
-import models.Mode
+import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.organisation.PostcodePage
+import pages.enterprises.IsAssociatedEnterpriseAffectedPage
+import pages.individual.IndividualNamePage
+import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationPostcodeController @Inject()(
+class IsAssociatedEnterpriseAffectedController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: PostcodeFormProvider,
+    formProvider: IsAssociatedEnterpriseAffectedFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
-
-  private def actionUrl(mode: Mode) = routes.OrganisationPostcodeController.onSubmit(mode).url
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
-      val preparedForm = request.userAnswers.get(PostcodePage) match {
+      val preparedForm = request.userAnswers.get(IsAssociatedEnterpriseAffectedPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
+
       val json = Json.obj(
-        "form" -> preparedForm,
-        "displayName" -> getOrganisationName(request.userAnswers),
-        "manualAddressURL" -> manualAddressURL(mode),
-        "actionUrl" -> actionUrl(mode),
-        "individual" -> false,
-        "mode" -> mode
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "associatedEnterprise" -> getName(request.userAnswers),
+        "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
 
-      renderer.render("postcode.njk", json).map(Ok(_))
+      renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -77,22 +71,29 @@ class OrganisationPostcodeController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors => {
+
           val json = Json.obj(
-            "form" -> formWithErrors,
-            "displayName" -> getOrganisationName(request.userAnswers),
-            "manualAddressURL" -> manualAddressURL(mode),
-            "actionUrl" -> actionUrl(mode),
-            "individual" -> false,
-            "mode" -> mode
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "associatedEnterprise" -> getName(request.userAnswers),
+            "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
-          renderer.render("postcode.njk", json).map(BadRequest(_))
+          renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsAssociatedEnterpriseAffectedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IsAssociatedEnterpriseAffectedPage, mode, updatedAnswers))
       )
+  }
+
+  private def getName(userAnswers: UserAnswers) = {
+    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+      case (Some(name), _) => name.displayName
+      case (_, Some(name)) => name
+      case _ => "this associated enterprise"
+    }
   }
 }

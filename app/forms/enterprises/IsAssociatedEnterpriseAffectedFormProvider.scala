@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.enterprises
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.SelectType
 
-class SelectTypeFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[SelectType] =
+class IsAssociatedEnterpriseAffectedFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
     Form(
-      "selectType" -> enumerable[SelectType]("selectType.error.required")
+      "confirm" -> boolean("isAssociatedEnterpriseAffected.error.required")
     )
 }

@@ -19,7 +19,7 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.arrangement._
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
@@ -27,11 +27,17 @@ import pages.taxpayer.UpdateTaxpayerPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
+    Arbitrary(AssociatedEnterpriseTypePage)
+
   implicit lazy val arbitrarySelectTypePage: Arbitrary[SelectTypePage.type] =
     Arbitrary(SelectTypePage)
 
   implicit lazy val arbitraryUpdateTaxpayerPage: Arbitrary[UpdateTaxpayerPage.type] =
     Arbitrary(UpdateTaxpayerPage)
+
+  implicit lazy val arbitraryIsAssociatedEnterpriseAffectedPage: Arbitrary[IsAssociatedEnterpriseAffectedPage.type] =
+    Arbitrary(IsAssociatedEnterpriseAffectedPage)
 
   implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprisesPage: Arbitrary[YouHaveNotAddedAnyAssociatedEnterprisesPage.type] =
     Arbitrary(YouHaveNotAddedAnyAssociatedEnterprisesPage)

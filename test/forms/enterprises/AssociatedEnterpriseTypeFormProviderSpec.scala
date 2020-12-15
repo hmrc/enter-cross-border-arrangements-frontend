@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package forms
+package forms.enterprises
 
 import forms.behaviours.OptionFieldBehaviours
 import models.SelectType
 import play.api.data.FormError
 
-class SelectTypeFormProviderSpec extends OptionFieldBehaviours {
+class AssociatedEnterpriseTypeFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new SelectTypeFormProvider()()
+  val requiredKey = "associatedEnterpriseType.error.required"
+
+  val form = new AssociatedEnterpriseTypeFormProvider()()
 
   ".selectType" - {
 
     val fieldName = "selectType"
-    val requiredKey = "selectType.error.required"
 
-    behave like optionsField[SelectType](
+    behave like optionsField[SelectType ](
       form,
       fieldName,
       validValues  = SelectType.values,

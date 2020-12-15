@@ -17,6 +17,7 @@
 package pages
 
 import pages.behaviours.PageBehaviours
+import pages.organisation.PostcodePage
 
 
 class PostcodePageSpec extends PageBehaviours {

@@ -18,8 +18,7 @@ package controllers.organisation
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import handlers.ErrorHandler
-import pages.organisation.OrganisationLoopPage
+import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,35 +27,39 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersOrganisationHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers.get(OrganisationLoopPage) match {
-        case Some(taxResidentCountriesLoop) =>
-          val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-          val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
-          val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary(taxResidentCountriesLoop)
+      val associatedEnterpriseJourney: Boolean = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+        case Some(_) => true
+        case None => false
+      }
 
-          renderer.render(
-            "organisation/check-your-answers-organisation.njk",
-            Json.obj("organisationSummary" -> organisationDetails,
-              "countrySummary" -> countryDetails
-            )
-          ).map(Ok(_))
+      //TODO Below redirect is temporary until a solution about change routing is found
+      if (associatedEnterpriseJourney) {
+        Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
+      } else {
+        val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+        val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
+        val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary
 
-        case _ => errorHandler.onServerError(request, throw new Exception("OrganisationLoop is missing"))
-
+        renderer.render(
+          "organisation/check-your-answers-organisation.njk",
+          Json.obj("organisationSummary" -> organisationDetails,
+            "countrySummary" -> countryDetails
+          )
+        ).map(Ok(_))
       }
   }
+
 }

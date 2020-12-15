@@ -19,8 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers._
-import javax.inject.Inject
-import models.{CheckMode, Mode, NormalMode, LoopDetails}
+import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.Navigator
 import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
@@ -90,6 +90,11 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
+          val determineRoute = (value, mode) match {
+            case (false, CheckMode) => true
+            case  _ => false
+          }
+
           val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
                 list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
@@ -107,7 +112,13 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+          } yield {
+            if (determineRoute) {
+              Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
+            }
+          }
         }
       )
   }

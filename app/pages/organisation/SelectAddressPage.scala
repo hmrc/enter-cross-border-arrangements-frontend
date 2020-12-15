@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package pages.individual
+package pages.organisation
 
-import models.{Address, UserAnswers}
-import pages.organisation.PostcodePage
-import pages.{QuestionPage, SelectedAddressLookupPage}
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object IndividualAddressPage extends QuestionPage[Address] {
+case object SelectAddressPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "individualAddress"
-
-  override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) =>
-        userAnswers
-          .remove(SelectedAddressLookupPage)
-          .flatMap(_.remove(PostcodePage))
-      case None => super.cleanup(value, userAnswers)
-    }
-
+  override def toString: String = "selectAddress"
 }
