@@ -319,17 +319,3 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 
 #GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
 
-GET        /associated-enterprises/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = CheckMode)
-
-GET        /associated-enterprises/type                    controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/type                    controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-type             controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-type             controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = CheckMode)
-
-GET        /associated-enterprises/affected-by             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/affected-by             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)

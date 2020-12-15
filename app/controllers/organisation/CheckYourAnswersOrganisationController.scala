@@ -60,32 +60,6 @@ class CheckYourAnswersOrganisationController @Inject()(
           )
         ).map(Ok(_))
       }
-
-      val (summaryRows, countrySummary) = if (isOrganisation) {
-        (
-          Seq(helper.associatedEnterpriseType).flatten ++
-            organisationHelper.buildOrganisationDetails,
-          organisationHelper.buildTaxResidencySummary
-        )
-      } else {
-        (
-          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-          helper.buildTaxResidencySummaryForIndividuals
-        )
-      }
-
-      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
-
-      val json = Json.obj(
-        "summaryRows" -> summaryRows,
-        "countrySummary" -> countrySummary,
-        "isEnterpriseAffected" -> isEnterpriseAffected
-      )
-
-      renderer.render("associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
   }
 
 }

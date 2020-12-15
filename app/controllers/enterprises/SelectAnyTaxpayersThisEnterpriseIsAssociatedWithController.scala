@@ -56,16 +56,6 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
       // retrieve list of taxpayers TODO get the actual list from page
       import SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
-      val taxpayers: List[Taxpayer] = {
-        List(
-          Taxpayer(
-            Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
-          ),
-          Taxpayer(
-            Organisation("My organisation")
-          )
-        )
-      }
 
       val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
         case None => form
@@ -114,7 +104,6 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
 }
 
-}
 object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {
 
   val taxpayers: List[Taxpayer] = {

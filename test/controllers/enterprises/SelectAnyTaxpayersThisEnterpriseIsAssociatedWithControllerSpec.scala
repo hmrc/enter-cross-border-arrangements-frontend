@@ -80,7 +80,10 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      val jc = jsonCaptor.getValue
+      println("XXX\n\n")
+      println(jc.toString.diff(expectedJson.toString))
+      jc must containJson(expectedJson)
 
       application.stop()
     }

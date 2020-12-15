@@ -30,24 +30,12 @@ import models.hallmarks._
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
 import pages.arrangement._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.arrangement._
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.UpdateTaxpayerPage
-import pages.individual._
-import pages.organisation._
 import play.api.mvc.{AnyContent, Call, Request}
-import pages.arrangement._
-import pages.enterprises.{SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.taxpayer.UpdateTaxpayerPage
-import play.api.mvc.{AnyContent, Call, Request}
-import pages.arrangement._
-import pages.enterprises.{SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.taxpayer.UpdateTaxpayerPage
 
 import javax.inject.{Inject, Singleton}
 
@@ -117,21 +105,13 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
-    case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
     case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesPage(NormalMode)
-    case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage => _ => _ => Some(controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode)) // TODO redirect
-
+    case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode)) // TODO redirect
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(NormalMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
-
-    case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(NormalMode)
-    case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
-    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesPage(NormalMode)
-    case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage => _ => _ => Some(controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode)) // TODO redirect
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -195,7 +175,8 @@ class Navigator @Inject()() {
     case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad)
 
-    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesRoutes(CheckMode)
+    case YouHaveNotAddedAnyAssociatedEnterprisesPage => youHaveNotAddedAnyAssociatedEnterprisesPage(CheckMode)
+    case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage => _ => _ => Some(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode)) // TODO redirect
     case AssociatedEnterpriseTypePage => associatedEnterpriseTypeRoutes(CheckMode)
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
@@ -432,42 +413,9 @@ class Navigator @Inject()() {
     ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
       case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow  =>
         controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode)
-      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater =>
-        controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
-      case YouHaveNotAddedAnyAssociatedEnterprises.No =>
+      case _ =>
         controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
     }
-
-  private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
-      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow => controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(mode)
-      case _ => controllers.routes.IndexController.onPageLoad()
-    }
-  }
-
-  private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(AssociatedEnterpriseTypePage) map {
-      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
-      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
-    }
-  }
-
-  private def youHaveNotAddedAnyAssociatedEnterprisesPage(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
-      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow  =>
-        controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode)
-      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater =>
-        controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
-      case YouHaveNotAddedAnyAssociatedEnterprises.No =>
-        controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode)
-    }
-
-  private def youHaveNotAddedAnyAssociatedEnterprisesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map {
-      case YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow => controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(mode)
-      case _ => controllers.routes.IndexController.onPageLoad()
-    }
-  }
 
   private def associatedEnterpriseTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(AssociatedEnterpriseTypePage) map {
