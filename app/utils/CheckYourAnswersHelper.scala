@@ -36,7 +36,32 @@ import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
-    
+ 
+import pages.intermediaries.WhatTypeofIntermediaryPage
+  def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"whatTypeofIntermediary.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatTypeofIntermediary.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def youHaveNotAddedAnyIntermediaries: Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage) map {
+    answer =>
+      toRow(
+        msgKey  = "youHaveNotAddedAnyIntermediaries",
+        content = msg"youHaveNotAddedAnyIntermediaries.$answer",
+        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
+      )
+  }
+   
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
       Row(

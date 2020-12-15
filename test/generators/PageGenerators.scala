@@ -24,8 +24,16 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer._
+import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 
 trait PageGenerators {
+
+import pages.intermediaries.WhatTypeofIntermediaryPage
+  implicit lazy val arbitraryWhatTypeofIntermediaryPage: Arbitrary[WhatTypeofIntermediaryPage.type] =
+    Arbitrary(WhatTypeofIntermediaryPage)
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyIntermediariesPage: Arbitrary[YouHaveNotAddedAnyIntermediariesPage.type] =
+    Arbitrary(YouHaveNotAddedAnyIntermediariesPage)
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
     Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)

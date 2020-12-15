@@ -20,6 +20,7 @@ import models.SelectType
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -31,9 +32,29 @@ import pages.individual._
 import pages.organisation._
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
+import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+	import pages.intermediaries.WhatTypeofIntermediaryPage
+	import models.intermediaries.WhatTypeofIntermediary
+	  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
+	    Arbitrary {
+	      for {
+		page  <- arbitrary[WhatTypeofIntermediaryPage.type]
+		value <- arbitrary[WhatTypeofIntermediary].map(Json.toJson(_))
+	      } yield (page, value)
+	    }
+
+	  implicit lazy val arbitraryYouHaveNotAddedAnyIntermediariesUserAnswersEntry: Arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] =
+	    Arbitrary {
+	      for {
+		page  <- arbitrary[YouHaveNotAddedAnyIntermediariesPage.type]
+		value <- arbitrary[YouHaveNotAddedAnyIntermediaries].map(Json.toJson(_))
+	      } yield (page, value)
+	    }
+
+  
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
     Arbitrary {
       for {

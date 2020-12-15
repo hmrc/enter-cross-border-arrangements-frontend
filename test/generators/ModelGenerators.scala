@@ -21,11 +21,23 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks._
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+import models.intermediaries.WhatTypeofIntermediary
+  implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =
+    Arbitrary {
+      Gen.oneOf(WhatTypeofIntermediary.values.toSeq)
+    }
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyIntermediaries: Arbitrary[YouHaveNotAddedAnyIntermediaries] =
+    Arbitrary {
+      Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
+    }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =
     Arbitrary {

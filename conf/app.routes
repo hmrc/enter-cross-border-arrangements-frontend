@@ -326,3 +326,19 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 
 #GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
 
+# INTERMEDIARIES
+
+GET        /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaries/capacity                        controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/capacity                        controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
