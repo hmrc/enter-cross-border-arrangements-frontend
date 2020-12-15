@@ -29,7 +29,7 @@ object NavigatorForOrganisation extends AbstractNavigator {
   private[navigation] val routeMap: Page => Mode => Option[Any] => Int => Call = {
 
     case OrganisationNamePage =>
-      mode => _ => - => routes.IsOrganisationAddressKnownController.onPageLoad(mode)
+      mode => _ => _ => routes.IsOrganisationAddressKnownController.onPageLoad(mode)
 
     case IsOrganisationAddressKnownPage =>
       mode => value => _ => value.asInstanceOf[Boolean] match {
@@ -44,13 +44,10 @@ object NavigatorForOrganisation extends AbstractNavigator {
       }
 
     case PostcodePage =>
-      mode => _ => - => routes.OrganisationSelectAddressController.onPageLoad(mode)
+      mode => _ => _ => routes.OrganisationSelectAddressController.onPageLoad(mode)
 
-    case SelectAddressPage =>
-      mode => _ => - => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
-
-    case OrganisationAddressPage =>
-      mode => _ => - => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
+    case SelectAddressPage | OrganisationAddressPage =>
+      mode => _ => _ => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
 
     case EmailAddressQuestionForOrganisationPage =>
       mode => value => _ => value.asInstanceOf[Boolean] match {
@@ -59,7 +56,7 @@ object NavigatorForOrganisation extends AbstractNavigator {
       }
 
     case EmailAddressForOrganisationPage =>
-      mode => _ => - => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
+      mode => _ => _ => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
 
     case WhichCountryTaxForOrganisationPage =>
       mode => value => index => value match { case country: Country =>
@@ -81,7 +78,7 @@ object NavigatorForOrganisation extends AbstractNavigator {
         case _     => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
       }
 
-    case WhatAreTheTaxNumbersForUKOrganisationPage =>
+    case WhatAreTheTaxNumbersForUKOrganisationPage | WhatAreTheTaxNumbersForNonUKOrganisationPage =>
       mode => _ => index => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
 
     case IsOrganisationResidentForTaxOtherCountriesPage =>
@@ -89,9 +86,6 @@ object NavigatorForOrganisation extends AbstractNavigator {
         case true => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, index)
         case _    => checkYourAnswersRoute
       }
-
-    case WhatAreTheTaxNumbersForNonUKOrganisationPage =>
-      mode => _ => index => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
 
     case _ =>
       mode => _ => _ => mode match {

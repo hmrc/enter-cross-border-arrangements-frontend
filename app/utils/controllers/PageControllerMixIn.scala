@@ -20,13 +20,14 @@ import controllers.actions.{DataRequiredAction, DataRequiredInitializingActionIm
 import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.libs.json.JsObject
 
 trait PageControllerMixIn[A] extends PageControllerComponents {
 
   val template: String
 
-  def pageData(form: Form[A], userAnswers: Option[UserAnswers]): JsObject
+  def pageData(form: Form[A], userAnswers: Option[UserAnswers])(implicit messages: Messages): JsObject
 
   val form: Form[A]
 

@@ -16,7 +16,7 @@
 
 package navigation
 
-import models.Mode
+import models.{CheckMode, Mode, NormalMode}
 import pages.Page
 import play.api.mvc.Call
 
@@ -33,6 +33,12 @@ abstract class AbstractNavigator {
       routeMap(page)(mode)(value)(index)
     }
   }
+
+  private[navigation] def orCheckYourAnswers(mode: Mode, route: Call): Call =
+    mode match {
+      case NormalMode => route
+      case CheckMode  => checkYourAnswersRoute
+    }
 
   val indexRoute = controllers.routes.IndexController.onPageLoad()
 

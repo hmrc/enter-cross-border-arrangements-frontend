@@ -17,23 +17,27 @@
 package utils.controllers
 
 import models.{Mode, UserAnswers}
-import pages.QuestionPage
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json, Reads}
+import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-trait OnPageLoadIndexMixIn[A] extends PageIndexController[A] with PageControllerMixIn[A] {
+trait OnPageLoadIndexMixIn[A, D] extends FrontendBaseController with I18nSupport with NunjucksSupport with PageControllerMixIn[A] {
 
-  def getPage(userAnswers: UserAnswers): Option[IndexedSeq[A]]
+  val  getLoopPage: UserAnswers => Option[IndexedSeq[D]]
+
+  val toValue: D => A
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val userAnswers = getUserAnswers(request)
-      val preparedForm = userAnswers.flatMap(getPage) match {
+      val preparedForm = userAnswers.flatMap(getLoopPage) match {
         case None => form
         case Some(list) =>
-          list.lift(index).fold(form) { fill }
+          list.lift(index).map(toValue).fold(form) { fill }
       }
 
       val json = Json.obj(

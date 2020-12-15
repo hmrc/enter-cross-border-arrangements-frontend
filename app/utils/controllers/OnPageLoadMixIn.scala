@@ -17,11 +17,13 @@
 package utils.controllers
 
 import models.{Mode, UserAnswers}
-import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-trait OnPageLoadMixIn[A] extends PageController[A] with PageControllerMixIn[A] {
+trait OnPageLoadMixIn[A] extends FrontendBaseController with I18nSupport with NunjucksSupport with PageControllerMixIn[A] {
 
   val getPage: UserAnswers => Option[A]
 
