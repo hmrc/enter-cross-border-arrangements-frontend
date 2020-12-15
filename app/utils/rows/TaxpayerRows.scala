@@ -28,16 +28,10 @@ trait TaxpayerRows extends RowBuilder {
 
   def taxpayerSelectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
-      Row(
-        key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectType.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
-          )
-        )
+      toRow(
+        msgKey = "selectType",
+        content = msg"selectType.$answer",
+        href = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url
       )
   }
 

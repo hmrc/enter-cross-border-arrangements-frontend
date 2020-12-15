@@ -108,14 +108,8 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
 
   private def getDisplayName(userAnswers: UserAnswers): Option[String] = {
    userAnswers.get(TaxpayerSelectTypePage) map {
-     case Organisation => userAnswers.get(OrganisationNamePage) match {
-       case Some(organisationName) => organisationName
-       case None => "the organisation"
-     }
-     case Individual => userAnswers.get(IndividualNamePage) match {
-       case Some(individualName) => individualName.displayName
-       case None => "the individual"
-     }
+     case Organisation => JourneyHelpers.getOrganisationName(userAnswers)
+     case Individual => JourneyHelpers.getIndividualName(userAnswers)
    }
   }
 }

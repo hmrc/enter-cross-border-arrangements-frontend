@@ -56,7 +56,6 @@ class CheckYourAnswersTaxpayersControllerSpec extends SpecBase with MockitoSugar
     val json = jsonCaptor.getValue
     val summaryRows = (json \ "taxpayersSummary").toString
 
-    println(s"\n\n\n$summaryRows\n\n\n")
     templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
     assertFunction(summaryRows)
 
