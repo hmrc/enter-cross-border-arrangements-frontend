@@ -83,7 +83,11 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val jc = jsonCaptor.getValue
       println("XXX\n\n")
       println(jc.toString.diff(expectedJson.toString))
-      jc must containJson(expectedJson)
+      println("YYY\n\n")
+      println(jc)
+      println("ZZZ\n\n")
+      println(expectedJson)
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

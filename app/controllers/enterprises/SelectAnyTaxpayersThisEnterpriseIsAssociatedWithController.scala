@@ -63,7 +63,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       }
 
       val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.selectType}:${taxpayer.nameAsString}")
+        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
       }
       val checkboxes = Checkboxes.set(field = preparedForm("value"), items = items)
 

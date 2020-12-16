@@ -17,6 +17,7 @@
 package navigation
 
 import base.SpecBase
+import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController
 import generators.Generators
 import models._
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
@@ -379,10 +380,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "must go from 'You have not added any taxpayers' page to " +
-        "'Is this an organisation or an individual?' if answer is 'Yes, add now'" in {
+        "'Select any taxpayers this enterprise is associated with' if answer is 'Yes, add now'" in {
 
         assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
-          controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode)) {
+          controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(CheckMode)) {
           _
             .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
             .success
@@ -391,10 +392,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
 
       "must go from 'You have not added any taxpayers' page to " +
-        "Index page if answer is 'Yes, add later'" in {
+        "the same page if answer is 'Yes, add later'" in {
 
         assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
-          controllers.routes.IndexController.onPageLoad()) {
+          controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode)) {
           _
             .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater)
             .success
@@ -405,7 +406,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'You have not added any taxpayers' page to " +
         "Index page if answer is 'No'" in {
         assertRedirect(YouHaveNotAddedAnyAssociatedEnterprisesPage,
-          controllers.routes.IndexController.onPageLoad()) {
+          controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode)) {
           _
             .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.No)
             .success
