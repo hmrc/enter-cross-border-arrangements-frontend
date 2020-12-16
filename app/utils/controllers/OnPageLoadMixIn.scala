@@ -25,13 +25,13 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 trait OnPageLoadMixIn[A] extends PageLoadMixIn[A] {
 
-  val getPage: UserAnswers => Option[A]
+  val getValue: UserAnswers => Option[A]
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val userAnswers = getUserAnswers(request)
-      val preparedForm = userAnswers.flatMap(getPage) match {
+      val preparedForm = userAnswers.flatMap(getValue) match {
         case None => form
         case Some(value) => fill(value)
       }

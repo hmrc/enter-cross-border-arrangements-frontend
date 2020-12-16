@@ -26,7 +26,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 trait OnPageLoadIndexMixIn[A, D] extends PageLoadMixIn[A] {
 
-  val  getLoopPage: UserAnswers => Option[IndexedSeq[D]]
+  val  getList: UserAnswers => Option[IndexedSeq[D]]
 
   val toValue: D => A
 
@@ -34,7 +34,7 @@ trait OnPageLoadIndexMixIn[A, D] extends PageLoadMixIn[A] {
     implicit request =>
 
       val userAnswers = getUserAnswers(request)
-      val preparedForm = userAnswers.flatMap(getLoopPage) match {
+      val preparedForm = userAnswers.flatMap(getList) match {
         case None => form
         case Some(list) =>
           list.lift(index).map(toValue).fold(form) { fill }

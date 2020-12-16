@@ -20,11 +20,11 @@ import controllers.actions._
 import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers._
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
-import navigation.Navigator
+import navigation.NavigatorForOrganisation
 import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -72,6 +71,9 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
       renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(Ok(_))
   }
+
+  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForOrganisation.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -112,13 +114,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield {
-            if (determineRoute) {
-              Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
-            }
-          }
+          } yield Redirect(redirect(mode, Some(value), currentIndexInsideLoop(request), determineRoute))
         }
       )
   }

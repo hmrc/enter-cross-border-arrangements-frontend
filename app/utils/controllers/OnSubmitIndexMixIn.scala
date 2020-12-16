@@ -26,7 +26,7 @@ import scala.util.Try
 
 trait OnSubmitIndexMixIn[A, D] extends OnPageLoadIndexMixIn[A, D] with PageSubmitMixIn[A] {
 
-  val setLoopPage: UserAnswers => IndexedSeq[D] => Try[UserAnswers]
+  val setList: UserAnswers => IndexedSeq[D] => Try[UserAnswers]
 
   val toDetail: A => D
 
@@ -57,12 +57,12 @@ trait OnSubmitIndexMixIn[A, D] extends OnPageLoadIndexMixIn[A, D] with PageSubmi
               }
             }
           )
-        case _ => Future.successful(Redirect(failOnSubmit()))
+        case _ => Future.successful(Redirect(failOnSubmit))
       }
   }
 
   def getLoopList(mode: Mode, userAnswers: UserAnswers, value: A, index: Int): IndexedSeq[D] =
-    (getLoopPage(userAnswers), mode, value) match {
+    (getList(userAnswers), mode, value) match {
       case (None, _, _)                    => IndexedSeq[D](toDetail(value))
       case (Some(list), CheckMode, false)  => list.slice(0, index) // Remove from loop in CheckMode
       case (Some(list), _, true)           => list :+ toDetail(value)
@@ -78,8 +78,8 @@ trait OnSubmitIndexMixIn[A, D] extends OnPageLoadIndexMixIn[A, D] with PageSubmi
 
   def updateAnswers(userAnswers: UserAnswers, value: A, loopList: IndexedSeq[D])(f: UserAnswers => Result): Future[Result] =
     for {
-      updatedAnswers <- Future.fromTry(setPage(userAnswers)(value))
-      updatedAnswersWithLoopDetails <- Future.fromTry(setLoopPage(updatedAnswers)(loopList))
+      updatedAnswers <- Future.fromTry(setValue(userAnswers)(value))
+      updatedAnswersWithLoopDetails <- Future.fromTry(setList(updatedAnswers)(loopList))
       _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
     } yield f(updatedAnswersWithLoopDetails)
 

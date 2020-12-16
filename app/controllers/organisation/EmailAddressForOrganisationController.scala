@@ -18,46 +18,79 @@ package controllers.organisation
 
 import controllers.actions._
 import forms.organisation.EmailAddressForOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
-import models.{Mode, UserAnswers}
-import navigation.NavigatorForOrganisation
-import pages.organisation.EmailAddressForOrganisationPage
-import play.api.data.Form
-import play.api.i18n.MessagesApi
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Call, MessagesControllerComponents}
-import renderer.Renderer
-import repositories.SessionRepository
-import utils.controllers.OnSubmitMixIn
+import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import models.Mode
+import navigation.{Navigator, NavigatorForOrganisation}
+import pages.organisation.EmailAddressForOrganisationPage
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import renderer.Renderer
+import repositories.SessionRepository
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class EmailAddressForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
-    val sessionRepository: SessionRepository,
-    val identify: IdentifierAction,
-    val getData: DataRetrievalAction,
-    val requireData: DataRequiredAction,
+    sessionRepository: SessionRepository,
+    navigator: Navigator,
+    identify: IdentifierAction,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
     formProvider: EmailAddressForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
-    val renderer: Renderer
-)(implicit val ec: ExecutionContext) extends OnSubmitMixIn[String] {
+    renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  val template: String = "organisation/emailAddressForOrganisation.njk"
+  private val form = formProvider()
 
-  val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
 
-  override def pageData(form: Form[String], userAnswers: Option[UserAnswers]): JsObject = Json.obj(
-    "organisationName" -> getOrganisationName(userAnswers.get)
-  )
+      val preparedForm = request.userAnswers.get(EmailAddressForOrganisationPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
-  val getPage = ua => ua.get(EmailAddressForOrganisationPage)
+      val json = Json.obj(
+        "form" -> preparedForm,
+        "organisationName" -> getOrganisationName(request.userAnswers),
+        "mode" -> mode
+      )
 
-  val setPage = ua => value => ua.set(EmailAddressForOrganisationPage, value)
-
-  override def redirect(mode: Mode, value: Option[String], index: Int, alternative: Boolean): Call = {
-    NavigatorForOrganisation.nextPage(EmailAddressForOrganisationPage, mode, value, 0, alternative)
+      renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int, alternative: Boolean): Call =
+    NavigatorForOrganisation.nextPage(EmailAddressForOrganisationPage, mode, value, 0, alternative)
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      form.bindFromRequest().fold(
+        formWithErrors => {
+
+          val json = Json.obj(
+            "form" -> formWithErrors,
+            "organisationName" -> getOrganisationName(request.userAnswers),
+            "mode" -> mode
+          )
+
+          renderer.render("organisation/emailAddressForOrganisation.njk", json).map(BadRequest(_))
+        },
+        value => {
+
+          val redirectUsers = hasValueChanged(value, EmailAddressForOrganisationPage, mode, request.userAnswers)
+
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
+        }
+      )
+  }
 }

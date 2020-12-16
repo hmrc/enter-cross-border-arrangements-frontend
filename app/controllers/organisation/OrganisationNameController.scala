@@ -19,24 +19,23 @@ package controllers.organisation
 import controllers.actions._
 import forms.organisation.OrganisationNameFormProvider
 import helpers.JourneyHelpers.hasValueChanged
-import javax.inject.Inject
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForOrganisation
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationNameController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     formProvider: OrganisationNameFormProvider,
@@ -62,6 +61,9 @@ class OrganisationNameController @Inject()(
       renderer.render("organisation/organisationName.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForOrganisation.nextPage(OrganisationNamePage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
@@ -84,13 +86,7 @@ class OrganisationNameController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
-            }
-          }
+          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
         }
      )
   }

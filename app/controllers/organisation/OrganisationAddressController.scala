@@ -19,25 +19,24 @@ package controllers.organisation
 import controllers.actions._
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged}
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
-import navigation.Navigator
+import models.{Address, Mode, UserAnswers}
+import navigation.NavigatorForOrganisation
 import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
                                               countryListFactory: CountryListFactory,
                                               sessionRepository: SessionRepository,
-                                              navigator: Navigator,
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
@@ -72,6 +71,9 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       renderer.render("address.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[Address], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForOrganisation.nextPage(OrganisationAddressPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -99,13 +101,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
-            }
-          }
+          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
         }
       )
   }

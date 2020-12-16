@@ -16,15 +16,13 @@
 
 package utils.controllers
 
-import controllers.routes
-import models.{Mode, UserAnswers}
+import models.Mode
 import play.api.libs.json.Json
 import play.api.mvc._
 
 import scala.concurrent.Future
-import scala.util.Try
 
-trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] with PageSubmitMixIn[A] {
+trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] with OnSubmitSuccessMixIn[A] {
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -44,31 +42,13 @@ trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] with PageSubmitMixIn[A] {
             },
             value => updateAnswers(userAnswers, value) { updatedAnswers =>
 
-              success(mode, updatedAnswers, value, getIndex(request))
+              val previousValue: Option[A] = getValue(userAnswers)
+              val alternative = previousValue.exists(_ != value)
+              success(mode, updatedAnswers, value, getIndex(request), alternative)
             }
           )
-        case _ => Future.successful(Redirect(failOnSubmit()))
+        case _ => Future.successful(Redirect(failOnSubmit))
       }
   }
-
-  def success(mode: Mode, userAnswers: UserAnswers, value: A, index: Int = 0): Result = {
-    val previousValue: Option[A] = getPage(userAnswers)
-    val alternative = previousValue.exists(_ != value)
-    Redirect(redirect(mode, Some(value), index, alternative))
-  }
-
-  def updateAnswers(userAnswers: UserAnswers, value: A)(f: UserAnswers => Result): Future[Result] =
-    for {
-      updatedAnswers <- Future.fromTry(setPage(userAnswers)(value))
-      _ <- sessionRepository.set(updatedAnswers)
-    } yield f(updatedAnswers)
-
-  def getIndex(request: Request[AnyContent]): Int =
-    Try {
-      val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
-      val uriPattern(_, index) = request.uri
-
-      index.toInt
-    }.getOrElse(0)
 
 }

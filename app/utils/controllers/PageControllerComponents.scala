@@ -29,7 +29,6 @@ import scala.concurrent.ExecutionContext
 trait PageControllerComponents extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   implicit val ec: ExecutionContext
-  val sessionRepository: SessionRepository
   val identify: IdentifierAction
   val getData: DataRetrievalAction
   val requireData: DataRequiredAction

@@ -19,14 +19,15 @@ package controllers.organisation
 import controllers.actions._
 import forms.organisation.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
+
 import javax.inject.Inject
-import models.{Mode, LoopDetails, UserAnswers}
-import navigation.Navigator
+import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
+import navigation.{Navigator, NavigatorForOrganisation}
 import pages.organisation.WhatAreTheTaxNumbersForNonUKOrganisationPage
 import pages.organisation.{OrganisationLoopPage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -74,6 +75,9 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
       renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[TaxReferenceNumbers], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForOrganisation.nextPage(WhatAreTheTaxNumbersForNonUKOrganisationPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -108,7 +112,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(WhatAreTheTaxNumbersForNonUKOrganisationPage, mode, updatedAnswersWithLoopDetails))
+          } yield Redirect(redirect(mode, Some(value), currentIndexInsideLoop(request)))
         }
       )
   }

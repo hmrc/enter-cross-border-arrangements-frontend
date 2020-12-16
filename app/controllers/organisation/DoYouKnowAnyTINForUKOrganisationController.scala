@@ -18,57 +18,99 @@ package controllers.organisation
 
 import controllers.actions._
 import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
-import models.{LoopDetails, Mode, UserAnswers}
+import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
+import models.{LoopDetails, Mode}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
-import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Call, MessagesControllerComponents}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.Radios
-import utils.controllers.OnSubmitIndexMixIn
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
-import scala.util.Try
+import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouKnowAnyTINForUKOrganisationController @Inject()(
                                                             override val messagesApi: MessagesApi,
-                                                            val sessionRepository: SessionRepository,
-                                                            val identify: IdentifierAction,
-                                                            val getData: DataRetrievalAction,
-                                                            val requireData: DataRequiredAction,
+                                                            sessionRepository: SessionRepository,
+                                                            identify: IdentifierAction,
+                                                            getData: DataRetrievalAction,
+                                                            requireData: DataRequiredAction,
                                                             formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
                                                             val controllerComponents: MessagesControllerComponents,
-                                                            val renderer: Renderer
-)(implicit val ec: ExecutionContext) extends OnSubmitIndexMixIn[Boolean, LoopDetails] {
+                                                            renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  val template: String = "organisation/doYouKnowAnyTINForUKOrganisation.njk"
+  private val form = formProvider()
 
-  val setPage = ua => value => ua.set(DoYouKnowAnyTINForUKOrganisationPage, value)
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
 
-  val form = formProvider()
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
+        case None => form
+        case Some(value) if value.lift(index).isDefined =>
+          val doYouKnowUTR = value.lift(index).get.doYouKnowUTR
+          if (doYouKnowUTR.isDefined) {
+            form.fill(doYouKnowUTR.get)
+          } else {
+            form
+          }
+        case Some(_) => form
+      }
 
-  val getLoopPage: UserAnswers => Option[IndexedSeq[LoopDetails]] = _.get(OrganisationLoopPage)
+      val json = Json.obj(
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios" -> Radios.yesNo(preparedForm("confirm")),
+        "organisationName" -> getOrganisationName(request.userAnswers),
+        "index" -> index
+      )
 
-  val setLoopPage: UserAnswers => IndexedSeq[LoopDetails] => Try[UserAnswers] = ua => loopDetails => ??? //getLoopPage(ua).copy(doYouKnowUTR = )
-
-  override val toValue: LoopDetails => Boolean = _.doYouKnowTIN.getOrElse(false)
-
-  def pageData(form: Form[Boolean], userAnswers: Option[UserAnswers])(implicit messages: Messages): JsObject = Json.obj(
-      "radios" -> Radios.yesNo(form("confirm")),
-      "organisationName" -> getOrganisationName(userAnswers.get)
-    )
+      renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
+  }
 
   def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForOrganisation.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, value, index)
+    NavigatorForOrganisation.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, value, index, alternative)
 
-  val toDetail = value => LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
+  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
 
-  def updatedLoop(details: LoopDetails, value: Boolean): LoopDetails = details.copy(doYouKnowUTR = Some(value))
+      form.bindFromRequest().fold(
+        formWithErrors => {
 
-  override val updatedLoop: (LoopDetails, Boolean) => LoopDetails = ???
+          val json = Json.obj(
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "organisationName" -> getOrganisationName(request.userAnswers),
+            "index" -> index
+          )
+
+          renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
+        },
+        value => {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+            case None =>
+              val newOrganisationLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
+              IndexedSeq[LoopDetails](newOrganisationLoop)
+            case Some(list) =>
+              if (list.lift(index).isDefined) {
+                val updatedLoop = list.lift(index).get.copy(doYouKnowUTR = Some(value))
+                list.updated(index, updatedLoop)
+              } else {
+                list
+              }
+          }
+
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+          } yield Redirect(redirect(mode, Some(value), currentIndexInsideLoop(request)))
+        }
+      )
+  }
 }

@@ -95,8 +95,7 @@ object NavigatorForOrganisation extends AbstractNavigator {
   }
 
   private[navigation] val alternativeRouteMap: Page => Call = {
-    case EmailAddressForOrganisationPage => routes.CheckYourAnswersOrganisationController.onPageLoad()
-    case _ => indexRoute
+    case _ => checkYourAnswersRoute
   }
 
 }
