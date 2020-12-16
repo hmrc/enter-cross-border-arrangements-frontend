@@ -17,7 +17,6 @@
 package controllers.enterprises
 
 import base.SpecBase
-import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
@@ -27,7 +26,6 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,8 +33,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
 import scala.concurrent.Future
 

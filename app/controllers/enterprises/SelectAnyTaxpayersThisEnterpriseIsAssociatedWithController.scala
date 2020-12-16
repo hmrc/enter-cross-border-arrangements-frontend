@@ -18,9 +18,9 @@ package controllers.enterprises
 
 import controllers.actions._
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
-import models.individual.Individual
+import javax.inject.Inject
+import models.Mode
 import models.organisation.Organisation
-import models.{Mode, Name, SelectType}
 import models.taxpayer.Taxpayer
 import navigation.Navigator
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
@@ -33,8 +33,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
-import java.time.LocalDate
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
@@ -107,14 +105,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {
 
   val taxpayers: List[Taxpayer] = {
-    List(
-      Taxpayer(
-        Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
-      ),
-      Taxpayer(
-        Organisation("My organisation")
-      )
-    )
+    List(Taxpayer(Organisation("organisation")), Taxpayer(Organisation("new organisation")))
   }
 
 }

@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{Address, Country, Name, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -30,11 +29,9 @@ import org.scalatest.BeforeAndAfterEach
 import pages.individual._
 import play.api.inject.bind
 import play.api.libs.json._
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -169,7 +166,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlaceKnown(yesOrNo = false)(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -185,7 +182,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlaceKnown(yesOrNo = false)(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -201,7 +198,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlace("BIRTHPLACE")(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -217,7 +214,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertAddressKnown(yesOrNo = true)(list(1))
         assertAddress(address)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -233,45 +230,8 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertAddressKnown(yesOrNo = false)(list(1))
         assertEmailKnown(yesOrNo = true)(list(2))
         assertEmail("email@email.org")(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
-    }
-
-    "must redirect to the taxpayers update page when valid data is submitted" in {
-
-      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualNamePage, Name("Check", "YourAnswers"))
-        .success
-        .value
-        .set(IndividualDateOfBirthPage, LocalDate.now())
-        .success
-        .value
-
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, checkYourAnswersIndividualRoute)
-          .withFormUrlEncodedBody(("", ""))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
   }
 }

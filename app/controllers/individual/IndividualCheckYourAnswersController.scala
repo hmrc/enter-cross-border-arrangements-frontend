@@ -55,7 +55,7 @@ class IndividualCheckYourAnswersController @Inject()(
       if (associatedEnterpriseJourney) {
         Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
       } else if(relevantTaxpayerJourney) {
-        Future.successful(Redirect(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()))
+        Future.successful(Redirect(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()))
       }
       else {
         val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -75,26 +75,5 @@ class IndividualCheckYourAnswersController @Inject()(
             "countrySummary" -> countryDetails)
         ).map(Ok(_))
       }
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-    (request.userAnswers.get(IndividualNamePage), request.userAnswers.get(IndividualDateOfBirthPage)) match {
-      case (Some(name), Some(dob)) =>
-        val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
-          case Some(list) => // append to existing list
-            list :+ Taxpayer.apply(Individual(name, dob))
-          case None => // start new list
-            IndexedSeq[Taxpayer](Taxpayer.apply(Individual(name, dob)))
-        }
-        for {
-          userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
-          _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
-        } yield {
-          Redirect(navigator.nextPage(CheckYourAnswersIndividualPage, mode, userAnswersWithTaxpayerLoop))
-        }
-      case _ => errorHandler.onServerError(request, throw new Exception("Error submitting - missing required individual taxpayer details"))
-    }
   }
 }

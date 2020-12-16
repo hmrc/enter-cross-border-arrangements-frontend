@@ -13,7 +13,9 @@ GET        /organisation/check-answers                  controllers.organisation
 GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
 GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
-GET        /taxpayers/check-answers                     controllers.taxpayer.CheckYourAnswersTaxpayersController.onPageLoad
+
+GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
+POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package pages.organisation
+package pages.taxpayer
 
 import pages.Page
 
-case object CheckYourAnswersOrganisationPage extends Page {
+case object TaxpayerCheckYourAnswersPage extends Page {
 
-  override def toString: String = "checkYourAnswersOrganisationPage"
+  override def toString: String = "taxpayerCheckYourAnswersPage"
 
 }

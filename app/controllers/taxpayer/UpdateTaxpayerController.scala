@@ -39,7 +39,6 @@ class UpdateTaxpayerController @Inject()(
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: UpdateTaxpayerFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer

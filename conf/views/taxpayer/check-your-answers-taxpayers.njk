@@ -20,30 +20,33 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-            {{ csrf() | safe }}
+       <h1 class="govuk-heading-xl">
+          {{ messages("taxpayerscheckYourAnswers.heading") }}
+       </h1>
 
-           <h1 class="govuk-heading-xl">
-              {{ messages("taxpayerscheckYourAnswers.heading") }}
-           </h1>
+       <form action="{{ routes.controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode).url }}" method="post">
 
-           {{ govukSummaryList({
-              classes: 'govuk-!-margin-bottom-0',
-              rows: taxpayersSummary
-           }) }}
-           {{ govukSummaryList({
-              classes: 'govuk-summary-list--no-border',
-              rows: countrySummary
-           }) }}
+       {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+          rows: taxpayersSummary
+       }) }}
 
+       {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: countrySummary
+       }) }}
 
+       {{ csrf() | safe }}
 
-            <div class="govuk-!-margin-top-9">
-                {{ govukButton({
-                    text: messages("site.continue"),
-                    preventDoubleClick: true,
-                    attributes: {id:"submit"}
-                }) }}
-            </div>
+        <div class="govuk-!-margin-top-9">
+            {{ govukButton({
+                text: messages("site.continue"),
+                preventDoubleClick: true,
+                attributes: {id:"submit"}
+            }) }}
+        </div>
+
+        </form>
 
       </div>
     </div>

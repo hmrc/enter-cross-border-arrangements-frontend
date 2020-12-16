@@ -29,11 +29,16 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-
 import java.time.LocalDate
+
+import navigation.{FakeNavigator, Navigator}
+import play.api.inject.bind
+import play.api.mvc.Call
+import repositories.SessionRepository
+
 import scala.concurrent.Future
 
-class CheckYourAnswersTaxpayersControllerSpec extends SpecBase with MockitoSugar {
+class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 
@@ -42,7 +47,7 @@ class CheckYourAnswersTaxpayersControllerSpec extends SpecBase with MockitoSugar
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url)
 
     val result = route(application, request).value
 
@@ -67,7 +72,7 @@ class CheckYourAnswersTaxpayersControllerSpec extends SpecBase with MockitoSugar
   }
 
 
-  "AssociatedEnterpriseCheckYourAnswers Controller" - {
+  "TaxpayersCheckYourAnswers Controller - onPageload" - {
 
     "must return rows for an associated enterprise who is an organisation" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -127,5 +132,87 @@ class CheckYourAnswersTaxpayersControllerSpec extends SpecBase with MockitoSugar
       }
     }
   }
+
+  "TaxpayersCheckYourAnswersController - onSubmit" - {
+
+    lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url
+
+    "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
+
+      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(TaxpayerSelectTypePage, SelectType.Organisation)
+        .success
+        .value
+        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
+        .success
+        .value
+
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, taxpayersCheckYourAnswersRoute)
+          .withFormUrlEncodedBody(("", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the taxpayers update page when valid data is submitted for an individual taxpayer" in {
+
+      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(TaxpayerSelectTypePage, SelectType.Individual)
+        .success
+        .value
+        .set(IndividualNamePage, Name("Check", "YourAnswers"))
+        .success
+        .value
+        .set(IndividualDateOfBirthPage, LocalDate.now())
+        .success
+        .value
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, taxpayersCheckYourAnswersRoute)
+          .withFormUrlEncodedBody(("", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+  }
+
 }
 

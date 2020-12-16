@@ -24,7 +24,6 @@
           {{ messages("checkYourAnswers.heading") }}
         </h1>
 
-        <form action="{{ routes.controllers.organisation.CheckYourAnswersOrganisationController.onSubmit(mode).url }}" method="post">
 
         {{ govukSummaryList({
           classes: 'govuk-!-margin-bottom-0',
@@ -46,7 +45,6 @@
                     attributes: {id:"submit"}
                 }) }}
             </div>
-        </form>
 
       </div>
     </div>

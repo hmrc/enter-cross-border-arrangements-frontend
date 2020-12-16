@@ -55,7 +55,7 @@ class CheckYourAnswersOrganisationController @Inject()(
       if (associatedEnterpriseJourney) {
         Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
       } else if (relevantTaxpayerJourney) {
-        Future.successful(Redirect(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()))
+        Future.successful(Redirect(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()))
       } else {
         val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
         val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
@@ -68,29 +68,5 @@ class CheckYourAnswersOrganisationController @Inject()(
           )
         ).map(Ok(_))
       }
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-    //TODO - build full Taxpayer Details to submit
-    request.userAnswers.get(OrganisationNamePage) match {
-      case Some(name) =>
-        val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
-          case Some(list) => // append to existing list
-            list :+ Taxpayer.apply(Organisation(name))
-          case None => // start new list
-            IndexedSeq[Taxpayer](Taxpayer.apply(Organisation(name)))
-        }
-
-        for {
-          userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
-          _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
-        } yield {
-          Redirect(navigator.nextPage(CheckYourAnswersOrganisationPage, mode, userAnswersWithTaxpayerLoop))
-        }
-      case _ => errorHandler.onServerError(request, throw new Exception("Error submitting - missing required organisation taxpayer details"))
-
-    }
   }
 }
