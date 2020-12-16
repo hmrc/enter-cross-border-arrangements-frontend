@@ -16,24 +16,24 @@
 
 package controllers.taxpayer
 
+import java.time.LocalDate
+
 import base.SpecBase
 import models.{Name, SelectType, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.taxpayer.TaxpayerSelectTypePage
+import play.api.inject.bind
 import play.api.libs.json.JsObject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import java.time.LocalDate
-
-import navigation.{FakeNavigator, Navigator}
-import play.api.inject.bind
-import play.api.mvc.Call
 import repositories.SessionRepository
 
 import scala.concurrent.Future
@@ -59,10 +59,12 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json = jsonCaptor.getValue
-    val summaryRows = (json \ "taxpayersSummary").toString
+    val taxpayersSummaryRows = (json \ "taxpayersSummary").toString
 
     templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
-    assertFunction(summaryRows)
+    assertFunction(taxpayersSummaryRows)
+
+    //TODO - change assertFunction for json caps
 
     application.stop()
 
@@ -71,10 +73,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
     )
   }
 
-
   "TaxpayersCheckYourAnswers Controller - onPageload" - {
 
-    "must return rows for an associated enterprise who is an organisation" in {
+    "must return rows for a taxpayer who is an organisation" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .set(TaxpayerSelectTypePage, SelectType.Organisation)
         .success.value
@@ -86,9 +87,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .success.value
         .set(EmailAddressForOrganisationPage, "email@email.com")
         .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
-          LocalDate.of(2002,1,1))
-        .success.value
+//        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
+//          LocalDate.of(2002,1,1))
+//        .success.value
 
       verifyList(userAnswers) { rows =>
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
@@ -96,11 +97,11 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know their email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
-        rows.contains("""{"key":{"text":"Implementing date","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2002"}""") mustBe true
+//        rows.contains("""{"key":{"text":"Implementing date","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2002"}""") mustBe true
       }
     }
 
-    "must return rows for an associated enterprise who is an individual" in {
+    "must return rows for an taxpayer who is an individual" in {
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -116,9 +117,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .success.value
         .set(EmailAddressForIndividualPage, "email@email.com")
         .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
-          LocalDate.of(2002,1,1))
-        .success.value
+//        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
+//          LocalDate.of(2002,1,1))
+//        .success.value
 
       verifyList(userAnswers) { rows =>
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Individual"}""") mustBe true
@@ -128,7 +129,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know their email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
-        rows.contains("""{"key":{"text":"Implementing date","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2002"}""") mustBe true
+//        rows.contains("""{"key":{"text":"Implementing date","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2002"}""") mustBe true
       }
     }
   }

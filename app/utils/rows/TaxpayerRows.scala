@@ -18,8 +18,8 @@ package utils.rows
 
 import models.CheckMode
 import pages.taxpayer.TaxpayerSelectTypePage
-import uk.gov.hmrc.viewmodels.{MessageInterpolators, SummaryList}
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.MessageInterpolators
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
 trait TaxpayerRows extends RowBuilder {

@@ -434,7 +434,7 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
       case false if intermediariesJourney => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(mode)
-      case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
+      case false => controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad()
     }
   }
 

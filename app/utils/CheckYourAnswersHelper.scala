@@ -23,20 +23,17 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
-import pages._
-import pages.arrangement._
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows}
+import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
- 
+  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
+
 import pages.intermediaries.WhatTypeofIntermediaryPage
   def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
     answer =>
@@ -61,7 +58,7 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
         href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
       )
   }
-   
+
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
       Row(
@@ -216,14 +213,5 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
       )
     )
 
-  }
-
-  def buildTaxpayerDetails(taxpayerDetails: Seq[Row], countryDetails: Seq[Row]) : Seq[SummaryList.Row] = {
-    Seq(
-      taxpayerSelectType,
-    ).flatten ++
-      taxpayerDetails ++
-      countryDetails ++
-      Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
   }
 }

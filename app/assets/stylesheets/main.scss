@@ -1,3 +1,6 @@
+$govuk-assets-path: "/enter-cross-border-arrangements/assets/lib/govuk-frontend/govuk/assets/";
+@import "lib/govuk-frontend/govuk/all";
+
 .name-overflow {
     word-wrap: break-word; /* old version of overflow-wrap for IE and Edge and FF < 49*/
     overflow-wrap: anywhere; /* modern, tries to fit word on a new line rather than fitting on remnants of the current line */
@@ -7,3 +10,10 @@
     -moz-hyphens: auto;
     hyphens: auto;
 }
+
+hr { /* used to style additional line break for CYA Summary List */
+    border: 0px;
+    border-top: 1px solid $govuk-border-colour;
+    margin-bottom: 0px;
+}
+

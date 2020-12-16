@@ -26,11 +26,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.CheckYourAnswersOrganisationHelper
+import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersOrganisationController @Inject()(
+class OrganisationCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
@@ -57,9 +57,17 @@ class CheckYourAnswersOrganisationController @Inject()(
       } else if (relevantTaxpayerJourney) {
         Future.successful(Redirect(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()))
       } else {
-        val helper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
-        val organisationDetails: Seq[SummaryList.Row] = helper.buildOrganisationDetails
-        val countryDetails: Seq[SummaryList.Row] = helper.buildTaxResidencySummary
+
+        val helper = new CheckYourAnswersHelper(request.userAnswers)
+
+
+        val organisationDetails: Seq[SummaryList.Row] =
+            helper.organisationName.toSeq ++
+            helper.buildOrganisationAddressGroup ++
+            helper.buildOrganisationEmailAddressGroup
+
+        val countryDetails: Seq[SummaryList.Row] =
+          helper.buildTaxResidencySummaryForOrganisation
 
         renderer.render(
           "organisation/check-your-answers-organisation.njk",

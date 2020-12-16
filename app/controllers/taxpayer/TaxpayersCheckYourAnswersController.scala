@@ -18,14 +18,13 @@ package controllers.taxpayer
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import handlers.ErrorHandler
 import models.individual.Individual
 import models.organisation.Organisation
 import models.taxpayer.Taxpayer
 import models.{Mode, SelectType, UserAnswers}
 import navigation.Navigator
 import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
-import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import pages.organisation.OrganisationNamePage
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -34,7 +33,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{CheckYourAnswersHelper, CheckYourAnswersOrganisationHelper}
+import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +42,6 @@ class TaxpayersCheckYourAnswersController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    errorHandler: ErrorHandler,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     val controllerComponents: MessagesControllerComponents,
@@ -52,25 +50,35 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-          val helper = new CheckYourAnswersHelper(request.userAnswers)
-          val orgHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-          request.userAnswers.get(TaxpayerSelectTypePage) match {
-            case Some(selectType) =>
-              val taxpayerDetails: Seq[SummaryList.Row] =
-                helper.buildTaxpayerDetails(
-                  detailsSummary(selectType)(helper, orgHelper),
-                  countryDetails(selectType, request.userAnswers)(helper, orgHelper))
+      val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(TaxpayerSelectTypePage) match {
+        case Some(SelectType.Organisation) =>
+          (helper.taxpayerSelectType.toSeq ++ helper.organisationName.toSeq ++
+            helper.buildOrganisationAddressGroup ++ helper.buildOrganisationEmailAddressGroup,
+            helper.buildTaxResidencySummaryForOrganisation)
 
-                renderer.render (
-                "taxpayer/check-your-answers-taxpayers.njk",
-                Json.obj(
-                  "taxpayersSummary" -> taxpayerDetails
-                )).map(Ok(_))
+        case Some(SelectType.Individual) =>
 
-            case _ => errorHandler.onServerError(request, throw new Exception("Relevant taxpayer type is missing"))
-          }
+          (Seq(helper.taxpayerSelectType, helper.individualName,
+            helper.individualDateOfBirth).flatten ++
+            helper.buildIndividualPlaceOfBirthGroup ++
+            helper.buildIndividualAddressGroup ++
+            helper.buildIndividualEmailAddressGroup, helper.buildTaxResidencySummaryForIndividuals)
+
+        case _ => throw new RuntimeException("Unable to retrieve select type for Taxpayer")
       }
+
+      val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement.toSeq
+
+      renderer.render(
+        "taxpayer/check-your-answers-taxpayers.njk",
+        Json.obj(
+          "taxpayersSummary" -> taxpayerSummary,
+          "countrySummary" -> countrySummary,
+          "implementingDateSummary" -> implementingDateSummary
+        )).map(Ok(_))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -109,32 +117,4 @@ class TaxpayersCheckYourAnswersController @Inject()(
       case _ => throw new RuntimeException("Unable to retrieve Taxpayer details")
     }
   }
-
-  def detailsSummary(selectType: SelectType)
-                    (helper: CheckYourAnswersHelper, orgHelper: CheckYourAnswersOrganisationHelper): Seq[SummaryList.Row] = {
-     selectType match {
-        case SelectType.Organisation =>
-          orgHelper.buildOrganisationDetails
-        case SelectType.Individual =>
-          Seq(helper.individualName,
-            helper.individualDateOfBirth).flatten ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup
-      }
-  }
-
-    def countryDetails(selectType: SelectType, userAnswers: UserAnswers)
-                      (helper: CheckYourAnswersHelper, orgHelper: CheckYourAnswersOrganisationHelper): Seq[SummaryList.Row] = {
-      selectType match {
-        case SelectType.Organisation =>
-          userAnswers.get(OrganisationLoopPage) match {
-            case Some(taxResidentCountriesLoop) =>
-              orgHelper.buildTaxResidencySummary
-            case _ => Nil
-          }
-        case SelectType.Individual => helper.buildTaxResidencySummaryForIndividuals
-      }
-    }
-  }
-
+}

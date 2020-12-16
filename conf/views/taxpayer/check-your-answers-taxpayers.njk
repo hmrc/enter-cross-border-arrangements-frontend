@@ -36,6 +36,13 @@
           rows: countrySummary
        }) }}
 
+        <hr>
+
+      {{ govukSummaryList({
+         classes: 'govuk-!-margin-bottom-0',
+         rows: implementingDateSummary
+      }) }}
+
        {{ csrf() | safe }}
 
         <div class="govuk-!-margin-top-9">

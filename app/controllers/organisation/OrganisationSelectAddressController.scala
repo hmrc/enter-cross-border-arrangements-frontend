@@ -131,7 +131,7 @@ class OrganisationSelectAddressController @Inject()(
               _ <- sessionRepository.set(updatedAnswersWithAddress)
             } yield {
               if (redirectUsers) {
-                Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+                Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
               } else {
                 Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithAddress))
               }

@@ -101,7 +101,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
             }
