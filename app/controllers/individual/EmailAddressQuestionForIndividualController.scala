@@ -19,24 +19,23 @@ package controllers.individual
 import controllers.actions._
 import forms.individual.EmailAddressQuestionForIndividualFormProvider
 import helpers.JourneyHelpers.getIndividualName
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.individual.EmailAddressQuestionForIndividualPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailAddressQuestionForIndividualController @Inject()(
                                                              override val messagesApi: MessagesApi,
                                                              sessionRepository: SessionRepository,
-                                                             navigator: Navigator,
                                                              identify: IdentifierAction,
                                                              getData: DataRetrievalAction,
                                                              requireData: DataRequiredAction,
@@ -65,6 +64,9 @@ class EmailAddressQuestionForIndividualController @Inject()(
       renderer.render("individual/emailAddressQuestionForIndividual.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForIndividual.nextPage(EmailAddressQuestionForIndividualPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -84,7 +86,7 @@ class EmailAddressQuestionForIndividualController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForIndividualPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailAddressQuestionForIndividualPage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value)))
       )
   }
 }

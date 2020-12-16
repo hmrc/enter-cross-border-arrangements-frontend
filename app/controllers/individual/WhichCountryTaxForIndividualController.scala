@@ -18,27 +18,26 @@ package controllers.individual
 
 import controllers.actions._
 import forms.individual.WhichCountryTaxForIndividualFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getCountry}
-import javax.inject.Inject
+import helpers.JourneyHelpers.{countryJsonList, currentIndexInsideLoop, getCountry}
 import models.{Country, LoopDetails, Mode, UserAnswers}
-import navigation.Navigator
-import pages.individual.{IndividualNamePage, WhichCountryTaxForIndividualPage, IndividualLoopPage}
+import navigation.NavigatorForIndividual
+import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhichCountryTaxForIndividualController @Inject()(
     override val messagesApi: MessagesApi,
     countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -70,6 +69,9 @@ class WhichCountryTaxForIndividualController @Inject()(
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[Country], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForIndividual.nextPage(WhichCountryTaxForIndividualPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -94,7 +96,7 @@ class WhichCountryTaxForIndividualController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopDetails))
             _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(WhichCountryTaxForIndividualPage, mode, updatedAnswersWithLoopDetails))
+          } yield Redirect(redirect(mode, Some(value), currentIndexInsideLoop(request)))
         }
       )
   }

@@ -18,29 +18,27 @@ package controllers.individual
 
 import connectors.AddressLookupConnector
 import controllers.actions._
-import controllers.routes
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.{getIndividualName, hasValueChanged}
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{AddressLookup, Mode}
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.SelectedAddressLookupPage
 import pages.individual.{IndividualSelectAddressPage, IndividualUkPostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -87,6 +85,9 @@ class IndividualSelectAddressController @Inject()(
       }
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForIndividual.nextPage(IndividualSelectAddressPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -122,13 +123,7 @@ class IndividualSelectAddressController @Inject()(
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, value))
               updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
               _ <- sessionRepository.set(updatedAnswersWithAddress)
-            } yield {
-              if (redirectUsers) {
-                Redirect(routes.IndividualCheckYourAnswersController.onPageLoad())
-              } else {
-                Redirect(navigator.nextPage(IndividualSelectAddressPage, mode, updatedAnswersWithAddress))
-              }
-            }
+            } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
           }
         )
       }

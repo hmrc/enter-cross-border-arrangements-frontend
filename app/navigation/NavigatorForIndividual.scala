@@ -107,7 +107,7 @@ object NavigatorForIndividual extends AbstractNavigator {
   }
 
   private[navigation] val alternativeRouteMap: Page => Call = {
-    case _ => indexRoute
+    case _ => checkYourAnswersRoute
   }
 
 }
