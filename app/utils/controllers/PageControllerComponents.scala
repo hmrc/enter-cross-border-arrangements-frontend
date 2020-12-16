@@ -17,13 +17,16 @@
 package utils.controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
 import renderer.Renderer
 import repositories.SessionRepository
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.ExecutionContext
 
-trait PageControllerComponents {
+trait PageControllerComponents extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   implicit val ec: ExecutionContext
   val sessionRepository: SessionRepository

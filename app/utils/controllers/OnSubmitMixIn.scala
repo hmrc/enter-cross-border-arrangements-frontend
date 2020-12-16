@@ -24,11 +24,7 @@ import play.api.mvc._
 import scala.concurrent.Future
 import scala.util.Try
 
-trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] {
-
-  val setPage: UserAnswers => A => Try[UserAnswers]
-
-  def redirect(mode: Mode, value: Option[A], index: Int = 0, alternative: Boolean = false): Call
+trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] with PageSubmitMixIn[A] {
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -60,8 +56,6 @@ trait OnSubmitMixIn[A] extends OnPageLoadMixIn[A] {
     val alternative = previousValue.exists(_ != value)
     Redirect(redirect(mode, Some(value), index, alternative))
   }
-
-  def failOnSubmit(): Call = routes.SessionExpiredController.onPageLoad()
 
   def updateAnswers(userAnswers: UserAnswers, value: A)(f: UserAnswers => Result): Future[Result] =
     for {

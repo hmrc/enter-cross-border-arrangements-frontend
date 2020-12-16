@@ -70,4 +70,5 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
 
   def updatedLoop(details: LoopDetails, value: Boolean): LoopDetails = details.copy(doYouKnowUTR = Some(value))
 
+  override val updatedLoop: (LoopDetails, Boolean) => LoopDetails = ???
 }

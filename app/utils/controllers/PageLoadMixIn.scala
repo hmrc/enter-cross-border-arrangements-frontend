@@ -23,7 +23,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.libs.json.JsObject
 
-trait PageControllerMixIn[A] extends PageControllerComponents {
+trait PageLoadMixIn[A] extends PageControllerComponents {
 
   val template: String
 

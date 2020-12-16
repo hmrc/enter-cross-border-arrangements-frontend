@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-trait OnPageLoadIndexMixIn[A, D] extends FrontendBaseController with I18nSupport with NunjucksSupport with PageControllerMixIn[A] {
+trait OnPageLoadIndexMixIn[A, D] extends PageLoadMixIn[A] {
 
   val  getLoopPage: UserAnswers => Option[IndexedSeq[D]]
 
