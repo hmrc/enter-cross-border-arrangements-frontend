@@ -15,6 +15,7 @@ site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.service_name = Enter cross-border arrangements for DAC6
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
+site.selectAllThatApply = Select all that apply.
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -568,6 +569,8 @@ giveDetailsOfThisArrangement.hint2 = If this will take more than 15 minutes to w
 giveDetailsOfThisArrangement.checkYourAnswersLabel = Description
 giveDetailsOfThisArrangement.error.required = Provide arrangement details
 
+arrangementCheckYourAnswers.heading = Check your answers
+
 updateTaxpayer.title = Your taxpayers
 updateTaxpayer.heading = You have not added any taxpayers
 updateTaxpayer.h2 = Do you want to add a taxpayer?
@@ -606,3 +609,28 @@ selectType.organisation = Organisation
 selectType.individual = Individual
 selectType.checkYourAnswersLabel = Is this an organisation or an individual?
 selectType.error.required = Select the type of taxpayer
+
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1 = If the taxpayer associated with this enterprise is not listed below,
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2 = add the relevant taxpayer
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
+
+associatedEnterpriseCheckYourAnswers.title = Check your answers for associated enterprise details
+associatedEnterpriseCheckYourAnswers.heading = Check your answers for associated enterprise details
+
+associatedEnterpriseType.title = Is this an organisation or an individual?
+associatedEnterpriseType.heading = Is this an organisation or an individual?
+associatedEnterpriseType.checkYourAnswersLabel = Organisation or individual
+associatedEnterpriseType.error.required = Select the type of associated enterprise
+
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1 = If the taxpayer associated with this enterprise is not listed below,
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2 = add the relevant taxpayer
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
+selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
+

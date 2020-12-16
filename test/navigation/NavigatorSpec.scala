@@ -17,6 +17,7 @@
 package navigation
 
 import base.SpecBase
+import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController
 import controllers.routes
 import generators.Generators
 import models.SelectType.{Individual, Organisation}
@@ -1314,7 +1315,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from 'You have not added any taxpayers' page to " +
-        "'Is this an organisation or an individual?' if answer is 'Yes, add now'" in {
+        "'Select any taxpayers this enterprise is associated with' if answer is 'Yes, add now'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -1324,12 +1325,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode))
+              .mustBe(controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode))
         }
       }
 
       "must go from 'You have not added any taxpayers' page to " +
-        "Index page if answer is 'Yes, add later'" in {
+        "the same page if answer is 'Yes, add later'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -1339,12 +1340,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IndexController.onPageLoad())
+              .mustBe(controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode))
         }
       }
 
       "must go from 'You have not added any taxpayers' page to " +
-        "Index page if answer is 'No'" in {
+        "the same page if answer is 'No'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -1354,7 +1355,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IndexController.onPageLoad())
+              .mustBe(controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode))
         }
       }
 

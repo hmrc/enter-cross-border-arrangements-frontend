@@ -35,7 +35,7 @@ import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows with EnterpriseRows {
-    
+
   def selectType: Option[Row] = userAnswers.get(SelectTypePage) map {
     answer =>
       Row(
@@ -46,66 +46,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
             content            = msg"site.edit",
             href               = controllers.routes.SelectTypeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whyAreYouReportingThisArrangementNow: Option[Row] = userAnswers.get(WhyAreYouReportingThisArrangementNowPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whyAreYouReportingThisArrangementNow.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whyAreYouReportingThisArrangementNow.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whyAreYouReportingThisArrangementNow.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def doYouKnowTheReasonToReportArrangementNow: Option[Row] = userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"doYouKnowTheReasonToReportArrangementNow.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouKnowTheReasonToReportArrangementNow.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whatIsTheImplementationDate: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatIsTheImplementationDate.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Literal(answer.format(dateFormatter))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsTheImplementationDate.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def whatIsThisArrangementCalled: Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatIsThisArrangementCalled.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsThisArrangementCalled.checkYourAnswersLabel"))
           )
         )
       )
