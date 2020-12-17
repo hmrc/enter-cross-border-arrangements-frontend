@@ -23,8 +23,6 @@ import models.organisation.Organisation
 import models.taxpayer.Taxpayer
 import models.{Mode, SelectType, UserAnswers}
 import navigation.Navigator
-import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
-import pages.organisation.OrganisationNamePage
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -97,23 +95,14 @@ class TaxpayersCheckYourAnswersController @Inject()(
       }
   }
 
+
   private def buildTaxpayerDetails(ua: UserAnswers): Taxpayer = {
 
     ua.get(TaxpayerSelectTypePage) match {
       case Some(SelectType.Organisation) =>
-        ua.get(OrganisationNamePage) match {
-          case Some(name) =>
-            Taxpayer.apply(Organisation(name))
-          case _ => throw new RuntimeException("Unable to retrieve Organisation Taxpayer details")
-        }
-
+            Taxpayer.apply(Organisation.buildOrganisationDetails(ua))
       case Some(SelectType.Individual) =>
-        (ua.get(IndividualNamePage), ua.get(IndividualDateOfBirthPage)) match {
-          case (Some(name), Some(dob)) =>
-            Taxpayer.apply(Individual(name, dob))
-          case _ => throw new RuntimeException("Unable to retrieve Individual Taxpayer details")
-        }
-
+        Taxpayer.apply(Individual.buildIndividualDetails(ua))
       case _ => throw new RuntimeException("Unable to retrieve Taxpayer details")
     }
   }

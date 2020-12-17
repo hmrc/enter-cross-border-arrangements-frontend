@@ -18,16 +18,17 @@ package models.individual
 
 import java.time.LocalDate
 
-import models.{Address, Name, TIN}
+import models.taxpayer.TaxResidency
+import models.{Address, Name, UserAnswers}
+import pages.individual._
 import play.api.libs.json.{Json, OFormat}
 
 case class Individual(individualName: Name,
                       birthDate: LocalDate,
                       birthPlace: Option[String] = None,
-                      tins: Seq[TIN] = Seq.empty,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
-                      resCountryCodes: Seq[String] = Seq.empty
+                      taxResidencies: IndexedSeq[TaxResidency]
                      ) {
 
   val nameAsString: String = individualName.displayName
@@ -35,4 +36,37 @@ case class Individual(individualName: Name,
 
 object Individual {
   implicit val format: OFormat[Individual] = Json.format[Individual]
+
+  def buildIndividualDetails(ua: UserAnswers): Individual = {
+    (ua.get(IndividualNamePage), ua.get(IndividualDateOfBirthPage),
+      ua.get(IndividualPlaceOfBirthPage), ua.get(IndividualAddressPage),
+      ua.get(EmailAddressForIndividualPage), ua.get(IndividualLoopPage)) match {
+
+      case (Some(name), Some(dob),  Some(pob),Some(address), Some(email), Some(loop)) => // All details
+        new Individual(name, dob, Some(pob), Some(address), Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), None, Some(address), Some(email), Some(loop)) => // No place of birth
+        new Individual(name, dob, None, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), Some(pob), None, Some(email), Some(loop)) => // No address
+        new Individual(name, dob, Some(pob), None, Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), Some(pob), Some(address), None, Some(loop)) => // No email address
+        new Individual(name, dob, Some(pob), Some(address), None, TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), None, None, Some(email), Some(loop)) => // No place of birth or address
+        new Individual(name, dob, None, None, Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), Some(pob), None, None, Some(loop)) => // No address or email address
+        new Individual(name, dob, Some(pob), None, None, TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), None, Some(address), None, Some(loop)) => // No place of birth or email address
+        new Individual(name, dob, None, Some(address), None, TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(dob), None, None, None, Some(loop)) => // No place of birth or address or email address
+        new Individual(name, dob, None, None, None, TaxResidency.buildTaxResidency(loop))
+
+      case _ => throw new Exception("Individual Taxpayer must contain a name and at minimum one tax residency")
+    }
+  }
 }

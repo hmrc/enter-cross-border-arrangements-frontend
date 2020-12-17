@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{Name, SelectType}
+import models.{Country, Name, SelectType}
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -32,7 +32,8 @@ class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChe
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  LocalDate.now()
+        birthDate =  LocalDate.now(), None, None,
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
       val taxpayer = Taxpayer(individual)
@@ -46,7 +47,8 @@ class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChe
     "or must be created from an organisation" in {
 
       val organisation = Organisation(
-        organisationName = "My organisation"
+        organisationName = "My organisation",
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
       val taxpayer = Taxpayer(organisation)
