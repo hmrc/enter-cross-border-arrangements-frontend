@@ -19,24 +19,23 @@ package controllers.individual
 import controllers.actions._
 import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getIndividualName
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.individual.IndividualUkPostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualPostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -74,6 +73,9 @@ class IndividualPostcodeController @Inject()(
       renderer.render("postcode.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForIndividual.nextPage(IndividualUkPostcodePage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -94,7 +96,7 @@ class IndividualPostcodeController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUkPostcodePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IndividualUkPostcodePage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value)))
       )
   }
 }

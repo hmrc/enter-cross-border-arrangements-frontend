@@ -20,26 +20,24 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
-
-import javax.inject.Inject
 import models.{AddressLookup, Mode}
-import navigation.Navigator
-import pages.organisation.{PostcodePage, SelectAddressPage}
+import navigation.NavigatorForOrganisation
 import pages.SelectedAddressLookupPage
+import pages.organisation.{PostcodePage, SelectAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -91,6 +89,9 @@ class OrganisationSelectAddressController @Inject()(
       }
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForOrganisation.nextPage(SelectAddressPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val postCode = request.userAnswers.get(PostcodePage) match {
@@ -129,13 +130,7 @@ class OrganisationSelectAddressController @Inject()(
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
               updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
               _ <- sessionRepository.set(updatedAnswersWithAddress)
-            } yield {
-              if (redirectUsers) {
-                Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
-              } else {
-                Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithAddress))
-              }
-            }
+            } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
           }
         )
       } recover {

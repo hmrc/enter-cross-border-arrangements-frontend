@@ -18,24 +18,23 @@ package controllers.individual
 
 import controllers.actions._
 import forms.individual.IsIndividualPlaceOfBirthKnownFormProvider
-import javax.inject.Inject
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.individual.{IndividualNamePage, IsIndividualPlaceOfBirthKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsIndividualPlaceOfBirthKnownController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -64,6 +63,9 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
       renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForIndividual.nextPage(IsIndividualPlaceOfBirthKnownPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -83,7 +85,7 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualPlaceOfBirthKnownPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IsIndividualPlaceOfBirthKnownPage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value)))
       )
   }
 

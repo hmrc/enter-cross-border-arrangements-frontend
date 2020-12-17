@@ -19,13 +19,14 @@ package controllers.organisation
 import controllers.actions._
 import forms.organisation.EmailAddressForOrganisationFormProvider
 import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
+
 import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.{Navigator, NavigatorForOrganisation}
 import pages.organisation.EmailAddressForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -64,6 +65,9 @@ class EmailAddressForOrganisationController @Inject()(
       renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
   }
 
+  def redirect(mode: Mode, value: Option[String], index: Int, alternative: Boolean): Call =
+    NavigatorForOrganisation.nextPage(EmailAddressForOrganisationPage, mode, value, 0, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -85,13 +89,7 @@ class EmailAddressForOrganisationController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
-            }
-          }
+          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
         }
       )
   }

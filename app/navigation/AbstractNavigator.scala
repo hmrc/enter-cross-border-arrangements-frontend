@@ -16,27 +16,32 @@
 
 package navigation
 
-import controllers.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode}
 import pages.Page
-import play.api.mvc.{AnyContent, Call, Request}
+import play.api.mvc.Call
 
 abstract class AbstractNavigator {
 
-  private[navigation] val normalRoutes:  Page => UserAnswers => Request[AnyContent] => Option[Call]
-  private[navigation] val checkRouteMap: Page => UserAnswers => Request[AnyContent] => Option[Call]
+  private[navigation] val routeMap:  Page => Mode => Option[Any] => Int => Call
+  private[navigation] val alternativeRouteMap: Page => Call
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(userAnswers)(request) match {
-        case Some(call) => call
-        case None => routes.SessionExpiredController.onPageLoad()
-      }
-    case CheckMode =>
-      checkRouteMap(page)(userAnswers)(request) match {
-        case Some(call) => call
-        case None => routes.SessionExpiredController.onPageLoad()
-
-      }
+  def nextPage[A](page: Page, mode: Mode, value: Option[A], index: Int = 0, alternative: Boolean = false): Call = {
+    if (alternative) {
+      alternativeRouteMap(page)
+    }
+    else {
+      routeMap(page)(mode)(value)(index)
+    }
   }
+
+  private[navigation] def orCheckYourAnswers(mode: Mode, route: Call): Call =
+    mode match {
+      case NormalMode => route
+      case CheckMode  => checkYourAnswersRoute
+    }
+
+  val indexRoute = controllers.routes.IndexController.onPageLoad()
+
+  val checkYourAnswersRoute: Call
+
 }

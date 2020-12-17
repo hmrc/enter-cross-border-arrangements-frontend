@@ -317,5 +317,5 @@ POST       /associated-enterprises/affected-by             controllers.enterpris
 GET        /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)
 
-#GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
 
