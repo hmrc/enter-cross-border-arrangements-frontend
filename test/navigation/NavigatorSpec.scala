@@ -46,6 +46,8 @@ import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
+import java.time.LocalDate
+
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new Navigator
@@ -1204,7 +1206,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
+              .mustBe(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
         }
       }
 
