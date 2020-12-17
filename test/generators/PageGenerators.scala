@@ -82,6 +82,15 @@ trait PageGenerators {
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
     Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
 
+  implicit lazy val arbitraryIsExemptionKnownPage: Arbitrary[IsExemptionKnownPage.type] =
+    Arbitrary(IsExemptionKnownPage)
+
+  implicit lazy val arbitraryisExemptionCountryKnownPage: Arbitrary[IsExemptionCountryKnownPage.type] =
+    Arbitrary(IsExemptionCountryKnownPage)
+
+  implicit lazy val arbitraryExemptCountriesPage: Arbitrary[ExemptCountriesPage.type] =
+    Arbitrary(ExemptCountriesPage)
+
   implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
     Arbitrary(AssociatedEnterpriseTypePage)
 

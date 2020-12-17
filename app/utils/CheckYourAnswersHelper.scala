@@ -23,6 +23,7 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
+import pages._
 import pages.hallmarks._
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.{PostcodePage, SelectAddressPage}
@@ -35,6 +36,52 @@ import utils.rows._
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
 
+  def isExemptionKnown: Option[Row] = userAnswers.get(IsExemptionKnownPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"isExemptionKnown.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.IsExemptionKnownController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionKnown.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def isExemptionCountryKnown: Option[Row] = userAnswers.get(IsExemptionCountryKnownPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionCountryKnown.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def exemptCountries: Option[Row] = userAnswers.get(ExemptCountriesPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Html(answer.map(a => msg"exemptCountries.$a".resolve).mkString(",<br>"))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.ExemptCountriesController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"exemptCountries.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+import pages.intermediaries.WhatTypeofIntermediaryPage
   def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
     answer =>
       Row(
@@ -69,6 +116,36 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
             content            = msg"site.edit",
             href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"selectAddress.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )
       )

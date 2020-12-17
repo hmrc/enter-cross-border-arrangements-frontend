@@ -17,6 +17,7 @@
 package generators
 
 import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
+import models.{ExemptCountries, IsExemptionKnown, SelectType}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
@@ -169,7 +170,33 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
+  implicit lazy val arbitraryIsExemptionKnownUserAnswersEntry: Arbitrary[(IsExemptionKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsExemptionKnownPage.type]
+        value <- arbitrary[IsExemptionKnown].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsExemptionCountryKnownUserAnswersEntry: Arbitrary[(IsExemptionCountryKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsExemptionCountryKnownPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryExemptCountriesUserAnswersEntry: Arbitrary[(ExemptCountriesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExemptCountriesPage.type]
+        value <- arbitrary[ExemptCountries].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitrarySelectTypeUserAnswersEntry: Arbitrary[(SelectTypePage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type]

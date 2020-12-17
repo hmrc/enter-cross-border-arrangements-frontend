@@ -424,3 +424,21 @@ GET        /reporter/taxpayers/implementation-date                  controllers.
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaries/exempt-countries                 controllers.ExemptCountriesController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exempt-countries                 controllers.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaries/exemption-country-known          controllers.IsExemptionCountryKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exemption-country-known          controllers.IsExemptionCountryKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-country-known   controllers.IsExemptionCountryKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-country-known   controllers.IsExemptionCountryKnownController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaries/exemption-known                  controllers.IsExemptionKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exemption-known                  controllers.IsExemptionKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-known           controllers.IsExemptionKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-known           controllers.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
+
+GET       /intermediaries/check-answers                     controllers.IntermediariesCheckYourAnswersController.onPageLoad()
+

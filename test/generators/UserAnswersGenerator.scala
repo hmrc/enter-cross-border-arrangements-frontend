@@ -41,6 +41,9 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] ::
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
+    arbitrary[(IsExemptionKnownPage.type, JsValue)] ::
+    arbitrary[(IsExemptionCountryKnownPage.type, JsValue)] ::
+    arbitrary[(ExemptCountriesPage.type, JsValue)] ::
     arbitrary[(TaxpayerWhyReportArrangementPage.type, JsValue)] ::
     arbitrary[(TaxpayerWhyReportInUKPage.type, JsValue)] ::
     arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] ::

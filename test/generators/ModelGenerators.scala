@@ -41,6 +41,16 @@ trait ModelGenerators {
       Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
     }
 
+  implicit lazy val arbitraryIsExemptionKnown: Arbitrary[IsExemptionKnown] =
+    Arbitrary {
+      Gen.oneOf(IsExemptionKnown.values.toSeq)
+    }
+
+  implicit lazy val arbitraryExemptCountries: Arbitrary[ExemptCountries] =
+    Arbitrary {
+      Gen.oneOf(ExemptCountries.values.toSeq)
+    }
+
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values.toSeq)

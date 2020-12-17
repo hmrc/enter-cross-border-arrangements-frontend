@@ -42,6 +42,7 @@ import play.api.mvc.{AnyContent, Call, Request}
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 
 import javax.inject.{Inject, Singleton}
+import models.IsExemptionKnown.{No, Unknown, Yes}
 
 @Singleton
 class Navigator @Inject()() {
@@ -122,6 +123,11 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
     case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+
+
+    case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
+    case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
+
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -299,7 +305,7 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
   private def updateTaxpayerRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(UpdateTaxpayerPage) map {
       case Now => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(mode)
-      case Later | No => controllers.routes.IndexController.onPageLoad() // TODO: Link to disclose type page when ready
+      case Later | models.taxpayer.UpdateTaxpayer.No => controllers.routes.IndexController.onPageLoad() // TODO: Link to disclose type page when ready
     }
 
   private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -469,7 +475,6 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     }
   }
 
-
   private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(YouHaveNotAddedAnyIntermediariesPage) map {
       case YouHaveNotAddedAnyIntermediaries.YesAddNow => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(mode)
@@ -483,6 +488,20 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
       case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
     }
   }
+
+  private def isExemptionKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(IsExemptionKnownPage) map {
+      case Yes => controllers.routes.IsExemptionCountryKnownController.onPageLoad(mode)
+      case models.IsExemptionKnown.No | Unknown => controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+    }
+  }
+
+  private def isExemptionCountryKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    ua.get(IsExemptionCountryKnownPage) map {
+      case true  => controllers.routes.ExemptCountriesController.onPageLoad(mode)
+      case false => controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+    }
+
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)(request) match {
