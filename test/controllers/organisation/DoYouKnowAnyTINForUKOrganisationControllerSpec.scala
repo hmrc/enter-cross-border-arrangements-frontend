@@ -19,8 +19,8 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
+import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,14 +39,12 @@ import scala.concurrent.Future
 
 class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
   val form = formProvider()
   val index = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val doYouKnowAnyTINForUKOrganisationRoute = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowAnyTINForUKOrganisationRoute: String = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index).url
 
   "DoYouKnowAnyTINForUKOrganisation Controller" - {
 
@@ -129,12 +127,11 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
-      val request =
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
         FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
@@ -142,7 +139,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/uk-tax-numbers-0"
 
       application.stop()
     }

@@ -17,12 +17,10 @@
 package controllers.individual
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -30,7 +28,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualSelectAddressPage, IndividualUkPostcodePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -41,24 +38,20 @@ import scala.concurrent.Future
 
 class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  private val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  private val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-  def onwardRoute = Call("GET", "/foo")
+  lazy private val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode).url
+  lazy private val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode).canonical()
 
-  lazy val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode).url
-  lazy val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode).canonical()
+  private val formProvider = new SelectAddressFormProvider()
+  private val form = formProvider()
 
-  val formProvider = new SelectAddressFormProvider()
-  val form = formProvider()
-
-  val addresses: Seq[AddressLookup] = Seq(
+  private val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
   )
-  val addressRadios: Seq[Radios.Radio] = Seq(
+  private val addressRadios: Seq[Radios.Radio] = Seq(
     Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
     Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
   )
@@ -161,7 +154,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
       val application =
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
           ).build()
@@ -174,7 +166,7 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/email-address"
 
       application.stop()
     }

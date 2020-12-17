@@ -20,9 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
-import models.Address._
 import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -31,7 +30,6 @@ import pages.organisation.OrganisationAddressPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -42,8 +40,6 @@ import utils.CountryListFactory
 import scala.concurrent.Future
 
 class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -134,12 +130,13 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val mockSessionRepository = mock[SessionRepository]
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -153,39 +150,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to check answers page when in CheckMode and data is changed and then submitted" in {
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-
-      val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address)
-        .success
-        .value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CountryListFactory].toInstance(mockCountryFactory)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, organisationAddressCheckModeRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 11"), ("addressLine2", "value 22"),("addressLine3", "value 33"), ("city", "value 44"),
-            ("postcode", "XXX XXX"),("country", "FR"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address"
 
       application.stop()
     }

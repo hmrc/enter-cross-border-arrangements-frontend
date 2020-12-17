@@ -16,9 +16,6 @@
 
 package controllers.individual
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{Address, Country, Name, UserAnswers}
@@ -27,7 +24,6 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.individual._
-import play.api.inject.bind
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,9 +33,7 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 import scala.concurrent.Future
 
-class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
-
-  lazy val checkYourAnswersIndividualRoute: String = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url
+class CheckYourAnswersIndividualControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   val address: Address = Address(
       addressLine1 = Some("value 1")
@@ -68,7 +62,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad().url)
 
     val result = route(application, request).value
 
@@ -100,6 +94,12 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     row.key.text mustBe Some(Literal("Name"))
     row.value.text mustBe Some(Literal("FirstName LastName"))
     assertAction("/enter-cross-border-arrangements/individual/change-name")(row.actions.head)
+  }
+
+  def assertBirthDateKnown(yesOrNo: Boolean)(row: Row): Unit = {
+    row.key.text mustBe Some(Literal("Do you know their date of birth?"))
+    row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-date-of-birth")(row.actions.head)
   }
 
   def assertDateOfBirth(birthDateAsString: String)(row: Row): Unit = {
@@ -163,10 +163,11 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .success.value
       verifyList(userAnswers) { list =>
         assertName(list.head)
-        assertBirthPlaceKnown(yesOrNo = false)(list(1))
-        assertAddressKnown(yesOrNo = false)(list(2))
-        assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe (4)
+        assertBirthDateKnown(yesOrNo = false)(list(1))
+        assertBirthPlaceKnown(yesOrNo = false)(list(2))
+        assertAddressKnown(yesOrNo = false)(list(3))
+        assertEmailKnown(yesOrNo = false)(list(4))
+        list.size mustBe(5)
       }
     }
 
@@ -175,14 +176,17 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       val dateOfBirth = LocalDate.now()
       val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(IsIndividualDateOfBirthKnownPage, true)
+        .success.value
         .set(IndividualDateOfBirthPage, LocalDate.now())
         .success.value
       verifyList(userAnswers) { list =>
-        assertDateOfBirth(dateFormatter.format(dateOfBirth))(list.head)
-        assertBirthPlaceKnown(yesOrNo = false)(list(1))
-        assertAddressKnown(yesOrNo = false)(list(2))
-        assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe (4)
+        assertBirthDateKnown(yesOrNo = true)(list.head)
+        assertDateOfBirth(dateFormatter.format(dateOfBirth))(list(1))
+        assertBirthPlaceKnown(yesOrNo = false)(list(2))
+        assertAddressKnown(yesOrNo = false)(list(3))
+        assertEmailKnown(yesOrNo = false)(list(4))
+        list.size mustBe(5)
       }
     }
 
@@ -194,11 +198,12 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .set(IndividualPlaceOfBirthPage, "BIRTHPLACE")
         .success.value
       verifyList(userAnswers) { list =>
-        assertBirthPlaceKnown(yesOrNo = true)(list.head)
-        assertBirthPlace("BIRTHPLACE")(list(1))
-        assertAddressKnown(yesOrNo = false)(list(2))
-        assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe (4)
+        assertBirthDateKnown(yesOrNo = false)(list.head)
+        assertBirthPlaceKnown(yesOrNo = true)(list(1))
+        assertBirthPlace("BIRTHPLACE")(list(2))
+        assertAddressKnown(yesOrNo = false)(list(3))
+        assertEmailKnown(yesOrNo = false)(list(4))
+        list.size mustBe(5)
       }
     }
 
@@ -210,11 +215,12 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .set(IndividualAddressPage, address)
         .success.value
       verifyList(userAnswers) { list =>
-        assertBirthPlaceKnown(yesOrNo = false)(list.head)
-        assertAddressKnown(yesOrNo = true)(list(1))
-        assertAddress(address)(list(2))
-        assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe (4)
+        assertBirthDateKnown(yesOrNo = false)(list.head)
+        assertBirthPlaceKnown(yesOrNo = false)(list(1))
+        assertAddressKnown(yesOrNo = true)(list(2))
+        assertAddress(address)(list(3))
+        assertEmailKnown(yesOrNo = false)(list(4))
+        list.size mustBe(5)
       }
     }
 
@@ -226,11 +232,12 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .set(EmailAddressForIndividualPage, "email@email.org")
         .success.value
       verifyList(userAnswers) { list =>
-        assertBirthPlaceKnown(yesOrNo = false)(list.head)
-        assertAddressKnown(yesOrNo = false)(list(1))
-        assertEmailKnown(yesOrNo = true)(list(2))
-        assertEmail("email@email.org")(list(3))
-        list.size mustBe (4)
+        assertBirthDateKnown(yesOrNo = false)(list.head)
+        assertBirthPlaceKnown(yesOrNo = false)(list(1))
+        assertAddressKnown(yesOrNo = false)(list(2))
+        assertEmailKnown(yesOrNo = true)(list(3))
+        assertEmail("email@email.org")(list(4))
+        list.size mustBe(5)
       }
     }
   }

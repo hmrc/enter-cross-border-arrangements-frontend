@@ -57,7 +57,8 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
         )
       } else {
         (
-          Seq(helper.associatedEnterpriseType, helper.individualName, helper.individualDateOfBirth).flatten ++
+          Seq(helper.associatedEnterpriseType, helper.individualName).flatten ++
+            helper.buildIndividualDateOfBirthGroup ++
             helper.buildIndividualPlaceOfBirthGroup ++
             helper.buildIndividualAddressGroup ++
             helper.buildIndividualEmailAddressGroup,

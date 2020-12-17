@@ -23,6 +23,8 @@ import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 
+import java.time.LocalDate
+
 trait IndividualRows extends RowBuilder {
 
   def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map { answer =>
@@ -34,14 +36,28 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  def individualDateOfBirth: Option[Row] = userAnswers.get(IndividualDateOfBirthPage) map { answer =>
+  def buildIndividualDateOfBirthGroup: Seq[Row] =
+    (userAnswers.get(IsIndividualDateOfBirthKnownPage), userAnswers.get(IndividualDateOfBirthPage)) match {
 
+      case (Some(true), Some(dateOfBirth)) =>
+        Seq(isIndividualDateOfBirthKnown(true), individualDateOfBirth(dateOfBirth))
+      case _ =>
+        Seq(isIndividualDateOfBirthKnown(false))
+    }
+
+  def isIndividualDateOfBirthKnown(isKnown: Boolean): Row =
+    toRow(
+      msgKey  = "isIndividualDateOfBirthKnown",
+      content = yesOrNo(isKnown),
+      href    = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(CheckMode).url
+    )
+
+  def individualDateOfBirth(dateOfBirth: LocalDate): Row =
     toRow(
       msgKey  = "individualDateOfBirth",
-      content = Literal(answer.format(dateFormatter)),
+      content = Literal(dateOfBirth.format(dateFormatter)),
       href    = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(CheckMode).url
     )
-  }
 
   def buildIndividualPlaceOfBirthGroup: Seq[Row] =
     (userAnswers.get(IsIndividualPlaceOfBirthKnownPage), userAnswers.get(IndividualPlaceOfBirthPage)) match {

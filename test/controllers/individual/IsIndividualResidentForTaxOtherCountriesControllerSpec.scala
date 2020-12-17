@@ -19,8 +19,7 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, Country, LoopDetails, Name, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +27,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +36,6 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new IsIndividualResidentForTaxOtherCountriesFormProvider()
   val form = formProvider()
@@ -129,7 +125,6 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -141,8 +136,6 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }
@@ -175,37 +168,6 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
 
       application.stop()
     }
-
-    "must redirect to the Check your answers page when in CheckMode and loop isn't incremented as users selected 'false'" in {
-
-      lazy val isIndividualResidentForTaxOtherCountriesRoute =
-        controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index).url
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isIndividualResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url
-
-      application.stop()
-    }
-
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 

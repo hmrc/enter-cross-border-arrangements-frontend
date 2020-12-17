@@ -17,14 +17,15 @@
 package controllers.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,14 +37,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class IsIndividualResidentForTaxOtherCountriesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIndividual,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IsIndividualResidentForTaxOtherCountriesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -73,6 +74,9 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
       renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
+    navigator.routeMap(IsIndividualResidentForTaxOtherCountriesPage)(checkRoute)(value)(index)
+
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -90,10 +94,6 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
           renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
         },
         value => {
-          val determineRoute = (value, mode) match {
-            case (false, CheckMode) => true
-            case  _ => false
-          }
 
           val individualLoopList = (request.userAnswers.get(IndividualLoopPage), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
@@ -112,13 +112,8 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield {
-            if (determineRoute) {
-              Redirect(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(IsIndividualResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
-            }
-          }
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+          } yield Redirect(redirect(checkRoute, Some(value), index))
         }
       )
   }

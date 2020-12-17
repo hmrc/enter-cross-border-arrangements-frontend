@@ -17,33 +17,34 @@
 package controllers.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
-import javax.inject.Inject
 import models.{LoopDetails, Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForIndividual
 import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouKnowTINForNonUKIndividualController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIndividual,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DoYouKnowTINForNonUKIndividualFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -76,6 +77,9 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
       renderer.render("individual/doYouKnowTINForNonUKIndividual.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
+    navigator.routeMap(DoYouKnowTINForNonUKIndividualPage)(checkRoute)(value)(index)
+
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -97,6 +101,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
           renderer.render("individual/doYouKnowTINForNonUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
+
           val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
             case None =>
               val newIndividualLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
@@ -111,10 +116,11 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
           }
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, value))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
-            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(DoYouKnowTINForNonUKIndividualPage, mode, updatedAnswersWithLoopDetails))
+            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+          } yield Redirect(redirect(checkRoute, Some(value), index))
         }
       )
   }

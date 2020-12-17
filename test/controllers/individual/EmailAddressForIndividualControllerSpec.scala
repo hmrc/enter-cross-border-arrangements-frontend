@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.individual.EmailAddressForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +27,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.EmailAddressForIndividualPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,16 +37,14 @@ import scala.concurrent.Future
 
 class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  private val formProvider = new EmailAddressForIndividualFormProvider()
+  private val form = formProvider()
 
-  val formProvider = new EmailAddressForIndividualFormProvider()
-  val form = formProvider()
+  private val validAnswer: String = "email@email.com"
 
-  val validAnswer: String = "email@email.com"
+  private val validData = Map("email" -> validAnswer)
 
-  val validData = Map("email" -> validAnswer)
-
-  lazy val emailAddressForIndividualRoute = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
+  lazy private val emailAddressForIndividualRoute = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
 
   "EmailAddressForIndividual Controller" - {
 
@@ -118,7 +114,6 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,7 +125,8 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/which-country-tax-1"
 
       application.stop()
     }
@@ -196,4 +192,4 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
     }
 
   }
-} 
+}
