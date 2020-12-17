@@ -102,6 +102,8 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         "radios" -> UpdateTaxpayer.radios(filledForm)
       )
 
+
+
       templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 

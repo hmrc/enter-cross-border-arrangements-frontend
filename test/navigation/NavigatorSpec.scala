@@ -38,9 +38,11 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+
+import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -356,7 +358,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.SelectTypeController.onPageLoad(NormalMode))
+              .mustBe(controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(NormalMode))
         }
       }
 
@@ -399,11 +401,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(SelectTypePage, Organisation)
+              answers.set(TaxpayerSelectTypePage, Organisation)
                 .success.value
 
             navigator
-              .nextPage(SelectTypePage, NormalMode, updatedAnswers)
+              .nextPage(TaxpayerSelectTypePage, NormalMode, updatedAnswers)
               .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
         }
       }
@@ -415,11 +417,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(SelectTypePage, Individual)
+              answers.set(TaxpayerSelectTypePage, Individual)
                 .success.value
 
             navigator
-              .nextPage(SelectTypePage, NormalMode, updatedAnswers)
+              .nextPage(TaxpayerSelectTypePage, NormalMode, updatedAnswers)
               .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
         }
       }
@@ -803,6 +805,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               answers
                 .remove(IsAssociatedEnterpriseAffectedPage)
                 .success.value
+                .remove(TaxpayerSelectTypePage)
+                .success.value
                 .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
                 .success.value
 
@@ -1157,6 +1161,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers.remove(IsAssociatedEnterpriseAffectedPage)
                 .success.value
+                .remove(TaxpayerSelectTypePage)
+                .success.value
                 .set(IsIndividualResidentForTaxOtherCountriesPage, false)
                 .success.value
 
@@ -1401,6 +1407,77 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(IsAssociatedEnterpriseAffectedPage, NormalMode, updatedAnswers)
               .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "What is [name]'s implementation date? page to " +
+        "taxpayers check your answers page if organisation entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now)
+                .success.value
+                .set(OrganisationNamePage, "validAnswer")
+                .success.value
+
+            navigator
+              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+        }
+      }
+
+      "What is [name]'s implementation date? page to " +
+        "taxpayers check your answers page if individual entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now)
+                .success.value
+                .remove(OrganisationNamePage)
+                .success
+                .value
+                .set(IndividualNamePage, Name("dummy","user"))
+                .success.value
+
+            navigator
+              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+        }
+      }
+
+      "must go from Is the individuals resident for tax purposes in any other countries? page to " +
+        "'What is [name]'s implementation date?' if the answer is false and in relevant taxpayer journey" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsIndividualResidentForTaxOtherCountriesPage, false)
+                .success.value
+                .set(TaxpayerSelectTypePage, Individual)
+                .success.value
+
+            navigator
+              .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
+        "'What is [name]'s implementation date?' for organisation page if the answer is false and in relevant taxpayer journey" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, false)
+                .success.value
+                .set(TaxpayerSelectTypePage, Organisation)
+                .success.value
+
+            navigator
+              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
         }
       }
     }

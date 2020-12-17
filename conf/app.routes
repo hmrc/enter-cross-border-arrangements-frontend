@@ -13,6 +13,7 @@ GET        /organisation/check-answers                  controllers.organisation
 GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
 GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
+GET        /taxpayers/check-answers                     controllers.taxpayer.CheckYourAnswersTaxpayersController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
@@ -289,10 +290,16 @@ POST       /arrangement/change-details                  controllers.arrangement.
 GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
-GET        /taxpayers/choose-type                        controllers.SelectTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /taxpayers/choose-type                        controllers.SelectTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /taxpayers/change-choose-type                 controllers.SelectTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /taxpayers/change-choose-type                 controllers.SelectTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /taxpayers/choose-type                        controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayers/choose-type                        controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/change-implementation-date                        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /taxpayers/change-implementation-date                        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
 
 # ASSOCIATED ENTERPRISES

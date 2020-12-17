@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package pages.taxpayer
 
-import models.SelectType
+import java.time.LocalDate
+import pages._
+
 import play.api.libs.json.JsPath
 
-case object SelectTypePage extends QuestionPage[SelectType] {
+case object WhatIsTaxpayersStartDateForImplementingArrangementPage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "selectType"
+  override def toString: String = "whatIsTaxpayersStartDateForImplementingArrangement"
 }
