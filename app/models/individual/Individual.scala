@@ -30,7 +30,6 @@ case class Individual(individualName: Name,
                       emailAddress: Option[String] = None,
                       taxResidencies: IndexedSeq[TaxResidency]
                      ) {
-
   val nameAsString: String = individualName.displayName
 }
 
@@ -38,6 +37,7 @@ object Individual {
   implicit val format: OFormat[Individual] = Json.format[Individual]
 
   def buildIndividualDetails(ua: UserAnswers): Individual = {
+
     (ua.get(IndividualNamePage), ua.get(IndividualDateOfBirthPage),
       ua.get(IndividualPlaceOfBirthPage), ua.get(IndividualAddressPage),
       ua.get(EmailAddressForIndividualPage), ua.get(IndividualLoopPage)) match {
