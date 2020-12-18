@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package utils.controllers
+package utils.mixins
 
-import controllers.routes
 import models.{CheckMode, Mode, UserAnswers}
 import play.api.libs.json.Json
 import play.api.mvc._

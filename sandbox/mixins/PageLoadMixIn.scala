@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils.controllers
+package utils.mixins
 
 import controllers.actions.{DataRequiredAction, DataRequiredInitializingActionImpl}
 import models.UserAnswers

@@ -323,6 +323,3 @@ GET        /associated-enterprises/affected-by             controllers.enterpris
 POST       /associated-enterprises/affected-by             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = NormalMode)
 GET        /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)
-
-GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package utils.controllers
+package utils.mixins
 
 import models.{Mode, UserAnswers}
-import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 trait OnPageLoadMixIn[A] extends PageLoadMixIn[A] {
 

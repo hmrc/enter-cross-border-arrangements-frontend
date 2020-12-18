@@ -23,64 +23,15 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
-import pages._
-import pages.arrangement._
 import pages.hallmarks._
-import pages.organisation.{PostcodePage, SelectAddressPage}
-import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
-import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows}
+import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, OrganisationRows, TaxpayerRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
+  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
     
-  def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectType.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectAddress.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
     answer => userAnswers.get(HallmarkD1Page) match {

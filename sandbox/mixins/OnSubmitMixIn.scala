@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils.controllers
+package utils.mixins
 
 import models.Mode
 import play.api.libs.json.Json

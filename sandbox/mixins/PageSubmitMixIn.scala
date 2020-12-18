@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package utils.controllers
+package utils.mixins
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import play.api.i18n.I18nSupport
-import play.api.mvc.MessagesControllerComponents
-import renderer.Renderer
+import controllers.routes
+import models.{Mode, UserAnswers}
+import play.api.mvc.Call
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
-trait PageControllerComponents extends FrontendBaseController with I18nSupport with NunjucksSupport {
+trait PageSubmitMixIn[A] {
+
+  val sessionRepository: SessionRepository
 
   implicit val ec: ExecutionContext
-  val identify: IdentifierAction
-  val getData: DataRetrievalAction
-  val requireData: DataRequiredAction
-  val controllerComponents: MessagesControllerComponents
-  val renderer: Renderer
+
+  val setValue: UserAnswers => A => Try[UserAnswers]
+
+  val failOnSubmit: Call = routes.SessionExpiredController.onPageLoad()
+
+  def redirect(mode: Mode, value: Option[A], index: Int = 0, alternative: Boolean = false): Call
 
 }
