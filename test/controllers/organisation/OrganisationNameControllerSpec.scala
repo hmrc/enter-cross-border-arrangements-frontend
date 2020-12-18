@@ -39,8 +39,6 @@ import scala.concurrent.Future
 
 class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new OrganisationNameFormProvider()
   val form = formProvider()
 
@@ -114,7 +112,6 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -126,7 +123,6 @@ class OrganisationNameControllerSpec extends SpecBase with MockitoSugar with Nun
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

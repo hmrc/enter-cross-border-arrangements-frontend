@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.individual.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import pages.individual.{IndividualLoopPage, WhichCountryTaxForIndividualPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,8 +38,6 @@ import utils.CountryListFactory
 import scala.concurrent.Future
 
 class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new WhichCountryTaxForIndividualFormProvider()
   val form: Form[Country] = formProvider(Seq(Country("valid","GB","United Kingdom")))
@@ -131,7 +127,6 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
@@ -142,7 +137,6 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

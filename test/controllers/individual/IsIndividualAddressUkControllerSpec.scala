@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import pages.individual.IsIndividualAddressUkPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,7 +38,6 @@ import scala.concurrent.Future
 
 
 class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -117,7 +114,6 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -129,8 +125,6 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

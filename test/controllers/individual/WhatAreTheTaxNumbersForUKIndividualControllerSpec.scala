@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -30,7 +29,6 @@ import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNu
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -41,7 +39,6 @@ import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new WhatAreTheTaxNumbersForUKIndividualFormProvider()
@@ -139,7 +136,6 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -151,7 +147,6 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

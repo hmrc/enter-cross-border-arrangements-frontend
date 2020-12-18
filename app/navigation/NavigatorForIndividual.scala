@@ -35,24 +35,24 @@ object NavigatorForIndividual extends AbstractNavigator {
       mode => _ => _ => orCheckYourAnswers(mode, routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(mode))
 
     case IsIndividualPlaceOfBirthKnownPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case false if mode == NormalMode => routes.IsIndividualAddressKnownController.onPageLoad(mode)
-        case _  => orCheckYourAnswers(mode, routes.IndividualPlaceOfBirthController.onPageLoad(mode))
+      mode => value => _ => value match {
+        case Some(false) if mode == NormalMode => routes.IsIndividualAddressKnownController.onPageLoad(mode)
+        case _                                 => orCheckYourAnswers(mode, routes.IndividualPlaceOfBirthController.onPageLoad(mode))
       }
 
     case IndividualPlaceOfBirthPage =>
       mode => _ => _ => orCheckYourAnswers(mode, routes.IsIndividualAddressKnownController.onPageLoad(mode))
 
     case IsIndividualAddressKnownPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case false if mode == NormalMode => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
-        case _  => orCheckYourAnswers(mode, routes.IsIndividualAddressUkController.onPageLoad(mode))
+      mode => value => _ => value match {
+        case Some(false) if mode == NormalMode => routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
+        case _                                 => orCheckYourAnswers(mode, routes.IsIndividualAddressUkController.onPageLoad(mode))
       }
 
     case IsIndividualAddressUkPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case true  => routes.IndividualPostcodeController.onPageLoad(mode)
-        case _     => routes.IndividualAddressController.onPageLoad(mode)
+      mode => value => _ => value match {
+        case Some(true)  => routes.IndividualPostcodeController.onPageLoad(mode)
+        case _           => routes.IndividualAddressController.onPageLoad(mode)
       }
 
     case IndividualUkPostcodePage =>
@@ -62,16 +62,16 @@ object NavigatorForIndividual extends AbstractNavigator {
       mode => _ => _ => orCheckYourAnswers(mode, routes.EmailAddressQuestionForIndividualController.onPageLoad(mode))
 
     case EmailAddressQuestionForIndividualPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case false if mode == NormalMode => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, 0)
-        case _  => orCheckYourAnswers(mode, routes.EmailAddressForIndividualController.onPageLoad(mode))
+      mode => value => _ => value match {
+        case Some(false) if mode == NormalMode => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, 0)
+        case _                                 => orCheckYourAnswers(mode, routes.EmailAddressForIndividualController.onPageLoad(mode))
       }
 
     case EmailAddressForIndividualPage =>
       mode => _ => index => orCheckYourAnswers(mode, routes.WhichCountryTaxForIndividualController.onPageLoad(mode, index + 1))
 
     case WhichCountryTaxForIndividualPage =>
-      mode => value => index => value match { case country: Country =>
+      mode => value => index => value match { case Some(country: Country) =>
         country.code match {
           case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(mode, index)
           case _    => routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(mode, index)
@@ -79,24 +79,24 @@ object NavigatorForIndividual extends AbstractNavigator {
       }
 
     case DoYouKnowAnyTINForUKIndividualPage =>
-      mode => value => index => value.asInstanceOf[Boolean] match {
-        case true  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode, index)
-        case _     => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
+      mode => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(mode, index)
+        case _           => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
       }
 
     case DoYouKnowTINForNonUKIndividualPage =>
-      mode => value => index => value.asInstanceOf[Boolean] match {
-        case true  => routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(mode, index)
-        case _     => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
+      mode => value => index => value match {
+        case Some(true) => routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(mode, index)
+        case _          => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
       }
 
     case WhatAreTheTaxNumbersForUKIndividualPage | WhatAreTheTaxNumbersForNonUKIndividualPage =>
       mode => _ => index => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
 
     case IsIndividualResidentForTaxOtherCountriesPage =>
-      mode => value => index => value.asInstanceOf[Boolean] match {
-        case true => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, index)
-        case _    => checkYourAnswersRoute
+      mode => value => index => value match {
+        case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(mode, index)
+        case _          => checkYourAnswersRoute
       }
 
     case _ =>

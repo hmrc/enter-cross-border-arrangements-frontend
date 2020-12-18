@@ -20,15 +20,13 @@ import base.SpecBase
 import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +36,6 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new DoYouKnowTINForNonUKIndividualFormProvider()
   val form = formProvider("the country")
@@ -127,7 +123,6 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -139,41 +134,6 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowTINForNonUKIndividualPage, true)
-        .success.value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, doYouKnowTINForNonUKIndividualRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

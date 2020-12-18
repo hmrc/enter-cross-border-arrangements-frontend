@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +27,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.EmailAddressQuestionForOrganisationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +36,6 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
   val form = formProvider()
@@ -117,7 +113,6 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -129,72 +124,6 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the check your answers page when in 'CheckMode' and 'no' is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers =
-        UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, true)
-        .success
-        .value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, contactEmailAddressForOrganisationCheckModeRoute)
-          .withFormUrlEncodedBody(("confirm", "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to next page when in 'CheckMode' and 'yes' is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers =
-        UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, false)
-          .success
-          .value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, contactEmailAddressForOrganisationCheckModeRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

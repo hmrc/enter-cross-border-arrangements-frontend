@@ -39,8 +39,6 @@ import scala.concurrent.Future
 
 class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new IsIndividualAddressKnownFormProvider()
   val form = formProvider()
 
@@ -116,7 +114,6 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -128,8 +125,6 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with MockitoSugar 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

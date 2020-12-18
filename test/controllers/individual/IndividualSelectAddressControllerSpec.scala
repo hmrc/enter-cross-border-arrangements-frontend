@@ -22,7 +22,6 @@ import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -30,7 +29,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualSelectAddressPage, IndividualUkPostcodePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -45,8 +43,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode).url
   lazy val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode).canonical()
@@ -161,7 +157,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
       val application =
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
           ).build()
@@ -173,8 +168,6 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

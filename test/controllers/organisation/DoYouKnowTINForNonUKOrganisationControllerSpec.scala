@@ -19,16 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.DoYouKnowTINForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +36,6 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
   val form = formProvider("the country")
@@ -130,7 +126,6 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -142,41 +137,6 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowTINForNonUKOrganisationPage, true)
-        .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

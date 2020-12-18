@@ -20,16 +20,14 @@ import base.SpecBase
 import forms.individual.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForNonUKIndividualPage}
+import pages.individual.{IndividualLoopPage, IndividualNamePage}
 import pages.organisation.WhatAreTheTaxNumbersForNonUKOrganisationPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,8 +37,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new WhatAreTheTaxNumbersForNonUKIndividualFormProvider
   val form = formProvider()
@@ -136,7 +132,6 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -148,40 +143,6 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and update IndividualLoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatAreTheTaxNumbersForNonUKIndividualPage, taxReferenceNumbers)
-        .success.value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, whatAreTheTaxNumbersForNonUKIndividualRoute)
-          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
 
       application.stop()
     }

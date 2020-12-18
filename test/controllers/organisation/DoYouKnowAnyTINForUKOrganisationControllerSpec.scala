@@ -39,8 +39,6 @@ import scala.concurrent.Future
 
 class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
   val form = formProvider()
   val index = 0
@@ -129,7 +127,6 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -141,8 +138,6 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Mocki
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }

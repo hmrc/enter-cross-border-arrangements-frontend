@@ -32,15 +32,15 @@ object NavigatorForOrganisation extends AbstractNavigator {
       mode => _ => _ => routes.IsOrganisationAddressKnownController.onPageLoad(mode)
 
     case IsOrganisationAddressKnownPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case true  => routes.IsOrganisationAddressUkController.onPageLoad(mode)
-        case _     => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
+      mode => value => _ => value match {
+        case Some(true)  => routes.IsOrganisationAddressUkController.onPageLoad(mode)
+        case _           => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
       }
 
     case IsOrganisationAddressUkPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case true  => routes.OrganisationPostcodeController.onPageLoad(mode)
-        case _     => routes.OrganisationAddressController.onPageLoad(mode)
+      mode => value => _ => value match {
+        case Some(true)  => routes.OrganisationPostcodeController.onPageLoad(mode)
+        case _           => routes.OrganisationAddressController.onPageLoad(mode)
       }
 
     case PostcodePage =>
@@ -50,16 +50,16 @@ object NavigatorForOrganisation extends AbstractNavigator {
       mode => _ => _ => routes.EmailAddressQuestionForOrganisationController.onPageLoad(mode)
 
     case EmailAddressQuestionForOrganisationPage =>
-      mode => value => _ => value.asInstanceOf[Boolean] match {
-        case true  => routes.EmailAddressForOrganisationController.onPageLoad(mode)
-        case _     => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
+      mode => value => _ => value match {
+        case Some(true)  => routes.EmailAddressForOrganisationController.onPageLoad(mode)
+        case _           => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
       }
 
     case EmailAddressForOrganisationPage =>
       mode => _ => _ => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, 0)
 
     case WhichCountryTaxForOrganisationPage =>
-      mode => value => index => value match { case country: Country =>
+      mode => value => index => value match { case Some(country: Country) =>
         country.code match {
           case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(mode, index)
           case _    => routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(mode, index)
@@ -67,24 +67,24 @@ object NavigatorForOrganisation extends AbstractNavigator {
       }
 
     case DoYouKnowAnyTINForUKOrganisationPage =>
-      mode => value => index => value.asInstanceOf[Boolean] match {
-        case true  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode, index)
-        case _     => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
+      mode => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(mode, index)
+        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
       }
 
     case DoYouKnowTINForNonUKOrganisationPage =>
-      mode => value => index => value.asInstanceOf[Boolean] match {
-        case true  => routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(mode, index)
-        case _     => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
+      mode => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(mode, index)
+        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
       }
 
     case WhatAreTheTaxNumbersForUKOrganisationPage | WhatAreTheTaxNumbersForNonUKOrganisationPage =>
       mode => _ => index => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(mode, index + 1)
 
     case IsOrganisationResidentForTaxOtherCountriesPage =>
-      mode => value => index =>value.asInstanceOf[Boolean] match {
-        case true => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, index)
-        case _    => checkYourAnswersRoute
+      mode => value => index =>value match {
+        case Some(true) => routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, index)
+        case _          => checkYourAnswersRoute
       }
 
     case _ =>

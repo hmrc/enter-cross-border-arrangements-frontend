@@ -20,8 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -30,7 +29,6 @@ import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhatAreTh
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -41,7 +39,6 @@ import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
@@ -140,7 +137,6 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -152,7 +148,6 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
     }
