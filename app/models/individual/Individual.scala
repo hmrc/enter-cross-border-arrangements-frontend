@@ -39,21 +39,21 @@ object Individual {
   private def getIndividualName(ua: UserAnswers): Name = {
     ua.get(IndividualNamePage) match {
       case Some(name) => name
-      case None => throw new Exception("Individual Taxpayer must contain a name and at minimum one tax residency")
+      case None => throw new Exception("Individual Taxpayer must contain a name")
     }
   }
 
   private def getIndividualDateOfBirth(ua: UserAnswers): LocalDate = {
     ua.get(IndividualDateOfBirthPage) match {
       case Some(dob) => dob
-      case None => throw new Exception("Individual Taxpayer must contain a name and at minimum one tax residency")
+      case None => throw new Exception("Individual Taxpayer must contain a date of birth")
     }
   }
 
   private def getTaxResidencies(ua: UserAnswers): IndexedSeq[TaxResidency] = {
     ua.get(IndividualLoopPage) match {
       case Some(loop) => TaxResidency.buildTaxResidency(loop)
-      case None => throw new Exception("Individual Taxpayer must contain a name and at minimum one tax residency")
+      case None => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
     }
   }
 

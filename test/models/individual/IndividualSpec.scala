@@ -16,6 +16,8 @@
 
 package models.individual
 
+import java.time.LocalDate
+
 import generators.ModelGenerators
 import models.taxpayer.TaxResidency
 import models.{Address, LoopDetails, Name, UserAnswers}
@@ -24,8 +26,6 @@ import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.individual._
-
-import java.time.LocalDate
 
 class IndividualSpec extends FreeSpec
   with MustMatchers
@@ -95,7 +95,75 @@ class IndividualSpec extends FreeSpec
             individual mustBe expected
         }
       }
+
+      "must throw an Exception if date of birth data is missing" in {
+        forAll(arbitrary[Name], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
+          (name, address, email, loop) =>
+
+            val userAnswers =
+              UserAnswers("id")
+                .set(IndividualNamePage, name)
+                .success.value
+                .set(IndividualAddressPage, address)
+                .success.value
+                .set(EmailAddressForIndividualPage, email)
+                .success.value
+                .set(IndividualLoopPage, loop)
+                .success.value
+
+            val ex = intercept[Exception] {
+              Individual.buildIndividualDetails(userAnswers)
+            }
+
+            ex.getMessage mustEqual "Individual Taxpayer must contain a date of birth"
+        }
+      }
+
+      "must throw an Exception if name is missing" in {
+        forAll(arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
+          (address, email, loop) =>
+
+            val userAnswers =
+              UserAnswers("id")
+                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .success.value
+                .set(IndividualAddressPage, address)
+                .success.value
+                .set(EmailAddressForIndividualPage, email)
+                .success.value
+                .set(IndividualLoopPage, loop)
+                .success.value
+
+            val ex = intercept[Exception] {
+              Individual.buildIndividualDetails(userAnswers)
+            }
+
+            ex.getMessage mustEqual "Individual Taxpayer must contain a name"
+        }
+      }
+
+      "must throw an Exception if tax residency is missing" in {
+        forAll(arbitrary[Name], arbitrary[Address], arbitrary[String]) {
+          (name, address, email) =>
+
+            val userAnswers =
+              UserAnswers("id")
+                .set(IndividualNamePage, name)
+                .success.value
+                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .success.value
+                .set(IndividualAddressPage, address)
+                .success.value
+                .set(EmailAddressForIndividualPage, email)
+                .success.value
+
+            val ex = intercept[Exception] {
+              Individual.buildIndividualDetails(userAnswers)
+            }
+
+            ex.getMessage mustEqual "Individual Taxpayer must contain at minimum one tax residency"
+        }
+      }
     }
   }
-
 }
