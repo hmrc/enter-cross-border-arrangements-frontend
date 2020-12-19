@@ -28,7 +28,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries._
@@ -39,6 +39,7 @@ trait UserAnswersGenerator extends TryValues {
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
+    arbitrary[(IntermediaryRolePage.type, JsValue)] ::
     arbitrary[(DisclosureMarketablePage.type, JsValue)] ::
     arbitrary[(DisclosureTypePage.type, JsValue)] ::
     arbitrary[(DisclosureNamePage.type, JsValue)] ::

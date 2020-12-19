@@ -20,7 +20,7 @@ import models._
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import pages._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.Call
 
 
@@ -36,8 +36,10 @@ object NavigatorForReporter extends AbstractNavigator {
     }
 
     case IntermediaryWhyReportInUKPage => mode => _ => _ =>
-      controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
-      //TODO change above when next page built
+      controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(mode)
+
+    case IntermediaryRolePage => mode =>_ =>_ =>
+      controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(mode)
 
     case _ => mode => _ => _ => mode match {
         case NormalMode => indexRoute

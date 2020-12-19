@@ -23,7 +23,7 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.IntermediaryWhyReportInUK
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -35,7 +35,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
@@ -85,6 +85,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
+  implicit lazy val arbitraryIntermediaryRoleUserAnswersEntry: Arbitrary[(IntermediaryRolePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IntermediaryRolePage.type]
+        value <- arbitrary[IntermediaryRole].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryWhyReportInUKUserAnswersEntry: Arbitrary[(IntermediaryWhyReportInUKPage.type, JsValue)] =
     Arbitrary {

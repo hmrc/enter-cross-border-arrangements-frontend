@@ -49,9 +49,10 @@
                 errorMessage: form.value.error
               }) }}
 
-              {{ govukButton({
-                text: messages("site.continue")
-              }) }}
+                {{ govukButton({
+                    text: messages("site.saveAndContinue"),
+                    attributes: {"id": "submit"}
+                }) }}
 
             </fieldset>
         </form>
