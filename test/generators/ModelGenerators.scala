@@ -19,15 +19,19 @@ package generators
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.hallmarks._
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.IntermediaryWhyReportInUK
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryIntermediaryRole: Arbitrary[IntermediaryRole] =
+    Arbitrary {
+      Gen.oneOf(IntermediaryRole.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhyReportInUK: Arbitrary[IntermediaryWhyReportInUK] =
     Arbitrary {

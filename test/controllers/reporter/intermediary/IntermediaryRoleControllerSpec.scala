@@ -17,16 +17,16 @@
 package controllers.reporter.intermediary
 
 import base.SpecBase
-import forms.reporter.intermediary.IntermediaryWhyReportInUKFormProvider
+import forms.reporter.intermediary.IntermediaryRoleFormProvider
 import matchers.JsonMatchers
-import models.reporter.intermediary.IntermediaryWhyReportInUK
+import models.reporter.intermediary.IntermediaryRole
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.IntermediaryRolePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -38,16 +38,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IntermediaryRoleControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/intermediary/role")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/intermediary/role") //TODO - update next page built
 
-  lazy val whyReportInUKRoute = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode).url
+  lazy val intermediaryRoleRoute = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(NormalMode).url
 
-  val formProvider = new IntermediaryWhyReportInUKFormProvider()
+  val formProvider = new IntermediaryRoleFormProvider()
   val form = formProvider()
 
-  "WhyReportInUK Controller" - {
+  "IntermediaryRole Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +55,7 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, whyReportInUKRoute)
+      val request = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,10 +68,10 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryWhyReportInUK.radios(form)
+        "radios" -> IntermediaryRole.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/IntermediaryWhyReportInUK.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -82,9 +82,9 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryRolePage, IntermediaryRole.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, whyReportInUKRoute)
+      val request = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -94,15 +94,15 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> IntermediaryWhyReportInUK.values.head.toString))
+      val filledForm = form.bind(Map("value" -> IntermediaryRole.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryWhyReportInUK.radios(filledForm)
+        "radios" -> IntermediaryRole.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/IntermediaryWhyReportInUK.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -123,8 +123,8 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
           .build()
 
       val request =
-        FakeRequest(POST, whyReportInUKRoute)
-          .withFormUrlEncodedBody(("value", IntermediaryWhyReportInUK.values.head.toString))
+        FakeRequest(POST, intermediaryRoleRoute)
+          .withFormUrlEncodedBody(("value", IntermediaryRole.values.head.toString))
 
       val result = route(application, request).value
 
@@ -141,7 +141,7 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request = FakeRequest(POST, intermediaryRoleRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -155,10 +155,10 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryWhyReportInUK.radios(boundForm)
+        "radios" -> IntermediaryRole.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/IntermediaryWhyReportInUK.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

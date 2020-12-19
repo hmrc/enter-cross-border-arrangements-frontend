@@ -337,3 +337,8 @@ GET        /intermediary/why-report-in-uk                           controllers.
 POST       /intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = CheckMode)

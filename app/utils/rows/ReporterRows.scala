@@ -18,7 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -41,6 +41,15 @@ trait ReporterRows extends RowBuilder {
       msgKey  = "whyReportInUK",
       content = Literal(s"whyReportInUK.$answer"),
       href    = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def intermediaryRolePage: Option[Row] = userAnswers.get(IntermediaryRolePage) map { answer =>
+
+    toRow(
+      msgKey  = "intermediaryRole",
+      content = Literal(s"intermediaryRole.$answer"),
+      href    = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(CheckMode).url
     )
   }
 }
