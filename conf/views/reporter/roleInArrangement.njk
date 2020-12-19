@@ -29,25 +29,25 @@
 
         <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(mode).url }}" method="post">
 
-          {{ csrf() | safe }}
+        {{ csrf() | safe }}
 
-          {{ govukRadios({
-            name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('roleInArrangement.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
-              }
-            },
-            items: radios,
-            errorMessage: form.value.error
-          }) }}
+        <h1 class="govuk-heading-xl">
+        {{ messages("roleInArrangement.title") }}
+        </h1>
 
-          {{ govukButton({
-            text: messages("site.continue")
-          }) }}
+        <p class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
 
+        <fieldset class="govuk-fieldset">
+              {{ govukRadios({
+                name: 'value',
+                items: radios,
+                errorMessage: form.value.error
+              }) }}
+         </fieldset>
+
+            {{ govukButton({
+                text: messages("site.continue")
+            }) }}
         </form>
 
       </div>

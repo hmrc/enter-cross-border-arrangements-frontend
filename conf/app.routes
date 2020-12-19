@@ -364,7 +364,7 @@ POST       /disclosure/change-marketable                    controllers.disclosu
 
 # REPORTER DETAILS
 
-GET        /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)

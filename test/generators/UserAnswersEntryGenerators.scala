@@ -22,6 +22,7 @@ import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.reporter.RoleInArrangement
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
