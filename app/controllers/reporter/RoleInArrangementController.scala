@@ -65,12 +65,8 @@ class RoleInArrangementController @Inject()(
       renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
   }
 
-//  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
-//    NavigatorForIndividual.nextPage(DoYouKnowAnyTINForUKIndividualPage, mode, value, index, alternative)
-
   def redirect(mode:Mode, value: Option[RoleInArrangement], index: Int = 0, alternative: Boolean = false): Call =
     NavigatorForReporter.nextPage(RoleInArrangementPage, mode, value, index, alternative)
-
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
