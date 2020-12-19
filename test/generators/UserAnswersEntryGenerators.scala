@@ -29,10 +29,19 @@ import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayers
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryRoleInArrangementUserAnswersEntry: Arbitrary[(RoleInArrangementPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[RoleInArrangementPage.type]
+        value <- arbitrary[RoleInArrangement].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
     Arbitrary {

@@ -23,20 +23,17 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
-import pages._
-import pages.arrangement._
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows.{ArrangementRows, EnterpriseRows, IndividualRows, TaxpayerRows}
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with ArrangementRows with EnterpriseRows with TaxpayerRows {
-    
+
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
       Row(

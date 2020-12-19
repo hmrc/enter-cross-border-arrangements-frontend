@@ -326,3 +326,9 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 
 #GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
 
+# REPORTER DETAILS
+
+GET        /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
