@@ -95,7 +95,6 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       application.stop()
     }
 
-    //TODO - fix below test
     "must populate the view correctly on a GET when the question has previously been answered" ignore {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)

@@ -27,5 +27,6 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider @Inject() ext
   def apply(): Form[List[String]] =
     Form(
       "value" -> list[String](text("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
+        .verifying(nonEmptyList("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
     )
 }

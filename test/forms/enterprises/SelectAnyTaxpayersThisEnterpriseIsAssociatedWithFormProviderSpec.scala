@@ -17,7 +17,6 @@
 package forms.enterprises
 
 import forms.behaviours.CheckboxFieldBehaviours
-import play.api.data.FormError
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProviderSpec extends CheckboxFieldBehaviours {
 
@@ -28,10 +27,11 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProviderSpec extends C
     val fieldName = "value"
     val requiredKey = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"
 
-    "must bind correctly " in {
-
-      form.bind(Map("value[0]" -> "1")).get shouldEqual List("1")
-    }
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
 
   }
 }
