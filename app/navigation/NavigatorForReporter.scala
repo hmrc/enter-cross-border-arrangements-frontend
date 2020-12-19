@@ -17,8 +17,10 @@
 package navigation
 
 import models._
+import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import pages._
 import pages.reporter.RoleInArrangementPage
+import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import play.api.mvc.Call
 
 
@@ -28,7 +30,14 @@ object NavigatorForReporter extends AbstractNavigator {
 
   private[navigation] val routeMap: Page => Mode => Option[Any] => Int => Call = {
 
-    case RoleInArrangementPage => _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when next page built
+    case RoleInArrangementPage => mode => value => _ => value match {
+      case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
+      case Some(Taxpayer) => controllers.routes.IndexController.onPageLoad() //TODO - change when reporter taxpayer journey built
+    }
+
+    case IntermediaryWhyReportInUKPage => mode => _ => _ =>
+      controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
+      //TODO change above when next page built
 
     case _ => mode => _ => _ => mode match {
         case NormalMode => indexRoute

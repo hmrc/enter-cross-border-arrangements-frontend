@@ -25,20 +25,26 @@ sealed trait IntermediaryWhyReportInUK
 
 object IntermediaryWhyReportInUK extends Enumerable.Implicits {
 
-  case object Taxresidentuk extends WithName("taxResidentUk") with IntermediaryWhyReportInUK
-  case object Permanentestablishment extends WithName("permanentEstablishment") with IntermediaryWhyReportInUK
+  case object TaxResidentUK extends WithName("taxResidentUK") with IntermediaryWhyReportInUK
+  case object PermanentEstablishment extends WithName("permanentEstablishment") with IntermediaryWhyReportInUK
+  case object GovernedByLaw extends WithName("governedByLaw") with IntermediaryWhyReportInUK
+  case object RegisteredWithAssociated extends WithName("registeredWithAssociated") with IntermediaryWhyReportInUK
+  case object DoNotKnow extends WithName("doNotKnow") with IntermediaryWhyReportInUK
 
   val values: Seq[IntermediaryWhyReportInUK] = Seq(
-    Taxresidentuk,
-    Permanentestablishment
+    TaxResidentUK,
+    PermanentEstablishment
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"whyReportInUK.taxResidentUk", Taxresidentuk.toString),
-      Radios.Radio(msg"whyReportInUK.permanentEstablishment", Permanentestablishment.toString)
+      Radios.Radio(msg"whyReportInUK.taxResidentUk", TaxResidentUK.toString),
+      Radios.Radio(msg"whyReportInUK.permanentEstablishment", PermanentEstablishment.toString),
+      Radios.Radio(msg"whyReportInUK.governedByLaw", GovernedByLaw.toString),
+      Radios.Radio(msg"whyReportInUK.registeredWithAssociated", RegisteredWithAssociated.toString),
+      Radios.Radio(msg"whyReportInUK.doNotKnow", DoNotKnow.toString)
     )
 
     Radios(field, items)

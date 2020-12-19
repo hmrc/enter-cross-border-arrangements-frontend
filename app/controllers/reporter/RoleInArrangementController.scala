@@ -49,8 +49,6 @@ class RoleInArrangementController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      //TODO - Change back to below method & add requireData when full journey is built
-
       val preparedForm = request.userAnswers.flatMap(_.get(RoleInArrangementPage)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -70,8 +68,6 @@ class RoleInArrangementController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
-      //TODO - add requireData back to when full journey is built
 
       form.bindFromRequest().fold(
         formWithErrors => {
