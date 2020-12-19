@@ -31,11 +31,11 @@
 
         {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">
+        <h1 id="heading" class="govuk-heading-xl">
         {{ messages("roleInArrangement.title") }}
         </h1>
 
-        <p class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
+        <p "id=roleInfo" class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
 
         <fieldset class="govuk-fieldset">
               {{ govukRadios({

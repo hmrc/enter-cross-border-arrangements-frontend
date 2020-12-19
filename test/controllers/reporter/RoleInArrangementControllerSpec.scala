@@ -124,7 +124,7 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      
+
       application.stop()
     }
 
