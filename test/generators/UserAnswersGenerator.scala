@@ -28,6 +28,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
+import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries._
@@ -41,6 +42,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(DisclosureMarketablePage.type, JsValue)] ::
     arbitrary[(DisclosureTypePage.type, JsValue)] ::
     arbitrary[(DisclosureNamePage.type, JsValue)] ::
+    arbitrary[(IntermediaryWhyReportInUKPage.type, JsValue)] ::
     arbitrary[(RoleInArrangementPage.type, JsValue)] ::
     arbitrary[(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type, JsValue)] ::
     arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] ::

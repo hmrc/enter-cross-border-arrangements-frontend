@@ -368,3 +368,8 @@ GET        /reporter/role                        controllers.reporter.RoleInArra
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = CheckMode)

@@ -712,3 +712,10 @@ roleInArrangement.taxpayer = Taxpayer
 roleInArrangement.checkYourAnswersLabel = What is your role in this arrangement?
 roleInArrangement.error.required = Select whether you are an intermediary or a taxpayer
 roleInArrangement.information = By providing your details here, you do not need to add yourself as an intermediary or taxpayer again in another section.
+
+whyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.taxResidentUk = You are tax resident in the UK
+whyReportInUK.permanentEstablishment = You have a permanent establishment in the UK
+whyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.error.required = Select whyReportInUK
