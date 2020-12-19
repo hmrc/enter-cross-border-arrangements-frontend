@@ -361,3 +361,10 @@ GET        /disclosure/marketable                           controllers.disclosu
 POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
 GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
 POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
+
+# REPORTER DETAILS
+
+GET        /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /role-in-arrangement                         controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-role-in-arrangement                  controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)

@@ -23,6 +23,7 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.disclosure.DisclosureType
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.reporter.RoleInArrangement
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -43,6 +44,11 @@ import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values.toSeq)
+    }
+
+  implicit lazy val arbitraryRoleInArrangement: Arbitrary[RoleInArrangement] =
+    Arbitrary {
+      Gen.oneOf(RoleInArrangement.values.toSeq)
     }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =

@@ -701,3 +701,10 @@ disclosureMarketable.warning = Check this is correct. If you need to change your
 disclosureMarketable.checkYourAnswersLabel = Is this arrangement marketable?
 disclosureMarketable.error.required = Select yes if this arrangement is marketable
 
+
+roleInArrangement.title = What is your role in this arrangement?
+roleInArrangement.heading = What is your role in this arrangement?
+roleInArrangement.intermediary = Intermediary
+roleInArrangement.taxpayer = Taxpayer
+roleInArrangement.checkYourAnswersLabel = What is your role in this arrangement?
+roleInArrangement.error.required = Select roleInArrangement

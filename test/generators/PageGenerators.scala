@@ -24,6 +24,7 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 
@@ -44,6 +45,9 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 
   implicit lazy val arbitraryDisclosureNamePage: Arbitrary[DisclosureNamePage.type] =
     Arbitrary(DisclosureNamePage)
+
+  implicit lazy val arbitraryRoleInArrangementPage: Arbitrary[RoleInArrangementPage.type] =
+    Arbitrary(RoleInArrangementPage)
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
     Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
