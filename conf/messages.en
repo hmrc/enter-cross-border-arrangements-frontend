@@ -648,9 +648,13 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a val
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.nonNumericKey = Provide a valid date
 
+
+## REPORTER DETAILS
+
 roleInArrangement.title = What is your role in this arrangement?
 roleInArrangement.heading = What is your role in this arrangement?
 roleInArrangement.intermediary = Intermediary
 roleInArrangement.taxpayer = Taxpayer
 roleInArrangement.checkYourAnswersLabel = What is your role in this arrangement?
-roleInArrangement.error.required = Select roleInArrangement
+roleInArrangement.error.required = Select whether you are an intermediary or a taxpayer
+roleInArrangement.information = By providing your details here, you do not need to add yourself as an intermediary or taxpayer again in another section.

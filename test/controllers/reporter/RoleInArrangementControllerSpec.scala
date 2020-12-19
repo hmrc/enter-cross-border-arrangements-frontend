@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.reporter
 
 import base.SpecBase
@@ -5,7 +21,6 @@ import forms.reporter.RoleInArrangementFormProvider
 import matchers.JsonMatchers
 import models.reporter.RoleInArrangement
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -13,7 +28,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.RoleInArrangementPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -24,9 +38,7 @@ import scala.concurrent.Future
 
 class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
-
-  lazy val roleInArrangementRoute = routes.RoleInArrangementController.onPageLoad(NormalMode).url
+  lazy val roleInArrangementRoute = controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode).url
 
   val formProvider = new RoleInArrangementFormProvider()
   val form = formProvider()
@@ -55,7 +67,7 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
         "radios" -> RoleInArrangement.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "roleInArrangement.njk"
+      templateCaptor.getValue mustEqual "reporter/roleInArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -86,7 +98,7 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
         "radios" -> RoleInArrangement.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "roleInArrangement.njk"
+      templateCaptor.getValue mustEqual "reporter/roleInArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -101,7 +113,6 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -113,9 +124,7 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-
+      
       application.stop()
     }
 
@@ -142,39 +151,8 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
         "radios" -> RoleInArrangement.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "roleInArrangement.njk"
+      templateCaptor.getValue mustEqual "reporter/roleInArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, roleInArrangementRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, roleInArrangementRoute)
-          .withFormUrlEncodedBody(("value", RoleInArrangement.values.head.toString))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

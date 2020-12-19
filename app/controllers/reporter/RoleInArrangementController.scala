@@ -19,13 +19,14 @@ package controllers.reporter
 import controllers.actions._
 import forms.reporter.RoleInArrangementFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import models.reporter.RoleInArrangement
-import navigation.Navigator
+import helpers.JourneyHelpers.hasValueChanged
+import navigation.NavigatorForReporter
 import pages.reporter.RoleInArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,10 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class RoleInArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     formProvider: RoleInArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -47,10 +46,12 @@ class RoleInArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(RoleInArrangementPage) match {
+      //TODO - Change back to below method & add requireData when full journey is built
+
+      val preparedForm = request.userAnswers.flatMap(_.get(RoleInArrangementPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,11 +62,20 @@ class RoleInArrangementController @Inject()(
         "radios"  -> RoleInArrangement.radios(preparedForm)
       )
 
-      renderer.render("roleInArrangement.njk", json).map(Ok(_))
+      renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+//  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
+//    NavigatorForIndividual.nextPage(DoYouKnowAnyTINForUKIndividualPage, mode, value, index, alternative)
+
+  def redirect(mode:Mode, value: Option[RoleInArrangement], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(RoleInArrangementPage, mode, value, index, alternative)
+
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
+      //TODO - add requireData back to when full journey is built
 
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -76,13 +86,19 @@ class RoleInArrangementController @Inject()(
             "radios" -> RoleInArrangement.radios(formWithErrors)
           )
 
-          renderer.render("roleInArrangement.njk", json).map(BadRequest(_))
+          renderer.render("reporter/roleInArrangement.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+          val redirectUsers = hasValueChanged(value, RoleInArrangementPage, mode, userAnswers)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(RoleInArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RoleInArrangementPage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
+
+        }
       )
   }
 }
