@@ -715,7 +715,13 @@ roleInArrangement.information = By providing your details here, you do not need 
 
 whyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
 whyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
+whyReportInUK.hint = This list is in priority order. You only need to choose the first that applies.
 whyReportInUK.taxResidentUk = You are tax resident in the UK
 whyReportInUK.permanentEstablishment = You have a permanent establishment in the UK
+whyReportInUK.governedByLaw = You are governed by UK law, or, if relevant, your organisation was incorporated in the UK
+whyReportInUK.registeredWithAssociated = You are registered with a relevant professional association in the UK
+whyReportInUK.doNotKnow = I do not know
 whyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
-whyReportInUK.error.required = Select whyReportInUK
+whyReportInUK.error.required = Select the first reason that applies
+
