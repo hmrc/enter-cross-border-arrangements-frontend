@@ -27,28 +27,32 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(mode).url }}" method="post">
+       <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(mode).url }}" method="post">
+        <fieldset class="govuk-fieldset">
 
         {{ csrf() | safe }}
 
-        <h1 id="heading" class="govuk-heading-xl">
-        {{ messages("roleInArrangement.title") }}
-        </h1>
+        <legend>
+            <h1 id="heading" class="govuk-heading-xl">
+                {{ messages("roleInArrangement.title") }}
+            </h1>
+        </legend>
 
         <p "id=roleInfo" class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
 
-        <fieldset class="govuk-fieldset">
-              {{ govukRadios({
-                name: 'value',
-                items: radios,
-                errorMessage: form.value.error
-              }) }}
-         </fieldset>
+        {{ govukRadios({
+            name: 'value',
+            items: radios,
+            errorMessage: form.value.error
+        }) }}
 
-            {{ govukButton({
-                text: messages("site.continue")
-            }) }}
-        </form>
+        {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {"id": "submit"}
+        }) }}
+
+        </fieldset>
+       </form>
 
       </div>
     </div>
