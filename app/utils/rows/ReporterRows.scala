@@ -18,6 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import pages.reporter.RoleInArrangementPage
+import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -27,8 +28,19 @@ trait ReporterRows extends RowBuilder {
 
     toRow(
       msgKey  = "roleInArrangement",
-      content = Literal("roleInArrangement.$answer"),
+      content = Literal(s"roleInArrangement.$answer"),
       href    = controllers.reporter.routes.RoleInArrangementController.onPageLoad(CheckMode).url
+    )
+  }
+
+  //Reporter - Intermediary Journey
+
+  def intermediaryWhyReportInUKPage: Option[Row] = userAnswers.get(IntermediaryWhyReportInUKPage) map { answer =>
+
+    toRow(
+      msgKey  = "whyReportInUK",
+      content = Literal(s"whyReportInUK.$answer"),
+      href    = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(CheckMode).url
     )
   }
 }

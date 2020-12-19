@@ -24,9 +24,13 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
+import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.taxpayer._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryWhyReportInUKPage: Arbitrary[IntermediaryWhyReportInUKPage.type] =
+    Arbitrary(IntermediaryWhyReportInUKPage)
 
   implicit lazy val arbitraryRoleInArrangementPage: Arbitrary[RoleInArrangementPage.type] =
     Arbitrary(RoleInArrangementPage)
