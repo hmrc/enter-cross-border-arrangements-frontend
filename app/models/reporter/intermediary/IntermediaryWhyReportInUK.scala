@@ -33,7 +33,10 @@ object IntermediaryWhyReportInUK extends Enumerable.Implicits {
 
   val values: Seq[IntermediaryWhyReportInUK] = Seq(
     TaxResidentUK,
-    PermanentEstablishment
+    PermanentEstablishment,
+    GovernedByLaw,
+    RegisteredWithAssociated,
+    DoNotKnow
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
