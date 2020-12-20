@@ -39,7 +39,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'What is your role in this arrangement?' page " +
         "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
-        "when any the intermediary option is selected" in {
+        "when any 'INTERMEDIARY' option is selected" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
