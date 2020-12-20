@@ -18,9 +18,8 @@ package navigation
 
 import base.SpecBase
 import generators.Generators
-import models._
+import models.{YesNoDoNotKnowRadios, _}
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.IntermediaryExemptionInEU
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
@@ -87,7 +86,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.Yes).success.value
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.Yes).success.value
 
             NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
@@ -102,7 +101,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.No).success.value
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.No).success.value
 
             //TODO - redirect to CYA page when built
             NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
@@ -118,7 +117,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.No).success.value
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.No).success.value
 
             //TODO - redirect to CYA page when built
             NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))

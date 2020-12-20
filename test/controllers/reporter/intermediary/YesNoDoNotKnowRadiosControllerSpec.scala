@@ -19,8 +19,7 @@ package controllers.reporter.intermediary
 import base.SpecBase
 import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
 import matchers.JsonMatchers
-import models.reporter.intermediary.IntermediaryExemptionInEU
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers, YesNoDoNotKnowRadios}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -36,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   lazy val intermediaryExemptionInEURoute = routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode).url
 
@@ -64,7 +63,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(form)
+        "radios" -> YesNoDoNotKnowRadios.radios(form)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
@@ -78,7 +77,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, intermediaryExemptionInEURoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,12 +89,12 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> IntermediaryExemptionInEU.values.head.toString))
+      val filledForm = form.bind(Map("value" -> YesNoDoNotKnowRadios.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(filledForm)
+        "radios" -> YesNoDoNotKnowRadios.radios(filledForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
@@ -119,12 +118,12 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
 
       val request =
         FakeRequest(POST, intermediaryExemptionInEURoute)
-          .withFormUrlEncodedBody(("value", IntermediaryExemptionInEU.values.head.toString))
+          .withFormUrlEncodedBody(("value", YesNoDoNotKnowRadios.values.head.toString))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      
+
       application.stop()
     }
 
@@ -148,7 +147,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(boundForm)
+        "radios" -> YesNoDoNotKnowRadios.radios(boundForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"

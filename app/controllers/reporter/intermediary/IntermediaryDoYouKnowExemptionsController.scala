@@ -84,7 +84,7 @@ class IntermediaryDoYouKnowExemptionsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryDoYouKnowExemptionsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IntermediaryDoYouKnowExemptionsPage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value), 0))
       )
   }
 }

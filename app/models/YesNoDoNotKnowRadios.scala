@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package models.reporter.intermediary
+package models
 
-import models.{Enumerable, WithName}
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-sealed trait IntermediaryExemptionInEU
+sealed trait YesNoDoNotKnowRadios
 
-object IntermediaryExemptionInEU extends Enumerable.Implicits {
+object YesNoDoNotKnowRadios extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with IntermediaryExemptionInEU
-  case object No extends WithName("no") with IntermediaryExemptionInEU
-  case object DoNotKnow extends WithName("doNotKnow") with IntermediaryExemptionInEU
+  case object Yes extends WithName("yes") with YesNoDoNotKnowRadios
+  case object No extends WithName("no") with YesNoDoNotKnowRadios
+  case object DoNotKnow extends WithName("doNotKnow") with YesNoDoNotKnowRadios
 
-  val values: Seq[IntermediaryExemptionInEU] = Seq(
+  val values: Seq[YesNoDoNotKnowRadios] = Seq(
     Yes,
     No,
     DoNotKnow
@@ -39,14 +38,14 @@ object IntermediaryExemptionInEU extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"intermediaryExemptionInEU.yes", Yes.toString),
-      Radios.Radio(msg"intermediaryExemptionInEU.no", No.toString),
-      Radios.Radio(msg"intermediaryExemptionInEU.doNotKnow", DoNotKnow.toString)
+      Radios.Radio(msg"site.yes", Yes.toString),
+      Radios.Radio(msg"site.no", No.toString),
+      Radios.Radio(msg"site.doNotKnow", DoNotKnow.toString)
     )
 
     Radios(field, items)
   }
 
-  implicit val enumerable: Enumerable[IntermediaryExemptionInEU] =
+  implicit val enumerable: Enumerable[YesNoDoNotKnowRadios] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }
