@@ -403,3 +403,18 @@ GET        /reporter/taxpayer/why-reporting                        controllers.r
 POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /disclosureName                        controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosureName                        controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
+GET        /changeDisclosureName                  controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeDisclosureName                  controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /disclosureType                        controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosureType                        controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeDisclosureType                  controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeDisclosureType                  controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /disclosureMarketable                        controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosureMarketable                        controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
+GET        /changeDisclosureMarketable                  controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeDisclosureMarketable                  controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)

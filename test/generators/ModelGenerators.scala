@@ -82,6 +82,11 @@ trait ModelGenerators {
       Gen.oneOf(RoleInArrangement.values.toSeq)
     }
 
+  implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
+    Arbitrary {
+      Gen.oneOf(DisclosureType.values.toSeq)
+    }
+
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =
     Arbitrary {
       Gen.oneOf(SelectType.values.toSeq)
