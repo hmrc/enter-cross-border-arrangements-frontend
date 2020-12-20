@@ -21,7 +21,7 @@ import models._
 import models.reporter.RoleInArrangement.Intermediary
 import pages._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.Call
 
 
@@ -49,9 +49,12 @@ object NavigatorForReporter extends AbstractNavigator {
     }
 
     case IntermediaryDoYouKnowExemptionsPage => mode => value =>_ => value match {
-      case Some(true) => controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode) // TODO - Change to counteries list page when built
+      case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(mode)
       case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to CYA when built
     }
+
+    case IntermediaryWhichCountriesExemptPage => mode => _ =>_ =>
+      controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) //TODO - Change redirect to CYA when built
 
     case _ => mode => _ => _ => mode match {
         case NormalMode => indexRoute

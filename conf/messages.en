@@ -784,4 +784,4 @@ intermediaryWhichCountriesExempt.title = Which countries are you exempt from rep
 intermediaryWhichCountriesExempt.heading = Which countries are you exempt from reporting in?
 intermediaryWhichCountriesExempt.hint = Select all that apply.
 intermediaryWhichCountriesExempt.checkYourAnswersLabel = Which countries are you exempt from reporting in?
-intermediaryWhichCountriesExempt.error.required = Select intermediaryWhichCountriesExempt
+intermediaryWhichCountriesExempt.error.required = Select one or more countries
