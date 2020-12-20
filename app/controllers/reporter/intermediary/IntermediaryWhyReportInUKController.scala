@@ -18,11 +18,10 @@ package controllers.reporter.intermediary
 
 import controllers.actions._
 import forms.reporter.intermediary.IntermediaryWhyReportInUKFormProvider
-import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
+import models.Mode
 import models.reporter.intermediary.IntermediaryWhyReportInUK
-import models.{Mode, UserAnswers}
-import navigation.{Navigator, NavigatorForReporter}
+import navigation.NavigatorForReporter
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -37,9 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class IntermediaryWhyReportInUKController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
-                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
                                          formProvider: IntermediaryWhyReportInUKFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          renderer: Renderer
@@ -47,10 +46,10 @@ class IntermediaryWhyReportInUKController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(IntermediaryWhyReportInUKPage)) match {
+      val preparedForm = request.userAnswers.get(IntermediaryWhyReportInUKPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +66,7 @@ class IntermediaryWhyReportInUKController @Inject()(
   def redirect(mode:Mode, value: Option[IntermediaryWhyReportInUK], index: Int = 0, alternative: Boolean = false): Call =
     NavigatorForReporter.nextPage(IntermediaryWhyReportInUKPage, mode, value, index, alternative)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -82,14 +81,11 @@ class IntermediaryWhyReportInUKController @Inject()(
           renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(BadRequest(_))
         },
         value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = hasValueChanged(value, IntermediaryWhyReportInUKPage, mode, userAnswers)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(IntermediaryWhyReportInUKPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhyReportInUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
+          } yield Redirect(redirect(mode, Some(value), 0))
 
         }
       )
