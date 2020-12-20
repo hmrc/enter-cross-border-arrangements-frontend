@@ -121,7 +121,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      
+
       application.stop()
     }
 

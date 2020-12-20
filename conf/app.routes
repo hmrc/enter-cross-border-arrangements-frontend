@@ -353,7 +353,7 @@ POST       /reporter/intermediary/exemption-country-known                       
 GET        /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /intermediaryWhichCountriesExempt                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaryWhichCountriesExempt                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = NormalMode)
-GET        /changeIntermediaryWhichCountriesExempt                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeIntermediaryWhichCountriesExempt                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)

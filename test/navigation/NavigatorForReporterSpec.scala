@@ -23,7 +23,7 @@ import models.reporter.RoleInArrangement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -135,13 +135,11 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
             val updatedAnswers = answers.set(IntermediaryDoYouKnowExemptionsPage, true).success.value
 
-            //TODO - redirect to Countries List page when built
             NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
-              .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
+              .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(NormalMode))
 
         }
       }
-
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
@@ -154,6 +152,20 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
             //TODO - redirect to CYA page when built
             NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
+                .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Which countries are you exempt from reporting in?' page " +
+        "to 'Check your Answers' page " +
+        "when any option is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            //TODO - redirect to CYA page when built
+            NavigatorForReporter.nextPage(IntermediaryWhichCountriesExemptPage, NormalMode, answers.get(IntermediaryDoYouKnowExemptionsPage))
                 .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
 
         }

@@ -20,11 +20,11 @@ import controllers.actions._
 import forms.IntermediaryWhichCountriesExemptFormProvider
 import javax.inject.Inject
 import models.{CountriesListEUCheckboxes, Mode}
-import navigation.Navigator
+import navigation.{Navigator, NavigatorForReporter}
 import pages.reporter.intermediary.IntermediaryWhichCountriesExemptPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -63,6 +63,9 @@ class IntermediaryWhichCountriesExemptController @Inject()(
       renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(Ok(_))
   }
 
+  def redirect(mode:Mode, value: Some[Set[CountriesListEUCheckboxes]], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(IntermediaryWhichCountriesExemptPage, mode, value, index, alternative)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -77,11 +80,12 @@ class IntermediaryWhichCountriesExemptController @Inject()(
 
           renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhichCountriesExemptPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IntermediaryWhichCountriesExemptPage, mode, updatedAnswers))
+          } yield Redirect(redirect(mode, Some(value)))
+        }
       )
   }
 }
