@@ -17,10 +17,11 @@
 package navigation
 
 import models._
-import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
+import models.reporter.RoleInArrangement.Intermediary
+import models.reporter.intermediary.IntermediaryExemptionInEU.Yes
 import pages._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.Call
 
 
@@ -32,7 +33,7 @@ object NavigatorForReporter extends AbstractNavigator {
 
     case RoleInArrangementPage => mode => value => _ => value match {
       case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
-      case Some(Taxpayer) => controllers.routes.IndexController.onPageLoad() //TODO - change when reporter taxpayer journey built
+      case _ => controllers.routes.IndexController.onPageLoad() //TODO - change when reporter taxpayer journey built
     }
 
     case IntermediaryWhyReportInUKPage => mode => _ => _ =>
@@ -41,8 +42,16 @@ object NavigatorForReporter extends AbstractNavigator {
     case IntermediaryRolePage => mode =>_ =>_ =>
       controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(mode)
 
-    case IntermediaryExemptionInEUPage => mode => _ => _ =>
-      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(mode)
+    case IntermediaryExemptionInEUPage => mode => value => _ => value match {
+      case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode)
+      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) //TODO - Change redirect to CYA when built
+
+    }
+
+    case IntermediaryDoYouKnowExemptionsPage => mode => value =>_ => value match {
+      case Some(true) => controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode) // TODO - Change to counteries list page when built
+      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to CYA when built
+    }
 
     case _ => mode => _ => _ => mode match {
         case NormalMode => indexRoute

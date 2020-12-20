@@ -17,29 +17,29 @@
 package controllers.reporter.intermediary
 
 import controllers.actions._
-import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
+import forms.reporter.intermediary.IntermediaryDoYouKnowExemptionsFormProvider
 import javax.inject.Inject
 import models.Mode
-import models.reporter.intermediary.IntermediaryExemptionInEU
-import navigation.NavigatorForReporter
-import pages.reporter.intermediary.IntermediaryExemptionInEUPage
+import navigation.{Navigator, NavigatorForReporter}
+import pages.reporter.intermediary.IntermediaryDoYouKnowExemptionsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IntermediaryExemptionInEUController @Inject()(
+class IntermediaryDoYouKnowExemptionsController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: IntermediaryExemptionInEUFormProvider,
+    formProvider: IntermediaryDoYouKnowExemptionsFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,7 +49,7 @@ class IntermediaryExemptionInEUController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IntermediaryExemptionInEUPage) match {
+      val preparedForm = request.userAnswers.get(IntermediaryDoYouKnowExemptionsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -57,14 +57,14 @@ class IntermediaryExemptionInEUController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios"  -> IntermediaryExemptionInEU.radios(preparedForm)
+        "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
-      renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(Ok(_))
+      renderer.render("reporter/intermediary/intermediaryDoYouKnowExemptions.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[IntermediaryExemptionInEU], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, mode, value, index, alternative)
+  def redirect(mode:Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -75,16 +75,16 @@ class IntermediaryExemptionInEUController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> IntermediaryExemptionInEU.radios(formWithErrors)
+            "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 
-          renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(BadRequest(_))
+          renderer.render("reporter/intermediary/intermediaryDoYouKnowExemptions.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryDoYouKnowExemptionsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0))
+          } yield Redirect(navigator.nextPage(IntermediaryDoYouKnowExemptionsPage, mode, updatedAnswers))
       )
   }
 }

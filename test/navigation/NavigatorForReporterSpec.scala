@@ -20,10 +20,11 @@ import base.SpecBase
 import generators.Generators
 import models._
 import models.reporter.RoleInArrangement
+import models.reporter.intermediary.IntermediaryExemptionInEU
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryExemptionInEUPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -45,10 +46,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           answers =>
 
             val updatedAnswers =
-              answers
-                .set(RoleInArrangementPage, RoleInArrangement.Intermediary)
-                .success
-                .value
+              answers.set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
 
             NavigatorForReporter.nextPage(RoleInArrangementPage, NormalMode, updatedAnswers.get(RoleInArrangementPage))
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode))
@@ -76,8 +74,88 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, answers.get(IntermediaryExemptionInEUPage))
+            NavigatorForReporter.nextPage(IntermediaryRolePage, NormalMode, answers.get(IntermediaryRolePage))
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
+        "to 'Do you know which countries you are exempt from reporting in?' page " +
+        "when option YES is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.Yes).success.value
+
+            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
+                .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
+        "to 'Check your answers' page " +
+        "when option NO is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.No).success.value
+
+            //TODO - redirect to CYA page when built
+            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
+              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
+        "to 'Check your answers' page " +
+        "when option I DO NOT KNOW is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.No).success.value
+
+            //TODO - redirect to CYA page when built
+            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
+              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'Do you know which countries you are exempt from reporting in?' page " +
+        "to 'which countries are you exempt from reporting in' page " +
+        "when option YES is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(IntermediaryDoYouKnowExemptionsPage, true).success.value
+
+            //TODO - redirect to Countries List page when built
+            NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
+              .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
+
+        }
+      }
+
+
+      "must go from 'Do you know which countries you are exempt from reporting in?' page " +
+        "to 'Check your Answers' page " +
+        "when option NO is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers = answers.set(IntermediaryDoYouKnowExemptionsPage, false).success.value
+
+            //TODO - redirect to CYA page when built
+            NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
+                .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
 
         }
       }

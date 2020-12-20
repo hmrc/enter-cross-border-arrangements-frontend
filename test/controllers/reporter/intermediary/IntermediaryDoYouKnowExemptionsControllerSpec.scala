@@ -17,33 +17,32 @@
 package controllers.reporter.intermediary
 
 import base.SpecBase
-import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
+import forms.reporter.intermediary.IntermediaryDoYouKnowExemptionsFormProvider
 import matchers.JsonMatchers
-import models.reporter.intermediary.IntermediaryExemptionInEU
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.intermediary.IntermediaryExemptionInEUPage
+import pages.reporter.intermediary.IntermediaryDoYouKnowExemptionsPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val intermediaryExemptionInEURoute = routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode).url
-
-  val formProvider = new IntermediaryExemptionInEUFormProvider()
+  val formProvider = new IntermediaryDoYouKnowExemptionsFormProvider()
   val form = formProvider()
 
-  "IntermediaryExemptionInEU Controller" - {
+  lazy val intermediaryDoYouKnowExemptionsRoute = routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode).url
+
+  "IntermediaryDoYouKnowExemptions Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -51,7 +50,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, intermediaryExemptionInEURoute)
+      val request = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -64,10 +63,10 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(form)
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryDoYouKnowExemptions.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -78,9 +77,9 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryExemptionInEUPage, IntermediaryExemptionInEU.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryDoYouKnowExemptionsPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, intermediaryExemptionInEURoute)
+      val request = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -90,15 +89,15 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> IntermediaryExemptionInEU.values.head.toString))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(filledForm)
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryDoYouKnowExemptions.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -118,8 +117,8 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
           .build()
 
       val request =
-        FakeRequest(POST, intermediaryExemptionInEURoute)
-          .withFormUrlEncodedBody(("value", IntermediaryExemptionInEU.values.head.toString))
+        FakeRequest(POST, intermediaryDoYouKnowExemptionsRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
@@ -134,8 +133,8 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, intermediaryExemptionInEURoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, intermediaryDoYouKnowExemptionsRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -148,10 +147,10 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> IntermediaryExemptionInEU.radios(boundForm)
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryDoYouKnowExemptions.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
