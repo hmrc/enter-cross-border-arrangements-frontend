@@ -16,12 +16,12 @@
 
 package generators
 
-import models.{SelectType, YesNoDoNotKnowRadios}
+import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
@@ -35,15 +35,14 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
+import pages.intermediaries.WhatTypeofIntermediaryPage
+
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
-
-	import pages.intermediaries.WhatTypeofIntermediaryPage
-	import models.intermediaries.WhatTypeofIntermediary
 	  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
 	    Arbitrary {
 	      for {
@@ -85,6 +84,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
+  implicit lazy val arbitraryIntermediaryWhichCountriesExemptUserAnswersEntry: Arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IntermediaryWhichCountriesExemptPage.type]
+        value <- arbitrary[CountriesListEUCheckboxes].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryIntermediaryDoYouKnowExemptionsUserAnswersEntry: Arbitrary[(IntermediaryDoYouKnowExemptionsPage.type, JsValue)] =
     Arbitrary {

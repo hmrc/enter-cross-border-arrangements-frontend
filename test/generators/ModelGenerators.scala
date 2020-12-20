@@ -46,6 +46,11 @@ trait ModelGenerators {
       Gen.oneOf(DisclosureType.values.toSeq)
     }
 
+  implicit lazy val arbitraryIntermediaryWhichCountriesExempt: Arbitrary[CountriesListEUCheckboxes] =
+    Arbitrary {
+      Gen.oneOf(CountriesListEUCheckboxes.values.toSeq)
+    }
+
   implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[YesNoDoNotKnowRadios] =
     Arbitrary {
       Gen.oneOf(YesNoDoNotKnowRadios.values.toSeq)

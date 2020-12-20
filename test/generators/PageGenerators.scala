@@ -25,13 +25,14 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
+import pages.intermediaries.WhatTypeofIntermediaryPage
+
 
 trait PageGenerators {
 
-import pages.intermediaries.WhatTypeofIntermediaryPage
   implicit lazy val arbitraryWhatTypeofIntermediaryPage: Arbitrary[WhatTypeofIntermediaryPage.type] =
     Arbitrary(WhatTypeofIntermediaryPage)
 
@@ -46,6 +47,9 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 
   implicit lazy val arbitraryDisclosureNamePage: Arbitrary[DisclosureNamePage.type] =
     Arbitrary(DisclosureNamePage)
+
+  implicit lazy val arbitraryIntermediaryWhichCountriesExemptPage: Arbitrary[IntermediaryWhichCountriesExemptPage.type] =
+    Arbitrary(IntermediaryWhichCountriesExemptPage)
 
   implicit lazy val arbitraryIntermediaryDoYouKnowExemptionsPage: Arbitrary[IntermediaryDoYouKnowExemptionsPage.type] =
     Arbitrary(IntermediaryDoYouKnowExemptionsPage)
