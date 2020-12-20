@@ -19,6 +19,7 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.arrangement._
+import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -34,6 +35,15 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 
   implicit lazy val arbitraryYouHaveNotAddedAnyIntermediariesPage: Arbitrary[YouHaveNotAddedAnyIntermediariesPage.type] =
     Arbitrary(YouHaveNotAddedAnyIntermediariesPage)
+
+  implicit lazy val arbitraryDisclosureMarketablePage: Arbitrary[DisclosureMarketablePage.type] =
+    Arbitrary(DisclosureMarketablePage)
+
+  implicit lazy val arbitraryDisclosureTypePage: Arbitrary[DisclosureTypePage.type] =
+    Arbitrary(DisclosureTypePage)
+
+  implicit lazy val arbitraryDisclosureNamePage: Arbitrary[DisclosureNamePage.type] =
+    Arbitrary(DisclosureNamePage)
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
     Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)

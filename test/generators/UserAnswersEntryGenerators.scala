@@ -18,6 +18,7 @@ package generators
 
 import models.SelectType
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
@@ -26,6 +27,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement._
+import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -54,7 +56,31 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 	      } yield (page, value)
 	    }
 
-  
+
+  implicit lazy val arbitraryDisclosureMarketableUserAnswersEntry: Arbitrary[(DisclosureMarketablePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[DisclosureMarketablePage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryDisclosureTypeUserAnswersEntry: Arbitrary[(DisclosureTypePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[DisclosureTypePage.type]
+        value <- arbitrary[DisclosureType].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryDisclosureNameUserAnswersEntry: Arbitrary[(DisclosureNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[DisclosureNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
     Arbitrary {
       for {

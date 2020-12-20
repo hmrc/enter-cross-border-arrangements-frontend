@@ -674,3 +674,21 @@ whatTypeofIntermediary.serviceProvider.hint = Service providers provide aid, ass
 whatTypeofIntermediary.iDoNotKnow = I do not know
 whatTypeofIntermediary.checkYourAnswersLabel = Intermediary type
 whatTypeofIntermediary.error.required = Select the type of intermediary
+
+disclosureName.title = disclosureName
+disclosureName.heading = disclosureName
+disclosureName.checkYourAnswersLabel = disclosureName
+disclosureName.error.required = Enter disclosureName
+disclosureName.error.length = DisclosureName must be 183 characters or less
+
+disclosureType.title = What type of disclosure would you like to make?
+disclosureType.heading = What type of disclosure would you like to make?
+disclosureType.dac6new = A new arrangement
+disclosureType.dac6add = An addition to an existing arrangement
+disclosureType.checkYourAnswersLabel = What type of disclosure would you like to make?
+disclosureType.error.required = Select disclosureType
+
+disclosureMarketable.title = disclosureMarketable
+disclosureMarketable.heading = disclosureMarketable
+disclosureMarketable.checkYourAnswersLabel = disclosureMarketable
+disclosureMarketable.error.required = Select yes if disclosureMarketable
