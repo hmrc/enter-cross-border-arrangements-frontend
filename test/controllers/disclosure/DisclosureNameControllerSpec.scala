@@ -88,7 +88,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("disclosureName" -> "answer"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -116,7 +116,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val request =
         FakeRequest(POST, disclosureNameRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("disclosureName", "answer"))
 
       val result = route(application, request).value
 
@@ -131,8 +131,8 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, disclosureNameRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, disclosureNameRoute).withFormUrlEncodedBody(("disclosureName", ""))
+      val boundForm = form.bind(Map("disclosureName" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 

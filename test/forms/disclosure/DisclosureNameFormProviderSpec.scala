@@ -27,9 +27,9 @@ class DisclosureNameFormProviderSpec extends StringFieldBehaviours {
 
   val form = new DisclosureNameFormProvider()()
 
-  ".value" - {
+  ".disclosureName" - {
 
-    val fieldName = "value"
+    val fieldName = "disclosureName"
 
     behave like fieldThatBindsValidData(
       form,
