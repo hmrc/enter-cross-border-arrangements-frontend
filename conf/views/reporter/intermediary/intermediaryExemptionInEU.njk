@@ -33,6 +33,9 @@
 
           {{ govukRadios({
             name: 'value',
+            hint: {
+                text: messages('intermediaryExemptionInEU.hint')
+            },
             fieldset: {
               legend: {
                 text: messages('intermediaryExemptionInEU.title'),
@@ -45,7 +48,8 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+              text: messages("site.saveAndContinue"),
+              attributes: {"id": "submit"}
           }) }}
 
         </form>

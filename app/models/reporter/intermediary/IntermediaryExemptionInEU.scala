@@ -27,10 +27,12 @@ object IntermediaryExemptionInEU extends Enumerable.Implicits {
 
   case object Yes extends WithName("yes") with IntermediaryExemptionInEU
   case object No extends WithName("no") with IntermediaryExemptionInEU
+  case object DoNotKnow extends WithName("doNotKnow") with IntermediaryExemptionInEU
 
   val values: Seq[IntermediaryExemptionInEU] = Seq(
     Yes,
-    No
+    No,
+    DoNotKnow
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
@@ -38,7 +40,8 @@ object IntermediaryExemptionInEU extends Enumerable.Implicits {
     val field = form("value")
     val items = Seq(
       Radios.Radio(msg"intermediaryExemptionInEU.yes", Yes.toString),
-      Radios.Radio(msg"intermediaryExemptionInEU.no", No.toString)
+      Radios.Radio(msg"intermediaryExemptionInEU.no", No.toString),
+      Radios.Radio(msg"intermediaryExemptionInEU.doNotKnow", DoNotKnow.toString)
     )
 
     Radios(field, items)
