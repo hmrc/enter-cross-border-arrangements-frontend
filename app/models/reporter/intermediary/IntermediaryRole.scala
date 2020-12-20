@@ -19,11 +19,12 @@ package models.reporter.intermediary
 import models.{Enumerable, WithName}
 import play.api.data.Form
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels._
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import viewmodels.{Hint, Radios}
 
 sealed trait IntermediaryRole
 
-object IntermediaryRole extends Enumerable.Implicits {
+object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
 
   case object Promoter extends WithName("promoter") with IntermediaryRole
   case object ServiceProvider extends WithName("serviceProvider") with IntermediaryRole
@@ -39,8 +40,14 @@ object IntermediaryRole extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"intermediaryRole.promoter", Promoter.toString),
-      Radios.Radio(msg"intermediaryRole.serviceProvider", ServiceProvider.toString),
+      Radios.Radio(label = msg"intermediaryRole.promoter",
+        value = Promoter.toString,
+        hint = Some(Hint(msg"intermediaryRole.promoter.hint", "promoter-hint"))),
+
+      Radios.Radio(label = msg"intermediaryRole.serviceProvider",
+        value = ServiceProvider.toString,
+        hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))),
+
       Radios.Radio(msg"intermediaryRole.unknown", ServiceProvider.toString)
     )
 
