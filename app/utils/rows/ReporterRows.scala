@@ -18,7 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -68,6 +68,15 @@ trait ReporterRows extends RowBuilder {
       msgKey  = "intermediaryDoYouKnowExemptions",
       content = Literal(s"intermediaryDoYouKnowExemptions.$answer"),
       href    = controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def intermediaryWhichCountriesExemptPage: Option[Row] = userAnswers.get(IntermediaryWhichCountriesExemptPage) map { answer =>
+
+    toRow(
+      msgKey  = "intermediaryWhichCountriesExempt",
+      content = Literal(s"intermediaryWhichCountriesExempt.$answer"),
+      href    = controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(CheckMode).url
     )
   }
 }
