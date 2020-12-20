@@ -24,10 +24,13 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryIntermediaryDoYouKnowExemptionsPage: Arbitrary[IntermediaryDoYouKnowExemptionsPage.type] =
+    Arbitrary(IntermediaryDoYouKnowExemptionsPage)
 
   implicit lazy val arbitraryIntermediaryExemptionInEUPage: Arbitrary[IntermediaryExemptionInEUPage.type] =
     Arbitrary(IntermediaryExemptionInEUPage)

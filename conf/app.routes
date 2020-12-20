@@ -347,3 +347,8 @@ GET        /reporter/intermediary/exemption-known                        control
 POST       /reporter/intermediary/exemption-known                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = CheckMode)
