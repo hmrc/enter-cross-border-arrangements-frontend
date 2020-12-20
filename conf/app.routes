@@ -393,3 +393,13 @@ GET        /reporter/intermediary/exempt-countries                        contro
 POST       /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)

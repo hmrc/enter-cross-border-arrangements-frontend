@@ -26,6 +26,7 @@ import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
@@ -47,6 +48,12 @@ trait PageGenerators {
 
   implicit lazy val arbitraryDisclosureNamePage: Arbitrary[DisclosureNamePage.type] =
     Arbitrary(DisclosureNamePage)
+
+  implicit lazy val arbitraryTaxpayerWhyReportArrangementPage: Arbitrary[TaxpayerWhyReportArrangementPage.type] =
+    Arbitrary(TaxpayerWhyReportArrangementPage)
+
+  implicit lazy val arbitraryTaxpayerWhyReportInUKPage: Arbitrary[TaxpayerWhyReportInUKPage.type] =
+    Arbitrary(TaxpayerWhyReportInUKPage)
 
   implicit lazy val arbitraryIntermediaryWhichCountriesExemptPage: Arbitrary[IntermediaryWhichCountriesExemptPage.type] =
     Arbitrary(IntermediaryWhichCountriesExemptPage)

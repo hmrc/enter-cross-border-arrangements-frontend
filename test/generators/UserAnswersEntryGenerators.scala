@@ -24,6 +24,7 @@ import models.hallmarks._
 import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -36,6 +37,7 @@ import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
@@ -84,6 +86,22 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
+  implicit lazy val arbitraryTaxpayerWhyReportArrangementUserAnswersEntry: Arbitrary[(TaxpayerWhyReportArrangementPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[TaxpayerWhyReportArrangementPage.type]
+        value <- arbitrary[TaxpayerWhyReportArrangement].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryTaxpayerWhyReportInUKUserAnswersEntry: Arbitrary[(TaxpayerWhyReportInUKPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[TaxpayerWhyReportInUKPage.type]
+        value <- arbitrary[TaxpayerWhyReportInUK].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryIntermediaryWhichCountriesExemptUserAnswersEntry: Arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] =
     Arbitrary {

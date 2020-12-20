@@ -785,3 +785,25 @@ intermediaryWhichCountriesExempt.heading = Which countries are you exempt from r
 intermediaryWhichCountriesExempt.hint = Select all that apply.
 intermediaryWhichCountriesExempt.checkYourAnswersLabel = Which countries are you exempt from reporting in?
 intermediaryWhichCountriesExempt.error.required = Select one or more countries
+
+taxpayerWhyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.hint = The list is in priority order. You only need to choose the first one that applies.
+taxpayerWhyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
+taxpayerWhyReportInUK.ukTaxResident = You are tax resident in the UK
+taxpayerWhyReportInUK.ukPermanentEstablishment = You have a permanent establishment in the UK
+taxpayerWhyReportInUK.incomeOrProfit = You receive income or generate profit in the UK
+taxpayerWhyReportInUK.ukActivity = You carry out any activity in the UK
+taxpayerWhyReportInUK.doNotKnow = I do not know
+taxpayerWhyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.error.required = Select the first reason that applies
+
+taxpayerWhyReportArrangement.title = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.heading = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.noIntermediaries = There are no intermediaries involved
+taxpayerWhyReportArrangement.professionalPrivilege = The intermediaries involved have legal professional privilege
+taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outside of the UK and EU
+taxpayerWhyReportArrangement.doNotKnow = I do not know
+taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.error.required = Select your reason for reporting
+

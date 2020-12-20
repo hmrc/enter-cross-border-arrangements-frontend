@@ -19,9 +19,11 @@ package navigation
 import models.YesNoDoNotKnowRadios.Yes
 import models._
 import models.reporter.RoleInArrangement.Intermediary
+import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary._
+import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
 
 
@@ -33,8 +35,10 @@ object NavigatorForReporter extends AbstractNavigator {
 
     case RoleInArrangementPage => mode => value => _ => value match {
       case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
-      case _ => controllers.routes.IndexController.onPageLoad() //TODO - change when reporter taxpayer journey built
+      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(mode)
     }
+
+    // Reporter - Intermediary Journey Navigation
 
     case IntermediaryWhyReportInUKPage => mode => _ => _ =>
       controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(mode)
@@ -55,6 +59,18 @@ object NavigatorForReporter extends AbstractNavigator {
 
     case IntermediaryWhichCountriesExemptPage => mode => _ =>_ =>
       controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) //TODO - Change redirect to CYA when built
+
+
+    // Reporter - Taxpayer Journey Navigation
+
+    case TaxpayerWhyReportInUKPage => mode => value =>_ => value match {
+      case Some(DoNotKnow) => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to date implementing page when built
+      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(mode)
+    }
+
+    case TaxpayerWhyReportArrangementPage => mode => _ =>_ =>
+      controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to date implementing page when built
+
 
     case _ => mode => _ => _ => mode match {
         case NormalMode => indexRoute

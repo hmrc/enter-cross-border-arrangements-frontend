@@ -25,6 +25,7 @@ import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -44,6 +45,16 @@ trait ModelGenerators {
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values.toSeq)
+    }
+
+  implicit lazy val arbitraryTaxpayerWhyReportArrangement: Arbitrary[TaxpayerWhyReportArrangement] =
+    Arbitrary {
+      Gen.oneOf(TaxpayerWhyReportArrangement.values.toSeq)
+    }
+
+  implicit lazy val arbitraryTaxpayerWhyReportInUK: Arbitrary[TaxpayerWhyReportInUK] =
+    Arbitrary {
+      Gen.oneOf(TaxpayerWhyReportInUK.values.toSeq)
     }
 
   implicit lazy val arbitraryIntermediaryWhichCountriesExempt: Arbitrary[CountriesListEUCheckboxes] =
