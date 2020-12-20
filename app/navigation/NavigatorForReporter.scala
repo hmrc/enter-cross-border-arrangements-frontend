@@ -16,9 +16,9 @@
 
 package navigation
 
+import models.YesNoDoNotKnowRadios.Yes
 import models._
 import models.reporter.RoleInArrangement.Intermediary
-import models.reporter.intermediary.IntermediaryExemptionInEU.Yes
 import pages._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}

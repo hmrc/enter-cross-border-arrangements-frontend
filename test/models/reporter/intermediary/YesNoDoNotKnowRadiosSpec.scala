@@ -16,41 +16,42 @@
 
 package models.reporter.intermediary
 
+import models.YesNoDoNotKnowRadios
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class IntermediaryExemptionInEUSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class YesNoDoNotKnowRadiosSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
   "IntermediaryExemptionInEU" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(IntermediaryExemptionInEU.values)
+      val gen = Gen.oneOf(YesNoDoNotKnowRadios.values)
 
       forAll(gen) {
         intermediaryExemptionInEU =>
 
-          JsString(intermediaryExemptionInEU.toString).validate[IntermediaryExemptionInEU].asOpt.value mustEqual intermediaryExemptionInEU
+          JsString(intermediaryExemptionInEU.toString).validate[YesNoDoNotKnowRadios].asOpt.value mustEqual intermediaryExemptionInEU
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!IntermediaryExemptionInEU.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!YesNoDoNotKnowRadios.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[IntermediaryExemptionInEU] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[YesNoDoNotKnowRadios] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(IntermediaryExemptionInEU.values)
+      val gen = Gen.oneOf(YesNoDoNotKnowRadios.values)
 
       forAll(gen) {
         intermediaryExemptionInEU =>

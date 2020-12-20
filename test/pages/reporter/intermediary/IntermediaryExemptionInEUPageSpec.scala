@@ -16,17 +16,17 @@
 
 package pages.reporter.intermediary
 
-import models.reporter.intermediary.IntermediaryExemptionInEU
+import models.YesNoDoNotKnowRadios
 import pages.behaviours.PageBehaviours
 
-class IntermediaryExemptionInEUSpec extends PageBehaviours {
+class YesNoDoNotKnowRadiosSpec extends PageBehaviours {
 
   "IntermediaryExemptionInEUPage" - {
 
-    beRetrievable[IntermediaryExemptionInEU](IntermediaryExemptionInEUPage)
+    beRetrievable[YesNoDoNotKnowRadios](IntermediaryExemptionInEUPage)
 
-    beSettable[IntermediaryExemptionInEU](IntermediaryExemptionInEUPage)
+    beSettable[YesNoDoNotKnowRadios](IntermediaryExemptionInEUPage)
 
-    beRemovable[IntermediaryExemptionInEU](IntermediaryExemptionInEUPage)
+    beRemovable[YesNoDoNotKnowRadios](IntermediaryExemptionInEUPage)
   }
 }

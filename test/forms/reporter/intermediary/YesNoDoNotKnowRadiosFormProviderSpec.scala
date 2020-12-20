@@ -17,10 +17,10 @@
 package forms.reporter.intermediary
 
 import forms.behaviours.OptionFieldBehaviours
-import models.reporter.intermediary.IntermediaryExemptionInEU
+import models.YesNoDoNotKnowRadios
 import play.api.data.FormError
 
-class IntermediaryExemptionInEUFormProviderSpec extends OptionFieldBehaviours {
+class YesNoDoNotKnowRadiosFormProviderSpec extends OptionFieldBehaviours {
 
   val form = new IntermediaryExemptionInEUFormProvider()()
 
@@ -29,10 +29,10 @@ class IntermediaryExemptionInEUFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "intermediaryExemptionInEU.error.required"
 
-    behave like optionsField[IntermediaryExemptionInEU](
+    behave like optionsField[YesNoDoNotKnowRadios](
       form,
       fieldName,
-      validValues  = IntermediaryExemptionInEU.values,
+      validValues  = YesNoDoNotKnowRadios.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

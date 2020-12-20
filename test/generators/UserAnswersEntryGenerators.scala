@@ -16,12 +16,12 @@
 
 package generators
 
-import models.SelectType
+import models.{SelectType, YesNoDoNotKnowRadios}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.{IntermediaryExemptionInEU, IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -50,7 +50,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[IntermediaryExemptionInEUPage.type]
-        value <- arbitrary[IntermediaryExemptionInEU].map(Json.toJson(_))
+        value <- arbitrary[YesNoDoNotKnowRadios].map(Json.toJson(_))
       } yield (page, value)
     }
 

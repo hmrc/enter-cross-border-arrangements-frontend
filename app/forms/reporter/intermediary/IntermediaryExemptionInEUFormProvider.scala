@@ -18,13 +18,13 @@ package forms.reporter.intermediary
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.reporter.intermediary.IntermediaryExemptionInEU
+import models.YesNoDoNotKnowRadios
 import play.api.data.Form
 
 class IntermediaryExemptionInEUFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[IntermediaryExemptionInEU] =
+  def apply(): Form[YesNoDoNotKnowRadios] =
     Form(
-      "value" -> enumerable[IntermediaryExemptionInEU]("intermediaryExemptionInEU.error.required")
+      "value" -> enumerable[YesNoDoNotKnowRadios]("intermediaryExemptionInEU.error.required")
     )
 }

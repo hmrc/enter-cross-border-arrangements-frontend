@@ -21,16 +21,16 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.{IntermediaryExemptionInEU, IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[IntermediaryExemptionInEU] =
+  implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[YesNoDoNotKnowRadios] =
     Arbitrary {
-      Gen.oneOf(IntermediaryExemptionInEU.values.toSeq)
+      Gen.oneOf(YesNoDoNotKnowRadios.values.toSeq)
     }
 
   implicit lazy val arbitraryIntermediaryRole: Arbitrary[IntermediaryRole] =

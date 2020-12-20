@@ -16,11 +16,11 @@
 
 package pages.reporter.intermediary
 
-import models.reporter.intermediary.IntermediaryExemptionInEU
+import models.YesNoDoNotKnowRadios
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryExemptionInEUPage extends QuestionPage[IntermediaryExemptionInEU] {
+case object IntermediaryExemptionInEUPage extends QuestionPage[YesNoDoNotKnowRadios] {
 
   override def path: JsPath = JsPath \ toString
 
