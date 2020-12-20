@@ -29,23 +29,28 @@
 
         <form action="{{ routes.controllers.disclosure.DisclosureNameController.onSubmit(mode).url }}" method="post">
 
-          {{ csrf() | safe }}
+        {{ csrf() | safe }}
 
-          {{ govukInput({
-            label: {
-              text: messages('disclosureName.title'),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
-            },
-            id: "value",
-            name: "value",
-            value: form.value.value,
-            errorMessage: form.value.error
-          }) }}
+        <h1 class="govuk-heading-xl" id="heading">
+            {{ messages("disclosureName.heading")}}
+        </h1>
 
-          {{ govukButton({
-            text: messages("site.continue")
-          }) }}
+        <p class="govuk-body">{{ messages('disclosureName.info') }}</p>
+
+        {{ govukInput({
+            id: "disclosureName",
+            name: "disclosureName",
+            attributes: {
+                "aria-labelledby": "heading"
+                },
+            value: form.disclosureName.value,
+            errorMessage: form.disclosureName.error
+        }) }}
+
+        {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+        }) }}
 
         </form>
 

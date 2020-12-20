@@ -4,6 +4,7 @@
 {% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -28,27 +29,32 @@
         {% endif %}
 
         <form action="{{ routes.controllers.disclosure.DisclosureMarketableController.onSubmit(mode).url }}" method="post">
+        <fieldset class="govuk-fieldset">
+         {{ csrf() | safe }}
 
-          {{ csrf() | safe }}
+        <legend>
+            <h1 class="govuk-heading-xl" id="heading">
+                {{ messages("disclosureMarketable.heading")}}
+            </h1>
+        </legend>
 
-          {{ govukRadios({
-            classes: "govuk-radios--inline",
+        {{ govukWarningText({
+          text: messages('disclosureMarketable.warning'),
+          iconFallbackText: "Warning"
+        }) }}
+
+        {{ govukRadios({
             name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('disclosureMarketable.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
-              }
-            },
             items: radios,
             errorMessage: form.value.error
-          }) }}
+        }) }}
 
-          {{ govukButton({
-            text: messages("site.continue")
-          }) }}
+        {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+        }) }}
 
+        </fieldset>
         </form>
 
       </div>

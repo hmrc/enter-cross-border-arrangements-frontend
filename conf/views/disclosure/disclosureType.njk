@@ -29,9 +29,9 @@
 
         <form action="{{ routes.controllers.disclosure.DisclosureTypeController.onSubmit(mode).url }}" method="post">
 
-          {{ csrf() | safe }}
+        {{ csrf() | safe }}
 
-          {{ govukRadios({
+        {{ govukRadios({
             name: 'value',
             fieldset: {
               legend: {
@@ -42,11 +42,12 @@
             },
             items: radios,
             errorMessage: form.value.error
-          }) }}
+        }) }}
 
-          {{ govukButton({
-            text: messages("site.continue")
-          }) }}
+        {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+        }) }}
 
         </form>
 

@@ -680,15 +680,25 @@ disclosureName.heading = disclosureName
 disclosureName.checkYourAnswersLabel = disclosureName
 disclosureName.error.required = Enter disclosureName
 disclosureName.error.length = DisclosureName must be 183 characters or less
+disclosureName.title = Provide a name for this disclosure
+disclosureName.heading = Provide a name for this disclosure
+disclosureName.info = Choose something that will help you identify this individual disclosure, particularly if you submit multiple. Do not use any sensitive information. We will combine it with your user ID to create a unique message reference ID that will be used by you, HMRC and the EU to tell disclosures apart.
+disclosureName.checkYourAnswersLabel = Disclosure name
+disclosureName.error.required = Provide a name
+disclosureName.error.length = Name must be 183 characters or less
 
 disclosureType.title = What type of disclosure would you like to make?
 disclosureType.heading = What type of disclosure would you like to make?
 disclosureType.dac6new = A new arrangement
 disclosureType.dac6add = An addition to an existing arrangement
+disclosureType.dac6rep = A replacement of an existing disclosure
+disclosureType.dac6del = A deletion of an existing disclosure
 disclosureType.checkYourAnswersLabel = What type of disclosure would you like to make?
-disclosureType.error.required = Select disclosureType
+disclosureType.error.required = Type of disclosure
 
-disclosureMarketable.title = disclosureMarketable
-disclosureMarketable.heading = disclosureMarketable
-disclosureMarketable.checkYourAnswersLabel = disclosureMarketable
-disclosureMarketable.error.required = Select yes if disclosureMarketable
+disclosureMarketable.title = Is this arrangement marketable?
+disclosureMarketable.heading = Is this arrangement marketable?
+disclosureMarketable.warning = Check this is correct. If you need to change your answer at a later date, you may need to disclose it as a new arrangement.
+disclosureMarketable.checkYourAnswersLabel = Is this arrangement marketable?
+disclosureMarketable.error.required = Select yes if this arrangement is marketable
+
