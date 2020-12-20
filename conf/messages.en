@@ -682,3 +682,11 @@ intermediaryRole.unknown = Unknown
 intermediaryRole.checkYourAnswersLabel = As an intermediary, what is your role in this arrangement?
 intermediaryRole.error.required = Select your role in this arrangement
 
+
+intermediaryExemptionInEU.title = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.heading = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.yes = Yes
+intermediaryExemptionInEU.no = No
+intermediaryExemptionInEU.doNotKnow = I do now know
+intermediaryExemptionInEU.checkYourAnswersLabel = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.error.required = Select yes if you are exempt. If unsure, choose I do not know
