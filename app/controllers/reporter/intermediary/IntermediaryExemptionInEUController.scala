@@ -21,11 +21,11 @@ import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.reporter.intermediary.IntermediaryExemptionInEU
-import navigation.Navigator
+import navigation.{Navigator, NavigatorForReporter}
 import pages.reporter.intermediary.IntermediaryExemptionInEUPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -61,8 +61,11 @@ class IntermediaryExemptionInEUController @Inject()(
         "radios"  -> IntermediaryExemptionInEU.radios(preparedForm)
       )
 
-      renderer.render("intermediaryExemptionInEU.njk", json).map(Ok(_))
+      renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(Ok(_))
   }
+
+  def redirect(mode:Mode, value: Option[IntermediaryExemptionInEU], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -76,7 +79,7 @@ class IntermediaryExemptionInEUController @Inject()(
             "radios" -> IntermediaryExemptionInEU.radios(formWithErrors)
           )
 
-          renderer.render("intermediaryExemptionInEU.njk", json).map(BadRequest(_))
+          renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(BadRequest(_))
         },
         value =>
           for {

@@ -71,7 +71,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
         "radios" -> IntermediaryExemptionInEU.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
         "radios" -> IntermediaryExemptionInEU.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class IntermediaryExemptionInEUControllerSpec extends SpecBase with MockitoSugar
         "radios" -> IntermediaryExemptionInEU.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "intermediaryExemptionInEU.njk"
+      templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

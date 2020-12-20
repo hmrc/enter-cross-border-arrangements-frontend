@@ -23,7 +23,7 @@ import models.reporter.RoleInArrangement
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
+import pages.reporter.intermediary.{IntermediaryExemptionInEUPage, IntermediaryWhyReportInUKPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -65,6 +65,19 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
             NavigatorForReporter.nextPage(IntermediaryWhyReportInUKPage, NormalMode, answers.get(IntermediaryWhyReportInUKPage))
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'As an intermediary, what is your role in this arrangement' page " +
+        "to 'Are you exempt from reporting in any of the EU member states?' page " +
+        "when any option is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, answers.get(IntermediaryExemptionInEUPage))
+                .mustBe(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode))
 
         }
       }
