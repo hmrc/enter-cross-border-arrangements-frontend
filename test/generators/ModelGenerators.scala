@@ -24,7 +24,7 @@ import models.disclosure.DisclosureType
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
-import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.intermediary.{IntermediaryExemptionInEU, IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -45,6 +45,11 @@ import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values.toSeq)
+    }
+
+  implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[IntermediaryExemptionInEU] =
+    Arbitrary {
+      Gen.oneOf(IntermediaryExemptionInEU.values.toSeq)
     }
 
   implicit lazy val arbitraryIntermediaryRole: Arbitrary[IntermediaryRole] =

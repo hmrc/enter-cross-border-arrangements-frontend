@@ -378,3 +378,8 @@ GET        /intermediary/role                           controllers.reporter.int
 POST       /intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = CheckMode)
+
+GET        /intermediaryExemptionInEU                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaryExemptionInEU                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIntermediaryExemptionInEU                  controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIntermediaryExemptionInEU                  controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = CheckMode)

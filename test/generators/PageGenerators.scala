@@ -25,7 +25,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.taxpayer._
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 
@@ -46,6 +46,9 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 
   implicit lazy val arbitraryDisclosureNamePage: Arbitrary[DisclosureNamePage.type] =
     Arbitrary(DisclosureNamePage)
+
+  implicit lazy val arbitraryIntermediaryExemptionInEUPage: Arbitrary[IntermediaryExemptionInEUPage.type] =
+    Arbitrary(IntermediaryExemptionInEUPage)
 
   implicit lazy val arbitraryIntermediaryRolePage: Arbitrary[IntermediaryRolePage.type] =
     Arbitrary(IntermediaryRolePage)
