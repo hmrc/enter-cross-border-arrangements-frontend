@@ -683,8 +683,11 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a val
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.nonNumericKey = Provide a valid date
 
-youHaveNotAddedAnyIntermediaries.title = You have not added any intermediaries
-youHaveNotAddedAnyIntermediaries.heading = Does this arrangement involve any intermediaries?
+youHaveNotAddedAnyIntermediaries.title = Your intermediaries
+youHaveNotAddedAnyIntermediaries.subHeading = Does this arrangement involve any intermediaries?
+youHaveNotAddedAnyIntermediaries.emptyList = You have not added any intermediaries
+youHaveNotAddedAnyIntermediaries.singular = intermediary
+youHaveNotAddedAnyIntermediaries.plural = intermediaries
 youHaveNotAddedAnyIntermediaries.hint = An intermediary is an individual or organisation involved in the arrangement.
 youHaveNotAddedAnyIntermediaries.yesAddNow = Yes, add now
 youHaveNotAddedAnyIntermediaries.yesAddLater = Yes, add later

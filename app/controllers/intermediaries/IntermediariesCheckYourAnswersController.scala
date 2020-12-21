@@ -17,24 +17,30 @@
 package controllers.intermediaries
 
 import controllers.actions._
+
 import javax.inject.Inject
-import models.SelectType
-import pages.intermediaries.IntermediariesTypePage
+import models.{Mode, SelectType}
+import models.intermediaries.Intermediary
+import navigation.Navigator
+import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediariesCheckYourAnswersController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           identify: IdentifierAction,
                                                           getData: DataRetrievalAction,
                                                           requireData: DataRequiredAction,
+                                                          sessionRepository: SessionRepository,
+                                                          navigator: Navigator,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           renderer: Renderer
                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport{
@@ -89,5 +95,23 @@ class IntermediariesCheckYourAnswersController @Inject()(
 
         )).map(Ok(_))
   }
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      val taxpayerLoopList = request.userAnswers.get(IntermediaryLoopPage) match {
+        case Some(list) => // append to existing list
+          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers)
+        case None => // start new list
+          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers))
+      }
+      for {
+        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, taxpayerLoopList))
+        _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
+      } yield {
+        Redirect(navigator.nextPage(IntermediariesCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))
+      }
+  }
+
 }
 

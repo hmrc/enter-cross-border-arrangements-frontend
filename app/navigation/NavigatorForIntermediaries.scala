@@ -37,7 +37,7 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
         value match {
           case Some(YesAddNow) => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(checkRoute.mode)
             //TODO: Send to task list page when created
-          case _ => controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(checkRoute.mode)
+          case _ => controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad()
         }
 
     case IntermediariesTypePage =>

@@ -42,7 +42,7 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
       "'You have not added any intermediaries' if answer is 'No'" in {
       navigator
         .routeMap(YouHaveNotAddedAnyIntermediariesPage)(IntermediariesRouting(NormalMode))(Some(YouHaveNotAddedAnyIntermediaries.No))(0)
-        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(NormalMode))
+        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
     }
 
     //TODO: Link to task list page when ready
@@ -50,7 +50,7 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
       "'You have not added any intermediaries' if answer is 'YesAddLater'" in {
       navigator
         .routeMap(YouHaveNotAddedAnyIntermediariesPage)(IntermediariesRouting(NormalMode))(Some(YouHaveNotAddedAnyIntermediaries.YesAddLater))(0)
-        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(NormalMode))
+        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
     }
 
     "must go from 'Is this an organisation or an individual?' intermediaries page to " +
