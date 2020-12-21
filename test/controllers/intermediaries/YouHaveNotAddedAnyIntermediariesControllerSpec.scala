@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.enterprises
+package controllers.intermediaries
 
 import base.SpecBase
-import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
-import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
+import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import matchers.JsonMatchers
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import play.api.Application
+import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,35 +34,27 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
-import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode).url
+  lazy val youHaveNotAddedAnyIntermediariesRoute = routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(NormalMode).url
 
-  val formProvider = new SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider()
+  val formProvider = new YouHaveNotAddedAnyIntermediariesFormProvider()
   val form = formProvider()
-  // TODO substitute when actual values are available
-  val taxpayers = SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
-  val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-    Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
-  }
 
-  val checkboxes = Checkboxes.set(field = form("value"), items = items)
-
-  "SelectAnyTaxpayersThisEnterpriseIsAssociatedWith Controller" - {
+  "YouHaveNotAddedAnyIntermediaries Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -76,12 +67,10 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> checkboxes
+        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
-      val jc = jsonCaptor.getValue
-
+      templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -91,9 +80,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("1")).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -103,16 +92,15 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(List("1"))
-      val filledCheckboxes = Checkboxes.set(field = filledForm("value"), items = items)
+      val filledForm = form.fill(YouHaveNotAddedAnyIntermediaries.values.head)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> filledCheckboxes
+        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
+      templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -133,8 +121,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
           .build()
 
       val request =
-        FakeRequest(POST, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
-          .withFormUrlEncodedBody(("value[0]", "1"))
+        FakeRequest(POST, youHaveNotAddedAnyIntermediariesRoute)
+          .withFormUrlEncodedBody(("value", YouHaveNotAddedAnyIntermediaries.values.head.toString))
 
       val result = route(application, request).value
 
@@ -145,29 +133,31 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       application.stop()
     }
 
-    "must redirect to Session Expired for a GET if no existing data is found" in {
+    "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute).withFormUrlEncodedBody(("value[0]", "1"))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request =  FakeRequest(POST, youHaveNotAddedAnyIntermediariesRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual BAD_REQUEST
 
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"       -> boundForm,
+        "mode"       -> NormalMode,
+        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(boundForm)
+      )
+
+      templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

@@ -28,11 +28,14 @@ import pages.individual._
 import pages.organisation._
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
+import pages.intermediaries._
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
+    arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
     arbitrary[(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type, JsValue)] ::
     arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] ::
     arbitrary[(TaxpayerSelectTypePage.type, JsValue)] ::

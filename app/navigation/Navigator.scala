@@ -27,6 +27,7 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, Cat
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import pages._
 import pages.arrangement._
@@ -34,6 +35,7 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.intermediaries._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
@@ -113,6 +115,9 @@ class Navigator @Inject()() {
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
+case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(NormalMode)
+    case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
+
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
 
@@ -187,6 +192,10 @@ class Navigator @Inject()() {
 
     case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+
+
+    case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(CheckMode)
+    case IntermediariesTypePage => intermediaryTypeRoutes(CheckMode)
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }
@@ -342,10 +351,16 @@ class Navigator @Inject()() {
       case None => false
     }
 
+    val intermediariesJourney: Boolean = ua.get(IntermediariesTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
     ua.get(IsIndividualResidentForTaxOtherCountriesPage) map {
       case true => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
+      case false if intermediariesJourney => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(mode)
       case false => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
   }
@@ -406,10 +421,17 @@ class Navigator @Inject()() {
       case None => false
     }
 
+    val intermediariesJourney: Boolean = ua.get(IntermediariesTypePage) match {
+      case Some(_) => true
+      case None => false
+    }
+
+
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
+      case false if intermediariesJourney => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(mode)
       case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
     }
   }
@@ -443,6 +465,20 @@ class Navigator @Inject()() {
     }
   }
 
+
+  private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(YouHaveNotAddedAnyIntermediariesPage) map {
+      case YouHaveNotAddedAnyIntermediaries.YesAddNow => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(mode)
+      case _ => controllers.routes.IndexController.onPageLoad()
+    }
+  }
+
+  private def intermediaryTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(IntermediariesTypePage) map {
+      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
+      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
+    }
+  }
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)(request) match {

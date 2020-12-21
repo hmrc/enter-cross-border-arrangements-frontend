@@ -647,3 +647,27 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.required = The implemen
 whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a valid date
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.nonNumericKey = Provide a valid date
+
+youHaveNotAddedAnyIntermediaries.title = You have not added any intermediaries
+youHaveNotAddedAnyIntermediaries.heading = Does this arrangement involve any intermediaries?
+youHaveNotAddedAnyIntermediaries.hint = An intermediary is an individual or organisation involved in the arrangement.
+youHaveNotAddedAnyIntermediaries.yesAddNow = Yes, add now
+youHaveNotAddedAnyIntermediaries.yesAddLater = Yes, add later
+youHaveNotAddedAnyIntermediaries.no = No
+youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Intermediaries
+youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an intermediary now, later or not at all
+
+intermediariesType.title = Is this an organisation or an individual?
+intermediariesType.heading = Is this an organisation or an individual?
+intermediariesType.checkYourAnswersLabel = Organisation or individual
+intermediariesType.error.required = Select the type of intermediary
+
+whatTypeofIntermediary.title = What type of intermediary is this?
+whatTypeofIntermediary.heading = What type of intermediary is {0}?
+whatTypeofIntermediary.promoter = Promoter
+whatTypeofIntermediary.promoter.hint = Promoters design, market, organise, make available for implementation or manage the implementation of an arrangement.
+whatTypeofIntermediary.serviceProvider = Service Provider
+whatTypeofIntermediary.serviceProvider.hint = Service providers provide aid, assistance or advice about the design, marketing, organising or implementation of a scheme. These include those who provide finance, expertise, knowledge, advice or share their experience.
+whatTypeofIntermediary.iDoNotKnow = I do not know
+whatTypeofIntermediary.checkYourAnswersLabel = Intermediary type
+whatTypeofIntermediary.error.required = Select the type of intermediary
