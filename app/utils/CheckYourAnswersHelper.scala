@@ -23,6 +23,9 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
+import pages._
+import pages.arrangement._
+import pages.disclosure.DisclosureIdentifyArrangementPage
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
@@ -56,6 +59,21 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
         msgKey  = "youHaveNotAddedAnyIntermediaries",
         content = msg"youHaveNotAddedAnyIntermediaries.$answer",
         href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"disclosureIdentifyArrangement.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"disclosureIdentifyArrangement.checkYourAnswersLabel"))
+          )
+        )
       )
   }
 

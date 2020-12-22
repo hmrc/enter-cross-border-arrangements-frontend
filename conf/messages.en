@@ -806,3 +806,12 @@ taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 
+
+disclosureIdentifyArrangement.title = What is the arrangement ID for this disclosure?
+disclosureIdentifyArrangement.heading = What is the arrangement ID for this disclosure?
+disclosureIdentifyArrangement.p = Also called an arrangement reference number.
+disclosureIdentifyArrangement.hint = For example, GBA20210101ABC123
+disclosureIdentifyArrangement.checkYourAnswersLabel = disclosureIdentifyArrangement
+disclosureIdentifyArrangement.error.required = Provide an arrangement ID
+disclosureIdentifyArrangement.error.notFound = Arrangement ID not found. Check arrangement ID is correct
+disclosureIdentifyArrangement.error.invalid = Provide a valid arrangement ID

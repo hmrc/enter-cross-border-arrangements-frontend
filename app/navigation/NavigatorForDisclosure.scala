@@ -19,7 +19,7 @@ package navigation
 import models.Mode
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import pages.Page
-import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure._
 import play.api.mvc.Call
 
 object NavigatorForDisclosure extends AbstractNavigator {
@@ -32,11 +32,12 @@ object NavigatorForDisclosure extends AbstractNavigator {
 
     case DisclosureTypePage => mode => value => _ => value match {
       case Some(Dac6new) => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(mode)
-      case Some(Dac6add) => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(mode) //TODO - redirect to what is arrangment ID page when built
+      case Some(Dac6add) => controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(mode)
       case _ => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
     }
 
     case DisclosureMarketablePage => mode => value => _ => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(mode)
+    case DisclosureIdentifyArrangementPage => mode => _ => _ => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(mode)
 
   }
 
