@@ -27,7 +27,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.taxpayer.TaxpayerLoopPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -55,11 +57,13 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
   val taxpayers = IndexedSeq(Taxpayer(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)))
 
-  val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-    Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+  private def taxpayerCheckboxes(form: Form[_], taxpayersList: IndexedSeq[Taxpayer]): Seq[Checkboxes.Item] = {
+        val field = form("value")
+        val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+        }
+        Checkboxes.set(field, items)
   }
-
-  val checkboxes = Checkboxes.set(field = form("value"), items = items)
 
   "SelectAnyTaxpayersThisEnterpriseIsAssociatedWith Controller" - {
 
@@ -86,7 +90,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> checkboxes
+        "checkboxes" -> taxpayerCheckboxes(form, taxpayers)
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
@@ -95,10 +99,13 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" ignore {
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .set(TaxpayerLoopPage, taxpayers)
+        .success
+        .value
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Taxpayer Ltd"))
         .success
         .value
 
@@ -115,13 +122,12 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(List("1"))
-      val filledCheckboxes = Checkboxes.set(field = filledForm("value"), items = items)
+      val filledForm = form.fill(List("Taxpayer Ltd"))
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> filledCheckboxes
+        "checkboxes" -> taxpayerCheckboxes(filledForm, taxpayers)
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"

@@ -85,7 +85,7 @@ class IntermediariesTypeController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
-              Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+              Redirect(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(IntermediariesTypePage, mode, updatedAnswers))
             }
