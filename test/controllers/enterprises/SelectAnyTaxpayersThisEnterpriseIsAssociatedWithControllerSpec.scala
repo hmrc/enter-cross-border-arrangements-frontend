@@ -54,8 +54,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
   val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
   val email = "email@email.com"
   val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
-
-  val taxpayers = IndexedSeq(Taxpayer(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)))
+  val taxpayers = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)),None))
 
   private def taxpayerCheckboxes(form: Form[_], taxpayersList: IndexedSeq[Taxpayer]): Seq[Checkboxes.Item] = {
         val field = form("value")

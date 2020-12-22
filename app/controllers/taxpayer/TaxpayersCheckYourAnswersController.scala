@@ -18,10 +18,8 @@ package controllers.taxpayer
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.individual.Individual
-import models.organisation.Organisation
 import models.taxpayer.Taxpayer
-import models.{Mode, SelectType, UserAnswers}
+import models.{Mode, SelectType}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -83,9 +81,9 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
       val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
         case Some(list) => // append to existing list
-          list :+ buildTaxpayerDetails(request.userAnswers)
+          list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers)
         case None => // start new list
-          IndexedSeq[Taxpayer](buildTaxpayerDetails(request.userAnswers))
+          IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers))
       }
       for {
         userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
@@ -93,17 +91,5 @@ class TaxpayersCheckYourAnswersController @Inject()(
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))
       }
-  }
-
-
-  private def buildTaxpayerDetails(ua: UserAnswers): Taxpayer = {
-
-    ua.get(TaxpayerSelectTypePage) match {
-      case Some(SelectType.Organisation) =>
-            Taxpayer.apply(Organisation.buildOrganisationDetails(ua))
-      case Some(SelectType.Individual) =>
-        Taxpayer.apply(Individual.buildIndividualDetails(ua))
-      case _ => throw new RuntimeException("Unable to retrieve Taxpayer details")
-    }
   }
 }
