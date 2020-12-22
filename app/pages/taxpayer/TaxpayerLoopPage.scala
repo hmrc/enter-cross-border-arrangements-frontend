@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package forms.enterprises
+package pages.taxpayer
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import play.api.data.Forms.list
+import models.taxpayer.Taxpayer
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object TaxpayerLoopPage extends QuestionPage[IndexedSeq[Taxpayer]] {
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  def apply(): Form[List[String]] =
-    Form(
-      "value" -> list[String](text("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
-        .verifying(nonEmptyList("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
-    )
+  override def toString: String = "taxpayerLoop"
 }

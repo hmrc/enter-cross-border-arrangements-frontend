@@ -114,7 +114,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
           } yield {
             if (determineRoute) {
-              Redirect(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+              Redirect(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(IsOrganisationResidentForTaxOtherCountriesPage, mode, updatedAnswersWithLoopDetails))
             }

@@ -191,7 +191,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+        controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

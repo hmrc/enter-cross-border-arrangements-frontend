@@ -116,4 +116,12 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
+  protected def nonEmptyList(errorKey: String): Constraint[List[_]] =
+    Constraint {
+      case list if list.nonEmpty =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
 }

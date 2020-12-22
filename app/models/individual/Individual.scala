@@ -16,23 +16,55 @@
 
 package models.individual
 
-import models.{Address, Name, TIN}
+import models.taxpayer.TaxResidency
+import models.{Address, Name, UserAnswers}
+import pages.individual._
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 case class Individual(individualName: Name,
-                      birthDate: LocalDateTime,
+                      birthDate: LocalDate,
                       birthPlace: Option[String] = None,
-                      tins: Seq[TIN] = Seq.empty,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
-                      resCountryCodes: Seq[String] = Seq.empty
+                      taxResidencies: IndexedSeq[TaxResidency]
                      ) {
-
   val nameAsString: String = individualName.displayName
 }
 
 object Individual {
   implicit val format: OFormat[Individual] = Json.format[Individual]
+
+  private def getIndividualName(ua: UserAnswers): Name = {
+    ua.get(IndividualNamePage) match {
+      case Some(name) => name
+      case None => throw new Exception("Individual Taxpayer must contain a name")
+    }
+  }
+
+  private def getIndividualDateOfBirth(ua: UserAnswers): LocalDate = {
+    ua.get(IndividualDateOfBirthPage) match {
+      case Some(dob) => dob
+      case None => throw new Exception("Individual Taxpayer must contain a date of birth")
+    }
+  }
+
+  private def getTaxResidencies(ua: UserAnswers): IndexedSeq[TaxResidency] = {
+    ua.get(IndividualLoopPage) match {
+      case Some(loop) => TaxResidency.buildTaxResidency(loop)
+      case None => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
+    }
+  }
+
+  def buildIndividualDetails(ua: UserAnswers): Individual = {
+    new Individual(
+      individualName = getIndividualName(ua),
+      birthDate = getIndividualDateOfBirth(ua),
+      birthPlace = ua.get(IndividualPlaceOfBirthPage),
+      address = ua.get(IndividualAddressPage),
+      emailAddress = ua.get(EmailAddressForIndividualPage),
+      taxResidencies = getTaxResidencies(ua)
+    )
+  }
 }

@@ -19,10 +19,10 @@ package controllers.taxpayer
 import controllers.actions._
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
 import models.taxpayer.UpdateTaxpayer
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,14 +49,24 @@ class UpdateTaxpayerController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
+      val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.flatMap(_.get(TaxpayerLoopPage)) match {
+        case Some(list) =>
+          for {
+            taxpayer <- list
+          } yield {
+            taxpayer.nameAsString
+          }
+        case None => IndexedSeq.empty
+      }
+
       val preparedForm =  request.userAnswers.flatMap(_.get(UpdateTaxpayerPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-
       val json = Json.obj(
         "form"   -> preparedForm,
+        "taxpayerList" -> namesOfTaxpayers,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
       )

@@ -91,7 +91,7 @@ class IsOrganisationAddressKnownController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (determineRoute) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(IsOrganisationAddressKnownPage, mode, updatedAnswers))
             }

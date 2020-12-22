@@ -17,17 +17,19 @@
 package controllers.enterprises
 
 import base.SpecBase
-import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.organisation.Organisation
+import models.taxpayer.{TaxResidency, Taxpayer}
+import models.{Address, Country, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import play.api.Application
+import pages.taxpayer.TaxpayerLoopPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,8 +37,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 import uk.gov.hmrc.viewmodels.Text.Literal
+import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
 import scala.concurrent.Future
 
@@ -48,21 +50,32 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
   val formProvider = new SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider()
   val form = formProvider()
-  // TODO substitute when actual values are available
-  val taxpayers = SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
-  val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-    Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
-  }
 
-  val checkboxes = Checkboxes.set(field = form("value"), items = items)
+  val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
+  val email = "email@email.com"
+  val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+  val taxpayers = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)),None))
+
+  private def taxpayerCheckboxes(form: Form[_], taxpayersList: IndexedSeq[Taxpayer]): Seq[Checkboxes.Item] = {
+        val field = form("value")
+        val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+        }
+        Checkboxes.set(field, items)
+  }
 
   "SelectAnyTaxpayersThisEnterpriseIsAssociatedWith Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(TaxpayerLoopPage, taxpayers)
+        .success
+        .value
+
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -76,12 +89,10 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> checkboxes
+        "checkboxes" -> taxpayerCheckboxes(form, taxpayers)
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
-      val jc = jsonCaptor.getValue
-
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -89,9 +100,16 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(TaxpayerLoopPage, taxpayers)
+        .success
+        .value
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Taxpayer Ltd"))
+        .success
+        .value
+
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("1")).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -103,13 +121,12 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(List("1"))
-      val filledCheckboxes = Checkboxes.set(field = filledForm("value"), items = items)
+      val filledForm = form.fill(List("Taxpayer Ltd"))
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> filledCheckboxes
+        "checkboxes" -> taxpayerCheckboxes(filledForm, taxpayers)
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"

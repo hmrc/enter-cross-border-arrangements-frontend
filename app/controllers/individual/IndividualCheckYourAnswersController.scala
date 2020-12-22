@@ -55,7 +55,7 @@ class IndividualCheckYourAnswersController @Inject()(
       if (associatedEnterpriseJourney) {
         Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
       } else if(relevantTaxpayerJourney) {
-        Future.successful(Redirect(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()))
+        Future.successful(Redirect(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()))
       }
       else {
         val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -76,5 +76,4 @@ class IndividualCheckYourAnswersController @Inject()(
         ).map(Ok(_))
       }
   }
-
 }

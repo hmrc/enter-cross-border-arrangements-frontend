@@ -35,11 +35,10 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.hallmarks._
 import pages.individual._
 import pages.organisation._
+import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.intermediaries._
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.{AnyContent, Call, Request}
-import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -119,7 +118,8 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+    case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -191,7 +191,9 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
     case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad())
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+
+    case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
 
 
     case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(CheckMode)
@@ -432,7 +434,7 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
       case false if associatedEnterpriseJourney => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(mode)
       case false if relevantTaxpayerJourney => controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode)
       case false if intermediariesJourney => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(mode)
-      case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
+      case false => controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad()
     }
   }
 

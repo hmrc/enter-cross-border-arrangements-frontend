@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package pages.individual
 
-import play.api.libs.json.{Json, OFormat}
+import pages.Page
 
-case class TIN(value: Option[String], resCountryCode: String = "GB")
+case object CheckYourAnswersIndividualPage extends Page {
 
-object TIN {
-  implicit val format: OFormat[TIN] = Json.format[TIN]
+  override def toString: String = "checkYourAnswersIndividualPage"
+
 }

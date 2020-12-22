@@ -72,7 +72,7 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
 
      case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
-    case _ => _ => _ => Some(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+    case _ => _ => _ => Some(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
   }
 
   private def isOrganisationAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
@@ -117,7 +117,7 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
   private def isOrganisationResidentForTaxOtherCountriesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
       case true => controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(mode, currentIndexInsideLoop(request))
-      case false => controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad()
+      case false => controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad()
     }
   }
 

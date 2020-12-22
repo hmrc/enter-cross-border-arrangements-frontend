@@ -18,14 +18,14 @@ package controllers.enterprises
 
 import controllers.actions._
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
-import models.individual.Individual
-import models.organisation.Organisation
-import models.{Mode, Name, SelectType}
-import models.taxpayer.Taxpayer
+import javax.inject.Inject
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
+import pages.taxpayer.TaxpayerLoopPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -33,8 +33,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
-import java.time.LocalDate
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
@@ -54,26 +52,17 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      // retrieve list of taxpayers TODO get the actual list from page
-      import SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.taxpayers
+          val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
 
-      val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      val items: Seq[Checkboxes.Checkbox] = taxpayers.map { taxpayer =>
-        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
-      }
-      val checkboxes = Checkboxes.set(field = preparedForm("value"), items = items)
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mode"       -> mode,
-        "checkboxes" -> checkboxes
-      )
-
-      renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "checkboxes" -> taxpayerCheckboxes(preparedForm, request.userAnswers)
+          )
+          renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -84,7 +73,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
-            "mode"       -> mode
+            "mode"       -> mode,
+            "checkboxes" -> taxpayerCheckboxes(formWithErrors, request.userAnswers)
           )
 
           renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(BadRequest(_))
@@ -97,24 +87,17 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       )
   }
 
-  def toCheckboxes(taxpayers: Set[JsObject]): Seq[Checkboxes.Checkbox] = taxpayers.map { json =>
-    val name = json.validate[Taxpayer].getOrElse(throw new IllegalArgumentException("")).nameAsString
-    Checkboxes.Checkbox(label = Literal(name), value = json.toString())
-  }.toSeq
+  private def taxpayerCheckboxes(form: Form[_], ua: UserAnswers): Seq[Checkboxes.Item] = {
+    ua.get(TaxpayerLoopPage) match {
+      case Some(taxpayersList) =>
+        val field = form("value")
+        val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+        }
+        Checkboxes.set(field, items)
 
-}
-
-object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController {
-
-  val taxpayers: List[Taxpayer] = {
-    List(
-      Taxpayer(
-        Individual(Name("John", "Smith"), LocalDate.of(2001, 9, 11).atStartOfDay())
-      ),
-      Taxpayer(
-        Organisation("My organisation")
-      )
-    )
+      case _ => throw new RuntimeException("Unable to retrieve list of Taxpayers")
+    }
   }
 
 }

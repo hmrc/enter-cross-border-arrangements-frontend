@@ -16,16 +16,37 @@
 
 package models.organisation
 
-import models.{Address, TIN}
+import models.taxpayer.TaxResidency
+import models.{Address, UserAnswers}
+import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.{Json, OFormat}
 
 case class Organisation(organisationName: String,
-                        tins: Seq[TIN] = Seq.empty,
                         address: Option[Address] = None,
                         emailAddress: Option[String] = None,
-                        resCountryCodes: Seq[String] = Seq.empty
+                        taxResidencies: IndexedSeq[TaxResidency]
                        )
 
 object Organisation {
   implicit val format: OFormat[Organisation] = Json.format[Organisation]
+
+  def buildOrganisationDetails(ua: UserAnswers): Organisation = {
+    (ua.get(OrganisationNamePage), ua.get(OrganisationAddressPage),
+      ua.get(EmailAddressForOrganisationPage), ua.get(OrganisationLoopPage)) match {
+
+      case (Some(name), Some(address), Some(email), Some(loop)) => // All details
+        new Organisation(name, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), None, Some(email), Some(loop)) => // No address
+        new Organisation(name, None, Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(address), None, Some(loop)) => // No email address
+        new Organisation(name, Some(address), None, TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), None, None, Some(loop)) => // No address or email address
+        new Organisation(name, None, None, TaxResidency.buildTaxResidency(loop))
+
+      case _ => throw new Exception("Organisation Taxpayer must contain a name and at minimum one tax residency")
+    }
+  }
 }

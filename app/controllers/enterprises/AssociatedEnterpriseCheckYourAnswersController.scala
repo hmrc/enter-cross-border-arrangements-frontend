@@ -17,6 +17,7 @@
 package controllers.enterprises
 
 import controllers.actions._
+import javax.inject.Inject
 import models.SelectType
 import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -24,9 +25,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{CheckYourAnswersHelper, CheckYourAnswersOrganisationHelper}
+import utils.CheckYourAnswersHelper
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AssociatedEnterpriseCheckYourAnswersController @Inject()(
@@ -42,7 +42,6 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
-      val organisationHelper = new CheckYourAnswersOrganisationHelper(request.userAnswers)
 
       val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
         case Some(SelectType.Organisation) => true
@@ -51,9 +50,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
-          Seq(helper.associatedEnterpriseType).flatten ++
-            organisationHelper.buildOrganisationDetails,
-          organisationHelper.buildTaxResidencySummary
+          Seq(helper.associatedEnterpriseType, helper.organisationName).flatten ++
+          helper.buildOrganisationAddressGroup ++
+          helper.buildOrganisationEmailAddressGroup,
+          helper.buildTaxResidencySummaryForOrganisation
         )
       } else {
         (

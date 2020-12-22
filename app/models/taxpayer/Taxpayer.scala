@@ -16,38 +16,45 @@
 
 package models.taxpayer
 
-import models.SelectType
-import models.individual.Individual
-import models.organisation.Organisation
-import play.api.libs.json.{Json, OFormat}
-
+import java.time.LocalDate
 import java.util.UUID
 
-case class Taxpayer(taxpayerId: String, selectType: SelectType, individual: Option[Individual] = None, organisation: Option[Organisation] = None) {
+import models.{SelectType, UserAnswers}
+import models.individual.Individual
+import models.organisation.Organisation
+import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import play.api.libs.json.{Json, OFormat}
+
+case class Taxpayer(taxpayerId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None, implementingDate: Option[LocalDate] = None) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString
     case (_, Some(o)) => o.organisationName
     case _            => throw new RuntimeException("Taxpayer must contain either an individual or an organisation.")
   }
-
 }
 
 object Taxpayer {
 
   private def generateId = UUID.randomUUID.toString
 
-  def apply(individual: Individual) = new Taxpayer(
-    taxpayerId = generateId
-    , selectType = SelectType.Individual
-    , individual = Some(individual)
-  )
-
-  def apply(organisation: Organisation) = new Taxpayer(
-    taxpayerId = generateId
-    , selectType = SelectType.Organisation
-    , organisation = Some(organisation)
-  )
+  def buildTaxpayerDetails(ua: UserAnswers): Taxpayer = {
+    ua.get(TaxpayerSelectTypePage) match {
+      case Some(SelectType.Organisation) =>
+        new Taxpayer(
+        taxpayerId = generateId,
+          organisation = Some(Organisation.buildOrganisationDetails(ua)),
+          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage)
+      )
+      case Some(SelectType.Individual) =>
+        new Taxpayer(
+          taxpayerId = generateId,
+          individual = Some(Individual.buildIndividualDetails(ua)),
+          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage)
+        )
+      case _ => throw new Exception("Unable to retrieve Taxpayer select type")
+    }
+  }
 
   implicit val format: OFormat[Taxpayer] = Json.format[Taxpayer]
 }

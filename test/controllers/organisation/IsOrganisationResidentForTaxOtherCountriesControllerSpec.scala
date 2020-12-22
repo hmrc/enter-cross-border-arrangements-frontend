@@ -200,7 +200,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

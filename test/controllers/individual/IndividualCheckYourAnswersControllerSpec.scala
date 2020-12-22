@@ -16,6 +16,9 @@
 
 package controllers.individual
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{Address, Country, Name, UserAnswers}
@@ -24,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.individual._
+import play.api.inject.bind
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,11 +35,11 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+
+  lazy val checkYourAnswersIndividualRoute: String = controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url
 
   val address: Address = Address(
       addressLine1 = Some("value 1")
@@ -59,7 +63,6 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       .thenReturn(Future.successful(Html("")))
 
   }
-
 
   def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
 
@@ -163,7 +166,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlaceKnown(yesOrNo = false)(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -179,7 +182,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlaceKnown(yesOrNo = false)(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -195,7 +198,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertBirthPlace("BIRTHPLACE")(list(1))
         assertAddressKnown(yesOrNo = false)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -211,7 +214,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertAddressKnown(yesOrNo = true)(list(1))
         assertAddress(address)(list(2))
         assertEmailKnown(yesOrNo = false)(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
 
@@ -227,10 +230,9 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertAddressKnown(yesOrNo = false)(list(1))
         assertEmailKnown(yesOrNo = true)(list(2))
         assertEmail("email@email.org")(list(3))
-        list.size mustBe(4)
+        list.size mustBe (4)
       }
     }
-
   }
 }
 

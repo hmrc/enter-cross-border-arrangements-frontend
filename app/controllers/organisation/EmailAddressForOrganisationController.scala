@@ -87,7 +87,7 @@ class EmailAddressForOrganisationController @Inject()(
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
-              Redirect(routes.CheckYourAnswersOrganisationController.onPageLoad())
+              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
             }

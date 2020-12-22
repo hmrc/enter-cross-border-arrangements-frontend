@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package forms.enterprises
+package pages.taxpayer
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import play.api.data.Forms.list
+import pages.Page
 
-import javax.inject.Inject
+case object TaxpayerCheckYourAnswersPage extends Page {
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider @Inject() extends Mappings {
+  override def toString: String = "taxpayerCheckYourAnswersPage"
 
-  def apply(): Form[List[String]] =
-    Form(
-      "value" -> list[String](text("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
-        .verifying(nonEmptyList("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"))
-    )
 }

@@ -16,13 +16,13 @@
 
 package models.taxpayer
 
+import java.time.LocalDate
+
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{Name, SelectType}
+import models.{Country, Name}
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-
-import java.time.LocalDateTime
 
 class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,30 +32,31 @@ class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChe
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  LocalDateTime.now()
+        birthDate =  LocalDate.now(), None, None,
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
-      val taxpayer = Taxpayer(individual)
+      val taxpayer = Taxpayer("123456789012345678901234567890123456", Some(individual), None, Some(LocalDate.now()))
 
       taxpayer.taxpayerId.isEmpty mustBe false
       taxpayer.taxpayerId.length mustBe 36
-      taxpayer.selectType mustEqual SelectType.Individual
       taxpayer.individual.get mustEqual individual
+      taxpayer.implementingDate.get mustEqual LocalDate.now()
     }
 
     "or must be created from an organisation" in {
 
       val organisation = Organisation(
-        organisationName = "My organisation"
+        organisationName = "My organisation",
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
-      val taxpayer = Taxpayer(organisation)
+      val taxpayer = Taxpayer("123456789012345678901234567890123456",  None, Some(organisation), Some(LocalDate.now()))
 
       taxpayer.taxpayerId.isEmpty mustBe false
       taxpayer.taxpayerId.length mustBe 36
-      taxpayer.selectType mustEqual SelectType.Organisation
       taxpayer.organisation.get mustEqual organisation
+      taxpayer.implementingDate.get mustEqual LocalDate.now()
     }
-
   }
 }
