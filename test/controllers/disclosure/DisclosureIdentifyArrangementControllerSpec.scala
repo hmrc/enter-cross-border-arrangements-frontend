@@ -21,7 +21,6 @@ import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import matchers.JsonMatchers
 import models.{Country, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -46,6 +45,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val validArrangementID = "GBA20210101ABC123"
 
   val formProvider = new DisclosureIdentifyArrangementFormProvider()
   val form: Form[String] = formProvider(countriesSeq, mockCrossBorderArrangementsConnector)
@@ -75,7 +75,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "disclosureIdentifyArrangement.njk"
+      templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -85,9 +85,14 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
-      val userAnswers = UserAnswers(userAnswersId).set(DisclosureIdentifyArrangementPage, "answer").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(DisclosureIdentifyArrangementPage, validArrangementID).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+        ).build()
+
       val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -98,14 +103,14 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("arrangementID" -> validArrangementID))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "disclosureIdentifyArrangement.njk"
+      templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -116,35 +121,41 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
           )
           .build()
 
       val request =
         FakeRequest(POST, disclosureIdentifyArrangementRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("arrangementID", validArrangementID))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/marketable"
 
       application.stop()
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors if arrangement id wasn't created by HMRC" in {
+      when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
+      when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(false)
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+          )
+          .build()
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", validArrangementID))
+      val boundForm = form.bind(Map("arrangementID" -> validArrangementID))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -159,7 +170,35 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "disclosureIdentifyArrangement.njk"
+      templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", ""))
+      val boundForm = form.bind(Map("arrangementID" -> ""))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form" -> boundForm,
+        "mode" -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -186,7 +225,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
 
       val request =
         FakeRequest(POST, disclosureIdentifyArrangementRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("arrangementID", "answer"))
 
       val result = route(application, request).value
 

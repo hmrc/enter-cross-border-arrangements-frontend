@@ -33,26 +33,25 @@ class DisclosureIdentifyArrangementFormProviderSpec extends StringFieldBehaviour
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
   val requiredKey = "disclosureIdentifyArrangement.error.required"
-  val lengthKey = "disclosureIdentifyArrangement.error.length"
-  val maxLength = 20
+  val invalidKey = "disclosureIdentifyArrangement.error.invalid"
 
   val form = new DisclosureIdentifyArrangementFormProvider()(countriesSeq, mockCrossBorderArrangementsConnector)
 
-  ".value" - {
+  ".arrangementID" - {
 
-    val fieldName = "value"
+    val fieldName = "arrangementID"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validArrangementID
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithInvalidData(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      invalidString = "ZZA20210101ABC123",
+      error = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

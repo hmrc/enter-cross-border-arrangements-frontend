@@ -22,7 +22,7 @@ import models.disclosure.DisclosureType
 import models.{NormalMode, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Arbitrary.arbitrary
-import pages.disclosure.{DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -66,7 +66,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       "must go from 'What type of disclosure would you like to make?' page" +
         "to 'What is the arrangement ID?' page" +
-        "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" ignore {
+        "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" in {
 
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -74,9 +74,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
             val updatedAnswers =
               answers.set(DisclosureTypePage, DisclosureType.Dac6add).success.value
 
-            //TODO - Redirect to what is the arrangement ID when page is built
             NavigatorForDisclosure.nextPage(DisclosureTypePage, NormalMode, updatedAnswers.get(DisclosureTypePage))
-              .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
+              .mustBe(controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode))
 
         }
       }
@@ -111,6 +110,22 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
             //TODO - Redirect to delete disclosure when page is built
             NavigatorForDisclosure.nextPage(DisclosureTypePage, NormalMode, updatedAnswers.get(DisclosureTypePage))
               .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
+
+        }
+      }
+
+      "must go from 'What is the arrangement ID for this disclosure?' page" +
+        "to '???' page" +
+        "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" in { //TODO Redirect to correct page when ready
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DisclosureIdentifyArrangementPage, "FRA20210101ABC123").success.value
+
+            NavigatorForDisclosure.nextPage(DisclosureIdentifyArrangementPage, NormalMode, updatedAnswers.get(DisclosureIdentifyArrangementPage))
+              .mustBe(controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(NormalMode))
 
         }
       }
