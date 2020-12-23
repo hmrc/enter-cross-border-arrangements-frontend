@@ -45,6 +45,7 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
 	  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
 	    Arbitrary {
 	      for {
