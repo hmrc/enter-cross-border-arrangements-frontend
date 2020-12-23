@@ -344,3 +344,20 @@ GET        /intermediaries/capacity                        controllers.intermedi
 POST       /intermediaries/capacity                        controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
+
+# DISCLOSURE
+
+GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /disclosure/type                             controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/type                             controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)

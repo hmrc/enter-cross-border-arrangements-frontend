@@ -20,6 +20,7 @@ import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
+import models.disclosure.DisclosureType
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.taxpayer.UpdateTaxpayer
@@ -37,6 +38,11 @@ import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryYouHaveNotAddedAnyIntermediaries: Arbitrary[YouHaveNotAddedAnyIntermediaries] =
     Arbitrary {
       Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
+    }
+
+  implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
+    Arbitrary {
+      Gen.oneOf(DisclosureType.values.toSeq)
     }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =

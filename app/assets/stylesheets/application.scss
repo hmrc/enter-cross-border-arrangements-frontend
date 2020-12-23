@@ -9,3 +9,15 @@ $hmrc-assets-path: "/enter-cross-border-arrangements/assets/lib/hmrc-frontend/hm
 @import "language-toggles.scss";
 @import "main.css";
 
+
+
+
+.govuk-warning-text__icon {
+    margin-top: 5px;
+    width: 33px;
+    height: 33px;
+}
+
+.govuk-warning-text__text {
+    margin-left: 11px;
+}

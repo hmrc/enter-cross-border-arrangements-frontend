@@ -22,6 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.arrangement._
+import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -36,6 +37,9 @@ trait UserAnswersGenerator extends TryValues {
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
+    arbitrary[(DisclosureMarketablePage.type, JsValue)] ::
+    arbitrary[(DisclosureTypePage.type, JsValue)] ::
+    arbitrary[(DisclosureNamePage.type, JsValue)] ::
     arbitrary[(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage.type, JsValue)] ::
     arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] ::
     arbitrary[(TaxpayerSelectTypePage.type, JsValue)] ::
