@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms.intermediaries
 
-import models.ExemptCountries
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class ExemptCountriesPageSpec extends PageBehaviours {
+class IsExemptionCountryKnownFormProvider @Inject() extends Mappings {
 
-  "ExemptCountriesPage" - {
-
-    beRetrievable[Set[ExemptCountries]](ExemptCountriesPage)
-
-    beSettable[Set[ExemptCountries]](ExemptCountriesPage)
-
-    beRemovable[Set[ExemptCountries]](ExemptCountriesPage)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("isExemptionCountryKnown.error.required")
+    )
 }

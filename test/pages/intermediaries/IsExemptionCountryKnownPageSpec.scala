@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.intermediaries
+package pages.intermediaries
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import models.intermediaries.WhatTypeofIntermediary
+class IsExemptionCountryKnownPageSpec extends PageBehaviours {
 
-class WhatTypeofIntermediaryFormProvider @Inject() extends Mappings {
+  "isExemptionCountryKnownPage" - {
 
-  def apply(): Form[WhatTypeofIntermediary] =
-    Form(
-      "value" -> enumerable[WhatTypeofIntermediary]("whatTypeofIntermediary.error.required")
-    )
+    beRetrievable[Boolean](IsExemptionCountryKnownPage)
+
+    beSettable[Boolean](IsExemptionCountryKnownPage)
+
+    beRemovable[Boolean](IsExemptionCountryKnownPage)
+  }
 }

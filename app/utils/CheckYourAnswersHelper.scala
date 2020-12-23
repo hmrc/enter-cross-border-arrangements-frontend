@@ -25,6 +25,7 @@ import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages._
 import pages.hallmarks._
+import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage}
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
@@ -36,6 +37,22 @@ import utils.rows._
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
 
+
+  def intermediariesType: Option[Row] = userAnswers.get(IntermediariesTypePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"intermediariesType.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"intermediariesType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def isExemptionKnown: Option[Row] = userAnswers.get(IsExemptionKnownPage) map {
     answer =>
       Row(
@@ -44,7 +61,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.routes.IsExemptionKnownController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionKnown.checkYourAnswersLabel"))
           )
         )
@@ -59,7 +76,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionCountryKnown.checkYourAnswersLabel"))
           )
         )
@@ -74,7 +91,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.routes.ExemptCountriesController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"exemptCountries.checkYourAnswersLabel"))
           )
         )

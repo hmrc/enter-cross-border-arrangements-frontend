@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package pages.intermediaries
 
-import javax.inject.Inject
-
-import forms.mappings.Mappings
-import play.api.data.Form
 import models.IsExemptionKnown
+import pages.behaviours.PageBehaviours
 
-class IsExemptionKnownFormProvider @Inject() extends Mappings {
+class IsExemptionKnownSpec extends PageBehaviours {
 
-  def apply(): Form[IsExemptionKnown] =
-    Form(
-      "value" -> enumerable[IsExemptionKnown]("isExemptionKnown.error.required")
-    )
+  "IsExemptionKnownPage" - {
+
+    beRetrievable[IsExemptionKnown](IsExemptionKnownPage)
+
+    beSettable[IsExemptionKnown](IsExemptionKnownPage)
+
+    beRemovable[IsExemptionKnown](IsExemptionKnownPage)
+  }
 }

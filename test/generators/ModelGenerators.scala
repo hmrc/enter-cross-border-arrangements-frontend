@@ -25,6 +25,7 @@ import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}

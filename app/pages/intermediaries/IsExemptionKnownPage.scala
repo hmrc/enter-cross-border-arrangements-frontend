@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.intermediaries
 
+import models.IsExemptionKnown
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IsExemptionCountryKnownPage extends QuestionPage[Boolean] {
+case object IsExemptionKnownPage extends QuestionPage[IsExemptionKnown] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isExemptionCountryKnown"
+  override def toString: String = "isExemptionKnown"
 }

@@ -8,6 +8,17 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
+GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
+GET        /organisation/check-answers                  controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad
+GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
+GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
+GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
+
+GET       /intermediaries/check-answers                controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad
+
+GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
+POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
@@ -346,10 +357,10 @@ POST       /intermediaries/type                            controllers.intermedi
 GET        /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /intermediaries/capacity                        controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/capacity                        controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/choose-type                      controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/choose-type                      controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-choose-type               controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-choose-type               controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
 
 # DISCLOSURE
 
@@ -429,16 +440,21 @@ GET        /intermediaries/exempt-countries                 controllers.ExemptCo
 POST       /intermediaries/exempt-countries                 controllers.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exempt-countries          controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exempt-countries          controllers.intermediaries.ExemptCountriesController.onSubmit(mode: Mode = CheckMode)
 
-GET        /intermediaries/exemption-country-known          controllers.IsExemptionCountryKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exemption-country-known          controllers.IsExemptionCountryKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exemption-country-known   controllers.IsExemptionCountryKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exemption-country-known   controllers.IsExemptionCountryKnownController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exemption-country-known          controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exemption-country-known          controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-country-known   controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-country-known   controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(mode: Mode = CheckMode)
 
-GET        /intermediaries/exemption-known                  controllers.IsExemptionKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exemption-known                  controllers.IsExemptionKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exemption-known           controllers.IsExemptionKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exemption-known           controllers.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exemption-known                  controllers.intermediaries.IsExemptionKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /intermediaries/exemption-known                  controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
 
-GET       /intermediaries/check-answers                     controllers.IntermediariesCheckYourAnswersController.onPageLoad()
+GET       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
+
 

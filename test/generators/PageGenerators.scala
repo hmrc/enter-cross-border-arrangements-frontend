@@ -28,6 +28,8 @@ import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
+import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
+
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
 

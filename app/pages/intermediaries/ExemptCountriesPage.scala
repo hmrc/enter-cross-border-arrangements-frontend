@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.intermediaries
 
-import pages.behaviours.PageBehaviours
+import models.intermediaries.ExemptCountries
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class isExemptionCountryKnownPageSpec extends PageBehaviours {
+case object ExemptCountriesPage extends QuestionPage[Set[ExemptCountries]] {
 
-  "isExemptionCountryKnownPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[Boolean](IsExemptionCountryKnownPage)
-
-    beSettable[Boolean](IsExemptionCountryKnownPage)
-
-    beRemovable[Boolean](IsExemptionCountryKnownPage)
-  }
+  override def toString: String = "exemptCountries"
 }

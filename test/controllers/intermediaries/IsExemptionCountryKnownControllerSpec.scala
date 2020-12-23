@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.intermediaries
 
 import base.SpecBase
-import forms.IsExemptionKnownFormProvider
+import controllers.routes
+import forms.intermediaries.IsExemptionCountryKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, IsExemptionKnown, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsExemptionKnownPage
+import pages.intermediaries.IsExemptionCountryKnownPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,20 +34,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(NormalMode).url
-
-  val formProvider = new IsExemptionKnownFormProvider()
+  val formProvider = new IsExemptionCountryKnownFormProvider()
   val form = formProvider()
 
-  "IsExemptionKnown Controller" - {
+  lazy val isExemptionCountryKnownRoute = routes.IsExemptionCountryKnownController.onPageLoad(NormalMode).url
+
+  "isExemptionCountryKnown Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +55,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, isExemptionKnownRoute)
+      val request = FakeRequest(GET, isExemptionCountryKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -67,10 +68,10 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> IsExemptionKnown.radios(form)
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +82,9 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsExemptionKnownPage, IsExemptionKnown.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsExemptionCountryKnownPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, isExemptionKnownRoute)
+      val request = FakeRequest(GET, isExemptionCountryKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -93,15 +94,15 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> IsExemptionKnown.values.head.toString))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> IsExemptionKnown.radios(filledForm)
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,8 +123,8 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
           .build()
 
       val request =
-        FakeRequest(POST, isExemptionKnownRoute)
-          .withFormUrlEncodedBody(("value", IsExemptionKnown.values.head.toString))
+        FakeRequest(POST, isExemptionCountryKnownRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
@@ -140,8 +141,8 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, isExemptionKnownRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, isExemptionCountryKnownRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -154,10 +155,10 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> IsExemptionKnown.radios(boundForm)
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -167,12 +168,13 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, isExemptionKnownRoute)
+      val request = FakeRequest(GET, isExemptionCountryKnownRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -182,14 +184,14 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, isExemptionKnownRoute)
-          .withFormUrlEncodedBody(("value", IsExemptionKnown.values.head.toString))
+        FakeRequest(POST, isExemptionCountryKnownRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

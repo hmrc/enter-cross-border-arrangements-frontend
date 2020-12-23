@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package pages
+package forms.intermediaries
 
+import forms.behaviours.OptionFieldBehaviours
 import models.IsExemptionKnown
-import pages.behaviours.PageBehaviours
+import play.api.data.FormError
 
-class IsExemptionKnownSpec extends PageBehaviours {
+class IsExemptionKnownFormProviderSpec extends OptionFieldBehaviours {
 
-  "IsExemptionKnownPage" - {
+  val form = new IsExemptionKnownFormProvider()()
 
-    beRetrievable[IsExemptionKnown](IsExemptionKnownPage)
+  ".value" - {
 
-    beSettable[IsExemptionKnown](IsExemptionKnownPage)
+    val fieldName = "value"
+    val requiredKey = "isExemptionKnown.error.required"
 
-    beRemovable[IsExemptionKnown](IsExemptionKnownPage)
+    behave like optionsField[IsExemptionKnown](
+      form,
+      fieldName,
+      validValues  = IsExemptionKnown.values,
+      invalidError = FormError(fieldName, "error.invalid")
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

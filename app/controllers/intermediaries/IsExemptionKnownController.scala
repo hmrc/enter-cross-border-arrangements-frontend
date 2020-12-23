@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.intermediaries
 
 import controllers.actions._
-import forms.ExemptCountriesFormProvider
+import forms.intermediaries.IsExemptionKnownFormProvider
 import javax.inject.Inject
-import models.{Mode, ExemptCountries}
+import models.{IsExemptionKnown, Mode, UserAnswers}
 import navigation.Navigator
-import pages.ExemptCountriesPage
+import pages.individual.IndividualNamePage
+import pages.intermediaries.IsExemptionKnownPage
+import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,14 +34,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExemptCountriesController @Inject()(
+class IsExemptionKnownController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: ExemptCountriesFormProvider,
+    formProvider: IsExemptionKnownFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,18 +51,19 @@ class ExemptCountriesController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ExemptCountriesPage) match {
+      val preparedForm = request.userAnswers.get(IsExemptionKnownPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"       -> preparedForm,
-        "mode"       -> mode,
-        "checkboxes" -> ExemptCountries.checkboxes(preparedForm)
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios"  -> IsExemptionKnown.radios(preparedForm),
+        "intermediary" -> getName(request.userAnswers)
       )
 
-      renderer.render("exemptCountries.njk", json).map(Ok(_))
+      renderer.render("intermediaries/isExemptionKnown.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -70,18 +73,26 @@ class ExemptCountriesController @Inject()(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"       -> formWithErrors,
-            "mode"       -> mode,
-            "checkboxes" -> ExemptCountries.checkboxes(formWithErrors)
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "radios" -> IsExemptionKnown.radios(formWithErrors),
+            "intermediary" -> getName(request.userAnswers)
           )
 
-          renderer.render("exemptCountries.njk", json).map(BadRequest(_))
+          renderer.render("intermediaries/isExemptionKnown.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptCountriesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsExemptionKnownPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExemptCountriesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(IsExemptionKnownPage, mode, updatedAnswers))
       )
+  }
+  private def getName(userAnswers: UserAnswers) = {
+    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+      case (Some(name), _) => name.displayName
+      case (_, Some(name)) => name
+      case _ => "this intermediary"
+    }
   }
 }

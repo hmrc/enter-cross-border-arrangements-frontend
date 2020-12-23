@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk"    import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isExemptionKnown.title"), form.errors) }}
+  {{ title(messages("exemptCountries.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,28 +27,20 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.IsExemptionKnownController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.intermediaries.ExemptCountriesController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">{{ messages("isExemptionKnown.heading") }}</h1>
-          <p class="govuk-body">{{ messages("isExemptionKnown.hint.1") }}</p>
-
-          <ul class="govuk-list govuk-list--bullet">
-            <li>{{ messages("isExemptionKnown.hint.2") }}</li>
-            <li>{{ messages("isExemptionKnown.hint.3") }}</li>
-            <li>{{ messages("isExemptionKnown.hint.4") }}</li>
-          </ul>
-
-          {{ govukRadios({
+          {{ govukCheckboxes({
             name: 'value',
             fieldset: {
               legend: {
+                text: messages('exemptCountries.heading', intermediary),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
             },
-            items: radios,
+            items: checkboxes,
             errorMessage: form.value.error
           }) }}
 

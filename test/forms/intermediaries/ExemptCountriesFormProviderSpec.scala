@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package forms.intermediaries
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.ExemptCountries
+import models.intermediaries.ExemptCountries
 import play.api.data.FormError
 
 class ExemptCountriesFormProviderSpec extends CheckboxFieldBehaviours {

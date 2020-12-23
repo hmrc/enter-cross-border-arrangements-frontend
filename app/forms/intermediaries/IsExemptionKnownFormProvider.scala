@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms.intermediaries
 
-import models.ExemptCountries
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import javax.inject.Inject
+import models.IsExemptionKnown
+import play.api.data.Form
 
-case object ExemptCountriesPage extends QuestionPage[Set[ExemptCountries]] {
+class IsExemptionKnownFormProvider @Inject() extends Mappings {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "exemptCountries"
+  def apply(): Form[IsExemptionKnown] =
+    Form(
+      "value" -> enumerable[IsExemptionKnown]("isExemptionKnown.error.required")
+    )
 }

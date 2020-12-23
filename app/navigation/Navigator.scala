@@ -18,6 +18,8 @@ package navigation
 
 import controllers.routes
 import helpers.JourneyHelpers.{currentIndexInsideLoop, incrementIndexIndividual, incrementIndexOrganisation}
+import javax.inject.{Inject, Singleton}
+import models.IsExemptionKnown.{Unknown, Yes}
 import models.SelectType.{Individual, Organisation}
 import models._
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
@@ -27,17 +29,17 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, Cat
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
+import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
+import models.taxpayer.UpdateTaxpayer.{Later, Now}
 import pages._
 import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
-import pages.intermediaries._
-import pages.taxpayer.UpdateTaxpayerPage
 import play.api.mvc.{AnyContent, Call, Request}
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 
@@ -125,8 +127,10 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
 
 
+    case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(NormalMode)
     case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
+    case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
 
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
@@ -489,17 +493,24 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     }
   }
 
+  private def whatTypeofIntermediaryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(WhatTypeofIntermediaryPage) map {
+      case Promoter => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(mode)
+      case Serviceprovider | IDoNotKnow => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+    }
+  }
+
   private def isExemptionKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
     ua.get(IsExemptionKnownPage) map {
-      case Yes => controllers.routes.IsExemptionCountryKnownController.onPageLoad(mode)
-      case models.IsExemptionKnown.No | Unknown => controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      case Yes => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(mode)
+      case models.IsExemptionKnown.No | Unknown => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
     }
   }
 
   private def isExemptionCountryKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsExemptionCountryKnownPage) map {
-      case true  => controllers.routes.ExemptCountriesController.onPageLoad(mode)
-      case false => controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      case true  => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(mode)
+      case false => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {

@@ -17,7 +17,6 @@
 package navigation
 
 import base.SpecBase
-import controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController
 import controllers.routes
 import generators.Generators
 import models.SelectType.{Individual, Organisation}
@@ -28,11 +27,11 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
+import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalacheck.Gen.Choose
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.arrangement._
@@ -1266,6 +1265,145 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from 'What type of intermediary is name?' page to " +
+        "'Is *name* exempt from reporting in an EU member state, or the UK?' if answer is Promoter" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatTypeofIntermediaryPage, Promoter)
+                .success.value
+
+            navigator
+              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What type of intermediary is name?' page to " +
+        "'Is *name* exempt from reporting in an EU member state, or the UK?' if answer is Service Provider" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatTypeofIntermediaryPage, Serviceprovider)
+                .success.value
+
+            navigator
+              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from 'What type of intermediary is name?' page to " +
+        "'Is *name* exempt from reporting in an EU member state, or the UK?' if answer is I do not know" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(WhatTypeofIntermediaryPage, IDoNotKnow)
+                .success.value
+
+            navigator
+              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from ' Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
+        "'Do you know which countries *name* is exempt from reporting in?' if answer is Yes" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsExemptionKnownPage, IsExemptionKnown.Yes)
+                .success.value
+
+            navigator
+              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(NormalMode))
+        }
+      }
+
+      "Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
+        "'Do you know which countries *name* is exempt from reporting in?' if answer is No" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsExemptionKnownPage, IsExemptionKnown.No)
+                .success.value
+
+            navigator
+              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "Is *name* exempt from reporting in an EU member state, or the UK?' intemediaries page to " +
+        "'Do you know which countries *name* is exempt from reporting in?' if answer is I do not know" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsExemptionKnownPage, IsExemptionKnown.Unknown)
+                .success.value
+
+            navigator
+              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+
+      "Do you know which countries *name* exempt from reporting in?' page to " +
+        "'Which countries is *name* exempt from reporting in?' page in the intermediaries journey" +
+        "when answer is true" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsExemptionCountryKnownPage, true)
+                .success.value
+
+            navigator
+              .nextPage(IsExemptionCountryKnownPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(NormalMode))
+        }
+      }
+
+      "Do you know which countries *name* exempt from reporting in?' page to " +
+        "'Check your answers' page in the intermediaries journey when answer is false" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IsExemptionCountryKnownPage, false)
+                .success.value
+
+            navigator
+              .nextPage(IsExemptionCountryKnownPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "'Which countries is *name* exempt from reporting in?' page to " +
+        "'Check your answers' page in the intermediaries journey" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+
+              val updatedAnswers =
+                answers
+                  .set(ExemptCountriesPage, ExemptCountries.enumerable.withName("uk").toSet)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(ExemptCountriesPage, NormalMode, updatedAnswers)
+                .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+          }
+        }
+
       "must go from What is the arrangement called? page to " +
         "what is the implementation date?" in {
         forAll(arbitrary[UserAnswers]) {
@@ -1617,103 +1755,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
         }
       }
-
-
-
-      "Is *name* exempt from reporting in an EU member state, or the UK?' intemediaries page to " +
-        "'Do you know which countries *name* is exempt from reporting in?' if answer is Yes" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.Yes)
-                .success.value
-
-            navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IsExemptionCountryKnownController.onPageLoad(NormalMode))
-        }
-      }
-
-      "Is *name* exempt from reporting in an EU member state, or the UK?' intemediaries page to " +
-        "'Do you know which countries *name* is exempt from reporting in?' if answer is No" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.No)
-                .success.value
-
-            navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-        }
-      }
-
-      "Is *name* exempt from reporting in an EU member state, or the UK?' intemediaries page to " +
-        "'Do you know which countries *name* is exempt from reporting in?' if answer is I do not know" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.Unknown)
-                .success.value
-
-            navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-        }
-      }
-
-
-      "Do you know which countries *name* exempt from reporting in?' page to " +
-        "'Which countries is *name* Ltd exempt from reporting in?' page in the intermediaries journey" +
-          "when answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsExemptionCountryKnownPage, true)
-                .success.value
-
-            navigator
-              .nextPage(IsAssociatedEnterpriseAffectedPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.ExemptCountriesController.onPageLoad(NormalMode))
-        }
-      }
-
-      "Do you know which countries *name* exempt from reporting in?' page to " +
-        "'Check your answers' page in the intermediaries journey when answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsExemptionCountryKnownPage, false)
-                .success.value
-
-            navigator
-              .nextPage(IsAssociatedEnterpriseAffectedPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-        }
-      }
-
-      "'Which countries is *name* exempt from reporting in?' page to " +
-        "'Check your answers' page in the intermediaries journey" {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-
-              val updatedAnswers =
-                (ExemptCountries, arbitraryExemptCountries)
-                  .success.value
-
-              navigator
-                .nextPage(ExemptCountriesPage, NormalMode, updatedAnswers)
-                .mustBe(controllers.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-          }
-        }
-
-
-
     }
   }
 }

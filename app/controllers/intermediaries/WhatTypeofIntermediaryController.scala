@@ -95,7 +95,7 @@ class WhatTypeofIntermediaryController @Inject()(
     (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
-      case _ => "this associated enterprise"
+      case _ => "this intermediary"
     }
   }
 }

@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/checkboxes/macro.njk"    import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("exemptCountries.title"), form.errors) }}
+  {{ title(messages("isExemptionCountryKnown.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,20 +27,20 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ExemptCountriesController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          {{ govukCheckboxes({
+          {{ govukRadios({
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('exemptCountries.heading'),
+                text: messages('isExemptionCountryKnown.heading', intermediary),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
             },
-            items: checkboxes,
+            items: radios,
             errorMessage: form.value.error
           }) }}
 

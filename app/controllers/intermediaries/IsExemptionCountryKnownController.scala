@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.intermediaries
 
 import controllers.actions._
-import forms.IsExemptionCountryKnownFormProvider
+import forms.intermediaries.IsExemptionCountryKnownFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.IsExemptionCountryKnownPage
+import pages.individual.IndividualNamePage
+import pages.intermediaries.IsExemptionCountryKnownPage
+import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -57,10 +59,11 @@ class IsExemptionCountryKnownController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "intermediary" -> getName(request.userAnswers)
       )
 
-      renderer.render("isExemptionCountryKnown.njk", json).map(Ok(_))
+      renderer.render("intermediaries/isExemptionCountryKnown.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -72,10 +75,11 @@ class IsExemptionCountryKnownController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "intermediary" -> getName(request.userAnswers)
           )
 
-          renderer.render("isExemptionCountryKnown.njk", json).map(BadRequest(_))
+          renderer.render("intermediaries/isExemptionCountryKnown.njk", json).map(BadRequest(_))
         },
         value =>
           for {
@@ -83,5 +87,12 @@ class IsExemptionCountryKnownController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(IsExemptionCountryKnownPage, mode, updatedAnswers))
       )
+  }
+  private def getName(userAnswers: UserAnswers) = {
+    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+      case (Some(name), _) => name.displayName
+      case (_, Some(name)) => name
+      case _ => "this intermediary"
+    }
   }
 }

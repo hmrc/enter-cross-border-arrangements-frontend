@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package forms
-
-import javax.inject.Inject
+package forms.intermediaries
 
 import forms.mappings.Mappings
+import javax.inject.Inject
+import models.intermediaries.ExemptCountries
 import play.api.data.Form
+import play.api.data.Forms.set
 
-class IsExemptionCountryKnownFormProvider @Inject() extends Mappings {
+class ExemptCountriesFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[Set[ExemptCountries]] =
     Form(
-      "value" -> boolean("isExemptionCountryKnown.error.required")
+      "value" -> set(enumerable[ExemptCountries]("exemptCountries.error.required")).verifying(nonEmptySet("exemptCountries.error.required"))
     )
 }
