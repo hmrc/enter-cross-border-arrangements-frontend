@@ -25,6 +25,7 @@ import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermed
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -34,6 +35,7 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
@@ -62,7 +64,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 	      } yield (page, value)
 	    }
 
-	  implicit lazy val arbitraryYouHaveNotAddedAnyIntermediariesUserAnswersEntry: Arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] =
+  implicit lazy val arbitraryYouHaveNotAddedAnyIntermediariesUserAnswersEntry: Arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] =
 	    Arbitrary {
 	      for {
 		page  <- arbitrary[YouHaveNotAddedAnyIntermediariesPage.type]
@@ -71,10 +73,11 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 	    }
 
 
-  implicit lazy val arbitraryDisclosureMarketableUserAnswersEntry: Arbitrary[(DisclosureMarketablePage.type, JsValue)] =
+  implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
+  implicit lazy val arbitraryIsIndividualDateOfBirthKnownUserAnswersEntry: Arbitrary[(IsIndividualDateOfBirthKnownPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[DisclosureMarketablePage.type]
+        page  <- arbitrary[IsIndividualDateOfBirthKnownPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -84,6 +87,15 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[DisclosureTypePage.type]
         value <- arbitrary[DisclosureType].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+
+  implicit lazy val arbitrarySelectTypeUserAnswersEntry: Arbitrary[(TaxpayerSelectTypePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -167,7 +179,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
-
   implicit lazy val arbitrarySelectTypeUserAnswersEntry: Arbitrary[(TaxpayerSelectTypePage.type, JsValue)] =
     Arbitrary {
       for {

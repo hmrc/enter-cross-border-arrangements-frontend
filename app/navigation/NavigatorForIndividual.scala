@@ -104,25 +104,25 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case IsIndividualResidentForTaxOtherCountriesPage =>
       checkRoute => value => index => value match {
         case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, index)
-        case _          => jumpOrCheckYourAnswers(routes.CheckYourAnswersIndividualController.onPageLoad(), checkRoute)
+        case _          => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
       }
 
     case _ =>
       checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
-        case CheckMode  => routes.CheckYourAnswersIndividualController.onPageLoad()
+        case CheckMode  => routes.IndividualCheckYourAnswersController.onPageLoad()
       }
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.CheckYourAnswersIndividualController.onPageLoad()
+    _ => _ => _ => routes.IndividualCheckYourAnswersController.onPageLoad()
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
       case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.CheckYourAnswersTaxpayersController.onPageLoad()
-      case DefaultRouting(CheckMode)                => routes.CheckYourAnswersIndividualController.onPageLoad()
+      case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }
   }

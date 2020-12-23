@@ -56,8 +56,8 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
         case Some(SelectType.Individual) =>
 
-          (Seq(helper.taxpayerSelectType, helper.individualName,
-            helper.individualDateOfBirth).flatten ++
+          (Seq(helper.taxpayerSelectType, helper.individualName).flatten ++
+            helper.buildIndividualDateOfBirthGroup ++
             helper.buildIndividualPlaceOfBirthGroup ++
             helper.buildIndividualAddressGroup ++
             helper.buildIndividualEmailAddressGroup, helper.buildTaxResidencySummaryForIndividuals)

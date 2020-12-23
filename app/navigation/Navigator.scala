@@ -165,17 +165,17 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
     case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
 
-    case IndividualNamePage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
-    case IndividualDateOfBirthPage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
+    case IndividualNamePage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
+    case IndividualDateOfBirthPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
     case IsIndividualPlaceOfBirthKnownPage => isIndividualPlaceOfBirthKnownRoutes(CheckMode)
-    case IndividualPlaceOfBirthPage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
+    case IndividualPlaceOfBirthPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
     case IsIndividualAddressKnownPage => isIndividualAddressKnownRoutes(CheckMode)
     case IsIndividualAddressUkPage => isIndividualAddressUKRoutes(CheckMode) // TODO is necessary ?
     case IndividualUkPostcodePage => _ => _ => Some(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(CheckMode))  // TODO is necessary ?
-    case IndividualAddressPage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
-    case IndividualSelectAddressPage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
+    case IndividualAddressPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
+    case IndividualSelectAddressPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
     case EmailAddressQuestionForIndividualPage => emailAddressQuestionForIndividualRoutes(CheckMode)
-    case EmailAddressForIndividualPage => _ => _ => Some(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
+    case EmailAddressForIndividualPage => _ => _ => Some(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
 
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
     case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
@@ -312,21 +312,21 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
     ua.get(IsIndividualPlaceOfBirthKnownPage) map {
       case true  => controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(mode)
-      case _ => controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()
+      case _ => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def isIndividualAddressKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(IsIndividualAddressKnownPage) map {
       case true  => controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(mode)
-      case _ => controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()
+      case _ => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def emailAddressQuestionForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(EmailAddressQuestionForIndividualPage) map {
       case true  => controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(mode)
       case false if mode == NormalMode => controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(mode, 0)
-      case _ => controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()
+      case _ => controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()
     }
 
   private def whichCountryTaxForIndividualRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =

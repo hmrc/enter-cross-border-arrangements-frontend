@@ -452,7 +452,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.CheckYourAnswersOrganisationController.onPageLoad())
+              .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
         }
       }
 

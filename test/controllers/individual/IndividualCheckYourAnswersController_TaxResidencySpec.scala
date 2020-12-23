@@ -30,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualController_TaxResidencySpec extends SpecBase with BeforeAndAfterEach {
+class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase with BeforeAndAfterEach {
 
   val countryUK    = Country("valid","GB","United Kingdom")
   val countryNonUK = Country("valid","FR","France")
@@ -52,7 +52,7 @@ class CheckYourAnswersIndividualController_TaxResidencySpec extends SpecBase wit
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
 
     val result = route(application, request).value
 

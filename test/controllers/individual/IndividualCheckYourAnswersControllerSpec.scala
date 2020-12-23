@@ -31,9 +31,11 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualControllerSpec extends SpecBase with BeforeAndAfterEach {
+class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   val address: Address = Address(
       addressLine1 = Some("value 1")
@@ -62,7 +64,7 @@ class CheckYourAnswersIndividualControllerSpec extends SpecBase with BeforeAndAf
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
 
     val result = route(application, request).value
 

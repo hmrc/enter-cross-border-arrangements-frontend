@@ -29,7 +29,7 @@ import utils.CheckYourAnswersHelper
 
 import scala.concurrent.ExecutionContext
 
-class CheckYourAnswersIndividualController @Inject()(
+class IndividualCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,

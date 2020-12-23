@@ -190,13 +190,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from What is their name? page to Check your answers page" in {
 
         assertRedirect(IndividualNamePage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) _
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from What is {0}'s date of birth? page to Check your answers page" in {
 
         assertRedirect(IndividualDateOfBirthPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) _
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from the Do you know where {0} was born? page to the Where was {0} born? when answer is 'Yes' " in {
@@ -213,7 +213,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
       "must go from the Do you know where {0} was born? page to the Check your answers page when answer is 'No' " in {
         assertRedirect(IsIndividualPlaceOfBirthKnownPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) {
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
           _
             .set(IsIndividualPlaceOfBirthKnownPage, false)
             .success
@@ -225,7 +225,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from Where was {0} born? page to Check your answers page" in {
 
         assertRedirect(IndividualPlaceOfBirthPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) _
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from Do you know {0} address to 'Does the individual live in the United Kingdom?' when answer is 'Yes'" in {
@@ -277,13 +277,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from What is {0}’s address? to Check your answers page" in {
 
         assertRedirect(IndividualAddressPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) _
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from Do you know {0}’s email address? to Check your answers page when answer is 'No'" in {
 
         assertRedirect(EmailAddressQuestionForIndividualPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) {
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
           _
             .set(EmailAddressQuestionForIndividualPage, false)
             .success
@@ -306,7 +306,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from What is {0}’s email address? to Check your answers page" in {
 
         assertRedirect(EmailAddressForIndividualPage
-          , controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad()) _
+          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from What is the arrangement called? page to Check your answers page" in {
