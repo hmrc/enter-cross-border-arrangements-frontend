@@ -53,6 +53,10 @@ trait Mappings extends Formatters with Constraints {
                            args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, nonNumericKey, args))
 
+  protected def maxLengthText(requiredKey: String, lengthKey: String, maxLength: Int): FieldMapping[String] = {
+    of(maxLengthTextFormatter(requiredKey,lengthKey, maxLength))
+  }
+
   protected def validatedText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, maxLength: Int): FieldMapping[String] = {
     of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, maxLength))
   }

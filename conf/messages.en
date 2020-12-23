@@ -638,7 +638,6 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
-
 whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
 whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s start date for implementing the arrangement?
 whatIsTaxpayersStartDateForImplementingArrangement.part1.hint = This is when the first step of the arrangement was or will be made.
@@ -694,7 +693,7 @@ disclosureType.dac6add = An addition to an existing arrangement
 disclosureType.dac6rep = A replacement of an existing disclosure
 disclosureType.dac6del = A deletion of an existing disclosure
 disclosureType.checkYourAnswersLabel = What type of disclosure would you like to make?
-disclosureType.error.required = Type of disclosure
+disclosureType.error.required = Select a type of disclosure
 
 disclosureMarketable.title = Is this arrangement marketable?
 disclosureMarketable.heading = Is this arrangement marketable?
