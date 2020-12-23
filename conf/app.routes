@@ -361,3 +361,45 @@ GET        /disclosure/marketable                           controllers.disclosu
 POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
 GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
 POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
+
+# REPORTER DETAILS
+
+GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/exemption-known                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/exemption-known                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)

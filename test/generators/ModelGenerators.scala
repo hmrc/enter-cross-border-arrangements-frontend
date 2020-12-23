@@ -23,13 +23,15 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.disclosure.DisclosureType
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.reporter.RoleInArrangement
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
-
-import models.intermediaries.WhatTypeofIntermediary
+  import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =
     Arbitrary {
       Gen.oneOf(WhatTypeofIntermediary.values.toSeq)
@@ -43,6 +45,41 @@ import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values.toSeq)
+    }
+
+  implicit lazy val arbitraryTaxpayerWhyReportArrangement: Arbitrary[TaxpayerWhyReportArrangement] =
+    Arbitrary {
+      Gen.oneOf(TaxpayerWhyReportArrangement.values.toSeq)
+    }
+
+  implicit lazy val arbitraryTaxpayerWhyReportInUK: Arbitrary[TaxpayerWhyReportInUK] =
+    Arbitrary {
+      Gen.oneOf(TaxpayerWhyReportInUK.values.toSeq)
+    }
+
+  implicit lazy val arbitraryIntermediaryWhichCountriesExempt: Arbitrary[CountriesListEUCheckboxes] =
+    Arbitrary {
+      Gen.oneOf(CountriesListEUCheckboxes.values.toSeq)
+    }
+
+  implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[YesNoDoNotKnowRadios] =
+    Arbitrary {
+      Gen.oneOf(YesNoDoNotKnowRadios.values.toSeq)
+    }
+
+  implicit lazy val arbitraryIntermediaryRole: Arbitrary[IntermediaryRole] =
+    Arbitrary {
+      Gen.oneOf(IntermediaryRole.values.toSeq)
+    }
+
+  implicit lazy val arbitraryWhyReportInUK: Arbitrary[IntermediaryWhyReportInUK] =
+    Arbitrary {
+      Gen.oneOf(IntermediaryWhyReportInUK.values.toSeq)
+    }
+
+  implicit lazy val arbitraryRoleInArrangement: Arbitrary[RoleInArrangement] =
+    Arbitrary {
+      Gen.oneOf(RoleInArrangement.values.toSeq)
     }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =

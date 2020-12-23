@@ -9,6 +9,7 @@ site.delete.hidden = Change {0}
 site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
+site.doNotKnow = I do not know
 site.continue = Continue
 site.saveAndContinue = Save and continue
 site.getHelpWithThisPage = Get help with this page (opens in a new tab)
@@ -700,4 +701,108 @@ disclosureMarketable.heading = Is this arrangement marketable?
 disclosureMarketable.warning = Check this is correct. If you need to change your answer at a later date, you may need to disclose it as a new arrangement.
 disclosureMarketable.checkYourAnswersLabel = Is this arrangement marketable?
 disclosureMarketable.error.required = Select yes if this arrangement is marketable
+
+
+
+## COUNTRY LIST CHECKBOX LABELS
+
+countriesListCheckboxes.GB = United Kingdom
+countriesListCheckboxes.AT = Austria
+countriesListCheckboxes.BE = Belgium
+countriesListCheckboxes.BG = Bulgaria
+countriesListCheckboxes.HR = Croatia
+countriesListCheckboxes.CY = Cyprus
+countriesListCheckboxes.CZ = Czechia
+countriesListCheckboxes.DK =  Denmark
+countriesListCheckboxes.EE =  Estonia
+countriesListCheckboxes.FI =  Finland
+countriesListCheckboxes.FR =  France
+countriesListCheckboxes.DE =  Germany
+countriesListCheckboxes.GR =  Greece
+countriesListCheckboxes.HU =  Hungary
+countriesListCheckboxes.IE =  Ireland
+countriesListCheckboxes.IT =  Italy
+countriesListCheckboxes.LV =  Latvia
+countriesListCheckboxes.LT =  Lithuania
+countriesListCheckboxes.LU =  Luxembourg
+countriesListCheckboxes.MT =  Malta
+countriesListCheckboxes.NL =  Netherlands
+countriesListCheckboxes.PL =  Poland
+countriesListCheckboxes.PT =  Portugal
+countriesListCheckboxes.RO =  Romania
+countriesListCheckboxes.SK =  Slovakia
+countriesListCheckboxes.SI =  Slovenia
+countriesListCheckboxes.ES =  Spain
+countriesListCheckboxes.SE =  Sweden
+
+## REPORTER DETAILS
+
+roleInArrangement.title = What is your role in this arrangement?
+roleInArrangement.heading = What is your role in this arrangement?
+roleInArrangement.intermediary = Intermediary
+roleInArrangement.taxpayer = Taxpayer
+roleInArrangement.checkYourAnswersLabel = What is your role in this arrangement?
+roleInArrangement.error.required = Select whether you are an intermediary or a taxpayer
+roleInArrangement.information = By providing your details here, you do not need to add yourself as an intermediary or taxpayer again in another section.
+
+whyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
+whyReportInUK.hint = This list is in priority order. You only need to choose the first that applies.
+whyReportInUK.taxResidentUk = You are tax resident in the UK
+whyReportInUK.permanentEstablishment = You have a permanent establishment in the UK
+whyReportInUK.governedByLaw = You are governed by UK law, or, if relevant, your organisation was incorporated in the UK
+whyReportInUK.registeredWithAssociated = You are registered with a relevant professional association in the UK
+whyReportInUK.doNotKnow = I do not know
+whyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.error.required = Select the first reason that applies
+
+
+intermediaryRole.title = As an intermediary, what is your role in this arrangement?
+intermediaryRole.heading = As an intermediary, what is your role in this arrangement?
+intermediaryRole.promoter = Promoter
+intermediaryRole.promoter.hint = Promoters design, market, organise, make available for implementation or manage the implementation of an arrangement.
+intermediaryRole.serviceProvider = Service provider
+intermediaryRole.serviceProvider.hint = Service providers provide aid, assistance or advice about the design, marketing, organising or implementation of a scheme. These include those who provide finance, expertise, knowledge, advice or share their experience.
+intermediaryRole.unknown = Unknown
+intermediaryRole.checkYourAnswersLabel = As an intermediary, what is your role in this arrangement?
+intermediaryRole.error.required = Select your role in this arrangement
+
+intermediaryExemptionInEU.title = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.heading = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.hint = Reporting in the UK may mean you do not have to report in one or more EU member states. You may also be exempt for other reasons, such as legal professional privilege.
+intermediaryExemptionInEU.checkYourAnswersLabel = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.error.required = Select yes if you are exempt. If unsure, choose I do not know
+
+intermediaryDoYouKnowExemptions.title = Do you know which countries you are exempt from reporting in?
+intermediaryDoYouKnowExemptions.heading = Do you know which countries you are exempt from reporting in?
+intermediaryDoYouKnowExemptions.checkYourAnswersLabel = Do you know which countries you are exempt from reporting in?
+intermediaryDoYouKnowExemptions.error.required = Select yes if you know which countries
+
+intermediaryWhichCountriesExempt.title = Which countries are you exempt from reporting in?
+intermediaryWhichCountriesExempt.heading = Which countries are you exempt from reporting in?
+intermediaryWhichCountriesExempt.hint = Select all that apply.
+intermediaryWhichCountriesExempt.checkYourAnswersLabel = Which countries are you exempt from reporting in?
+intermediaryWhichCountriesExempt.error.required = Select one or more countries
+
+taxpayerWhyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.hint = The list is in priority order. You only need to choose the first one that applies.
+taxpayerWhyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
+taxpayerWhyReportInUK.ukTaxResident = You are tax resident in the UK
+taxpayerWhyReportInUK.ukPermanentEstablishment = You have a permanent establishment in the UK
+taxpayerWhyReportInUK.incomeOrProfit = You receive income or generate profit in the UK
+taxpayerWhyReportInUK.ukActivity = You carry out any activity in the UK
+taxpayerWhyReportInUK.doNotKnow = I do not know
+taxpayerWhyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.error.required = Select the first reason that applies
+
+taxpayerWhyReportArrangement.title = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.heading = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.noIntermediaries = There are no intermediaries involved
+taxpayerWhyReportArrangement.professionalPrivilege = The intermediaries involved have legal professional privilege
+taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outside of the UK and EU
+taxpayerWhyReportArrangement.doNotKnow = I do not know
+taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 
