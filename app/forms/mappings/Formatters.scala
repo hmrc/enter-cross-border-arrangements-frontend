@@ -16,11 +16,12 @@
 
 package forms.mappings
 
+import models.{Country, Enumerable}
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import models.Enumerable
 
 import scala.util.control.Exception.nonFatalCatch
+import scala.util.matching.Regex
 
 trait Formatters {
 
@@ -235,6 +236,32 @@ trait Formatters {
         .right.flatMap {
         case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
         case str => Right(str)
+      }
+    }
+    override def unbind(key: String, value: String): Map[String, String] = {
+      Map(key -> value)
+    }
+  }
+
+  protected def validatedArrangementID(requiredKey: String,
+                                       invalidKey: String,
+                                       validFormatRegex: String,
+                                       countryList: Seq[Country]): Formatter[String] = new Formatter[String] {
+    private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      dataFormatter
+        .bind(key, data)
+        .right.flatMap {
+        case id if !id.matches(validFormatRegex) => Left(Seq(FormError(key, invalidKey)))
+        case id =>
+          val splitID: Regex = "(^[A-Za-z]{2})([A-Za-z0-9]+)".r
+          val splitID(countryCode, _) = id
+
+          if(countryList.exists(_.code == countryCode)) {
+            Right(id)
+          } else {
+            Left(Seq(FormError(key, invalidKey)))
+          }
       }
     }
     override def unbind(key: String, value: String): Map[String, String] = {

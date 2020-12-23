@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import scala.util.matching.Regex
 
 class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
 
@@ -36,10 +35,11 @@ class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
             crossBorderArrangementsConnector: CrossBorderArrangementsConnector
            )(implicit hc: HeaderCarrier): Form[String] =
     Form(
-      "arrangementID" -> requiredRegexOnlyText(
+      "arrangementID" -> validatedArrangementIDText(
         "disclosureIdentifyArrangement.error.required",
         "disclosureIdentifyArrangement.error.invalid",
-        arrangementIDRegex)
+        arrangementIDRegex,
+        countryList)
         .verifying("disclosureIdentifyArrangement.error.notFound",
           id => {
             if (id.matches(startOfUKIDRegex)) {
@@ -51,15 +51,5 @@ class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
             }
           }
         )
-        .verifying("disclosureIdentifyArrangement.error.invalid", id => {
-          if (!id.matches(startOfUKIDRegex)) {
-            val splitID: Regex = "(^[A-Za-z]{2})([A-Za-z0-9]+)".r
-            val splitID(countryCode, _) = id
-
-            countryList.exists(_.code == countryCode)
-          } else {
-            true
-          }
-        })
     )
 }

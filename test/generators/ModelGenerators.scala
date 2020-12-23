@@ -18,9 +18,8 @@ package generators
 
 import models._
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
 import models.disclosure.DisclosureType
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
@@ -80,11 +79,6 @@ trait ModelGenerators {
   implicit lazy val arbitraryRoleInArrangement: Arbitrary[RoleInArrangement] =
     Arbitrary {
       Gen.oneOf(RoleInArrangement.values.toSeq)
-    }
-
-  implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
-    Arbitrary {
-      Gen.oneOf(DisclosureType.values.toSeq)
     }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =
