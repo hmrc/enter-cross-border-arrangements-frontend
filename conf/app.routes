@@ -8,16 +8,6 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
-GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
-GET        /organisation/check-answers                  controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad
-GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
-GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
-GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
-
-
-GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
-POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
-
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
@@ -452,6 +442,11 @@ GET        /reporter/taxpayers/implementation-date                  controllers.
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = CheckMode)
 
 
 

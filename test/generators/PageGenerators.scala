@@ -32,12 +32,16 @@ import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, I
 
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
+import pages.reporter.individual.ReporterIndividualNamePage
 
 
 trait PageGenerators {
 
   implicit lazy val arbitraryDisclosureIdentifyArrangementPage: Arbitrary[DisclosureIdentifyArrangementPage.type] =
     Arbitrary(DisclosureIdentifyArrangementPage)
+
+  implicit lazy val arbitraryReporterIndividualNamePage: Arbitrary[ReporterIndividualNamePage.type] =
+    Arbitrary(ReporterIndividualNamePage)
 
   implicit lazy val arbitraryWhatTypeofIntermediaryPage: Arbitrary[WhatTypeofIntermediaryPage.type] =
     Arbitrary(WhatTypeofIntermediaryPage)

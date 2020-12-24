@@ -25,6 +25,7 @@ import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
+import pages.reporter.individual.ReporterIndividualNamePage
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -33,6 +34,21 @@ import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows {
+
+  def reporterIndividualName: Option[Row] = userAnswers.get(ReporterIndividualNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${answer.firstName} ${answer.lastName}"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualName.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
