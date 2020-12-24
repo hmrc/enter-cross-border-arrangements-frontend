@@ -855,3 +855,15 @@ reporterIndividualName.error.firstName.required = Provide a first name
 reporterIndividualName.error.lastName.required = Provide a last name
 reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
 reporterIndividualName.error.lastName.length = Last name must be 200 characters or less
+
+reporterIndividualDateOfBirth.title = What is your date of birth?
+reporterIndividualDateOfBirth.heading = What is your date of birth?
+reporterIndividualDateOfBirth.hint = We use this to help confirm your identity. For example, 31 3 1980
+reporterIndividualDateOfBirth.checkYourAnswersLabel = ReporterIndividualDateOfBirth
+reporterIndividualDateOfBirth.error.required.all = Provide a date
+reporterIndividualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+reporterIndividualDateOfBirth.error.required = Date of birth must include {0}
+reporterIndividualDateOfBirth.error.nonNumeric = Provide a date
+reporterIndividualDateOfBirth.error.invalid = Provide a valid date of birth
+reporterIndividualDateOfBirth.error.futureDate = Provide a valid date of birth
+reporterIndividualDateOfBirth.error.pastDate = Provide a date after 1 January 1900
