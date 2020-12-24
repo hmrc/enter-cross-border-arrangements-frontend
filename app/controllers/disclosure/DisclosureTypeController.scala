@@ -19,7 +19,6 @@ package controllers.disclosure
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureTypeFormProvider
-
 import javax.inject.Inject
 import models.Mode
 import models.disclosure.DisclosureType

@@ -17,8 +17,8 @@
 package controllers.reporter.intermediary
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.intermediary.IntermediaryRoleFormProvider
-import javax.inject.Inject
 import models.Mode
 import models.reporter.intermediary.IntermediaryRole
 import navigation.NavigatorForReporter
@@ -31,18 +31,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryRoleController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IntermediaryRoleFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +65,8 @@ class IntermediaryRoleController @Inject()(
       renderer.render("reporter/intermediary/intermediaryRole.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[IntermediaryRole], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(IntermediaryRolePage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[IntermediaryRole]): Call =
+    navigator.routeMap(IntermediaryRolePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -86,7 +88,8 @@ class IntermediaryRoleController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryRolePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
 
         }
       )

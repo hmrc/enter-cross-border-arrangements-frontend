@@ -19,7 +19,6 @@ package controllers.disclosure
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureMarketableFormProvider
-
 import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForDisclosure

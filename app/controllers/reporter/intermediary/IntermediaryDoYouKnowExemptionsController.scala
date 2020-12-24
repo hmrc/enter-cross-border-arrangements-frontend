@@ -17,10 +17,10 @@
 package controllers.reporter.intermediary
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.intermediary.IntermediaryDoYouKnowExemptionsFormProvider
-import javax.inject.Inject
 import models.Mode
-import navigation.{Navigator, NavigatorForReporter}
+import navigation.NavigatorForReporter
 import pages.reporter.intermediary.IntermediaryDoYouKnowExemptionsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -30,19 +30,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryDoYouKnowExemptionsController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IntermediaryDoYouKnowExemptionsFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +64,8 @@ class IntermediaryDoYouKnowExemptionsController @Inject()(
       renderer.render("reporter/intermediary/intermediaryDoYouKnowExemptions.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(IntermediaryDoYouKnowExemptionsPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,7 +85,8 @@ class IntermediaryDoYouKnowExemptionsController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryDoYouKnowExemptionsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

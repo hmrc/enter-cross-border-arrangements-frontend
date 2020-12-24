@@ -16,6 +16,8 @@
 
 package navigation
 
+import controllers.mixins.{CheckRoute, DefaultRouting}
+import controllers.reporter.routes
 import models.YesNoDoNotKnowRadios.Yes
 import models._
 import models.reporter.RoleInArrangement.Intermediary
@@ -26,63 +28,67 @@ import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
 
+import javax.inject.{Inject, Singleton}
 
-object NavigatorForReporter extends AbstractNavigatorOld {
+@Singleton
+class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
-  override val checkYourAnswersRoute: Call = controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
+  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
-  private[navigation] val routeMap: Page => Mode => Option[Any] => Int => Call = {
-
-    case RoleInArrangementPage => mode => value => _ => value match {
-      case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(mode)
-      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(mode)
+    case RoleInArrangementPage => checkRoute => value => _ => value match {
+      case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(checkRoute.mode)
+      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(checkRoute.mode)
     }
 
     // Reporter - Intermediary Journey Navigation
 
-    case IntermediaryWhyReportInUKPage => mode => _ => _ =>
-      controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(mode)
+    case IntermediaryWhyReportInUKPage => checkRoute => _ => _ =>
+      controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(checkRoute.mode)
 
-    case IntermediaryRolePage => mode =>_ =>_ =>
-      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(mode)
+    case IntermediaryRolePage => checkRoute =>_ =>_ =>
+      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode)
 
-    case IntermediaryExemptionInEUPage => mode => value => _ => value match {
-      case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode)
-      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) //TODO - Change redirect to CYA when built
+    case IntermediaryExemptionInEUPage => checkRoute => value => _ => value match {
+      case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(checkRoute.mode)
+      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
 
     }
 
-    case IntermediaryDoYouKnowExemptionsPage => mode => value =>_ => value match {
-      case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(mode)
-      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to CYA when built
+    case IntermediaryDoYouKnowExemptionsPage => checkRoute => value =>_ => value match {
+      case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(checkRoute.mode)
+      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to CYA when built
     }
 
-    case IntermediaryWhichCountriesExemptPage => mode => _ =>_ =>
-      controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) //TODO - Change redirect to CYA when built
+    case IntermediaryWhichCountriesExemptPage => checkRoute => _ =>_ =>
+      routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
 
 
     // Reporter - Taxpayer Journey Navigation
 
-    case TaxpayerWhyReportInUKPage => mode => value =>_ => value match {
-      case Some(DoNotKnow) => controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to date implementing page when built
-      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(mode)
+    case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
+      case Some(DoNotKnow) => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to date implementing page when built
+      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
     }
 
-    case TaxpayerWhyReportArrangementPage => mode => _ =>_ =>
-      controllers.reporter.routes.RoleInArrangementController.onPageLoad(mode) // TODO - Change redirect to date implementing page when built
+    case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
+      routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to date implementing page when built
 
 
-    case _ => mode => _ => _ => mode match {
+    case _ => checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
-        case CheckMode  => checkYourAnswersRoute
+        case CheckMode  => routes.ReporterCheckYourAnswersController.onPageLoad()
       }
 
   }
 
-  private[navigation] val alternativeRouteMap: Page => Call = {
+  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
+    _ => _ => _ => controllers.routes.IndexController.onPageLoad()
 
-    case _ => checkYourAnswersRoute
-
+  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+    checkRoute match {
+      case DefaultRouting(CheckMode)               => routes.ReporterCheckYourAnswersController.onPageLoad()
+      case _                                       => jumpTo
+    }
   }
 
 }

@@ -17,7 +17,9 @@
 package controllers.reporter.taxpayer
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.taxpayer.TaxpayerWhyReportInUKFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
@@ -36,13 +38,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxpayerWhyReportInUKController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: TaxpayerWhyReportInUKFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +66,8 @@ class TaxpayerWhyReportInUKController @Inject()(
       renderer.render("reporter/taxpayer/taxpayerWhyReportInUK.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[TaxpayerWhyReportInUK], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(TaxpayerWhyReportInUKPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[TaxpayerWhyReportInUK]): Call =
+    navigator.routeMap(TaxpayerWhyReportInUKPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,7 +87,8 @@ class TaxpayerWhyReportInUKController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerWhyReportInUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

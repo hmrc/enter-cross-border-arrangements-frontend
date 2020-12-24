@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.organisation
+package controllers.reporter
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -27,36 +27,23 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationCheckYourAnswersController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    errorHandler: ErrorHandler,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class ReporterCheckYourAnswersController  @Inject()(
+   override val messagesApi: MessagesApi,
+   identify: IdentifierAction,
+   getData: DataRetrievalAction,
+   requireData: DataRequiredAction,
+   errorHandler: ErrorHandler,
+   val controllerComponents: MessagesControllerComponents,
+   renderer: Renderer
+ )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val organisationDetails: Seq[SummaryList.Row] =
-        helper.organisationName.toSeq ++
-          helper.buildOrganisationAddressGroup ++
-          helper.buildOrganisationEmailAddressGroup
-
-      val countryDetails: Seq[SummaryList.Row] =
-        helper.buildTaxResidencySummaryForOrganisation
-
-      renderer.render(
-        "organisation/check-your-answers-organisation.njk",
-        Json.obj("organisationSummary" -> organisationDetails,
-          "countrySummary" -> countryDetails
-        )
-      ).map(Ok(_))
+      // TODO this is a placeholder, implement CYA page when available.
+      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
   }
 
 }
