@@ -30,13 +30,16 @@ import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyRep
 import pages.taxpayer._
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual.ReporterIndividualNamePage
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage}
 
 
 trait PageGenerators {
 
   implicit lazy val arbitraryDisclosureIdentifyArrangementPage: Arbitrary[DisclosureIdentifyArrangementPage.type] =
     Arbitrary(DisclosureIdentifyArrangementPage)
+
+  implicit lazy val arbitraryReporterIndividualDateOfBirthPage: Arbitrary[ReporterIndividualDateOfBirthPage.type] =
+    Arbitrary(ReporterIndividualDateOfBirthPage)
 
   implicit lazy val arbitraryReporterIndividualNamePage: Arbitrary[ReporterIndividualNamePage.type] =
     Arbitrary(ReporterIndividualNamePage)

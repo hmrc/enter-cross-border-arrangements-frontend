@@ -429,3 +429,8 @@ GET        /reporter/individual/name                         controllers.reporte
 POST       /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/date-of-birth                controllers.reporter.individual.ReporterIndividualDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/date-of-birth                controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = CheckMode)

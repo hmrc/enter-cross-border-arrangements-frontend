@@ -44,7 +44,7 @@ import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual.ReporterIndividualNamePage
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
@@ -54,6 +54,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[DisclosureIdentifyArrangementPage.type]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualDateOfBirthUserAnswersEntry: Arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualDateOfBirthPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
 

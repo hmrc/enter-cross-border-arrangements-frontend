@@ -26,10 +26,11 @@ import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.{PostcodePage, SelectAddressPage}
-import pages.reporter.individual.ReporterIndividualNamePage
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
+import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
@@ -37,6 +38,21 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
 
 import pages.intermediaries.WhatTypeofIntermediaryPage
+
+  def reporterIndividualDateOfBirth: Option[Row] = userAnswers.get(ReporterIndividualDateOfBirthPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualDateOfBirth.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Literal(answer.format(dateFormatter))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualDateOfBirth.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def reporterIndividualName: Option[Row] = userAnswers.get(ReporterIndividualNamePage) map {
     answer =>
