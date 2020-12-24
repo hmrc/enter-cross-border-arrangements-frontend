@@ -820,3 +820,14 @@ taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outsid
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
+
+
+reporterIndividualName.title = What is your full name?
+reporterIndividualName.heading = What is your full name?
+reporterIndividualName.firstName = First Name
+reporterIndividualName.lastName = Last Name
+reporterIndividualName.checkYourAnswersLabel = reporterIndividualName
+reporterIndividualName.error.firstName.required = Provide a first name
+reporterIndividualName.error.lastName.required = Provide a last name
+reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
+reporterIndividualName.error.lastName.length = Last name must be 200 characters or less

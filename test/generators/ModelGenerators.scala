@@ -30,6 +30,14 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryReporterIndividualName: Arbitrary[ReporterIndividualName] =
+    Arbitrary {
+      for {
+        firstName <- arbitrary[String]
+        lastName <- arbitrary[String]
+      } yield ReporterIndividualName(firstName, lastName)
+    }
   import models.intermediaries.WhatTypeofIntermediary
   implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =
     Arbitrary {

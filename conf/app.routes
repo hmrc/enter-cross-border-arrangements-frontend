@@ -424,3 +424,8 @@ GET        /reporter/taxpayers/implementation-date                  controllers.
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = CheckMode)
