@@ -17,6 +17,7 @@
 package utils.rows
 
 import models.CheckMode
+import models.disclosure.DisclosureType._
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
@@ -24,7 +25,6 @@ import uk.gov.hmrc.viewmodels._
 trait DisclosureRows extends RowBuilder {
 
   def disclosureNamePage: Option[Row] = userAnswers.get(DisclosureNamePage) map { answer =>
-
     toRow(
       msgKey  = "disclosureName",
       content = formatMaxChars(answer),
@@ -32,7 +32,7 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  def disclosureMarketablePage: Option[Row] = userAnswers.get(DisclosureMarketablePage) map { answer =>
+  private def disclosureMarketablePage: Option[Row] = userAnswers.get(DisclosureMarketablePage) map { answer =>
     toRow(
       msgKey  = "disclosureMarketable",
       content = yesOrNo(answer),
@@ -41,7 +41,6 @@ trait DisclosureRows extends RowBuilder {
   }
 
   def disclosureTypePage: Option[Row] = userAnswers.get(DisclosureTypePage) map { answer =>
-
     toRow(
       msgKey  = "disclosureType",
       content = msg"disclosureType.$answer",
@@ -49,12 +48,21 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map { answer =>
-
+  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map { answer =>
+    val arrangementID = answer.toUpperCase
     toRow(
       msgKey  = "disclosureIdentifyArrangement",
-      content = lit"$answer",
+      content = lit"$arrangementID",
       href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url
     )
   }
+
+  def buildDisclosureSummaryDetails: Seq[Row] =
+    userAnswers.get(DisclosureTypePage) match {
+      case Some(Dac6new) =>
+        disclosureMarketablePage.toSeq
+      case Some(Dac6add) =>
+        disclosureIdentifyArrangement.toSeq
+
+    }
 }

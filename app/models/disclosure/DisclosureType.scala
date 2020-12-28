@@ -31,9 +31,7 @@ object DisclosureType extends Enumerable.Implicits {
 
   val values: Seq[DisclosureType] = Seq(
     Dac6new,
-    Dac6add,
-    Dac6rep,
-    Dac6del
+    Dac6add
   )
 
   def radios(form: Form[_]): Seq[Radios.Item] = {
@@ -41,9 +39,7 @@ object DisclosureType extends Enumerable.Implicits {
     val field = form("value")
     val items = Seq(
       Radios.Radio(msg"disclosureType.dac6new", Dac6new.toString),
-      Radios.Radio(msg"disclosureType.dac6add", Dac6add.toString),
-      Radios.Radio(msg"disclosureType.dac6rep", Dac6new.toString),
-      Radios.Radio(msg"disclosureType.dac6del", Dac6new.toString)
+      Radios.Radio(msg"disclosureType.dac6add", Dac6add.toString)
     )
 
     Radios(field, items)

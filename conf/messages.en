@@ -675,6 +675,9 @@ whatTypeofIntermediary.iDoNotKnow = I do not know
 whatTypeofIntermediary.checkYourAnswersLabel = Intermediary type
 whatTypeofIntermediary.error.required = Select the type of intermediary
 
+
+## DISCLOSURE DETAILS
+
 disclosureName.title = disclosureName
 disclosureName.heading = disclosureName
 disclosureName.checkYourAnswersLabel = disclosureName
@@ -693,7 +696,7 @@ disclosureType.dac6new = A new arrangement
 disclosureType.dac6add = An addition to an existing arrangement
 disclosureType.dac6rep = A replacement of an existing disclosure
 disclosureType.dac6del = A deletion of an existing disclosure
-disclosureType.checkYourAnswersLabel = What type of disclosure would you like to make?
+disclosureType.checkYourAnswersLabel = Type of disclosure
 disclosureType.error.required = Select a type of disclosure
 
 disclosureMarketable.title = Is this arrangement marketable?
@@ -706,7 +709,7 @@ disclosureIdentifyArrangement.title = What is the arrangement ID for this disclo
 disclosureIdentifyArrangement.heading = What is the arrangement ID for this disclosure?
 disclosureIdentifyArrangement.p = Also called an arrangement reference number.
 disclosureIdentifyArrangement.hint = For example, GBA20210101ABC123
-disclosureIdentifyArrangement.checkYourAnswersLabel = disclosureIdentifyArrangement
+disclosureIdentifyArrangement.checkYourAnswersLabel = Arrangement ID
 disclosureIdentifyArrangement.error.required = Provide an arrangement ID
 disclosureIdentifyArrangement.error.notFound = Arrangement ID not found. Check arrangement ID is correct
 disclosureIdentifyArrangement.error.invalid = Provide a valid arrangement ID
@@ -764,7 +767,6 @@ whyReportInUK.registeredWithAssociated = You are registered with a relevant prof
 whyReportInUK.doNotKnow = I do not know
 whyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
 whyReportInUK.error.required = Select the first reason that applies
-
 
 intermediaryRole.title = As an intermediary, what is your role in this arrangement?
 intermediaryRole.heading = As an intermediary, what is your role in this arrangement?

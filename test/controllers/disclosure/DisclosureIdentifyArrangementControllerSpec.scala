@@ -138,7 +138,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/marketable"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/check-your-answers"
 
       application.stop()
     }

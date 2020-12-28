@@ -23,6 +23,8 @@ import models.NormalMode
 import models.disclosure.DisclosureType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureNamePage, DisclosureTypePage}
+import org.scalacheck.Arbitrary.arbitrary
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -52,6 +54,23 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
             .mustBe(controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(NormalMode))
       }
 
+
+      "must go from 'Is this a marketable arrangement?' page" +
+        "to 'Disclosure check your answers' page" +
+        "when an option is selected" in {
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(DisclosureMarketablePage, true).success.value
+
+            NavigatorForDisclosure.nextPage(DisclosureMarketablePage, NormalMode, updatedAnswers.get(DisclosureMarketablePage))
+              .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
+
+        }
+      }
+
       "must go from 'What type of disclosure would you like to make?' page" +
         "to 'What is the arrangement ID?' page" +
         "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" in {
@@ -79,11 +98,11 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       "must go from 'What is the arrangement ID for this disclosure?' page" +
-        "to '???' page" +
-        "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" in { //TODO Redirect to correct page when ready
+        "to 'Disclosure check your answers' page" +
+        "when an arrangement ID is entered" in {
 
           navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(Some("FRA20210101ABC123"))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(NormalMode))
+            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(NormalMode))
       }
 
     }
