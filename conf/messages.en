@@ -845,6 +845,15 @@ taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 
+## REPORTER DETAILS - ORGANISATION
+
+reporterOrganisationName.title = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.heading = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.checkYourAnswersLabel = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.error.required = Provide a name
+reporterOrganisationName.error.length = Name must be 200 characters or less
+
+
 
 reporterIndividualName.title = What is your full name?
 reporterIndividualName.heading = What is your full name?

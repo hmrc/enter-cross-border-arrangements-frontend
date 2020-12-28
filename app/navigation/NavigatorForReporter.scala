@@ -28,8 +28,8 @@ import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
-
 import javax.inject.{Inject, Singleton}
+import pages.reporter.organisation.ReporterOrganisationNamePage
 
 @Singleton
 class NavigatorForReporter @Inject()() extends AbstractNavigator {
@@ -55,12 +55,12 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     }
 
-    case IntermediaryDoYouKnowExemptionsPage => checkRoute => value =>_ => value match {
+    case IntermediaryDoYouKnowExemptionsPage => checkRoute => value => _ => value match {
       case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(checkRoute.mode)
       case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to CYA when built
     }
 
-    case IntermediaryWhichCountriesExemptPage => checkRoute => _ =>_ =>
+    case IntermediaryWhichCountriesExemptPage => checkRoute => _ => _ =>
       routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
 
 
@@ -73,6 +73,11 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
       controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+
+    // Reporter - Organisation Journey Navigation
+
+    case ReporterOrganisationNamePage => checkRoute => _ => _ =>
+      controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(checkRoute.mode) //TODO - Change redirect to main address in UK Page
 
     // Reporter - Individual Journey Navigation
 
@@ -103,11 +108,10 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
         case NormalMode => indexRoute
         case CheckMode  => routes.ReporterCheckYourAnswersController.onPageLoad()
       }
-
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => controllers.routes.IndexController.onPageLoad()
+    _ => _ => _ => routes.ReporterCheckYourAnswersController.onPageLoad()
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {

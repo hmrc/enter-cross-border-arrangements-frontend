@@ -27,6 +27,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.organisation.ReporterOrganisationNamePage
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -180,6 +181,19 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         navigator
           .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
           .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+      }
+    }
+
+    "on ORGANISATION JOURNEY in Normal Mode" - {
+
+      "must go from 'What is the name of the organisation your're reporting for' page " +
+        "to 'Is [name]'s address in the United Kingdom' page " +
+        "when a valid name is entered" ignore {
+
+        //TODO - redirect to main address uk page when built
+        navigator
+          .routeMap(ReporterOrganisationNamePage)(DefaultRouting(NormalMode))(Some("name"))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
       }
     }
   }
