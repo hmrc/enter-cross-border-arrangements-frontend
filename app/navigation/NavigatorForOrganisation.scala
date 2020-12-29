@@ -31,68 +31,68 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
     case OrganisationNamePage =>
-      checkMode => _ => _ => routes.IsOrganisationAddressKnownController.onPageLoad(checkMode.mode)
+      checkRoute => _ => _ => routes.IsOrganisationAddressKnownController.onPageLoad(checkRoute.mode)
 
     case IsOrganisationAddressKnownPage =>
-      checkMode => value => _ => value match {
-        case Some(true)  => routes.IsOrganisationAddressUkController.onPageLoad(checkMode.mode)
-        case _           => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkMode.mode)
+      checkRoute => value => _ => value match {
+        case Some(true)  => routes.IsOrganisationAddressUkController.onPageLoad(checkRoute.mode)
+        case _           => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode)
       }
 
     case IsOrganisationAddressUkPage =>
-      checkMode => value => _ => value match {
-        case Some(true)  => routes.OrganisationPostcodeController.onPageLoad(checkMode.mode)
-        case _           => routes.OrganisationAddressController.onPageLoad(checkMode.mode)
+      checkRoute => value => _ => value match {
+        case Some(true)  => routes.OrganisationPostcodeController.onPageLoad(checkRoute.mode)
+        case _           => routes.OrganisationAddressController.onPageLoad(checkRoute.mode)
       }
 
     case PostcodePage =>
-      checkMode => _ => _ => routes.OrganisationSelectAddressController.onPageLoad(checkMode.mode)
+      checkRoute => _ => _ => routes.OrganisationSelectAddressController.onPageLoad(checkRoute.mode)
 
     case SelectAddressPage | OrganisationAddressPage =>
-      checkMode => _ => _ => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkMode.mode)
+      checkRoute => _ => _ => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode)
 
     case EmailAddressQuestionForOrganisationPage =>
-      checkMode => value => _ => value match {
-        case Some(true)  => routes.EmailAddressForOrganisationController.onPageLoad(checkMode.mode)
-        case _           => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkMode.mode, 0)
+      checkRoute => value => _ => value match {
+        case Some(true)  => routes.EmailAddressForOrganisationController.onPageLoad(checkRoute.mode)
+        case _           => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0)
       }
 
     case EmailAddressForOrganisationPage =>
-      checkMode => _ => _ => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkMode.mode, 0)
+      checkRoute => _ => _ => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0)
 
     case WhichCountryTaxForOrganisationPage =>
-      checkMode => value => index => value match { case Some(country: Country) =>
+      checkRoute => value => index => value match { case Some(country: Country) =>
         country.code match {
-          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(checkMode.mode, index)
-          case _    => routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(checkMode.mode, index)
+          case "GB" => routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(checkRoute.mode, index)
+          case _    => routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(checkRoute.mode, index)
         }
       }
 
     case DoYouKnowAnyTINForUKOrganisationPage =>
-      checkMode => value => index => value match {
-        case Some(true)  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(checkMode.mode, index)
-        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkMode.mode, index + 1)
+      checkRoute => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(checkRoute.mode, index)
+        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
       }
 
     case DoYouKnowTINForNonUKOrganisationPage =>
-      checkMode => value => index => value match {
-        case Some(true)  => routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(checkMode.mode, index)
-        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkMode.mode, index + 1)
+      checkRoute => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(checkRoute.mode, index)
+        case _           => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
       }
 
     case WhatAreTheTaxNumbersForUKOrganisationPage | WhatAreTheTaxNumbersForNonUKOrganisationPage =>
-      checkMode => _ => index => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkMode.mode, index + 1)
+      checkRoute => _ => index => routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
 
     case IsOrganisationResidentForTaxOtherCountriesPage =>
-      checkMode => value => index => value match {
-        case Some(true) => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkMode.mode, index)
-        case _          => routes.OrganisationCheckYourAnswersController.onPageLoad()
+      checkRoute => value => index => value match {
+        case Some(true) => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, index)
+        case _          => jumpOrCheckYourAnswers(routes.OrganisationCheckYourAnswersController.onPageLoad(), checkRoute)
       }
 
     // default
 
     case _ =>
-      checkMode => _ => _ => checkMode.mode match {
+      checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => routes.OrganisationCheckYourAnswersController.onPageLoad()
       }
@@ -109,10 +109,11 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call =
     checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode) => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayerRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
-      case DefaultRouting(CheckMode)               => routes.OrganisationCheckYourAnswersController.onPageLoad()
-      case _                                       => jumpTo
+      case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
+      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+      case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)                => routes.OrganisationCheckYourAnswersController.onPageLoad()
+      case _                                        => jumpTo
     }
 
 }
