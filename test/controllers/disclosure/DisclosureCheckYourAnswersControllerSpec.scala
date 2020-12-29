@@ -103,7 +103,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   }
 
   private def assertMarketableArrangement(yesOrNo: Boolean)(row: Row): Unit = {
-    row.key.text mustBe Some(Literal("Is this arrangement marketable?"))
+    row.key.text mustBe Some(Literal("Is this a marketable arrangement?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
     assertAction("/enter-cross-border-arrangements/disclosure/change-marketable")(row.actions.head)
   }

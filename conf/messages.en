@@ -699,10 +699,10 @@ disclosureType.dac6del = A deletion of an existing disclosure
 disclosureType.checkYourAnswersLabel = Type of disclosure
 disclosureType.error.required = Select a type of disclosure
 
-disclosureMarketable.title = Is this arrangement marketable?
-disclosureMarketable.heading = Is this arrangement marketable?
+disclosureMarketable.title = Is this a marketable arrangement?
+disclosureMarketable.heading = Is this a marketable arrangement?
 disclosureMarketable.warning = Check this is correct. If you need to change your answer at a later date, you may need to disclose it as a new arrangement.
-disclosureMarketable.checkYourAnswersLabel = Is this arrangement marketable?
+disclosureMarketable.checkYourAnswersLabel = Is this a marketable arrangement?
 disclosureMarketable.error.required = Select yes if this arrangement is marketable
 
 disclosureIdentifyArrangement.title = What is the arrangement ID for this disclosure?
