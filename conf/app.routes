@@ -439,3 +439,8 @@ GET        /reporter/individual/birthplace                   controllers.reporte
 POST       /reporter/individual/birthplace                   controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/live-in-uk                   controllers.reporter.individual.ReporterIsIndividualAddressUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/live-in-uk                   controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = CheckMode)

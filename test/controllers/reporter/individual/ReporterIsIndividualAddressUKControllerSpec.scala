@@ -17,7 +17,7 @@
 package controllers.reporter.individual
 
 import base.SpecBase
-import forms.reporter.individual.ReporterIndividualPlaceOfBirthFormProvider
+import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.individual.ReporterIndividualPlaceOfBirthPage
+import pages.reporter.individual.ReporterIsIndividualAddressUKPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,20 +33,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ReporterIndividualPlaceOfBirthFormProvider()
+  val formProvider = new ReporterIsIndividualAddressUKFormProvider()
   val form = formProvider()
 
-  lazy val reporterIndividualPlaceOfBirthRoute = routes.ReporterIndividualPlaceOfBirthController.onPageLoad(NormalMode).url
+  lazy val reporterIsIndividualAddressUKRoute = routes.ReporterIsIndividualAddressUKController.onPageLoad(NormalMode).url
 
-  "ReporterIndividualPlaceOfBirth Controller" - {
+  "ReporterIsIndividualAddressUK Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +54,7 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
+      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,11 +65,12 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +81,9 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterIndividualPlaceOfBirthPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterIsIndividualAddressUKPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
+      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +93,15 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("placeOfBirth" -> "answer"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,13 +122,14 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
           .build()
 
       val request =
-        FakeRequest(POST, reporterIndividualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(("placeOfBirth", "answer"))
+        FakeRequest(POST, reporterIsIndividualAddressUKRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/live-in-uk"
+
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements"
 
       application.stop()
     }
@@ -137,8 +140,8 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, reporterIndividualPlaceOfBirthRoute).withFormUrlEncodedBody(("placeOfBirth", ""))
-      val boundForm = form.bind(Map("placeOfBirth" -> ""))
+      val request = FakeRequest(POST, reporterIsIndividualAddressUKRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -149,11 +152,12 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPlaceOfBirth.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +167,7 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
+      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
 
       val result = route(application, request).value
 
@@ -179,8 +183,8 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, reporterIndividualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(("placeOfBirth", "answer"))
+        FakeRequest(POST, reporterIsIndividualAddressUKRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
