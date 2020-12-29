@@ -33,26 +33,27 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
   val index: Int = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
-  info("Page index for the Organisation Navigator test")
-  info(" --- In the organisation sub-journey")
-  info(" 1 - What is the name of the organisation?")
-  info(" 2 - Do you know {0}’s Address?")
-  info(" 3 - Is {0}’s main address in the United Kingdom?")
-  info(" 4 - What is the {0}'s postcode?")
-  info(" 5 - What is {0}'s main address? (/select-address)")
-  info(" 6 - What is {0}'s main address? (/address)")
-  info(" 7 - Do you know the email address for a main contact at {0}?")
-  info(" 8 - What is the email address for a main contact at {0}?")
-  info(" 9 - Which country is {0} resident in for tax purposes?")
-  info("10 - Do you know any of {0}’s tax reference numbers for the United Kingdom?")
-  info("11 - Do you know {0}’s tax identification numbers for the country?")
-  info("12 - What are {0}’s tax reference numbers for the United Kingdom?")
-  info("13 - What are {0}’s tax identification numbers for {1}?")
-  info("14 - Is {0} resident for tax purposes in any other countries?")
-  info("15 - Check your answers")
-  info(" --- In the associated enterprise journey")
-  info("E10 - Is {0} affected by the arrangement?")
-  info("E11 - Check your answers?")
+  val D1 = "What is the name of the organisation?"
+  val D2 = "Do you know {0}’s Address?"
+  val D3 = "Is {0}’s main address in the United Kingdom?"
+  val D4 = "What is the {0}'s postcode?"
+  val D5 = "What is {0}'s main address? (/select-address)"
+  val D6 = "What is {0}'s main address? (/address)"
+  val D7 = "Do you know the email address for a main contact at {0}?"
+  val D8 = "What is the email address for a main contact at {0}?"
+  val D9 = "Which country is {0} resident in for tax purposes?"
+  val D10 = "Do you know any of {0}’s tax reference numbers for the United Kingdom?"
+  val D11 = "Do you know {0}’s tax identification numbers for the country?"
+  val D12 = "What are {0}’s tax reference numbers for the United Kingdom?"
+  val D13 = "What are {0}’s tax identification numbers for {1}?"
+  val D14 = "Is {0} resident for tax purposes in any other countries?"
+  val D15 = "Check your answers"
+  // In the associated enterprise journey
+  val E10 = "Is {0} affected by the arrangement?"
+  val E11 = "Check your answers?"
+  // In the relevant taxpayers journey
+  val T9 = "Is this a marketable arrangement - gateway controller"
+  val T11 = "Check your answers?"
 
   "Organisation Navigator" - {
 
@@ -72,42 +73,42 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
       "in Normal mode" - {
 
-        "must go from 1 to 2" in {
+        s"must go from $D1 to $D2" in {
 
           navigator
             .routeMap(OrganisationNamePage)(DefaultRouting(NormalMode))(Some("name"))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
         }
 
-        "must go from 2 to 3 when the answer is 'Yes' " in {
+        s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
             .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
         }
 
-        "must go from 2 to 7 when the answer is 'No' " in {
+        s"must go from $D2 to $D7 when the answer is 'No' " in {
 
           navigator
             .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
 
-        "must go from 3 to 4 when the answer is 'Yes' " in {
+        s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
             .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode))
         }
 
-        "must go from 3 to 6 when the answer is 'No' " in {
+        s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
             .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode))
         }
 
-        "must go from 4 to 5 when the answer has multiple entries " in {
+        s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
             .routeMap(PostcodePage)(DefaultRouting(NormalMode))(Some("ZZ1 ZZ4"))(0)
@@ -115,7 +116,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        "must go from 5 to 7 " in {
+        s"must go from $D5 to $D7 " in {
 
           navigator
             .routeMap(SelectAddressPage)(DefaultRouting(NormalMode))(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
@@ -124,7 +125,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         // manual?
 
-        "must go from 6 to 7 " in {
+        s"must go from $D6 to $D7 " in {
 
           val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
             Country("valid", "FR", "France"))
@@ -134,91 +135,91 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
         }
 
-        "must go from 7 to 8 if the answer is 'Yes' " in {
+        s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
             .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
         }
 
-        "must go from 7 to 9 if the answer is false " in {
+        s"must go from $D7 to $D9 if the answer is false " in {
 
           navigator
             .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 8 to 9 " in {
+        s"must go from $D8 to $D9 " in {
 
           navigator
             .routeMap(EmailAddressForOrganisationPage)(DefaultRouting(NormalMode))(Some("email@email.com"))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 9 to 10 if the answer is GB" in {
+        s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
             .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(Some(country))(0)
             .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 9 to 11 if the answer is not GB" in {
+        s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
             .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
             .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 10 to 12 if the answer is 'Yes' " in {
+        s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
             .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 10 to 14 if the answer is 'No' " in {
+        s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
             .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
         }
 
-        "must go from 11 to 13 if the answer is 'Yes' " in {
+        s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
             .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 11 to 14 if the answer is 'No' " in {
+        s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
             .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
         }
 
-        "must go from 12 to 14 " in {
+        s"must go from $D12 to $D14 " in {
 
           navigator
             .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
             .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
         }
 
-        "must go from 13 to 14 if the answer is 'No' " in {
+        s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
             .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
         }
 
-        "must go from 14 to 9 if the answer is 'Yes' " in {
+        s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
         }
 
-        "must go from 14 to 15 if the answer is 'No' " in {
+        s"must go from $D14 to $D15 if the answer is 'No' " in {
 
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(false))(0)
@@ -231,7 +232,20 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
       "in Normal mode" - {
 
-        "must go from 14 to E10 if the answer is 'No' " in {
+        s"must go from $D14 to $E10 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(AssociatedEnterprisesRouting(NormalMode))(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
+        }
+      }
+    }
+
+    "Relevant taxpayers routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D14 to $T9 if the answer is 'No' " in {
 
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(AssociatedEnterprisesRouting(NormalMode))(Some(false))(0)

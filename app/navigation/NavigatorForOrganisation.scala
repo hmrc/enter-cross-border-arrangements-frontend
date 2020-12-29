@@ -111,6 +111,7 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+      case TaxpayerRouting(NormalMode)              => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
       case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
       case DefaultRouting(CheckMode)                => routes.OrganisationCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo

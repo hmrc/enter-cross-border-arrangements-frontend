@@ -299,6 +299,8 @@ POST       /taxpayers/choose-type                        controllers.taxpayer.Ta
 GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /taxpayers/is-marketable                      controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /taxpayers/change-is-marketable               controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
 
 GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
