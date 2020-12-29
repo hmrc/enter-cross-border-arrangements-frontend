@@ -34,6 +34,7 @@ import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
+import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
@@ -47,6 +48,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(ReporterIndividualPlaceOfBirthPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] ::
     arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationPostcodePage.type, JsValue)] ::
     arbitrary[(ReporterIndividualNamePage.type, JsValue)] ::
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::

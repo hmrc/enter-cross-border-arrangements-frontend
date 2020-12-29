@@ -37,6 +37,7 @@ import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
+import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.reporter.intermediary._
 import pages.reporter.individual._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
@@ -102,6 +103,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryReporterOrganisationPostcodeUserAnswersEntry: Arbitrary[(ReporterOrganisationPostcodePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationPostcodePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryReporterIndividualDateOfBirthUserAnswersEntry: Arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -118,7 +127,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-	  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
+  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
 	    Arbitrary {
 	      for {
 		page  <- arbitrary[WhatTypeofIntermediaryPage.type]

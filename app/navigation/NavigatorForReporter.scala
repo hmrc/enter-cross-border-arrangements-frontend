@@ -82,8 +82,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case ReporterOrganisationIsAddressUkPage => checkRoute => value => _ => value match {
       case Some(true) =>
-        //TODO - change redirect to enter postcode page
-        controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)
+        controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(checkRoute.mode)
       case _ =>
         //TODO- Change redirect to manual address non UK page
         controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)

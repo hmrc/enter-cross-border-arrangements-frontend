@@ -197,12 +197,11 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Is [name]'s address in the United Kingdom' page " +
         "to 'What is [name]'s postcode' page " +
-        "when option YES is selected" ignore {
+        "when option YES is selected" in {
 
-        //TODO - change redirect to enter postcode page
         navigator
           .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
       }
 
       "must go from 'Is [name]'s address in the United Kingdom' page " +
@@ -214,6 +213,17 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
           .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
       }
+
+      "must go from 'What is [name]'s postcode' page " +
+        "to select 'What is [name]'s address' page " +
+        "when valid postcode is entered" in {
+
+        //TODO - redirect to select address page
+        navigator
+          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+      }
+
     }
   }
 }

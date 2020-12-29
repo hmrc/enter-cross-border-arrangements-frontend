@@ -454,6 +454,10 @@ POST       /reporter/organisation/main-address-in-uk                            
 GET        /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onSubmit(mode: Mode = CheckMode)
 
+GET        /reporter/organisation/postcode                          controllers.reporter.organisation.ReporterOrganisationPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/postcode                          controllers.reporter.organisation.ReporterOrganisationPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onSubmit(mode: Mode = CheckMode)
 
 # REPORTER DETAILS - INDIVIDUAL JOURNEY
 
