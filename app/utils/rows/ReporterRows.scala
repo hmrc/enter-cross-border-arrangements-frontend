@@ -19,6 +19,7 @@ package utils.rows
 import models.CheckMode
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.organisation.ReporterOrganisationNamePage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -99,6 +100,16 @@ trait ReporterRows extends RowBuilder {
       content = Literal(s"taxpayerWhyReportInUK.$answer"),
       href    = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(CheckMode).url
     )
-
   }
+
+  //Reporter - Organisation Journey
+
+  def reporterOrganisationName: Option[Row] = userAnswers.get(ReporterOrganisationNamePage) map { answer =>
+    toRow(
+      msgKey  = "reporterOrganisationName",
+      content = Literal(s"$answer"),
+      href    = controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode).url
+    )
+  }
+
 }
