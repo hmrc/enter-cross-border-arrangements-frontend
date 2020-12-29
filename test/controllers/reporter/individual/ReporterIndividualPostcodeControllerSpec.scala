@@ -17,7 +17,7 @@
 package controllers.reporter.individual
 
 import base.SpecBase
-import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
+import forms.reporter.individual.ReporterIndividualPostcodeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.individual.ReporterIsIndividualAddressUKPage
+import pages.reporter.individual.ReporterIndividualPostcodePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -33,20 +33,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterIndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ReporterIsIndividualAddressUKFormProvider()
+  val formProvider = new ReporterIndividualPostcodeFormProvider()
   val form = formProvider()
 
-  lazy val reporterIsIndividualAddressUKRoute = routes.ReporterIsIndividualAddressUKController.onPageLoad(NormalMode).url
+  lazy val postcodeRoute = routes.ReporterIndividualPostcodeController.onPageLoad(NormalMode).url
 
-  "ReporterIsIndividualAddressUK Controller" - {
+  "Postcode Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +54,7 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -65,12 +65,11 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("confirm"))
+        "form" -> form,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -81,9 +80,9 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterIsIndividualAddressUKPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterIndividualPostcodePage, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
+      val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -93,15 +92,14 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("confirm" -> "true"))
+      val filledForm = form.bind(Map("postcode" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm"))
+        "form" -> filledForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,14 +120,13 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
           .build()
 
       val request =
-        FakeRequest(POST, reporterIsIndividualAddressUKRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/postcode"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements"
 
       application.stop()
     }
@@ -140,8 +137,8 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, reporterIsIndividualAddressUKRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -152,12 +149,11 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("confirm"))
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIsIndividualAddressUK.njk"
+      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -167,7 +163,7 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
+      val request = FakeRequest(GET, postcodeRoute)
 
       val result = route(application, request).value
 
@@ -183,8 +179,8 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, reporterIsIndividualAddressUKRoute)
-          .withFormUrlEncodedBody(("confirm", "true"))
+        FakeRequest(POST, postcodeRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 

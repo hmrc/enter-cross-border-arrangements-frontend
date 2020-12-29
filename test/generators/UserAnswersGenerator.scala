@@ -26,19 +26,20 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.individual._
+import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
-import pages.intermediaries._
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIsIndividualAddressUKPage}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReporterIndividualPostcodePage.type, JsValue)] ::
     arbitrary[(ReporterIsIndividualAddressUKPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualPlaceOfBirthPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] ::

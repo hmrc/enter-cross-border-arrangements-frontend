@@ -879,3 +879,11 @@ reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
 reporterIsIndividualAddressUK.heading = Do you live in the United Kingdom?
 reporterIsIndividualAddressUK.checkYourAnswersLabel = reporterIsIndividualAddressUK
 reporterIsIndividualAddressUK.error.required = Select yes if they live in the United Kingdom
+
+reporterIndividualPostcode.title = What is your postcode?
+reporterIndividualPostcode.heading = What is your postcode?
+reporterIndividualPostcode.checkYourAnswersLabel = reporterIndividualPostcode
+reporterIndividualPostcode.error.required = Enter a postcode
+reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
+reporterIndividualPostcode.hint = Or enter the address manually
+reporterIndividualPostcode.submit = Find address
