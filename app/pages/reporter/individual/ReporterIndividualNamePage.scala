@@ -16,7 +16,7 @@
 
 package pages.reporter.individual
 
-import models.ReporterIndividualName
+import models.reporter.individual.ReporterIndividualName
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

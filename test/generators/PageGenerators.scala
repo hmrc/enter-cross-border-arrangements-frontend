@@ -32,13 +32,16 @@ import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, I
 
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage}
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 
 
 trait PageGenerators {
 
   implicit lazy val arbitraryDisclosureIdentifyArrangementPage: Arbitrary[DisclosureIdentifyArrangementPage.type] =
     Arbitrary(DisclosureIdentifyArrangementPage)
+
+  implicit lazy val arbitraryReporterIndividualPlaceOfBirthPage: Arbitrary[ReporterIndividualPlaceOfBirthPage.type] =
+    Arbitrary(ReporterIndividualPlaceOfBirthPage)
 
   implicit lazy val arbitraryReporterIndividualDateOfBirthPage: Arbitrary[ReporterIndividualDateOfBirthPage.type] =
     Arbitrary(ReporterIndividualDateOfBirthPage)

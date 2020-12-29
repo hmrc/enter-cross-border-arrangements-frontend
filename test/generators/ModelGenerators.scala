@@ -23,6 +23,7 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
+import models.reporter.individual.ReporterIndividualName
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}

@@ -17,7 +17,7 @@
 package forms.reporter.individual
 
 import forms.mappings.Mappings
-import models.ReporterIndividualName
+import models.reporter.individual.ReporterIndividualName
 import play.api.data.Form
 import play.api.data.Forms._
 
