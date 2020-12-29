@@ -29,7 +29,7 @@ import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.organisation.{ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
 
 @Singleton
 class NavigatorForReporter @Inject()() extends AbstractNavigator {
@@ -74,10 +74,22 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
       controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
 
+
     // Reporter - Organisation Journey Navigation
 
     case ReporterOrganisationNamePage => checkRoute => _ => _ =>
-      controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(checkRoute.mode) //TODO - Change redirect to main address in UK Page
+      controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)
+
+    case ReporterOrganisationIsAddressUkPage => checkRoute => value => _ => value match {
+      case Some(true) =>
+        //TODO - change redirect to enter postcode page
+        controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)
+      case _ =>
+        //TODO- Change redirect to manual address non UK page
+        controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)
+
+
+    }
 
     // Reporter - Individual Journey Navigation
 

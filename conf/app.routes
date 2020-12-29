@@ -449,6 +449,11 @@ POST       /reporter/organisation/name                                       con
 GET        /reporter/organisation/change-name                                controllers.reporter.organisation.ReporterOrganisationNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/organisation/change-name                                controllers.reporter.organisation.ReporterOrganisationNameController.onSubmit(mode: Mode = CheckMode)
 
+GET        /reporter/organisation/main-address-in-uk                                       controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/main-address-in-uk                                       controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onSubmit(mode: Mode = CheckMode)
+
 
 # REPORTER DETAILS - INDIVIDUAL JOURNEY
 

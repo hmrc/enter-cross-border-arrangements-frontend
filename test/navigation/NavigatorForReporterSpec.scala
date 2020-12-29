@@ -27,7 +27,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.organisation.{ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -188,12 +188,31 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'What is the name of the organisation your're reporting for' page " +
         "to 'Is [name]'s address in the United Kingdom' page " +
-        "when a valid name is entered" ignore {
+        "when a valid name is entered" in {
 
-        //TODO - redirect to main address uk page when built
         navigator
           .routeMap(ReporterOrganisationNamePage)(DefaultRouting(NormalMode))(Some("name"))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Is [name]'s address in the United Kingdom' page " +
+        "to 'What is [name]'s postcode' page " +
+        "when option YES is selected" ignore {
+
+        //TODO - change redirect to enter postcode page
+        navigator
+          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Is [name]'s address in the United Kingdom' page " +
+        "to 'What is [name]'s address non UK' page" +
+        "when option NO is selected" ignore {
+
+        //TODO - change redirect to enter manual address non UK page
+        navigator
+          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
       }
     }
   }

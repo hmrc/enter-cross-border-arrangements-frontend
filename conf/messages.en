@@ -853,6 +853,12 @@ reporterOrganisationName.checkYourAnswersLabel = What is the name of the organis
 reporterOrganisationName.error.required = Provide a name
 reporterOrganisationName.error.length = Name must be 200 characters or less
 
+reporterOrganisationIsAddressUk.title = Is its address in the United Kingdom?
+reporterOrganisationIsAddressUk.heading = Is {0}’s address in the United Kingdom?
+reporterOrganisationIsAddressUk.checkYourAnswersLabel = Is {0}’s address in the United Kingdom?
+reporterOrganisationIsAddressUk.error.required = Select yes if their address is in the UK
+
+
 
 
 reporterIndividualName.title = What is your full name?

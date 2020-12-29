@@ -18,15 +18,14 @@ package pages.reporter.organisation
 
 import pages.behaviours.PageBehaviours
 
+class ReporterOrganisationIsAddressUkPageSpec extends PageBehaviours {
 
-class ReporterOrganisationNamePageSpec extends PageBehaviours {
+  "ReporterOrganisationIsAddressUkPage" - {
 
-  "ReporterOrganisationNamePage" - {
+    beRetrievable[Boolean](ReporterOrganisationIsAddressUkPage)
 
-    beRetrievable[String](ReporterOrganisationNamePage)
+    beSettable[Boolean](ReporterOrganisationIsAddressUkPage)
 
-    beSettable[String](ReporterOrganisationNamePage)
-
-    beRemovable[String](ReporterOrganisationNamePage)
+    beRemovable[Boolean](ReporterOrganisationIsAddressUkPage)
   }
 }

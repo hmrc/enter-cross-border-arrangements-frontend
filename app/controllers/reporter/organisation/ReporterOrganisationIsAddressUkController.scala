@@ -18,84 +18,84 @@ package controllers.reporter.organisation
 
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import forms.reporter.organisation.ReporterOrganisationNameFormProvider
-import helpers.JourneyHelpers.hasValueChanged
+import forms.reporter.organisation.ReporterOrganisationIsAddressUkFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.organisation.{ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterOrganisationNameController @Inject()(
+class ReporterOrganisationIsAddressUkController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  formProvider: ReporterOrganisationNameFormProvider,
+  requireData: DataRequiredAction,
+  formProvider: ReporterOrganisationIsAddressUkFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm =  request.userAnswers.flatMap(_.get(ReporterOrganisationNamePage)) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationIsAddressUkPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios" -> Radios.yesNo(preparedForm("value")),
+        "organisationName" -> getReportingOrganisationName(request.userAnswers)
       )
 
-      renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(Ok(_))
+      renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
-    if (isAlt) {
-      navigator.routeAltMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
-    }
-    else {
-      navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
-    }
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterOrganisationIsAddressUkPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "organisationName" -> getReportingOrganisationName(request.userAnswers)
           )
 
-          renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(BadRequest(_))
+          renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(BadRequest(_))
         },
-        value => {
-
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = hasValueChanged(value, ReporterOrganisationNamePage, mode, userAnswers)
-
+        value =>
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(ReporterOrganisationNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationIsAddressUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
-        }
-     )
+          } yield Redirect(redirect(checkRoute, Some(value)))
+      )
+  }
+
+  private def getReportingOrganisationName(userAnswers: UserAnswers): String = {
+    userAnswers.get(ReporterOrganisationNamePage) match {
+      case Some(organisationName) => organisationName
+      case None => "the organisation"
+    }
   }
 }

@@ -17,32 +17,32 @@
 package controllers.reporter.organisation
 
 import base.SpecBase
-import forms.reporter.organisation.ReporterOrganisationNameFormProvider
+import forms.reporter.organisation.ReporterOrganisationIsAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.organisation.ReporterOrganisationIsAddressUkPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new ReporterOrganisationNameFormProvider()
+  val formProvider = new ReporterOrganisationIsAddressUkFormProvider()
   val form = formProvider()
 
-  lazy val reporterOrganisationNameRoute = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode).url
+  lazy val reporterOrganisationisAddressUkRoute = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode).url
 
-  "OrganisationName Controller" - {
+  "IsOrganisationAddressUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -50,7 +50,7 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, reporterOrganisationNameRoute)
+      val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -61,11 +61,12 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode
+        "form"   -> form,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationName.njk"
+      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationIsAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -76,9 +77,9 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationNamePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationIsAddressUkPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, reporterOrganisationNameRoute)
+      val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -88,20 +89,21 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("organisationName" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationName.njk"
+      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationIsAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -115,8 +117,32 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
           .build()
 
       val request =
-        FakeRequest(POST, reporterOrganisationNameRoute)
-          .withFormUrlEncodedBody(("organisationName", "answer"))
+        FakeRequest(POST, reporterOrganisationisAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      application.stop()
+    }
+
+    "must redirect to the next page when no is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, reporterOrganisationisAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "false"))
 
       val result = route(application, request).value
 
@@ -131,7 +157,7 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, reporterOrganisationNameRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, reporterOrganisationisAddressUkRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -143,15 +169,47 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
+        "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationName.njk"
+      templateCaptor.getValue mustEqual "reporter/organisation/reporterOrganisationIsAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }
 
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to Session Expired for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request =
+        FakeRequest(POST, reporterOrganisationisAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
   }
 }
