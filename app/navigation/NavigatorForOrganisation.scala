@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.organisation.routes
-import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, TaxpayerRouting}
+import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, TaxpayersRouting}
 import models._
 import pages._
 import pages.organisation._
@@ -31,12 +31,12 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
     case OrganisationNamePage =>
-      checkRoute => _ => _ => routes.IsOrganisationAddressKnownController.onPageLoad(checkRoute.mode)
+      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsOrganisationAddressKnownController.onPageLoad(checkRoute.mode), checkRoute)
 
     case IsOrganisationAddressKnownPage =>
       checkRoute => value => _ => value match {
         case Some(true)  => routes.IsOrganisationAddressUkController.onPageLoad(checkRoute.mode)
-        case _           => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode)
+        case _           => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode), checkRoute)
       }
 
     case IsOrganisationAddressUkPage =>
@@ -54,11 +54,11 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
     case EmailAddressQuestionForOrganisationPage =>
       checkRoute => value => _ => value match {
         case Some(true)  => routes.EmailAddressForOrganisationController.onPageLoad(checkRoute.mode)
-        case _           => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0)
+        case _           => jumpOrCheckYourAnswers(routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0), checkRoute)
       }
 
     case EmailAddressForOrganisationPage =>
-      checkRoute => _ => _ => routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0)
+      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.WhichCountryTaxForOrganisationController.onPageLoad(checkRoute.mode, 0), checkRoute)
 
     case WhichCountryTaxForOrganisationPage =>
       checkRoute => value => index => value match { case Some(country: Country) =>
@@ -111,8 +111,8 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayerRouting(NormalMode)              => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
-      case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case TaxpayersRouting(NormalMode)              => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
+      case TaxpayersRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
       case DefaultRouting(CheckMode)                => routes.OrganisationCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }

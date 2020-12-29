@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.individual.routes
-import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, TaxpayerRouting}
+import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, TaxpayersRouting}
 import models._
 import pages._
 import pages.individual.{IndividualNamePage, _}
@@ -121,7 +121,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayerRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case TaxpayersRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
       case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }

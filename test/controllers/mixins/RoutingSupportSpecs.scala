@@ -49,7 +49,7 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe (TaxpayerRouting(NormalMode))
+        toCheckRoute(NormalMode, userAnswers) mustBe (TaxpayersRouting(NormalMode))
       }
     }
 
@@ -75,7 +75,7 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe (TaxpayerRouting(CheckMode))
+        toCheckRoute(CheckMode, userAnswers) mustBe (TaxpayersRouting(CheckMode))
       }
     }
 
