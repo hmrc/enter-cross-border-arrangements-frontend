@@ -25,7 +25,7 @@ import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIsIndividualAddressUKPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -35,6 +35,21 @@ import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows {
+
+  def reporterIsIndividualAddressUK: Option[Row] = userAnswers.get(ReporterIsIndividualAddressUKPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def reporterIndividualPlaceOfBirth: Option[Row] = userAnswers.get(ReporterIndividualPlaceOfBirthPage) map {
     answer =>

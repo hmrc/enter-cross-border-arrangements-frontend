@@ -24,7 +24,7 @@ import models.reporter.RoleInArrangement.Intermediary
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIsIndividualAddressUKPage}
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
@@ -80,7 +80,10 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterIndividualDateOfBirthPage => mode => _ => _ =>
       controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(mode)
 
-    case ReporterIndividualPlaceOfBirthPage => _ => _ => _ =>
+    case ReporterIndividualPlaceOfBirthPage => mode => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(mode)
+
+    case ReporterIsIndividualAddressUKPage => _ => _ => _ =>
       controllers.routes.IndexController.onPageLoad()
 
     case _ => checkRoute => _ => _ => checkRoute.mode match {

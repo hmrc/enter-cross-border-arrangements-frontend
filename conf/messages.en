@@ -874,3 +874,8 @@ reporterIndividualPlaceOfBirth.hint = Provide the town or city and country
 reporterIndividualPlaceOfBirth.checkYourAnswersLabel = reporterIndividualPlaceOfBirth
 reporterIndividualPlaceOfBirth.error.required = Provide a place of birth
 reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
+
+reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
+reporterIsIndividualAddressUK.heading = Do you live in the United Kingdom?
+reporterIsIndividualAddressUK.checkYourAnswersLabel = reporterIsIndividualAddressUK
+reporterIsIndividualAddressUK.error.required = Select yes if they live in the United Kingdom
