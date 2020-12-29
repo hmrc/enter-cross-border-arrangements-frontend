@@ -33,12 +33,13 @@ import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyRep
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries._
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage}
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReporterIndividualPlaceOfBirthPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] ::
     arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualNamePage.type, JsValue)] ::

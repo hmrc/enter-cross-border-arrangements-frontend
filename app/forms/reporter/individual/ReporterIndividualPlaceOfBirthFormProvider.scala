@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms.reporter.individual
 
-import play.api.libs.json._
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class ReporterIndividualName (firstName: String, lastName: String)
+import javax.inject.Inject
 
-object ReporterIndividualName {
-  implicit val format = Json.format[ReporterIndividualName]
+class ReporterIndividualPlaceOfBirthFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
+    Form(
+      "placeOfBirth" -> text("reporterIndividualPlaceOfBirth.error.required")
+        .verifying(maxLength(200, "reporterIndividualPlaceOfBirth.error.length"))
+    )
 }

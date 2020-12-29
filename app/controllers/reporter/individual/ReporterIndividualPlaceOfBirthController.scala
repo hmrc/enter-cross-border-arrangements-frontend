@@ -17,11 +17,10 @@
 package controllers.reporter.individual
 
 import controllers.actions._
-import forms.reporter.individual.ReporterIndividualNameFormProvider
+import forms.reporter.individual.ReporterIndividualPlaceOfBirthFormProvider
 import models.Mode
-import models.reporter.individual.ReporterIndividualName
-import navigation.{Navigator, NavigatorForReporter}
-import pages.reporter.individual.ReporterIndividualNamePage
+import navigation.NavigatorForReporter
+import pages.reporter.individual.ReporterIndividualPlaceOfBirthPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -33,14 +32,13 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterIndividualNameController @Inject()(
+class ReporterIndividualPlaceOfBirthController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: ReporterIndividualNameFormProvider,
+    formProvider: ReporterIndividualPlaceOfBirthFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -50,21 +48,21 @@ class ReporterIndividualNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualNamePage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualPlaceOfBirthPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode
+        "form" -> preparedForm,
+        "mode" -> mode
       )
 
-      renderer.render("reporter/individual/reporterIndividualName.njk", json).map(Ok(_))
+      renderer.render("reporter/individual/reporterIndividualPlaceOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[ReporterIndividualName], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIndividualNamePage, mode, value, index, alternative)
+  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(ReporterIndividualPlaceOfBirthPage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -73,15 +71,15 @@ class ReporterIndividualNameController @Inject()(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode
+            "form" -> formWithErrors,
+            "mode" -> mode
           )
 
-          renderer.render("reporter/individual/reporterIndividualName.njk", json).map(BadRequest(_))
+          renderer.render("reporter/individual/reporterIndividualPlaceOfBirth.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPlaceOfBirthPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(redirect(mode, Some(value)))
       )

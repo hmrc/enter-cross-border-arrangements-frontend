@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages.reporter.individual
+package models.reporter.individual
 
-import models.reporter.individual.ReporterIndividualName
-import pages.behaviours.PageBehaviours
+import play.api.libs.json._
 
-class ReporterIndividualNamePageSpec extends PageBehaviours {
+case class ReporterIndividualName (firstName: String, lastName: String)
 
-  "ReporterIndividualNamePage" - {
-
-    beRetrievable[ReporterIndividualName](ReporterIndividualNamePage)
-
-    beSettable[ReporterIndividualName](ReporterIndividualNamePage)
-
-    beRemovable[ReporterIndividualName](ReporterIndividualNamePage)
-  }
+object ReporterIndividualName {
+  implicit val format = Json.format[ReporterIndividualName]
 }

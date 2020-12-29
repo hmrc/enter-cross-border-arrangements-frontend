@@ -434,3 +434,8 @@ GET        /reporter/individual/date-of-birth                controllers.reporte
 POST       /reporter/individual/date-of-birth                controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/birthplace                   controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/birthplace                   controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
