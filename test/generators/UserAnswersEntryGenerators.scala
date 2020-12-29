@@ -45,10 +45,18 @@ import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIsIndividualAddressUKPage}
+import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIsIndividualAddressUKPage}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterIndividualPostcodeUserAnswersEntry: Arbitrary[(ReporterIndividualPostcodePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualPostcodePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterIsIndividualAddressUKUserAnswersEntry: Arbitrary[(ReporterIsIndividualAddressUKPage.type, JsValue)] =
     Arbitrary {

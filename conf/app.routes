@@ -444,3 +444,8 @@ GET        /reporter/individual/live-in-uk                   controllers.reporte
 POST       /reporter/individual/live-in-uk                   controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/postcode                     controllers.reporter.individual.ReporterIndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/postcode                     controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
