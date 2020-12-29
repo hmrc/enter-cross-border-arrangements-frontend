@@ -17,7 +17,7 @@
 package controllers.mixins
 
 import models.{Country, LoopDetails, UserAnswers}
-import pages.{Page, QuestionPage}
+import pages.QuestionPage
 import play.api.libs.json.{JsObject, Json}
 
 trait CountrySupport {
@@ -31,7 +31,7 @@ trait CountrySupport {
   def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
+        case Some(countryCode) => countryCode == country.code
         case _ => false
       }
 

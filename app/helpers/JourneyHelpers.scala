@@ -17,12 +17,14 @@
 package helpers
 
 import models.{CheckMode, Country, Currency, Mode, UserAnswers}
-import pages._
-import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.QuestionPage
 import pages.individual.{IndividualLoopPage, IndividualNamePage}
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import pages.reporter.organisation.ReporterOrganisationNamePage
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
+import uk.gov.hmrc.viewmodels.Html
 
 object JourneyHelpers {
 
@@ -40,6 +42,16 @@ object JourneyHelpers {
     }
   }
 
+  def getReporterDetailsOrganisationName(userAnswers: UserAnswers): String = {
+    userAnswers.get(ReporterOrganisationNamePage) match {
+      case Some(organisationName) => organisationName
+      case None => "the organisation"
+    }
+  }
+
+  def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
+    Html(s"<h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1>")
+  }
   def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =
     Json.obj("value" -> "", "text" -> "") +: currencies.map {
       currency => Json.obj(

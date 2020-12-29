@@ -19,10 +19,11 @@ package controllers.reporter.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.organisation.ReporterOrganisationIsAddressUkFormProvider
+import helpers.JourneyHelpers.getReporterDetailsOrganisationName
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.NavigatorForReporter
-import pages.reporter.organisation.{ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
+import pages.reporter.organisation.ReporterOrganisationIsAddressUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -59,7 +60,7 @@ class ReporterOrganisationIsAddressUkController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getReportingOrganisationName(request.userAnswers)
+        "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers)
       )
 
       renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(Ok(_))
@@ -78,7 +79,7 @@ class ReporterOrganisationIsAddressUkController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getReportingOrganisationName(request.userAnswers)
+            "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers)
           )
 
           renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(BadRequest(_))
@@ -90,12 +91,5 @@ class ReporterOrganisationIsAddressUkController @Inject()(
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
-  }
-
-  private def getReportingOrganisationName(userAnswers: UserAnswers): String = {
-    userAnswers.get(ReporterOrganisationNamePage) match {
-      case Some(organisationName) => organisationName
-      case None => "the organisation"
-    }
   }
 }

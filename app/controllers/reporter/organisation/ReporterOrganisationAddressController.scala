@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers.organisation
+package controllers.reporter.organisation
 
 import controllers.actions._
-import controllers.mixins.{CheckRoute, RoutingSupport}
+import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged, pageHeadingProvider}
+import helpers.JourneyHelpers.{getReporterDetailsOrganisationName, hasValueChanged, pageHeadingProvider}
 import javax.inject.Inject
 import models.{Address, Mode, UserAnswers}
-import navigation.NavigatorForOrganisation
-import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
+import navigation.NavigatorForReporter
+import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -35,19 +35,19 @@ import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
+class ReporterOrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
   countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
-  navigator: NavigatorForOrganisation,
+  navigator: NavigatorForReporter,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: AddressFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport with CountrySupport {
 
-  private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
+  private def actionUrl(mode: Mode) = routes.ReporterOrganisationAddressController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -55,7 +55,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(OrganisationAddressPage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,8 +66,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
-        "pageTitle" -> "organisationAddress.title",
-        "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers))
+        "pageTitle" -> "reporterOrganisationAddress.title",
+        "pageHeading" -> pageHeadingProvider("reporterOrganisationAddress.heading", getReporterDetailsOrganisationName(request.userAnswers))
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -75,10 +75,10 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
   def redirect(checkRoute: CheckRoute, value: Option[Address], isAlt: Boolean): Call =
     if (isAlt) {
-      navigator.routeAltMap(OrganisationAddressPage)(checkRoute)(value)(0)
+      navigator.routeAltMap(ReporterOrganisationAddressPage)(checkRoute)(value)(0)
     }
     else {
-      navigator.routeMap(OrganisationAddressPage)(checkRoute)(value)(0)
+      navigator.routeMap(ReporterOrganisationAddressPage)(checkRoute)(value)(0)
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -96,18 +96,18 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
-            "pageTitle" -> "organisationAddress.title",
-            "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers))
+            "pageTitle" -> "reporterOrganisationAddress.title",
+            "pageHeading" -> pageHeadingProvider("reporterOrganisationAddress.heading", getReporterDetailsOrganisationName(request.userAnswers))
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))
         },
         value => {
 
-          val redirectUsers = hasValueChanged(value, OrganisationAddressPage, mode, request.userAnswers)
+          val redirectUsers = hasValueChanged(value, ReporterOrganisationAddressPage, mode, request.userAnswers)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
@@ -115,7 +115,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       )
   }
 
-  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsOrganisationAddressUkPage) match {
+  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(ReporterOrganisationIsAddressUkPage) match {
     case Some(true) => true
     case _ => false
   }

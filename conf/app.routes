@@ -459,6 +459,11 @@ POST       /reporter/organisation/postcode                          controllers.
 GET        /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /reporter/organisation/address                                    controllers.reporter.organisation.ReporterOrganisationAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/address                                    controllers.reporter.organisation.ReporterOrganisationAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-address                             controllers.reporter.organisation.ReporterOrganisationAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-address                             controllers.reporter.organisation.ReporterOrganisationAddressController.onSubmit(mode: Mode = CheckMode)
+
 # REPORTER DETAILS - INDIVIDUAL JOURNEY
 
 GET        /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = NormalMode)

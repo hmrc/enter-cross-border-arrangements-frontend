@@ -858,6 +858,9 @@ reporterOrganisationIsAddressUk.heading = Is {0}’s address in the United Kingd
 reporterOrganisationIsAddressUk.checkYourAnswersLabel = Is {0}’s address in the United Kingdom?
 reporterOrganisationIsAddressUk.error.required = Select yes if their address is in the UK
 
+reporterOrganisationAddress.title = What is its address?
+reporterOrganisationAddress.heading = What is {0}’s address?
+
 
 
 
