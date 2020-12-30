@@ -104,7 +104,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case IsIndividualResidentForTaxOtherCountriesPage =>
       checkRoute => value => index => value match {
         case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, index)
-        case _          => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
+        case _          => continueToParentJourney(checkRoute)
       }
 
     case _ =>
@@ -117,13 +117,17 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
     _ => _ => _ => routes.IndividualCheckYourAnswersController.onPageLoad()
 
+  private[navigation] def continueToParentJourney(checkRoute: CheckRoute): Call = checkRoute match {
+    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
+    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
+    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode)
+    case _                                        => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
+  }
+
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
-      case IntermediariesRouting(NormalMode)         => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(checkRoute.mode)
       case IntermediariesRouting(CheckMode)          => routes.IndividualCheckYourAnswersController.onPageLoad() // TODO replace when CYA page is build
       case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo

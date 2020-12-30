@@ -19,7 +19,6 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.OrganisationNameFormProvider
-import helpers.JourneyHelpers.hasValueChanged
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.OrganisationNamePage
@@ -63,13 +62,8 @@ class OrganisationNameController @Inject()(
       renderer.render("organisation/organisationName.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
-    if (isAlt) {
-      navigator.routeAltMap(OrganisationNamePage)(checkRoute)(value)(0)
-    }
-    else {
-      navigator.routeMap(OrganisationNamePage)(checkRoute)(value)(0)
-    }
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(OrganisationNamePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -88,13 +82,14 @@ class OrganisationNameController @Inject()(
 
           val initialUserAnswers = UserAnswers(request.internalId)
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = hasValueChanged(value, OrganisationNamePage, mode, userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
+            _ = println("CR \n\n")
+            _ = println(checkRoute)
+          } yield Redirect(redirect(checkRoute, Some(value)))
         }
      )
   }
