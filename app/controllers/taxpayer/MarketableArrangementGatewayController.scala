@@ -41,6 +41,6 @@ class MarketableArrangementGatewayController @Inject()(
     implicit request =>
       // TODO placeholder, refactor to redirect to the right controller.
       val checkRoute = DefaultRouting(mode)
-      Future.successful(Redirect(navigator.routeMap(DisclosureMarketablePage)(checkRoute)(Some(false))(0)))
+      Future.successful(Redirect(navigator.routeMap(DisclosureMarketablePage)(checkRoute)(Some(true))(0)))
   }
 }

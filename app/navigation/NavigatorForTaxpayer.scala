@@ -33,7 +33,7 @@ class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
     case DisclosureMarketablePage =>
       checkRoute => value => _ =>
         value match {
-          case Some(true) => controllers.routes.IndexController.onPageLoad() //TODO - change when implementation date page built
+          case Some(true) => routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
           case _ => jumpOrCheckYourAnswers(routes.TaxpayersCheckYourAnswersController.onPageLoad(), checkRoute)
         }
 
