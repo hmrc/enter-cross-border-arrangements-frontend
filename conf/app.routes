@@ -477,3 +477,8 @@ GET        /reporter/individual/select-address               controllers.reporte
 POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/email-address                controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/email-address                controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-email-address         controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-email-address         controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = CheckMode)

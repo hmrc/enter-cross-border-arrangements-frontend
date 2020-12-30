@@ -898,3 +898,9 @@ reporterIndividualSelectAddress.1 = 2
 reporterIndividualSelectAddress.3 = 4
 reporterIndividualSelectAddress.checkYourAnswersLabel = What is your address?
 reporterIndividualSelectAddress.error.required = Select reporterIndividualSelectAddress
+
+reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.label = Email
+reporterIndividualEmailAddress.checkYourAnswersLabel = reporterIndividualEmailAddress
+reporterIndividualEmailAddress.error.required = Select yes if reporterIndividualEmailAddress

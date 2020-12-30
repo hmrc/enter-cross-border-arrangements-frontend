@@ -1,0 +1,86 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("reporterIndividualEmailAddress.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+          {% set emailHtml %}
+            {{ govukInput({
+              id: "emailAddress",
+              name: "emailAddress",
+              type: "email",
+              spellcheck: false,
+              classes: "govuk-!-width-one-third",
+              label: {
+                text: messages('reporterIndividualEmailAddress.label')
+              }
+            }) }}
+          {% endset -%}
+
+          {{ govukRadios({
+            idPrefix: "confirmEmail",
+            name: "confirmEmail",
+            fieldset: {
+              legend: {
+                text: messages('reporterIndividualEmailAddress.heading'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+            },
+            items: [
+              {
+                value: "email",
+                text: messages('site.yes'),
+                conditional: {
+                  html: emailHtml
+                }
+              },
+              {
+                value: "no",
+                text: messages('site.no')
+              }
+            ]
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {
+              "id": "submit"
+            }
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
