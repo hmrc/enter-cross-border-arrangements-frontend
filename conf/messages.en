@@ -863,3 +863,7 @@ reporterIndividualPostcode.error.required = Enter a postcode
 reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
 reporterIndividualPostcode.hint = Or enter the address manually
 reporterIndividualPostcode.submit = Find address
+
+reporterIndividualAddress.title = What is your address?
+reporterIndividualAddress.heading = What is your address?
+reporterIndividualAddress.checkYourAnswersLabel = reporterIndividualAddress

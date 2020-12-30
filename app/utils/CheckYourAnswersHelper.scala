@@ -39,6 +39,21 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
 import pages.intermediaries.WhatTypeofIntermediaryPage
 
+  def reporterIndividualAddress: Option[Row] = userAnswers.get(ReporterIndividualAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def reporterIndividualPostcode: Option[Row] = userAnswers.get(ReporterIndividualPostcodePage) map {
     answer =>
       Row(

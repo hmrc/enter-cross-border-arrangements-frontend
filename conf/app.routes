@@ -449,3 +449,8 @@ GET        /reporter/individual/postcode                     controllers.reporte
 POST       /reporter/individual/postcode                     controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/address                      controllers.reporter.individual.ReporterIndividualAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/address                      controllers.reporter.individual.ReporterIndividualAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-address               controllers.reporter.individual.ReporterIndividualAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-address               controllers.reporter.individual.ReporterIndividualAddressController.onSubmit(mode: Mode = CheckMode)

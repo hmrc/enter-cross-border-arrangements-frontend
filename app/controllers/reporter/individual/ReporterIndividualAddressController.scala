@@ -17,10 +17,11 @@
 package controllers.reporter.individual
 
 import controllers.actions._
-import forms.reporter.individual.ReporterIndividualPostcodeFormProvider
-import models.Mode
+import forms.AddressFormProvider
+import forms.reporter.individual.ReporterIndividualAddressFormProvider
+import models.{Address, Mode}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.ReporterIndividualPostcodePage
+import pages.reporter.individual.ReporterIndividualAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -28,62 +29,64 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterIndividualPostcodeController @Inject()(
+class ReporterIndividualAddressController @Inject()(
     override val messagesApi: MessagesApi,
+    countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: ReporterIndividualPostcodeFormProvider,
+    formProvider: AddressFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private val form = formProvider()
-
-  private def manualAddressURL(mode: Mode): String =
-    controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(mode).url
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualPostcodePage) match {
+      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val form = formProvider(countries)
+
+      val preparedForm = request.userAnswers.get(ReporterIndividualAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "mode" -> mode,
-        "manualAddressURL" -> manualAddressURL(mode)
+        "mode" -> mode
       )
 
-      renderer.render("reporter/individual/reporterIndividualPostcode.njk", json).map(Ok(_))
+      renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIndividualPostcodePage, mode, value, index, alternative)
+  def redirect(mode: Mode, value: Option[Address], index: Int = 0, alternative: Boolean = false): Call =
+    NavigatorForReporter.nextPage(ReporterIndividualAddressPage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val form = formProvider(countries)
+
       form.bindFromRequest().fold(
         formWithErrors => {
+
           val json = Json.obj(
             "form" -> formWithErrors,
-            "mode" -> mode,
-            "manualAddressURL" -> manualAddressURL(mode)
+            "mode" -> mode
           )
 
-          renderer.render("reporter/individual/reporterIndividualPostcode.njk", json).map(BadRequest(_))
+          renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(redirect(mode, Some(value)))
       )
