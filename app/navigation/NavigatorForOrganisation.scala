@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.organisation.routes
-import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, TaxpayersRouting}
+import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
 import models._
 import pages._
 import pages.organisation._
@@ -111,8 +111,10 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayersRouting(NormalMode)              => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
-      case TaxpayersRouting(CheckMode)               => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode)
+      case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case IntermediariesRouting(NormalMode)         => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(checkRoute.mode)
+      case IntermediariesRouting(CheckMode)          => routes.OrganisationCheckYourAnswersController.onPageLoad() // TODO replace when CYA page is build
       case DefaultRouting(CheckMode)                => routes.OrganisationCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }

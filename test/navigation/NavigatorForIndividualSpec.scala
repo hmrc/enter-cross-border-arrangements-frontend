@@ -17,814 +17,467 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
+import controllers.individual._
+import controllers.mixins.{AssociatedEnterprisesRouting, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
 import generators.Generators
-import models.SelectType.{Individual, Organisation}
 import models._
-import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement}
-import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.hallmarks.HallmarkD.D2
-import models.hallmarks.HallmarkD1._
-import models.hallmarks._
-import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import pages.arrangement._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.hallmarks._
 import pages.individual._
-import pages.organisation._
-import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-
-import java.time.LocalDate
 
 class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new Navigator
+  val navigator = new NavigatorForIndividual
   val country: Country = Country("valid", "GB", "United Kingdom")
-  val index: Int = 0
-  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
+  val address: Address = Address(None, None, None, "", None, country)
+  val tin: TaxReferenceNumbers = TaxReferenceNumbers("1234567890", None, None)
 
-  "Navigator" - {
+  val D1 = "What is their name?"
+  val D2 = "Do you know {0}'s date of birth?"
+  val D3 = "What is {0}'s date of birth?"
+  val D4 = "Do you know where {0} was born?"
+  val D5 = "Where was {0} born?"
+  val D6 = "Do you know {0}’s Address?"
+  val D7 = "Does {0}’s live in the United Kingdom?"
+  val D8 = "What is the {0}'s postcode?"
+  val D9 = "What is {0}'s address? (/select-address)"
+  val D10 = "What is {0}'s address? (/address)"
+  val D11 = "Do you know the email address for a main contact at {0}?"
+  val D12 = "What is the email address for a main contact at {0}?"
+  val D13 = "Which country is {0} resident in for tax purposes?"
+  val D14 = "Do you know any of {0}’s tax reference numbers for the United Kingdom?"
+  val D15 = "Do you know {0}’s tax identification numbers for the country?"
+  val D16 = "What are {0}’s tax reference numbers for the United Kingdom?"
+  val D17 = "What are {0}’s tax identification numbers for {1}?"
+  val D18 = "Is {0} resident for tax purposes in any other countries?"
+  val D19 = "[Organisation] Check your answers"
+  // In the associated enterprise journey
+  val E10 = "Is {0} affected by the arrangement?"
+  val E11 = "[Associated Enterprises] Check your answers?"
+  // In the relevant taxpayers journey
+  val T9 = "Is this a marketable arrangement - gateway controller"
+  val T11 = "[Relevant Taxpayers] Check your answers?"
+  // In the add intermediaries journey
+  val I9 = "What type of intermediary is {0}?"
+  val I13 = "[Add Intermediaries] Check your answers?"
 
-    "in Normal mode" - {
+  "Individual Navigator" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+    "must go from a page that doesn't exist in the route map to Index" ignore {
 
-        case object UnknownPage extends Page
+      case object UnknownPage extends Page
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+      navigator.routeMap(UnknownPage)(DefaultRouting(NormalMode))(Some(true))(0)
+        .mustBe(controllers.routes.IndexController.onPageLoad())
+    }
 
-            navigator.nextPage(UnknownPage, NormalMode, answers)
-              .mustBe(routes.IndexController.onPageLoad())
+    "Default routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D1 page to $D2" in {
+
+          navigator
+            .routeMap(IndividualNamePage)(DefaultRouting(NormalMode))(Some(Name("first", "last")))(0)
+            .mustBe(routes.IsIndividualDateOfBirthKnownController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D2 page to $D3 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D2 to $D4 when answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D4 to the $D5 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D4 to the $D6 when answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D5 to $D6" in {
+
+          navigator
+            .routeMap(IndividualPlaceOfBirthPage)(DefaultRouting(NormalMode))(Some("address"))(0)
+            .mustBe(routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D6 to $D7 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D6 to $D11 when answer is 'No'" in {
+
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D7 to $D10 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IndividualAddressController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D7 to $D8 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.IndividualPostcodeController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D8 to $D9 when the answer has multiple entries " in {
+
+          navigator
+            .routeMap(IndividualUkPostcodePage)(DefaultRouting(NormalMode))(Some("A99 AA9"))(0)
+            .mustBe(routes.IndividualSelectAddressController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D9 to $D11" in {
+
+          navigator
+            .routeMap(IndividualSelectAddressPage)(DefaultRouting(NormalMode))(Some("A99 AA9"))(0)
+            .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D10 to $D11" in {
+
+          navigator
+            .routeMap(IndividualAddressPage)(DefaultRouting(NormalMode))(Some(address))(0)
+            .mustBe(routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D11 to $D12 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
+        }
+
+        s"must go from $D11 to $D13 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D12 to $D13" in {
+
+          navigator
+            .routeMap(EmailAddressForIndividualPage)(DefaultRouting(NormalMode))(Some("test@email.com"))(0)
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 1))
+        }
+
+        s"must go from $D13 to $D14 when the country is GB" in {
+
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(DefaultRouting(NormalMode))(Some(country))(0)
+            .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D14 to $D15 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D14 to $D18 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, 1))
+        }
+
+        s"must go from $D15 to $D18" in {
+
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForUKIndividualPage)(DefaultRouting(NormalMode))(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, 1))
+        }
+
+        s"must go from $D13 to $D16 when the country is non GB" in {
+
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D16 to $D17 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D16 to $D18 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, 1))
+        }
+
+        s"must go from $D17 to $D18" in {
+
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(DefaultRouting(NormalMode))(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, 1))
+        }
+
+        s"must go from $D18 to $D13 if the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(true))(0)
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 0))
+        }
+
+        s"must go from $D18 to $D19 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(false))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
       }
 
+      "in Check mode" - {
 
-      "must go from What is their name? page to What is {0}'s date of birth?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        val defaultRoutingInCheckMode = DefaultRouting(CheckMode)
 
-            navigator
-              .nextPage(IndividualNamePage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
+        s"must go from $D1 page to $D19" in {
+
+          navigator
+            .routeMap(IndividualNamePage)(defaultRoutingInCheckMode)(Some(Name("first", "last")))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from What is {0}'s date of birth? page to Do you know where {0} was born?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D2 page to $D3 when answer is 'Yes' " in {
 
-            navigator
-              .nextPage(IndividualDateOfBirthPage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualDateOfBirthController.onPageLoad(CheckMode))
         }
-      }
 
+        s"must go from $D2 to $D19 when answer is 'No' " in {
 
-      "must go from the Do you know where {0} was born?  page to the Where was {0} born? when answer is 'Yes' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualPlaceOfBirthKnownPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from the Do you know where {0} was born?  page to the Do you know {0}'s address? when answer is 'No' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D4 to the $D5 when answer is 'Yes' " in {
 
-            val updatedAnswers =
-              answers
-                .set(IsIndividualPlaceOfBirthKnownPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from Where was {0} born? page to Do you know {0}'s address?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D4 to the $D19 when answer is 'No' " in {
 
-            navigator
-              .nextPage(IndividualPlaceOfBirthPage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from Do you know {0} address yes to 'Does the individual live in the United Kingdom?'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D5 to $D19" in {
 
-            val updatedAnswers =
-              answers
-                .set(IsIndividualAddressKnownPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IndividualPlaceOfBirthPage)(defaultRoutingInCheckMode)(Some("address"))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from What is the name of the organisation? page to Do you know {0}’s Address page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D6 to $D7 when answer is 'Yes' " in {
 
-            navigator
-              .nextPage(OrganisationNamePage, NormalMode, answers)
-              .mustBe(controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IsIndividualAddressUkController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from the Do you know {0}’s Address page to the Is {0}’s main address in the United Kingdom? when answer is 'Yes' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D6 to $D19 when answer is 'No'" in {
 
-            val updatedAnswers =
-              answers
-                .set(IsOrganisationAddressKnownPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from the Do you know {0}’s Address page to " +
-        "Do you know the email address for a main contact at the organisation? page when answer is 'No' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D7 to $D10 when the answer is 'No' " in {
 
-            val updatedAnswers =
-              answers
-                .set(IsOrganisationAddressKnownPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsOrganisationAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualAddressController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from the Is {0}’s main address in the United Kingdom? page to the Index page when answer is 'Yes' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D7 to $D8 when the answer is 'Yes' " in {
 
-            val updatedAnswers =
-              answers
-                .set(IsOrganisationAddressUkPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualPostcodeController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from the Is {0}’s main address in the United Kingdom? page to What is {0}’s main address? " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D8 to $D9 when the answer has multiple entries " in {
 
-            val updatedAnswers =
-              answers
-                .set(IsOrganisationAddressUkPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsOrganisationAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IndividualUkPostcodePage)(defaultRoutingInCheckMode)(Some("A99 AA9"))(0)
+            .mustBe(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from Postcode page to What is your main address page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D9 to $D19" in {
 
-            val updatedAnswers =
-              answers.set(PostcodePage, "ZZ1 ZZ4")
-                .success.value
-                .set(HallmarkEPage, HallmarkE.values.toSet)
-                .success.value
-
-
-            navigator
-              .nextPage(PostcodePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IndividualSelectAddressPage)(defaultRoutingInCheckMode)(Some("A99 AA9"))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from What is the organisation's main address page (/select-address) to " +
-        "Do you know the email address for a main contact at the organisation? page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D10 to $D19" in {
 
-            val updatedAnswers =
-              answers.set(SelectAddressPage, "25 Testing Close, Othertown, Z9 3WW")
-                .success.value
-
-            navigator
-              .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IndividualAddressPage)(defaultRoutingInCheckMode)(Some(address))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from What is the organisation's main address page (/address) to " +
-        "Do you know the email address for a main contact at the organisation? page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D11 to $D12 when the answer is 'Yes' " in {
 
-            val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-              Country("valid", "FR", "France"))
-
-            val updatedAnswers =
-              answers.set(OrganisationAddressPage, address)
-                .success.value
-
-            navigator
-              .nextPage(OrganisationAddressPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.EmailAddressForIndividualController.onPageLoad(CheckMode))
         }
-      }
 
-      "must go from Do you know the email address for a main contact at the organisation? page to " +
-        "What is the email address for a main contact at the organisation? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D11 to $D19 when the answer is 'No' " in {
 
-            val updatedAnswers =
-              answers.set(EmailAddressQuestionForOrganisationPage, true)
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from Do you know the email address for a main contact at the organisation? page to " +
-        "Which country is the organisation resident in for tax purposes? page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D12 to $D19" in {
 
-            val updatedAnswers =
-              answers.set(EmailAddressQuestionForOrganisationPage, false)
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressQuestionForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(EmailAddressForIndividualPage)(defaultRoutingInCheckMode)(Some("test@email.com"))(0)
+            .mustBe(routes.IndividualCheckYourAnswersController.onPageLoad())
         }
-      }
 
-      "must go from What is the email address for a main contact at the organisation? page to " +
-        "Which country is the organisation resident in for tax purposes? page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D13 to $D14 when the country is GB" in {
 
-            val updatedAnswers =
-              answers.set(EmailAddressForOrganisationPage, "email@email.com")
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(defaultRoutingInCheckMode)(Some(country))(0)
+            .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 0))
         }
-      }
 
-      "must go from Which country is the organisation resident in for tax purposes? page to " +
-        "Do you know any of the organisation’s tax reference numbers for the United Kingdom? page if the answer is GB" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D14 to $D15 when the answer is 'Yes' " in {
 
-            val updatedAnswers =
-              answers.set(WhichCountryTaxForOrganisationPage, country)
-                .success.value
-
-            navigator
-              .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 0))
         }
-      }
 
-      "must go from Which country is the organisation resident in for tax purposes? page to " +
-        "Do you know the organisation’s tax identification numbers for the country? page if the answer is not GB" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D14 to $D18 when the answer is 'No' " in {
 
-            val updatedAnswers =
-              answers.set(WhichCountryTaxForOrganisationPage, Country("valid", "FR", "France"))
-                .success.value
-
-            navigator
-              .nextPage(WhichCountryTaxForOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
         }
-      }
 
-      "must go from Do you know any of the organisation’s tax reference numbers for the United Kingdom? page " +
-        "to What are the organisation’s tax reference numbers for the United Kingdom? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D15 to $D18" in {
 
-            val updatedAnswers =
-              answers.set(DoYouKnowAnyTINForUKOrganisationPage, true)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForUKIndividualPage)(defaultRoutingInCheckMode)(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
         }
-      }
 
-      "must go from Do you know any of the organisation’s tax reference numbers for the United Kingdom? page " +
-        "to Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D13 to $D16 when the country is non GB" in {
 
-            val updatedAnswers =
-              answers.set(DoYouKnowAnyTINForUKOrganisationPage, false)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowAnyTINForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(defaultRoutingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(CheckMode, 0))
         }
-      }
 
-      "must go from Do you know the organisation’s tax identification numbers for the country? page " +
-        "to What are the organisation’s tax identification numbers for the country? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D16 to $D17 when the answer is 'Yes' " in {
 
-            val updatedAnswers =
-              answers.set(DoYouKnowTINForNonUKOrganisationPage, true)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(CheckMode, 0))
         }
-      }
 
-      "must go from Do you know the organisation’s tax identification numbers for the country? page " +
-        "to Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D16 to $D18 when the answer is 'No' " in {
 
-            val updatedAnswers =
-              answers.set(DoYouKnowTINForNonUKOrganisationPage, false)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowTINForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(defaultRoutingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
         }
-      }
 
-      "must go from What are the organisation’s tax reference numbers for the United Kingdom? " +
-        "to Is the organisation resident for tax purposes in any other countries? page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D17 to $D18" in {
 
-            val updatedAnswers =
-              answers.set(WhatAreTheTaxNumbersForUKOrganisationPage, TaxReferenceNumbers("1234567890", None, None))
-                .success.value
-
-            navigator
-              .nextPage(WhatAreTheTaxNumbersForUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(defaultRoutingInCheckMode)(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
         }
-      }
 
-      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "Which country is the organisation resident in for tax purposes? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        s"must go from $D18 to $D13 if the answer is 'Yes' " in {
 
-            val updatedAnswers =
-              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, true)
-                .success.value
-
-            navigator
-              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "Check your answers for organisation page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .remove(IsAssociatedEnterpriseAffectedPage)
-                .success.value
-                .remove(TaxpayerSelectTypePage)
-                .success.value
-                .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
-                .success.value
-
-            navigator
-              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
-        }
-      }
-
-      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "Check your answers for associated enterprise page if in the associated enterprise journey" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
-                .success.value
-                .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
-                .success.value
-
-            navigator
-              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from What are the organisation’s tax identification numbers for the country? page to " +
-        "Is the organisation resident for tax purposes in any other countries? page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, TaxReferenceNumbers("1234567890", None, None))
-                .success.value
-
-            navigator
-              .nextPage(WhatAreTheTaxNumbersForNonUKOrganisationPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from What is their name? page to What is individuals's date of birth?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            navigator
-              .nextPage(IndividualNamePage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from What is individuals's date of birth? page to Do you know where individuals was born?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            navigator
-              .nextPage(IndividualDateOfBirthPage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode))
-        }
-      }
-
-
-      "must go from the Do you know where individuals was born?  page to the Where was individuals born? when answer is 'Yes' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualPlaceOfBirthKnownPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from the Do you know where individuals was born?  page to the Do you know individuals's address? when answer is 'No' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualPlaceOfBirthKnownPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualPlaceOfBirthKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from Where was individuals born? page to Do you know individuals's address?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            navigator
-              .nextPage(IndividualPlaceOfBirthPage, NormalMode, answers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Do you know individuals address' to 'Does the individual live in the United Kingdom?' " +
-        "when answer is 'Yes'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualAddressKnownPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Do you know individuals address' to 'Do you know individuals email address?'" +
-        " when answer is 'No'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualAddressKnownPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualAddressKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Does the individual live in the United Kingdom? No to 'what is the individuals address'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualAddressUkPage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Does the individual live in the United Kingdom? yes to 'what is the individuals post code'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IsIndividualAddressUkPage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(IsIndividualAddressUkPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualPostcodeController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from select 'What is the individuals postcode? to 'What is the individuals address?'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IndividualUkPostcodePage, "A99 AA9")
-                .success
-                .value
-
-            navigator
-              .nextPage(IndividualUkPostcodePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from select 'What is the individuals address?' to 'Do you know individuals email address'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IndividualSelectAddressPage, "A99 AA9")
-                .success
-                .value
-
-            navigator
-              .nextPage(IndividualSelectAddressPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What is the individuals address?' entry to 'Do you know individuals email address'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(IndividualAddressPage, Address(None, None, None, "", None,
-                  Country("valid", "GB", "United Kingdom")))
-                .success
-                .value
-
-            navigator
-              .nextPage(IndividualAddressPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Do you know individuals email address' " +
-        "to What is individuals email address? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(EmailAddressQuestionForIndividualPage, true)
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Do you know individuals email address' " +
-        "to 'What is individuals email address?' page if the answer is false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(EmailAddressQuestionForIndividualPage, false)
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressQuestionForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from 'What is individuals email address?' to" +
-        "'Which country is the individual resident in for tax purposes?'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(EmailAddressForIndividualPage, "test@email.com")
-                .success.value
-
-            navigator
-              .nextPage(EmailAddressForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
-
-        }
-      }
-
-      "must go from 'Which country is the individual resident in for tax purposes?' to" +
-        "'Do you know the individuals tax identification numbers for the United Kingdom' when the country is GB" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhichCountryTaxForIndividualPage, country)
-                .success
-                .value
-
-            navigator
-              .nextPage(WhichCountryTaxForIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from 'Do you know the individuals tax identification numbers for the United Kingdom' to" +
-        "'What are the individuals tax identification numbers for the United Kingdom when true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(DoYouKnowAnyTINForUKIndividualPage, true)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index))
-
-        }
-      }
-
-      "must go from 'Do you know the individuals tax identification numbers for the United Kingdom' to" +
-        "'Is the individuals resident for tax purposes in any other countries?' when false" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(DoYouKnowAnyTINForUKIndividualPage, false)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowAnyTINForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
-
-        }
-      }
-
-      "must go from 'What are the individuals tax identification numbers for the United Kingdom to" +
-        "'Is the individuals resident for tax purposes in any other countries?'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(WhatAreTheTaxNumbersForUKIndividualPage, TaxReferenceNumbers("1234567890", None, None))
-                .success.value
-
-            navigator
-              .nextPage(WhatAreTheTaxNumbersForUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
-
-        }
-      }
-
-
-      "must go from Is the individuals resident for tax purposes in any other countries? page to " +
-        "Which country is the individuals resident in for tax purposes? page if the answer is true" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsIndividualResidentForTaxOtherCountriesPage, true)
-                .success.value
-
-            navigator
-              .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from What are the individuals’s tax identification numbers for the country? page to " +
-        "Is the individual resident for tax purposes in any other countries?" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, TaxReferenceNumbers("1234567890", None, None))
-                .success.value
-
-            navigator
-              .nextPage(WhatAreTheTaxNumbersForNonUKIndividualPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index))
-        }
-      }
-
-      "must go from Is the organisation resident for tax purposes in any other countries? page to " +
-        "'What is [name]'s implementation date?' for organisation page if the answer is false and in relevant taxpayer journey" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IsOrganisationResidentForTaxOtherCountriesPage, false)
-                .success.value
-                .set(TaxpayerSelectTypePage, Organisation)
-                .success.value
-
-            navigator
-              .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 0))
         }
       }
     }
+
+    "Associated enterprise routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D18 to $E10 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(AssociatedEnterprisesRouting(NormalMode))(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
+        }
+      }
+    }
+
+    "Relevant taxpayers routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D18 to $T9 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(TaxpayersRouting(NormalMode))(Some(false))(0)
+            .mustBe(controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode))
+        }
+      }
+    }
+
+    "Add intermediaries routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D18 to $I9 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(IntermediariesRouting(NormalMode))(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode))
+        }
+      }
+    }
+
   }
 }
 

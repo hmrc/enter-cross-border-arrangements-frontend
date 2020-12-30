@@ -17,13 +17,13 @@
 package navigation
 
 import base.SpecBase
-import controllers.mixins.{AssociatedEnterprisesRouting, DefaultRouting, TaxpayersRouting}
+import controllers.mixins.{AssociatedEnterprisesRouting, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
 import generators.Generators
 import models._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import pages.organisation._
-import play.api.mvc.{AnyContentAsEmpty, Call}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
 class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -54,6 +54,9 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
   // In the relevant taxpayers journey
   val T9 = "Is this a marketable arrangement - gateway controller"
   val T11 = "[Relevant Taxpayers] Check your answers?"
+  // In the add intermediaries journey
+  val I9 = "What type of intermediary is {0}?"
+  val I13 = "[Add Intermediaries] Check your answers?"
 
   "Organisation Navigator" - {
 
@@ -728,6 +731,19 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         }
       }
 
+    }
+
+    "Add intermediaries routing" - {
+
+      "in Normal mode" - {
+
+        s"must go from $D14 to $I9 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(IntermediariesRouting(NormalMode))(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode))
+        }
+      }
     }
 
   }
