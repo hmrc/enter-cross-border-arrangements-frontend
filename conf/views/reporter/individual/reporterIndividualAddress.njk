@@ -86,13 +86,13 @@
 
             {{ govukInput({
              label: {
-               text: messages('address.postcodeUk.optional')
+               text: messages('address.postcodeUk.optional' if isUkAddress else 'address.postcode.optional')
              },
-             classes: "govuk-!-width-two-thirds",
+             classes: "govuk-input--width-10",
              id: "postCode",
              name: "postCode",
              value: form.postCode.value,
-           errorMessage: form.postCode.error
+             errorMessage: form.postCode.error
             }) }}
 
             {{ govukInput ({
@@ -113,10 +113,10 @@
               }) }}
             {% else %}
               {{ govukSelect({
-                classes: "govuk-input--width-20 autocomplete",
                 label: {
                   text: messages('address.country')
                 },
+                classes: "govuk-!-width-two-thirds autocomplete",
                 id: "country",
                 name: "country",
                 errorMessage: form.country.error,

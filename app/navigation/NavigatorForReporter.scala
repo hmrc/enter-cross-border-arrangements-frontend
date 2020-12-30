@@ -83,8 +83,10 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterIndividualPlaceOfBirthPage => mode => _ => _ =>
       controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(mode)
 
-    case ReporterIsIndividualAddressUKPage => mode => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(mode)
+    case ReporterIsIndividualAddressUKPage => mode => value => _ => value match {
+      case Some(true) => controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(mode)
+      case _ => controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(mode)
+    }
 
     case ReporterIndividualPostcodePage => mode => _ => _ =>
       controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(mode)
