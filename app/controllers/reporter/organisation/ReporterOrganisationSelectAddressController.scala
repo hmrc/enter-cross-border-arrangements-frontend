@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.organisation
+package controllers.reporter.organisation
 
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged, pageHeadingProvider}
+import helpers.JourneyHelpers.{getReporterDetailsOrganisationName, hasValueChanged, pageHeadingProvider}
+import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.NavigatorForOrganisation
-import pages.SelectedAddressLookupPage
-import pages.organisation.{PostcodePage, SelectAddressPage}
+import pages.reporter.ReporterSelectedAddressLookupPage
+import pages.reporter.organisation.{ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -33,10 +34,9 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationSelectAddressController @Inject()(
+class ReporterOrganisationSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: NavigatorForOrganisation,
@@ -51,14 +51,14 @@ class OrganisationSelectAddressController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(mode: Mode): String = routes.ReporterOrganisationAddressController.onPageLoad(mode).url
 
-  private def actionUrl(mode: Mode): String = routes.OrganisationSelectAddressController.onPageLoad(mode).url
+  private def actionUrl(mode: Mode): String = routes.ReporterOrganisationSelectAddressController.onPageLoad(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = request.userAnswers.get(PostcodePage) match {
+      val postCode = request.userAnswers.get(ReporterOrganisationPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
       }
@@ -67,10 +67,10 @@ class OrganisationSelectAddressController @Inject()(
         case Nil => Future.successful(Redirect(manualAddressURL(mode)))
         case addresses =>
 
-            val preparedForm = request.userAnswers.get(SelectAddressPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
+          val preparedForm = request.userAnswers.get(ReporterOrganisationSelectAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
           val addressItems: Seq[Radios.Radio] = addresses.map(address =>
             Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}"))
           val radios = Radios(field = preparedForm("value"), items = addressItems)
@@ -79,9 +79,8 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> preparedForm,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
+              "displayName" -> getReporterDetailsOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "pageTitle" -> "selectAddress.title",
-              "pageHeading" -> pageHeadingProvider("selectAddress.heading", getOrganisationName(request.userAnswers)),
               "radios" -> radios
             )
 
@@ -93,15 +92,15 @@ class OrganisationSelectAddressController @Inject()(
 
   def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
     if (isAlt) {
-      navigator.routeAltMap(SelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeAltMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
     }
     else {
-      navigator.routeMap(SelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val postCode = request.userAnswers.get(PostcodePage) match {
+      val postCode = request.userAnswers.get(ReporterOrganisationPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
       }
@@ -120,9 +119,9 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> formWithErrors,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
+              "displayName" -> getReporterDetailsOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "pageTitle" -> "selectAddress.title",
-              "pageHeading" -> pageHeadingProvider("selectAddress.heading", getOrganisationName(request.userAnswers)),
+              "pageHeading" -> pageHeadingProvider("", getReporterDetailsOrganisationName(request.userAnswers)),
               "radios" -> radios
             )
 
@@ -131,11 +130,11 @@ class OrganisationSelectAddressController @Inject()(
           value => {
             val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
-            val redirectUsers = hasValueChanged(value, SelectAddressPage, mode, request.userAnswers)
+            val redirectUsers = hasValueChanged(value, ReporterOrganisationSelectAddressPage, mode, request.userAnswers)
 
             for {
-              updatedAnswers            <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+              updatedAnswers            <- Future.fromTry(request.userAnswers.set(ReporterOrganisationSelectAddressPage, value))
+              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, addressToStore))
               _                         <- sessionRepository.set(updatedAnswersWithAddress)
               checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
             } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))

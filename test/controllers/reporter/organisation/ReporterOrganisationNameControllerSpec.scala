@@ -42,7 +42,7 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val reporterOrganisationNameRoute = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode).url
 
-  "OrganisationName Controller" - {
+  "ReporterOrganisationName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

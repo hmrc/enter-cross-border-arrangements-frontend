@@ -29,7 +29,7 @@ import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
+import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
 
 @Singleton
 class NavigatorForReporter @Inject()() extends AbstractNavigator {
@@ -87,9 +87,16 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
         controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(checkRoute.mode)
     }
 
+    case ReporterOrganisationPostcodePage => checkRoute => _ => _ =>
+      controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(checkRoute.mode)
+
     case ReporterOrganisationAddressPage => checkRoute => _ => _ =>
       // TODO - Change redirect to reporter details email page when built
       controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(checkRoute.mode)
+
+    case ReporterOrganisationSelectAddressPage => checkRoute =>_ =>_ =>
+      // TODO - Change redirect to reporter details email page when built
+      controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(checkRoute.mode)
 
     // Reporter - Individual Journey Navigation
 

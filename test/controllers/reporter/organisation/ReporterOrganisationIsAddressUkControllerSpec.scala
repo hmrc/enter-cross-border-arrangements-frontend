@@ -42,7 +42,7 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Mockit
 
   lazy val reporterOrganisationisAddressUkRoute = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode).url
 
-  "IsOrganisationAddressUk Controller" - {
+  "ReporterOrganisationIsAddressUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

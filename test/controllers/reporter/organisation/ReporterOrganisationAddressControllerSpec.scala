@@ -52,7 +52,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with MockitoSug
   lazy val organisationAddressRoute: String = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(NormalMode).url
   lazy val organisationAddressCheckModeRoute = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(CheckMode).url
 
-  "OrganisationAddress Controller" - {
+  "ReporterOrganisationAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

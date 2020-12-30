@@ -27,7 +27,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
-import pages.reporter.organisation.{ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage}
+import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -214,22 +214,31 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       }
 
       "must go from 'What is [name]'s postcode' page " +
-        "to select 'What is [name]'s address' page " +
+        "to select 'What is [name]'s address' select address page " +
         "when valid postcode is entered" in {
 
-        //TODO - redirect to select address page
         navigator
-          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationPostcodePage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(NormalMode))
       }
 
-      "must go from 'What is [name]'s address' page " +
+      "must go from 'What is [name]'s address' manual address page " +
         "to select 'Do you have a contact email address at [name]' page " +
         "when a valid address is entered" ignore {
 
         //TODO - redirect to reporter details organisation email address page
         navigator
-          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is [name]'s address' select address page " +
+        "to select 'Do you have a contact email address at [name]' page " +
+        "when a valid address is selected" ignore {
+
+        //TODO - redirect to reporter details organisation email address page
+        navigator
+          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
           .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
       }
 
