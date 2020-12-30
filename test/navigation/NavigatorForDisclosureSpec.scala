@@ -22,8 +22,6 @@ import generators.Generators
 import models.NormalMode
 import models.disclosure.DisclosureType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureNamePage, DisclosureTypePage}
-import org.scalacheck.Arbitrary.arbitrary
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -59,15 +57,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "to 'Disclosure check your answers' page" +
         "when an option is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(DisclosureMarketablePage, true).success.value
-
-            NavigatorForDisclosure.nextPage(DisclosureMarketablePage, NormalMode, updatedAnswers.get(DisclosureMarketablePage))
-              .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
-
+        navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -102,9 +93,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "when an arrangement ID is entered" in {
 
           navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(Some("FRA20210101ABC123"))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(NormalMode))
+            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
       }
-
-    }
   }
 }
