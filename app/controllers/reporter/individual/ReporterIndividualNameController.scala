@@ -18,9 +18,8 @@ package controllers.reporter.individual
 
 import controllers.actions._
 import forms.reporter.individual.ReporterIndividualNameFormProvider
-import models.Mode
-import models.reporter.individual.ReporterIndividualName
-import navigation.{Navigator, NavigatorForReporter}
+import models.{Mode, Name}
+import navigation.NavigatorForReporter
 import pages.reporter.individual.ReporterIndividualNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReporterIndividualNameController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -63,7 +61,7 @@ class ReporterIndividualNameController @Inject()(
       renderer.render("reporter/individual/reporterIndividualName.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[ReporterIndividualName], index: Int = 0, alternative: Boolean = false): Call =
+  def redirect(mode: Mode, value: Option[Name], index: Int = 0, alternative: Boolean = false): Call =
     NavigatorForReporter.nextPage(ReporterIndividualNamePage, mode, value, index, alternative)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

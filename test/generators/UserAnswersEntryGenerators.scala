@@ -16,14 +16,12 @@
 
 package generators
 
-import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
-import models.reporter.individual.ReporterIndividualName
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
@@ -40,15 +38,21 @@ import pages.intermediaries._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
+import pages.reporter.individual._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
-import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
-import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIsIndividualAddressUKPage}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterIndividualSelectAddressUserAnswersEntry: Arbitrary[(ReporterIndividualSelectAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualSelectAddressPage.type]
+        value <- arbitrary[String].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterIndividualAddressUserAnswersEntry: Arbitrary[(ReporterIndividualAddressPage.type, JsValue)] =
     Arbitrary {
@@ -102,7 +106,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[ReporterIndividualNamePage.type]
-        value <- arbitrary[ReporterIndividualName].map(Json.toJson(_))
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 

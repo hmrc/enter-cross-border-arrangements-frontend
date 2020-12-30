@@ -16,17 +16,17 @@
 
 package pages.reporter.individual
 
-import models.reporter.individual.ReporterIndividualName
+import models.Name
 import pages.behaviours.PageBehaviours
 
 class ReporterIndividualNamePageSpec extends PageBehaviours {
 
   "ReporterIndividualNamePage" - {
 
-    beRetrievable[ReporterIndividualName](ReporterIndividualNamePage)
+    beRetrievable[Name](ReporterIndividualNamePage)
 
-    beSettable[ReporterIndividualName](ReporterIndividualNamePage)
+    beSettable[Name](ReporterIndividualNamePage)
 
-    beRemovable[ReporterIndividualName](ReporterIndividualNamePage)
+    beRemovable[Name](ReporterIndividualNamePage)
   }
 }

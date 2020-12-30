@@ -4,6 +4,7 @@
 {% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk"        import govukSelect %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -101,6 +102,27 @@
                 "hidden": "true"
               }
             }) }}
+
+            {% if isUkAddress %}
+              {{ govukInput ({
+                name: "country",
+                value: "GB",
+                attributes: {
+                  "hidden": "true"
+                }
+              }) }}
+            {% else %}
+              {{ govukSelect({
+                classes: "govuk-input--width-20 autocomplete",
+                label: {
+                  text: messages('address.country')
+                },
+                id: "country",
+                name: "country",
+                errorMessage: form.country.error,
+                items: countries
+              }) }}
+            {% endif %}
 
           </fieldset>
 

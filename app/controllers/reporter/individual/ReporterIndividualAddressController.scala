@@ -18,7 +18,6 @@ package controllers.reporter.individual
 
 import controllers.actions._
 import forms.AddressFormProvider
-import forms.reporter.individual.ReporterIndividualAddressFormProvider
 import models.{Address, Mode}
 import navigation.NavigatorForReporter
 import pages.reporter.individual.ReporterIndividualAddressPage
@@ -59,7 +58,8 @@ class ReporterIndividualAddressController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "mode" -> mode
+        "mode" -> mode,
+        "isUkAddress" -> true
       )
 
       renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(Ok(_))
@@ -79,7 +79,8 @@ class ReporterIndividualAddressController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
-            "mode" -> mode
+            "mode" -> mode,
+            "isUkAddress" -> true
           )
 
           renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(BadRequest(_))
