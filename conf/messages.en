@@ -825,12 +825,12 @@ taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 reporterIndividualName.title = What is your full name?
 reporterIndividualName.heading = What is your full name?
 reporterIndividualName.firstName = First Name
-reporterIndividualName.lastName = Last Name
+reporterIndividualName.secondName = Last Name
 reporterIndividualName.checkYourAnswersLabel = reporterIndividualName
 reporterIndividualName.error.firstName.required = Provide a first name
-reporterIndividualName.error.lastName.required = Provide a last name
+reporterIndividualName.error.secondName.required = Provide a last name
 reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
-reporterIndividualName.error.lastName.length = Last name must be 200 characters or less
+reporterIndividualName.error.secondName.length = Last name must be 200 characters or less
 
 reporterIndividualDateOfBirth.title = What is your date of birth?
 reporterIndividualDateOfBirth.heading = What is your date of birth?
@@ -867,3 +867,10 @@ reporterIndividualPostcode.submit = Find address
 reporterIndividualAddress.title = What is your address?
 reporterIndividualAddress.heading = What is your address?
 reporterIndividualAddress.checkYourAnswersLabel = reporterIndividualAddress
+
+reporterIndividualSelectAddress.title = What is your address?
+reporterIndividualSelectAddress.heading = What is your address?
+reporterIndividualSelectAddress.1 = 2
+reporterIndividualSelectAddress.3 = 4
+reporterIndividualSelectAddress.checkYourAnswersLabel = What is your address?
+reporterIndividualSelectAddress.error.required = Select reporterIndividualSelectAddress

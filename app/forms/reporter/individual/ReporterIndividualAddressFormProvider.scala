@@ -27,7 +27,6 @@ import javax.inject.Inject
 class ReporterIndividualAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
   val fieldLength = 400
-  //TODO Remove later if not needed
 
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(

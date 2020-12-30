@@ -126,7 +126,7 @@ class ReporterIndividualPostcodeControllerSpec extends SpecBase with MockitoSuga
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/select-address"
 
       application.stop()
     }

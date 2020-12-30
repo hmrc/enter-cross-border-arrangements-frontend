@@ -39,6 +39,21 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
 import pages.intermediaries.WhatTypeofIntermediaryPage
 
+  def reporterIndividualSelectAddress: Option[Row] = userAnswers.get(ReporterIndividualSelectAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualSelectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"reporterIndividualSelectAddress.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualSelectAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def reporterIndividualAddress: Option[Row] = userAnswers.get(ReporterIndividualAddressPage) map {
     answer =>
       Row(
@@ -118,7 +133,7 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
     answer =>
       Row(
         key     = Key(msg"reporterIndividualName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.firstName} ${answer.lastName}"),
+        value   = Value(lit"${answer.firstName} ${answer.secondName}"),
         actions = List(
           Action(
             content            = msg"site.edit",

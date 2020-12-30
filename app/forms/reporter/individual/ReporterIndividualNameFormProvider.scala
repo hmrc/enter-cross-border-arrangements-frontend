@@ -17,7 +17,7 @@
 package forms.reporter.individual
 
 import forms.mappings.Mappings
-import models.reporter.individual.ReporterIndividualName
+import models.Name
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -27,12 +27,12 @@ class ReporterIndividualNameFormProvider @Inject() extends Mappings {
 
   private val maxLength: Int = 200
 
-   def apply(): Form[ReporterIndividualName] = Form(
+   def apply(): Form[Name] = Form(
      mapping(
       "firstName" -> text("reporterIndividualName.error.firstName.required")
         .verifying(maxLength(maxLength, "reporterIndividualName.error.firstName.length")),
-      "lastName" -> text("reporterIndividualName.error.lastName.required")
-        .verifying(maxLength(maxLength, "reporterIndividualName.error.lastName.length"))
-    )(ReporterIndividualName.apply)(ReporterIndividualName.unapply)
+      "secondName" -> text("reporterIndividualName.error.secondName.required")
+        .verifying(maxLength(maxLength, "reporterIndividualName.error.secondName.length"))
+    )(Name.apply)(Name.unapply)
    )
  }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.reporter.individual
+package pages.reporter.individual
 
-import play.api.libs.json._
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class ReporterIndividualName (firstName: String, lastName: String)
+case object ReporterIndividualSelectAddressPage extends QuestionPage[String] {
 
-object ReporterIndividualName {
-  implicit val format = Json.format[ReporterIndividualName]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "reporterIndividualSelectAddress"
 }

@@ -50,7 +50,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
     Json.obj(
       ReporterIndividualNamePage.toString -> Json.obj(
         "firstName" -> "value 1",
-        "lastName" -> "value 2"
+        "secondName" -> "value 2"
       )
     )
   )
@@ -103,7 +103,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
       val filledForm = form.bind(
         Map(
           "firstName" -> "value 1",
-          "lastName" -> "value 2"
+          "secondName" -> "value 2"
         )
       )
 
@@ -134,7 +134,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
 
       val request =
         FakeRequest(POST, reporterIndividualNameRoute)
-          .withFormUrlEncodedBody(("firstName", "value 1"), ("lastName", "value 2"))
+          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
 
       val result = route(application, request).value
 
@@ -193,7 +193,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
 
       val request =
         FakeRequest(POST, reporterIndividualNameRoute)
-          .withFormUrlEncodedBody(("firstName", "value 1"), ("lastName", "value 2"))
+          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
 
       val result = route(application, request).value
 

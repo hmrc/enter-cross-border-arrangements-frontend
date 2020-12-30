@@ -23,7 +23,6 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
-import models.reporter.individual.ReporterIndividualName
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
@@ -32,14 +31,6 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
   import models.intermediaries.WhatTypeofIntermediary
-
-  implicit lazy val arbitraryReporterIndividualName: Arbitrary[ReporterIndividualName] =
-    Arbitrary {
-      for {
-        firstName <- arbitrary[String]
-        lastName <- arbitrary[String]
-      } yield ReporterIndividualName(firstName, lastName)
-    }
 
   implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =
     Arbitrary {
