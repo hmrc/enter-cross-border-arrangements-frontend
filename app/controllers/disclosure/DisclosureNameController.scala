@@ -17,7 +17,9 @@
 package controllers.disclosure
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureNameFormProvider
+
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
@@ -35,13 +37,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class DisclosureNameController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DisclosureNameFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +66,8 @@ class DisclosureNameController @Inject()(
       renderer.render("disclosure/disclosureName.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForDisclosure.nextPage(DisclosureNamePage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureNamePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -86,7 +89,8 @@ class DisclosureNameController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(DisclosureNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
 
         }
       )

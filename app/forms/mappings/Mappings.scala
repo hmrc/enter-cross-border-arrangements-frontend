@@ -78,8 +78,7 @@ trait Mappings extends Formatters with Constraints {
 
   protected def validatedArrangementIDText(requiredKey: String,
                                            invalidKey: String,
-                                           regex: String,
                                            countryList: Seq[Country]): FieldMapping[String] = {
-    of(validatedArrangementID(requiredKey, invalidKey, regex, countryList))
+    of(validatedArrangementID(requiredKey, invalidKey, countryList))
   }
 }

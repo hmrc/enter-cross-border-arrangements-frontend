@@ -29,7 +29,6 @@ import scala.concurrent.duration.DurationInt
 class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
 
   val startOfUKIDRegex = "^[GB]{2}.*"
-  val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
 
   def apply(countryList: Seq[Country],
             crossBorderArrangementsConnector: CrossBorderArrangementsConnector
@@ -38,12 +37,11 @@ class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
       "arrangementID" -> validatedArrangementIDText(
         "disclosureIdentifyArrangement.error.required",
         "disclosureIdentifyArrangement.error.invalid",
-        arrangementIDRegex,
         countryList)
         .verifying("disclosureIdentifyArrangement.error.notFound",
           id => {
-            if (id.matches(startOfUKIDRegex)) {
-              val verifyID = crossBorderArrangementsConnector.verifyArrangementId(id)
+            if (id.toUpperCase.matches(startOfUKIDRegex)) {
+              val verifyID = crossBorderArrangementsConnector.verifyArrangementId(id.toUpperCase)
 
               Await.result(verifyID, 5 seconds)
             } else {

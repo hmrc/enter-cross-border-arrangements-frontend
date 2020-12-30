@@ -27,7 +27,7 @@ import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyRep
 import play.api.mvc.Call
 
 
-object NavigatorForReporter extends AbstractNavigator {
+object NavigatorForReporter extends AbstractNavigatorOld {
 
   override val checkYourAnswersRoute: Call = controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
 

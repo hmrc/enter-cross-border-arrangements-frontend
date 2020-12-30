@@ -17,7 +17,9 @@
 package controllers.disclosure
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureTypeFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import models.disclosure.DisclosureType
@@ -36,13 +38,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class DisclosureTypeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DisclosureTypeFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +66,8 @@ class DisclosureTypeController @Inject()(
       renderer.render("disclosure/disclosureType.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[DisclosureType], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForDisclosure.nextPage(DisclosureTypePage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
+    navigator.routeMap(DisclosureTypePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,7 +87,8 @@ class DisclosureTypeController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

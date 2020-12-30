@@ -18,6 +18,7 @@ package controllers.disclosure
 
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
@@ -38,6 +39,7 @@ class DisclosureIdentifyArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     countryListFactory: CountryListFactory,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -45,7 +47,7 @@ class DisclosureIdentifyArrangementController @Inject()(
     formProvider: DisclosureIdentifyArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -66,8 +68,8 @@ class DisclosureIdentifyArrangementController @Inject()(
       renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForDisclosure.nextPage(DisclosureIdentifyArrangementPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -89,7 +91,8 @@ class DisclosureIdentifyArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureIdentifyArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }
