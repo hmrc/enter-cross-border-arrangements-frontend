@@ -18,9 +18,10 @@ package controllers.reporter.individual
 
 import controllers.actions._
 import forms.AddressFormProvider
-import models.{Address, Mode}
+import helpers.JourneyHelpers.countryJsonList
+import models.{Address, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.ReporterIndividualAddressPage
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIsIndividualAddressUKPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -59,7 +60,8 @@ class ReporterIndividualAddressController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "isUkAddress" -> true
+        "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
+        "isUkAddress" -> isUkAddress(request.userAnswers)
       )
 
       renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(Ok(_))
@@ -80,7 +82,8 @@ class ReporterIndividualAddressController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "isUkAddress" -> true
+            "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
+            "isUkAddress" -> isUkAddress(request.userAnswers)
           )
 
           renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(BadRequest(_))
@@ -91,5 +94,10 @@ class ReporterIndividualAddressController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(redirect(mode, Some(value)))
       )
+  }
+
+  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(ReporterIsIndividualAddressUKPage) match {
+    case Some(true) => true
+    case _ => false
   }
 }
