@@ -1,0 +1,118 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("reporterIndividualAddress.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.reporter.individual.ReporterIndividualAddressController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+          <fieldset class="govuk-fieldset">
+
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+              <h1 class="govuk-fieldset__heading">
+                {{ messages("reporterIndividualAddress.heading") }}
+              </h1>
+            </legend>
+
+            {{ govukInput({
+              label: {
+                text: messages('address.addressLine1')
+              },
+              classes: "govuk-!-width-two-thirds",
+              id: "addressLine1",
+              name: "addressLine1",
+              value: form.addressLine1.value,
+              errorMessage: form.addressLine1.error
+            }) }}
+
+            {{ govukInput({
+              label: {
+                text: messages('address.addressLine2')
+              },
+              classes: "govuk-!-width-two-thirds",
+              id: "addressLine2",
+              name: "addressLine2",
+              value: form.addressLine2.value,
+              errorMessage: form.addressLine2.error
+            }) }}
+
+            {{ govukInput({
+              label: {
+                text: messages('address.addressLine3')
+              },
+              classes: "govuk-!-width-two-thirds",
+              id: "addressLine3",
+              name: "addressLine3",
+              value: form.addressLine3.value,
+              errorMessage: form.addressLine3.error
+            }) }}
+
+            {{ govukInput({
+              label: {
+                text: messages('address.city')
+              },
+              classes: "govuk-!-width-two-thirds",
+              id: "city",
+              name: "city",
+              value: form.city.value,
+              errorMessage: form.city.error
+            }) }}
+
+            {{ govukInput({
+             label: {
+               text: messages('address.postcodeUk.optional')
+             },
+             classes: "govuk-!-width-two-thirds",
+             id: "postCode",
+             name: "postCode",
+             value: form.postCode.value,
+           errorMessage: form.postCode.error
+            }) }}
+
+            {{ govukInput ({
+              name: "country",
+              value: "GB",
+              attributes: {
+                "hidden": "true"
+              }
+            }) }}
+
+          </fieldset>
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
