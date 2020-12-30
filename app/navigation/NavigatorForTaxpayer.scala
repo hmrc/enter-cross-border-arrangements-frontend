@@ -26,7 +26,7 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForTaxpayer @Inject()() extends AbstractNavigator { //DisclosureMarketablePage
+class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
 
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
