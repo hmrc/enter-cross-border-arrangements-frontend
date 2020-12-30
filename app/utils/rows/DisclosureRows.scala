@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
@@ -46,6 +46,15 @@ trait DisclosureRows extends RowBuilder {
       msgKey  = "disclosureType",
       content = msg"disclosureType.$answer",
       href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map { answer =>
+
+    toRow(
+      msgKey  = "disclosureIdentifyArrangement",
+      content = lit"$answer",
+      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url
     )
   }
 }

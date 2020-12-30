@@ -17,7 +17,9 @@
 package controllers.disclosure
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureMarketableFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForDisclosure
@@ -35,13 +37,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class DisclosureMarketableController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DisclosureMarketableFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -62,8 +65,8 @@ class DisclosureMarketableController @Inject()(
       renderer.render("disclosure/disclosureMarketable.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForDisclosure.nextPage(DisclosureMarketablePage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(DisclosureMarketablePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -83,7 +86,8 @@ class DisclosureMarketableController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

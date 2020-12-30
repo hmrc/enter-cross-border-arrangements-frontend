@@ -17,10 +17,9 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
-import models.Enumerable
+import models.{Country, Enumerable}
 
 trait Mappings extends Formatters with Constraints {
 
@@ -75,5 +74,11 @@ trait Mappings extends Formatters with Constraints {
 
   protected def requiredRegexOnlyText(requiredKey: String, invalidKey: String, regex: String): FieldMapping[String] = {
     of(requiredRegexOnly(requiredKey, invalidKey, regex))
+  }
+
+  protected def validatedArrangementIDText(requiredKey: String,
+                                           invalidKey: String,
+                                           countryList: Seq[Country]): FieldMapping[String] = {
+    of(validatedArrangementID(requiredKey, invalidKey, countryList))
   }
 }

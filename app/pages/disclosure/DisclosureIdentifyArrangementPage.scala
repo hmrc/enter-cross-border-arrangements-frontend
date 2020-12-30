@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.disclosure
 
-import controllers.mixins.CheckRoute
-import models.Mode
-import pages.Page
-import play.api.mvc.Call
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-abstract class AbstractNavigator {
+case object DisclosureIdentifyArrangementPage extends QuestionPage[String] {
 
-  val routeMap:  Page => CheckRoute => Option[Any] => Int => Call
+  override def path: JsPath = JsPath \ toString
 
-  val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ => _ => _ => _ => Call("GET", "/")
-
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call
-
-  val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  override def toString: String = "disclosureIdentifyArrangement"
 }

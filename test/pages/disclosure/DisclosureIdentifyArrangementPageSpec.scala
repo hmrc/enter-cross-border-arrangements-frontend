@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.disclosure
 
-import controllers.mixins.CheckRoute
-import models.Mode
-import pages.Page
-import play.api.mvc.Call
+import pages.behaviours.PageBehaviours
 
-abstract class AbstractNavigator {
 
-  val routeMap:  Page => CheckRoute => Option[Any] => Int => Call
+class DisclosureIdentifyArrangementPageSpec extends PageBehaviours {
 
-  val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ => _ => _ => _ => Call("GET", "/")
+  "DisclosureIdentifyArrangementPage" - {
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call
+    beRetrievable[String](DisclosureIdentifyArrangementPage)
 
-  val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
+    beSettable[String](DisclosureIdentifyArrangementPage)
 
+    beRemovable[String](DisclosureIdentifyArrangementPage)
+  }
 }

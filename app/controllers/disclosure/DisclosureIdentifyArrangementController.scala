@@ -16,15 +16,13 @@
 
 package controllers.disclosure
 
+import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import forms.disclosure.DisclosureTypeFormProvider
-
-import javax.inject.Inject
-import models.Mode
-import models.disclosure.DisclosureType
+import forms.disclosure.DisclosureIdentifyArrangementFormProvider
+import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.DisclosureTypePage
+import pages.disclosure.DisclosureIdentifyArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -32,60 +30,66 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureTypeController @Inject()(
+class DisclosureIdentifyArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    countryListFactory: CountryListFactory,
     navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: DisclosureTypeFormProvider,
+    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
+    formProvider: DisclosureIdentifyArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DisclosureTypePage) match {
+      val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val form = formProvider(countries, crossBorderArrangementsConnector)
+
+      val preparedForm = request.userAnswers.get(DisclosureIdentifyArrangementPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios"  -> DisclosureType.radios(preparedForm)
+        "form" -> preparedForm,
+        "mode" -> mode
       )
 
-      renderer.render("disclosure/disclosureType.njk", json).map(Ok(_))
+      renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
-    navigator.routeMap(DisclosureTypePage)(checkRoute)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val form = formProvider(countries, crossBorderArrangementsConnector)
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> DisclosureType.radios(formWithErrors)
+            "form" -> formWithErrors,
+            "mode" -> mode
           )
 
-          renderer.render("disclosure/disclosureType.njk", json).map(BadRequest(_))
+          renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureIdentifyArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

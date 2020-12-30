@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package navigation
+package controllers.mixins
 
-import controllers.mixins.CheckRoute
 import models.Mode
-import pages.Page
-import play.api.mvc.Call
 
-abstract class AbstractNavigator {
+sealed trait CheckRoute {
 
-  val routeMap:  Page => CheckRoute => Option[Any] => Int => Call
-
-  val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ => _ => _ => _ => Call("GET", "/")
-
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call
-
-  val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  val mode: Mode
 }
+
+case class DefaultRouting(mode: Mode) extends CheckRoute
+case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
+case class TaxpayersRouting(mode: Mode) extends CheckRoute
+case class IntermediariesRouting(mode: Mode) extends CheckRoute
