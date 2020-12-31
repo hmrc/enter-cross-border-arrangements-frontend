@@ -16,12 +16,23 @@
 
 package pages.intermediaries
 
+import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object IsExemptionCountryKnownPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isExemptionCountryKnown"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    //Clear following answers
+    value match {
+      case Some(false) => userAnswers.remove(ExemptCountriesPage)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }

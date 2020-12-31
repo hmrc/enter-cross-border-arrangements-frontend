@@ -652,9 +652,9 @@ exemptCountries.austria = Austria
 exemptCountries.checkYourAnswersLabel = exemptCountries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
 
-isExemptionCountryKnown.title = Do you know which countries they're exempt from reporting in?
+isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} exempt from reporting in?
-isExemptionCountryKnown.checkYourAnswersLabel = Do you know which countries they're exempt from reporting in?
+isExemptionCountryKnown.checkYourAnswersLabel = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.error.required = Select yes if you know which countries the intermediary is exempt from reporting in
 
 isExemptionKnown.title = Are they exempt from reporting?
@@ -731,6 +731,8 @@ intermediariesType.title = Is this an organisation or an individual?
 intermediariesType.heading = Is this an organisation or an individual?
 intermediariesType.checkYourAnswersLabel = Organisation or individual
 intermediariesType.error.required = Select the type of intermediary
+intermediariesType.organisation = Organisation
+intermediariesType.individual = Individual
 
 whatTypeofIntermediary.title = What type of intermediary is this?
 whatTypeofIntermediary.heading = What type of intermediary is {0}?

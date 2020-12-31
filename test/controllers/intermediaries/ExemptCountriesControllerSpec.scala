@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.intermediaries.ExemptCountriesFormProvider
 import matchers.JsonMatchers
+import models.intermediaries.ExemptCountries
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -70,7 +71,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
         "checkboxes" -> ExemptCountries.checkboxes(form)
       )
 
-      templateCaptor.getValue mustEqual "exemptCountries.njk"
+      templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -100,7 +101,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
         "checkboxes" -> ExemptCountries.checkboxes(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "exemptCountries.njk"
+      templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -156,7 +157,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
         "checkboxes" -> ExemptCountries.checkboxes(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "exemptCountries.njk"
+      templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

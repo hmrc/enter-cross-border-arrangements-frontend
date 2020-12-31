@@ -71,7 +71,7 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(form("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
-      templateCaptor.getValue mustEqual "isExemptionCountryKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionCountryKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

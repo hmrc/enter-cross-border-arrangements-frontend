@@ -28,7 +28,7 @@ import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
 import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -1340,7 +1340,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "Is *name* exempt from reporting in an EU member state, or the UK?' intemediaries page to " +
+      "Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
         "'Do you know which countries *name* is exempt from reporting in?' if answer is I do not know" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

@@ -16,13 +16,24 @@
 
 package pages.intermediaries
 
-import models.IsExemptionKnown
+import models.IsExemptionKnown.{No, Unknown}
+import models.{IsExemptionKnown, UserAnswers}
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object IsExemptionKnownPage extends QuestionPage[IsExemptionKnown] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isExemptionKnown"
+
+  override def cleanup(value: Option[IsExemptionKnown], userAnswers: UserAnswers): Try[UserAnswers] = {
+    //Clear following answers
+    value match {
+      case Some(No | Unknown) => userAnswers.remove(IsExemptionCountryKnownPage).flatMap(_.remove(ExemptCountriesPage))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }

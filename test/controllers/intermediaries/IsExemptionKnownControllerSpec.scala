@@ -71,7 +71,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> IsExemptionKnown.radios(form)
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -102,7 +102,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> IsExemptionKnown.radios(filledForm)
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -158,7 +158,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
         "radios" -> IsExemptionKnown.radios(boundForm)
       )
 
-      templateCaptor.getValue mustEqual "isExemptionKnown.njk"
+      templateCaptor.getValue mustEqual "intermediaries/isExemptionKnown.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

@@ -44,7 +44,7 @@ object WhatTypeofIntermediary extends Enumerable.Implicits {
         Some(RadiosHint.Hint(msg"whatTypeofIntermediary.promoter.hint"))),
       RadiosHint.Radio(msg"whatTypeofIntermediary.serviceProvider", Serviceprovider.toString,
         Some(RadiosHint.Hint(msg"whatTypeofIntermediary.serviceProvider.hint"))),
-      RadiosHint.Radio(msg"whatTypeofIntermediary.iDoNotKnow", Serviceprovider.toString, None)
+      RadiosHint.Radio(msg"whatTypeofIntermediary.iDoNotKnow", IDoNotKnow.toString, None)
     )
     RadiosHint(field, items)
   }

@@ -30,11 +30,16 @@
        }) }}
 
        {{ govukSummaryList({
-          classes: 'govuk-summary-list--no-border',
-          rows: countrySummary
+          classes: 'govuk-summary-list__row--no-border',
+          rows: tinCountrySummary
        }) }}
 
-        <hr>
+       <hr>
+
+      {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+         rows: intermediarySummary2
+      }) }}
 
        {{ csrf() | safe }}
 

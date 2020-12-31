@@ -119,14 +119,12 @@ class Navigator @Inject()() {
     case IsAssociatedEnterpriseAffectedPage => _ => _ =>
       Some(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
 
-case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(NormalMode)
-    case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
-
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
     case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
 
-
+    case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(NormalMode)
+    case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
     case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(NormalMode)
     case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
@@ -210,6 +208,10 @@ case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRou
 
     case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(CheckMode)
     case IntermediariesTypePage => intermediaryTypeRoutes(CheckMode)
+    case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(CheckMode)
+    case IsExemptionKnownPage => isExemptionKnownRoutes(CheckMode)
+    case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(CheckMode)
+    case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }

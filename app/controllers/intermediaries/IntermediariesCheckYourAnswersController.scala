@@ -19,13 +19,12 @@ package controllers.intermediaries
 import controllers.actions._
 import javax.inject.Inject
 import models.SelectType
-import navigation.Navigator
+import models.SelectType.{Individual, Organisation}
 import pages.intermediaries.IntermediariesTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
@@ -37,8 +36,6 @@ class IntermediariesCheckYourAnswersController @Inject()(
                                                           identify: IdentifierAction,
                                                           getData: DataRetrievalAction,
                                                           requireData: DataRequiredAction,
-                                                          sessionRepository: SessionRepository,
-                                                          navigator: Navigator,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           renderer: Renderer
                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -47,59 +44,51 @@ class IntermediariesCheckYourAnswersController @Inject()(
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val (intermediarySummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(IntermediariesTypePage) match {
-        case Some(SelectType.Organisation) =>
-          (helper.intermediariesType.toSeq ++
-            helper.organisationName.toSeq ++
-            helper.buildOrganisationAddressGroup ++
-            helper.buildOrganisationEmailAddressGroup ++
-            helper.whatTypeofIntermediary ++
-            helper.isExemptionKnown ++
-            helper.isExemptionCountryKnown,
-            helper.exemptCountries,
-            helper.buildTaxResidencySummaryForOrganisation)
+      val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
 
-        case Some(SelectType.Individual) =>
+        request.userAnswers.get(IntermediariesTypePage) match {
 
-          (Seq(
-            helper.intermediariesType.toSeq ++
-            helper.individualName.toSeq ++
-            helper.individualDateOfBirth).flatten ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-            helper.buildTaxResidencySummaryForIndividuals,
+          case Some(SelectType.Organisation) =>
+            (helper.intermediariesType.toSeq ++
+              helper.organisationName.toSeq ++
+              helper.buildOrganisationAddressGroup ++
+              helper.buildOrganisationEmailAddressGroup,
 
-            helper.isExemptionKnown,
-            helper.isExemptionCountryKnown,
-            helper.exemptCountries)
+              helper.buildTaxResidencySummaryForOrganisation,
 
-        case _ => throw new RuntimeException("Unable to retrieve select type for Intermediary")
+              Seq(helper.whatTypeofIntermediary ++
+              helper.isExemptionKnown ++
+              helper.isExemptionCountryKnown).flatten ++
+              helper.exemptCountries.toSeq
+              )
+
+          case Some(SelectType.Individual) =>
+            (Seq(helper.intermediariesType ++
+              helper.individualName ++
+              helper.individualDateOfBirth).flatten ++
+              helper.buildIndividualPlaceOfBirthGroup ++
+              helper.buildIndividualAddressGroup ++
+              helper.buildIndividualEmailAddressGroup,
+
+              helper.buildTaxResidencySummaryForIndividuals,
+
+              Seq(helper.whatTypeofIntermediary ++
+              helper.isExemptionKnown ++
+              helper.isExemptionCountryKnown).flatten ++
+              helper.exemptCountries.toSeq
+            )
+
+          case _ => throw new RuntimeException("Unable to retrieve select type for Intermediary")
       }
 
       renderer.render(
         "intermediaries/intermediariesCheckYourAnswers.njk",
         Json.obj(
           "intermediarySummary" -> intermediarySummary,
-          "countrySummary" -> countrySummary
+          "tinCountrySummary" -> tinCountrySummary,
+          "intermediarySummary2" -> intermediarySummary2
+
         )).map(Ok(_))
   }
-
-//  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-//    implicit request =>
-//
-//      val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
-//        case Some(list) => // append to existing list
-//          list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers)
-//        case None => // start new list
-//          IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers))
-//      }
-//      for {
-//        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
-//        _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
-//      } yield {
-//        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))
-//      }
-//  }
 }
 

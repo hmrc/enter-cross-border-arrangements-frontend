@@ -23,7 +23,6 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
-import pages._
 import pages.hallmarks._
 import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage}
 import pages.intermediaries.WhatTypeofIntermediaryPage
@@ -35,93 +34,7 @@ import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
-
-
-  def intermediariesType: Option[Row] = userAnswers.get(IntermediariesTypePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"intermediariesType.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"intermediariesType.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def isExemptionKnown: Option[Row] = userAnswers.get(IsExemptionKnownPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"isExemptionKnown.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionKnown.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def isExemptionCountryKnown: Option[Row] = userAnswers.get(IsExemptionCountryKnownPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionCountryKnown.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def exemptCountries: Option[Row] = userAnswers.get(ExemptCountriesPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"exemptCountries.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"exemptCountries.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-import pages.intermediaries.WhatTypeofIntermediaryPage
-  def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whatTypeofIntermediary.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatTypeofIntermediary.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def youHaveNotAddedAnyIntermediaries: Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage) map {
-    answer =>
-      toRow(
-        msgKey  = "youHaveNotAddedAnyIntermediaries",
-        content = msg"youHaveNotAddedAnyIntermediaries.$answer",
-        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
-      )
-  }
+  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows {
 
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
@@ -288,3 +201,4 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
       Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
   }
 }
+
