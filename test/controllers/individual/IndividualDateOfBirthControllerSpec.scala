@@ -44,8 +44,6 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
   val formProvider = new IndividualDateOfBirthFormProvider()
   private def form = formProvider()
 
-  def onwardRoute = Call("GET", "/foo")
-
   val validAnswer: LocalDate = LocalDate.now().minusDays(1)
 
   val validData =
@@ -142,7 +140,6 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -151,7 +148,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-birthplace"
 
       application.stop()
     }

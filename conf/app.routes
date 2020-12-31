@@ -222,21 +222,25 @@ POST       /individual/live-in-uk                                 controllers.in
 GET        /individual/change-live-in-uk                          controllers.individual.IsIndividualAddressUkController.onPageLoad(mode: Mode = CheckMode)
 POST       /individual/change-live-in-uk                          controllers.individual.IsIndividualAddressUkController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/postcode                                   controllers.individual.IndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/postcode                                   controllers.individual.IndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-postcode                            controllers.individual.IndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-postcode                            controllers.individual.IndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/postcode                                 controllers.individual.IndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/postcode                                 controllers.individual.IndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-postcode                          controllers.individual.IndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-postcode                          controllers.individual.IndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/select-address                        controllers.individual.IndividualSelectAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/select-address                        controllers.individual.IndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-select-address                  controllers.individual.IndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-select-address                  controllers.individual.IndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/select-address                           controllers.individual.IndividualSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/select-address                           controllers.individual.IndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-select-address                    controllers.individual.IndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-select-address                    controllers.individual.IndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /individual/address                        controllers.individual.IndividualAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/address                        controllers.individual.IndividualAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/change-address                 controllers.individual.IndividualAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/change-address                 controllers.individual.IndividualAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/address                                  controllers.individual.IndividualAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/address                                  controllers.individual.IndividualAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-address                           controllers.individual.IndividualAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-address                           controllers.individual.IndividualAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET        /individual/do-you-know-date-of-birth                controllers.individual.IsIndividualDateOfBirthKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/do-you-know-date-of-birth                controllers.individual.IsIndividualDateOfBirthKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/change-do-you-know-date-of-birth         controllers.individual.IsIndividualDateOfBirthKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/change-do-you-know-date-of-birth         controllers.individual.IsIndividualDateOfBirthKnownController.onSubmit(mode: Mode = CheckMode)
 
 # ARRANGEMENT ROUTES
 
@@ -295,6 +299,8 @@ POST       /taxpayers/choose-type                        controllers.taxpayer.Ta
 GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /taxpayers/is-marketable                      controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /taxpayers/change-is-marketable               controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
 
 GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
@@ -370,6 +376,8 @@ GET        /disclosure/change-identify                 controllers.disclosure.Di
 POST       /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
 
 # REPORTER DETAILS
+
+GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
 
 GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)

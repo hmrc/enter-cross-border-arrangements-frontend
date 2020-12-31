@@ -19,16 +19,15 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, LoopDetails, TaxReferenceNumbers, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
+import navigation.NavigatorForOrganisation
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +37,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new WhatAreTheTaxNumbersForNonUKOrganisationFormProvider()
   val form = formProvider()
@@ -135,7 +132,6 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -147,68 +143,8 @@ class WhatAreTheTaxNumbersForNonUKOrganisationControllerSpec extends SpecBase wi
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
 
-      application.stop()
-    }
-
-    "must redirect to the next page when valid data is submitted and update LoopDetails if index 0 exists" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxReferenceNumbers)
-        .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
-        .success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute)
-          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockSessionRepository, times(1)).set(Matchers.eq(userAnswers))
-
-      application.stop()
-    }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whatAreTheTaxNumbersForNonUKOrganisationRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "mode" -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/tax-resident-countries-1"
 
       application.stop()
     }

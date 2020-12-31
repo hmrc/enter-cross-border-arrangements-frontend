@@ -17,33 +17,34 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
-import javax.inject.Inject
-import models.{Mode, LoopDetails}
-import navigation.Navigator
+import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
+import models.{LoopDetails, Mode}
+import navigation.NavigatorForOrganisation
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouKnowAnyTINForUKOrganisationController @Inject()(
                                                             override val messagesApi: MessagesApi,
                                                             sessionRepository: SessionRepository,
-                                                            navigator: Navigator,
+                                                            navigator: NavigatorForOrganisation,
                                                             identify: IdentifierAction,
                                                             getData: DataRetrievalAction,
                                                             requireData: DataRequiredAction,
                                                             formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -72,6 +73,9 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
 
       renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(DoYouKnowAnyTINForUKOrganisationPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -107,7 +111,8 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(DoYouKnowAnyTINForUKOrganisationPage, mode, updatedAnswersWithLoopDetails))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+          } yield Redirect(redirect(checkRoute, Some(value), currentIndexInsideLoop(request)))
         }
       )
   }

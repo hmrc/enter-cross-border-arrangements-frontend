@@ -17,34 +17,35 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged}
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
-import navigation.Navigator
+import models.{Address, Mode, UserAnswers}
+import navigation.NavigatorForOrganisation
 import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
                                               countryListFactory: CountryListFactory,
                                               sessionRepository: SessionRepository,
-                                              navigator: Navigator,
+                                              navigator: NavigatorForOrganisation,
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: AddressFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               renderer: Renderer
-                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
 
@@ -72,6 +73,14 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       renderer.render("address.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[Address], isAlt: Boolean): Call =
+    if (isAlt) {
+      navigator.routeAltMap(OrganisationAddressPage)(checkRoute)(value)(0)
+    }
+    else {
+      navigator.routeMap(OrganisationAddressPage)(checkRoute)(value)(0)
+    }
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -94,18 +103,14 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
           renderer.render("address.njk", json).map(BadRequest(_))
         },
         value => {
+
           val redirectUsers = hasValueChanged(value, OrganisationAddressPage, mode, request.userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(OrganisationAddressPage, mode, updatedAnswers))
-            }
-          }
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
         }
       )
   }

@@ -16,8 +16,6 @@
 
 package navigation
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.routes
 import generators.Generators
@@ -39,11 +37,13 @@ import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import pages.intermediaries._
+
+import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -808,6 +808,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .success.value
                 .remove(TaxpayerSelectTypePage)
                 .success.value
+                .remove(TaxpayerSelectTypePage)
+                .success.value
                 .remove(IntermediariesTypePage)
                 .success.value
                 .set(IsOrganisationResidentForTaxOtherCountriesPage, false)
@@ -1189,6 +1191,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers.remove(IsAssociatedEnterpriseAffectedPage)
+                .success.value
+                .remove(TaxpayerSelectTypePage)
                 .success.value
                 .remove(TaxpayerSelectTypePage)
                 .success.value

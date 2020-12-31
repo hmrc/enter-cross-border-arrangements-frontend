@@ -17,34 +17,34 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.PostcodeFormProvider
 import helpers.JourneyHelpers.getOrganisationName
-
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.NavigatorForOrganisation
 import pages.organisation.PostcodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationPostcodeController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForOrganisation,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: PostcodeFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -72,6 +72,9 @@ class OrganisationPostcodeController @Inject()(
       renderer.render("postcode.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
+    navigator.routeMap(PostcodePage)(checkRoute)(value)(index)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -92,7 +95,8 @@ class OrganisationPostcodeController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

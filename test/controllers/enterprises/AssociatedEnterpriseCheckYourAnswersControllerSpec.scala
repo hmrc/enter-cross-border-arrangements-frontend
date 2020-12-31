@@ -103,6 +103,8 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
         .success.value
         .set(IndividualNamePage, Name("First", "Last"))
         .success.value
+        .set(IsIndividualDateOfBirthKnownPage, true)
+        .success.value
         .set(IndividualDateOfBirthPage, dob)
         .success.value
         .set(IsIndividualPlaceOfBirthKnownPage, false)

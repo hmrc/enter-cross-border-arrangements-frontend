@@ -46,7 +46,7 @@ object Individual {
   private def getIndividualDateOfBirth(ua: UserAnswers): LocalDate = {
     ua.get(IndividualDateOfBirthPage) match {
       case Some(dob) => dob
-      case None => throw new Exception("Individual Taxpayer must contain a date of birth")
+      case None => LocalDate.of(1900,1,1)
     }
   }
 

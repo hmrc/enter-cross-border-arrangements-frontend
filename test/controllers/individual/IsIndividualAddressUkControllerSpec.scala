@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import pages.individual.IsIndividualAddressUkPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,7 +38,6 @@ import scala.concurrent.Future
 
 
 class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -108,7 +105,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -117,7 +114,6 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,7 +126,33 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/postcode"
+
+      application.stop()
+    }
+
+    "must redirect to the next page when no is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isIndividualAddressUkRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/address"
 
       application.stop()
     }

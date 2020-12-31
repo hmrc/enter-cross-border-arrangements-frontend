@@ -18,8 +18,7 @@ package controllers.individual
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.enterprises.AssociatedEnterpriseTypePage
-import pages.taxpayer.TaxpayerSelectTypePage
+import controllers.mixins.RoutingSupport
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IndividualCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
@@ -37,43 +36,28 @@ class IndividualCheckYourAnswersController @Inject()(
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val associatedEnterpriseJourney: Boolean = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
-        case Some(_) => true
-        case None => false
-      }
 
-      val relevantTaxpayerJourney: Boolean = request.userAnswers.get(TaxpayerSelectTypePage) match {
-        case Some(_) => true
-        case None => false
-      }
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      //TODO Below redirect is temporary until a solution about change routing is found
-      if (associatedEnterpriseJourney) {
-        Future.successful(Redirect(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()))
-      } else if(relevantTaxpayerJourney) {
-        Future.successful(Redirect(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()))
-      }
-      else {
-        val helper = new CheckYourAnswersHelper(request.userAnswers)
+      val individualSummary: Seq[SummaryList.Row] =
+        Seq(helper.individualName).flatten ++
+          helper.buildIndividualDateOfBirthGroup ++
+          helper.buildIndividualPlaceOfBirthGroup ++
+          helper.buildIndividualAddressGroup ++
+          helper.buildIndividualEmailAddressGroup
 
-        val individualSummary: Seq[SummaryList.Row] =
-          Seq(helper.individualName, helper.individualDateOfBirth).flatten ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup
+      val countryDetails: Seq[SummaryList.Row] =
+        helper.buildTaxResidencySummaryForIndividuals
 
-        val countryDetails: Seq[SummaryList.Row] =
-          helper.buildTaxResidencySummaryForIndividuals
+      renderer.render(
+        "individual/check-your-answers.njk",
+        Json.obj("individualSummary" -> individualSummary,
+          "countrySummary" -> countryDetails)
+      ).map(Ok(_))
 
-        renderer.render(
-          "individual/check-your-answers.njk",
-          Json.obj("individualSummary" -> individualSummary,
-            "countrySummary" -> countryDetails)
-        ).map(Ok(_))
-      }
   }
 }

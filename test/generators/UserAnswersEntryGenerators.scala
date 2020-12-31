@@ -26,6 +26,7 @@ import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
+import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -34,9 +35,10 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
@@ -70,6 +72,13 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 	      } yield (page, value)
 	    }
 
+  implicit lazy val arbitraryIsIndividualDateOfBirthKnownUserAnswersEntry: Arbitrary[(IsIndividualDateOfBirthKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsIndividualDateOfBirthKnownPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryDisclosureMarketableUserAnswersEntry: Arbitrary[(DisclosureMarketablePage.type, JsValue)] =
     Arbitrary {

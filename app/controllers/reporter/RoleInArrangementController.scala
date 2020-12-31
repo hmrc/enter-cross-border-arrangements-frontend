@@ -17,11 +17,11 @@
 package controllers.reporter
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.RoleInArrangementFormProvider
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
-import models.reporter.RoleInArrangement
 import helpers.JourneyHelpers.hasValueChanged
+import models.reporter.RoleInArrangement
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForReporter
 import pages.reporter.RoleInArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,17 +32,19 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RoleInArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     formProvider: RoleInArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +65,14 @@ class RoleInArrangementController @Inject()(
       renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[RoleInArrangement], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(RoleInArrangementPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[RoleInArrangement], redirectUsers: Boolean): Call = {
+    if (redirectUsers) {
+      navigator.routeAltMap(RoleInArrangementPage)(checkRoute)(value)(0)
+    }
+    else {
+      navigator.routeMap(RoleInArrangementPage)(checkRoute)(value)(0)
+    }
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -88,7 +96,8 @@ class RoleInArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(RoleInArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0, redirectUsers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
 
         }
       )

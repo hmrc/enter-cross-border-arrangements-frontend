@@ -17,35 +17,35 @@
 package controllers.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.individual.WhichCountryTaxForIndividualFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getCountry}
-import javax.inject.Inject
 import models.{Country, LoopDetails, Mode, UserAnswers}
-import navigation.Navigator
-import pages.individual.{IndividualNamePage, WhichCountryTaxForIndividualPage, IndividualLoopPage}
+import navigation.NavigatorForIndividual
+import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhichCountryTaxForIndividualController @Inject()(
     override val messagesApi: MessagesApi,
     countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIndividual,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhichCountryTaxForIndividualFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport with CountrySupport {
 
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
 
@@ -54,7 +54,7 @@ class WhichCountryTaxForIndividualController @Inject()(
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = getCountry(request.userAnswers, index) match {
+      val preparedForm = getCountry(request.userAnswers, IndividualLoopPage, index) match {
         case Some(value) => form.fill(value)
         case _ => form
       }
@@ -69,6 +69,9 @@ class WhichCountryTaxForIndividualController @Inject()(
 
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int): Call =
+    navigator.routeMap(WhichCountryTaxForIndividualPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -93,8 +96,9 @@ class WhichCountryTaxForIndividualController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopDetails))
-            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(WhichCountryTaxForIndividualPage, mode, updatedAnswersWithLoopDetails))
+            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+          } yield Redirect(redirect(checkRoute, Some(value), index))
         }
       )
   }
@@ -106,7 +110,7 @@ class WhichCountryTaxForIndividualController @Inject()(
     }
   }
 
-  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, index: Int) =
+  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
       userAnswers.get(IndividualLoopPage) match {
     case None =>
       val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)

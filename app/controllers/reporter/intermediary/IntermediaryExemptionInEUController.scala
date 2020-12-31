@@ -17,8 +17,8 @@
 package controllers.reporter.intermediary
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
-import javax.inject.Inject
 import models.{Mode, YesNoDoNotKnowRadios}
 import navigation.NavigatorForReporter
 import pages.reporter.intermediary.IntermediaryExemptionInEUPage
@@ -30,18 +30,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryExemptionInEUController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IntermediaryExemptionInEUFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -62,8 +64,8 @@ class IntermediaryExemptionInEUController @Inject()(
       renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[YesNoDoNotKnowRadios], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[YesNoDoNotKnowRadios]): Call =
+    navigator.routeMap(IntermediaryExemptionInEUPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -83,7 +85,8 @@ class IntermediaryExemptionInEUController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

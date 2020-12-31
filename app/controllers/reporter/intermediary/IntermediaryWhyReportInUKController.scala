@@ -17,8 +17,8 @@
 package controllers.reporter.intermediary
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.intermediary.IntermediaryWhyReportInUKFormProvider
-import javax.inject.Inject
 import models.Mode
 import models.reporter.intermediary.IntermediaryWhyReportInUK
 import navigation.NavigatorForReporter
@@ -31,18 +31,20 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryWhyReportInUKController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: IntermediaryWhyReportInUKFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+   override val messagesApi: MessagesApi,
+   sessionRepository: SessionRepository,
+   navigator: NavigatorForReporter,
+   identify: IdentifierAction,
+   getData: DataRetrievalAction,
+   requireData: DataRequiredAction,
+   formProvider: IntermediaryWhyReportInUKFormProvider,
+   val controllerComponents: MessagesControllerComponents,
+   renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,8 +65,8 @@ class IntermediaryWhyReportInUKController @Inject()(
       renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(Ok(_))
   }
 
-  def redirect(mode:Mode, value: Option[IntermediaryWhyReportInUK], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(IntermediaryWhyReportInUKPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[IntermediaryWhyReportInUK]): Call =
+    navigator.routeMap(IntermediaryWhyReportInUKPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -85,7 +87,8 @@ class IntermediaryWhyReportInUKController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhyReportInUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value), 0))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
 
         }
       )

@@ -18,28 +18,28 @@ package controllers.organisation
 
 import connectors.AddressLookupConnector
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
-
-import javax.inject.Inject
 import models.{AddressLookup, Mode}
-import navigation.Navigator
-import pages.organisation.{PostcodePage, SelectAddressPage}
+import navigation.NavigatorForOrganisation
 import pages.SelectedAddressLookupPage
+import pages.organisation.{PostcodePage, SelectAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationSelectAddressController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForOrganisation,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -47,7 +47,7 @@ class OrganisationSelectAddressController @Inject()(
     val controllerComponents: MessagesControllerComponents,
     addressLookupConnector: AddressLookupConnector,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -91,6 +91,14 @@ class OrganisationSelectAddressController @Inject()(
       }
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
+    if (isAlt) {
+      navigator.routeAltMap(SelectAddressPage)(checkRoute)(value)(0)
+    }
+    else {
+      navigator.routeMap(SelectAddressPage)(checkRoute)(value)(0)
+    }
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val postCode = request.userAnswers.get(PostcodePage) match {
@@ -126,16 +134,11 @@ class OrganisationSelectAddressController @Inject()(
             val redirectUsers = hasValueChanged(value, SelectAddressPage, mode, request.userAnswers)
 
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
+              updatedAnswers            <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
               updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
-              _ <- sessionRepository.set(updatedAnswersWithAddress)
-            } yield {
-              if (redirectUsers) {
-                Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
-              } else {
-                Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithAddress))
-              }
-            }
+              _                         <- sessionRepository.set(updatedAnswersWithAddress)
+              checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
+            } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
           }
         )
       } recover {

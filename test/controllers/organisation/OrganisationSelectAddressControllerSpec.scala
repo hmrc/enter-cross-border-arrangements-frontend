@@ -22,7 +22,7 @@ import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -30,7 +30,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -45,8 +44,6 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val selectAddressRoute = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode).url
   lazy val manualAddressURL: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode).canonical()
@@ -161,7 +158,6 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
       val application =
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
           ).build()
@@ -174,7 +170,7 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address"
 
       application.stop()
     }

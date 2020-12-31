@@ -17,32 +17,34 @@
 package controllers.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IndividualDateOfBirthFormProvider
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
-import navigation.Navigator
+import models.{Country, Mode, UserAnswers}
+import navigation.NavigatorForIndividual
 import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualDateOfBirthController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIndividual,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IndividualDateOfBirthFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   val form = formProvider()
 
@@ -66,6 +68,9 @@ class IndividualDateOfBirthController @Inject()(
       renderer.render("individual/individualDateOfBirth.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[LocalDate]): Call =
+    navigator.routeMap(IndividualDateOfBirthPage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -84,10 +89,12 @@ class IndividualDateOfBirthController @Inject()(
           renderer.render("individual/individualDateOfBirth.njk", json).map(BadRequest(_))
         },
         value =>
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(IndividualDateOfBirthPage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 

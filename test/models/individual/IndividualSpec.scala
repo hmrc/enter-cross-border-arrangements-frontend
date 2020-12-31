@@ -96,7 +96,7 @@ class IndividualSpec extends FreeSpec
         }
       }
 
-      "must throw an Exception if date of birth data is missing" in {
+      "must have 1/1/1900 if date of birth data is missing" in {
         forAll(arbitrary[Name], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, address, email, loop) =>
 
@@ -111,11 +111,9 @@ class IndividualSpec extends FreeSpec
                 .set(IndividualLoopPage, loop)
                 .success.value
 
-            val ex = intercept[Exception] {
-              Individual.buildIndividualDetails(userAnswers)
-            }
+            val expected = Individual.buildIndividualDetails(userAnswers)
 
-            ex.getMessage mustEqual "Individual Taxpayer must contain a date of birth"
+            expected.birthDate mustEqual LocalDate.of(1900,1,1)
         }
       }
 

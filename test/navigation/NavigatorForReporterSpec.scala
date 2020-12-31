@@ -17,9 +17,11 @@
 package navigation
 
 import base.SpecBase
+import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.{YesNoDoNotKnowRadios, _}
 import models.reporter.RoleInArrangement
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -31,7 +33,7 @@ import play.api.test.FakeRequest
 
 class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new Navigator
+  val navigator = new NavigatorForReporter
   val index: Int = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
@@ -43,26 +45,20 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "when any 'INTERMEDIARY' option is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
-
-            NavigatorForReporter.nextPage(RoleInArrangementPage, NormalMode, updatedAnswers.get(RoleInArrangementPage))
-                .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode))
-
-        }
+        navigator
+          .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Intermediary))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'As an intermediary, what is your role in this arrangement' page " +
         "when any option is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
+        forAll(arbitrary[IntermediaryWhyReportInUK]) {
           answers =>
 
-            NavigatorForReporter.nextPage(IntermediaryWhyReportInUKPage, NormalMode, answers.get(IntermediaryWhyReportInUKPage))
+            navigator
+              .routeMap(IntermediaryWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(answers))(0)
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(NormalMode))
 
         }
@@ -72,10 +68,11 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to 'Are you exempt from reporting in any of the EU member states?' page " +
         "when any option is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
+        forAll(arbitrary[IntermediaryRole]) {
           answers =>
 
-            NavigatorForReporter.nextPage(IntermediaryRolePage, NormalMode, answers.get(IntermediaryRolePage))
+            navigator
+              .routeMap(IntermediaryRolePage)(DefaultRouting(NormalMode))(Some(answers))(0)
                 .mustBe(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode))
 
         }
@@ -85,89 +82,60 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to 'Do you know which countries you are exempt from reporting in?' page " +
         "when option YES is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.Yes).success.value
-
-            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
-                .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
-
-        }
+        navigator
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.Yes))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
       }
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
         "to 'Check your answers' page " +
         "when option NO is selected" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.No).success.value
-
-            //TODO - redirect to CYA page when built
-            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
-              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-
-        }
+        //TODO - redirect to CYA page when built
+        navigator
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.DoNotKnow))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
         "to 'Check your answers' page " +
         "when option I DO NOT KNOW is selected" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers = answers.set(IntermediaryExemptionInEUPage, YesNoDoNotKnowRadios.No).success.value
-
-            //TODO - redirect to CYA page when built
-            NavigatorForReporter.nextPage(IntermediaryExemptionInEUPage, NormalMode, updatedAnswers.get(IntermediaryExemptionInEUPage))
-              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-
-        }
+        //TODO - redirect to CYA page when built
+        navigator
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.No))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
         "to 'which countries are you exempt from reporting in' page " +
         "when option YES is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers = answers.set(IntermediaryDoYouKnowExemptionsPage, true).success.value
-
-            NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
-              .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(NormalMode))
-
-        }
+        navigator
+          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(NormalMode))
       }
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
         "when option NO is selected" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers = answers.set(IntermediaryDoYouKnowExemptionsPage, false).success.value
-
-            //TODO - redirect to CYA page when built
-            NavigatorForReporter.nextPage(IntermediaryDoYouKnowExemptionsPage, NormalMode, updatedAnswers.get(IntermediaryDoYouKnowExemptionsPage))
-                .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-
-        }
+        //TODO - redirect to CYA page when built
+        navigator
+          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Which countries are you exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
         "when any option is selected" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
+        forAll(arbitrary[CountriesListEUCheckboxes]) {
           answers =>
 
             //TODO - redirect to CYA page when built
-            NavigatorForReporter.nextPage(IntermediaryWhichCountriesExemptPage, NormalMode, answers.get(IntermediaryDoYouKnowExemptionsPage))
+            navigator
+              .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(Some(Seq(answers)))(0)
                 .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
 
         }
@@ -180,62 +148,38 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "when 'TAXPAYER' option is selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-
-            NavigatorForReporter.nextPage(RoleInArrangementPage, NormalMode, updatedAnswers.get(RoleInArrangementPage))
-              .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
-        }
+        navigator
+          .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Taxpayer))(0)
+          .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'Why are you reporting the arrangement as a taxpayer' page " +
         "when 'I DO NOT KNOW' is 'NOT' selected" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkTaxResident).success.value
-
-            NavigatorForReporter.nextPage(TaxpayerWhyReportInUKPage, NormalMode, updatedAnswers.get(TaxpayerWhyReportInUKPage))
-              .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(NormalMode))
-        }
+        navigator
+          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.UkTaxResident))(0)
+          .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'What is [name] start date for implementing this arrangement' page " +
         "when 'I DO NOT KNOW' is selected & its a marketable arrangement" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.DoNotKnow).success.value
-
-            //TODO - redirect to implementing date page if marketable arrangement
-            NavigatorForReporter.nextPage(TaxpayerWhyReportInUKPage, NormalMode, updatedAnswers.get(TaxpayerWhyReportInUKPage))
-              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-        }
+        //TODO - redirect to implementing date page if marketable arrangement
+        navigator
+          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'What is [name] start date for implementing this arrangement' page " +
         "when 'I DO NOT KNOW' is selected & its 'NOT' a marketable arrangement" ignore {
 
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.DoNotKnow).success.value
-
-            //TODO - redirect to CYA page
-            NavigatorForReporter.nextPage(TaxpayerWhyReportInUKPage, NormalMode, updatedAnswers.get(TaxpayerWhyReportInUKPage))
-              .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-        }
+        //TODO - redirect to CYA page
+        navigator
+          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
       }
     }
   }

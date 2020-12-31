@@ -17,32 +17,32 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.OrganisationNameFormProvider
-import helpers.JourneyHelpers.hasValueChanged
-import javax.inject.Inject
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForOrganisation
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationNameController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForOrganisation,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     formProvider: OrganisationNameFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -62,6 +62,9 @@ class OrganisationNameController @Inject()(
       renderer.render("organisation/organisationName.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(OrganisationNamePage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
@@ -79,18 +82,14 @@ class OrganisationNameController @Inject()(
 
           val initialUserAnswers = UserAnswers(request.internalId)
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = hasValueChanged(value, OrganisationNamePage, mode, userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(OrganisationNamePage, mode, updatedAnswers))
-            }
-          }
+            _              <- sessionRepository.set(updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            _ = println("CR \n\n")
+            _ = println(checkRoute)
+          } yield Redirect(redirect(checkRoute, Some(value)))
         }
      )
   }

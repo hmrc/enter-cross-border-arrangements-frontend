@@ -17,35 +17,36 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName}
-import javax.inject.Inject
-import models.{Country, Mode, LoopDetails}
-import navigation.Navigator
+import helpers.JourneyHelpers.getOrganisationName
+import models.{Country, LoopDetails, Mode}
+import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhichCountryTaxForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     countryListFactory: CountryListFactory,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForOrganisation,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhichCountryTaxForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport with CountrySupport {
 
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
@@ -53,16 +54,9 @@ class WhichCountryTaxForOrganisationController @Inject()(
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
-        case None => form
-        case Some(value) if value.lift(index).isDefined =>
-          val country = value.lift(index).get.whichCountry
-          if (country.isDefined) {
-            form.fill(country.get)
-          } else {
-            form
-          }
-        case Some(_) => form
+      val preparedForm = getCountry(request.userAnswers, OrganisationLoopPage, index) match {
+        case Some(value) => form.fill(value)
+        case _ => form
       }
 
       val json = Json.obj(
@@ -75,6 +69,9 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
       renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
+    navigator.routeMap(WhichCountryTaxForOrganisationPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -113,8 +110,12 @@ class WhichCountryTaxForOrganisationController @Inject()(
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForOrganisationPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-          } yield Redirect(navigator.nextPage(WhichCountryTaxForOrganisationPage, mode, updatedAnswersWithLoopDetails))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+
+          } yield Redirect(redirect(checkRoute, Some(value), index))
         }
+
       )
   }
+
 }

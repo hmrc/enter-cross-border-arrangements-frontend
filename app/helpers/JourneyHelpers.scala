@@ -49,6 +49,7 @@ object JourneyHelpers {
         )
     }
 
+  @deprecated
   def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
@@ -108,6 +109,7 @@ object JourneyHelpers {
     }
   }
 
+  @deprecated
   def getCountry[A](userAnswers: UserAnswers, index: Int): Option[Country] = for {
     loopPage <- userAnswers.get(IndividualLoopPage)
     loopDetails <- loopPage.lift(index)

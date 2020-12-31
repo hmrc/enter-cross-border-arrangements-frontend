@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, Country, LoopDetails, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,7 +28,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{IsOrganisationResidentForTaxOtherCountriesPage, OrganisationLoopPage, OrganisationNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -38,8 +37,6 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new IsOrganisationResidentForTaxOtherCountriesFormProvider()
   val form = formProvider()
@@ -120,7 +117,7 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       application.stop()
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -129,7 +126,6 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -142,7 +138,33 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/which-country-tax-0"
+
+      application.stop()
+    }
+
+    "must redirect to the next page when no is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
+          .withFormUrlEncodedBody(("confirm", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/check-answers"
 
       application.stop()
     }
@@ -187,7 +209,6 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()

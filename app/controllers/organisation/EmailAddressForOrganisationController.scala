@@ -17,33 +17,34 @@
 package controllers.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.EmailAddressForOrganisationFormProvider
 import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
-import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
+import navigation.NavigatorForOrganisation
 import pages.organisation.EmailAddressForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailAddressForOrganisationController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForOrganisation,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: EmailAddressForOrganisationFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,6 +64,14 @@ class EmailAddressForOrganisationController @Inject()(
 
       renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
+    if (isAlt) {
+      navigator.routeAltMap(EmailAddressForOrganisationPage)(checkRoute)(value)(0)
+    }
+    else {
+      navigator.routeMap(EmailAddressForOrganisationPage)(checkRoute)(value)(0)
+    }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,14 +93,9 @@ class EmailAddressForOrganisationController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(routes.OrganisationCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(EmailAddressForOrganisationPage, mode, updatedAnswers))
-            }
-          }
+            _              <- sessionRepository.set(updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
         }
       )
   }

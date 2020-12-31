@@ -74,36 +74,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
   }
 
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectAddress.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
     answer => userAnswers.get(HallmarkD1Page) match {
       case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
@@ -213,5 +183,14 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
     )
 
+  }
+
+  def buildTaxpayerDetails(taxpayerDetails: Seq[Row], countryDetails: Seq[Row]) : Seq[SummaryList.Row] = {
+    Seq(
+      taxpayerSelectType,
+    ).flatten ++
+      taxpayerDetails ++
+      countryDetails ++
+      Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
   }
 }
