@@ -64,8 +64,8 @@ class IntermediariesCheckYourAnswersController @Inject()(
 
           case Some(SelectType.Individual) =>
             (Seq(helper.intermediariesType ++
-              helper.individualName ++
-              helper.individualDateOfBirth).flatten ++
+              helper.individualName).flatten ++
+              helper.buildIndividualDateOfBirthGroup ++
               helper.buildIndividualPlaceOfBirthGroup ++
               helper.buildIndividualAddressGroup ++
               helper.buildIndividualEmailAddressGroup,

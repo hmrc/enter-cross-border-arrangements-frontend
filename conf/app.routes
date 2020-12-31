@@ -14,7 +14,6 @@ GET        /associated-enterprises/check-answers        controllers.enterprises.
 GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
 
-GET       /intermediaries/check-answers                controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad
 
 GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
 POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
@@ -436,10 +435,6 @@ POST       /reporter/taxpayers/implementation-date                  controllers.
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
-GET        /intermediaries/exempt-countries                 controllers.ExemptCountriesController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exempt-countries                 controllers.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exempt-countries          controllers.ExemptCountriesController.onSubmit(mode: Mode = CheckMode)
 GET        /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediaries/change-exempt-countries          controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
