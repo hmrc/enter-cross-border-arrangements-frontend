@@ -377,6 +377,8 @@ POST       /disclosure/change-identify                 controllers.disclosure.Di
 
 # REPORTER DETAILS
 
+GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
+
 GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
