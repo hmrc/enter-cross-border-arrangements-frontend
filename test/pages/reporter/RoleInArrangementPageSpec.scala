@@ -19,7 +19,7 @@ package pages.reporter
 import models.reporter.RoleInArrangement
 import pages.behaviours.PageBehaviours
 
-class RoleInArrangementSpec extends PageBehaviours {
+class RoleInArrangementPageSpec extends PageBehaviours {
 
   "RoleInArrangementPage" - {
 

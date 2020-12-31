@@ -39,9 +39,8 @@ class NavigatorForDisclosure @Inject()() extends AbstractNavigator {
       case _             => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
     }
 
-    case DisclosureMarketablePage => checkRoute => value => _ => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
-    case DisclosureIdentifyArrangementPage => checkRoute => _ => _ => controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
-
+    case DisclosureMarketablePage => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
+    case DisclosureIdentifyArrangementPage => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>

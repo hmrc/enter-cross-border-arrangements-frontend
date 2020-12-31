@@ -16,10 +16,12 @@
 
 package pages.disclosure
 
+import models.UserAnswers
 import models.disclosure.DisclosureType
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
-class DisclosureTypeSpec extends PageBehaviours {
+class DisclosureTypePageSpec extends PageBehaviours {
 
   "DisclosureTypePage" - {
 
@@ -29,4 +31,35 @@ class DisclosureTypeSpec extends PageBehaviours {
 
     beRemovable[DisclosureType](DisclosureTypePage)
   }
+
+  "must remove arrangement ID value if 'A new arrangement' is selected" in {
+    forAll(arbitrary[UserAnswers]) {
+      answers =>
+        val result = answers
+          .set(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
+          .success
+          .value
+          .set(DisclosureTypePage, DisclosureType.Dac6new)
+          .success
+          .value
+
+        result.get(DisclosureIdentifyArrangementPage) mustBe None
+    }
+  }
+
+  "must remove marketable arrangement value if 'An addition to an existing arrangement' is selected" in {
+    forAll(arbitrary[UserAnswers]) {
+      answers =>
+        val result = answers
+          .set(DisclosureMarketablePage, true)
+          .success
+          .value
+          .set(DisclosureTypePage, DisclosureType.Dac6add)
+          .success
+          .value
+
+        result.get(DisclosureMarketablePage) mustBe None
+    }
+  }
+
 }

@@ -8,15 +8,6 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
-GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
-GET        /organisation/check-answers                  controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad
-GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
-GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
-GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
-
-GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
-POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
-
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
@@ -26,6 +17,7 @@ GET        /sign-out                                    controllers.SignOutContr
 
 # HALLMARK ROUTES
 
+GET        /hallmarks/check-answers                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
 
 GET        /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(mode: Mode = NormalMode)
@@ -82,6 +74,7 @@ POST       /hallmarks/change-hallmark-category-e                    controllers.
 
 # ORGANISATION ROUTES
 
+GET        /organisation/check-answers                  controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad
 
 GET        /organisation/main-address-in-uk                         controllers.organisation.IsOrganisationAddressUkController.onPageLoad(mode: Mode = NormalMode)
 POST       /organisation/main-address-in-uk                         controllers.organisation.IsOrganisationAddressUkController.onSubmit(mode: Mode = NormalMode)
@@ -156,6 +149,7 @@ POST       /organisation/change-non-uk-tax-numbers-:index       controllers.orga
 
 # INDIVIDUAL ROUTES
 
+GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
 
 GET        /individual/date-of-birth                               controllers.individual.IndividualDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
 POST       /individual/date-of-birth                               controllers.individual.IndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
@@ -246,6 +240,7 @@ POST       /individual/change-address                 controllers.individual.Ind
 
 # ARRANGEMENT ROUTES
 
+GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
 
 GET        /arrangement/name                        controllers.arrangement.WhatIsThisArrangementCalledController.onPageLoad(mode: Mode = NormalMode)
 POST       /arrangement/name                         controllers.arrangement.WhatIsThisArrangementCalledController.onSubmit(mode: Mode = NormalMode)
@@ -289,6 +284,9 @@ POST       /arrangement/change-details                  controllers.arrangement.
 
 # TAXPAYER ROUTES
 
+GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
+POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+
 GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
 
@@ -305,6 +303,8 @@ POST       /taxpayers/change-implementation-date                        controll
 
 
 # ASSOCIATED ENTERPRISES
+
+GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
 
 GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
 POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
@@ -346,6 +346,8 @@ GET        /intermediaries/change-capacity                 controllers.intermedi
 POST       /intermediaries/change-capacity                 controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
 
 # DISCLOSURE
+
+GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)

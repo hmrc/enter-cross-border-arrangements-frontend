@@ -16,13 +16,26 @@
 
 package pages.disclosure
 
+import models.UserAnswers
 import models.disclosure.DisclosureType
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object DisclosureTypePage extends QuestionPage[DisclosureType] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "disclosureType"
+
+  override def cleanup(value: Option[DisclosureType], userAnswers: UserAnswers): Try[UserAnswers] =
+
+    value match {
+      case Some(DisclosureType.Dac6new) =>
+        userAnswers.remove(DisclosureIdentifyArrangementPage)
+      case Some(DisclosureType.Dac6add) =>
+        userAnswers.remove(DisclosureMarketablePage)
+      case None =>     super.cleanup(value, userAnswers)
+    }
 }
