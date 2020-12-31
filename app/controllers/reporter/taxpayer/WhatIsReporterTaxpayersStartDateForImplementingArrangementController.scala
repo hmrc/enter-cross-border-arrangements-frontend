@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.taxpayer
+package controllers.reporter.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
@@ -23,7 +23,8 @@ import helpers.JourneyHelpers
 import models.SelectType.{Individual, Organisation}
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.reporter.WhatIsReporterTaxpayersStartDateForImplementingArrangementPage
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,7 +37,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
+class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
@@ -51,18 +52,17 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
   val numberOfMonthsToAdd = 6
   val form = formProvider()
 
-  private def actionUrl(mode: Mode): String = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode).url
+  private def actionUrl(mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage) match {
+      val preparedForm = request.userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
 
       val viewModel = DateInput.localDate(preparedForm("value"))
-
 
       val json = Json.obj (
         "form" -> preparedForm,
@@ -98,14 +98,14 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, mode, updatedAnswers))
       )
   }
 
   private def getDisplayName(userAnswers: UserAnswers): Option[String] = {
-   userAnswers.get(TaxpayerSelectTypePage) map {
+   userAnswers.get(TaxpayerSelectTypePage) map { //ToDo this may have to change for reporter
      case Organisation => JourneyHelpers.getOrganisationName(userAnswers)
      case Individual => JourneyHelpers.getIndividualName(userAnswers)
    }

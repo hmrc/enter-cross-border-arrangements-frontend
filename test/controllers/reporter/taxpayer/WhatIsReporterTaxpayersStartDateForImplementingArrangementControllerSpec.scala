@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package controllers.taxpayer
+package controllers.reporter.taxpayer
 
-import java.time.{LocalDate, ZoneOffset}
 import base.SpecBase
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
@@ -28,7 +27,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.OrganisationNamePage
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.reporter.WhatIsReporterTaxpayersStartDateForImplementingArrangementPage
+import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -38,9 +38,10 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTaxpayersStartDateForImplementingArrangementFormProvider()
   private def form = formProvider()
@@ -49,7 +50,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode).url
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "validAnswer").success.value
 
@@ -107,7 +108,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, validAnswer)
+        .set(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, validAnswer)
         .success
         .value
         .set(OrganisationNamePage, "validAnswer")

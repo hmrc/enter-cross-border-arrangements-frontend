@@ -66,12 +66,12 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     // Reporter - Taxpayer Journey Navigation
 
     case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
-      case Some(DoNotKnow) => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to date implementing page when built
+      case Some(DoNotKnow) => controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
       case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
-      routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to date implementing page when built
+      controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
 
 
     case _ => checkRoute => _ => _ => checkRoute.mode match {

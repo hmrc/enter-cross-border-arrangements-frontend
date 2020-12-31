@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages.taxpayer
+package pages.reporter
 
 import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
 import java.time.LocalDate
 
-class WhatIsTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
+class
+WhatIsReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
 
   "WhatIsTaxpayersStartDateForImplementingArrangementPage" - {
 
@@ -29,10 +30,10 @@ class WhatIsTaxpayersStartDateForImplementingArrangementPageSpec extends PageBeh
       datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
     }
 
-    beRetrievable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
+    beRetrievable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
 
-    beSettable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
+    beSettable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
 
-    beRemovable[LocalDate](WhatIsTaxpayersStartDateForImplementingArrangementPage)
+    beRemovable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
   }
 }

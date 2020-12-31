@@ -399,7 +399,7 @@ POST       /reporter/intermediary/exemption-known                        control
 GET        /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = CheckMode)
 
-GET        /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = NormalMode)
+GET        /reporter/intermediary/exemption-country-known                       controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = CheckMode)
@@ -418,3 +418,9 @@ GET        /reporter/taxpayer/why-reporting                        controllers.r
 POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
