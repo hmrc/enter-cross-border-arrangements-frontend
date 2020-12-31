@@ -164,22 +164,22 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'What is [name] start date for implementing this arrangement' page " +
-        "when 'I DO NOT KNOW' is selected & its a marketable arrangement" ignore {
+        "when 'I DO NOT KNOW' is selected & its a marketable arrangement" in {
 
         //TODO - redirect to implementing date page if marketable arrangement
         navigator
           .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'What is [name] start date for implementing this arrangement' page " +
-        "when 'I DO NOT KNOW' is selected & its 'NOT' a marketable arrangement" ignore {
+        "when 'I DO NOT KNOW' is selected & its 'NOT' a marketable arrangement" in {
 
         //TODO - redirect to CYA page
         navigator
           .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
       }
     }
   }
