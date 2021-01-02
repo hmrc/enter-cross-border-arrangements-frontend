@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms
+package forms.reporter
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.reporter.organisation.ReporterOrganisationEmailAddressQuestionFormProvider
 import play.api.data.FormError
 
-class ReporterOrganisationEmailAddressQuestionFormProviderSpec extends BooleanFieldBehaviours {
+class ReporterEmailAddressQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "reporterOrganisationEmailAddressQuestion.error.required"
+  val requiredKey = "reporterEmailAddressQuestion.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new ReporterOrganisationEmailAddressQuestionFormProvider()()
+  val form = new ReporterEmailAddressQuestionFormProvider()()
 
   ".value" - {
 

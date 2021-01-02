@@ -474,6 +474,13 @@ POST       /reporter/organisation/email-address                          control
 GET        /reporter/organisation/change-email-address                   controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/organisation/change-email-address                   controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode: Mode = CheckMode)
 
+## REPORTER DETAILS - INDIVIDUAL
+
+GET        /reporter/individual/email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onSubmit(mode: Mode = CheckMode)
+
 
 # REPORTER DETAILS - INDIVIDUAL JOURNEY
 

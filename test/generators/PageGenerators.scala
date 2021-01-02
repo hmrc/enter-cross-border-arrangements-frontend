@@ -23,10 +23,12 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary._
+import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
 import pages.taxpayer._
 import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
 
@@ -39,8 +41,8 @@ import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryReporterOrganisationEmailAddressQuestionPage: Arbitrary[ReporterOrganisationEmailAddressQuestionPage.type] =
-    Arbitrary(ReporterOrganisationEmailAddressQuestionPage)
+  implicit lazy val arbitraryReporterEmailAddressQuestionPage: Arbitrary[ReporterEmailAddressQuestionPage.type] =
+    Arbitrary(ReporterEmailAddressQuestionPage)
 
   implicit lazy val arbitraryDisclosureIdentifyArrangementPage: Arbitrary[DisclosureIdentifyArrangementPage.type] =
     Arbitrary(DisclosureIdentifyArrangementPage)

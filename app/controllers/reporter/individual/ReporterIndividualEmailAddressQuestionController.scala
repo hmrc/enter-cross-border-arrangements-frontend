@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.reporter.organisation
+package controllers.reporter.individual
 
 import controllers.actions._
 import forms.reporter.ReporterEmailAddressQuestionFormProvider
@@ -33,7 +33,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterOrganisationEmailAddressQuestionController @Inject()(
+class ReporterIndividualEmailAddressQuestionController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -45,8 +45,7 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  private def actionUrl(mode: Mode): String = routes.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode).url
-
+  private def actionUrl(mode: Mode) = routes.ReporterIndividualEmailAddressQuestionController.onSubmit(mode).url
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -60,9 +59,9 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "pageTitle" -> "reporterOrganisationEmailAddressQuestion.title",
+        "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
         "actionUrl" -> actionUrl(mode),
-        "pageHeading" -> pageHeadingProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers)),
+        "pageHeading" -> pageHeadingProvider("reporterIndividualEmailAddressQuestion.heading", ""),
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
@@ -78,9 +77,9 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "pageTitle" -> "reporterOrganisationEmailAddressQuestion.title",
+            "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
             "actionUrl" -> actionUrl(mode),
-            "pageHeading" -> pageHeadingProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers)),
+            "pageHeading" -> pageHeadingProvider("reporterIndividualEmailAddressQuestion.heading", ""),
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 

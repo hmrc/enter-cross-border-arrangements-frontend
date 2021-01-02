@@ -42,6 +42,13 @@ object JourneyHelpers {
     }
   }
 
+  def getReporterDetailsIndividualName(userAnswers: UserAnswers): String = {
+    userAnswers.get(IndividualNamePage) match { //TODO - change this to Reporter Details IndividualName userAnswers when page built
+      case Some(indName) => indName.displayName
+      case _ => "the individual"
+    }
+  }
+
   def getReporterDetailsOrganisationName(userAnswers: UserAnswers): String = {
     userAnswers.get(ReporterOrganisationNamePage) match {
       case Some(organisationName) => organisationName
@@ -52,6 +59,7 @@ object JourneyHelpers {
   def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
     Html(s"<h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1>")
   }
+
   def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =
     Json.obj("value" -> "", "text" -> "") +: currencies.map {
       currency => Json.obj(

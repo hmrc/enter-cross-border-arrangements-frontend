@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package forms.reporter.organisation
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import pages.behaviours.PageBehaviours
+import pages.reporter.ReporterEmailAddressQuestionPage
 
-class ReporterOrganisationEmailAddressQuestionFormProvider @Inject() extends Mappings {
+class ReporterEmailAddressQuestionPageSpec extends PageBehaviours {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("reporterOrganisationEmailAddressQuestion.error.required")
-    )
+  "ReporterOrganisationEmailAddressQuestionPage" - {
+
+    beRetrievable[Boolean](ReporterEmailAddressQuestionPage)
+
+    beSettable[Boolean](ReporterEmailAddressQuestionPage)
+
+    beRemovable[Boolean](ReporterEmailAddressQuestionPage)
+  }
 }
