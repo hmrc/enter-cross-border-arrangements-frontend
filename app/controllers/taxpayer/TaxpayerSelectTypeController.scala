@@ -18,7 +18,7 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
-import models.{Mode, SelectType}
+import models.{Mode, NormalMode, SelectType}
 import navigation.Navigator
 
 import pages.taxpayer.TaxpayerSelectTypePage
@@ -78,11 +78,13 @@ class TaxpayerSelectTypeController @Inject()(
 
           renderer.render("taxpayer/selectType.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectMode = if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, value)) NormalMode else mode
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, redirectMode, updatedAnswers))
+        }
       )
   }
 }
