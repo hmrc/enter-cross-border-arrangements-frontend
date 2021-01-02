@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package controllers.mixins
 import models.{CheckMode, NormalMode, SelectType, UserAnswers}
 import org.scalatest.{FreeSpec, MustMatchers, TryValues}
 import pages.enterprises.AssociatedEnterpriseTypePage
+import pages.intermediaries.IntermediariesTypePage
 import pages.taxpayer.TaxpayerSelectTypePage
 
 class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
@@ -36,7 +37,7 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe (AssociatedEnterprisesRouting(NormalMode))
+        toCheckRoute(NormalMode, userAnswers) mustBe AssociatedEnterprisesRouting(NormalMode)
       }
     }
 
@@ -49,11 +50,24 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe (TaxpayersRouting(NormalMode))
+        toCheckRoute(NormalMode, userAnswers) mustBe TaxpayersRouting(NormalMode)
       }
     }
 
-    "must route to AssociatedEnterpriseRouting(ChecklMode) if in CheckMode called from associated enterprises route" in {
+    "must continue to IntermediariesRouting(NormalMode) if in NormalMode called from Intermediaries route" in {
+
+      new RoutingSupport {
+
+        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(IntermediariesTypePage, SelectType.values.head)
+          .success
+          .value
+
+        toCheckRoute(NormalMode, userAnswers) mustBe IntermediariesRouting(NormalMode)
+      }
+    }
+
+    "must route to AssociatedEnterpriseRouting(CheckMode) if in CheckMode called from associated enterprises route" in {
 
       new RoutingSupport {
 
@@ -62,7 +76,7 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe (AssociatedEnterprisesRouting(CheckMode))
+        toCheckRoute(CheckMode, userAnswers) mustBe AssociatedEnterprisesRouting(CheckMode)
       }
     }
 
@@ -75,7 +89,20 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe (TaxpayersRouting(CheckMode))
+        toCheckRoute(CheckMode, userAnswers) mustBe TaxpayersRouting(CheckMode)
+      }
+    }
+
+    "must route to IntermediariesRouting(CheckMode) if in NormalMode called from Intermediaries route" in {
+
+      new RoutingSupport {
+
+        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(IntermediariesTypePage, SelectType.values.head)
+          .success
+          .value
+
+        toCheckRoute(CheckMode, userAnswers) mustBe IntermediariesRouting(CheckMode)
       }
     }
 

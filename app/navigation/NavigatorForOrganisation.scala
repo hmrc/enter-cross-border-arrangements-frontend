@@ -118,7 +118,7 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
-      case IntermediariesRouting(CheckMode)         => routes.OrganisationCheckYourAnswersController.onPageLoad() // TODO replace when CYA page is build
+      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
       case DefaultRouting(CheckMode)                => routes.OrganisationCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
 package controllers.intermediaries
 
 import base.SpecBase
-import controllers.routes
 import forms.intermediaries.ExemptCountriesFormProvider
 import matchers.JsonMatchers
 import models.intermediaries.ExemptCountries
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -40,8 +38,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val exemptCountriesRoute = routes.ExemptCountriesController.onPageLoad(NormalMode).url
 
@@ -116,7 +112,6 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -129,7 +124,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers"
 
       application.stop()
     }

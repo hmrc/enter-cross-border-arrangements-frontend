@@ -24,8 +24,6 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
-import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage}
-import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages

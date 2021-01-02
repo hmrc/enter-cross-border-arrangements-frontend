@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1229,6 +1229,81 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from 'You have not added any intermediaries' page to " +
+        "'Is this an organisation or an individual?' if answer is yes" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddNow)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'You have not added any intermediaries' page to " +
+        "Index page if answer is 'No'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.No)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from 'You have not added any intermediaries' page to " +
+        "Index page if answer is 'YesAddLater'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddLater)
+                .success.value
+
+            navigator
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
+              .mustBe(controllers.routes.IndexController.onPageLoad())
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' intermediaries page to " +
+        "'What is the name of the organisation?' if answer is Organisation" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IntermediariesTypePage, SelectType.Organisation)
+                .success.value
+
+            navigator
+              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Is this an organisation or an individual?' intermediaries page to " +
+        "'What is their name?' if answer is Individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers.set(IntermediariesTypePage, SelectType.Individual)
+                .success.value
+
+            navigator
+              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
+              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from Is the individuals resident for tax purposes in any other countries? page to " +
         "'What type of intermediary is name?' if in the intermediaries journey" in {
         forAll(arbitrary[UserAnswers]) {
@@ -1430,7 +1505,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+      "Do you know the reason this arrangement must be reported now? page to " +
         "Why are you reporting this arrangement now? page when the answer is yes" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -1445,7 +1520,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
+      "Do you know the reason this arrangement must be reported now? page to " +
         "'Which of these countries are expected to be involved in this arrangement?' page when the answer is No" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -1678,81 +1753,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(IsOrganisationResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
               .mustBe(controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
-        }
-      }
-
-     "must go from 'You have not added any intermediaries' page to " +
-        "'Is this an organisation or an individual?' if answer is yes" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddNow)
-                .success.value
-
-            navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'You have not added any intermediaries' page to " +
-        "Index page if answer is 'No'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.No)
-                .success.value
-
-            navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IndexController.onPageLoad())
-        }
-      }
-
-      "must go from 'You have not added any intermediaries' page to " +
-        "Index page if answer is 'YesAddLater'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddLater)
-                .success.value
-
-            navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.routes.IndexController.onPageLoad())
-        }
-      }
-
-      "must go from 'Is this an organisation or an individual?' intermediaries page to " +
-        "'What is the name of the organisation?' if answer is Organisation" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IntermediariesTypePage, SelectType.Organisation)
-                .success.value
-
-            navigator
-              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Is this an organisation or an individual?' intermediaries page to " +
-        "'What is their name?' if answer is Individual" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(IntermediariesTypePage, SelectType.Individual)
-                .success.value
-
-            navigator
-              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
         }
       }
     }

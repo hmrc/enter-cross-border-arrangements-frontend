@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package controllers.intermediaries
 
 import base.SpecBase
-import controllers.routes
 import forms.intermediaries.IsExemptionKnownFormProvider
 import matchers.JsonMatchers
 import models.{IsExemptionKnown, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +27,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.IsExemptionKnownPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,8 +36,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(NormalMode).url
 
@@ -117,7 +112,6 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,8 +124,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
-
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-country-known"
       application.stop()
     }
 

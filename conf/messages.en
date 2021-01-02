@@ -644,14 +644,6 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
-exemptCountries.title = Choose exempt countries
-exemptCountries.heading = Which countries is Carlson and Leonard Ltd exempt from reporting in?
-exemptCountries.hint = Select all that apply.
-exemptCountries.unitedKingdom = United Kingdom
-exemptCountries.austria = Austria
-exemptCountries.checkYourAnswersLabel = exemptCountries
-exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
-
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} exempt from reporting in?
 isExemptionCountryKnown.checkYourAnswersLabel = Do you know which countries they’re exempt from reporting in?
@@ -670,7 +662,7 @@ isExemptionKnown.checkYourAnswersLabel = Are they exempt from reporting?
 isExemptionKnown.error.required = Select yes if you know the intermediary is exempt from reporting in an EU member state, or in the UK
 
 exemptCountries.title = Choose exempt countries
-exemptCountries.heading = Which countries is Carlson and Leonard Ltd exempt from reporting in?
+exemptCountries.heading = Which countries is {0} exempt from reporting in?
 exemptCountries.hint = Select all that apply.
 exemptCountries.checkYourAnswersLabel = Choose exempt countries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in

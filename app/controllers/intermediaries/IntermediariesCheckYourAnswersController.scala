@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package controllers.intermediaries
 import controllers.actions._
 import javax.inject.Inject
 import models.SelectType
-import models.SelectType.{Individual, Organisation}
 import pages.intermediaries.IntermediariesTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -38,7 +37,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
                                                           requireData: DataRequiredAction,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           renderer: Renderer
-                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport{
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

@@ -17,18 +17,18 @@
 package controllers.intermediaries
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.WhatTypeofIntermediaryFormProvider
-
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
 import models.intermediaries.WhatTypeofIntermediary
-import navigation.Navigator
+import models.{Mode, UserAnswers}
+import navigation.NavigatorForIntermediaries
 import pages.individual.IndividualNamePage
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,14 +39,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatTypeofIntermediaryController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIntermediaries,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhatTypeofIntermediaryFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -68,6 +68,9 @@ class WhatTypeofIntermediaryController @Inject()(
       renderer.render("intermediaries/whatTypeofIntermediary.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[WhatTypeofIntermediary]): Call =
+    navigator.routeMap(WhatTypeofIntermediaryPage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -87,7 +90,8 @@ class WhatTypeofIntermediaryController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatTypeofIntermediaryPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatTypeofIntermediaryPage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 

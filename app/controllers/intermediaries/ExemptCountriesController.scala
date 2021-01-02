@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,20 @@
 package controllers.intermediaries
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.ExemptCountriesFormProvider
 import javax.inject.Inject
 import models.intermediaries.ExemptCountries
+import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.{Navigator, NavigatorForIntermediaries}
 import pages.individual.IndividualNamePage
 import pages.intermediaries.ExemptCountriesPage
 import pages.organisation.OrganisationNamePage
+import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,14 +41,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExemptCountriesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForIntermediaries,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: ExemptCountriesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -67,6 +70,9 @@ class ExemptCountriesController @Inject()(
       renderer.render("intermediaries/exemptCountries.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[Set[ExemptCountries]]): Call =
+    navigator.routeMap(ExemptCountriesPage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -86,7 +92,8 @@ class ExemptCountriesController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptCountriesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ExemptCountriesPage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
