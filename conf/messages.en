@@ -861,6 +861,16 @@ reporterOrganisationIsAddressUk.error.required = Select yes if their address is 
 reporterOrganisationAddress.title = What is its address?
 reporterOrganisationAddress.heading = What is {0}’s address?
 
+reporterOrganisationEmailAddressQuestion.title = Do you have a contact email address at the organisation?
+reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
+reporterOrganisationEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
+reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
+reporterOrganisationEmailAddressQuestion.error.required = Select yes if you have a contact email address
+
+## REPORTER DETAILS - INDIVIDUAL
+
+
+
 
 
 

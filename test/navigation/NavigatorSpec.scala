@@ -16,6 +16,8 @@
 
 package navigation
 
+import java.time.LocalDate
+
 import base.SpecBase
 import controllers.routes
 import generators.Generators
@@ -43,10 +45,6 @@ import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-
-import java.time.LocalDate
-
-import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -1206,7 +1204,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsIndividualResidentForTaxOtherCountriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.CheckYourAnswersIndividualController.onPageLoad())
+              .mustBe(controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad())
         }
       }
 

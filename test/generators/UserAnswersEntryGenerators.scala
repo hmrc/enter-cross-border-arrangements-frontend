@@ -35,17 +35,28 @@ import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayers
 import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
+import pages.individual.{IsIndividualDateOfBirthKnownPage}
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
-import pages.reporter.intermediary._
 import pages.reporter.individual._
+import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationEmailAddressQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterIndividualEmailAddressUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] =
     Arbitrary {
@@ -142,14 +153,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 		value <- arbitrary[YouHaveNotAddedAnyIntermediaries].map(Json.toJson(_))
 	      } yield (page, value)
 	    }
-
-  implicit lazy val arbitraryDisclosureMarketableUserAnswersEntry: Arbitrary[(DisclosureMarketablePage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[DisclosureMarketablePage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
 
   implicit lazy val arbitraryIsIndividualDateOfBirthKnownUserAnswersEntry: Arbitrary[(IsIndividualDateOfBirthKnownPage.type, JsValue)] =
     Arbitrary {

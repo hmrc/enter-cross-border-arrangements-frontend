@@ -222,26 +222,43 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(NormalMode))
       }
 
-      "must go from 'What is [name]'s address' manual address page " +
+      "must go from 'What is [name]'s address' manual address' page " +
         "to select 'Do you have a contact email address at [name]' page " +
-        "when a valid address is entered" ignore {
+        "when a valid address is entered" in {
 
-        //TODO - redirect to reporter details organisation email address page
         navigator
           .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
       }
 
-      "must go from 'What is [name]'s address' select address page " +
+      "must go from 'What is [name]'s address' select address' page " +
         "to select 'Do you have a contact email address at [name]' page " +
-        "when a valid address is selected" ignore {
+        "when a valid address is selected" in {
 
-        //TODO - redirect to reporter details organisation email address page
         navigator
           .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
       }
 
+      "must go from 'Do you have a contact email address at [name]' page " +
+        "to select 'What is the contact email for [name]' page " +
+        "when option YES is selected" ignore {
+
+        // TODO - add redirec tto what is email address page
+        navigator
+          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Do you have a contact email address at [name]' page " +
+        "to select 'Which country is [name] resident in for tax purposes' page " +
+        "when option NO is selected" ignore {
+
+        // TODO - add redirect to tax residency page
+        navigator
+          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+      }
     }
   }
 }

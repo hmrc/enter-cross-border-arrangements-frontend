@@ -16,30 +16,14 @@
 
 package forms.reporter.organisation
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class ReporterOrganisationIsAddressUkFormProviderSpec extends BooleanFieldBehaviours {
+class ReporterOrganisationEmailAddressQuestionFormProvider @Inject() extends Mappings {
 
-  val requiredKey = "reporterOrganisationIsAddressUk.error.required"
-  val invalidKey = "error.boolean"
-
-  val form = new ReporterOrganisationIsAddressUkFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("reporterOrganisationEmailAddressQuestion.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }
