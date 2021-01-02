@@ -18,8 +18,9 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, SelectType}
 import navigation.Navigator
+
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
