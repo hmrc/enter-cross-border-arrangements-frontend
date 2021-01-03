@@ -437,11 +437,12 @@ POST       /reporter/taxpayer/why-reporting                        controllers.r
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
+
+# REPORTER DETAILS - INDIVIDUAL JOURNEY
 
 GET        /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = NormalMode)
@@ -477,8 +478,3 @@ GET        /reporter/individual/select-address               controllers.reporte
 POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
-
-GET        /reporter/individual/email-address                controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/individual/email-address                controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/individual/change-email-address         controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/individual/change-email-address         controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = CheckMode)

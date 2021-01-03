@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package controllers.reporter.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
+import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForReporter
 import pages.reporter.individual.ReporterIsIndividualAddressUKPage
@@ -29,7 +31,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIsIndividualAddressUKController @Inject()(
@@ -39,9 +40,10 @@ class ReporterIsIndividualAddressUKController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: ReporterIsIndividualAddressUKFormProvider,
+    navigator: NavigatorForReporter,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -62,8 +64,8 @@ class ReporterIsIndividualAddressUKController @Inject()(
       renderer.render("reporter/individual/reporterIsIndividualAddressUK.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[Boolean], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIsIndividualAddressUKPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterIsIndividualAddressUKPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -83,7 +85,8 @@ class ReporterIsIndividualAddressUKController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIsIndividualAddressUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

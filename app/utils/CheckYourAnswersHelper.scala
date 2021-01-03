@@ -36,21 +36,6 @@ import utils.rows._
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows {
 
-  def reporterIndividualEmailAddress: Option[Row] = userAnswers.get(ReporterIndividualEmailAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualEmailAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualEmailAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def reporterIndividualSelectAddress: Option[Row] = userAnswers.get(ReporterIndividualSelectAddressPage) map {
     answer =>
       Row(

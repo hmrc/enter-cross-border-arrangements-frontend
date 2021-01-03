@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package controllers.reporter.individual
 
 import connectors.AddressLookupConnector
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.hasValueChanged
 import models.requests.DataRequest
@@ -32,8 +33,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIndividualSelectAddressController @Inject()(
@@ -45,8 +46,11 @@ class ReporterIndividualSelectAddressController @Inject()(
     formProvider: SelectAddressFormProvider,
     val controllerComponents: MessagesControllerComponents,
     addressLookupConnector: AddressLookupConnector,
+    navigator: NavigatorForReporter,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+
+  private def manualAddressURL(mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(mode).url //TODO Change to UK page when ready
 
   private val form = formProvider()
 
@@ -80,8 +84,13 @@ class ReporterIndividualSelectAddressController @Inject()(
       }
   }
 
-  def redirect(mode: Mode, value: Option[String], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIndividualSelectAddressPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
+    if (isAlt) {
+      navigator.routeAltMap(ReporterIndividualSelectAddressPage)(checkRoute)(value)(0)
+    }
+    else {
+      navigator.routeMap(ReporterIndividualSelectAddressPage)(checkRoute)(value)(0)
+    }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -113,19 +122,12 @@ class ReporterIndividualSelectAddressController @Inject()(
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualSelectAddressPage, value))
                 updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
                 _ <- sessionRepository.set(updatedAnswersWithAddress)
-              } yield {
-                if (redirectUsers) {
-                  Redirect(controllers.routes.IndexController.onPageLoad()) //TODO Redirect to correct CYA page when ready
-                } else {
-                  Redirect(redirect(mode, Some(value)))
-                }
-              }
+                checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
+              } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
             }
           )
       }
   }
-
-  private def manualAddressURL(mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(mode).url //TODO Change to UK page when ready
 
   private def getPostCodeFromRequest[A](request: DataRequest[A]): String =
     request.userAnswers.get(ReporterIndividualPostcodePage) match {
