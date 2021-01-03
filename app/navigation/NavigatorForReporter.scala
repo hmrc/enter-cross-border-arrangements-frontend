@@ -26,9 +26,6 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.individual._
-import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
@@ -115,25 +112,6 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       indexRoute
 
 
-
-    // Reporter - Individual Journey Navigation
-
-    case ReporterIndividualEmailAddressQuestionPage => checkRoute =>value => _ => value match {
-      case Some(true) =>
-        controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
-
-      case _ =>
-        //TODO- redirect to Tax Residencies page when built
-        controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
-    }
-
-    case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>
-      //TODO- redirect to Tax Residencies page when built
-      indexRoute
-
-
-
-
     // Reporter - Individual Journey Navigation
 
     case ReporterIndividualNamePage => checkRoute => _ => _ =>
@@ -158,6 +136,20 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case ReporterIndividualSelectAddressPage => _ => _ => _ =>
       controllers.routes.IndexController.onPageLoad()
+
+    case ReporterIndividualEmailAddressQuestionPage => checkRoute =>value => _ => value match {
+      case Some(true) =>
+        controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
+
+      case _ =>
+        //TODO- redirect to Tax Residencies page when built
+        controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+    }
+
+    case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>
+      //TODO- redirect to Tax Residencies page when built
+      indexRoute
+
 
     case _ => checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute

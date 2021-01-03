@@ -40,13 +40,10 @@ import pages.individual.{IsIndividualDateOfBirthKnownPage, _}
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.organisation.ReporterOrganisationPostcodePage
-import pages.reporter.individual._
-import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
@@ -81,14 +78,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[ReporterOrganisationEmailAddressQuestionPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryReporterIndividualEmailAddressUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[ReporterIndividualEmailAddressPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

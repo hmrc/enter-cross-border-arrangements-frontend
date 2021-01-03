@@ -25,11 +25,11 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
+import pages.reporter.RoleInArrangementPage
+import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
 
@@ -59,9 +59,6 @@ trait PageGenerators {
 
   implicit lazy val arbitraryReporterOrganisationPostcodePage: Arbitrary[ReporterOrganisationPostcodePage.type] =
     Arbitrary(ReporterOrganisationPostcodePage)
-
-  implicit lazy val arbitraryReporterIndividualEmailAddressPage: Arbitrary[ReporterIndividualEmailAddressPage.type] =
-    Arbitrary(ReporterIndividualEmailAddressPage)
 
   implicit lazy val arbitraryReporterIndividualSelectAddressPage: Arbitrary[ReporterIndividualSelectAddressPage.type] =
     Arbitrary(ReporterIndividualSelectAddressPage)
@@ -122,12 +119,6 @@ trait PageGenerators {
 
   implicit lazy val arbitraryRoleInArrangementPage: Arbitrary[RoleInArrangementPage.type] =
     Arbitrary(RoleInArrangementPage)
-
-  implicit lazy val arbitraryIsIndividualDateOfBirthKnownPage: Arbitrary[IsIndividualDateOfBirthKnownPage.type] =
-    Arbitrary(IsIndividualDateOfBirthKnownPage)
-
-  implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
-    Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
 
   implicit lazy val arbitraryIsExemptionKnownPage: Arbitrary[IsExemptionKnownPage.type] =
     Arbitrary(IsExemptionKnownPage)

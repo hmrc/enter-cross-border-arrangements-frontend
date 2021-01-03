@@ -28,20 +28,13 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
-import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
+import pages.reporter.RoleInArrangementPage
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
-import pages.reporter.organisation.ReporterOrganisationPostcodePage
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.individual._
-import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
-import pages.intermediaries._
-import pages.reporter.organisation.{ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
-import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
@@ -51,7 +44,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
-    arbitrary[(ReporterEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualSelectAddressPage.type, JsValue)] ::
