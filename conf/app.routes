@@ -397,6 +397,12 @@ POST       /disclosure/change-identify                 controllers.disclosure.Di
 
 GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
 
+
+GET        /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = CheckMode)
+
 GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
@@ -528,3 +534,4 @@ GET        /reporter/individual/select-address               controllers.reporte
 POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
+

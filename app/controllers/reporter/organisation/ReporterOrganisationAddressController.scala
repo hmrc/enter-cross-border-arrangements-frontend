@@ -45,7 +45,11 @@ class ReporterOrganisationAddressController @Inject()(override val messagesApi: 
   formProvider: AddressFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport with CountrySupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController
+  with I18nSupport
+  with NunjucksSupport
+  with RoutingSupport
+  with CountrySupport {
 
   private def actionUrl(mode: Mode) = routes.ReporterOrganisationAddressController.onSubmit(mode).url
 
@@ -67,7 +71,8 @@ class ReporterOrganisationAddressController @Inject()(override val messagesApi: 
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
         "pageTitle" -> "reporterOrganisationAddress.title",
-        "pageHeading" -> pageHeadingProvider("reporterOrganisationAddress.heading", getReporterDetailsOrganisationName(request.userAnswers))
+        "pageHeading" -> pageHeadingProvider("reporterOrganisationAddress.heading",
+          getReporterDetailsOrganisationName(request.userAnswers))
       )
 
       renderer.render("address.njk", json).map(Ok(_))

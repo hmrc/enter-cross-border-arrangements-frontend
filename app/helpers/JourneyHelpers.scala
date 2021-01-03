@@ -56,8 +56,12 @@ object JourneyHelpers {
     }
   }
 
-  def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
+  def pageHeadingLegendProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
     Html(s"<legend><h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1></legend>")
+  }
+
+  def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
+    Html(s"<h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1>")
   }
 
   def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =

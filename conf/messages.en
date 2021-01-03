@@ -777,6 +777,13 @@ countriesListCheckboxes.SE =  Sweden
 
 ## REPORTER DETAILS
 
+reporterOrganisationOrIndividual.title = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.heading = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.organisation = Organisation
+reporterOrganisationOrIndividual.individual = Individual
+reporterOrganisationOrIndividual.checkYourAnswersLabel = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.error.required = Select organisation or individual
+
 roleInArrangement.title = What is your role in this arrangement?
 roleInArrangement.heading = What is your role in this arrangement?
 roleInArrangement.intermediary = Intermediary
@@ -885,7 +892,7 @@ reporterIndividualEmailAddress.heading = What is your preferred email address?
 reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
 
 
-
+## REPORTER DETAILS - INDIVIDUAL
 
 reporterIndividualName.title = What is your full name?
 reporterIndividualName.heading = What is your full name?
@@ -912,18 +919,16 @@ reporterIndividualDateOfBirth.error.pastDate = Provide a date after 1 January 19
 reporterIndividualPlaceOfBirth.title = What is your place of birth?
 reporterIndividualPlaceOfBirth.heading = What is your place of birth?
 reporterIndividualPlaceOfBirth.hint = Provide the town or city and country
-reporterIndividualPlaceOfBirth.checkYourAnswersLabel = reporterIndividualPlaceOfBirth
+reporterIndividualPlaceOfBirth.checkYourAnswersLabel = What is your place of birth?
 reporterIndividualPlaceOfBirth.error.required = Provide a place of birth
 reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
 
 reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
 reporterIsIndividualAddressUK.heading = Do you live in the United Kingdom?
-reporterIsIndividualAddressUK.checkYourAnswersLabel = reporterIsIndividualAddressUK
 reporterIsIndividualAddressUK.error.required = Select yes if they live in the United Kingdom
 
 reporterIndividualPostcode.title = What is your postcode?
 reporterIndividualPostcode.heading = What is your postcode?
-reporterIndividualPostcode.checkYourAnswersLabel = reporterIndividualPostcode
 reporterIndividualPostcode.error.required = Enter a postcode
 reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
 reporterIndividualPostcode.hint = Or enter the address manually
@@ -931,17 +936,18 @@ reporterIndividualPostcode.submit = Find address
 
 reporterIndividualAddress.title = What is your address?
 reporterIndividualAddress.heading = What is your address?
-reporterIndividualAddress.checkYourAnswersLabel = reporterIndividualAddress
+reporterIndividualAddress.checkYourAnswersLabel = What is your address?
 
 reporterIndividualSelectAddress.title = What is your address?
 reporterIndividualSelectAddress.heading = What is your address?
 reporterIndividualSelectAddress.1 = 2
 reporterIndividualSelectAddress.3 = 4
 reporterIndividualSelectAddress.checkYourAnswersLabel = What is your address?
-reporterIndividualSelectAddress.error.required = Select reporterIndividualSelectAddress
+reporterIndividualSelectAddress.error.required = Select an address
 
 reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddress.label = Email
-reporterIndividualEmailAddress.checkYourAnswersLabel = reporterIndividualEmailAddress
-reporterIndividualEmailAddress.error.required = Select yes if reporterIndividualEmailAddress
+reporterIndividualEmailAddress.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
+

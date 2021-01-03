@@ -27,7 +27,7 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -191,6 +191,15 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
     "on ORGANISATION JOURNEY in Normal Mode" - {
 
+      "must go from 'Are you reporting as an organisation or individual?' page " +
+        "to 'What is the name of the organisation you’re reporting for?' page " +
+        "when any 'ORGANISATION' option is selected" in {
+
+        navigator
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Organisation))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
+      }
+
       "must go from 'What is the name of the organisation your're reporting for' page " +
         "to 'Is [name]'s address in the United Kingdom' page " +
         "when a valid name is entered" in {
@@ -268,6 +277,15 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
 
     "on INDIVIDUAL JOURNEY in Normal Mode" - {
+
+      "must go from 'Are you reporting as an organisation or individual?' page " +
+        "to 'What is your full name?' page " +
+        "when any 'INDIVIDUAL' option is selected" in {
+
+        navigator
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Individual))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(NormalMode))
+      }
 
       "must go from 'What is your full name?' page " +
         "to 'What is your date of birth?' page " +

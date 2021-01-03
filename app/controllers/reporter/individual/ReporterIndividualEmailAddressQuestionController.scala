@@ -62,7 +62,7 @@ class ReporterIndividualEmailAddressQuestionController @Inject()(
         "mode"   -> mode,
         "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
         "actionUrl" -> actionUrl(mode),
-        "pageHeading" -> pageHeadingProvider("reporterIndividualEmailAddressQuestion.heading", ""),
+        "pageHeading" -> pageHeadingLegendProvider("reporterIndividualEmailAddressQuestion.heading", ""),
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
@@ -83,7 +83,7 @@ class ReporterIndividualEmailAddressQuestionController @Inject()(
             "mode"   -> mode,
             "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
             "actionUrl" -> actionUrl(mode),
-            "pageHeading" -> pageHeadingProvider("reporterIndividualEmailAddressQuestion.heading", ""),
+            "pageHeading" -> pageHeadingLegendProvider("reporterIndividualEmailAddressQuestion.heading", ""),
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 

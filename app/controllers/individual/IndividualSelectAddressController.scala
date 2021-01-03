@@ -20,7 +20,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.{getIndividualName, hasValueChanged, pageHeadingProvider}
+import helpers.JourneyHelpers.{getIndividualName, hasValueChanged, pageHeadingLegendProvider}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{AddressLookup, Mode}
@@ -77,7 +77,7 @@ class IndividualSelectAddressController @Inject()(
               "manualAddressURL" -> manualAddressURL(mode),
               "actionUrl" -> actionUrl(mode),
               "pageTitle" -> "selectAddress.individual.title",
-              "pageHeading" -> pageHeadingProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
+              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
               "radios" -> radios
             )
 
@@ -114,7 +114,7 @@ class IndividualSelectAddressController @Inject()(
               "manualAddressURL" -> manualAddressURL(mode),
               "actionUrl" -> actionUrl(mode),
               "pageTitle" -> "selectAddress.individual.title",
-              "pageHeading" -> pageHeadingProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
+              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
               "radios" -> radios
             )
 

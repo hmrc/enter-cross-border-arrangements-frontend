@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.organisation.ReporterOrganisationNameFormProvider
 import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.NavigatorForReporter
 import pages.reporter.organisation.ReporterOrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,6 +40,7 @@ class ReporterOrganisationNameController @Inject()(
   navigator: NavigatorForReporter,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   formProvider: ReporterOrganisationNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -47,10 +48,10 @@ class ReporterOrganisationNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm =  request.userAnswers.flatMap(_.get(ReporterOrganisationNamePage)) match {
+      val preparedForm =  request.userAnswers.get(ReporterOrganisationNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -71,7 +72,7 @@ class ReporterOrganisationNameController @Inject()(
       navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -85,13 +86,9 @@ class ReporterOrganisationNameController @Inject()(
           renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(BadRequest(_))
         },
         value => {
-
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-          val redirectUsers = hasValueChanged(value, ReporterOrganisationNamePage, mode, userAnswers)
-
+          val redirectUsers = hasValueChanged(value, ReporterOrganisationNamePage, mode, request.userAnswers)
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(ReporterOrganisationNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))

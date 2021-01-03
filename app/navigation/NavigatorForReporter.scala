@@ -19,12 +19,13 @@ package navigation
 import controllers.mixins.{CheckRoute, DefaultRouting}
 import controllers.reporter.routes
 import javax.inject.{Inject, Singleton}
+import models.ReporterOrganisationOrIndividual.Organisation
 import models.YesNoDoNotKnowRadios.Yes
 import models._
 import models.reporter.RoleInArrangement.Intermediary
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -35,6 +36,11 @@ import play.api.mvc.Call
 class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+
+    case ReporterOrganisationOrIndividualPage => checkRoute => value => _ => value match {
+      case Some(Organisation) => controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(checkRoute.mode)
+      case _ => controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(checkRoute.mode)
+    }
 
     case RoleInArrangementPage => checkRoute => value => _ => value match {
       case Some(Intermediary) => controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(checkRoute.mode)

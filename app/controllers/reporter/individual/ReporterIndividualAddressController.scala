@@ -17,13 +17,13 @@
 package controllers.reporter.individual
 
 import controllers.actions._
-import controllers.mixins.{CheckRoute, RoutingSupport}
+import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.countryJsonList
+import helpers.JourneyHelpers.pageHeadingProvider
 import javax.inject.Inject
 import models.{Address, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIsIndividualAddressUKPage}
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIsIndividualAddressUKPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -46,7 +46,13 @@ class ReporterIndividualAddressController @Inject()(
     navigator: NavigatorForReporter,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController
+  with I18nSupport
+  with NunjucksSupport
+  with RoutingSupport
+  with CountrySupport {
+
+  private def actionUrl(mode: Mode) = routes.ReporterIndividualAddressController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -63,10 +69,15 @@ class ReporterIndividualAddressController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
-        "isUkAddress" -> isUkAddress(request.userAnswers)
+        "isUkAddress" -> isUkAddress(request.userAnswers),
+        "actionUrl" -> actionUrl(mode),
+        "pageTitle" -> "reporterIndividualAddress.title",
+        "pageHeading" -> pageHeadingProvider("reporterIndividualAddress.heading",
+          "")
+
       )
 
-      renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(Ok(_))
+      renderer.render("address.njk", json).map(Ok(_))
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[Address], index: Int = 0): Call =
@@ -85,10 +96,14 @@ class ReporterIndividualAddressController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
-            "isUkAddress" -> isUkAddress(request.userAnswers)
+            "isUkAddress" -> isUkAddress(request.userAnswers),
+            "actionUrl" -> actionUrl(mode),
+            "pageTitle" -> "reporterIndividualAddress.title",
+            "pageHeading" -> pageHeadingProvider("reporterIndividualAddress.heading",
+              "")
           )
 
-          renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(BadRequest(_))
+          renderer.render("address.njk", json).map(BadRequest(_))
         },
         value =>
           for {

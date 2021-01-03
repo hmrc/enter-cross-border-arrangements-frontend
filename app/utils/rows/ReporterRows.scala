@@ -21,7 +21,7 @@ import pages.reporter.individual.ReporterIndividualEmailAddressQuestionPage
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -33,6 +33,15 @@ trait ReporterRows extends RowBuilder {
       msgKey  = "roleInArrangement",
       content = Literal(s"roleInArrangement.$answer"),
       href    = controllers.reporter.routes.RoleInArrangementController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def reporterOrganisationOrIndividual: Option[Row] = userAnswers.get(ReporterOrganisationOrIndividualPage) map { answer =>
+
+    toRow(
+      msgKey  = "reporterOrganisationOrIndividual",
+      content = Literal(s"reporterOrganisationOrIndividual.$answer"),
+      href    = controllers.reporter.routes.ReporterOrganisationOrIndividualController.onPageLoad(CheckMode).url
     )
   }
 

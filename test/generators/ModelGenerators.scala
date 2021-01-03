@@ -31,6 +31,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryReporterOrganisationOrIndividual: Arbitrary[ReporterOrganisationOrIndividual] =
+    Arbitrary {
+      Gen.oneOf(ReporterOrganisationOrIndividual.values.toSeq)
+    }
   import models.intermediaries.WhatTypeofIntermediary
 
   implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =

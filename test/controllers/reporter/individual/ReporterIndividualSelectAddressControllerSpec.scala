@@ -173,7 +173,7 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/email-address"
 
       application.stop()
     }
