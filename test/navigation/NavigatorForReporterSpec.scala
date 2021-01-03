@@ -16,18 +16,21 @@
 
 package navigation
 
+import java.time.LocalDate
+
 import base.SpecBase
 import controllers.mixins.DefaultRouting
 import generators.Generators
-import models.{YesNoDoNotKnowRadios, _}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
+import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
+import pages.reporter.individual._
+import pages.reporter.intermediary._
+import pages.reporter.organisation._
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -37,6 +40,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
   val navigator = new NavigatorForReporter
   val index: Int = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
+  val addressUK: Address = Address(Some("addressLine1"), Some("addressLine2"), Some("addressLine3"), "city", Some("postcode"),
+    Country("valid", "GB", "United Kingdom"))
 
   "NavigatorForReporter" - {
 
@@ -258,6 +263,101 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         navigator
           .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
           .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+      }
+    }
+
+
+    "on INDIVIDUAL JOURNEY in Normal Mode" - {
+
+      "must go from 'What is your full name?' page " +
+        "to 'What is your date of birth?' page " +
+        "when a valid name is entered" in {
+
+        navigator
+          .routeMap(ReporterIndividualNamePage)(DefaultRouting(NormalMode))(Some(Name("Some", "Name")))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is your date of birth?' page " +
+        "to 'What is your place of birth?' page " +
+        "when a valid DOB is entered" in {
+
+        navigator
+          .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(NormalMode))(Some(LocalDate.now()))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is your place of birth?' page " +
+        "to 'Do you live in the United Kingdom?" +
+        "when a valid POB is entered" in {
+
+        navigator
+          .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(NormalMode))(Some("Some place in some country"))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Do you live in the United Kingdom?' page " +
+        "to select 'What is your postcode?' page " +
+        "when option YES is selected" in {
+
+        navigator
+          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Do you live in the United Kingdom?' page " +
+        "to select 'What is your address?' manual address page " +
+        "when option NO is selected" in {
+
+        navigator
+          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is your postcode?' page " +
+        "to select 'What is your address' select address page " +
+        "when valid postcode is entered" in {
+
+        navigator
+          .routeMap(ReporterIndividualPostcodePage)(DefaultRouting(NormalMode))(Some("postcode"))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is your address?' manual address' page " +
+        "to select 'Do you have a preferred email address?' page " +
+        "when a valid address is entered" in {
+
+        navigator
+          .routeMap(ReporterIndividualAddressPage)(DefaultRouting(NormalMode))(Some(addressUK))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'What is your address?' select address' page " +
+        "to select 'Do you have a preferred email address?' page " +
+        "when a valid address is selected" in {
+
+        navigator
+          .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(NormalMode))(Some(addressUK))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Do you have a contact email address at [name]' page " +
+        "to select 'What is the contact email for [name]' page " +
+        "when option YES is selected" in {
+
+        navigator
+          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Do you have a contact email address at [name]' page " +
+        "to select 'Which country is [name] resident in for tax purposes' page " +
+        "when option NO is selected" ignore {
+
+        // TODO - add redirect to tax residency page
+        navigator
+          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(NormalMode))
       }
     }
   }

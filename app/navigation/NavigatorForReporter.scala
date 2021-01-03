@@ -131,16 +131,15 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterIndividualPostcodePage => checkRoute => _ => _ =>
       controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(checkRoute.mode)
 
-    case ReporterIndividualAddressPage => _ => _ => _ =>
-      controllers.routes.IndexController.onPageLoad()
+    case ReporterIndividualAddressPage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
-    case ReporterIndividualSelectAddressPage => _ => _ => _ =>
-      controllers.routes.IndexController.onPageLoad()
+    case ReporterIndividualSelectAddressPage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
     case ReporterIndividualEmailAddressQuestionPage => checkRoute =>value => _ => value match {
       case Some(true) =>
         controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
-
       case _ =>
         //TODO- redirect to Tax Residencies page when built
         controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
