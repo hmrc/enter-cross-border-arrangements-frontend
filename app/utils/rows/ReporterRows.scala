@@ -45,6 +45,15 @@ trait ReporterRows extends RowBuilder {
     )
   }
 
+//  def reporterTaxResidentCountryPage: Option[Row] = userAnswers.get(ReporterTaxResidentCountryPage) map { answer =>
+//
+//    toRow(
+//      msgKey  = "reporterTaxResidentCountry",
+//      content = Literal(s"reporterTaxResidentCountry.$answer"),
+//      href    = controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(CheckMode, 1).url
+//    )
+//  }
+
   //Reporter - Intermediary Journey
 
   def intermediaryWhyReportInUKPage: Option[Row] = userAnswers.get(IntermediaryWhyReportInUKPage) map { answer =>

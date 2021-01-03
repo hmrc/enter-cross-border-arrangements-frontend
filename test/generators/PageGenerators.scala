@@ -25,7 +25,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
@@ -41,6 +41,9 @@ import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryReporterTaxResidentCountryPage: Arbitrary[ReporterTaxResidentCountryPage.type] =
+    Arbitrary(ReporterTaxResidentCountryPage)
 
   implicit lazy val arbitraryReporterOrganisationOrIndividualPage: Arbitrary[ReporterOrganisationOrIndividualPage.type] =
     Arbitrary(ReporterOrganisationOrIndividualPage)

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.reporter.organisation
+package controllers.reporter
 
 import base.SpecBase
-import forms.reporter.ReporterEmailAddressFormProvider
+import forms.reporter.ReporterTaxResidentCountryFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.organisation.ReporterOrganisationEmailAddressPage
+import pages.reporter.{ReporterTaxResidencyLoopPage, ReporterTaxResidentCountryPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -34,19 +35,26 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-tax-country?index=0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements")
+//  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-country-tin-0") //TODO - change to this when page built
 
-  val formProvider = new ReporterEmailAddressFormProvider()
-  val form = formProvider()
+  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val selectedCountry: Country = Country("valid", "FR", "France")
+  val index: Int = 0
 
-  lazy val reporterEmailAddressRoute = routes.ReporterOrganisationEmailAddressController.onPageLoad(NormalMode).url
+  val formProvider = new ReporterTaxResidentCountryFormProvider()
+  val form: Form[Country] = formProvider(countriesSeq)
 
-  "ReporterEmailAddress Controller" - {
+  lazy val reporterTaxResidentCountryRoute = routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, index).url
+
+  "ReporterTaxResidentCountry Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +62,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request = FakeRequest(GET, reporterTaxResidentCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -69,7 +77,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterTaxResidentCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +88,21 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationEmailAddressPage, "email@address.com").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ReporterTaxResidentCountryPage, selectedCountry)
+        .success
+        .value
+        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CountryListFactory].toInstance(mockCountryFactory)
+        ).build()
+      val request = FakeRequest(GET, reporterTaxResidentCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +112,14 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "email@address.com"))
+      val filledForm = form.bind(Map("country" -> "FR"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterTaxResidentCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,8 +140,8 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
           .build()
 
       val request =
-        FakeRequest(POST, reporterEmailAddressRoute)
-          .withFormUrlEncodedBody(("value", "email@address.com"))
+        FakeRequest(POST, reporterTaxResidentCountryRoute)
+          .withFormUrlEncodedBody(("country", "FR"))
 
       val result = route(application, request).value
 
@@ -137,8 +157,8 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, reporterEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, reporterTaxResidentCountryRoute).withFormUrlEncodedBody(("country", ""))
+      val boundForm = form.bind(Map("country" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -153,7 +173,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterTaxResidentCountry.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +183,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request = FakeRequest(GET, reporterTaxResidentCountryRoute)
 
       val result = route(application, request).value
 
@@ -179,7 +199,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, reporterEmailAddressRoute)
+        FakeRequest(POST, reporterTaxResidentCountryRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value

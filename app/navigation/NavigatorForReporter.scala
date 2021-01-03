@@ -104,18 +104,15 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterOrganisationSelectAddressPage => checkRoute => _ => _ =>
       controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
-    case ReporterOrganisationEmailAddressQuestionPage => checkRoute => value => _ => value match {
+    case ReporterOrganisationEmailAddressQuestionPage => checkRoute => value => index => value match {
       case Some(true) =>
-      controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(checkRoute.mode)
-
+        controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(checkRoute.mode)
       case _ =>
-        //TODO- redirect to Tax Residencies page when built
-      controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+        controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, index)
     }
 
-    case ReporterOrganisationEmailAddressPage => checkRoute => _ => _ =>
-      //TODO- redirect to Tax Residencies page when built
-      indexRoute
+    case ReporterOrganisationEmailAddressPage => checkRoute => _ => index =>
+      controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, index)
 
 
     // Reporter - Individual Journey Navigation
@@ -148,7 +145,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
         controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
       case _ =>
         //TODO- redirect to Tax Residencies page when built
-        controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+        controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0)
     }
 
     case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>

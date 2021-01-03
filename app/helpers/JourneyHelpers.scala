@@ -42,13 +42,6 @@ object JourneyHelpers {
     }
   }
 
-  def getReporterDetailsIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match { //TODO - change this to Reporter Details IndividualName userAnswers when page built
-      case Some(indName) => indName.displayName
-      case _ => "the individual"
-    }
-  }
-
   def getReporterDetailsOrganisationName(userAnswers: UserAnswers): String = {
     userAnswers.get(ReporterOrganisationNamePage) match {
       case Some(organisationName) => organisationName

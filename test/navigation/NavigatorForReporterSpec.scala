@@ -256,7 +256,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Do you have a contact email address at [name]' page " +
         "to select 'What is the contact email for [name]' page " +
-        "when option YES is selected" ignore {
+        "when option YES is selected" in {
 
         // TODO - add redirec tto what is email address page
         navigator
@@ -266,12 +266,11 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Do you have a contact email address at [name]' page " +
         "to select 'Which country is [name] resident in for tax purposes' page " +
-        "when option NO is selected" ignore {
+        "when option NO is selected" in {
 
-        // TODO - add redirect to tax residency page
         navigator
-          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
       }
     }
 
@@ -370,12 +369,11 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Do you have a contact email address at [name]' page " +
         "to select 'Which country is [name] resident in for tax purposes' page " +
-        "when option NO is selected" ignore {
+        "when option NO is selected" in {
 
-        // TODO - add redirect to tax residency page
         navigator
           .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
       }
     }
   }

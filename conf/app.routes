@@ -397,7 +397,6 @@ POST       /disclosure/change-identify                 controllers.disclosure.Di
 
 GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
 
-
 GET        /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = CheckMode)
@@ -407,6 +406,11 @@ GET        /reporter/role                        controllers.reporter.RoleInArra
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/resident-tax-country                           controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /reporter/resident-tax-country                           controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-resident-tax-country                    controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-resident-tax-country                    controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = CheckMode, index: Int)
 
 GET        /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
@@ -534,4 +538,3 @@ GET        /reporter/individual/select-address               controllers.reporte
 POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
-

@@ -868,30 +868,6 @@ reporterOrganisationIsAddressUk.error.required = Select yes if their address is 
 reporterOrganisationAddress.title = What is its address?
 reporterOrganisationAddress.heading = What is {0}’s address?
 
-## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
-
-reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
-reporterEmailAddressQuestion.error.required = Select yes if you have an email address
-reporterOrganisationEmailAddressQuestion.title = Do you have an email address there?
-reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
-reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
-reporterIndividualEmailAddressQuestion.title = Do you have a preferred email address?
-reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
-
-## REPORTER DETAILS - EMAIL ADDRESS PAGE
-
-reporterEmailAddress.error.required = Enter an email address
-reporterEmailAddress.error.length = Email address must be 254 characters or less
-reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
-reporterOrganisationEmailAddress.title = What is the email address?
-reporterOrganisationEmailAddress.heading = What is the email address at {0}?
-reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
-reporterIndividualEmailAddress.title = What is your preferred email address?
-reporterIndividualEmailAddress.heading = What is your preferred email address?
-reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
-
-
 ## REPORTER DETAILS - INDIVIDUAL
 
 reporterIndividualName.title = What is your full name?
@@ -951,3 +927,38 @@ reporterIndividualEmailAddress.label = Email
 reporterIndividualEmailAddress.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
 
+## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
+
+reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
+reporterEmailAddressQuestion.error.required = Select yes if you have an email address
+reporterOrganisationEmailAddressQuestion.title = Do you have an email address there?
+reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
+reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
+reporterIndividualEmailAddressQuestion.title = Do you have a preferred email address?
+reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+
+## REPORTER DETAILS - EMAIL ADDRESS PAGE
+
+reporterEmailAddress.error.required = Enter an email address
+reporterEmailAddress.error.length = Email address must be 254 characters or less
+reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
+reporterOrganisationEmailAddress.title = What is the email address?
+reporterOrganisationEmailAddress.heading = What is the email address at {0}?
+reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
+reporterIndividualEmailAddress.title = What is your preferred email address?
+reporterIndividualEmailAddress.heading = What is your preferred email address?
+reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
+
+## REPORTER DETAILS - TAX RESIDENCY PAGE
+
+reporterOrganisationTaxResidentCountry.title = Which country are they resident in for tax purposes?
+reporterOrganisationTaxResidentCountry.heading = Which country is {0} resident in for tax purposes?
+reporterIndividualTaxResidentCountry.title = Which country are you resident in for tax purposes?
+reporterIndividualTaxResidentCountry.heading = Which country are you resident in for tax purposes?
+reporterTaxResidentCountry.checkYourAnswersLabel = Tax resident countries
+reporterTaxResidentCountry.countryCounter = Country {0}
+reporterTaxResidentCountry.countryKey = Country
+reporterTaxResidentCountry.utrKey = Unique Taxpayer Reference (UTR)
+reporterTaxResidentCountry.tinKey = Tax identification number for {0}
+reporterTaxResidentCountry.error.required = Provide a country
