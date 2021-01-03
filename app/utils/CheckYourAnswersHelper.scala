@@ -24,8 +24,6 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
-import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.reporter.individual._
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
@@ -38,21 +36,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
 
 import pages.intermediaries.WhatTypeofIntermediaryPage
-
-  def reporterIndividualEmailAddress: Option[Row] = userAnswers.get(ReporterIndividualEmailAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualEmailAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualEmailAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   def reporterIndividualSelectAddress: Option[Row] = userAnswers.get(ReporterIndividualSelectAddressPage) map {
     answer =>

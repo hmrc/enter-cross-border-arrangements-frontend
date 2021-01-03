@@ -74,22 +74,24 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
       controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
 
-    case ReporterIndividualNamePage => mode => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(mode)
+    // Reporter - Individual Journey Navigation
 
-    case ReporterIndividualDateOfBirthPage => mode => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(mode)
+    case ReporterIndividualNamePage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(checkRoute.mode)
 
-    case ReporterIndividualPlaceOfBirthPage => mode => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(mode)
+    case ReporterIndividualDateOfBirthPage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(checkRoute.mode)
 
-    case ReporterIsIndividualAddressUKPage => mode => value => _ => value match {
-      case Some(true) => controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(mode)
-      case _ => controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(mode)
+    case ReporterIndividualPlaceOfBirthPage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(checkRoute.mode)
+
+    case ReporterIsIndividualAddressUKPage => checkRoute => value => _ => value match {
+      case Some(true) => controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(checkRoute.mode)
+      case _ => controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(checkRoute.mode)
     }
 
-    case ReporterIndividualPostcodePage => mode => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(mode)
+    case ReporterIndividualPostcodePage => checkRoute => _ => _ =>
+      controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(checkRoute.mode)
 
     case ReporterIndividualAddressPage => _ => _ => _ =>
       controllers.routes.IndexController.onPageLoad()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
-
 import java.time.LocalDate
+
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIndividualDateOfBirthController @Inject()(
@@ -39,10 +41,11 @@ class ReporterIndividualDateOfBirthController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    navigator: NavigatorForReporter,
     formProvider: ReporterIndividualDateOfBirthFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   val form = formProvider()
 
@@ -65,8 +68,8 @@ class ReporterIndividualDateOfBirthController @Inject()(
       renderer.render("reporter/individual/reporterIndividualDateOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[LocalDate], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIndividualDateOfBirthPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
+    navigator.routeMap(ReporterIndividualDateOfBirthPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -88,7 +91,8 @@ class ReporterIndividualDateOfBirthController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualDateOfBirthPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

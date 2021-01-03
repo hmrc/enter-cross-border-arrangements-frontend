@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 package controllers.reporter.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.countryJsonList
+import javax.inject.Inject
 import models.{Address, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIsIndividualAddressUKPage}
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIsIndividualAddressUKPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -31,7 +33,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIndividualAddressController @Inject()(
@@ -42,9 +43,10 @@ class ReporterIndividualAddressController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: AddressFormProvider,
+    navigator: NavigatorForReporter,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -67,8 +69,8 @@ class ReporterIndividualAddressController @Inject()(
       renderer.render("reporter/individual/reporterIndividualAddress.njk", json).map(Ok(_))
   }
 
-  def redirect(mode: Mode, value: Option[Address], index: Int = 0, alternative: Boolean = false): Call =
-    NavigatorForReporter.nextPage(ReporterIndividualAddressPage, mode, value, index, alternative)
+  def redirect(checkRoute: CheckRoute, value: Option[Address], index: Int = 0): Call =
+    navigator.routeMap(ReporterIndividualAddressPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -92,7 +94,8 @@ class ReporterIndividualAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(redirect(mode, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
