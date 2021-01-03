@@ -17,10 +17,11 @@
 package utils.rows
 
 import models.CheckMode
-import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.individual.ReporterIndividualEmailAddressQuestionPage
+import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.RoleInArrangementPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -112,7 +113,7 @@ trait ReporterRows extends RowBuilder {
     )
   }
 
-  def reporterOrganisationEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterEmailAddressQuestionPage) map { answer =>
+  def reporterOrganisationEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressQuestionPage) map { answer =>
     toRow(
       msgKey  = "reporterOrganisationEmailAddressQuestion",
       content = yesOrNo(answer),
@@ -120,14 +121,32 @@ trait ReporterRows extends RowBuilder {
     )
   }
 
+  def reporterOrganisationEmailAddress: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressPage) map { answer =>
+    toRow(
+      msgKey  = "reporterOrganisationEmailAddress",
+      content = Literal(s"$answer"),
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(CheckMode).url
+    )
+  }
+
   //Reporter - Individual Journey
 
-  def reporterIndividualEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterEmailAddressQuestionPage) map { answer =>
+  def reporterIndividualEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterIndividualEmailAddressQuestionPage) map { answer =>
     toRow(
       msgKey  = "reporterIndividualEmailAddressQuestion",
       content = yesOrNo(answer),
       href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(CheckMode).url
     )
   }
+
+  def reporterIndividualEmailAddress: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressPage) map { answer =>
+    toRow(
+      msgKey  = "reporterIndividualEmailAddress",
+      content = Literal(s"$answer"),
+      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(CheckMode).url
+    )
+  }
+
+
 
 }

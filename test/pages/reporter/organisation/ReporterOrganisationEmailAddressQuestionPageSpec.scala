@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package pages.reporter.organisation
 
 import pages.behaviours.PageBehaviours
-import pages.reporter.ReporterEmailAddressQuestionPage
 
-class ReporterEmailAddressQuestionPageSpec extends PageBehaviours {
+class ReporterOrganisationEmailAddressQuestionPageSpec extends PageBehaviours {
 
   "ReporterOrganisationEmailAddressQuestionPage" - {
 
-    beRetrievable[Boolean](ReporterEmailAddressQuestionPage)
+    beRetrievable[Boolean](ReporterOrganisationEmailAddressQuestionPage)
 
-    beSettable[Boolean](ReporterEmailAddressQuestionPage)
+    beSettable[Boolean](ReporterOrganisationEmailAddressQuestionPage)
 
-    beRemovable[Boolean](ReporterEmailAddressQuestionPage)
+    beRemovable[Boolean](ReporterOrganisationEmailAddressQuestionPage)
   }
 }

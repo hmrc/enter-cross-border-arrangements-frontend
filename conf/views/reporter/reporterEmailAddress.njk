@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -28,27 +28,26 @@
         {% endif %}
 
         <form action="{{ actionUrl }}" method="post">
-            <fieldset class="govuk-fieldset">
 
-              {{ csrf() | safe }}
+          {{ csrf() | safe }}
 
-              {{ pageHeading | safe }}
+          {{ govukInput({
+            label: {
+              text: messages(pageHeading),
+              isPageHeading: true,
+              classes: "govuk-label--xl"
+            },
+            id: "value",
+            name: "value",
+            value: form.value.value,
+            errorMessage: form.value.error
+          }) }}
 
-              <p "id=guidance" class="govuk-body">{{ messages('reporterEmailAddressQuestion.guidance') }} </p>
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {id:"submit"}
+          }) }}
 
-              {{ govukRadios({
-                classes: "govuk-radios",
-                name: 'value',
-                items: radios,
-                errorMessage: form.value.error
-              }) }}
-
-              {{ govukButton({
-                text: messages("site.saveAndContinue"),
-                attributes: {id:"submit"}
-              }) }}
-
-            </fieldset>
         </form>
 
       </div>

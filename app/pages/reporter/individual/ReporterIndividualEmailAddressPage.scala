@@ -19,7 +19,7 @@ package pages.reporter.individual
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ReporterIndividualEmailAddressPage extends QuestionPage[Boolean] {
+case object ReporterIndividualEmailAddressPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -28,13 +28,15 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
 import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
+import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 import pages.intermediaries._
@@ -45,6 +47,10 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReporterOrganisationEmailAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualEmailAddressQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::

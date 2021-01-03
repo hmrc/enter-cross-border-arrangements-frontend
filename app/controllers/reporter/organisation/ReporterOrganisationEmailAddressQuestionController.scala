@@ -17,15 +17,16 @@
 package controllers.reporter.organisation
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.ReporterEmailAddressQuestionFormProvider
 import helpers.JourneyHelpers._
 import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
-import pages.reporter.ReporterEmailAddressQuestionPage
+import navigation.NavigatorForReporter
+import pages.reporter.organisation.ReporterOrganisationEmailAddressQuestionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,14 +37,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReporterOrganisationEmailAddressQuestionController @Inject()(
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: NavigatorForReporter,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ReporterEmailAddressQuestionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private def actionUrl(mode: Mode): String = routes.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode).url
 
@@ -52,7 +53,7 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterEmailAddressQuestionPage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationEmailAddressQuestionPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,6 +69,9 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
 
       renderer.render("reporter/reporterEmailAddressQuestion.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterOrganisationEmailAddressQuestionPage)(checkRoute)(value)(index)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -88,9 +92,10 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterEmailAddressQuestionPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationEmailAddressQuestionPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ReporterEmailAddressQuestionPage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

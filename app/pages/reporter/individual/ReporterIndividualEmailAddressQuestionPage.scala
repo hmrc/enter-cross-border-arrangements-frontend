@@ -16,17 +16,12 @@
 
 package pages.reporter.individual
 
-import pages.behaviours.PageBehaviours
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
+case object ReporterIndividualEmailAddressQuestionPage extends QuestionPage[Boolean] {
 
-class ReporterIndividualEmailAddressPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "ReporterIndividualEmailAddressPage" - {
-
-    beRetrievable[String](ReporterIndividualEmailAddressPage)
-
-    beSettable[String](ReporterIndividualEmailAddressPage)
-
-    beRemovable[String](ReporterIndividualEmailAddressPage)
-  }
+  override def toString: String = "reporterIndividualEmailAddressQuestion"
 }

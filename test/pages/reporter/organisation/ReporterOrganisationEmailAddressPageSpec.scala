@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages.reporter.individual
+package pages.reporter.organisation
 
 import pages.behaviours.PageBehaviours
 
 
-class ReporterIndividualEmailAddressPageSpec extends PageBehaviours {
+class ReporterOrganisationEmailAddressPageSpec extends PageBehaviours {
 
-  "ReporterIndividualEmailAddressPage" - {
+  "ReporterOrganisationEmailAddressPage" - {
 
-    beRetrievable[String](ReporterIndividualEmailAddressPage)
+    beRetrievable[String](ReporterOrganisationEmailAddressPage)
 
-    beSettable[String](ReporterIndividualEmailAddressPage)
+    beSettable[String](ReporterOrganisationEmailAddressPage)
 
-    beRemovable[String](ReporterIndividualEmailAddressPage)
+    beRemovable[String](ReporterOrganisationEmailAddressPage)
   }
 }

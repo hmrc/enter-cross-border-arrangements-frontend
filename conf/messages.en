@@ -864,7 +864,7 @@ reporterOrganisationAddress.heading = What is {0}’s address?
 ## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
 
 reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
-reporterEmailAddressQuestion.error.required = Select yes if you have a contact email address
+reporterEmailAddressQuestion.error.required = Select yes if you have an email address
 reporterOrganisationEmailAddressQuestion.title = Do you have an email address there?
 reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
 reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
@@ -872,7 +872,17 @@ reporterIndividualEmailAddressQuestion.title = Do you have a preferred email add
 reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
 
+## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
+reporterEmailAddress.error.required = Enter an email address
+reporterEmailAddress.error.length = Email address must be 254 characters or less
+reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
+reporterOrganisationEmailAddress.title = What is the email address?
+reporterOrganisationEmailAddress.heading = What is the email address at {0}?
+reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
+reporterIndividualEmailAddress.title = What is your preferred email address?
+reporterIndividualEmailAddress.heading = What is your preferred email address?
+reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
 
 
 

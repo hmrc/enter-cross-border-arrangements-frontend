@@ -42,20 +42,45 @@ import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.reporter.individual._
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
 import pages.reporter.intermediary._
-import pages.reporter.organisation.ReporterOrganisationPostcodePage
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
+import pages.reporter.RoleInArrangementPage
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryReporterEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterEmailAddressQuestionPage.type, JsValue)] =
+  implicit lazy val arbitraryReporterOrganisationEmailAddressUserAnswersEntry: Arbitrary[(ReporterOrganisationEmailAddressPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ReporterEmailAddressQuestionPage.type]
+        page  <- arbitrary[ReporterOrganisationEmailAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualEmailAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualEmailAddressQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationEmailAddressQuestionPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

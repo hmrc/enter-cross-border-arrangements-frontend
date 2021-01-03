@@ -18,6 +18,7 @@ package navigation
 
 import controllers.mixins.{CheckRoute, DefaultRouting}
 import controllers.reporter.routes
+import javax.inject.{Inject, Singleton}
 import models.YesNoDoNotKnowRadios.Yes
 import models._
 import models.reporter.RoleInArrangement.Intermediary
@@ -26,11 +27,12 @@ import pages._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.individual._
 import pages.reporter.{ReporterEmailAddressQuestionPage, RoleInArrangementPage}
+import pages.reporter.RoleInArrangementPage
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage}
 import pages.reporter.intermediary._
+import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
-import javax.inject.{Inject, Singleton}
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
 
 @Singleton
 class NavigatorForReporter @Inject()() extends AbstractNavigator {
@@ -68,8 +70,10 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     // Reporter - Taxpayer Journey Navigation
 
     case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
-      case Some(DoNotKnow) => controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
-      case _ => controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
+      case Some(DoNotKnow) =>
+        controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+      case _ =>
+        controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
@@ -94,19 +98,41 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterOrganisationAddressPage => checkRoute => _ => _ =>
       controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
-    case ReporterOrganisationSelectAddressPage => checkRoute =>_ => _ =>
+    case ReporterOrganisationSelectAddressPage => checkRoute => _ => _ =>
       controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
-      // Reporter Details - Joint Journey Navigation
-
-    case ReporterEmailAddressQuestionPage => checkRoute => value => _ => value match {
+    case ReporterOrganisationEmailAddressQuestionPage => checkRoute => value => _ => value match {
       case Some(true) =>
-        // TODO - Change redirect to reporter details email enter page when built
-      controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+      controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(checkRoute.mode)
+
       case _ =>
         //TODO- redirect to Tax Residencies page when built
       controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
     }
+
+    case ReporterOrganisationEmailAddressPage => checkRoute => _ => _ =>
+      //TODO- redirect to Tax Residencies page when built
+      indexRoute
+
+
+
+    // Reporter - Individual Journey Navigation
+
+    case ReporterIndividualEmailAddressQuestionPage => checkRoute =>value => _ => value match {
+      case Some(true) =>
+        controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
+
+      case _ =>
+        //TODO- redirect to Tax Residencies page when built
+        controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+    }
+
+    case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>
+      //TODO- redirect to Tax Residencies page when built
+      indexRoute
+
+
+
 
     // Reporter - Individual Journey Navigation
 

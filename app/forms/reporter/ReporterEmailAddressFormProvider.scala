@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package pages.reporter.individual
+package forms.reporter
 
-import pages.behaviours.PageBehaviours
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
+import utils.RegexConstants
 
+class ReporterEmailAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
-class ReporterIndividualEmailAddressPageSpec extends PageBehaviours {
+  private val maxLength = 254
 
-  "ReporterIndividualEmailAddressPage" - {
-
-    beRetrievable[String](ReporterIndividualEmailAddressPage)
-
-    beSettable[String](ReporterIndividualEmailAddressPage)
-
-    beRemovable[String](ReporterIndividualEmailAddressPage)
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedText("reporterEmailAddress.error.required",
+        "reporterEmailAddress.error.invalid",
+      "reporterEmailAddress.error.length",
+        emailRegex,
+        maxLength
+      )
+    )
 }

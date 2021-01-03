@@ -18,15 +18,14 @@ package pages.reporter.individual
 
 import pages.behaviours.PageBehaviours
 
+class ReporterIndividualEmailAddressQuestionPageSpec extends PageBehaviours {
 
-class ReporterIndividualEmailAddressPageSpec extends PageBehaviours {
+  "ReporterIndividualEmailAddressQuestionPage" - {
 
-  "ReporterIndividualEmailAddressPage" - {
+    beRetrievable[Boolean](ReporterIndividualEmailAddressQuestionPage)
 
-    beRetrievable[String](ReporterIndividualEmailAddressPage)
+    beSettable[Boolean](ReporterIndividualEmailAddressQuestionPage)
 
-    beSettable[String](ReporterIndividualEmailAddressPage)
-
-    beRemovable[String](ReporterIndividualEmailAddressPage)
+    beRemovable[Boolean](ReporterIndividualEmailAddressQuestionPage)
   }
 }

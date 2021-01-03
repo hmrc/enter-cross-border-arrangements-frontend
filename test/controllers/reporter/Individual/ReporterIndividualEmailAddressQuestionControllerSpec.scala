@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.reporter.Individual
+package controllers.reporter.individual
 
 import base.SpecBase
 import forms.reporter.ReporterEmailAddressQuestionFormProvider
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.ReporterEmailAddressQuestionPage
+import pages.reporter.individual.ReporterIndividualEmailAddressQuestionPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class ReporterIndividualEmailAddressQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/individual/what-is-email-address")
 
   val formProvider = new ReporterEmailAddressQuestionFormProvider()
   val form = formProvider()
@@ -81,7 +81,7 @@ class ReporterIndividualEmailAddressQuestionControllerSpec extends SpecBase with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterEmailAddressQuestionPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterIndividualEmailAddressQuestionPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterIndividualEmailAddressQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
