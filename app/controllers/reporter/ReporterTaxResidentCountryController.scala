@@ -75,7 +75,8 @@ class ReporterTaxResidentCountryController @Inject()(
             "mode" -> mode,
             "actionUrl" -> actionUrl(mode, index),
             "countries" -> countryJsonList(preparedForm.data, countries),
-            "index" -> index
+            "index" -> index,
+            "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
           ) ++ contentProvider(request.userAnswers)
 
 
@@ -93,7 +94,8 @@ class ReporterTaxResidentCountryController @Inject()(
             "mode" -> mode,
             "actionUrl" -> actionUrl(mode, index),
             "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
+            "index" -> index,
+            "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
           ) ++ contentProvider(request.userAnswers)
 
           renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(BadRequest(_))
@@ -111,7 +113,6 @@ class ReporterTaxResidentCountryController @Inject()(
   }
 
   private def contentProvider(userAnswers: UserAnswers) = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
-
     case Some(Individual) => //Display Individual Content
       Json.obj("pageTitle" -> "reporterIndividualTaxResidentCountry.title",
         "pageHeading" -> "reporterIndividualTaxResidentCountry.heading")

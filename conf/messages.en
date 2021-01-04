@@ -954,6 +954,7 @@ reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred em
 
 reporterOrganisationTaxResidentCountry.title = Which country are they resident in for tax purposes?
 reporterOrganisationTaxResidentCountry.heading = Which country is {0} resident in for tax purposes?
+reporterOrganisationTaxResidentCountry.hint = If more than 1, you can add others later.
 reporterIndividualTaxResidentCountry.title = Which country are you resident in for tax purposes?
 reporterIndividualTaxResidentCountry.heading = Which country are you resident in for tax purposes?
 reporterTaxResidentCountry.checkYourAnswersLabel = Tax resident countries

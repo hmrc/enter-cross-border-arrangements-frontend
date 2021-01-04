@@ -31,13 +31,12 @@
 
         {{ csrf() | safe }}
 
+        <h1 class="govuk-heading-xl">{{messages(pageHeading, name)}}</h1>
+
+        <p class="govuk-body">{{messages(guidance)}}</p>
+
         {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
-            label: {
-              text: messages(pageHeading, name),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
-            },
             id: "country",
             name: "country",
             attributes: {"aria-labelledby": "country"},
