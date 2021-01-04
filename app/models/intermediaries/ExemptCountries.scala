@@ -34,7 +34,7 @@ object ExemptCountries extends Enumerable.Implicits {
   case object Czechia extends WithName("CZ") with ExemptCountries
   case object Denmark extends WithName("DK") with ExemptCountries
   case object Estonia extends WithName("EE") with ExemptCountries
-  case object Finland extends WithName("DI") with ExemptCountries
+  case object Finland extends WithName("FI") with ExemptCountries
   case object France extends WithName("FR") with ExemptCountries
   case object Germany extends WithName("DE") with ExemptCountries
   case object Greece extends WithName("GR") with ExemptCountries
@@ -91,7 +91,7 @@ object ExemptCountries extends Enumerable.Implicits {
     val field = form("value")
     val items = Seq(
       Checkboxes.Checkbox(msg"countriesListCheckboxes.GB", UnitedKingdom.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", UnitedKingdom.toString),
+      Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", Austria.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.BE", Belgium.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.BG", Bulgaria.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.HR", Croatia.toString),

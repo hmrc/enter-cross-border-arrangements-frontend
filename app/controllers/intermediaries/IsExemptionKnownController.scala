@@ -21,9 +21,9 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.IsExemptionKnownFormProvider
 import javax.inject.Inject
 import models.{IsExemptionKnown, Mode, UserAnswers}
-import navigation.{Navigator, NavigatorForIntermediaries}
+import navigation.NavigatorForIntermediaries
 import pages.individual.IndividualNamePage
-import pages.intermediaries.{ExemptCountriesPage, IsExemptionKnownPage}
+import pages.intermediaries.IsExemptionKnownPage
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

@@ -20,10 +20,10 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import javax.inject.Inject
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.{Mode, UserAnswers}
-import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
-import navigation.{Navigator, NavigatorForIntermediaries}
-import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
+import navigation.NavigatorForIntermediaries
+import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}

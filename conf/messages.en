@@ -646,7 +646,7 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the tax
 
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} exempt from reporting in?
-isExemptionCountryKnown.checkYourAnswersLabel = Do you know which countries they’re exempt from reporting in?
+isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known
 isExemptionCountryKnown.error.required = Select yes if you know which countries the intermediary is exempt from reporting in
 
 isExemptionKnown.title = Are they exempt from reporting?
@@ -658,45 +658,14 @@ isExemptionKnown.hint.4 = the intermediary is covered by legal, professional pri
 isExemptionKnown.yes = Yes
 isExemptionKnown.no = No
 isExemptionKnown.unknown = I do not know
-isExemptionKnown.checkYourAnswersLabel = Are they exempt from reporting?
+isExemptionKnown.checkYourAnswersLabel = Any reporting exemptions known?
 isExemptionKnown.error.required = Select yes if you know the intermediary is exempt from reporting in an EU member state, or in the UK
 
 exemptCountries.title = Choose exempt countries
-exemptCountries.heading = Which countries is {0} exempt from reporting in?
+exemptCountries.heading = Which countries is {0}’s exempt from reporting in?
 exemptCountries.hint = Select all that apply.
-exemptCountries.checkYourAnswersLabel = Choose exempt countries
+exemptCountries.checkYourAnswersLabel = Exempt Countries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
-
-## COUNTRY LIST CHECKBOX LABELS
-
-countriesListCheckboxes.GB = United Kingdom
-countriesListCheckboxes.AT = Austria
-countriesListCheckboxes.BE = Belgium
-countriesListCheckboxes.BG = Bulgaria
-countriesListCheckboxes.HR = Croatia
-countriesListCheckboxes.CY = Cyprus
-countriesListCheckboxes.CZ = Czechia
-countriesListCheckboxes.DK =  Denmark
-countriesListCheckboxes.EE =  Estonia
-countriesListCheckboxes.FI =  Finland
-countriesListCheckboxes.FR =  France
-countriesListCheckboxes.DE =  Germany
-countriesListCheckboxes.GR =  Greece
-countriesListCheckboxes.HU =  Hungary
-countriesListCheckboxes.IE =  Ireland
-countriesListCheckboxes.IT =  Italy
-countriesListCheckboxes.LV =  Latvia
-countriesListCheckboxes.LT =  Lithuania
-countriesListCheckboxes.LU =  Luxembourg
-countriesListCheckboxes.MT =  Malta
-countriesListCheckboxes.NL =  Netherlands
-countriesListCheckboxes.PL =  Poland
-countriesListCheckboxes.PT =  Portugal
-countriesListCheckboxes.RO =  Romania
-countriesListCheckboxes.SK =  Slovakia
-countriesListCheckboxes.SI =  Slovenia
-countriesListCheckboxes.ES =  Spain
-countriesListCheckboxes.SE =  Sweden
 
 whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
 whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s start date for implementing the arrangement?

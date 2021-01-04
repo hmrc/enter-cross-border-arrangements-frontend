@@ -69,11 +69,24 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
+
+  def gbSort(exemptCountries : List[String]) : List[String] = {
+
+    val gbMessage = msg"countriesListCheckboxes.GB".resolve
+
+    if (exemptCountries.contains(gbMessage)) {
+      List(gbMessage) ++ exemptCountries.filter(_ != gbMessage).sorted
+    } else {
+      exemptCountries.sorted
+    }
+  }
+
   def exemptCountries: Option[Row] = userAnswers.get(ExemptCountriesPage) map {
     answer =>
+
       Row(
         key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"countriesListCheckboxes.$a".resolve).mkString(",<br>"))),
+        value   = Value(Html(gbSort(answer.map(_.toString).toList.map(country => msg"countriesListCheckboxes.$country".resolve)).mkString(",<br>"))),
         actions = List(
           Action(
             content            = msg"site.edit",

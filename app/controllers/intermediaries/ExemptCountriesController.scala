@@ -21,13 +21,11 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.ExemptCountriesFormProvider
 import javax.inject.Inject
 import models.intermediaries.ExemptCountries
-import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{Mode, UserAnswers}
-import navigation.{Navigator, NavigatorForIntermediaries}
+import navigation.NavigatorForIntermediaries
 import pages.individual.IndividualNamePage
 import pages.intermediaries.ExemptCountriesPage
 import pages.organisation.OrganisationNamePage
-import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}

@@ -76,17 +76,17 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
     }
 
     "must go from 'What type of intermediary is name?' page to " +
-      "'Intermediaries Check Your Answers' if answer is Service Provider" in {
+      "'Is *name* exempt from reporting in an EU member state, or the UK?' if answer is Service provider" in {
       navigator
         .routeMap(WhatTypeofIntermediaryPage)(IntermediariesRouting(NormalMode))(Some(WhatTypeofIntermediary.Serviceprovider))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        .mustBe(controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(NormalMode))
     }
 
     "must go from 'What type of intermediary is name?' page to " +
-      "'Intermediaries Check Your Answers' if answer is I Do Not Know" in {
+      "'Is *name* exempt from reporting in an EU member state, or the UK?' if answer is I Do Not Know" in {
       navigator
         .routeMap(WhatTypeofIntermediaryPage)(IntermediariesRouting(NormalMode))(Some(WhatTypeofIntermediary.IDoNotKnow))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        .mustBe(controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(NormalMode))
     }
 
     "must go from ' Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
@@ -97,14 +97,14 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
     }
 
     "Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
-      "Intermediairies Check Your Answers Page if answer is No" in {
+      "Intermediaries Check Your Answers Page if answer is No" in {
       navigator
         .routeMap(IsExemptionKnownPage)(IntermediariesRouting(NormalMode))(Some(IsExemptionKnown.No))(0)
         .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
     }
 
     "Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
-      "Intermediairies Check Your Answers Page if answer is I Do Not Know" in {
+      "Intermediaries Check Your Answers Page if answer is I Do Not Know" in {
       navigator
         .routeMap(IsExemptionKnownPage)(IntermediariesRouting(NormalMode))(Some(IsExemptionKnown.Unknown))(0)
         .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())

@@ -48,11 +48,7 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
         }
 
     case WhatTypeofIntermediaryPage =>
-      checkRoute => value => _ =>
-        value match {
-          case Some(Promoter) => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(routes.IntermediariesCheckYourAnswersController.onPageLoad(), checkRoute)
-        }
+      checkRoute => _ => _ => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(checkRoute.mode)
 
     case IsExemptionKnownPage =>
       checkRoute => value => _ =>

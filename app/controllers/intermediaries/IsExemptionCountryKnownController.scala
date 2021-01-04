@@ -20,11 +20,10 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.IsExemptionCountryKnownFormProvider
 import javax.inject.Inject
-import models.intermediaries.ExemptCountries
 import models.{Mode, UserAnswers}
-import navigation.{Navigator, NavigatorForIntermediaries}
+import navigation.NavigatorForIntermediaries
 import pages.individual.IndividualNamePage
-import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage}
+import pages.intermediaries.IsExemptionCountryKnownPage
 import pages.organisation.OrganisationNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
