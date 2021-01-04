@@ -18,11 +18,12 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.UpdateTaxpayerFormProvider
+
 import javax.inject.Inject
 import models.taxpayer.UpdateTaxpayer
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage}
+import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -94,8 +95,9 @@ class UpdateTaxpayerController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(UpdateTaxpayerPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(UpdateTaxpayerPage, mode, updatedAnswers))
+            cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage)) // TODO test when userAnswers are properly supplied
+            _              <- sessionRepository.set(cleanAnswers)
+          } yield Redirect(navigator.nextPage(UpdateTaxpayerPage, mode, cleanAnswers))
 
         }
       )

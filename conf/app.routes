@@ -308,8 +308,8 @@ POST       /taxpayers/choose-type                        controllers.taxpayer.Ta
 GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /taxpayers/is-marketable                      controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
-GET        /taxpayers/change-is-marketable               controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
+GET        /taxpayers/is-marketable                      controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /taxpayers/change-is-marketable               controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
 
 GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
@@ -484,6 +484,9 @@ GET        /reporter/taxpayer/why-reporting                        controllers.r
 POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/taxpayers/is-marketable                        controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /reporter/taxpayers/change-is-marketable                 controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
 
 GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)

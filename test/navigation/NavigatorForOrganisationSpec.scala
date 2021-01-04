@@ -569,7 +569,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(TaxpayersRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.MarketableArrangementGatewayController.onRouting(NormalMode))
+            .mustBe(controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode))
         }
       }
 

@@ -27,6 +27,8 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
 import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.reporter.individual._
+import pages.disclosure.DisclosureMarketablePage
+import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
@@ -108,7 +110,14 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
-      controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+      controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
+
+    case DisclosureMarketablePage =>
+      checkRoute => value => _ =>
+        value match {
+          case Some(true) => controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+          case _ => jumpOrCheckYourAnswers(routes.ReporterCheckYourAnswersController.onPageLoad(), checkRoute)
+        }
 
 
     // Reporter - Organisation Journey Navigation

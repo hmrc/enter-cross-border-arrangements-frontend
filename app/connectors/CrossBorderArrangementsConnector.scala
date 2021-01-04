@@ -31,6 +31,10 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
     s"$baseUrl/verify-arrangement-id/$arrangementId"
   }
 
+  def isMarketableArrangementUrl(arrangementId: String): String = {
+    s"$baseUrl/is-marketable-arrangement/$arrangementId"
+  }
+
   def verifyArrangementId(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](verificationUrl(arrangementId)).map { response =>
       response.status match {
@@ -39,6 +43,15 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
       }
     } recover {
       case _: Exception => false
+    }
+  }
+
+  def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    httpClient.GET[HttpResponse](isMarketableArrangementUrl(arrangementId)).map { response =>
+      (response.status, response.body) match {
+        case (200, "true") => true
+        case _ => false
+      }
     }
   }
 
