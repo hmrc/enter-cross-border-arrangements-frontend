@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package forms.reporter
+package pages.reporter
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Country
-import play.api.data.Form
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class ReporterTaxResidentCountryFormProvider @Inject() extends Mappings {
+case object ReporterTinUKQuestionPage extends QuestionPage[Boolean] {
 
-  def apply(countryList: Seq[Country]): Form[Country] =
-    Form(
-      "country" -> text("reporterTaxResidentCountry.error.required")
-        .verifying("reporterTaxResidentCountry.error.country.required",
-          value => countryList.exists(_.code == value) || value == "GB")
-        .transform[Country](value => countryList.find(_.code == value).get, _.code)
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "reporterTinUKQuestion"
 }

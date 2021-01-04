@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package forms.reporter
+package forms
 
-import forms.behaviours.StringFieldBehaviours
-import models.Country
-import org.scalacheck.Gen
+import forms.behaviours.BooleanFieldBehaviours
+import forms.reporter.ReporterTinUKQuestionFormProvider
 import play.api.data.FormError
 
-class ReporterTaxResidentCountryFormProviderSpec extends StringFieldBehaviours {
+class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "reporterTaxResidentCountry.error.required"
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val requiredKey = "reporterTinUKQuestion.error.required"
+  val invalidKey = "error.boolean"
 
-  val form = new ReporterTaxResidentCountryFormProvider()(countriesSeq)
+  val form = new ReporterTinUKQuestionFormProvider()()
 
-  ".country" - {
+  ".value" - {
 
-    val fieldName = "country"
+    val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like booleanField(
       form,
       fieldName,
-      Gen.oneOf(Seq("GB", "FR"))
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

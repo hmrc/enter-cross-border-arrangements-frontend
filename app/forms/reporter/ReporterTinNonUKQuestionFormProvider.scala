@@ -18,16 +18,13 @@ package forms.reporter
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.Country
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class ReporterTaxResidentCountryFormProvider @Inject() extends Mappings {
+class ReporterTinNonUKQuestionFormProvider @Inject() extends Mappings {
 
-  def apply(countryList: Seq[Country]): Form[Country] =
+  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "country" -> text("reporterTaxResidentCountry.error.required")
-        .verifying("reporterTaxResidentCountry.error.country.required",
-          value => countryList.exists(_.code == value) || value == "GB")
-        .transform[Country](value => countryList.find(_.code == value).get, _.code)
+      "value" -> boolean(messages("reporterTinNonUKQuestion.error.required", country))
     )
 }

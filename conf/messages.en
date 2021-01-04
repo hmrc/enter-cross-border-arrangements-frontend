@@ -963,3 +963,21 @@ reporterTaxResidentCountry.countryKey = Country
 reporterTaxResidentCountry.utrKey = Unique Taxpayer Reference (UTR)
 reporterTaxResidentCountry.tinKey = Tax identification number for {0}
 reporterTaxResidentCountry.error.required = Provide a country
+
+reporterOrganisationTinUKQuestion.title = Do you know any of their tax identification numbers for the UK?
+reporterOrganisationTinUKQuestion.heading = Do you know any of {0}’s tax identification numbers for the United Kingdom?
+reporterOrganisationTinUKQuestion.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
+reporterIndividualTinUKQuestion.title = Do you have any tax identification numbers for the UK?
+reporterIndividualTinUKQuestion.heading = Do you have any tax identification numbers for the United Kingdom?
+reporterIndividualTinUKQuestion.hint = This is any number issued by HMRC, like a National Insurance number or Unique Taxpayer Reference.
+reporterTinUKQuestion.checkYourAnswersLabel = reporterTinUKQuestion
+reporterTinUKQuestion.error.required = Select yes if you know any tax identification numbers
+
+reporterOrganisationTinNonUKQuestion.title = Do you know their tax identification numbers for {0}?
+reporterOrganisationTinNonUKQuestion.heading = Do you know any of {0}’s tax identification numbers for {1}?
+reporterOrganisationTinNonUKQuestion.hint = This is a number given by the tax administration in the country where the organisation is resident for tax purposes. It is used to identify individual taxpayers.
+reporterIndividualTinNonUKQuestion.title = Do you have any tax identification numbers for {0}?
+reporterIndividualTinNonUKQuestion.heading = Do you have any tax identification numbers for {1}?
+reporterIndividualTinNonUKQuestion.hint = This is a number given by the tax administration in the country where you are resident for tax purposes. It is used to identify you as a taxpayer.
+reporterTinNonUKQuestion.checkYourAnswersLabel = reporterTinNonUKQuestion
+reporterTinNonUKQuestion.error.required = Select yes if you know any tax identification numbers for {0}

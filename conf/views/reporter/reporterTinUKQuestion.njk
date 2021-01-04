@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/select/macro.njk"        import govukSelect %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
@@ -27,28 +27,26 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode, index).url }}" method="post">
+        <form action="{{ routes.controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode, index).url }}" method="post">
 
-        {{ csrf() | safe }}
+          {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">{{messages(pageHeading, name)}}</h1>
-
-        <p class="govuk-body">{{messages(guidance)}}</p>
-
-        {{ govukSelect({
-            classes: "govuk-input--width-20 autocomplete",
-            label: {
-              text: messages(pageHeading, name),
-              classes: "govuk-label govuk-visually-hidden"
+          {{ govukRadios({
+            classes: "govuk-radios",
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages(pageHeading, name),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
             },
-            id: "country",
-            name: "country",
-            attributes: {
-                "aria-labelledby" : "country"
-            },
-            errorMessage: form.country.error,
-            items: countries
-        }) }}
+            hint: {
+                text: messages(hintText)
+             },
+            items: radios,
+            errorMessage: form.value.error
+          }) }}
 
           {{ govukButton({
             text: messages("site.saveAndContinue"),

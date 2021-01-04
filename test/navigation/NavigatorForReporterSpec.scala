@@ -27,7 +27,7 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -45,7 +45,43 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
   "NavigatorForReporter" - {
 
-    "on INTERMEDIARY JOURNEY in Normal mode" - {
+    "in Normal mode" - {
+
+      "must go from 'Are you reporting as an organisation or individual?' page " +
+        "to 'What is the name of the organisation you’re reporting for?' page " +
+        "when any 'ORGANISATION' option is selected" in {
+
+        navigator
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Organisation))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Are you reporting as an organisation or individual?' page " +
+        "to 'What is your full name?' page " +
+        "when any 'INDIVIDUAL' option is selected" in {
+
+        navigator
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Individual))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(NormalMode))
+      }
+
+      "must go from 'Which country *are you/is org* resident in for tax purposes' page " +
+        "to 'Do *you have any/you know any of org's* tax identification numbers for the United Kingdom' question page " +
+        "when UNITED KINGDOM is selected" in {
+
+        navigator
+          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(Some(Country("valid", "GB", "United Kingdom")))(0)
+          .mustBe(controllers.reporter.routes.ReporterTinUKQuestionController.onPageLoad(NormalMode, 0))
+      }
+
+      "must go from 'Which country *are you/is org* resident in for tax purposes' page " +
+        "to 'Do you *have any/ know organisation's* tax identification numbers for *country*' question page " +
+        "when UNITED KINGDOM is NOT selected" in {
+
+        navigator
+          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
+          .mustBe(controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(NormalMode, 0))
+      }
 
       "must go from 'What is your role in this arrangement?' page " +
         "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
@@ -55,6 +91,18 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Intermediary))(0)
           .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode))
       }
+    }
+
+    "must go from 'What is your role in this arrangement?' page " +
+      "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
+      "when 'TAXPAYER' option is selected" in {
+
+      navigator
+        .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Taxpayer))(0)
+        .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
+    }
+
+    "on INTERMEDIARY JOURNEY in Normal mode" - {
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'As an intermediary, what is your role in this arrangement' page " +
@@ -150,15 +198,6 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
     "on TAXPAYER JOURNEY in Normal Mode" - {
 
-      "must go from 'What is your role in this arrangement?' page " +
-        "to 'Why are you required to report this arrangement in the United Kingdom?' page " +
-        "when 'TAXPAYER' option is selected" in {
-
-        navigator
-          .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Taxpayer))(0)
-          .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
-      }
-
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'Why are you reporting the arrangement as a taxpayer' page " +
         "when 'I DO NOT KNOW' is 'NOT' selected" in {
@@ -190,15 +229,6 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
     }
 
     "on ORGANISATION JOURNEY in Normal Mode" - {
-
-      "must go from 'Are you reporting as an organisation or individual?' page " +
-        "to 'What is the name of the organisation you’re reporting for?' page " +
-        "when any 'ORGANISATION' option is selected" in {
-
-        navigator
-          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Organisation))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
-      }
 
       "must go from 'What is the name of the organisation your're reporting for' page " +
         "to 'Is [name]'s address in the United Kingdom' page " +
@@ -276,15 +306,6 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
 
     "on INDIVIDUAL JOURNEY in Normal Mode" - {
-
-      "must go from 'Are you reporting as an organisation or individual?' page " +
-        "to 'What is your full name?' page " +
-        "when any 'INDIVIDUAL' option is selected" in {
-
-        navigator
-          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Individual))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(NormalMode))
-      }
 
       "must go from 'What is your full name?' page " +
         "to 'What is your date of birth?' page " +

@@ -57,8 +57,6 @@ class ReporterTaxResidentCountryController @Inject()(
   private def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
     navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(value)(index)
 
-  private def actionUrl(mode: Mode, index: Int) = routes.ReporterTaxResidentCountryController.onSubmit(mode, index).url
-
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
 
@@ -73,7 +71,6 @@ class ReporterTaxResidentCountryController @Inject()(
         val json = Json.obj(
           "form" -> preparedForm,
             "mode" -> mode,
-            "actionUrl" -> actionUrl(mode, index),
             "countries" -> countryJsonList(preparedForm.data, countries),
             "index" -> index,
             "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
@@ -92,7 +89,6 @@ class ReporterTaxResidentCountryController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "actionUrl" -> actionUrl(mode, index),
             "countries" -> countryJsonList(formWithErrors.data, countries),
             "index" -> index,
             "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
@@ -105,7 +101,7 @@ class ReporterTaxResidentCountryController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxResidentCountryPage, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, taxResidencyLoopDetails))
-            _              <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))
         }
@@ -136,8 +132,8 @@ class ReporterTaxResidentCountryController @Inject()(
           list.updated(index, updateResidencyLoop)
         } else {
           //Add to loop
-          val addResidencyLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
-          list :+ addResidencyLoop
+          val newResidencyLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+          list :+ newResidencyLoop
         }
     }
 }

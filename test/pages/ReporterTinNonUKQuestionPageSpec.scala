@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package forms.reporter
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Country
-import play.api.data.Form
+import pages.behaviours.PageBehaviours
+import pages.reporter.ReporterTinNonUKQuestionPage
 
-class ReporterTaxResidentCountryFormProvider @Inject() extends Mappings {
+class ReporterTinNonUKQuestionPageSpec extends PageBehaviours {
 
-  def apply(countryList: Seq[Country]): Form[Country] =
-    Form(
-      "country" -> text("reporterTaxResidentCountry.error.required")
-        .verifying("reporterTaxResidentCountry.error.country.required",
-          value => countryList.exists(_.code == value) || value == "GB")
-        .transform[Country](value => countryList.find(_.code == value).get, _.code)
-    )
+  "ReporterTinNonUKQuestionPage" - {
+
+    beRetrievable[Boolean](ReporterTinNonUKQuestionPage)
+
+    beSettable[Boolean](ReporterTinNonUKQuestionPage)
+
+    beRemovable[Boolean](ReporterTinNonUKQuestionPage)
+  }
 }

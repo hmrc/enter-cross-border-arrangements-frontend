@@ -44,12 +44,28 @@ import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIn
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterTinNonUKQuestionUserAnswersEntry: Arbitrary[(ReporterTinNonUKQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterTinNonUKQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterTinUKQuestionUserAnswersEntry: Arbitrary[(ReporterTinUKQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterTinUKQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterTaxResidentCountryUserAnswersEntry: Arbitrary[(ReporterTaxResidentCountryPage.type, JsValue)] =
     Arbitrary {
