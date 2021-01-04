@@ -645,7 +645,7 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpaye
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
-isExemptionCountryKnown.heading = Do you know which countries {0} exempt from reporting in?
+isExemptionCountryKnown.heading = Do you know which countries {0} is exempt from reporting in?
 isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known
 isExemptionCountryKnown.error.required = Select yes if you know which countries the intermediary is exempt from reporting in
 
@@ -662,7 +662,7 @@ isExemptionKnown.checkYourAnswersLabel = Any reporting exemptions known?
 isExemptionKnown.error.required = Select yes if you know the intermediary is exempt from reporting in an EU member state, or in the UK
 
 exemptCountries.title = Choose exempt countries
-exemptCountries.heading = Which countries is {0}’s exempt from reporting in?
+exemptCountries.heading = Which countries is {0} exempt from reporting in?
 exemptCountries.hint = Select all that apply.
 exemptCountries.checkYourAnswersLabel = Exempt Countries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in

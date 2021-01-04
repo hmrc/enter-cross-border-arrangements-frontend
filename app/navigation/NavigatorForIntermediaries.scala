@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.intermediaries._
-import controllers.mixins.{CheckRoute, DefaultRouting}
+import controllers.mixins.{CheckRoute, DefaultRouting, IntermediariesRouting}
 import javax.inject.{Inject, Singleton}
 import models.IsExemptionKnown.Yes
 import models.intermediaries.WhatTypeofIntermediary.Promoter
@@ -48,7 +48,9 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
         }
 
     case WhatTypeofIntermediaryPage =>
-      checkRoute => _ => _ => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(checkRoute.mode)
+      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsExemptionKnownController.onPageLoad(checkRoute.mode), checkRoute)
+
+
 
     case IsExemptionKnownPage =>
       checkRoute => value => _ =>
@@ -79,7 +81,7 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      case IntermediariesRouting(CheckMode)        => routes.IntermediariesCheckYourAnswersController.onPageLoad()
       case _                                       => jumpTo
     }
   }

@@ -22,7 +22,6 @@ import generators.Generators
 import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.{IsExemptionKnown, NormalMode, SelectType}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.individual.WhatAreTheTaxNumbersForNonUKIndividualPage
 import pages.intermediaries._
 
 class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

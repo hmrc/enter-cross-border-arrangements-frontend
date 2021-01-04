@@ -16,13 +16,9 @@
 
 package pages.intermediaries
 
-import models.UserAnswers
 import models.intermediaries.WhatTypeofIntermediary
-import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Serviceprovider}
 import pages._
 import play.api.libs.json.JsPath
-
-import scala.util.Try
 
 case object WhatTypeofIntermediaryPage extends QuestionPage[WhatTypeofIntermediary] {
 
@@ -30,13 +26,4 @@ case object WhatTypeofIntermediaryPage extends QuestionPage[WhatTypeofIntermedia
 
   override def toString: String = "whatTypeofIntermediary"
 
-  override def cleanup(value: Option[WhatTypeofIntermediary], userAnswers: UserAnswers): Try[UserAnswers] = {
-    //Clear following answers
-    value match {
-      case Some(Serviceprovider | IDoNotKnow) => userAnswers.remove(IsExemptionKnownPage)
-        .flatMap(_.remove(IsExemptionCountryKnownPage))
-        .flatMap(_.remove(ExemptCountriesPage))
-      case _ => super.cleanup(value, userAnswers)
-    }
-  }
 }
