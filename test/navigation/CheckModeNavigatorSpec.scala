@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ package navigation
 
 import base.SpecBase
 import generators.Generators
+import models.IsExemptionKnown.{No, Yes}
 import models._
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
+import models.intermediaries.ExemptCountries
+import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -28,6 +31,7 @@ import pages.arrangement._
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries._
 import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
@@ -449,6 +453,137 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(IsAssociatedEnterpriseAffectedPage, CheckMode, updatedAnswers)
               .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+
+
+
+      // INTERMEDIARIES CHECKMODE
+
+        "must go from 'Organisation or Individual' page to " +
+          "'What is the name of the organisation?' page in the intermediaries journey when organisation" in {
+          assertRedirect(IntermediariesTypePage,
+            controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode)) {
+            _
+              .set(IntermediariesTypePage, SelectType.Organisation)
+              .success
+              .value
+          }
+        }
+
+        "must go from 'Organisation or Individual' page to " +
+          "'What is the name of the individual?' page in the intermediaries journey when individual" in {
+          assertRedirect(IntermediariesTypePage,
+            controllers.individual.routes.IndividualNameController.onPageLoad(CheckMode)) {
+            _
+              .set(IntermediariesTypePage, SelectType.Individual)
+              .success
+              .value
+          }
+        }
+
+      "must go from 'What type of intermediary is *name*?' page to " +
+        "'Is *organisation* exempt from reporting in an EU member state, or the UK?' page in the intermediaries journey" +
+        "when Promoter" in {
+        assertRedirect(WhatTypeofIntermediaryPage,
+          controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(CheckMode)) {
+          _
+            .set(WhatTypeofIntermediaryPage, Promoter)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'What type of intermediary is *name*?' page to " +
+        "'Check your answers' page in the intermediaries journey when unknown" in {
+        assertRedirect(WhatTypeofIntermediaryPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(WhatTypeofIntermediaryPage, IDoNotKnow)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'What type of intermediary is *name*?' page to " +
+        "'Check your answers' page in the intermediaries journey when I do not know" in {
+        assertRedirect(WhatTypeofIntermediaryPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(WhatTypeofIntermediaryPage, Serviceprovider)
+            .success
+            .value
+        }
+      }
+
+
+      "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
+        "Do you know which countries *name* exempt from reporting in?' page in the intermediaries journey" +
+        "when Yes" in {
+        assertRedirect(IsExemptionKnownPage,
+          controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode)) {
+          _
+            .set(IsExemptionKnownPage, Yes)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
+        "Check your answers?' page in the intermediaries journey when No" in {
+        assertRedirect(IsExemptionKnownPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(IsExemptionKnownPage, No)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
+        "Check your answers?' page in the intermediaries journey when Unknown" in {
+        assertRedirect(IsExemptionKnownPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(IsExemptionKnownPage, IsExemptionKnown.Unknown)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Do you know which countries *name* exempt from reporting in?' page to " +
+        "Which countries is *name* exempt from reporting in?' page in the intermediaries journey" +
+        "when Yes" in {
+        assertRedirect(IsExemptionCountryKnownPage,
+          controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(CheckMode)) {
+          _
+            .set(IsExemptionCountryKnownPage, true)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Do you know which countries *name* exempt from reporting in?' page to " +
+        "Check your answers' page in the intermediaries journey" +
+        "when No" in {
+        assertRedirect(IsExemptionCountryKnownPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(IsExemptionCountryKnownPage, false)
+            .success
+            .value
+        }
+      }
+
+      "must go from 'Which countries is *name* exempt from reporting in?' page to " +
+        "'Check your answers' page in the intermediaries journey" in {
+        assertRedirect(ExemptCountriesPage,
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          _
+            .set(ExemptCountriesPage, ExemptCountries.enumerable.withName("uk").toSet)
+            .success
+            .value
         }
       }
     }

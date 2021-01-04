@@ -17,16 +17,16 @@
 package controllers.intermediaries
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
-
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import navigation.Navigator
+import models.{Mode, UserAnswers}
+import navigation.NavigatorForIntermediaries
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,15 +35,15 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyIntermediariesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    formProvider: YouHaveNotAddedAnyIntermediariesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                                            override val messagesApi: MessagesApi,
+                                                            sessionRepository: SessionRepository,
+                                                            navigator: NavigatorForIntermediaries,
+                                                            identify: IdentifierAction,
+                                                            getData: DataRetrievalAction,
+                                                            formProvider: YouHaveNotAddedAnyIntermediariesFormProvider,
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,6 +63,9 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
 
       renderer.render("intermediaries/youHaveNotAddedAnyIntermediaries.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyIntermediaries]): Call =
+    navigator.routeMap(YouHaveNotAddedAnyIntermediariesPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -87,7 +90,8 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyIntermediariesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(YouHaveNotAddedAnyIntermediariesPage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
         }
       )
   }

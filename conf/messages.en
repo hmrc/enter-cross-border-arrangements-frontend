@@ -644,6 +644,29 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
+isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
+isExemptionCountryKnown.heading = Do you know which countries {0} is exempt from reporting in?
+isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known
+isExemptionCountryKnown.error.required = Select yes if you know which countries the intermediary is exempt from reporting in
+
+isExemptionKnown.title = Are they exempt from reporting?
+isExemptionKnown.heading = Is {0} exempt from reporting in an EU member state, or the UK?
+isExemptionKnown.hint.1 = An intermediary is exempt from reporting if:
+isExemptionKnown.hint.2 = the intermediary has a reporting obligation in another EU member state
+isExemptionKnown.hint.3 = another intermediary involved in the arrangement has already reported the same information
+isExemptionKnown.hint.4 = the intermediary is covered by legal, professional privilege (LPP)
+isExemptionKnown.yes = Yes
+isExemptionKnown.no = No
+isExemptionKnown.unknown = I do not know
+isExemptionKnown.checkYourAnswersLabel = Any reporting exemptions known?
+isExemptionKnown.error.required = Select yes if you know the intermediary is exempt from reporting in an EU member state, or in the UK
+
+exemptCountries.title = Choose exempt countries
+exemptCountries.heading = Which countries is {0} exempt from reporting in?
+exemptCountries.hint = Select all that apply.
+exemptCountries.checkYourAnswersLabel = Exempt Countries
+exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
+
 whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
 whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s start date for implementing the arrangement?
 whatIsTaxpayersStartDateForImplementingArrangement.part1.hint = This is when the first step of the arrangement was or will be made.
@@ -669,6 +692,8 @@ intermediariesType.title = Is this an organisation or an individual?
 intermediariesType.heading = Is this an organisation or an individual?
 intermediariesType.checkYourAnswersLabel = Organisation or individual
 intermediariesType.error.required = Select the type of intermediary
+intermediariesType.organisation = Organisation
+intermediariesType.individual = Individual
 
 whatTypeofIntermediary.title = What type of intermediary is this?
 whatTypeofIntermediary.heading = What type of intermediary is {0}?
@@ -679,7 +704,6 @@ whatTypeofIntermediary.serviceProvider.hint = Service providers provide aid, ass
 whatTypeofIntermediary.iDoNotKnow = I do not know
 whatTypeofIntermediary.checkYourAnswersLabel = Intermediary type
 whatTypeofIntermediary.error.required = Select the type of intermediary
-
 
 ## DISCLOSURE DETAILS
 

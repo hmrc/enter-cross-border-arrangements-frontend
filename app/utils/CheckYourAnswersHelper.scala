@@ -24,7 +24,6 @@ import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
-import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
@@ -33,31 +32,7 @@ import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with DisclosureRows {
-
-  def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whatTypeofIntermediary.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatTypeofIntermediary.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def youHaveNotAddedAnyIntermediaries: Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage) map {
-    answer =>
-      toRow(
-        msgKey  = "youHaveNotAddedAnyIntermediaries",
-        content = msg"youHaveNotAddedAnyIntermediaries.$answer",
-        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
-      )
-  }
+  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows {
 
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
@@ -69,6 +44,36 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
             content            = msg"site.edit",
             href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"selectAddress.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )
       )
@@ -194,3 +199,4 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
   }
 }
+

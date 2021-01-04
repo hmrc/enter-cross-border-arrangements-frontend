@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] ::
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
+    arbitrary[(IsExemptionKnownPage.type, JsValue)] ::
+    arbitrary[(IsExemptionCountryKnownPage.type, JsValue)] ::
+    arbitrary[(ExemptCountriesPage.type, JsValue)] ::
     arbitrary[(TaxpayerWhyReportArrangementPage.type, JsValue)] ::
     arbitrary[(TaxpayerWhyReportInUKPage.type, JsValue)] ::
     arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] ::

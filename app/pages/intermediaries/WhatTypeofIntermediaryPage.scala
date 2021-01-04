@@ -17,12 +17,13 @@
 package pages.intermediaries
 
 import models.intermediaries.WhatTypeofIntermediary
-import play.api.libs.json.JsPath
 import pages._
+import play.api.libs.json.JsPath
 
 case object WhatTypeofIntermediaryPage extends QuestionPage[WhatTypeofIntermediary] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatTypeofIntermediary"
+
 }

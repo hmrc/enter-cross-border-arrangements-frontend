@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.WhatTypeofIntermediaryFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
 import models.intermediaries.WhatTypeofIntermediary
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -29,7 +29,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,8 +38,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val whatTypeofIntermediaryRoute = routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode).url
 
@@ -117,7 +114,6 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,8 +126,7 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
-
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-known"
       application.stop()
     }
 

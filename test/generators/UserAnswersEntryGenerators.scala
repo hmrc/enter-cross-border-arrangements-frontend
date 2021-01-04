@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package generators
 
-import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
+import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
-import models.{CountriesListEUCheckboxes, SelectType, YesNoDoNotKnowRadios}
+import models.{CountriesListEUCheckboxes, IsExemptionKnown, SelectType, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -35,15 +34,13 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
-import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
+import pages.intermediaries._
 import pages.organisation._
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
-import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
-import pages.intermediaries.WhatTypeofIntermediaryPage
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
@@ -169,11 +166,36 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type]
         value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsExemptionKnownUserAnswersEntry: Arbitrary[(IsExemptionKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsExemptionKnownPage.type]
+        value <- arbitrary[IsExemptionKnown].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsExemptionCountryKnownUserAnswersEntry: Arbitrary[(IsExemptionCountryKnownPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IsExemptionCountryKnownPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryExemptCountriesUserAnswersEntry: Arbitrary[(ExemptCountriesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExemptCountriesPage.type]
+        value <- arbitrary[ExemptCountries].map(Json.toJson(_))
       } yield (page, value)
     }
 

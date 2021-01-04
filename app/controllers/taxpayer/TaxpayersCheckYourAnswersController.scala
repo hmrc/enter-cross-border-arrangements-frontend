@@ -60,7 +60,8 @@ class TaxpayersCheckYourAnswersController @Inject()(
             helper.buildIndividualDateOfBirthGroup ++
             helper.buildIndividualPlaceOfBirthGroup ++
             helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup, helper.buildTaxResidencySummaryForIndividuals)
+            helper.buildIndividualEmailAddressGroup,
+            helper.buildTaxResidencySummaryForIndividuals)
 
         case _ => throw new RuntimeException("Unable to retrieve select type for Taxpayer")
       }

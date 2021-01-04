@@ -16,7 +16,7 @@
 
 package controllers.mixins
 
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{Mode, UserAnswers}
 import pages.enterprises.AssociatedEnterpriseTypePage
 import pages.intermediaries.IntermediariesTypePage
 import pages.taxpayer.TaxpayerSelectTypePage

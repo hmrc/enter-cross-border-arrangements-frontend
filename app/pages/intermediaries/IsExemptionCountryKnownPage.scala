@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package forms.intermediaries
+package pages.intermediaries
 
-import javax.inject.Inject
+import models.UserAnswers
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import models.intermediaries.WhatTypeofIntermediary
+import scala.util.Try
 
-class WhatTypeofIntermediaryFormProvider @Inject() extends Mappings {
+case object IsExemptionCountryKnownPage extends QuestionPage[Boolean] {
 
-  def apply(): Form[WhatTypeofIntermediary] =
-    Form(
-      "value" -> enumerable[WhatTypeofIntermediary]("whatTypeofIntermediary.error.required")
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "isExemptionCountryKnown"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    //Clear following answers
+    value match {
+      case Some(false) => userAnswers.remove(ExemptCountriesPage)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }

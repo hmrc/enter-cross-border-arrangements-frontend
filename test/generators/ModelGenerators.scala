@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -39,6 +40,16 @@ trait ModelGenerators {
   implicit lazy val arbitraryYouHaveNotAddedAnyIntermediaries: Arbitrary[YouHaveNotAddedAnyIntermediaries] =
     Arbitrary {
       Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
+    }
+
+  implicit lazy val arbitraryIsExemptionKnown: Arbitrary[IsExemptionKnown] =
+    Arbitrary {
+      Gen.oneOf(IsExemptionKnown.values.toSeq)
+    }
+
+  implicit lazy val arbitraryExemptCountries: Arbitrary[ExemptCountries] =
+    Arbitrary {
+      Gen.oneOf(ExemptCountries.values.toSeq)
     }
 
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =

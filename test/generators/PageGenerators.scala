@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
+import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
+
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
 
@@ -81,6 +83,15 @@ trait PageGenerators {
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
     Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
+
+  implicit lazy val arbitraryIsExemptionKnownPage: Arbitrary[IsExemptionKnownPage.type] =
+    Arbitrary(IsExemptionKnownPage)
+
+  implicit lazy val arbitraryisExemptionCountryKnownPage: Arbitrary[IsExemptionCountryKnownPage.type] =
+    Arbitrary(IsExemptionCountryKnownPage)
+
+  implicit lazy val arbitraryExemptCountriesPage: Arbitrary[ExemptCountriesPage.type] =
+    Arbitrary(ExemptCountriesPage)
 
   implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
     Arbitrary(AssociatedEnterpriseTypePage)
