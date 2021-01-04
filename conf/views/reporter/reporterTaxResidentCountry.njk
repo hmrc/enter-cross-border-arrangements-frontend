@@ -31,16 +31,18 @@
 
         {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">{{messages(pageHeading, name)}}</h1>
+        <h1 class="govuk-heading-xl" id="country">{{messages(pageHeading, name)}}</h1>
 
         <p class="govuk-body">{{messages(guidance)}}</p>
 
         {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
-            id: "country",
+            id: "countrySelction",
             name: "country",
-            attributes: {"aria-labelledby": "country"},
-            errorMessage: form.country.error,
+            attributes: {
+                "aria-labelledby" : "country"
+            },
+            errorMessage: form.countrySelction.error,
             items: countries
         }) }}
 

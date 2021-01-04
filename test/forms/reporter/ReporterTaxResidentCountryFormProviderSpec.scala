@@ -28,9 +28,9 @@ class ReporterTaxResidentCountryFormProviderSpec extends StringFieldBehaviours {
 
   val form = new ReporterTaxResidentCountryFormProvider()(countriesSeq)
 
-  ".country" - {
+  ".countrySelction" - {
 
-    val fieldName = "country"
+    val fieldName = "countrySelction"
 
     behave like fieldThatBindsValidData(
       form,
