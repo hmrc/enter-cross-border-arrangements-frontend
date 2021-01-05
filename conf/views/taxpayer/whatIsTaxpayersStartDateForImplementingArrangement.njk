@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("whatIsTaxpayersStartDateForImplementingArrangement.title"), form.errors) }}
+  {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -31,14 +31,15 @@
 
         <form action="{{ actionUrl }}" method="post">
 
+
           {{ csrf() | safe }}
 
-          <h1 class = "govuk-heading-xl">{{ messages('whatIsTaxpayersStartDateForImplementingArrangement.heading', displayName) }}</h1>
+          <h1 class="govuk-heading-xl">{{ messages(pageHeading, name) }}</h1>
 
           {{ govukDateInput({
             fieldset: {
               legend: {
-                text: messages('whatIsTaxpayersStartDateForImplementingArrangement.heading'),
+                text: messages(pageHeading, name),
                 isPageHeading: false,
                 classes: "govuk-fieldset__legend--xl govuk-visually-hidden"
               }

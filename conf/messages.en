@@ -667,8 +667,10 @@ exemptCountries.hint = Select all that apply.
 exemptCountries.checkYourAnswersLabel = Exempt Countries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
 
-whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
-whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s start date for implementing the arrangement?
+whatIsTaxpayersStartDateForImplementingArrangement.org.title = What is their implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.ind.title = What is your implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.org.heading = What is {0}’s start date for implementing the arrangement?
+whatIsTaxpayersStartDateForImplementingArrangement.ind.heading = What is your start date for implementing the arrangement?
 whatIsTaxpayersStartDateForImplementingArrangement.part1.hint = This is when the first step of the arrangement was or will be made.
 whatIsTaxpayersStartDateForImplementingArrangement.part2.hint = For example, {0}
 whatIsTaxpayersStartDateForImplementingArrangement.checkYourAnswersLabel = Implementing date
