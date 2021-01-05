@@ -26,6 +26,7 @@ import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import uk.gov.hmrc.viewmodels.Html
 
 class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -155,6 +156,28 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         val result = hasValueChanged("Organisation", OrganisationNamePage, CheckMode, userAnswers)
 
         result mustBe false
+      }
+    }
+
+    "linkToHomePageText" - {
+
+      "must return the correct go to home page content" in {
+        val mockURL = "home.gov.uk"
+
+        linkToHomePageText(mockURL) mustBe Html(s"<a class='govuk-link' id='homepage-link' href='$mockURL'>" +
+          s"Disclose a cross-border arrangement</a>")
+
+      }
+    }
+
+    "surveyLinkText" - {
+
+      "must return the correct beta feedback content" in {
+        val mockURL = "home.gov.uk"
+
+        surveyLinkText(mockURL) mustBe Html(s"<a class='govuk-link' id='feedback-link' href='$mockURL'>" +
+          s"What did you think of this service?</a> (takes 30 seconds)")
+
       }
     }
   }

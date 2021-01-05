@@ -17,12 +17,13 @@
 package helpers
 
 import models.{CheckMode, Country, Currency, Mode, UserAnswers}
-import pages._
-import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.QuestionPage
 import pages.individual.{IndividualLoopPage, IndividualNamePage}
+import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{AnyContent, Request}
+import uk.gov.hmrc.viewmodels.Html
 
 object JourneyHelpers {
 
@@ -115,4 +116,12 @@ object JourneyHelpers {
     loopDetails <- loopPage.lift(index)
     country <- loopDetails.whichCountry
   } yield country
+
+  def linkToHomePageText(href: String)(implicit messages: Messages): Html = {
+    Html(s"<a class='govuk-link' id='homepage-link' href='$href'>${{ messages("confirmation.link.text") }}</a>")
+  }
+
+  def surveyLinkText(href: String)(implicit messages: Messages): Html = {
+    Html(s"<a class='govuk-link' id='feedback-link' href='$href'>${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
+  }
 }

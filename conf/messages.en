@@ -844,3 +844,18 @@ taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outsid
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
+
+
+# CONFIRMATION PAGES
+
+confirmation.link.text = Disclose a cross-border arrangement
+confirmation.survey.link = What did you think of this service?
+confirmation.survey.text = (takes 30 seconds)
+
+newDisclosureConfirmation.title = Disclosure received
+newDisclosureConfirmation.heading = Disclosure received
+newDisclosureConfirmation.panel.html = Your arrangement ID
+newDisclosureConfirmation.p1 = We have sent a confirmation email to {0}.
+newDisclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+newDisclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+newDisclosureConfirmation.p4 = Your message reference ID is {0}. This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. It will always start with your registered user ID and you can use it to tell the difference between any submissions with the same disclosure ID.
