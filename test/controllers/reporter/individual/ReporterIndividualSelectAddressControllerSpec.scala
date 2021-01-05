@@ -101,7 +101,7 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
         "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualSelectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -140,7 +140,7 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualSelectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -207,7 +207,7 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
         "radios" -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualSelectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

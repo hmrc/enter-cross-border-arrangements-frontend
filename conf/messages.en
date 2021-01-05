@@ -264,19 +264,19 @@ address.addressLine1 = Address line 1 (optional)
 address.addressLine2 = Address line 2 (optional)
 address.addressLine3 = Address line 3 (optional)
 address.city = City
-address.postcode.optional = Postal code (optional)
+address.postcode.optional = Postcode (optional)
 address.postcodeUk.optional = Postcode (optional)
 address.country = Country
 address.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
 address.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
 address.error.addressLine3.length = Address line 3 (optional) must be 35 characters or less
 address.error.city.length = City must be 35 characters or less
-address.error.postcode.optional.length = Postal code (optional) must be 10 characters or less
+address.error.postcode.optional.length = Postcode (optional) must be 10 characters or less
 address.error.addressLine1.invalid = Address line 1 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.addressLine2.invalid = Address line 2 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-address.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.postcode.optional.invalid = Postcode (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.city.required = Enter a city
 address.error.country.required = Select a country
 
@@ -903,7 +903,7 @@ reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 charact
 
 reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
 reporterIsIndividualAddressUK.heading = Do you live in the United Kingdom?
-reporterIsIndividualAddressUK.error.required = Select yes if they live in the United Kingdom
+reporterIsIndividualAddressUK.error.required = Select yes if you live in the United Kingdom
 
 reporterIndividualPostcode.title = What is your postcode?
 reporterIndividualPostcode.heading = What is your postcode?

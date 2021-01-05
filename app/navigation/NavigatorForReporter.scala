@@ -126,7 +126,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterOrganisationPostcodePage => checkRoute => _ => _ =>
       controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(checkRoute.mode)
 
-    case ReporterOrganisationAddressPage | ReporterOrganisationSelectAddressPage => checkRoute => _ => _ =>
+    case ReporterOrganisationSelectAddressPage | ReporterOrganisationAddressPage => checkRoute => _ => _ =>
       controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
 
     case ReporterOrganisationEmailAddressQuestionPage => checkRoute => value => _ => value match {

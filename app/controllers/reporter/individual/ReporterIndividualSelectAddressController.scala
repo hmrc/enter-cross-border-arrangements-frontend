@@ -52,6 +52,8 @@ class ReporterIndividualSelectAddressController @Inject()(
 
   private def manualAddressURL(mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(mode).url //TODO Change to UK page when ready
 
+  def actionUrl(mode: Mode) = routes.ReporterIndividualSelectAddressController.onSubmit(mode).url
+
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -75,10 +77,13 @@ class ReporterIndividualSelectAddressController @Inject()(
             "form" -> preparedForm,
             "mode" -> mode,
             "manualAddressURL" -> manualAddressURL(mode),
-            "radios" -> radios
+            "radios" -> radios,
+            "pageTitle" -> "reporterIndividualSelectAddress.title",
+            "pageHeading" -> "reporterIndividualSelectAddress.heading",
+            "actionUrl" -> actionUrl(mode)
           )
 
-          renderer.render("reporter/individual/reporterIndividualSelectAddress.njk", json).map(Ok(_))
+          renderer.render("reporter/reporterSelectAddress.njk", json).map(Ok(_))
       } recover {
         case _: Exception => Redirect(manualAddressURL(mode))
       }
@@ -108,10 +113,13 @@ class ReporterIndividualSelectAddressController @Inject()(
                 "form" -> formWithErrors,
                 "mode" -> mode,
                 "manualAddressURL" -> manualAddressURL(mode),
-                "radios" -> radios
+                "radios" -> radios,
+                "pageTitle" -> "reporterIndividualSelectAddress.title",
+                "pageHeading" -> "reporterIndividualSelectAddress.heading",
+                "actionUrl" -> actionUrl(mode)
               )
 
-              renderer.render("reporter/individual/reporterIndividualSelectAddress.njk", json).map(BadRequest(_))
+              renderer.render("reporter/reporterSelectAddress.njk", json).map(BadRequest(_))
             },
             value => {
               val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))

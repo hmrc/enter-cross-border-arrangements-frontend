@@ -80,7 +80,7 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" ignore {
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
       //TODO - fix this test
 
@@ -91,7 +91,7 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
         .set(ReporterTinNonUKQuestionPage, true)
         .success
         .value
-        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, selectedCountry, Some(true), None, None, None)))
+        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, selectedCountry, None, None, Some(true), None)))
         .success
         .value
 

@@ -18,7 +18,7 @@ package pages.reporter
 
 import models.{AddressLookup, UserAnswers}
 import pages.QuestionPage
-import pages.individual.IndividualAddressPage
+import pages.reporter.individual.ReporterIndividualAddressPage
 import pages.reporter.organisation.ReporterOrganisationAddressPage
 import play.api.libs.json.JsPath
 
@@ -34,7 +34,7 @@ object ReporterSelectedAddressLookupPage  extends QuestionPage[AddressLookup] {
       case Some(_) =>
         userAnswers
           .remove(ReporterOrganisationAddressPage)
-          .flatMap(_.remove(IndividualAddressPage)) // TODO - Change to ReporterIndividualAddressPage
+          .flatMap(_.remove(ReporterIndividualAddressPage))
       case None => super.cleanup(value, userAnswers)
     }
 }

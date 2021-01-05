@@ -23,5 +23,5 @@ case object ReporterOrganisationSelectAddressPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "selectAddress"
+  override def toString: String = "reporterOrganisationSelectAddress"
 }

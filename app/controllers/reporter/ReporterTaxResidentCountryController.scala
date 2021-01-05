@@ -63,9 +63,9 @@ class ReporterTaxResidentCountryController @Inject()(
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-    val preparedForm: Form[Country] = request.userAnswers.get(ReporterTaxResidentCountryPage) match {
-        case None => form
+    val preparedForm: Form[Country] = getCountry(request.userAnswers, ReporterTaxResidencyLoopPage, index) match {
         case Some(value) => form.fill(value)
+        case _ => form
       }
 
         val json = Json.obj(

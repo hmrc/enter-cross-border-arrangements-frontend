@@ -41,7 +41,7 @@ import scala.concurrent.Future
 
 class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-country-tin-0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/non-uk-tin-known-0")
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))

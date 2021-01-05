@@ -95,7 +95,7 @@ class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with Mock
          "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -137,7 +137,7 @@ class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with Mock
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -170,7 +170,7 @@ class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with Mock
 
       status(result) mustEqual SEE_OTHER
 
-//      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address" //TODO - change to email page when built
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/organisation/email-address"
 
       application.stop()
     }
@@ -210,7 +210,7 @@ class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with Mock
         "radios" -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
