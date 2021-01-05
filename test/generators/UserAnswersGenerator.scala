@@ -28,7 +28,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
@@ -40,6 +40,9 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterNonUKTaxNumbersPage.type, JsValue)] ::
+    arbitrary[(ReporterUKTaxNumbersPage.type, JsValue)] ::
     arbitrary[(ReporterTinNonUKQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterTinUKQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterTaxResidentCountryPage.type, JsValue)] ::

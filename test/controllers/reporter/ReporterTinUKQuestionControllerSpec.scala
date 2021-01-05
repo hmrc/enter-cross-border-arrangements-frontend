@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class ReporterTinUKQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements") //TODO - change when next page built
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/uk-tax-numbers-0")
 
   val formProvider = new ReporterTinUKQuestionFormProvider()
   val form = formProvider()

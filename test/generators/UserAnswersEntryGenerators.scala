@@ -44,12 +44,36 @@ import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIn
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterOtherTaxResidentQuestionUserAnswersEntry: Arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOtherTaxResidentQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterNonUKTaxNumbersUserAnswersEntry: Arbitrary[(ReporterNonUKTaxNumbersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterNonUKTaxNumbersPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterUKTaxNumbersUserAnswersEntry: Arbitrary[(ReporterUKTaxNumbersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterUKTaxNumbersPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterTinNonUKQuestionUserAnswersEntry: Arbitrary[(ReporterTinNonUKQuestionPage.type, JsValue)] =
     Arbitrary {

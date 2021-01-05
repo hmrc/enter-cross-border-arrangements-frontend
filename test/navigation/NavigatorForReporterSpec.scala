@@ -27,7 +27,7 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -65,8 +65,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(NormalMode))
       }
 
-      "must go from 'Which country *are you/is org* resident in for tax purposes' page " +
-        "to 'Do *you have any/you know any of org's* tax identification numbers for the United Kingdom' question page " +
+      "must go from 'Which country *are you/is org* resident in for tax purposes?' page " +
+        "to 'Do *you have any/you know any of org's* tax identification numbers for the United Kingdom?' page " +
         "when UNITED KINGDOM is selected" in {
 
         navigator
@@ -74,13 +74,67 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           .mustBe(controllers.reporter.routes.ReporterTinUKQuestionController.onPageLoad(NormalMode, 0))
       }
 
-      "must go from 'Which country *are you/is org* resident in for tax purposes' page " +
-        "to 'Do you *have any/ know organisation's* tax identification numbers for *country*' question page " +
+      "must go from 'Which country *are you/is org* resident in for tax purposes?' page " +
+        "to 'Do you *have any/ know organisation's* tax identification numbers for *country*?' page " +
         "when UNITED KINGDOM is NOT selected" in {
 
         navigator
           .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
           .mustBe(controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(NormalMode, 0))
+      }
+
+      "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the United Kingdom?' page " +
+        "to 'What are *your/organisation's* tax identification numbers for the United Kingdom?' page " +
+        "when YES is selected" in {
+
+        navigator
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterUKTaxNumbersController.onPageLoad(NormalMode, 0))
+      }
+
+      "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the United Kingdom?' page " +
+        "to '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
+        "when NO is selected" in {
+
+        navigator
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(NormalMode, 1))
+      }
+
+      "must go from 'Do you *have any/ know organisation's* tax identification numbers for *country*' page " +
+        "to 'What are *your/organisation's* tax identification numbers for *country*' page " +
+        "when YES is selected" in {
+
+        navigator
+          .routeMap(ReporterTinNonUKQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterNonUKTaxNumbersController.onPageLoad(NormalMode, 0))
+      }
+
+      "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the *country*' page " +
+        "to '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
+        "when NO is selected" in {
+
+        navigator
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(NormalMode, 1))
+      }
+
+      "must go from '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
+        "to 'What is your role in this arrangement?' page " +
+        "when NO is selected" in {
+
+        navigator
+          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+      }
+
+      "must go from '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
+        "to 'Which country *are you/is org* resident in for tax purposes?' page " +
+        "when YES is selected" in {
+
+        navigator
+          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
       }
 
       "must go from 'What is your role in this arrangement?' page " +

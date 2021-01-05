@@ -25,7 +25,7 @@ import models._
 import models.reporter.RoleInArrangement.Intermediary
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, RoleInArrangementPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -43,11 +43,31 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     }
 
     case ReporterTaxResidentCountryPage =>
-      checkRoute => value => index => value match { case Some(country: Country) =>
+      checkRoute => value => index => value match {
+        case Some(country: Country) =>
         country.code match {
           case "GB" => routes.ReporterTinUKQuestionController.onPageLoad(checkRoute.mode, index)
           case _    => routes.ReporterTinNonUKQuestionController.onPageLoad(checkRoute.mode, index)
       }
+        case _ => throw new RuntimeException("Unable to retrieve selected country from loop")
+    }
+
+    case ReporterTinUKQuestionPage => checkRoute => value => index => value match {
+      case Some(true) => controllers.reporter.routes.ReporterUKTaxNumbersController.onPageLoad(checkRoute.mode, index)
+      case _ => controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(checkRoute.mode, index + 1)
+    }
+
+    case ReporterTinNonUKQuestionPage => checkRoute => value => index => value match {
+      case Some(true) => controllers.reporter.routes.ReporterNonUKTaxNumbersController.onPageLoad(checkRoute.mode, index)
+      case _ => controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(checkRoute.mode, index + 1)
+    }
+
+    case ReporterUKTaxNumbersPage | ReporterNonUKTaxNumbersPage => checkRoute => _ => index =>
+      controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(checkRoute.mode, index + 1)
+
+    case ReporterOtherTaxResidentQuestionPage => checkRoute =>value => index => value match {
+      case Some(true) => controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, index)
+      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(checkRoute.mode)
     }
 
     case RoleInArrangementPage => checkRoute => value => _ => value match {

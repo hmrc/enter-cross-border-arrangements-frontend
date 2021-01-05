@@ -25,7 +25,7 @@ import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
@@ -41,6 +41,15 @@ import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryReporterOtherTaxResidentQuestionPage: Arbitrary[ReporterOtherTaxResidentQuestionPage.type] =
+    Arbitrary(ReporterOtherTaxResidentQuestionPage)
+
+  implicit lazy val arbitraryReporterNonUKTaxNumbersPage: Arbitrary[ReporterNonUKTaxNumbersPage.type] =
+    Arbitrary(ReporterNonUKTaxNumbersPage)
+
+  implicit lazy val arbitraryReporterUKTaxNumbersPage: Arbitrary[ReporterUKTaxNumbersPage.type] =
+    Arbitrary(ReporterUKTaxNumbersPage)
 
   implicit lazy val arbitraryReporterTinNonUKQuestionPage: Arbitrary[ReporterTinNonUKQuestionPage.type] =
     Arbitrary(ReporterTinNonUKQuestionPage)

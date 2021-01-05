@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.reporter.organisation
+package controllers.reporter
 
 import base.SpecBase
-import forms.reporter.ReporterEmailAddressFormProvider
+import forms.reporter.ReporterNonUKTaxNumbersFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.organisation.ReporterOrganisationEmailAddressPage
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterTaxResidencyLoopPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +37,21 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-tax-country-0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/tax-resident-countries-1")
 
-  val formProvider = new ReporterEmailAddressFormProvider()
+  val formProvider = new ReporterNonUKTaxNumbersFormProvider()
   val form = formProvider()
+  val index = 0
 
-  lazy val reporterEmailAddressRoute = routes.ReporterOrganisationEmailAddressController.onPageLoad(NormalMode).url
+  val taxNumber: String = "123ABC"
+  val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
+  val selectedCountry: Country = Country("valid", "FR", "France")
 
-  "ReporterEmailAddress Controller" - {
+  lazy val reporterNonUKTaxNumbersRoute = routes.ReporterNonUKTaxNumbersController.onPageLoad(NormalMode, index).url
+
+  "ReporterNonUKTaxNumbers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +59,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -69,7 +74,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterNonUKTaxNumbers.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +85,14 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationEmailAddressPage, "email@address.com").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ReporterNonUKTaxNumbersPage, taxReferenceNumbers)
+        .success.value
+        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -92,14 +102,19 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "email@address.com"))
-
+      val filledForm = form.bind(Map(
+        "firstTaxNumber" -> taxNumber,
+        "secondTaxNumber" -> "",
+        "thirdTaxNumber" -> ""
+      ))
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "mode" -> NormalMode,
+        "country" -> "France",
+        "index" -> index
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterNonUKTaxNumbers.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -120,8 +135,8 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
           .build()
 
       val request =
-        FakeRequest(POST, reporterEmailAddressRoute)
-          .withFormUrlEncodedBody(("value", "email@address.com"))
+        FakeRequest(POST, reporterNonUKTaxNumbersRoute)
+          .withFormUrlEncodedBody(("firstTaxNumber", taxNumber), ("secondTaxNumber", ""), ("thirdTaxNumber", ""))
 
       val result = route(application, request).value
 
@@ -137,7 +152,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, reporterEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -153,7 +168,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "reporter/reporterEmailAddress.njk"
+      templateCaptor.getValue mustEqual "reporter/reporterNonUKTaxNumbers.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -163,7 +178,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
 
       val result = route(application, request).value
 
@@ -179,7 +194,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, reporterEmailAddressRoute)
+        FakeRequest(POST, reporterNonUKTaxNumbersRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
