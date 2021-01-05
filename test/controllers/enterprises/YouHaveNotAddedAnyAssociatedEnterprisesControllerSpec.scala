@@ -21,7 +21,6 @@ import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import matchers.JsonMatchers
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,12 +38,10 @@ import scala.concurrent.Future
 
 class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode).url
 
-  lazy val youHaveNotAddedAnyAssociatedEnterprisesRoute = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode).url
-
-  val formProvider = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()
-  val form = formProvider()
+  private val formProvider = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()
+  private val form = formProvider()
 
   "YouHaveNotAddedAnyAssociatedEnterprises Controller" - {
 
@@ -117,7 +113,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,7 +125,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/taxpayers"
 
       application.stop()
     }

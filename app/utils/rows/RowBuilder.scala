@@ -64,6 +64,7 @@ trait RowBuilder {
         ${address.addressLine1.fold("")(address => s"$address<br>")}
         ${address.addressLine2.fold("")(address => s"$address<br>")}
         ${address.addressLine3.fold("")(address => s"$address<br>")}
+        ${s"${address.city}<br>"}
         ${address.postCode.fold("")(postcode => s"$postcode<br>")}
         ${address.country.description}
      """)

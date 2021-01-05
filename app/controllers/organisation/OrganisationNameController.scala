@@ -87,8 +87,6 @@ class OrganisationNameController @Inject()(
             updatedAnswers <- Future.fromTry(userAnswers.set(OrganisationNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
-            _ = println("CR \n\n")
-            _ = println(checkRoute)
           } yield Redirect(redirect(checkRoute, Some(value)))
         }
      )

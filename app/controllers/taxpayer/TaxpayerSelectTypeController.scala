@@ -20,7 +20,6 @@ import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import models.{Mode, NormalMode, SelectType}
 import navigation.Navigator
-
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -34,16 +33,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxpayerSelectTypeController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      sessionRepository: SessionRepository,
-                                      navigator: Navigator,
-                                      identify: IdentifierAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      formProvider: TaxpayerSelectTypeFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      renderer: Renderer
-                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: TaxpayerSelectTypeFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -78,13 +77,12 @@ class TaxpayerSelectTypeController @Inject()(
 
           renderer.render("taxpayer/selectType.njk", json).map(BadRequest(_))
         },
-        value => {
-          val redirectMode = if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, value)) NormalMode else mode
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, value)) NormalMode else mode
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, redirectMode, updatedAnswers))
-        }
       )
   }
 }
