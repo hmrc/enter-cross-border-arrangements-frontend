@@ -417,10 +417,10 @@ POST       /reporter/uk-tin-known-:index                           controllers.r
 GET        /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
 POST       /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
 
-GET        /reporter/resident-country-tin-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST       /reporter/resident-country-tin-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET        /reporter/change-resident-country-tin-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST       /reporter/change-resident-country-tin-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET        /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
 
 GET         /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(mode: Mode = NormalMode, index: Int)
 POST        /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onSubmit(mode: Mode = NormalMode, index: Int)

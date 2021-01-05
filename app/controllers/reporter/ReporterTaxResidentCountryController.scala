@@ -72,10 +72,8 @@ class ReporterTaxResidentCountryController @Inject()(
           "form" -> preparedForm,
             "mode" -> mode,
             "countries" -> countryJsonList(preparedForm.data, countries),
-            "index" -> index,
-            "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
-          ) ++ contentProvider(request.userAnswers)
-
+            "index" -> index
+          ) ++ contentProvider(request.userAnswers, index)
 
       renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(Ok(_))
   }
@@ -90,9 +88,8 @@ class ReporterTaxResidentCountryController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index,
-            "guidance" -> "reporterOrganisationTaxResidentCountry.hint"
-          ) ++ contentProvider(request.userAnswers)
+            "index" -> index
+          ) ++ contentProvider(request.userAnswers, index)
 
           renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(BadRequest(_))
         },
@@ -108,16 +105,26 @@ class ReporterTaxResidentCountryController @Inject()(
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers) = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
-    case Some(Individual) => //Display Individual Content
-      Json.obj("pageTitle" -> "reporterIndividualTaxResidentCountry.title",
-        "pageHeading" -> "reporterIndividualTaxResidentCountry.heading")
+  private def contentProvider(userAnswers: UserAnswers, index: Int) = {
 
-    case _ => //Display Organisation Content
-      Json.obj(
-        "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
-        "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
-        "name" -> getReporterDetailsOrganisationName(userAnswers))
+    val dynamicGuidance = if (index >= 1) "reporterOrganisationTaxResidentCountry.moreThanOne.hint" else "reporterOrganisationTaxResidentCountry.hint"
+    val dynamicAlso = if (index >= 1) "also" else ""
+
+    userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+      case Some(Individual) => //Display Individual Content
+        Json.obj("pageTitle" -> "reporterIndividualTaxResidentCountry.title",
+          "pageHeading" -> "reporterIndividualTaxResidentCountry.heading",
+          "dynamicAlso" -> dynamicAlso,
+          "guidance" -> dynamicGuidance)
+
+      case _ => //Display Organisation Content
+        Json.obj(
+          "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
+          "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
+          "name" -> getReporterDetailsOrganisationName(userAnswers),
+          "dynamicAlso" -> dynamicAlso,
+          "guidance" -> dynamicGuidance)
+    }
   }
 
   private def getReporterTaxResidentLoopDetails(value: Country, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
