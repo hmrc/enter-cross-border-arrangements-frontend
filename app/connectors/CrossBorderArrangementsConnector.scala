@@ -49,8 +49,8 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
   def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](isMarketableArrangementUrl(arrangementId)).map { response =>
       (response.status, response.body) match {
-        case (200, "true") => true
-        case _ => false
+        case (200, isMarketableArrangement) => isMarketableArrangement.toBoolean
+        case _ => false // throw exception TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
       }
     } recover {
       case _: Exception => false // TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
