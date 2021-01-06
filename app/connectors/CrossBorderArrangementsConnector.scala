@@ -53,7 +53,7 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
         case _ => false
       }
     } recover {
-      case _: Exception => false // TODO see DAC6-513
+      case _: Exception => false // TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
     }
   }
 
