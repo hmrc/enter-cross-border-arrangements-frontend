@@ -11,9 +11,20 @@ $govuk-assets-path: "/enter-cross-border-arrangements/assets/lib/govuk-frontend/
     hyphens: auto;
 }
 
+.indent {
+    text-indent: 30px;
+}
+
 hr { /* used to style additional line break for CYA Summary List */
     border: 0px;
     border-top: 1px solid $govuk-border-colour;
     margin-bottom: 0px;
+}
+
+hr.indent { /* used to style indented line break for Disclosure Details Page (Task List) */
+    border: 0px;
+    border-top: 1px solid $govuk-border-colour;
+    margin-bottom: 0px;
+    margin-left: 30px;
 }
 
