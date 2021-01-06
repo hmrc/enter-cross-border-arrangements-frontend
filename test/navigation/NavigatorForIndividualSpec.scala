@@ -184,7 +184,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(EmailAddressForIndividualPage)(DefaultRouting(NormalMode))(Some("test@email.com"))(0)
-            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 1))
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 0))
         }
 
         s"must go from $D13 to $D14 when the country is GB" in {
