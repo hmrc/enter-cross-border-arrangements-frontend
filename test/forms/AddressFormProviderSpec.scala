@@ -25,6 +25,7 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
   val form = new AddressFormProvider()(countries)
 
   val addressLineMaxLength = 400
+  val postcodeMaxLength = 400
 
   ".addressLine1" - {
 
@@ -117,13 +118,13 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(addressLineMaxLength)
+      stringsWithMaxLength(postcodeMaxLength)
     )
 
     behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
-      maxLength = addressLineMaxLength,
+      maxLength = postcodeMaxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(addressLineMaxLength))
     )
   }
