@@ -277,23 +277,23 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        s"must go from $D5 to $D7 " in {
+        s"must go from $D5 to $D15 " in {
 
           navigator
             .routeMap(SelectAddressPage)(defaultRoutingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
         }
 
         // manual?
 
-        s"must go from $D6 to $D7 " in {
+        s"must go from $D6 to $D15 " in {
 
           val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
             Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(defaultRoutingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
@@ -448,23 +448,23 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        s"must go from $D5 to $D7 " in {
+        s"must go from $D5 to $E11 " in {
 
           navigator
             .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
         }
 
         // manual?
 
-        s"must go from $D6 to $D7 " in {
+        s"must go from $D6 to $E11 " in {
 
           val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
             Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
@@ -620,23 +620,23 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        s"must go from $D5 to $D7 " in {
+        s"must go from $D5 to $T11 " in {
 
           navigator
             .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
         }
 
         // manual?
 
-        s"must go from $D6 to $D7 " in {
+        s"must go from $D6 to $T11 " in {
 
           val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
             Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
@@ -792,23 +792,23 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        s"must go from $D5 to $D7 " in {
+        s"must go from $D5 to $I13 " in {
 
           navigator
             .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
         }
 
         // manual?
 
-        s"must go from $D6 to $D7 " in {
+        s"must go from $D6 to $I13 " in {
 
           val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
             Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode))
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
