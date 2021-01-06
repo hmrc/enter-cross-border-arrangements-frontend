@@ -69,7 +69,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
         "pageTitle" -> "individualAddress.title",
-        "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getIndividualName(request.userAnswers))
+        "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers))
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -94,7 +94,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
             "pageTitle" -> "individualAddress.title",
-            "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getIndividualName(request.userAnswers))
+            "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers))
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))

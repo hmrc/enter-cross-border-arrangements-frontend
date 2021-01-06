@@ -72,7 +72,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
         "actionUrl" -> actionUrl(mode)
       ) ++ contentProvider(request.userAnswers)
 
-      renderer.render ("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map (Ok (_) )
+      renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
 
   }
 
@@ -92,7 +92,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
             "actionUrl" -> actionUrl(mode)
           ) ++ contentProvider(request.userAnswers)
 
-          renderer.render("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map(BadRequest(_))
+          renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {
