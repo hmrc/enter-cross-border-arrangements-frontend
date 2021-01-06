@@ -23,21 +23,84 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
+import pages.reporter.individual._
+import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
 
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage, ReporterIsIndividualAddressUKPage}
+import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryReporterOtherTaxResidentQuestionPage: Arbitrary[ReporterOtherTaxResidentQuestionPage.type] =
+    Arbitrary(ReporterOtherTaxResidentQuestionPage)
+
+  implicit lazy val arbitraryReporterNonUKTaxNumbersPage: Arbitrary[ReporterNonUKTaxNumbersPage.type] =
+    Arbitrary(ReporterNonUKTaxNumbersPage)
+
+  implicit lazy val arbitraryReporterUKTaxNumbersPage: Arbitrary[ReporterUKTaxNumbersPage.type] =
+    Arbitrary(ReporterUKTaxNumbersPage)
+
+  implicit lazy val arbitraryReporterTinNonUKQuestionPage: Arbitrary[ReporterTinNonUKQuestionPage.type] =
+    Arbitrary(ReporterTinNonUKQuestionPage)
+
+  implicit lazy val arbitraryReporterTinUKQuestionPage: Arbitrary[ReporterTinUKQuestionPage.type] =
+    Arbitrary(ReporterTinUKQuestionPage)
+
+  implicit lazy val arbitraryReporterTaxResidentCountryPage: Arbitrary[ReporterTaxResidentCountryPage.type] =
+    Arbitrary(ReporterTaxResidentCountryPage)
+
+  implicit lazy val arbitraryReporterOrganisationOrIndividualPage: Arbitrary[ReporterOrganisationOrIndividualPage.type] =
+    Arbitrary(ReporterOrganisationOrIndividualPage)
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressPage: Arbitrary[ReporterOrganisationEmailAddressPage.type] =
+    Arbitrary(ReporterOrganisationEmailAddressPage)
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressPage: Arbitrary[ReporterIndividualEmailAddressPage.type] =
+    Arbitrary(ReporterIndividualEmailAddressPage)
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressQuestionPage: Arbitrary[ReporterIndividualEmailAddressQuestionPage.type] =
+    Arbitrary(ReporterIndividualEmailAddressQuestionPage)
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressQuestionPage: Arbitrary[ReporterOrganisationEmailAddressQuestionPage.type] =
+    Arbitrary(ReporterOrganisationEmailAddressQuestionPage)
+
   implicit lazy val arbitraryDisclosureIdentifyArrangementPage: Arbitrary[DisclosureIdentifyArrangementPage.type] =
     Arbitrary(DisclosureIdentifyArrangementPage)
+
+  implicit lazy val arbitraryReporterOrganisationPostcodePage: Arbitrary[ReporterOrganisationPostcodePage.type] =
+    Arbitrary(ReporterOrganisationPostcodePage)
+
+  implicit lazy val arbitraryReporterIndividualSelectAddressPage: Arbitrary[ReporterIndividualSelectAddressPage.type] =
+    Arbitrary(ReporterIndividualSelectAddressPage)
+
+  implicit lazy val arbitraryReporterIndividualAddressPage: Arbitrary[ReporterIndividualAddressPage.type] =
+    Arbitrary(ReporterIndividualAddressPage)
+
+  implicit lazy val arbitraryReporterIndividualPostcodePage: Arbitrary[ReporterIndividualPostcodePage.type] =
+    Arbitrary(ReporterIndividualPostcodePage)
+
+  implicit lazy val arbitraryReporterIsIndividualAddressUKPage: Arbitrary[ReporterIsIndividualAddressUKPage.type] =
+    Arbitrary(ReporterIsIndividualAddressUKPage)
+
+  implicit lazy val arbitraryReporterIndividualPlaceOfBirthPage: Arbitrary[ReporterIndividualPlaceOfBirthPage.type] =
+    Arbitrary(ReporterIndividualPlaceOfBirthPage)
+
+  implicit lazy val arbitraryReporterIndividualDateOfBirthPage: Arbitrary[ReporterIndividualDateOfBirthPage.type] =
+    Arbitrary(ReporterIndividualDateOfBirthPage)
+
+  implicit lazy val arbitraryReporterIndividualNamePage: Arbitrary[ReporterIndividualNamePage.type] =
+    Arbitrary(ReporterIndividualNamePage)
 
   implicit lazy val arbitraryWhatTypeofIntermediaryPage: Arbitrary[WhatTypeofIntermediaryPage.type] =
     Arbitrary(WhatTypeofIntermediaryPage)
@@ -78,12 +141,6 @@ trait PageGenerators {
   implicit lazy val arbitraryRoleInArrangementPage: Arbitrary[RoleInArrangementPage.type] =
     Arbitrary(RoleInArrangementPage)
 
-  implicit lazy val arbitraryIsIndividualDateOfBirthKnownPage: Arbitrary[IsIndividualDateOfBirthKnownPage.type] =
-    Arbitrary(IsIndividualDateOfBirthKnownPage)
-
-  implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
-    Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
-
   implicit lazy val arbitraryIsExemptionKnownPage: Arbitrary[IsExemptionKnownPage.type] =
     Arbitrary(IsExemptionKnownPage)
 
@@ -92,6 +149,12 @@ trait PageGenerators {
 
   implicit lazy val arbitraryExemptCountriesPage: Arbitrary[ExemptCountriesPage.type] =
     Arbitrary(ExemptCountriesPage)
+
+  implicit lazy val arbitraryIsIndividualDateOfBirthKnownPage: Arbitrary[IsIndividualDateOfBirthKnownPage.type] =
+    Arbitrary(IsIndividualDateOfBirthKnownPage)
+
+  implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementPage: Arbitrary[WhatIsTaxpayersStartDateForImplementingArrangementPage.type] =
+    Arbitrary(WhatIsTaxpayersStartDateForImplementingArrangementPage)
 
   implicit lazy val arbitraryAssociatedEnterpriseTypePage: Arbitrary[AssociatedEnterpriseTypePage.type] =
     Arbitrary(AssociatedEnterpriseTypePage)

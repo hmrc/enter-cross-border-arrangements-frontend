@@ -16,25 +16,25 @@
 
 package controllers.reporter.taxpayer
 
+import java.time.LocalDate
+
 import controllers.actions._
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import helpers.DateHelper.dateFormatterNumericDMY
-import helpers.JourneyHelpers
-import models.SelectType.{Individual, Organisation}
+import helpers.JourneyHelpers._
+import javax.inject.Inject
+import models.ReporterOrganisationOrIndividual.Individual
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.reporter.WhatIsReporterTaxpayersStartDateForImplementingArrangementPage
-import pages.taxpayer.TaxpayerSelectTypePage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
-import java.time.LocalDate
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject()(
@@ -69,11 +69,10 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "displayName" -> getDisplayName(request.userAnswers),
         "actionUrl" -> actionUrl(mode)
-      )
+      ) ++ contentProvider(request.userAnswers)
 
-      renderer.render ("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map (Ok (_) )
+      renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
 
   }
 
@@ -90,11 +89,10 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
             "mode" -> mode,
             "date" -> viewModel,
             "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "displayName" -> getDisplayName(request.userAnswers),
             "actionUrl" -> actionUrl(mode)
-          )
+          ) ++ contentProvider(request.userAnswers)
 
-          renderer.render("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map(BadRequest(_))
+          renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {
@@ -104,10 +102,15 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
       )
   }
 
-  private def getDisplayName(userAnswers: UserAnswers): Option[String] = {
-   userAnswers.get(TaxpayerSelectTypePage) map { //ToDo this may have to change for reporter
-     case Organisation => JourneyHelpers.getOrganisationName(userAnswers)
-     case Individual => JourneyHelpers.getIndividualName(userAnswers)
+  private def contentProvider(userAnswers: UserAnswers): JsObject = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+     case Some(Individual) => Json.obj(
+       "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.title",
+       "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.heading")
+     case _ =>
+       Json.obj(
+         "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.title",
+         "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.heading",
+       "name" -> getReporterDetailsOrganisationName(userAnswers))
    }
-  }
 }
+

@@ -26,19 +26,42 @@ import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketable
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
+import pages.intermediaries._
 import pages.organisation._
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
+import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
-import pages.intermediaries._
 
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterNonUKTaxNumbersPage.type, JsValue)] ::
+    arbitrary[(ReporterUKTaxNumbersPage.type, JsValue)] ::
+    arbitrary[(ReporterTinNonUKQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterTinUKQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterTaxResidentCountryPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationOrIndividualPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationEmailAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualEmailAddressQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualSelectAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualAddressPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualPostcodePage.type, JsValue)] ::
+    arbitrary[(ReporterIsIndividualAddressUKPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualPlaceOfBirthPage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] ::
     arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] ::
+    arbitrary[(ReporterOrganisationPostcodePage.type, JsValue)] ::
+    arbitrary[(ReporterIndividualNamePage.type, JsValue)] ::
     arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] ::
     arbitrary[(YouHaveNotAddedAnyIntermediariesPage.type, JsValue)] ::
     arbitrary[(IsExemptionKnownPage.type, JsValue)] ::

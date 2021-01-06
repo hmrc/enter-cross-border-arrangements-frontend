@@ -8,16 +8,6 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
-GET        /hallmarks/check-answers                     controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
-GET        /organisation/check-answers                  controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad
-GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
-GET        /individual/check-answers                    controllers.individual.IndividualCheckYourAnswersController.onPageLoad
-GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
-
-
-GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
-POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
-
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /accessibility-statement                     controllers.AccessibilityController.onPageLoad
@@ -407,15 +397,52 @@ POST       /disclosure/change-identify                 controllers.disclosure.Di
 
 GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
 
+GET        /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = CheckMode)
+
 GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
 
+GET        /reporter/resident-tax-country-:index                           controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /reporter/resident-tax-country-:index                           controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-resident-tax-country-:index                    controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-resident-tax-country-:index                    controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /reporter/uk-tin-known-:index                           controllers.reporter.ReporterTinUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /reporter/uk-tin-known-:index                           controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET         /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST        /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-uk-tax-numbers-:index                     controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-uk-tax-numbers-:index                     controllers.reporter.ReporterUKTaxNumbersController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET         /reporter/non-uk-tax-numbers-:index                            controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST        /reporter/non-uk-tax-numbers-:index                            controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-non-uk-tax-numbers-:index                     controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-non-uk-tax-numbers-:index                     controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET         /reporter/tax-resident-countries-:index                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST        /reporter/tax-resident-countries-:index                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-tax-resident-countries-:index                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-tax-resident-countries-:index                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+
 GET        /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+
+# REPORTER DETAILS INTERMEDIARY
 
 GET        /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = NormalMode)
@@ -437,6 +464,8 @@ POST       /reporter/intermediary/exempt-countries                        contro
 GET        /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)
 
+# REPORTER DETAILS TAXPAYER
+
 GET        /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
@@ -447,11 +476,92 @@ POST       /reporter/taxpayer/why-reporting                        controllers.r
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
+## REPORTER DETAILS - ORGANISATION
 
+GET        /reporter/organisation/name                                       controllers.reporter.organisation.ReporterOrganisationNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/name                                       controllers.reporter.organisation.ReporterOrganisationNameController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-name                                controllers.reporter.organisation.ReporterOrganisationNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-name                                controllers.reporter.organisation.ReporterOrganisationNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/main-address-in-uk                                       controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/main-address-in-uk                                       controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-main-address-in-uk                                controllers.reporter.organisation.ReporterOrganisationIsAddressUkController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/postcode                          controllers.reporter.organisation.ReporterOrganisationPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/postcode                          controllers.reporter.organisation.ReporterOrganisationPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-postcode                   controllers.reporter.organisation.ReporterOrganisationPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/address                                    controllers.reporter.organisation.ReporterOrganisationAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/address                                    controllers.reporter.organisation.ReporterOrganisationAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-address                             controllers.reporter.organisation.ReporterOrganisationAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-address                             controllers.reporter.organisation.ReporterOrganisationAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/select-address                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/select-address                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-select-address                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-select-address                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/email-address                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/email-address                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-email-address                   controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-email-address                   controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/organisation/what-is-email-address                        controllers.reporter.organisation.ReporterOrganisationEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/organisation/what-is-email-address                        controllers.reporter.organisation.ReporterOrganisationEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/organisation/change-what-is-email-address                  controllers.reporter.organisation.ReporterOrganisationEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-what-is-email-address                  controllers.reporter.organisation.ReporterOrganisationEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+## REPORTER DETAILS - INDIVIDUAL
+
+GET        /reporter/individual/email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressQuestionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/what-is-email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/what-is-email-address                        controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-what-is-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-what-is-email-address                  controllers.reporter.individual.ReporterIndividualEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/name                         controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-name                  controllers.reporter.individual.ReporterIndividualNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/date-of-birth                controllers.reporter.individual.ReporterIndividualDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/date-of-birth                controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-date-of-birth         controllers.reporter.individual.ReporterIndividualDateOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/birthplace                   controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/birthplace                   controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-birthplace            controllers.reporter.individual.ReporterIndividualPlaceOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/live-in-uk                   controllers.reporter.individual.ReporterIsIndividualAddressUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/live-in-uk                   controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-live-in-uk            controllers.reporter.individual.ReporterIsIndividualAddressUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/postcode                     controllers.reporter.individual.ReporterIndividualPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/postcode                     controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-postcode              controllers.reporter.individual.ReporterIndividualPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/address                      controllers.reporter.individual.ReporterIndividualAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/address                      controllers.reporter.individual.ReporterIndividualAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-address               controllers.reporter.individual.ReporterIndividualAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-address               controllers.reporter.individual.ReporterIndividualAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
 

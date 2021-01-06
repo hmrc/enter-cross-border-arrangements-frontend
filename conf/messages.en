@@ -264,19 +264,19 @@ address.addressLine1 = Address line 1 (optional)
 address.addressLine2 = Address line 2 (optional)
 address.addressLine3 = Address line 3 (optional)
 address.city = City
-address.postcode.optional = Postal code (optional)
+address.postcode.optional = Postcode (optional)
 address.postcodeUk.optional = Postcode (optional)
 address.country = Country
 address.error.addressLine1.length = Address line 1 (optional) must be 35 characters or less
 address.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
 address.error.addressLine3.length = Address line 3 (optional) must be 35 characters or less
 address.error.city.length = City must be 35 characters or less
-address.error.postcode.optional.length = Postal code (optional) must be 10 characters or less
+address.error.postcode.optional.length = Postcode (optional) must be 10 characters or less
 address.error.addressLine1.invalid = Address line 1 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.addressLine2.invalid = Address line 2 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.addressLine3.invalid = Address line 3 (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.city.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-address.error.postcode.optional.invalid = Postal code (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+address.error.postcode.optional.invalid = Postcode (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 address.error.city.required = Enter a city
 address.error.country.required = Select a country
 
@@ -669,6 +669,10 @@ exemptCountries.error.required = Select all countries you know the intermediary 
 
 whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?
 whatIsTaxpayersStartDateForImplementingArrangement.heading = What is {0}’s start date for implementing the arrangement?
+whatIsTaxpayersStartDateForImplementingArrangement.org.title = What is their implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.ind.title = What is your implementation date?
+whatIsTaxpayersStartDateForImplementingArrangement.org.heading = What is {0}’s start date for implementing the arrangement?
+whatIsTaxpayersStartDateForImplementingArrangement.ind.heading = What is your start date for implementing the arrangement?
 whatIsTaxpayersStartDateForImplementingArrangement.part1.hint = This is when the first step of the arrangement was or will be made.
 whatIsTaxpayersStartDateForImplementingArrangement.part2.hint = For example, {0}
 whatIsTaxpayersStartDateForImplementingArrangement.checkYourAnswersLabel = Implementing date
@@ -777,6 +781,13 @@ countriesListCheckboxes.SE =  Sweden
 
 ## REPORTER DETAILS
 
+reporterOrganisationOrIndividual.title = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.heading = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.organisation = Organisation
+reporterOrganisationOrIndividual.individual = Individual
+reporterOrganisationOrIndividual.checkYourAnswersLabel = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.error.required = Select organisation or individual
+
 roleInArrangement.title = What is your role in this arrangement?
 roleInArrangement.heading = What is your role in this arrangement?
 roleInArrangement.intermediary = Intermediary
@@ -844,3 +855,171 @@ taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outsid
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
+
+## REPORTER DETAILS - ORGANISATION
+
+reporterOrganisationName.title = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.heading = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.checkYourAnswersLabel = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.error.required = Provide a name
+reporterOrganisationName.error.length = Name must be 200 characters or less
+
+reporterOrganisationIsAddressUk.title = Is its address in the United Kingdom?
+reporterOrganisationIsAddressUk.heading = Is {0}’s address in the United Kingdom?
+reporterOrganisationIsAddressUk.checkYourAnswersLabel = Is {0}’s address in the United Kingdom?
+reporterOrganisationIsAddressUk.error.required = Select yes if their address is in the UK
+
+reporterOrganisationAddress.title = What is its address?
+reporterOrganisationAddress.heading = What is {0}’s address?
+
+## REPORTER DETAILS - INDIVIDUAL
+
+reporterIndividualName.title = What is your full name?
+reporterIndividualName.heading = What is your full name?
+reporterIndividualName.firstName = First Name
+reporterIndividualName.secondName = Last Name
+reporterIndividualName.checkYourAnswersLabel = reporterIndividualName
+reporterIndividualName.error.firstName.required = Provide a first name
+reporterIndividualName.error.secondName.required = Provide a last name
+reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
+reporterIndividualName.error.secondName.length = Last name must be 200 characters or less
+
+reporterIndividualDateOfBirth.title = What is your date of birth?
+reporterIndividualDateOfBirth.heading = What is your date of birth?
+reporterIndividualDateOfBirth.hint = We use this to help confirm your identity. For example, 31 3 1980
+reporterIndividualDateOfBirth.checkYourAnswersLabel = ReporterIndividualDateOfBirth
+reporterIndividualDateOfBirth.error.required.all = Provide a date
+reporterIndividualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+reporterIndividualDateOfBirth.error.required = Date of birth must include {0}
+reporterIndividualDateOfBirth.error.nonNumeric = Provide a date
+reporterIndividualDateOfBirth.error.invalid = Provide a valid date of birth
+reporterIndividualDateOfBirth.error.futureDate = Provide a valid date of birth
+reporterIndividualDateOfBirth.error.pastDate = Provide a date after 1 January 1900
+
+reporterIndividualPlaceOfBirth.title = What is your place of birth?
+reporterIndividualPlaceOfBirth.heading = What is your place of birth?
+reporterIndividualPlaceOfBirth.hint = Provide the town or city and country
+reporterIndividualPlaceOfBirth.checkYourAnswersLabel = What is your place of birth?
+reporterIndividualPlaceOfBirth.error.required = Provide a place of birth
+reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
+
+reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
+reporterIsIndividualAddressUK.heading = Do you live in the United Kingdom?
+reporterIsIndividualAddressUK.error.required = Select yes if you live in the United Kingdom
+
+reporterIndividualPostcode.title = What is your postcode?
+reporterIndividualPostcode.heading = What is your postcode?
+reporterIndividualPostcode.error.required = Enter a postcode
+reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
+reporterIndividualPostcode.hint = Or enter the address manually
+reporterIndividualPostcode.submit = Find address
+
+reporterIndividualAddress.title = What is your address?
+reporterIndividualAddress.heading = What is your address?
+reporterIndividualAddress.checkYourAnswersLabel = What is your address?
+
+reporterIndividualSelectAddress.title = What is your address?
+reporterIndividualSelectAddress.heading = What is your address?
+reporterIndividualSelectAddress.1 = 2
+reporterIndividualSelectAddress.3 = 4
+reporterIndividualSelectAddress.checkYourAnswersLabel = What is your address?
+reporterIndividualSelectAddress.error.required = Select an address
+
+reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.label = Email
+reporterIndividualEmailAddress.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
+
+## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
+
+reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
+reporterEmailAddressQuestion.error.required = Select yes if you have an email address
+reporterOrganisationEmailAddressQuestion.title = Do you have an email address there?
+reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
+reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
+reporterIndividualEmailAddressQuestion.title = Do you have a preferred email address?
+reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+
+## REPORTER DETAILS - EMAIL ADDRESS PAGE
+
+reporterEmailAddress.error.required = Enter an email address
+reporterEmailAddress.error.length = Email address must be 254 characters or less
+reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
+reporterOrganisationEmailAddress.title = What is the email address?
+reporterOrganisationEmailAddress.heading = What is the email address at {0}?
+reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
+reporterIndividualEmailAddress.title = What is your preferred email address?
+reporterIndividualEmailAddress.heading = What is your preferred email address?
+reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
+
+## REPORTER DETAILS - TAX RESIDENCY PAGE
+
+reporterOrganisationTaxResidentCountry.title = Which country are they resident in for tax purposes?
+reporterOrganisationTaxResidentCountry.heading = Which country is {0} {1} resident in for tax purposes?
+reporterOrganisationTaxResidentCountry.hint = If more than 1, you can add others later.
+reporterOrganisationTaxResidentCountry.moreThanOne.hint = You can add others later.
+reporterIndividualTaxResidentCountry.title = Which country are you resident in for tax purposes?
+reporterIndividualTaxResidentCountry.heading = Which country are you {1} resident in for tax purposes?
+reporterTaxResidentCountry.checkYourAnswersLabel = Tax resident countries
+reporterTaxResidentCountry.countryCounter = Country {0}
+reporterTaxResidentCountry.countryKey = Country
+reporterTaxResidentCountry.utrKey = Unique Taxpayer Reference (UTR)
+reporterTaxResidentCountry.tinKey = Tax identification number for {0}
+reporterTaxResidentCountry.error.required = Provide a country
+reporterOrganisationTaxResidentCountry.also = also
+
+reporterOrganisationTinUKQuestion.title = Do you know any of their tax identification numbers for the UK?
+reporterOrganisationTinUKQuestion.heading = Do you know any of {0}’s tax identification numbers for the United Kingdom?
+reporterOrganisationTinUKQuestion.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
+reporterIndividualTinUKQuestion.title = Do you have any tax identification numbers for the UK?
+reporterIndividualTinUKQuestion.heading = Do you have any tax identification numbers for the United Kingdom?
+reporterIndividualTinUKQuestion.hint = This is any number issued by HMRC, like a National Insurance number or Unique Taxpayer Reference.
+reporterTinUKQuestion.checkYourAnswersLabel = reporterTinUKQuestion
+reporterTinUKQuestion.error.required = Select yes if you know any tax identification numbers
+
+reporterOrganisationTinNonUKQuestion.title = Do you know their tax identification numbers for {0}?
+reporterOrganisationTinNonUKQuestion.heading = Do you know any of {0}’s tax identification numbers for {1}?
+reporterOrganisationTinNonUKQuestion.hint = This is a number given by the tax administration in the country where the organisation is resident for tax purposes. It is used to identify individual taxpayers.
+reporterIndividualTinNonUKQuestion.title = Do you have any tax identification numbers for {0}?
+reporterIndividualTinNonUKQuestion.heading = Do you have any tax identification numbers for {1}?
+reporterIndividualTinNonUKQuestion.hint = This is a number given by the tax administration in the country where you are resident for tax purposes. It is used to identify you as a taxpayer.
+reporterTinNonUKQuestion.checkYourAnswersLabel = reporterTinNonUKQuestion
+reporterTinNonUKQuestion.error.required = Select yes if you know any tax identification numbers for {0}
+
+reporterOrganisationUKTaxNumbers.title = What are their tax identification numbers for the UK?
+reporterOrganisationUKTaxNumbers.heading = What are {0}’s tax identification numbers for the United Kingdom?
+reporterIndividualUKTaxNumbers.title = What are your tax identification numbers for the UK?
+reporterIndividualUKTaxNumbers.heading = What are your tax identification numbers for the United Kingdom?
+reporterUKTaxNumbers.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
+reporterUKTaxNumbers.linkText = find a lost UTR number
+reporterUKTaxNumbers.label1 = UK tax number 1
+reporterUKTaxNumbers.label2 = UK tax number 2 (optional)
+reporterUKTaxNumbers.label3 = UK tax number 3 (optional)
+reporterUKTaxNumbers.checkYourAnswersLabel = UK tax number{0}
+reporterUKTaxNumbers.error.required = Provide a number in UK tax number 1
+reporterUKTaxNumbers.error.length.label1 = UK tax number 1 must be 200 characters or less
+reporterUKTaxNumbers.error.length.label2 = UK tax number 2 (optional) must be 200 characters or less
+reporterUKTaxNumbers.error.length.label3 = UK tax number 3 (optional) must be 200 characters or less
+
+reporterOrganisationNonUKTaxNumbers.title = What are their tax identification numbers for {0}?
+reporterOrganisationNonUKTaxNumbers.heading = What are {0}’s tax identification numbers for {1}?
+reporterIndividualNonUKTaxNumbers.title = What are your tax identification numbers for {0}?
+reporterIndividualNonUKTaxNumbers.heading = What are your tax identification numbers for {1}?
+reporterIndividualNonUKTaxNumbers.hint = Provide up to 3.
+reporterIndividualNonUKTaxNumbers.label1 = Tax identification number 1
+reporterIndividualNonUKTaxNumbers.label2 = Tax identification number 2 (optional)
+reporterIndividualNonUKTaxNumbers.label3 = Tax identification number 3 (optional)
+reporterNonUKTaxNumbers.checkYourAnswersLabel = Tax identification number{0} for {1}
+reporterNonUKTaxNumbers.error.required = Provide a number in tax identification number 1
+reporterNonUKTaxNumbers.error.length.label1 = Tax identification number 1 must be 200 characters or less
+reporterNonUKTaxNumbers.error.length.label2 = Tax identification number 2 (optional) must be 200 characters or less
+reporterNonUKTaxNumbers.error.length.label3 = Tax identification number 3 (optional) must be 200 characters or less
+
+reporterOrganisationOtherTaxResidentQuestion.title = Are they resident for tax purposes in any other countries?
+reporterOrganisationOtherTaxResidentQuestion.heading = Is {0} resident for tax purposes in any other countries?
+reporterIndividualOtherTaxResidentQuestion.title = Are you resident for tax purposes in any other countries?
+reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax purposes in any other countries?
+reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
+reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes

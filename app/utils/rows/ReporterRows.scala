@@ -17,9 +17,11 @@
 package utils.rows
 
 import models.CheckMode
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.individual.ReporterIndividualEmailAddressQuestionPage
+import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -33,6 +35,24 @@ trait ReporterRows extends RowBuilder {
       href    = controllers.reporter.routes.RoleInArrangementController.onPageLoad(CheckMode).url
     )
   }
+
+  def reporterOrganisationOrIndividual: Option[Row] = userAnswers.get(ReporterOrganisationOrIndividualPage) map { answer =>
+
+    toRow(
+      msgKey  = "reporterOrganisationOrIndividual",
+      content = Literal(s"reporterOrganisationOrIndividual.$answer"),
+      href    = controllers.reporter.routes.ReporterOrganisationOrIndividualController.onPageLoad(CheckMode).url
+    )
+  }
+
+//  def reporterTaxResidentCountryPage: Option[Row] = userAnswers.get(ReporterTaxResidentCountryPage) map { answer =>
+//
+//    toRow(
+//      msgKey  = "reporterTaxResidentCountry",
+//      content = Literal(s"reporterTaxResidentCountry.$answer"),
+//      href    = controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(CheckMode, 1).url
+//    )
+//  }
 
   //Reporter - Intermediary Journey
 
@@ -99,6 +119,52 @@ trait ReporterRows extends RowBuilder {
       content = Literal(s"taxpayerWhyReportInUK.$answer"),
       href    = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(CheckMode).url
     )
-
   }
+
+  //Reporter - Organisation Journey
+
+  def reporterOrganisationName: Option[Row] = userAnswers.get(ReporterOrganisationNamePage) map { answer =>
+    toRow(
+      msgKey  = "reporterOrganisationName",
+      content = Literal(s"$answer"),
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def reporterOrganisationEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressQuestionPage) map { answer =>
+    toRow(
+      msgKey  = "reporterOrganisationEmailAddressQuestion",
+      content = yesOrNo(answer),
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def reporterOrganisationEmailAddress: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressPage) map { answer =>
+    toRow(
+      msgKey  = "reporterOrganisationEmailAddress",
+      content = Literal(s"$answer"),
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(CheckMode).url
+    )
+  }
+
+  //Reporter - Individual Journey
+
+  def reporterIndividualEmailAddressQuestion: Option[Row] = userAnswers.get(ReporterIndividualEmailAddressQuestionPage) map { answer =>
+    toRow(
+      msgKey  = "reporterIndividualEmailAddressQuestion",
+      content = yesOrNo(answer),
+      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(CheckMode).url
+    )
+  }
+
+  def reporterIndividualEmailAddress: Option[Row] = userAnswers.get(ReporterOrganisationEmailAddressPage) map { answer =>
+    toRow(
+      msgKey  = "reporterIndividualEmailAddress",
+      content = Literal(s"$answer"),
+      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(CheckMode).url
+    )
+  }
+
+
+
 }

@@ -18,7 +18,7 @@ package pages
 import pages.behaviours.PageBehaviours
 import pages.organisation.SelectAddressPage
 
-class SelectAddressSpec extends PageBehaviours {
+class SelectAddressPageSpec extends PageBehaviours {
   "SelectAddressPage" - {
 
     beRetrievable[String](SelectAddressPage)

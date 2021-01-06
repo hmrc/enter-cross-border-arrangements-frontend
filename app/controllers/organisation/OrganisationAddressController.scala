@@ -19,7 +19,8 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged}
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged, pageHeadingProvider}
+import javax.inject.Inject
 import models.{Address, Mode, UserAnswers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
@@ -32,20 +33,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
-                                              countryListFactory: CountryListFactory,
-                                              sessionRepository: SessionRepository,
-                                              navigator: NavigatorForOrganisation,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: AddressFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              renderer: Renderer
-                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+  countryListFactory: CountryListFactory,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForOrganisation,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AddressFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private def actionUrl(mode: Mode) = routes.OrganisationAddressController.onSubmit(mode).url
 
@@ -66,8 +66,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers),
         "actionUrl" -> actionUrl(mode),
-        "individual" -> false,
-        "displayName" -> getOrganisationName(request.userAnswers)
+        "pageTitle" -> "organisationAddress.title",
+        "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers))
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -96,8 +96,8 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers),
             "actionUrl" -> actionUrl(mode),
-            "individual" -> false,
-            "displayName" -> getOrganisationName(request.userAnswers)
+            "pageTitle" -> "organisationAddress.title",
+            "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers))
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))

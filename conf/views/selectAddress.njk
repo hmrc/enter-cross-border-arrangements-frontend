@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("selectAddress.individual.title") if individual else messages("selectAddress.title"), form.errors) }}
+  {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -28,12 +28,11 @@
         {% endif %}
 
         <form action="{{ actionUrl }}" method="post">
+          <fieldset class="govuk-fieldset">
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl name-overflow">
-            {{ messages("selectAddress.individual.heading", displayName) if individual else messages("selectAddress.heading", displayName) }}
-          </h1>
+          {{ pageHeading | safe }}
 
           <span id="select-address-hint" class="govuk-hint">
             {{ messages("selectAddress.hint.part1") }}
@@ -54,6 +53,7 @@
             }
           }) }}
 
+          </fieldset>
         </form>
 
       </div>

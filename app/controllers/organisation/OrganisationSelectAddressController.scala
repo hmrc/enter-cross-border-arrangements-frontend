@@ -20,7 +20,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
+import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged, pageHeadingProvider}
 import models.{AddressLookup, Mode}
 import navigation.NavigatorForOrganisation
 import pages.SelectedAddressLookupPage
@@ -79,9 +79,9 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> preparedForm,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "displayName" -> getOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "individual" -> false,
+              "pageTitle" -> "selectAddress.title",
+              "pageHeading" -> pageHeadingProvider("selectAddress.heading", getOrganisationName(request.userAnswers)),
               "radios" -> radios
             )
 
@@ -120,9 +120,9 @@ class OrganisationSelectAddressController @Inject()(
               "form" -> formWithErrors,
               "mode" -> mode,
               "manualAddressURL" -> manualAddressURL(mode),
-              "displayName" -> getOrganisationName(request.userAnswers),
               "actionUrl" -> actionUrl(mode),
-              "individual" -> false,
+              "pageTitle" -> "selectAddress.title",
+              "pageHeading" -> pageHeadingProvider("selectAddress.heading", getOrganisationName(request.userAnswers)),
               "radios" -> radios
             )
 

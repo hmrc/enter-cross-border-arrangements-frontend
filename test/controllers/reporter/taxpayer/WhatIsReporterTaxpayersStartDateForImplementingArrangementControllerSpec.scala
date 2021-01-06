@@ -96,7 +96,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk"
+      templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -143,7 +143,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk"
+      templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -197,7 +197,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
         "date" -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk"
+      templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
