@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.confirmation
 
 import base.SpecBase
+import controllers.routes
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -46,7 +47,7 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "newDisclosureConfirmation.njk"
+      templateCaptor.getValue mustEqual "confirmation/newDisclosureConfirmation.njk"
 
       application.stop()
     }

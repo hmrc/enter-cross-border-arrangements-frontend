@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.confirmation
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -51,7 +51,7 @@ class NewDisclosureConfirmationController @Inject()(
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
       )
 
-      renderer.render("newDisclosureConfirmation.njk", json).map(Ok(_))
+      renderer.render("confirmation/newDisclosureConfirmation.njk", json).map(Ok(_))
   }
 
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
