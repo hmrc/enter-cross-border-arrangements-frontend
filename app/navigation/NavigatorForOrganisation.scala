@@ -49,7 +49,7 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
       checkRoute => _ => _ => routes.OrganisationSelectAddressController.onPageLoad(checkRoute.mode)
 
     case SelectAddressPage | OrganisationAddressPage =>
-      checkRoute => _ => _ => routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode)
+      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForOrganisationController.onPageLoad(checkRoute.mode), checkRoute)
 
     case EmailAddressQuestionForOrganisationPage =>
       checkRoute => value => _ => value match {
