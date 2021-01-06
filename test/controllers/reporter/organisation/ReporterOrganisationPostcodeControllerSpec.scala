@@ -126,7 +126,7 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with MockitoSu
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-//      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/organisation/select-address" //TODO - uncomment this when page built
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/organisation/select-address"
 
       application.stop()
     }

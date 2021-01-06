@@ -17,7 +17,8 @@
 package pages.reporter.organisation
 
 import models.{Address, UserAnswers}
-import pages.{QuestionPage, SelectedAddressLookupPage}
+import pages.QuestionPage
+import pages.reporter.ReporterSelectedAddressLookupPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -32,7 +33,7 @@ case object ReporterOrganisationAddressPage extends QuestionPage[Address] {
     value match {
       case Some(_) =>
         userAnswers
-          .remove(SelectedAddressLookupPage) // TODO - Change to ReporterOrganisationSelectAddressPage
+          .remove(ReporterSelectedAddressLookupPage)
           .flatMap(_.remove(ReporterOrganisationPostcodePage))
       case None => super.cleanup(value, userAnswers)
     }

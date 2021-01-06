@@ -82,8 +82,6 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      //TODO - fix this test
-
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 

@@ -50,7 +50,7 @@ class ReporterIndividualSelectAddressController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def manualAddressURL(mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(mode).url //TODO Change to UK page when ready
+  private def manualAddressURL(mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(mode).url
 
   def actionUrl(mode: Mode) = routes.ReporterIndividualSelectAddressController.onSubmit(mode).url
 

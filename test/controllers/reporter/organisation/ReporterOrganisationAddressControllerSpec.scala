@@ -149,7 +149,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with MockitoSug
 
       status(result) mustEqual SEE_OTHER
 
-//      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/organisation/email-address" // TODO - uncomment when Reporter Organisation email page built
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/organisation/email-address"
 
       application.stop()
     }
