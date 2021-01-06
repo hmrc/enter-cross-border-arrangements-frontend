@@ -89,8 +89,6 @@ class NavigatorForOrganisation @Inject()() extends AbstractNavigator {
         case _          => continueToParentJourney(checkRoute)
       }
 
-    // default
-
     case _ =>
       checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
