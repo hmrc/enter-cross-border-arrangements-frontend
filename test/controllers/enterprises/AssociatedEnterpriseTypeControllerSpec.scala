@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.enterprises.AssociatedEnterpriseTypeFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, SelectType, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,12 +38,10 @@ import scala.concurrent.Future
 
 class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
+  private val formProvider = new AssociatedEnterpriseTypeFormProvider()
+  private val form: Form[SelectType] = formProvider()
 
-  val formProvider = new AssociatedEnterpriseTypeFormProvider()
-  val form: Form[SelectType] = formProvider()
-
-  lazy val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
+  lazy private val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -117,7 +113,6 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -130,7 +125,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name"
 
       application.stop()
     }
@@ -177,7 +172,6 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -190,8 +184,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual
-        controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/check-answers"
 
       application.stop()
     }

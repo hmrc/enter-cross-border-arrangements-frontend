@@ -17,15 +17,15 @@
 package navigation
 
 import controllers.intermediaries._
-import controllers.mixins.{CheckRoute, DefaultRouting, IntermediariesRouting}
-import javax.inject.{Inject, Singleton}
+import controllers.mixins.{CheckRoute, IntermediariesRouting}
 import models.IsExemptionKnown.Yes
-import models.intermediaries.WhatTypeofIntermediary.Promoter
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries.YesAddNow
 import models.{CheckMode, NormalMode, SelectType}
 import pages.Page
 import pages.intermediaries._
 import play.api.mvc.Call
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
@@ -43,14 +43,14 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
     case IntermediariesTypePage =>
       checkRoute => value => _ =>
         value match {
-          case Some(SelectType.Organisation) => controllers.organisation.routes.OrganisationNameController.onPageLoad(checkRoute.mode)
-          case Some(SelectType.Individual) => controllers.individual.routes.IndividualNameController.onPageLoad(checkRoute.mode)
+          case Some(SelectType.Organisation) =>
+            jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(checkRoute.mode), checkRoute)
+          case Some(SelectType.Individual)   =>
+            jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(checkRoute.mode), checkRoute)
         }
 
     case WhatTypeofIntermediaryPage =>
       checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsExemptionKnownController.onPageLoad(checkRoute.mode), checkRoute)
-
-
 
     case IsExemptionKnownPage =>
       checkRoute => value => _ =>

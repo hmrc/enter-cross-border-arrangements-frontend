@@ -29,7 +29,6 @@ import pages.intermediaries.IntermediariesTypePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,12 +39,10 @@ import scala.concurrent.Future
 
 class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute: Call = Call("GET", "/foo")
+  private val formProvider = new IntermediariesTypeFormProvider()
+  private val form: Form[SelectType] = formProvider()
 
-  val formProvider = new IntermediariesTypeFormProvider()
-  val form: Form[SelectType] = formProvider()
-
-  lazy val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(NormalMode).url
+  lazy private val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -117,7 +114,6 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -177,7 +173,6 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -190,8 +185,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual
-        controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers"
 
       application.stop()
     }

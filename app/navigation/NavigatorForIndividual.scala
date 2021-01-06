@@ -76,7 +76,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
       }
 
     case EmailAddressForIndividualPage =>
-      checkRoute => _ => index => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, index + 1), checkRoute)
+      checkRoute => _ => index => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, 0), checkRoute)
 
     case WhichCountryTaxForIndividualPage =>
       checkRoute => value => index => value match { case Some(country: Country) =>

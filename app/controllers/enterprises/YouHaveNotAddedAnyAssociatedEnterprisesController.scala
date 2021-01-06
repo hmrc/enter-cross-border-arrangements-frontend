@@ -17,14 +17,15 @@
 package controllers.enterprises
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForEnterprises
 import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,13 +37,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForEnterprises,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -62,6 +63,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
       renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAssociatedEnterprises]): Call =
+    navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -84,8 +88,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(YouHaveNotAddedAnyAssociatedEnterprisesPage, mode, updatedAnswers))
+            _              <- sessionRepository.set(updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
         }
       )
   }

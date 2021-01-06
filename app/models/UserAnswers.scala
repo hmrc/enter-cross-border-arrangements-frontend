@@ -63,6 +63,13 @@ final case class UserAnswers(
         page.cleanup(None, updatedAnswers)
     }
   }
+
+  def removeAll(pageList: Seq[_ <: QuestionPage[Any]]): Try[UserAnswers] =
+    pageList.foldLeft(remove(pageList.head)) { case (result, step) => result.flatMap(_.remove(step)) }
+
+  def hasNewValue[A](page: QuestionPage[A], value: A)(implicit rds: Reads[A]): Boolean =
+    get(page).exists(_ != value)
+
 }
 
 object UserAnswers {
