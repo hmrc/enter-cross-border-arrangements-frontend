@@ -111,6 +111,7 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
                |        value 1<br>
                |        value 2<br>
                |        value 3<br>
+               |        Newcastle upon Tyne<br>
                |        XX9 9XX<br>
                |        United Kingdom
                |     """.stripMargin)

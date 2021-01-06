@@ -20,17 +20,13 @@ import base.SpecBase
 import generators.Generators
 import models.IsExemptionKnown.{No, Yes}
 import models._
-import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.ExemptCountries
 import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
-import pages.individual._
 import pages.intermediaries._
 import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.{AnyContentAsEmpty, Call}
@@ -189,128 +185,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
               .mustBe(route)
         }
 
-      }
-
-      "must go from What is their name? page to Check your answers page" in {
-
-        assertRedirect(IndividualNamePage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
-      }
-
-      "must go from What is {0}'s date of birth? page to Check your answers page" in {
-
-        assertRedirect(IndividualDateOfBirthPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
-      }
-
-      "must go from the Do you know where {0} was born? page to the Where was {0} born? when answer is 'Yes' " in {
-
-        assertRedirect(IsIndividualPlaceOfBirthKnownPage
-          , controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode)) {
-          _
-            .set(IsIndividualPlaceOfBirthKnownPage, true)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from the Do you know where {0} was born? page to the Check your answers page when answer is 'No' " in {
-        assertRedirect(IsIndividualPlaceOfBirthKnownPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
-          _
-            .set(IsIndividualPlaceOfBirthKnownPage, false)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from Where was {0} born? page to Check your answers page" in {
-
-        assertRedirect(IndividualPlaceOfBirthPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
-      }
-
-      "must go from Do you know {0} address to 'Does the individual live in the United Kingdom?' when answer is 'Yes'" in {
-
-        assertRedirect(IsIndividualAddressKnownPage
-          , controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
-          _
-            .set(IsIndividualAddressKnownPage, true)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from Do you know {0} address to Check your answers page when answer is 'No'" in {
-
-        assertRedirect(IsIndividualAddressKnownPage
-          , controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode)) {
-          _
-            .set(IsIndividualAddressKnownPage, true)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from Does {0} live in the United Kingdom? to What is {0}’s postcode? when answer is 'Yes'" in {
-
-        assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualPostcodeController.onPageLoad(CheckMode)) {
-          _
-            .set(IsIndividualAddressUkPage, true)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from Does {0} live in the United Kingdom? to What is {0}’s address? page when answer is 'No'" in {
-
-        assertRedirect(IsIndividualAddressUkPage, controllers.individual.routes.IndividualAddressController.onPageLoad(CheckMode)) {
-          _
-            .set(IsIndividualAddressUkPage, false)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from What is {0}’s address? to Check your answers page" in {
-
-        assertRedirect(IndividualAddressPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
-      }
-
-      "must go from Do you know {0}’s email address? to Check your answers page when answer is 'No'" in {
-
-        assertRedirect(EmailAddressQuestionForIndividualPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) {
-          _
-            .set(EmailAddressQuestionForIndividualPage, false)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from Do you know {0}’s email address? to What is {0}’s email address? page when answer is 'Yes'" in {
-
-        assertRedirect(EmailAddressQuestionForIndividualPage, controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(CheckMode)) {
-          _
-            .set(EmailAddressQuestionForIndividualPage, true)
-            .success
-            .value
-
-        }
-      }
-
-      "must go from What is {0}’s email address? to Check your answers page" in {
-
-        assertRedirect(EmailAddressForIndividualPage
-          , controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad()) _
       }
 
       "must go from What is the arrangement called? page to Check your answers page" in {
