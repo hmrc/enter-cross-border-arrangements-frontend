@@ -52,6 +52,8 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
         case (200, "true") => true
         case _ => false
       }
+    } recover {
+      case _: Exception => false // TODO see DAC6-513
     }
   }
 
