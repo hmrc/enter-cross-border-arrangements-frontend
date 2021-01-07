@@ -19,7 +19,7 @@
 
 
         <h1 class="govuk-heading-xl">
-          {{ messages("disclosureDetails.heading") }}
+          {{ messages("disclosureDetails.heading", arrangementID) }}
         </h1>
 
         <p class="govuk-body">{{ messages("disclosureDetails.p1") }}</p>
@@ -74,7 +74,7 @@
 
 
         <div class="govuk-!-margin-top-9">
-            <h5 class="govuk-heading-m">
+            <h5 class="govuk-heading-m app-task-list__section">
             {{ messages("disclosureDetails.section4") }}
             </h5>
         </div>
@@ -97,6 +97,17 @@
             </a></p>
             <hr class="indent">
         </div>
+
+
+        <div class="govuk-!-margin-top-9">
+            <h2 class="govuk-heading-m">
+              {{ messages("disclosureDetails.disclosureNotReady") }}
+            </h2>
+        </div>
+
+        <p class="govuk-body">{{ messages("disclosureDetails.disclosureNotReady.p1") }}</p>
+
+
 
       </div>
     </div>

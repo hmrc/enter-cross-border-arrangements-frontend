@@ -136,7 +136,7 @@ compliant.nine.p2.3=The full service was tested by HMRC and included disabled us
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
 disclosureDetails.title = Your DAC6 disclosure details
-disclosureDetails.heading = Your DAC6 disclosure details
+disclosureDetails.heading = Your DAC6 disclosure details {0}
 disclosureDetails.p1 = Information saved here is kept for 28 days from when you last made changes. You can log in within this time and continue any unsubmitted disclosures.
 disclosureDetails.section1 = 1. Tell us what you’re disclosing
 disclosureDetails.section2 = 2. Provide the details of the arrangement
@@ -155,7 +155,6 @@ disclosureDetails.relevantTaxpayersLink = Relevant taxpayers
 disclosureDetails.associatedEnterpriseLink = Taxpayers’ associated enterprises
 disclosureDetails.intermediariesLink = Intermediaries
 disclosureDetails.othersAffectedLink = Any others affected
-
 
 hallmarkCategories.title =Which categories of hallmarks are relevant to this arrangement?
 hallmarkCategories.heading =Which categories of hallmarks are relevant to this arrangement?
