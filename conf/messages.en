@@ -860,7 +860,7 @@ taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 
 confirmation.link.text = Disclose a cross-border arrangement
 confirmation.survey.link = What did you think of this service?
-confirmation.survey.text = (takes 30 seconds)
+confirmation.survey.text = (opens in a new tab)
 
 newDisclosureConfirmation.title = Disclosure received
 newDisclosureConfirmation.heading = Disclosure received

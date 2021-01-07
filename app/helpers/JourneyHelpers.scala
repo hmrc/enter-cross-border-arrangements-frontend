@@ -138,6 +138,7 @@ object JourneyHelpers {
   }
 
   def surveyLinkText(href: String)(implicit messages: Messages): Html = {
-    Html(s"<a class='govuk-link' id='feedback-link' href='$href'>${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
+    Html(s"<a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
+      s"${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
   }
 }

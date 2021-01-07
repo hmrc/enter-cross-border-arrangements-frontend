@@ -175,8 +175,8 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return the correct beta feedback content" in {
         val mockURL = "home.gov.uk"
 
-        surveyLinkText(mockURL) mustBe Html(s"<a class='govuk-link' id='feedback-link' href='$mockURL'>" +
-          s"What did you think of this service?</a> (takes 30 seconds)")
+        surveyLinkText(mockURL) mustBe Html(s"<a class='govuk-link' id='feedback-link' href='$mockURL' rel='noreferrer noopener' target='_blank'>" +
+          s"What did you think of this service?</a> (opens in a new tab)")
 
       }
     }
