@@ -3,8 +3,15 @@
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {% from "includes/get-help-link.njk" import hmrcReportTechnicalIssue %}
 {%- set htmlLang = request.language -%}
+{% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
 
 {% block head %}
+{{ hmrcTimeoutDialog({
+  timeout: config.timeout,
+  countdown: config.countdown,
+  keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
+  signOutUrl: routes.controllers.SignOutController.signOut().url
+}) }}
   {% include "includes/head.njk" %}
 {% endblock %}
 
