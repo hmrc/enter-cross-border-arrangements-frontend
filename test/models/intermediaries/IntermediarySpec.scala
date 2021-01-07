@@ -85,7 +85,7 @@ class IntermediarySpec extends SpecBase {
       intermediary.individual.get mustEqual individual
       intermediary.whatTypeofIntermediary mustEqual Promoter
       intermediary.isExemptionKnown mustEqual  Yes
-      intermediary.isExemptionCountryKnown mustEqual true
+      intermediary.isExemptionCountryKnown mustBe Some(true)
       intermediary.exemptCountries mustBe Some(exemptCountries)
     }
 
@@ -141,7 +141,7 @@ class IntermediarySpec extends SpecBase {
       intermediary.organisation.get mustEqual organisation
       intermediary.whatTypeofIntermediary mustEqual Promoter
       intermediary.isExemptionKnown mustEqual  Yes
-      intermediary.isExemptionCountryKnown mustEqual true
+      intermediary.isExemptionCountryKnown mustBe Some(true)
       intermediary.exemptCountries mustBe Some(exemptCountries)
     }
   }

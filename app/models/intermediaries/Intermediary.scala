@@ -27,7 +27,7 @@ case class Intermediary (intermediaryId: String, individual: Option[Individual] 
                          organisation: Option[Organisation] = None,
                          whatTypeofIntermediary: WhatTypeofIntermediary,
                          isExemptionKnown: IsExemptionKnown,
-                         isExemptionCountryKnown: Boolean,
+                         isExemptionCountryKnown: Option[Boolean],
                          exemptCountries: Option[Set[ExemptCountries]]
                         ) {
 
@@ -42,16 +42,19 @@ object Intermediary {
 
   private def generateId = UUID.randomUUID.toString
 
-  def getIntermediaryAnswers(ua: UserAnswers): (WhatTypeofIntermediary, IsExemptionKnown, Boolean, Option[Set[ExemptCountries]]) = {
+  def getIntermediaryAnswers(ua: UserAnswers): (WhatTypeofIntermediary, IsExemptionKnown, Option[Boolean], Option[Set[ExemptCountries]]) = {
     (ua.get(WhatTypeofIntermediaryPage),
       ua.get(IsExemptionKnownPage),
       ua.get(IsExemptionCountryKnownPage),
       ua.get(ExemptCountriesPage)) match {
       case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
-        (whatTypeOfIntermediary,isExemptionKnown, isExemptionCountryKnown, Some(exemptCountries))
+        (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
       case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None)
-        => (whatTypeOfIntermediary,isExemptionKnown, isExemptionCountryKnown, None)
-      case _ => throw new Exception("Unable to build intermediary")
+        => (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), None)
+      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), None ,None)
+      => (whatTypeOfIntermediary, isExemptionKnown, None, None)
+      case _ =>
+        throw new Exception("Unable to build intermediary")
     }
   }
 
