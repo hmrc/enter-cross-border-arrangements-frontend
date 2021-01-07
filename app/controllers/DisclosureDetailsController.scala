@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.UserAnswers
 import pages.disclosure.DisclosureIdentifyArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -39,19 +38,18 @@ class DisclosureDetailsController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val x = if (request.userAnswers.isDefined){ "for arrangement " + request.userAnswers.get.get(DisclosureIdentifyArrangementPage).get } else {
+      val arrangementMessage = if (request.userAnswers.isDefined){
+        "for arrangement " + request.userAnswers.get.get(DisclosureIdentifyArrangementPage).get
+      } else {
         ""
       }
 
       val json = Json.obj(
-        "arrangementID" -> x
+        "arrangementID" -> arrangementMessage
       )
 
 
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
   }
-
-
-
 
 }

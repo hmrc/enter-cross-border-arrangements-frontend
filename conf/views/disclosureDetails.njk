@@ -13,10 +13,8 @@
     text: messages("site.back")
   }) }}
 
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-xl">
           {{ messages("disclosureDetails.heading", arrangementID) }}
@@ -24,92 +22,85 @@
 
         <p class="govuk-body">{{ messages("disclosureDetails.p1") }}</p>
 
-        <h2 class="govuk-heading-m">
-          {{ messages("disclosureDetails.section1") }}
-        </h2>
+      <ol class="app-task-list">
+        <li>
 
-        <div class = "indent">
-        <hr class="indent">
-          <p><a href="{{ disclosureTypeLink }}" class="govuk-link" id="disclosureTypeLink" >
+          <h2 class="app-task-list__section">
+            <span class="app-task-list__section-number">1. </span>
+            {{ messages("disclosureDetails.section1") }}
+          </h2>
+
+          <ul class="app-task-list__items">
+            <li class="app-task-list__item">
+              <a class="app-task-list__task-name" href="#" aria-describedby="disclosure-type">
               {{ messages("disclosureDetails.disclosureTypeLink") }}
-          </a></p>
-
-        <hr class="indent">
-        </div>
-
-
-        <div class="govuk-!-margin-top-9">
-            <h3 class="govuk-heading-m">
+              </a>
+              <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">Completed</strong>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h2 class="app-task-list__section">
+            <span class="app-task-list__section-number">2. </span>
               {{ messages("disclosureDetails.section2") }}
-            </h3>
-        </div>
-
-        <div class = "indent">
-            <hr class="indent">
-            <p><a href="{{ hallmarksLink }}" class="govuk-link" id="hallmarksLink" >
+          </h2>
+          <ul class="app-task-list__items">
+            <li class="app-task-list__item">
+              <a class="app-task-list__task-name" href="#" aria-describedby="hallmarks">
               {{ messages("disclosureDetails.hallmarksLink") }}
-            </a></p>
-            <hr class="indent">
-
-            <p><a href="{{ arrangementDetailsLink }}" class="govuk-link" id="arrangementDetailsLink" >
+              </a>
+            </li>
+            <li class="app-task-list__item">
+              <a class="app-task-list__task-name" href="#" aria-describedby="arrangement-details">
               {{ messages("disclosureDetails.arrangementDetailsLink") }}
-            </a></p>
-            <hr class="indent">
-        </div>
-
-
-        <div class="govuk-!-margin-top-9">
-            <h4 class="govuk-heading-m">
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h2 class="app-task-list__section">
+            <span class="app-task-list__section-number">3. </span>
             {{ messages("disclosureDetails.section3") }}
-            </h4>
-        </div>
-
-        <div class = "indent">
-            <hr class="indent">
-            <p><a href="{{ reporterDetailsLink }}" class="govuk-link" id="reporterDetailsLink" >
+          </h2>
+          <ul class="app-task-list__items">
+            <li class="app-task-list__item">
+              <a class="app-task-list__task-name" href="#" aria-describedby="reporter-details">
               {{ messages("disclosureDetails.reporterDetailsLink") }}
-            </a></p>
-            <hr class="indent">
-        </div>
+              </a>
+            </li>
+          </ul>
+        </li>
 
 
-        <div class="govuk-!-margin-top-9">
-            <h5 class="govuk-heading-m app-task-list__section">
+        <li>
+          <h2 class="app-task-list__section">
+            <span class="app-task-list__section-number">3. </span>
             {{ messages("disclosureDetails.section4") }}
-            </h5>
-        </div>
+          </h2>
+          <ul class="app-task-list__items">
 
-        <div class = "indent">
-            <hr class="indent">
-            <p><a href="{{ relevantTaxpayersLink }}" class="govuk-link" id="relevantTaxpayersLink" >
+            <li class="app-task-list__item">
+              <a class="app-task-list__task-name" href="#" aria-describedby="relevant-taxpayers">
               {{ messages("disclosureDetails.relevantTaxpayersLink") }}
-            </a></p>
-            <p><a href="{{ associatedEnterpriseLink }}" class="govuk-link" id="associatedEnterpriseLink" >
-              {{ messages("disclosureDetails.associatedEnterpriseLink") }}
-            </a></p>
-            <hr class="indent">
-            <p><a href="{{ intermediariesLink }}" class="govuk-link" id="intermediariesLink" >
-              {{ messages("disclosureDetails.intermediariesLink") }}
-            </a></p>
-            <hr class="indent">
-            <p><a href="{{ othersAffectedLink }}" class="govuk-link" id="othersAffectedLink" >
-              {{ messages("disclosureDetails.othersAffectedLink") }}
-            </a></p>
-            <hr class="indent">
-        </div>
+              </a>
+            </li>
 
+            <li class="app-task-list__item">
+                <a class="app-task-list__task-name" href="#" aria-describedby="intermediaries">
+                {{ messages("disclosureDetails.intermediariesLink") }}
+                </a>
+            </li>
 
-        <div class="govuk-!-margin-top-9">
-            <h2 class="govuk-heading-m">
-              {{ messages("disclosureDetails.disclosureNotReady") }}
-            </h2>
-        </div>
+          </ul>
+        </li>
+      </ol>
 
-        <p class="govuk-body">{{ messages("disclosureDetails.disclosureNotReady.p1") }}</p>
+      <h2 class="govuk-heading-m">
+        {{ messages("disclosureDetails.disclosureNotReady") }}
+      </h2>
 
+      <p class="govuk-body">{{ messages("disclosureDetails.disclosureNotReady.p1") }}</p>
 
-
-      </div>
     </div>
   </div>
 
