@@ -104,7 +104,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
       case Some(DoNotKnow) =>
-        controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+        controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
       case _ =>
         controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
     }
@@ -115,7 +115,8 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case DisclosureMarketablePage =>
       checkRoute => value => _ =>
         value match {
-          case Some(true) => controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
+          case Some(true) =>
+            controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
           case _ => jumpOrCheckYourAnswers(routes.ReporterCheckYourAnswersController.onPageLoad(), checkRoute)
         }
 
