@@ -481,6 +481,9 @@ POST       /reporter/taxpayers/implementation-date                  controllers.
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
+# CONFIRMATION PAGES
+GET        /manual/disclosure-received                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad()
+
 ## REPORTER DETAILS - ORGANISATION
 
 GET        /reporter/organisation/name                                       controllers.reporter.organisation.ReporterOrganisationNameController.onPageLoad(mode: Mode = NormalMode)

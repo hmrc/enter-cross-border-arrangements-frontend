@@ -856,6 +856,20 @@ taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
 
+# CONFIRMATION PAGES
+
+confirmation.link.text = Disclose a cross-border arrangement
+confirmation.survey.link = What did you think of this service?
+confirmation.survey.text = (opens in a new tab)
+
+newDisclosureConfirmation.title = Disclosure received
+newDisclosureConfirmation.heading = Disclosure received
+newDisclosureConfirmation.panel.html = Your arrangement ID
+newDisclosureConfirmation.p1 = We have sent a confirmation email to {0}.
+newDisclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+newDisclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+newDisclosureConfirmation.p4 = Your message reference ID is {0}. This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. It will always start with your registered user ID and you can use it to tell the difference between any submissions with the same disclosure ID.
+
 ## REPORTER DETAILS - ORGANISATION
 
 reporterOrganisationName.title = What is the name of the organisation you’re reporting for?
@@ -1023,3 +1037,4 @@ reporterIndividualOtherTaxResidentQuestion.title = Are you resident for tax purp
 reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax purposes in any other countries?
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
+
