@@ -17,14 +17,19 @@
 package models.intermediaries
 
 import java.util.UUID
-
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{SelectType, UserAnswers}
-import pages.intermediaries.IntermediariesTypePage
+import models.{IsExemptionKnown, SelectType, UserAnswers}
+import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class Intermediary (intermediaryId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None) {
+case class Intermediary (intermediaryId: String, individual: Option[Individual] = None,
+                         organisation: Option[Organisation] = None,
+                         whatTypeofIntermediary: WhatTypeofIntermediary,
+                         isExemptionKnown: IsExemptionKnown,
+                         isExemptionCountryKnown: Option[Boolean],
+                         exemptCountries: Option[Set[ExemptCountries]]
+                        ) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString
@@ -37,18 +42,53 @@ object Intermediary {
 
   private def generateId = UUID.randomUUID.toString
 
+  def getIntermediaryAnswers(ua: UserAnswers): (WhatTypeofIntermediary, IsExemptionKnown, Option[Boolean], Option[Set[ExemptCountries]]) = {
+    (ua.get(WhatTypeofIntermediaryPage),
+      ua.get(IsExemptionKnownPage),
+      ua.get(IsExemptionCountryKnownPage),
+      ua.get(ExemptCountriesPage)) match {
+      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
+        (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
+      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None)
+        => (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), None)
+      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), None ,None)
+      => (whatTypeOfIntermediary, isExemptionKnown, None, None)
+      case _ =>
+        throw new Exception("Unable to build intermediary")
+    }
+  }
+
+  private def buildIndividualIntermediary(ua: UserAnswers): Intermediary = {
+    val intermediaryAnswers = getIntermediaryAnswers(ua)
+    new Intermediary(
+                intermediaryId = generateId,
+                individual = Some(Individual.buildIndividualDetails(ua)),
+                None,
+                intermediaryAnswers._1,
+                intermediaryAnswers._2,
+                intermediaryAnswers._3,
+                intermediaryAnswers._4
+              )
+  }
+
+  private def buildOrganisationIntermediary(ua: UserAnswers): Intermediary = {
+    val intermediaryAnswers = getIntermediaryAnswers(ua)
+    new Intermediary(
+      intermediaryId = generateId,
+      None,
+      organisation = Some(Organisation.buildOrganisationDetails(ua)),
+      intermediaryAnswers._1,
+      intermediaryAnswers._2,
+      intermediaryAnswers._3,
+      intermediaryAnswers._4
+    )
+  }
+
+
   def buildIntermediaryDetails(ua: UserAnswers): Intermediary = {
     ua.get(IntermediariesTypePage) match {
-      case Some(SelectType.Organisation) =>
-        new Intermediary(
-          intermediaryId = generateId,
-          organisation = Some(Organisation.buildOrganisationDetails(ua))
-        )
-      case Some(SelectType.Individual) =>
-        new Intermediary(
-          intermediaryId = generateId,
-          individual = Some(Individual.buildIndividualDetails(ua))
-        )
+      case Some(SelectType.Organisation) =>buildOrganisationIntermediary(ua)
+      case Some(SelectType.Individual) => buildIndividualIntermediary(ua)
       case _ => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }

@@ -79,7 +79,6 @@ class Navigator @Inject()() {
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
     case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
 
-
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
