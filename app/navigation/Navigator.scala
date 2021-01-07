@@ -78,7 +78,6 @@ class Navigator @Inject()() {
     case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
     case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-    case IntermediariesCheckYourAnswersPage => _ => _ => Some(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -117,7 +116,6 @@ class Navigator @Inject()() {
     case IsExemptionKnownPage => isExemptionKnownRoutes(CheckMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(CheckMode)
     case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
-    case IntermediariesCheckYourAnswersPage => _ => _ => Some(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
 
     case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
   }

@@ -129,5 +129,12 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
         .routeMap(ExemptCountriesPage)(IntermediariesRouting(NormalMode))(Some(ExemptCountries.UnitedKingdom))(0)
         .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
     }
+
+    "'Check your answers' page to " +
+      "'You have not added any intermediaries'" in {
+      navigator
+        .routeMap(IntermediariesCheckYourAnswersPage)(IntermediariesRouting(NormalMode))(None)(0)
+        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
+    }
   }
 }

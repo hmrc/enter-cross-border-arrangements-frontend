@@ -69,6 +69,8 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
     case ExemptCountriesPage =>
       _ => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad()
 
+    case IntermediariesCheckYourAnswersPage => _=> _ => _ => routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad()
+
     case _ =>
       checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
