@@ -17,13 +17,14 @@
 package controllers.enterprises
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.AssociatedEnterpriseTypeFormProvider
-import models.{CheckMode, Mode, SelectType, UserAnswers}
-import navigation.Navigator
+import models.{Mode, NormalMode, SelectType}
+import navigation.NavigatorForEnterprises
 import pages.enterprises.AssociatedEnterpriseTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -33,16 +34,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AssociatedEnterpriseTypeController @Inject()(
-                                                    override val messagesApi: MessagesApi,
-                                                    sessionRepository: SessionRepository,
-                                                    navigator: Navigator,
-                                                    identify: IdentifierAction,
-                                                    getData: DataRetrievalAction,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: AssociatedEnterpriseTypeFormProvider,
-                                                    val controllerComponents: MessagesControllerComponents,
-                                                    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForEnterprises,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AssociatedEnterpriseTypeFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
@@ -63,6 +64,9 @@ class AssociatedEnterpriseTypeController @Inject()(
       renderer.render("enterprises/associatedEnterpriseType.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[SelectType]): Call =
+    navigator.routeMap(AssociatedEnterpriseTypePage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -77,27 +81,14 @@ class AssociatedEnterpriseTypeController @Inject()(
 
           renderer.render("enterprises/associatedEnterpriseType.njk", json).map(BadRequest(_))
         },
-        value => {
-          val redirectUsers = redirectUsersToCYA(value, mode, request.userAnswers)
-
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(AssociatedEnterpriseTypePage, mode, updatedAnswers))
-            }
-          }
-        }
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def redirectUsersToCYA(value: SelectType, mode: Mode, ua: UserAnswers): Boolean = {
-    ua.get(AssociatedEnterpriseTypePage) match {
-      case Some(ans) if (ans == value) && (mode == CheckMode) => true
-      case _ => false
-    }
-  }
 }

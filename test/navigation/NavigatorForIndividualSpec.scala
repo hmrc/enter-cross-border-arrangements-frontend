@@ -184,7 +184,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(EmailAddressForIndividualPage)(DefaultRouting(NormalMode))(Some("test@email.com"))(0)
-            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 1))
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, 0))
         }
 
         s"must go from $D13 to $D14 when the country is GB" in {
@@ -857,6 +857,193 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
           navigator
             .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(IntermediariesRouting(NormalMode))(Some(false))(0)
             .mustBe(controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode))
+        }
+      }
+
+      "in Check mode" - {
+
+        val routingInCheckMode = IntermediariesRouting(CheckMode)
+
+        s"must go from $D1 page to $I13" in {
+
+          navigator
+            .routeMap(IndividualNamePage)(routingInCheckMode)(Some(Name("first", "last")))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D2 page to $D3 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualDateOfBirthController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D2 to $I13 when answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualDateOfBirthKnownPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D4 to the $D5 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D4 to the $I13 when answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualPlaceOfBirthKnownPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D5 to $I13" in {
+
+          navigator
+            .routeMap(IndividualPlaceOfBirthPage)(routingInCheckMode)(Some("address"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D6 to $D7 when answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IsIndividualAddressUkController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D6 to $I13 when answer is 'No'" in {
+
+          navigator
+            .routeMap(IsIndividualAddressKnownPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D7 to $D10 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IndividualAddressController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D7 to $D8 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualAddressUkPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.IndividualPostcodeController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D8 to $D9 when the answer has multiple entries " in {
+
+          navigator
+            .routeMap(IndividualUkPostcodePage)(routingInCheckMode)(Some("A99 AA9"))(0)
+            .mustBe(routes.IndividualSelectAddressController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D9 to $I13" in {
+
+          navigator
+            .routeMap(IndividualSelectAddressPage)(routingInCheckMode)(Some("A99 AA9"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D10 to $I13" in {
+
+          navigator
+            .routeMap(IndividualAddressPage)(routingInCheckMode)(Some(address))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D11 to $D12 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.EmailAddressForIndividualController.onPageLoad(CheckMode))
+        }
+
+        s"must go from $D11 to $I13 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(EmailAddressQuestionForIndividualPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D12 to $I13" in {
+
+          navigator
+            .routeMap(EmailAddressForIndividualPage)(routingInCheckMode)(Some("test@email.com"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+        }
+
+        s"must go from $D13 to $D14 when the country is GB" in {
+
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(routingInCheckMode)(Some(country))(0)
+            .mustBe(routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 0))
+        }
+
+        s"must go from $D14 to $D15 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 0))
+        }
+
+        s"must go from $D14 to $D18 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(DoYouKnowAnyTINForUKIndividualPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
+        }
+
+        s"must go from $D15 to $D18" in {
+
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForUKIndividualPage)(routingInCheckMode)(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
+        }
+
+        s"must go from $D13 to $D16 when the country is non GB" in {
+
+          navigator
+            .routeMap(WhichCountryTaxForIndividualPage)(routingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(CheckMode, 0))
+        }
+
+        s"must go from $D16 to $D17 when the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(CheckMode, 0))
+        }
+
+        s"must go from $D16 to $D18 when the answer is 'No' " in {
+
+          navigator
+            .routeMap(DoYouKnowTINForNonUKIndividualPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
+        }
+
+        s"must go from $D17 to $D18" in {
+
+          navigator
+            .routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(routingInCheckMode)(Some(tin))(0)
+            .mustBe(routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1))
+        }
+
+        s"must go from $D18 to $D13 if the answer is 'Yes' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(true))(0)
+            .mustBe(routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 0))
+        }
+
+        s"must go from $D18 to $I13 if the answer is 'No' " in {
+
+          navigator
+            .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
         }
       }
     }

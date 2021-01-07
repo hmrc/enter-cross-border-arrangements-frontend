@@ -26,6 +26,7 @@ import utils.RegexConstants
 class AddressFormProvider @Inject() extends Mappings with RegexConstants {
 
   val fieldLength = 400
+  val postcodeFieldLength = 10
 
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
@@ -37,7 +38,7 @@ class AddressFormProvider @Inject() extends Mappings with RegexConstants {
 
       "city" -> text("address.error.city.required").verifying(maxLength(fieldLength,"address.error.city.length")),
 
-      "postCode" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.postcode.optional.length")),
+      "postCode" -> optionalText().verifying(maxLengthOption(postcodeFieldLength,"address.error.postcode.optional.length")),
 
 
       "country" ->  text("address.error.country.required")

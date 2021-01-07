@@ -126,7 +126,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/which-country-tax-1"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/which-country-tax-0"
 
       application.stop()
     }

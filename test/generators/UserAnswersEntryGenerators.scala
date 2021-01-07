@@ -26,6 +26,7 @@ import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
 import models.{CountriesListEUCheckboxes, IsExemptionKnown, SelectType, YesNoDoNotKnowRadios}
+import models.{CountriesListEUCheckboxes, ReporterOrganisationOrIndividual, SelectType, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -35,15 +36,148 @@ import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayers
 import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
+import pages.individual.{IsIndividualDateOfBirthKnownPage}
+import pages.individual.{IsIndividualDateOfBirthKnownPage, _}
+import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
+import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReporterOtherTaxResidentQuestionUserAnswersEntry: Arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOtherTaxResidentQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterNonUKTaxNumbersUserAnswersEntry: Arbitrary[(ReporterNonUKTaxNumbersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterNonUKTaxNumbersPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterUKTaxNumbersUserAnswersEntry: Arbitrary[(ReporterUKTaxNumbersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterUKTaxNumbersPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterTinNonUKQuestionUserAnswersEntry: Arbitrary[(ReporterTinNonUKQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterTinNonUKQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterTinUKQuestionUserAnswersEntry: Arbitrary[(ReporterTinUKQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterTinUKQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterTaxResidentCountryUserAnswersEntry: Arbitrary[(ReporterTaxResidentCountryPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterTaxResidentCountryPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterOrganisationOrIndividualUserAnswersEntry: Arbitrary[(ReporterOrganisationOrIndividualPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationOrIndividualPage.type]
+        value <- arbitrary[ReporterOrganisationOrIndividual].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressUserAnswersEntry: Arbitrary[(ReporterOrganisationEmailAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationEmailAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualEmailAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterIndividualEmailAddressQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualEmailAddressQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterOrganisationEmailAddressQuestionUserAnswersEntry: Arbitrary[(ReporterOrganisationEmailAddressQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationEmailAddressQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualSelectAddressUserAnswersEntry: Arbitrary[(ReporterIndividualSelectAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualSelectAddressPage.type]
+        value <- arbitrary[String].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualAddressUserAnswersEntry: Arbitrary[(ReporterIndividualAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualPostcodeUserAnswersEntry: Arbitrary[(ReporterIndividualPostcodePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualPostcodePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIsIndividualAddressUKUserAnswersEntry: Arbitrary[(ReporterIsIndividualAddressUKPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIsIndividualAddressUKPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualPlaceOfBirthUserAnswersEntry: Arbitrary[(ReporterIndividualPlaceOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualPlaceOfBirthPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryDisclosureIdentifyArrangementUserAnswersEntry: Arbitrary[(DisclosureIdentifyArrangementPage.type, JsValue)] =
     Arbitrary {
@@ -53,7 +187,31 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-	  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
+  implicit lazy val arbitraryReporterOrganisationPostcodeUserAnswersEntry: Arbitrary[(ReporterOrganisationPostcodePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterOrganisationPostcodePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualDateOfBirthUserAnswersEntry: Arbitrary[(ReporterIndividualDateOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualDateOfBirthPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryReporterIndividualNameUserAnswersEntry: Arbitrary[(ReporterIndividualNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReporterIndividualNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatTypeofIntermediaryUserAnswersEntry: Arbitrary[(WhatTypeofIntermediaryPage.type, JsValue)] =
 	    Arbitrary {
 	      for {
 		page  <- arbitrary[WhatTypeofIntermediaryPage.type]
@@ -165,7 +323,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[RoleInArrangement].map(Json.toJson(_))
       } yield (page, value)
     }
-
 
   implicit lazy val arbitraryWhatIsTaxpayersStartDateForImplementingArrangementUserAnswersEntry: Arbitrary[(WhatIsTaxpayersStartDateForImplementingArrangementPage.type, JsValue)] =
     Arbitrary {

@@ -19,8 +19,7 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.IntermediariesTypeFormProvider
-import javax.inject.Inject
-import models.{CheckMode, Mode, SelectType, UserAnswers}
+import models.{Mode, NormalMode, SelectType}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.IntermediariesTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,18 +30,19 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediariesTypeController @Inject()(
-                                                    override val messagesApi: MessagesApi,
-                                                    sessionRepository: SessionRepository,
-                                                    navigator: NavigatorForIntermediaries,
-                                                    identify: IdentifierAction,
-                                                    getData: DataRetrievalAction,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: IntermediariesTypeFormProvider,
-                                                    val controllerComponents: MessagesControllerComponents,
-                                                    renderer: Renderer
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIntermediaries,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IntermediariesTypeFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
 
   private val form = formProvider()
@@ -81,28 +81,13 @@ class IntermediariesTypeController @Inject()(
 
           renderer.render("intermediaries/intermediariesType.njk", json).map(BadRequest(_))
         },
-        value => {
-          val redirectUsers = redirectUsersToCYA(value, mode, request.userAnswers)
-
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediariesTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield {
-            if (redirectUsers) {
-              Redirect(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(redirect(checkRoute, Some(value)))
-            }
-          }
-        }
+            redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, value)) NormalMode else mode
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
-  }
-
-  private def redirectUsersToCYA(value: SelectType, mode: Mode, ua: UserAnswers): Boolean = {
-    ua.get(IntermediariesTypePage) match {
-      case Some(ans) if (ans == value) && (mode == CheckMode) => true
-      case _ => false
-    }
   }
 }

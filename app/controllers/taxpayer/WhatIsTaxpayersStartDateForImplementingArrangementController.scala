@@ -69,11 +69,13 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "displayName" -> getDisplayName(request.userAnswers),
+        "name" -> getDisplayName(request.userAnswers),
+        "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
+        "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
         "actionUrl" -> actionUrl(mode)
       )
 
-      renderer.render ("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map (Ok (_) )
+      renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
 
   }
 
@@ -90,11 +92,13 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
             "mode" -> mode,
             "date" -> viewModel,
             "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "displayName" -> getDisplayName(request.userAnswers),
+            "name" -> getDisplayName(request.userAnswers),
+            "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
+            "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
             "actionUrl" -> actionUrl(mode)
           )
 
-          renderer.render("taxpayer/whatIsTaxpayersStartDateForImplementingArrangement.njk", json).map(BadRequest(_))
+          renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {

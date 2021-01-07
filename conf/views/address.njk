@@ -8,7 +8,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("individualAddress.title") if individual else messages("organisationAddress.title"), form.errors) }}
+  {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -32,9 +32,7 @@
 
                   {{ csrf() | safe }}
 
-                <h1 class="govuk-heading-xl name-overflow">
-                  {{ messages("individualAddress.heading", displayName) if individual else messages("organisationAddress.heading", displayName) }}
-                </h1>
+                  {{ pageHeading | safe }}
 
                   {{ govukInput({
                     label: {
@@ -96,15 +94,15 @@
                         }) }}
                 {% else %}
                       {{ govukSelect({
-                                 classes: "govuk-input--width-20 autocomplete",
-                                 label: {
-                                   text: messages('address.country')
-                                 },
-                                 id: "country",
-                                 name: "country",
-                                 errorMessage: form.country.error,
-                                 items: countries
-                               }) }}
+                         classes: "govuk-input--width-20 autocomplete",
+                         label: {
+                           text: messages('address.country')
+                         },
+                         id: "country",
+                         name: "country",
+                         errorMessage: form.country.error,
+                         items: countries
+                       }) }}
                 {% endif %}
 
                   {{ govukButton({

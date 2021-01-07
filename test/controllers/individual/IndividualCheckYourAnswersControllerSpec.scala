@@ -16,6 +16,9 @@
 
 package controllers.individual
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{Address, Country, Name, UserAnswers}
@@ -137,6 +140,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
                |        value 1<br>
                |        value 2<br>
                |        value 3<br>
+               |        Newcastle upon Tyne<br>
                |        XX9 9XX<br>
                |        United Kingdom
                |     """.stripMargin)
