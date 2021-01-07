@@ -29,7 +29,7 @@ import uk.gov.hmrc.viewmodels.Html
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NewDisclosureConfirmationController @Inject()(
+class AdditionalDisclosureConfirmationController @Inject()(
     override val messagesApi: MessagesApi,
     appConfig: FrontendAppConfig,
     identify: IdentifierAction,
@@ -39,12 +39,11 @@ class NewDisclosureConfirmationController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData).async { // andThen requireData
     implicit request =>
 
       val json = Json.obj(
         "arrangementID" -> confirmationPanelText("GBA20210101ABB381"),
-        "disclosureID" -> "GBD20210101AAA456",
         "email" -> "example@example.com",
         "secondEmail" -> "",
         "messageRefID" -> "GBXDAC0001234567AAA00101",
