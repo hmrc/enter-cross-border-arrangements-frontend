@@ -17,14 +17,15 @@
 package models.intermediaries
 
 import base.SpecBase
-import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
+import models.IsExemptionKnown.Yes
 import models.individual.Individual
+import models.intermediaries.WhatTypeofIntermediary.Promoter
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualAddressPage, IndividualDateOfBirthPage, IndividualLoopPage, IndividualNamePage, IndividualPlaceOfBirthPage, IndividualSelectAddressPage, IndividualUkPostcodePage, IsIndividualAddressKnownPage, IsIndividualAddressUkPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForNonUKIndividualPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
-import pages.intermediaries.IntermediariesTypePage
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage, PostcodePage, SelectAddressPage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
-import pages.taxpayer.TaxpayerSelectTypePage
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
+import pages.individual._
+import pages.intermediaries._
+import pages.organisation._
 
 import java.time.{LocalDate, LocalDateTime}
 
@@ -34,10 +35,13 @@ class IntermediarySpec extends SpecBase {
   val taxRefNumbers: TaxReferenceNumbers = TaxReferenceNumbers("utr", None, None)
   val address: Address = Address(None, None, None, "", None, country)
   val loopDetails: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(None, Some(country), None,None, None, Some(taxRefNumbers)))
+  val exemptCountries: Set[ExemptCountries] = ExemptCountries.enumerable.withName("ES").toSet
 
   "Intermediary" - {
 
     "either must be created from an individual" in {
+
+
 
       val userAnswers: UserAnswers = new UserAnswers("1").set(IndividualNamePage, Name("John", "Smith"))
         .success.value
@@ -59,6 +63,16 @@ class IntermediarySpec extends SpecBase {
         .success.value
         .set(IndividualLoopPage, loopDetails)
         .success.value
+        .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
+        .success.value
+        .set(IsExemptionKnownPage, IsExemptionKnown.Yes)
+        .success.value
+        .set(IsExemptionCountryKnownPage, true)
+        .success.value
+        .set(ExemptCountriesPage, exemptCountries)
+        .success.value
+
+      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers)
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
@@ -66,9 +80,13 @@ class IntermediarySpec extends SpecBase {
         None, None, None, Seq(TaxResidency(Some(country),Some(taxRefNumbers))).toIndexedSeq
       )
 
-      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers)
+
 
       intermediary.individual.get mustEqual individual
+      intermediary.whatTypeofIntermediary mustEqual Promoter
+      intermediary.isExemptionKnown mustEqual  Yes
+      intermediary.isExemptionCountryKnown mustEqual true
+      intermediary.exemptCountries mustBe Some(exemptCountries)
     }
 
     "or must be created from an organisation" in {
@@ -106,6 +124,14 @@ class IntermediarySpec extends SpecBase {
         .success.value
         .set(IntermediariesTypePage, SelectType.Organisation)
         .success.value
+        .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
+        .success.value
+        .set(IsExemptionKnownPage, IsExemptionKnown.Yes)
+        .success.value
+        .set(IsExemptionCountryKnownPage, true)
+        .success.value
+        .set(ExemptCountriesPage, exemptCountries)
+        .success.value
 
       val organisation = Organisation(
         organisationName = "Organisation name",Some(address),Some("email@email.com"), Seq(TaxResidency(Some(country),Some(taxRefNumbers))).toIndexedSeq)
@@ -113,6 +139,10 @@ class IntermediarySpec extends SpecBase {
       val intermediary = Intermediary.buildIntermediaryDetails(userAnswers)
 
       intermediary.organisation.get mustEqual organisation
+      intermediary.whatTypeofIntermediary mustEqual Promoter
+      intermediary.isExemptionKnown mustEqual  Yes
+      intermediary.isExemptionCountryKnown mustEqual true
+      intermediary.exemptCountries mustBe Some(exemptCountries)
     }
   }
 }
