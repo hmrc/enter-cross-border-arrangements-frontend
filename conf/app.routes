@@ -15,6 +15,13 @@ GET        /accessibility-statement                     controllers.Accessibilit
 GET        /sign-out                                    controllers.SignOutController.signOut
 
 
+
+# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
+
+GET        /manual/your-disclosure-details                         controllers.DisclosureDetailsController.onPageLoad()
+
+
+
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
