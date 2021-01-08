@@ -1,0 +1,15 @@
+@(header: renderer.XMLHeader,
+        dac6Disclosures: renderer.DAC6Disclosures)
+
+<DAC6_Arrangement version="First">
+    <Header>
+        <MessageRefId>@header.messageRefId</MessageRefId>
+        <Timestamp>@header.timestamp</Timestamp>
+    </Header>
+    <DAC6Disclosures>
+        <DisclosureImportInstruction>@dac6Disclosures.disclosureImportInstruction</DisclosureImportInstruction>
+        <Disclosing>
+
+        </Disclosing>
+    </DAC6Disclosures>
+</DAC6_Arrangement>
