@@ -14,7 +14,7 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /sign-out                                    controllers.SignOutController.signOut
 
-GET        /keep-alive                                   controllers.KeepAliveController.keepAlive
+GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
 
 
 

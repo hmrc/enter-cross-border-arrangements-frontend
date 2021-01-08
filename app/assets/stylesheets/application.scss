@@ -2,16 +2,12 @@ $govuk-assets-path: "/enter-cross-border-arrangements/assets/lib/govuk-frontend/
 $hmrc-assets-path: "/enter-cross-border-arrangements/assets/lib/hmrc-frontend/hmrc/assets";
 
 @import "lib/govuk-frontend/govuk/all";
-
-
 @import "partials/header";
 @import 'patterns/add-to-a-list';
 @import 'patterns/task-list';
 @import "language-toggles.scss";
 @import "main.scss";
 @import "_timeout-dialog.scss";
-
-
 
 .govuk-warning-text__icon {
     margin-top: 5px;
