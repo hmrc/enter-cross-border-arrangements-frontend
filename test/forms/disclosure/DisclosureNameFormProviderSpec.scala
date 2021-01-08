@@ -23,7 +23,7 @@ class DisclosureNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "disclosureName.error.required"
   val lengthKey = "disclosureName.error.length"
-  val maxLength = 183
+  val maxLength = 150
 
   val form = new DisclosureNameFormProvider()()
 
