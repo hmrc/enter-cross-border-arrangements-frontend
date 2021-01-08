@@ -16,13 +16,24 @@
 
 package pages.intermediaries
 
+import models.{SelectType, UserAnswers}
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import play.api.libs.json.JsPath
 import pages._
+import pages.individual.IndividualNamePage
+
+import scala.util.Try
 
 case object YouHaveNotAddedAnyIntermediariesPage extends QuestionPage[YouHaveNotAddedAnyIntermediaries] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "youHaveNotAddedAnyIntermediaries"
+
+  override def cleanup(value: Option[YouHaveNotAddedAnyIntermediaries], userAnswers: UserAnswers): Try[UserAnswers] = {
+    //Clear answers from unique pages in each journey
+
+        userAnswers.remove(IntermediariesTypePage)
+
+  }
 }
