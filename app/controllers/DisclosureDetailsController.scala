@@ -24,6 +24,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.Radios.MessageInterpolators
 
 import scala.concurrent.ExecutionContext
 
@@ -38,11 +39,12 @@ class DisclosureDetailsController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val arrangementMessage = if (request.userAnswers.isDefined){
-        "for arrangement " + request.userAnswers.get.get(DisclosureIdentifyArrangementPage).get
-      } else {
-        ""
+      val arrangementMessage: String = request.userAnswers.fold("") {
+        value => value.get(DisclosureIdentifyArrangementPage)
+          .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
+          .getOrElse("")
       }
+
 
       val json = Json.obj(
         "arrangementID" -> arrangementMessage

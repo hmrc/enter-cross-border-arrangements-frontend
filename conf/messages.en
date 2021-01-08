@@ -137,6 +137,7 @@ compliant.nine.p3=This page was prepared on [date when it was first published]. 
 
 disclosureDetails.title = Your DAC6 disclosure details
 disclosureDetails.heading = Your DAC6 disclosure details {0}
+disclosureDetails.heading.forArrangement = for arrangement {0}
 disclosureDetails.p1 = Information saved here is kept for 28 days from when you last made changes. You can log in within this time and continue any unsubmitted disclosures.
 disclosureDetails.section1 = Tell us what you’re disclosing
 disclosureDetails.section2 = Provide the details of the arrangement
