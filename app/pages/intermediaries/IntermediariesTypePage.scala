@@ -35,6 +35,7 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] {
     value match {
       case Some(SelectType.Individual) =>
         userAnswers.remove(IndividualNamePage)
+          .flatMap(_.remove(IsIndividualDateOfBirthKnownPage))
           .flatMap(_.remove(IndividualDateOfBirthPage))
           .flatMap(_.remove(IsIndividualPlaceOfBirthKnownPage))
           .flatMap(_.remove(IndividualPlaceOfBirthPage))
