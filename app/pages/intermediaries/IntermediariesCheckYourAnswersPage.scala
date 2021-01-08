@@ -16,18 +16,8 @@
 
 package pages.intermediaries
 
-import models.{SelectType, UserAnswers}
-import pages.QuestionPage
-import pages.individual._
-import pages.organisation._
-import play.api.libs.json.JsPath
+import pages.Page
 
-import scala.util.Try
-
-case object IntermediariesCheckYourAnswersPage extends QuestionPage[SelectType] {
-
-  override def path: JsPath = JsPath \ toString
-
+case object IntermediariesCheckYourAnswersPage extends Page {
   override def toString: String = "intermediariesCheckYourAnswers"
-
- }
+}

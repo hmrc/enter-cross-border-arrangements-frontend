@@ -43,7 +43,10 @@ class IntermediarySpec extends SpecBase {
 
 
 
-      val userAnswers: UserAnswers = new UserAnswers("1").set(IndividualNamePage, Name("John", "Smith"))
+      val userAnswers: UserAnswers = new UserAnswers("1")
+        .set(IntermediariesTypePage, SelectType.Individual)
+        .success.value
+        .set(IndividualNamePage, Name("John", "Smith"))
         .success.value
         .set(IndividualDateOfBirthPage, LocalDate.now())
         .success.value
@@ -59,8 +62,7 @@ class IntermediarySpec extends SpecBase {
         .success.value
         .set(WhatAreTheTaxNumbersForUKIndividualPage, taxRefNumbers)
         .success.value
-        .set(IntermediariesTypePage, SelectType.Individual)
-        .success.value
+
         .set(IndividualLoopPage, loopDetails)
         .success.value
         .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
@@ -92,6 +94,8 @@ class IntermediarySpec extends SpecBase {
     "or must be created from an organisation" in {
 
       val userAnswers: UserAnswers = new UserAnswers("1")
+        .set(IntermediariesTypePage, SelectType.Organisation)
+        .success.value
         .set(OrganisationNamePage, "Organisation name")
         .success.value
         .set(IsOrganisationAddressKnownPage, true)
@@ -121,8 +125,6 @@ class IntermediarySpec extends SpecBase {
         .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxRefNumbers)
         .success.value
         .set(OrganisationLoopPage, loopDetails)
-        .success.value
-        .set(IntermediariesTypePage, SelectType.Organisation)
         .success.value
         .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
         .success.value
