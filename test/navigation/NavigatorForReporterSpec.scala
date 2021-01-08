@@ -578,6 +578,14 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       }
     }
+
+      "must go from 'Check your answers?' page " +
+        "to 'task list' page "  in {
+
+        navigator
+          .routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+      }
   }
 }
 

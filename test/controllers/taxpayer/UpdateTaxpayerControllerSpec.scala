@@ -21,7 +21,6 @@ import forms.taxpayer.UpdateTaxpayerFormProvider
 import matchers.JsonMatchers
 import models.taxpayer.UpdateTaxpayer
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -29,7 +28,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.taxpayer.UpdateTaxpayerPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,8 +37,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad().url
 
@@ -119,7 +115,6 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -132,7 +127,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/choose-type"
 
       application.stop()
     }

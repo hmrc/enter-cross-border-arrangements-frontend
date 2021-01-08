@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package navigation
 
-import models.Mode
+import base.SpecBase
+import controllers.mixins.ArrangementRouting
+import models.NormalMode
+import pages.arrangement.ArrangementCheckYourAnswersPage
 
-sealed trait CheckRoute {
+class NavigatorForArrangementSpec extends SpecBase {
 
-  val mode: Mode
+  val navigator = new NavigatorForArrangement
+
+  "NavigatorForArrangement" - {
+    "must go from Arrangement CYA page" +
+      "to Task list page" in {
+          navigator
+            .routeMap(ArrangementCheckYourAnswersPage)(ArrangementRouting(NormalMode))(None)(0)
+            .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+    }
+  }
+
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute

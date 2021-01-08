@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package pages.reporter
 
-import models.Mode
+import pages.Page
 
-sealed trait CheckRoute {
+case object ReporterCheckYourAnswersPage extends Page {
 
-  val mode: Mode
+  override def toString: String = "reporterCheckYourAnswers"
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute

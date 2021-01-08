@@ -37,20 +37,18 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
             .mustBe(controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(NormalMode))
       }
 
-    //TODO: Link to task list page when ready
     "must go from 'You have not added any intermediaries' page to " +
-      "'You have not added any intermediaries' if answer is 'No'" in {
+      "'Task List page' if answer is 'No'" in {
       navigator
         .routeMap(YouHaveNotAddedAnyIntermediariesPage)(IntermediariesRouting(NormalMode))(Some(YouHaveNotAddedAnyIntermediaries.No))(0)
-        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
     }
 
-    //TODO: Link to task list page when ready
     "must go from 'You have not added any intermediaries' page to " +
-      "'You have not added any intermediaries' if answer is 'YesAddLater'" in {
+      "'Task List page' if answer is 'YesAddLater'" in {
       navigator
         .routeMap(YouHaveNotAddedAnyIntermediariesPage)(IntermediariesRouting(NormalMode))(Some(YouHaveNotAddedAnyIntermediaries.YesAddLater))(0)
-        .mustBe(controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad())
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
     }
 
     "must go from 'Is this an organisation or an individual?' intermediaries page to " +

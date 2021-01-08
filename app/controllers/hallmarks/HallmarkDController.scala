@@ -18,6 +18,7 @@ package controllers.hallmarks
 
 import controllers.actions._
 import forms.hallmarks.HallmarkDFormProvider
+
 import javax.inject.Inject
 import models.hallmarks.HallmarkD
 import models.hallmarks.HallmarkD.D1
@@ -33,7 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
+import scala.util.{Success, Try}
 
 class HallmarkDController @Inject()(
     override val messagesApi: MessagesApi,
@@ -49,10 +50,10 @@ class HallmarkDController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkDPage) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkDPage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +67,7 @@ class HallmarkDController @Inject()(
       renderer.render("hallmarks/hallmarkD.njk",json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -80,16 +81,20 @@ class HallmarkDController @Inject()(
 
           renderer.render("hallmarks/hallmarkD.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
           for {
-            userAnswers <- Future.fromTry(removeD1Parts(request.userAnswers, value))
+            userAnswers <- Future.fromTry(removeD1Parts(userAnswers, value))
             updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HallmarkDPage, mode, updatedAnswers))
+        }
       )
   }
 
-private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]) =
+private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]): Try[UserAnswers] =
   userAnswers.get(HallmarkD1Page) match {
     case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page)
     case _ => Success(userAnswers)

@@ -65,43 +65,6 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       application.stop()
     }
 
-    "must return OK and the correct view for a GET if there's more than one hallmark selected" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkAPage, HallmarkA.enumerable.withName("A1").toSet)
-        .success
-        .value
-        .set(HallmarkBPage, HallmarkB.enumerable.withName("B2").toSet)
-        .success
-        .value
-        .set(MainBenefitTestPage, true)
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      val json = jsonCaptor.getValue
-      val list = (json \ "list").toString
-
-      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-      list.contains("A1, B2") mustBe true
-
-      application.stop()
-    }
-
     "must include 'Parts of hallmark D1 that apply to this arrangement' if D1 Other selected" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -172,82 +135,6 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       application.stop()
 
-    }
-
-    "must include 'Main Benefit' if C1bi selected" in {
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkC1Page, HallmarkC1.enumerable.withName("C1bi").toSet)
-        .success
-        .value
-        .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("C").toSet)
-        .success
-        .value
-        .set(MainBenefitTestPage, true)
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      val json = jsonCaptor.getValue
-
-      val list = (json \ "list").toString
-
-      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-      list.contains("C1bi") mustBe true
-      list.contains("Does the arrangement meet the Main Benefit Test?") mustBe true
-
-      application.stop()
-    }
-
-    "must not include 'Main Benefit' if C1a selected" in {
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkC1Page, HallmarkC1.enumerable.withName("C1a").toSet)
-        .success
-        .value
-        .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("C").toSet)
-        .success
-        .value
-        .set(MainBenefitTestPage, true)
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      val json = jsonCaptor.getValue
-
-      val list = (json \ "list").toString
-
-      templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-      list.contains("C1a") mustBe true
-      list.contains("Does the arrangement meet the Main Benefit Test?") mustBe false
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

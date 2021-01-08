@@ -27,6 +27,7 @@ GET        /manual/your-disclosure-details                         controllers.D
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad
+POST       /hallmarks/check-answers                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onSubmit
 
 GET        /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-categories                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(mode: Mode = NormalMode)
@@ -254,6 +255,7 @@ POST       /individual/change-do-you-know-date-of-birth         controllers.indi
 # ARRANGEMENT ROUTES
 
 GET        /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onPageLoad
+POST       /arrangement/check-answers                   controllers.arrangement.ArrangementCheckYourAnswersController.onSubmit
 
 GET        /arrangement/name                        controllers.arrangement.WhatIsThisArrangementCalledController.onPageLoad(mode: Mode = NormalMode)
 POST       /arrangement/name                         controllers.arrangement.WhatIsThisArrangementCalledController.onSubmit(mode: Mode = NormalMode)
@@ -381,6 +383,7 @@ POST       /intermediaries/check-answers                     controllers.interme
 # DISCLOSURE
 
 GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
+POST        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)

@@ -48,6 +48,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val crossBorderArrangementsUrl: String = servicesConfig.baseUrl("cross-border-arrangements")
   lazy val discloseCrossBorderArrangementsFrontendUrl: String = configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+  lazy val hallmarksUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarks")}"
+  lazy val arrangementsUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.arrangements")}"
+  lazy val reportersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.reporters")}"
+  lazy val taxpayersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.taxpayers")}"
+  lazy val intermediariesUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
+  lazy val disclosureUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosures")}"
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

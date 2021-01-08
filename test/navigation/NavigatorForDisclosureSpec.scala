@@ -22,7 +22,7 @@ import generators.Generators
 import models.NormalMode
 import models.disclosure.DisclosureType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -95,5 +95,12 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
           navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(Some("FRA20210101ABC123"))(0)
             .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
       }
+
+    "must go from 'Disclosure check your answers' page" +
+      "to 'Task list' page" in {
+
+      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0)
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+    }
   }
 }
