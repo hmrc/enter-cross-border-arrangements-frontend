@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package pages
+package models.disclosure
 
-import models.UserAnswers
-import queries.{Gettable, Settable}
+import play.api.libs.json.{Json, OFormat}
 
-import scala.util.Try
+case class DisclosureDetails(
+  disclosureName: String,
+  disclosureType: DisclosureType,
+  arrangementID: Option[String] = None,
+  disclosureID: Option[String]  = None,
+  initialDisclosureMA: Boolean  = false,
+  messageRefId: Option[String]  = None
+)
+object DisclosureDetails {
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A] {
-
-  def remove(userAnswers: Try[UserAnswers]): Try[UserAnswers] =
-    userAnswers.map{ x: UserAnswers => x.remove(this)}.getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
+  implicit val format: OFormat[DisclosureDetails] = Json.format[DisclosureDetails]
 }
+

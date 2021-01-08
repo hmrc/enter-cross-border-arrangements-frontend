@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-package pages
+package pages.disclosure
 
 import models.UserAnswers
-import queries.{Gettable, Settable}
+import models.disclosure.DisclosureDetails
+import pages.QuestionPage
+import play.api.libs.json.{JsPath, Reads}
 
 import scala.util.Try
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A] {
+case object DisclosureDetailsPage extends QuestionPage[DisclosureDetails] {
 
-  def remove(userAnswers: Try[UserAnswers]): Try[UserAnswers] =
-    userAnswers.map{ x: UserAnswers => x.remove(this)}.getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "disclosureMarketable"
+
+  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
+    List(
+      DisclosureNamePage,
+      DisclosureTypePage,
+      DisclosureIdentifyArrangementPage,
+      DisclosureMarketablePage
+    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
+
 }

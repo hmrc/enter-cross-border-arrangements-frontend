@@ -381,6 +381,7 @@ POST       /intermediaries/check-answers                     controllers.interme
 # DISCLOSURE
 
 GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
+POST       /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onSubmit
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
