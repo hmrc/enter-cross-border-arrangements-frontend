@@ -26,8 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-//  private val contactHost = configuration.get[String]("contact-frontend.host")
-  private val contactHost = servicesConfig.baseUrl("contact-frontend")
+  private val contactHost = configuration.get[String]("contact-frontend.host")
   private val feedbackFrontend = servicesConfig.baseUrl("feedback-frontend")
   private val contactFormServiceIdentifier = "DAC6"
 
