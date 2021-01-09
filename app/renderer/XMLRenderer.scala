@@ -17,31 +17,34 @@
 package renderer
 
 import models.reporter.RoleInArrangement
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.{Address, UserAnswers}
 import org.joda.time.DateTime
+import pages.GiveDetailsOfThisArrangementPage
+import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
-import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import play.twirl.api.XmlFormat
+import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
+import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
 
 import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLRenderer @Inject()() {
 
-  private def createHeader(userAnswers: UserAnswers): Elem = {
-    val messageRefId = userAnswers.get(DisclosureNamePage) match {
+  private def buildHeader(userAnswers: UserAnswers): Elem = {
+    val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
       case Some(disclosureName) => "GB" + disclosureName
       case None => ""
     }
 
     //XML DateTime format e.g. 2021-01-06T12:25:14
-    val timestamp = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
+    val mandatoryTimestamp = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
 
     <Header>
-      <MessageRefId>{messageRefId}</MessageRefId>
-      <Timestamp>{timestamp}</Timestamp>
+      <MessageRefId>{mandatoryMessageRefId}</MessageRefId>
+      <Timestamp>{mandatoryTimestamp}</Timestamp>
     </Header>
   }
 
@@ -73,7 +76,7 @@ class XMLRenderer @Inject()() {
           loop =>
             <ResCountryCode>{loop.whichCountry.get.code}</ResCountryCode>
         }
-      case None => IndexedSeq[Elem]() //TODO Mandatory and Repeatable
+      case None => NodeSeq.Empty //TODO Mandatory and Repeatable //IndexedSeq[Elem]()
     }
   }
 
@@ -92,9 +95,9 @@ class XMLRenderer @Inject()() {
     }
   }
 
-  private def createIDForOrganisation(userAnswers: UserAnswers) = {
+  def buildIDForOrganisation(userAnswers: UserAnswers) = {
     //Mandatory
-    val organisationName = userAnswers.get(OrganisationNamePage) match {
+    val mandatoryOrganisationName = userAnswers.get(OrganisationNamePage) match {
       case Some(name) => name
       case None => ""
     }
@@ -104,88 +107,184 @@ class XMLRenderer @Inject()() {
         <TIN issuedBy={tin.issuedBy}>{tin.tin}</TIN>
     }
 
-    val resCountryCode: NodeSeq = buildResCountryCode(userAnswers)
+    val address = Seq(<Address>{buildAddress(userAnswers)}</Address>)
 
-    <ID>
+    val email = userAnswers.get(EmailAddressForOrganisationPage)
+      .fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
+
+    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(userAnswers)
+
+    val nodeBuffer = new xml.NodeBuffer
+    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
+    val organisationNodes = {
       <Organisation>
-        <OrganisationName>{organisationName}</OrganisationName>
-        {tins}
-        <Address>{buildAddress(userAnswers)}</Address>
-        {userAnswers.get(EmailAddressForOrganisationPage).map(email => <EmailAddress>{email}</EmailAddress>)}
-        {resCountryCode}
+        {nodeBuffer ++
+        Seq(<OrganisationName>{mandatoryOrganisationName}</OrganisationName>) ++
+        tins ++
+        address ++
+        email ++
+        mandatoryResCountryCode}
       </Organisation>
-    </ID>
+    }
 
-    ID(???)
-
-    ???
+    prettyPrinter.format(<ID>{organisationNodes}</ID>)
+    <ID>{organisationNodes}</ID>
   }
 
-  private def buildLiability(userAnswers: UserAnswers): Option[Elem] = {
-    val liabilityData = userAnswers.get(RoleInArrangementPage) match {
+  def buildLiability(userAnswers: UserAnswers) = {
+    val mandatoryRelevantTaxpayerNexus = userAnswers.get(RoleInArrangementPage) match {
       case Some(RoleInArrangement.Taxpayer) =>
-        val relevantTaxpayerNexus = userAnswers.get(TaxpayerWhyReportInUKPage) match {
-          case Some(value) => value.toString.toUpperCase
+        userAnswers.get(TaxpayerWhyReportInUKPage) match {
+          case Some(value) =>
+            value match {
+              case TaxpayerWhyReportInUK.UkTaxResident => "RTNEXa"
+              case TaxpayerWhyReportInUK.UkPermanentEstablishment => "RTNEXb"
+              case TaxpayerWhyReportInUK.IncomeOrProfit => "RTNEXc"
+              case TaxpayerWhyReportInUK.UkActivity => "RTNEXd"
+              case TaxpayerWhyReportInUK.DoNotKnow => ""
+            }
           case None => ""
         }
-
-        val capacity = userAnswers.get(TaxpayerWhyReportArrangementPage) match {
-          case Some(value) => Some(value.toString.toUpperCase)
-          case None => None
-        }
-
-        Some(Liability(RelevantTaxpayerDiscloser(relevantTaxpayerNexus, capacity)))
-      case _ => None
+      case _ => ""
     }
 
-    liabilityData.map { liability =>
-      <Liability>
-        {liability.relevantTaxpayerDiscloser.relevantTaxpayerNexus}
-        {liability.relevantTaxpayerDiscloser.capacity.map(capacity => <Capacity>{capacity.toUpperCase}</Capacity>)}
-      </Liability>
+    val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage)
+      .fold(NodeSeq.Empty)({
+        case TaxpayerWhyReportArrangement.NoIntermediaries => <Capacity>{"DAC61106"}</Capacity>
+        case TaxpayerWhyReportArrangement.ProfessionalPrivilege => <Capacity>{"DAC61104"}</Capacity>
+        case TaxpayerWhyReportArrangement.OutsideUKOrEU => <Capacity>{"DAC61105"}</Capacity>
+        case capacity@TaxpayerWhyReportArrangement.DoNotKnow => <Capacity>{capacity.toString.toUpperCase}</Capacity>
+      })
+
+    val nodeBuffer = new xml.NodeBuffer
+    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+    val relevantTaxPayersNode = {
+        nodeBuffer ++
+        Seq(<RelevantTaxpayerNexus>{mandatoryRelevantTaxpayerNexus}</RelevantTaxpayerNexus>) ++
+        capacity
     }
+
+    prettyPrinter.format(<Liability>{relevantTaxPayersNode}</Liability>)
+    <Liability>{relevantTaxPayersNode}</Liability>
   }
 
-  private def createRelevantTaxPayers(userAnswers: UserAnswers): RelevantTaxPayers = {
-    ???
+  def buildRelevantTaxPayers(userAnswers: UserAnswers) = {
+
+    val mandatoryImplementingDate: NodeSeq =
+      (userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage),
+        userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage),
+        userAnswers.get(DisclosureMarketablePage)) match {
+        case (Some(implementingDate), _, _) =>
+          Seq(<TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
+        case (_, Some(implementingDate), _) =>
+          Seq(<TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
+        case _ => Seq() //TODO If Marketable then it's Mandatory.
+      }
+
+    val nodeBuffer = new xml.NodeBuffer
+    val relevantTaxPayersNode = {
+      <RelevantTaxpayer>
+        {nodeBuffer ++
+        buildIDForOrganisation(userAnswers) ++
+        mandatoryImplementingDate}
+      </RelevantTaxpayer>
+    }
+
+    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
+    prettyPrinter.format(<RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>)
+    <RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>
   }
 
-  private def createDisclosureInformation(userAnswers: UserAnswers): DisclosureInformation = {
-    ???
+  private def buildDisclosureInformationSummary(userAnswers: UserAnswers) = {
+    val mandatoryDisclosureName = userAnswers.get(WhatIsThisArrangementCalledPage) match {
+      case Some(name) => Seq(<Disclosure_Name>{name}</Disclosure_Name>)
+      case None => NodeSeq.Empty
+    }
+
+    val mandatoryDisclosureDescription: NodeSeq = userAnswers.get(GiveDetailsOfThisArrangementPage) match {
+      case Some(description) =>
+        val splitString = description.grouped(10).toList
+
+        splitString.map(string =>
+          <Disclosure_Description>{string}</Disclosure_Description>
+        )
+      case None => NodeSeq.Empty
+    }
+
+    val nodeBuffer = new xml.NodeBuffer
+
+    <Summary>
+      {nodeBuffer ++
+      mandatoryDisclosureName ++
+      mandatoryDisclosureDescription
+      }
+    </Summary>
   }
 
-  def createDac6Disclosures(userAnswers: UserAnswers): DAC6Disclosures = {
-    val disclosureImportInstructionData = userAnswers.get(DisclosureTypePage) match {
+  private def buildDisclosureInformation(userAnswers: UserAnswers) = {
+
+    val mandatoryImplementingDate = userAnswers.get(WhatIsTheImplementationDatePage) match {
+      case Some(date) => Seq(<ImplementingDate>{date}</ImplementingDate>)
+      case None => NodeSeq.Empty
+    }
+
+    val reason: NodeSeq = userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
+      case Some(reasonKnown) if reasonKnown =>
+        userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
+          .fold(NodeSeq.Empty)(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
+      case _ => NodeSeq.Empty
+    }
+
+    <DisclosureInformation>
+      {mandatoryImplementingDate}
+      {reason}
+      {buildDisclosureInformationSummary(userAnswers)}
+      <NationalProvision>I don't know what this is as I am just a cat</NationalProvision>
+      <Amount currCode="GBP">4000</Amount>
+      <ConcernedMSs>
+        <ConcernedMS>CZ</ConcernedMS>
+      </ConcernedMSs>
+      <MainBenefitTest1>false</MainBenefitTest1>
+      <Hallmarks>
+        <ListHallmarks>
+          <Hallmark>DAC6D1Other</Hallmark>
+        </ListHallmarks>
+        <DAC6D1OtherInfo>blah blah blah</DAC6D1OtherInfo>
+      </Hallmarks>
+    </DisclosureInformation>
+  }
+
+  def renderXML(userAnswers: UserAnswers) = {
+    val mandatoryDisclosureImportInstruction = userAnswers.get(DisclosureTypePage) match {
       case Some(value) => value.toString.toUpperCase
       case None => ""
     }
 
-    val disclosureImportInstruction = <DisclosureImportInstruction>{disclosureImportInstructionData}</DisclosureImportInstruction>
-
-    val isMarketableData = userAnswers.get(DisclosureMarketablePage) match {//TODO Is this the right page?
+    val mandatoryInitialDisclosureMA = userAnswers.get(DisclosureMarketablePage) match {//TODO Is this the right page?
       case Some(value) => value
       case None => false
     }
 
-    val isMarketable = <InitialDisclosureMA>{isMarketableData}</InitialDisclosureMA>
+    val xml =
+      <DAC6_Arrangement version="First">
+        <DAC6Disclosures>
+          {buildHeader(userAnswers)}
+          <DisclosureImportInstruction>{mandatoryDisclosureImportInstruction}</DisclosureImportInstruction>
+          <Disclosing>
+            {buildIDForOrganisation(userAnswers)}
+            {buildLiability(userAnswers)}
+          </Disclosing>
+          <InitialDisclosureMA>{mandatoryInitialDisclosureMA}</InitialDisclosureMA>
+          {buildRelevantTaxPayers(userAnswers)}
+        </DAC6Disclosures>
+      </DAC6_Arrangement>
 
-//    DAC6Disclosures(
-//      disclosureImportInstruction = disclosureImportInstruction,
-//      disclosing = Disclosing(???, createLiability(userAnswers)),
-//      initialDisclosureMA = isMarketable,
-//      relevantTaxPayers = ???,
-//      disclosureInformation = ???)
-    ???
-  }
+    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-  def renderXML(userAnswers: UserAnswers): XmlFormat.Appendable = {
+    prettyPrinter.format(xml)
 
-    val header = createHeader(userAnswers)
-
-    val dac6Disclosures = createDac6Disclosures(userAnswers)
-
-//    views.xml.generateXMLForDAC(header, dac6Disclosures) //TODO Remove. Have method return a NodeSeq of everything
-    ???
   }
 }
 
@@ -241,3 +340,4 @@ case class DAC6Disclosures(disclosureImportInstruction: String,
                            initialDisclosureMA: Boolean,
                            relevantTaxPayers: RelevantTaxPayers,
                            disclosureInformation: DisclosureInformation)
+
