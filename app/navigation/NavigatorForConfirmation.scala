@@ -39,11 +39,11 @@ class NavigatorForConfirmation @Inject()() extends AbstractNavigator {
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
+    _ => _ => _ => controllers.routes.IndexController.onPageLoad()
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
+      case DefaultRouting(CheckMode)               => controllers.routes.IndexController.onPageLoad()
       case _                                       => jumpTo
     }
   }

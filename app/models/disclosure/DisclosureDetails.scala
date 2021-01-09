@@ -26,6 +26,7 @@ case class DisclosureDetails(
   initialDisclosureMA: Boolean  = false,
   messageRefId: Option[String]  = None
 )
+
 object DisclosureDetails {
 
   implicit val format: OFormat[DisclosureDetails] = Json.format[DisclosureDetails]
