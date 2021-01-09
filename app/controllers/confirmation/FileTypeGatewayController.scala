@@ -19,9 +19,9 @@ package controllers.confirmation
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
-import models.Mode
+import models.NormalMode
 import navigation.NavigatorForConfirmation
-import pages.disclosure.DisclosureDetailsPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureTypePage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,11 +37,11 @@ class FileTypeGatewayController @Inject()(
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onRouting: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(request.userAnswers.get(DisclosureDetailsPage).map(_.disclosureType)).map { disclosureType =>
-        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(mode))(disclosureType)(0))
+      Future.successful(request.userAnswers.get(DisclosureTypePage)).map { disclosureType =>
+        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(disclosureType)(0))
       }
   }
 }

@@ -381,7 +381,6 @@ POST       /intermediaries/check-answers                     controllers.interme
 # DISCLOSURE
 
 GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
-POST       /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onSubmit
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
@@ -495,6 +494,7 @@ GET        /reporter/taxpayers/change-implementation-date           controllers.
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
 # CONFIRMATION PAGES
+GET        /manual/confirmation-type                                controllers.confirmation.FileTypeGatewayController.onRouting()
 GET        /manual/disclosure-received                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad()
 GET        /manual/addition-received                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad()
 

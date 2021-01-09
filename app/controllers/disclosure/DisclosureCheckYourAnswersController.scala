@@ -18,16 +18,13 @@ package controllers.disclosure
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.mixins.RoutingSupport
+import models.UserAnswers
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.{NormalMode, UserAnswers}
-import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -36,58 +33,63 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      // TODO build rows from the disclosure details model
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val disclosureDetails: Seq[SummaryList.Row] =
+      val disclosureSummary: Seq[SummaryList.Row] =
         helper.disclosureNamePage.toSeq ++
         helper.disclosureTypePage.toSeq ++
         helper.buildDisclosureSummaryDetails
 
+      // TODO build the disclosure details model from pages
+//      val disclosureDetails: DisclosureDetails = buildDisclosureDetails(request.userAnswers)
+//
+//      for {
+//        updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
+//      } yield sessionRepository.set(updatedAnswers)
+
       renderer.render(
         "disclosure/check-your-answers-disclosure.njk",
-        Json.obj("disclosureSummary" -> disclosureDetails
+        Json.obj("disclosureSummary" -> disclosureSummary
         )
       ).map(Ok(_))
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      val disclosureDetails: DisclosureDetails = buildDisclosureDetails(request.userAnswers)
-      for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
-        _              <- sessionRepository.set(updatedAnswers)
-        checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
-      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(checkRoute)(Some(disclosureDetails))(0))
-  }
-
   def buildDisclosureDetails(userAnswers: UserAnswers): DisclosureDetails = {
 
-    userAnswers.get(DisclosureDetailsPage)
+    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage)
+      .orElse(Some(DisclosureDetails("")))
+    def getDisclosureName = userAnswers.get(DisclosureNamePage)
+    def getDisclosureType = userAnswers.get(DisclosureTypePage)
+    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage).orElse(Some(false))
+    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage)
+      .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
+
+    getDisclosureDetails
       .flatMap { details =>
-        userAnswers.get(DisclosureNamePage).map { disclosureName => details.copy(disclosureName = disclosureName) }
+        getDisclosureName.map { disclosureName => details.copy(disclosureName = disclosureName) }
       }
       .flatMap { details =>
-        userAnswers.get(DisclosureTypePage).flatMap {
+        getDisclosureType.flatMap {
         case disclosureType@DisclosureType.Dac6new =>
-          userAnswers.get(DisclosureIdentifyArrangementPage).map { arrangementID =>
-            details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID))
+          getDisclosureMarketable.map { initialDisclosureMA =>
+            details.copy(disclosureType = disclosureType, initialDisclosureMA = initialDisclosureMA)
           }
         case disclosureType@DisclosureType.Dac6add =>
-          userAnswers.get(DisclosureMarketablePage).map { initialDisclosureMA =>
-            details.copy(disclosureType = disclosureType, initialDisclosureMA = initialDisclosureMA)
+          getDisclosureIdentifyArrangement.flatMap { arrangementID =>
+            getDisclosureMarketable.map { initialDisclosureMA =>
+              details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+            }
           }
         case disclosureType@(DisclosureType.Dac6rep | DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6rep | DisclosureType.Dac6del cases
           throw new UnsupportedOperationException(s"Not yet implemented: $disclosureType")

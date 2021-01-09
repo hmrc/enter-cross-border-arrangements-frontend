@@ -25,7 +25,6 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
-import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,7 +36,9 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val disclosureCheckYourAnswersRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
   override def beforeEach: Unit = {
     reset(
@@ -51,7 +52,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, disclosureCheckYourAnswersRoute)
+    val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
     val result = route(application, request).value
 
@@ -146,6 +147,30 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertArrangementID("GBA20210101ABC123")(list(2))
         list.size mustBe 3
       }
+    }
+
+    "must be able to build disclosure details from user answers and redirect to task list" ignore {
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(DisclosureNamePage, "My arrangement")
+        .success.value
+        .set(DisclosureTypePage, DisclosureType.Dac6add)
+        .success
+        .value
+        .set(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(GET, disclosureCheckYourAnswersContinueRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details"
+
+      application.stop()
     }
 
   }

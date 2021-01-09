@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
   disclosureName: String,
-  disclosureType: DisclosureType,
+  disclosureType: DisclosureType = DisclosureType.Dac6new,
   arrangementID: Option[String] = None,
   disclosureID: Option[String]  = None,
   initialDisclosureMA: Boolean  = false,
