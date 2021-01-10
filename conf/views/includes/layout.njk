@@ -1,10 +1,19 @@
 {% extends "govuk/template.njk" %}
 {% from "macros/hmrc-header/macro.njk"            import hmrcHeader %}
-{%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {% from "includes/get-help-link.njk" import hmrcReportTechnicalIssue %}
+{% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
+
+{%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
 
+
 {% block head %}
+{{ hmrcTimeoutDialog({
+  timeout: config.timeout,
+  countdown: config.countdown,
+  keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
+  signOutUrl: routes.controllers.SignOutController.signOut().url
+}) }}
   {% include "includes/head.njk" %}
 {% endblock %}
 
