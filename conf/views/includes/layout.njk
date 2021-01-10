@@ -3,6 +3,8 @@
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {% from "includes/get-help-link.njk" import hmrcReportTechnicalIssue %}
 {% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
+
+{%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
 
 
@@ -35,8 +37,7 @@
 {% endblock %}
 
 {% block content %}
-  {% block mainContent %}
-  {% endblock %}
+  {% block mainContent %}{% endblock %}
     {{ hmrcReportTechnicalIssue({
       id: "getHelpWithThisPage",
       link: config.reportAProblemNonJSUrl,

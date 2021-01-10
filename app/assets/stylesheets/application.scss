@@ -2,12 +2,17 @@ $govuk-assets-path: "/enter-cross-border-arrangements/assets/lib/govuk-frontend/
 $hmrc-assets-path: "/enter-cross-border-arrangements/assets/lib/hmrc-frontend/hmrc/assets";
 
 @import "lib/govuk-frontend/govuk/all";
+@import "lib/hmrc-frontend/hmrc/components/header/header";
 @import "partials/header";
 @import 'patterns/add-to-a-list';
 @import 'patterns/task-list';
 @import "language-toggles.scss";
+<<<<<<< HEAD
 @import "main.scss";
+=======
+>>>>>>> DA6-299: Added unsafe inline handling
 @import "_timeout-dialog.scss";
+@import "main.css";
 
 .govuk-warning-text__icon {
     margin-top: 5px;
