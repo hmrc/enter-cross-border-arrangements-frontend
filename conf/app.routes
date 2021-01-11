@@ -577,5 +577,3 @@ POST       /reporter/individual/select-address               controllers.reporte
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-# TODO remove error test controller after qa tests
-GET       /error-test                                        controllers.ErrorTestController.onPageLoad
