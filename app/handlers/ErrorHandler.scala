@@ -44,6 +44,7 @@ class ErrorHandler @Inject()(
 
     implicit val rh: RequestHeader = request
 
+    println("XXXX")
     statusCode match {
       case BAD_REQUEST =>
         renderer.render("badRequest.njk").map(BadRequest(_))

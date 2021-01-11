@@ -3,7 +3,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("error.summary.heading")) }}
+  {{ title(messages(page + ".title")) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -12,7 +12,7 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-          <h1 class="govuk-heading-xl">{{ messages("error.summary.heading") }}</h1>
+      <h1 class="govuk-heading-xl">{{ messages(page + '.heading') }}</h1>
 
           {% if message %}
             <p class="govuk-body">
@@ -20,7 +20,7 @@
             </p>
           {% endif %}
 
-          <p class="govuk-body">{{ messages("error.summary.info") }}</p>
+          <p class="govuk-body">{{ messages(page + '.info') }}</p>
 
       </div>
   </div>
