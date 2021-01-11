@@ -16,24 +16,27 @@
 
 package renderer
 
+import models.hallmarks.HallmarkD.{D1, D2}
+import models.hallmarks.HallmarkD1.D1other
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.{Address, UserAnswers}
 import org.joda.time.DateTime
-import pages.GiveDetailsOfThisArrangementPage
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
 import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
+import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLRenderer @Inject()() {
 
-  private def buildHeader(userAnswers: UserAnswers): Elem = {
+  private[renderer] def buildHeader(userAnswers: UserAnswers): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
       case Some(disclosureName) => "GB" + disclosureName
       case None => ""
@@ -48,8 +51,7 @@ class XMLRenderer @Inject()() {
     </Header>
   }
 
-  private def buildTINData(userAnswers: UserAnswers): IndexedSeq[Option[TIN]] = {
-    //TODO Optional and repeatable
+  private[renderer] def buildTINData(userAnswers: UserAnswers): IndexedSeq[Option[TIN]] = {
     userAnswers.get(OrganisationLoopPage) match {
       case Some(value) =>
         value.map {
@@ -69,18 +71,18 @@ class XMLRenderer @Inject()() {
     }
   }
 
-  private def buildResCountryCode(userAnswers: UserAnswers): NodeSeq = {
+  private[renderer] def buildResCountryCode(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(OrganisationLoopPage) match {
       case Some(value) =>
         value.map {
           loop =>
             <ResCountryCode>{loop.whichCountry.get.code}</ResCountryCode>
         }
-      case None => NodeSeq.Empty //TODO Mandatory and Repeatable //IndexedSeq[Elem]()
+      case None => NodeSeq.Empty //TODO Mandatory and Repeatable
     }
   }
 
-  private def buildAddress(userAnswers: UserAnswers): NodeSeq = {
+  private[renderer] def buildAddress(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(OrganisationAddressPage) match {
       case Some(address) =>
         Seq(
@@ -95,8 +97,7 @@ class XMLRenderer @Inject()() {
     }
   }
 
-  def buildIDForOrganisation(userAnswers: UserAnswers) = {
-    //Mandatory
+  private[renderer] def buildIDForOrganisation(userAnswers: UserAnswers) = {
     val mandatoryOrganisationName = userAnswers.get(OrganisationNamePage) match {
       case Some(name) => name
       case None => ""
@@ -107,7 +108,7 @@ class XMLRenderer @Inject()() {
         <TIN issuedBy={tin.issuedBy}>{tin.tin}</TIN>
     }
 
-    val address = Seq(<Address>{buildAddress(userAnswers)}</Address>)
+    val address = Seq(<Address>{buildAddress(userAnswers)}</Address>) //TODO If None then it shouldn't be displayed
 
     val email = userAnswers.get(EmailAddressForOrganisationPage)
       .fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
@@ -132,7 +133,8 @@ class XMLRenderer @Inject()() {
     <ID>{organisationNodes}</ID>
   }
 
-  def buildLiability(userAnswers: UserAnswers) = {
+  private[renderer] def buildLiability(userAnswers: UserAnswers) = {
+    //TODO This is optional. If value is don't know, don't include this section
     val mandatoryRelevantTaxpayerNexus = userAnswers.get(RoleInArrangementPage) match {
       case Some(RoleInArrangement.Taxpayer) =>
         userAnswers.get(TaxpayerWhyReportInUKPage) match {
@@ -151,16 +153,16 @@ class XMLRenderer @Inject()() {
 
     val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage)
       .fold(NodeSeq.Empty)({
-        case TaxpayerWhyReportArrangement.NoIntermediaries => <Capacity>{"DAC61106"}</Capacity>
         case TaxpayerWhyReportArrangement.ProfessionalPrivilege => <Capacity>{"DAC61104"}</Capacity>
         case TaxpayerWhyReportArrangement.OutsideUKOrEU => <Capacity>{"DAC61105"}</Capacity>
-        case capacity@TaxpayerWhyReportArrangement.DoNotKnow => <Capacity>{capacity.toString.toUpperCase}</Capacity>
+        case TaxpayerWhyReportArrangement.NoIntermediaries => <Capacity>{"DAC61106"}</Capacity>
+        case TaxpayerWhyReportArrangement.DoNotKnow => <Capacity>{"TODO"}</Capacity> //TODO
       })
 
     val nodeBuffer = new xml.NodeBuffer
     val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
     val relevantTaxPayersNode = {
-        nodeBuffer ++
+      nodeBuffer ++
         Seq(<RelevantTaxpayerNexus>{mandatoryRelevantTaxpayerNexus}</RelevantTaxpayerNexus>) ++
         capacity
     }
@@ -169,7 +171,7 @@ class XMLRenderer @Inject()() {
     <Liability>{relevantTaxPayersNode}</Liability>
   }
 
-  def buildRelevantTaxPayers(userAnswers: UserAnswers) = {
+  private[renderer] def buildRelevantTaxPayers(userAnswers: UserAnswers) = {
 
     val mandatoryImplementingDate: NodeSeq =
       (userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage),
@@ -197,7 +199,7 @@ class XMLRenderer @Inject()() {
     <RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>
   }
 
-  private def buildDisclosureInformationSummary(userAnswers: UserAnswers) = {
+  private[renderer] def buildDisclosureInformationSummary(userAnswers: UserAnswers) = {
     val mandatoryDisclosureName = userAnswers.get(WhatIsThisArrangementCalledPage) match {
       case Some(name) => Seq(<Disclosure_Name>{name}</Disclosure_Name>)
       case None => NodeSeq.Empty
@@ -223,7 +225,65 @@ class XMLRenderer @Inject()() {
     </Summary>
   }
 
-  private def buildDisclosureInformation(userAnswers: UserAnswers) = {
+  private[renderer] def buildConcernedMS(userAnswers: UserAnswers) = {
+    val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
+      case Some(countries) =>
+        countries.map {
+          country =>
+            <ConcernedMS>{country.toString}</ConcernedMS>
+        }
+      case None => Set.empty[Elem]
+    }
+
+    <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
+  }
+
+  private[renderer] def buildHallmarks(userAnswers: UserAnswers) = {
+
+    val mandatoryHallmarks: Set[Elem] = {
+      userAnswers.get(HallmarkDPage) match {
+        case Some(hallmarkDSet) =>
+          hallmarkDSet.flatMap {
+            hallmark =>
+              if (hallmark == D1) {
+                userAnswers.get(HallmarkD1Page) match {
+                  case Some(hallmarkSet) =>
+                    hallmarkSet.map(hallmark =>
+                      <Hallmark>{hallmark.toString}</Hallmark>
+                    )
+                  case None => Set.empty[Elem]
+                }
+              } else {
+                Set(<Hallmark>{D2.toString}</Hallmark>)
+              }
+          }
+        case _ => Set.empty[Elem]
+      }
+    }
+
+    val dac6D1OtherInfo: NodeSeq = userAnswers.get(HallmarkD1Page) match {
+      case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
+        userAnswers.get(HallmarkD1OtherPage) match {
+          case Some(description) =>
+            val splitString = description.grouped(10).toList
+
+            splitString.map(string =>
+              <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>
+            )
+          case None => NodeSeq.Empty
+        }
+      case _ => NodeSeq.Empty
+    }
+
+    <Hallmarks>
+      <ListHallmarks>
+        {mandatoryHallmarks}
+      </ListHallmarks>
+      {dac6D1OtherInfo}
+    </Hallmarks>
+  }
+
+  private[renderer] def buildDisclosureInformation(userAnswers: UserAnswers) = {
 
     val mandatoryImplementingDate = userAnswers.get(WhatIsTheImplementationDatePage) match {
       case Some(date) => Seq(<ImplementingDate>{date}</ImplementingDate>)
@@ -237,23 +297,38 @@ class XMLRenderer @Inject()() {
       case _ => NodeSeq.Empty
     }
 
-    <DisclosureInformation>
-      {mandatoryImplementingDate}
-      {reason}
-      {buildDisclosureInformationSummary(userAnswers)}
-      <NationalProvision>I don't know what this is as I am just a cat</NationalProvision>
-      <Amount currCode="GBP">4000</Amount>
-      <ConcernedMSs>
-        <ConcernedMS>CZ</ConcernedMS>
-      </ConcernedMSs>
-      <MainBenefitTest1>false</MainBenefitTest1>
-      <Hallmarks>
-        <ListHallmarks>
-          <Hallmark>DAC6D1Other</Hallmark>
-        </ListHallmarks>
-        <DAC6D1OtherInfo>blah blah blah</DAC6D1OtherInfo>
-      </Hallmarks>
+    val mandatoryNationalProvision: NodeSeq = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) match {
+      case Some(nationalProvisions) =>
+        val splitString = nationalProvisions.grouped(10).toList
+
+        splitString.map(string =>
+          <NationalProvision>{string}</NationalProvision>
+        )
+      case None => NodeSeq.Empty
+    }
+
+    val mandatoryAmountType: NodeSeq = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
+      case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
+      case None => NodeSeq.Empty
+    }
+
+    //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
+    val xml =
+      <DisclosureInformation>
+        {mandatoryImplementingDate}
+        {reason}
+        {buildDisclosureInformationSummary(userAnswers)}
+        {mandatoryNationalProvision}
+        {mandatoryAmountType}
+        {buildConcernedMS(userAnswers)}
+        <MainBenefitTest1>false</MainBenefitTest1>
+        {buildHallmarks(userAnswers)}
     </DisclosureInformation>
+
+    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
+    prettyPrinter.format(xml)
+    xml
   }
 
   def renderXML(userAnswers: UserAnswers) = {
@@ -278,6 +353,7 @@ class XMLRenderer @Inject()() {
           </Disclosing>
           <InitialDisclosureMA>{mandatoryInitialDisclosureMA}</InitialDisclosureMA>
           {buildRelevantTaxPayers(userAnswers)}
+          {buildDisclosureInformation(userAnswers)}
         </DAC6Disclosures>
       </DAC6_Arrangement>
 
@@ -290,7 +366,6 @@ class XMLRenderer @Inject()() {
 
 
 /*===================================Models below=================================*/
-
 
 //case class XMLHeader(messageRefId: String,
 //                     timestamp: String)
