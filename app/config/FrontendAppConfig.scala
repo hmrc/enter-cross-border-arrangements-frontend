@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
   private val contactHost = configuration.get[String]("contact-frontend.host")
-  private val feedbackFrontend = servicesConfig.baseUrl("feedback-frontend")
   private val contactFormServiceIdentifier = "DAC6"
 
   lazy val countryCodeJson: String = configuration.get[String]("json.countries")
@@ -42,7 +41,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String             = s"$feedbackFrontend/feedback/enter-for-cross-border-arrangements"
+  val signOutUrl: String             = configuration.get[String]("urls.logout")
   lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
   lazy val discloseArrangeLink: String = configuration.get[String]("urls.homepage")
 
