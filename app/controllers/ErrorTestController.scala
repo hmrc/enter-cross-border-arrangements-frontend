@@ -18,15 +18,13 @@ package controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ErrorTestController @Inject()(
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+    val controllerComponents: MessagesControllerComponents
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action.async {
