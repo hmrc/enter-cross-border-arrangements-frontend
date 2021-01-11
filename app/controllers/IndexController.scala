@@ -31,7 +31,8 @@ class IndexController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-      renderer.render("index.njk").map(Ok(_))
+   def onPageLoad: Action[AnyContent] = identify .async { implicit request =>
+
+    renderer.render("index.njk").map(Ok(_))
   }
 }

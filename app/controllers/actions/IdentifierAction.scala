@@ -24,6 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -38,14 +39,26 @@ class AuthenticatedIdentifierAction @Inject()(
                                              )
                                              (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
 
+  private val enrolmentKey: String = "HMRC-DAC6-ORG"
+  private val enrolmentIDKey: String = "DAC6ID"
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
+    authorised(Enrolment(enrolmentKey)).retrieve(Retrievals.internalId and Retrievals.authorisedEnrolments) {
+
+      case Some(internalID) ~ Enrolments(enrolments) =>
+        val enrolmentID = {
+          (for {
+            enrolment <- enrolments.find(_.key.equals(enrolmentKey))
+            enrolmentIdentifier <- enrolment.getIdentifier(enrolmentIDKey)
+          } yield enrolmentIdentifier.value)
+            .getOrElse(throw new Exception("EnrolmentID Required for DAC6"))
+        }
+
+        block(IdentifierRequest(request, internalID, enrolmentID))
+      case None ~ _ => throw new UnauthorizedException("Unable to retrieve internal Id")
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
@@ -67,7 +80,7 @@ class SessionIdentifierAction @Inject()(
 
     hc.sessionId match {
       case Some(session) =>
-        block(IdentifierRequest(request, session.value))
+        block(IdentifierRequest(request, session.value, "EnrolmentID"))
       case None =>
         Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
     }
