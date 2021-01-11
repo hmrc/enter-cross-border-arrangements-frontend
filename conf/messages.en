@@ -20,6 +20,8 @@ site.selectAllThatApply = Select all that apply.
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
+error.summary.heading = Sorry, there is a problem with this service.
+error.summary.info = If you entered any information, your answers will be saved.
 
 footer.links.support_links = Cysylltiadau cymorth
 footer.links.help = Help using GOV.UK
