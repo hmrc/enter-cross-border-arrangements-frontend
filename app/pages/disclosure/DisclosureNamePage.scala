@@ -16,12 +16,15 @@
 
 package pages.disclosure
 
-import pages.QuestionPage
+import models.disclosure.DisclosureDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object DisclosureNamePage extends QuestionPage[String] {
+case object DisclosureNamePage extends DetailsPage[String, DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "disclosureName"
+
+  override def getFromModel(model: DisclosureDetails): String = model.disclosureName
 }

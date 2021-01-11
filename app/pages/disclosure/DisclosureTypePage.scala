@@ -17,13 +17,13 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.DisclosureType
-import pages.QuestionPage
+import models.disclosure.{DisclosureDetails, DisclosureType}
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object DisclosureTypePage extends QuestionPage[DisclosureType] {
+case object DisclosureTypePage extends DetailsPage[DisclosureType, DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -38,4 +38,6 @@ case object DisclosureTypePage extends QuestionPage[DisclosureType] {
         userAnswers.remove(DisclosureMarketablePage)
       case None =>     super.cleanup(value, userAnswers)
     }
+
+  override def getFromModel(model: DisclosureDetails): DisclosureType = model.disclosureType
 }

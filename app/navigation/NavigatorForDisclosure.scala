@@ -47,6 +47,8 @@ class NavigatorForDisclosure @Inject()() extends AbstractNavigator {
     case DisclosureIdentifyArrangementPage =>
       _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
 
+    case DisclosureDetailsPage =>
+      _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad()
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>

@@ -16,6 +16,13 @@
 
 package pages
 
-import queries.{Gettable, Settable}
+import models.UserAnswers
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A]
+import scala.util.Try
+
+trait ModelPage[A] extends QuestionPage[A] {
+
+  def restore(userAnswers: UserAnswers): Try[UserAnswers]
+
+  def build(userAnswers: UserAnswers): A
+}

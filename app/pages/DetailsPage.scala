@@ -16,6 +16,14 @@
 
 package pages
 
-import queries.{Gettable, Settable}
+import models.UserAnswers
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A]
+import scala.util.Try
+
+trait DetailsPage[A, M] extends QuestionPage[A] {
+
+  def remove(userAnswers: Try[UserAnswers]): Try[UserAnswers] =
+    userAnswers.map(_.remove(this)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
+
+  def getFromModel(model: M): A
+}

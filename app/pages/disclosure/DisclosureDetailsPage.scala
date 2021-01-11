@@ -17,13 +17,13 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.DisclosureDetails
-import pages.QuestionPage
-import play.api.libs.json.{JsPath, Reads}
+import models.disclosure.{DisclosureDetails, DisclosureType}
+import pages.ModelPage
+import play.api.libs.json.JsPath
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
-case object DisclosureDetailsPage extends QuestionPage[DisclosureDetails] {
+case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -36,5 +36,48 @@ case object DisclosureDetailsPage extends QuestionPage[DisclosureDetails] {
       DisclosureIdentifyArrangementPage,
       DisclosureMarketablePage
     ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
+
+  def restore(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers.get(DisclosureDetailsPage)
+      .fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
+        userAnswers.set(DisclosureNamePage, DisclosureNamePage.getFromModel(disclosureDetails))
+          .flatMap(_.set(DisclosureTypePage, DisclosureTypePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureMarketablePage, DisclosureMarketablePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureIdentifyArrangementPage, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
+          .flatMap(_.remove(DisclosureDetailsPage))
+      }
+
+  def build(userAnswers: UserAnswers): DisclosureDetails = {
+
+    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage)
+      .orElse(Some(DisclosureDetails("")))
+    def getDisclosureName = userAnswers.get(DisclosureNamePage)
+    def getDisclosureType = userAnswers.get(DisclosureTypePage)
+    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage).orElse(Some(false))
+    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage)
+      .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
+
+    getDisclosureDetails
+      .flatMap { details =>
+        getDisclosureName.map { disclosureName => details.copy(disclosureName = disclosureName) }
+      }
+      .flatMap { details =>
+        getDisclosureType.flatMap {
+          case disclosureType@DisclosureType.Dac6new =>
+            getDisclosureMarketable.map { initialDisclosureMA =>
+              details.copy(disclosureType = disclosureType, initialDisclosureMA = initialDisclosureMA)
+            }
+          case disclosureType@DisclosureType.Dac6add =>
+            getDisclosureIdentifyArrangement.flatMap { arrangementID =>
+              getDisclosureMarketable.map { initialDisclosureMA =>
+                details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+              }
+            }
+          case disclosureType@(DisclosureType.Dac6rep | DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6rep | DisclosureType.Dac6del cases
+            throw new UnsupportedOperationException(s"Not yet implemented: $disclosureType")
+        }
+      }
+      .getOrElse(throw new IllegalStateException("Unable to build disclose details"))
+  }
 
 }
