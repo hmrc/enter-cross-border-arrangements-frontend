@@ -19,6 +19,10 @@ package controllers.reporter
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import handlers.ErrorHandler
+import models.ReporterOrganisationOrIndividual.Organisation
+import models.UserAnswers
+import models.reporter.RoleInArrangement.Intermediary
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ReporterCheckYourAnswersController  @Inject()(
    override val messagesApi: MessagesApi,
@@ -42,8 +46,50 @@ class ReporterCheckYourAnswersController  @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      // TODO this is a placeholder, implement CYA page when available.
-      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
+
+      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, helper)
+      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter
+      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, helper)
+
+      renderer.render(
+        "reporter/reporterCheckYourAnswers.njk",
+        Json.obj("reporterDetails" -> reporterDetails,
+          "residentCountryDetails" -> residentCountryDetails,
+          "roleDetails" -> roleDetails
+
+        )
+      ).map(Ok(_))
   }
 
+  private def getOrganisationOrIndividualSummary(ua: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(ReporterOrganisationOrIndividualPage) match {
+      case Some(Organisation) =>
+        helper.reporterOrganisationOrIndividual.toSeq ++
+        helper.reporterOrganisationName.toSeq ++
+        helper.buildOrganisationReporterAddressGroup ++
+        helper.buildReporterOrganisationEmailGroup
+
+      case _ => helper.reporterOrganisationOrIndividual.toSeq ++
+        helper.reporterIndividualName.toSeq ++
+        helper.buildIndividualReporterAddressGroup ++
+        helper.buildReporterIndividualEmailGroup
+    }
+  }
+
+  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(RoleInArrangementPage) match {
+      case Some(Intermediary) =>
+        Seq(helper.roleInArrangementPage ++
+          helper.intermediaryWhyReportInUKPage ++
+          helper.intermediaryRolePage ++
+          helper.buildExemptCountriesSummary).flatten
+
+      case _ =>
+        Seq(helper.roleInArrangementPage ++
+          helper.buildTaxpayerReporterReasonGroup ++
+          helper.taxpayerImplementationDate).flatten
+
+    }
+  }
 }

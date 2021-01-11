@@ -25,4 +25,12 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterOrganisationOrIndividual"
+
+//  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
+//    List(
+//      DisclosureNamePage,
+//      DisclosureTypePage,
+//      DisclosureIdentifyArrangementPage,
+//      DisclosureMarketablePage
+//    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
 }

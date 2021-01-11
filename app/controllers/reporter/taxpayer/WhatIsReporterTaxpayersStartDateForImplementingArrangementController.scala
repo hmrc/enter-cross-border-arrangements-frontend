@@ -19,17 +19,19 @@ package controllers.reporter.taxpayer
 import java.time.LocalDate
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import helpers.DateHelper.dateFormatterNumericDMY
 import helpers.JourneyHelpers._
 import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{Mode, UserAnswers}
-import navigation.Navigator
-import pages.reporter.{ReporterOrganisationOrIndividualPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
+import navigation.NavigatorForReporter
+import pages.reporter.ReporterOrganisationOrIndividualPage
+import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,24 +42,27 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhatIsTaxpayersStartDateForImplementingArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   val numberOfMonthsToAdd = 6
   val form = formProvider()
 
-  private def actionUrl(mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode).url
+  private def redirect(checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
+    navigator.routeMap(ReporterTaxpayersStartDateForImplementingArrangementPage)(checkRoute)(value)(index)
+
+  private def actionUrl(mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage) match {
+      val preparedForm = request.userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -96,9 +101,10 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, mode, updatedAnswers))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 

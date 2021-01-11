@@ -107,8 +107,8 @@ class ReporterTinNonUKQuestionController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTinNonUKQuestionPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, taxResidencyLoopDetails))
+            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))
         }

@@ -129,11 +129,11 @@ class ReporterNonUKTaxNumbersController @Inject()(
   private def getReporterTaxResidentLoopDetails(value: TaxReferenceNumbers, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
     userAnswers.get(ReporterTaxResidencyLoopPage) match {
       case None =>
-        val newResidencyLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
+        val newResidencyLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
         IndexedSeq[LoopDetails](newResidencyLoop)
       case Some(list) =>
         if (list.lift(index).isDefined) {
-          val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))
+          val updatedLoop = list.lift(index).get.copy(taxNumbersNonUK = Some(value))
           list.updated(index, updatedLoop)
         } else {
           list

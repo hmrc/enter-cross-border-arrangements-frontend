@@ -43,7 +43,7 @@ object IntermediaryWhyReportInUK extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"whyReportInUK.taxResidentUk", TaxResidentUK.toString),
+      Radios.Radio(msg"whyReportInUK.taxResidentUK", TaxResidentUK.toString),
       Radios.Radio(msg"whyReportInUK.permanentEstablishment", PermanentEstablishment.toString),
       Radios.Radio(msg"whyReportInUK.governedByLaw", GovernedByLaw.toString),
       Radios.Radio(msg"whyReportInUK.registeredWithAssociated", RegisteredWithAssociated.toString),

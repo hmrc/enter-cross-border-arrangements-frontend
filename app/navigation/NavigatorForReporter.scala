@@ -31,7 +31,7 @@ import pages.disclosure.DisclosureMarketablePage
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.Call
 
 @Singleton
@@ -87,19 +87,19 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case IntermediaryExemptionInEUPage => checkRoute => value => _ => value match {
       case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(checkRoute.mode)
-      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
-
+      case _ => routes.ReporterCheckYourAnswersController.onPageLoad()
     }
 
     case IntermediaryDoYouKnowExemptionsPage => checkRoute => value => _ => value match {
       case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(checkRoute.mode)
-      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to CYA when built
+      case _ => routes.ReporterCheckYourAnswersController.onPageLoad()
     }
 
     case IntermediaryWhichCountriesExemptPage => checkRoute => _ => _ =>
-      routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
+      controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad()
 
-
+    case ReporterTaxpayersStartDateForImplementingArrangementPage => _ =>_ =>_ =>
+      controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad()
     // Reporter - Taxpayer Journey Navigation
 
     case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
