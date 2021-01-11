@@ -52,7 +52,6 @@ class TaskListController @Inject()(
         _.fold(
             //did it fail? oh my god - hand back to the user to fix
             errors => {
-
               val json = Json.obj(
                 "errors" -> errors
               )
@@ -62,7 +61,7 @@ class TaskListController @Inject()(
             //did it succeed - hand off to the backend to do it's generating thing
             messageRefId => {
               val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
-              val submission = transformationService.constructSubmission("manual-submission.xml", ???, uniqueXmlSubmission)
+              val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
               for {
                 ids <- crossBorderArrangementsConnector.submitXML(submission)
                 userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, ids))

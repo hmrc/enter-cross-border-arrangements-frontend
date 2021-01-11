@@ -50,6 +50,6 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
   )
 
   def submitXML(xml:NodeSeq)(implicit hc: HeaderCarrier): Future[GeneratedIDs] =
-    httpClient.POSTString[GeneratedIDs](s"$baseUrl/something-else", xml.mkString, headers)
+    httpClient.POSTString[GeneratedIDs](s"$baseUrl/submit", xml.mkString, headers)
 
 }

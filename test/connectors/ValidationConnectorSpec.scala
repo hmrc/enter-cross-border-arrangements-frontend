@@ -37,11 +37,11 @@ class ValidationConnectorSpec  extends SpecBase
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      conf = "microservice.services.disclose-cross-border-arrangements-frontend.port" -> server.port()
+      conf = "microservice.services.cross-border-arrangements.port" -> server.port()
     ).build()
 
   lazy val connector: ValidationConnector = app.injector.instanceOf[ValidationConnector]
-  val validationUrl = "/validate-manual-submission"
+  val validationUrl = "/disclose-cross-border-arrangements/validate-manual-submission"
 
   val successPayload =
     """

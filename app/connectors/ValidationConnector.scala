@@ -19,8 +19,9 @@ package connectors
 import config.FrontendAppConfig
 import models.{ManualSubmissionValidationFailure, ManualSubmissionValidationResult, ManualSubmissionValidationSuccess}
 import play.api.Logger
+import play.api.http.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.Elem
@@ -28,11 +29,16 @@ import scala.xml.Elem
 class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
   private val logger: Logger = Logger(this.getClass)
 
-  val url = s"${config.discloseCrossBorderArrangementsFrontendUrl}/validate-manual-submission"
+  val url = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/validate-manual-submission"
 
-  def sendForValidation(xml: Elem)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[Either[Seq[String], String]] =
-    http.POST[String, ManualSubmissionValidationResult](url, xml.mkString).map {
+  private val headers = Seq(
+    HeaderNames.CONTENT_TYPE -> "application/xml"
+  )
+
+  def sendForValidation(xml: Elem)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[Either[Seq[String], String]] = {
+    http.POSTString[ManualSubmissionValidationResult](url, xml.mkString, headers).map {
       case ManualSubmissionValidationSuccess(a) => Right(a)
       case ManualSubmissionValidationFailure(a) => Left(a)
     }
+  }
 }
