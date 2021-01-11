@@ -32,7 +32,7 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
   }
 
   def isMarketableArrangementUrl(arrangementId: String): String = {
-    s"$baseUrl/is-marketable-arrangement/$arrangementId"
+    s"$baseUrl/history/is-marketable-arrangement/$arrangementId"
   }
 
   def verifyArrangementId(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
