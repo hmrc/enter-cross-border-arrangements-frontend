@@ -146,21 +146,6 @@ class AuthActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
     }
-
-//    "when the user has the correct DAC6 enrolment" - {
-//      "must extract the enrolmentID correctly" in { //TODO Include once enrolment details have been set up
-//        val retrievals = Some("internalID") ~ Enrolments(Set(Enrolment("DAC6", Seq(EnrolmentIdentifier("EnrolmentID", "thisismyenrolmentID")), "ACTIVE")))
-//
-//     //   val retrievals = new ~(Some("internalID"), Enrolments(Set(Enrolment("DAC6", Seq(EnrolmentIdentifier("EnrolmentID", "thisismyenrolmentID")), "ACTIVE"))))
-//        val retrievalsResult = new ~(Some("Organisation"), Enrolments(Set.empty))
-//
-//        val controller = Harness.successful(retrievalsResult)
-//        val result = controller.onPageLoad()(fakeRequest)
-//
-//        status(result) mustBe OK
-//        contentAsString(result) mustBe "Identifier: internalID, EnrolmentID: thisismyenrolmentID"
-//      }
-//    }
   }
 }
 
