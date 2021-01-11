@@ -14,6 +14,15 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /sign-out                                    controllers.SignOutController.signOut
 
+GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
+
+
+
+# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
+
+GET        /manual/your-disclosure-details                         controllers.DisclosureDetailsController.onPageLoad()
+
+
 
 # HALLMARK ROUTES
 
@@ -338,8 +347,7 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 
 GET        /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = NormalMode)
@@ -367,6 +375,7 @@ GET        /intermediaries/change-exemption-known           controllers.intermed
 POST       /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
 
 GET       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
+POST       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
 
 # DISCLOSURE

@@ -35,6 +35,7 @@ case object TaxpayerSelectTypePage extends QuestionPage[SelectType] {
     value match {
       case Some(SelectType.Organisation) =>
         userAnswers.remove(IndividualNamePage)
+          .flatMap(_.remove(IsIndividualDateOfBirthKnownPage))
           .flatMap(_.remove(IndividualDateOfBirthPage))
           .flatMap(_.remove(IsIndividualPlaceOfBirthKnownPage))
           .flatMap(_.remove(IndividualPlaceOfBirthPage))

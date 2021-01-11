@@ -42,7 +42,7 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Mocki
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val youHaveNotAddedAnyIntermediariesRoute = routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(NormalMode).url
+  lazy val youHaveNotAddedAnyIntermediariesRoute = routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad().url
 
   val formProvider = new YouHaveNotAddedAnyIntermediariesFormProvider()
   val form = formProvider()

@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package forms.disclosure
+package pages.intermediaries
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import pages.Page
 
-class DisclosureNameFormProvider @Inject() extends Mappings {
-  private val length = 150
-  def apply(): Form[String] =
-    Form(
-      "disclosureName" -> maxLengthText("disclosureName.error.required", "disclosureName.error.length", length)
-    )
+case object IntermediariesCheckYourAnswersPage extends Page {
+  override def toString: String = "intermediariesCheckYourAnswers"
 }

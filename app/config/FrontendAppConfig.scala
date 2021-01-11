@@ -26,9 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-//  private val contactHost = configuration.get[String]("contact-frontend.host")
-  private val contactHost = servicesConfig.baseUrl("contact-frontend")
-  private val feedbackFrontend = servicesConfig.baseUrl("feedback-frontend")
+  private val contactHost = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "DAC6"
 
   lazy val countryCodeJson: String = configuration.get[String]("json.countries")
@@ -37,13 +35,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val analyticsHost: String = configuration.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
-  val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
+  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String             = s"$feedbackFrontend/feedback/enter-for-cross-border-arrangements"
+  val signOutUrl: String             = configuration.get[String]("urls.logout")
   lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
   lazy val discloseArrangeLink: String = configuration.get[String]("urls.homepage")
 
@@ -52,6 +50,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
+
+  lazy val timeoutSeconds: String = configuration.get[String]("session.timeoutSeconds")
+  lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
