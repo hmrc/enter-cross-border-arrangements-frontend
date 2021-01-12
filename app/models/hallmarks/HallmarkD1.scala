@@ -25,13 +25,13 @@ sealed trait HallmarkD1
 
 object HallmarkD1 extends Enumerable.Implicits {
 
-  case object D1a extends WithName("D1a") with HallmarkD1
-  case object D1b extends WithName("D1b") with HallmarkD1
-  case object D1c extends WithName("D1c") with HallmarkD1
-  case object D1d extends WithName("D1d") with HallmarkD1
-  case object D1e extends WithName("D1e") with HallmarkD1
-  case object D1f extends WithName("D1f") with HallmarkD1
-  case object D1other extends WithName("D1other") with HallmarkD1
+  case object D1a extends WithName("DAC6D1a") with HallmarkD1
+  case object D1b extends WithName("DAC6D1b") with HallmarkD1
+  case object D1c extends WithName("DAC6D1c") with HallmarkD1
+  case object D1d extends WithName("DAC6D1d") with HallmarkD1
+  case object D1e extends WithName("DAC6D1e") with HallmarkD1
+  case object D1f extends WithName("DAC6D1f") with HallmarkD1
+  case object D1other extends WithName("DAC6D1Other") with HallmarkD1
 
   val values: Seq[HallmarkD1] = Seq(
     D1a,

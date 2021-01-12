@@ -19,7 +19,8 @@ package renderer
 import models.hallmarks.HallmarkD.{D1, D2}
 import models.hallmarks.HallmarkD1.D1other
 import models.reporter.RoleInArrangement
-import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.reporter.taxpayer.TaxpayerWhyReportInUK
+import models.requests.DataRequest
 import models.{Address, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
@@ -30,15 +31,17 @@ import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyRep
 import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
 import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+import play.api.mvc.AnyContent
 
 import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLRenderer @Inject()() {
 
-  private[renderer] def buildHeader(userAnswers: UserAnswers): Elem = {
+  private[renderer] def buildHeader(userAnswers: UserAnswers)
+                                   (implicit request: DataRequest[AnyContent]): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
-      case Some(disclosureName) => "GB" + disclosureName
+      case Some(disclosureName) => "GB" + request.internalId +disclosureName
       case None => ""
     }
 
@@ -97,7 +100,7 @@ class XMLRenderer @Inject()() {
     }
   }
 
-  private[renderer] def buildIDForOrganisation(userAnswers: UserAnswers) = {
+  private[renderer] def buildIDForOrganisation(userAnswers: UserAnswers): Elem = {
     val mandatoryOrganisationName = userAnswers.get(OrganisationNamePage) match {
       case Some(name) => name
       case None => ""
@@ -116,7 +119,6 @@ class XMLRenderer @Inject()() {
     val mandatoryResCountryCode: NodeSeq = buildResCountryCode(userAnswers)
 
     val nodeBuffer = new xml.NodeBuffer
-    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
     val organisationNodes = {
       <Organisation>
@@ -129,46 +131,35 @@ class XMLRenderer @Inject()() {
       </Organisation>
     }
 
-    prettyPrinter.format(<ID>{organisationNodes}</ID>)
     <ID>{organisationNodes}</ID>
   }
 
-  private[renderer] def buildLiability(userAnswers: UserAnswers) = {
+  private[renderer] def buildLiability(userAnswers: UserAnswers): Elem = {
     //TODO This is optional. If value is don't know, don't include this section
-    val mandatoryRelevantTaxpayerNexus = userAnswers.get(RoleInArrangementPage) match {
-      case Some(RoleInArrangement.Taxpayer) =>
-        userAnswers.get(TaxpayerWhyReportInUKPage) match {
-          case Some(value) =>
-            value match {
-              case TaxpayerWhyReportInUK.UkTaxResident => "RTNEXa"
-              case TaxpayerWhyReportInUK.UkPermanentEstablishment => "RTNEXb"
-              case TaxpayerWhyReportInUK.IncomeOrProfit => "RTNEXc"
-              case TaxpayerWhyReportInUK.UkActivity => "RTNEXd"
-              case TaxpayerWhyReportInUK.DoNotKnow => ""
-            }
-          case None => ""
-        }
-      case _ => ""
+    //Note: If Taxpayer is selected, it's mandatory
+    val mandatoryRelevantTaxpayerNexus: NodeSeq =
+      (userAnswers.get(RoleInArrangementPage), userAnswers.get(TaxpayerWhyReportInUKPage)) match {
+        case (Some(RoleInArrangement.Taxpayer), Some(taxpayerWhyReportInUK)) if taxpayerWhyReportInUK != TaxpayerWhyReportInUK.DoNotKnow =>
+          <RelevantTaxpayerNexus>{taxpayerWhyReportInUK.toString}</RelevantTaxpayerNexus>
+        case (Some(RoleInArrangement.Taxpayer), None) =>
+          throw new Exception("Missing report details when building RelevantTaxpayerNexus")
+        case _ => NodeSeq.Empty
     }
 
     val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage)
-      .fold(NodeSeq.Empty)({
-        case TaxpayerWhyReportArrangement.ProfessionalPrivilege => <Capacity>{"DAC61104"}</Capacity>
-        case TaxpayerWhyReportArrangement.OutsideUKOrEU => <Capacity>{"DAC61105"}</Capacity>
-        case TaxpayerWhyReportArrangement.NoIntermediaries => <Capacity>{"DAC61106"}</Capacity>
-        case TaxpayerWhyReportArrangement.DoNotKnow => <Capacity>{"TODO"}</Capacity> //TODO
-      })
+      .fold(NodeSeq.Empty)(capacity => <Capacity>{capacity.toString}</Capacity>)
 
     val nodeBuffer = new xml.NodeBuffer
-    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
     val relevantTaxPayersNode = {
       nodeBuffer ++
-        Seq(<RelevantTaxpayerNexus>{mandatoryRelevantTaxpayerNexus}</RelevantTaxpayerNexus>) ++
+        mandatoryRelevantTaxpayerNexus ++
         capacity
     }
 
-    prettyPrinter.format(<Liability>{relevantTaxPayersNode}</Liability>)
-    <Liability>{relevantTaxPayersNode}</Liability>
+    <Liability>
+      <RelevantTaxpayerDiscloser>{relevantTaxPayersNode}</RelevantTaxpayerDiscloser>
+    </Liability>
   }
 
   private[renderer] def buildRelevantTaxPayers(userAnswers: UserAnswers) = {
@@ -193,13 +184,10 @@ class XMLRenderer @Inject()() {
       </RelevantTaxpayer>
     }
 
-    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-    prettyPrinter.format(<RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>)
     <RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>
   }
 
-  private[renderer] def buildDisclosureInformationSummary(userAnswers: UserAnswers) = {
+  private[renderer] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName = userAnswers.get(WhatIsThisArrangementCalledPage) match {
       case Some(name) => Seq(<Disclosure_Name>{name}</Disclosure_Name>)
       case None => NodeSeq.Empty
@@ -225,7 +213,7 @@ class XMLRenderer @Inject()() {
     </Summary>
   }
 
-  private[renderer] def buildConcernedMS(userAnswers: UserAnswers) = {
+  private[renderer] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
     val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
       case Some(countries) =>
         countries.map {
@@ -238,7 +226,7 @@ class XMLRenderer @Inject()() {
     <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
-  private[renderer] def buildHallmarks(userAnswers: UserAnswers) = {
+  private[renderer] def buildHallmarks(userAnswers: UserAnswers): Elem = {
 
     val mandatoryHallmarks: Set[Elem] = {
       userAnswers.get(HallmarkDPage) match {
@@ -283,7 +271,7 @@ class XMLRenderer @Inject()() {
     </Hallmarks>
   }
 
-  private[renderer] def buildDisclosureInformation(userAnswers: UserAnswers) = {
+  private[renderer] def buildDisclosureInformation(userAnswers: UserAnswers): Elem = {
 
     val mandatoryImplementingDate = userAnswers.get(WhatIsTheImplementationDatePage) match {
       case Some(date) => Seq(<ImplementingDate>{date}</ImplementingDate>)
@@ -313,25 +301,20 @@ class XMLRenderer @Inject()() {
     }
 
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    val xml =
-      <DisclosureInformation>
-        {mandatoryImplementingDate}
-        {reason}
-        {buildDisclosureInformationSummary(userAnswers)}
-        {mandatoryNationalProvision}
-        {mandatoryAmountType}
-        {buildConcernedMS(userAnswers)}
-        <MainBenefitTest1>false</MainBenefitTest1>
-        {buildHallmarks(userAnswers)}
+    <DisclosureInformation>
+      {mandatoryImplementingDate}
+      {reason}
+      {buildDisclosureInformationSummary(userAnswers)}
+      {mandatoryNationalProvision}
+      {mandatoryAmountType}
+      {buildConcernedMS(userAnswers)}
+      <MainBenefitTest1>false</MainBenefitTest1>
+      {buildHallmarks(userAnswers)}
     </DisclosureInformation>
-
-    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-    prettyPrinter.format(xml)
-    xml
   }
 
-  def renderXML(userAnswers: UserAnswers) = {
+  def renderXML(userAnswers: UserAnswers)
+               (implicit request: DataRequest[AnyContent]): String = {
     val mandatoryDisclosureImportInstruction = userAnswers.get(DisclosureTypePage) match {
       case Some(value) => value.toString.toUpperCase
       case None => ""
@@ -343,9 +326,9 @@ class XMLRenderer @Inject()() {
     }
 
     val xml =
-      <DAC6_Arrangement version="First">
+      <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+        {buildHeader(userAnswers)}
         <DAC6Disclosures>
-          {buildHeader(userAnswers)}
           <DisclosureImportInstruction>{mandatoryDisclosureImportInstruction}</DisclosureImportInstruction>
           <Disclosing>
             {buildIDForOrganisation(userAnswers)}

@@ -24,10 +24,10 @@ sealed trait TaxpayerWhyReportInUK
 
 object TaxpayerWhyReportInUK extends Enumerable.Implicits {
 
-  case object UkTaxResident extends WithName("ukTaxResident") with TaxpayerWhyReportInUK
-  case object UkPermanentEstablishment extends WithName("ukPermanentEstablishment") with TaxpayerWhyReportInUK
-  case object IncomeOrProfit extends WithName("incomeOrProfit") with TaxpayerWhyReportInUK
-  case object UkActivity extends WithName("ukActivity") with TaxpayerWhyReportInUK
+  case object UkTaxResident extends WithName("RTNEXa") with TaxpayerWhyReportInUK
+  case object UkPermanentEstablishment extends WithName("RTNEXb") with TaxpayerWhyReportInUK
+  case object IncomeOrProfit extends WithName("RTNEXc") with TaxpayerWhyReportInUK
+  case object UkActivity extends WithName("RTNEXd") with TaxpayerWhyReportInUK
   case object DoNotKnow extends WithName("doNotKnow") with TaxpayerWhyReportInUK
 
   val values: Seq[TaxpayerWhyReportInUK] = Seq(
