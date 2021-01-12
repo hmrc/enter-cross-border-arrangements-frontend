@@ -46,7 +46,7 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
           ReporterIndividualPostcodePage,
           ReporterIndividualSelectAddressPage,
           ReporterIsIndividualAddressUKPage
-        ).foldLeft(Try(userAnswers)) { case (ua: Try[UserAnswers], page) => ua.flatMap(x => x.remove(page)) }
+        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page)) }
 
       case Some(Individual) =>
         List(

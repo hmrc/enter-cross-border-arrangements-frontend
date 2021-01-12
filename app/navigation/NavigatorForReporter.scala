@@ -83,7 +83,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(checkRoute.mode)
 
     case IntermediaryRolePage => checkRoute =>_ =>_ =>
-      jumpOrCheckYourAnswers(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode), checkRoute)
+      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode)
 
     case IntermediaryExemptionInEUPage => checkRoute => value => _ => value match {
       case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(checkRoute.mode)
@@ -100,6 +100,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case ReporterTaxpayersStartDateForImplementingArrangementPage => _ =>_ =>_ =>
       controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad()
+
     // Reporter - Taxpayer Journey Navigation
 
     case TaxpayerWhyReportInUKPage => checkRoute => value =>_ => value match {
@@ -119,7 +120,6 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
             controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
           case _ => jumpOrCheckYourAnswers(routes.ReporterCheckYourAnswersController.onPageLoad(), checkRoute)
         }
-
 
     // Reporter - Organisation Journey Navigation
 

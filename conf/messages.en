@@ -813,6 +813,9 @@ countriesListCheckboxes.SE =  Sweden
 
 ## REPORTER DETAILS
 
+reporterCheckYourAnswers.heading = Check your answers for your reporter details
+reporterTaxpayerImplementingArrangement.checkYourAnswersLabel = Taxpayer implementing date
+
 reporterOrganisationOrIndividual.title = Are you reporting as an organisation or individual?
 reporterOrganisationOrIndividual.heading = Are you reporting as an organisation or individual?
 reporterOrganisationOrIndividual.organisation = Organisation
@@ -890,26 +893,6 @@ taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outsid
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
-
-# CONFIRMATION PAGES
-
-confirmation.link.text = Disclose a cross-border arrangement
-confirmation.survey.link = What did you think of this service?
-confirmation.survey.text = (opens in a new tab)
-
-disclosureConfirmation.title = Disclosure received
-disclosureConfirmation.arrangement.title = Arrangement received
-disclosureConfirmation.panel.new = Your arrangement ID
-disclosureConfirmation.panel.add = Your disclosure ID
-disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
-disclosureConfirmation.secondEmail = and {0}
-disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
-disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
-disclosureConfirmation.p4 = Your message reference ID is {0}.
-disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p7 = What happens next
-disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
 ## REPORTER DETAILS - ORGANISATION
 
@@ -1008,7 +991,7 @@ reporterOrganisationEmailAddress.heading = What is the email address at {0}?
 reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
 reporterIndividualEmailAddress.title = What is your preferred email address?
 reporterIndividualEmailAddress.heading = What is your preferred email address?
-reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
+reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
 
@@ -1080,6 +1063,26 @@ reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax pu
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
 
-reporterTaxpayerImplementingArrangement.checkYourAnswersLabel = Taxpayer implementing date
+# CONFIRMATION PAGES
+
+confirmation.link.text = Disclose a cross-border arrangement
+confirmation.survey.link = What did you think of this service?
+confirmation.survey.text = (opens in a new tab)
+
+disclosureConfirmation.title = Disclosure received
+disclosureConfirmation.arrangement.title = Arrangement received
+disclosureConfirmation.panel.new = Your arrangement ID
+disclosureConfirmation.panel.add = Your disclosure ID
+disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
+disclosureConfirmation.secondEmail = and {0}
+disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+disclosureConfirmation.p4 = Your message reference ID is {0}.
+disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p7 = What happens next
+disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
+
+
 
 

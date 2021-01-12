@@ -22,6 +22,7 @@ import handlers.ErrorHandler
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.UserAnswers
 import models.reporter.RoleInArrangement.Intermediary
+import navigation.NavigatorForReporter
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -39,6 +40,7 @@ class ReporterCheckYourAnswersController  @Inject()(
    getData: DataRetrievalAction,
    requireData: DataRequiredAction,
    errorHandler: ErrorHandler,
+   navigator: NavigatorForReporter,
    val controllerComponents: MessagesControllerComponents,
    renderer: Renderer
  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
