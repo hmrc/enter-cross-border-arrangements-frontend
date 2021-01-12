@@ -39,11 +39,12 @@ class AdditionalDisclosureConfirmationController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async { // andThen requireData
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val json = Json.obj(
-        "arrangementID" -> confirmationPanelText("GBA20210101ABB381"),
+        "panelTitle" -> confirmationPanelTitle,
+        "panelText" -> confirmationPanelText("GBA20210101ABB381"),
         "email" -> "example@example.com",
         "secondEmail" -> "",
         "messageRefID" -> "GBXDAC0001234567AAA00101",
@@ -54,7 +55,10 @@ class AdditionalDisclosureConfirmationController @Inject()(
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }
 
+  private def confirmationPanelTitle(implicit messages: Messages): String =
+    messages("disclosureConfirmation.panel.add")
+
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("disclosureConfirmation.panel.html") }}<br><strong>$id</strong>")
+    Html(s"${{ messages("disclosureConfirmation.panel.add") }}<br><strong>$id</strong>")
   }
 }

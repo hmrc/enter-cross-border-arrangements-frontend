@@ -43,7 +43,8 @@ class NewDisclosureConfirmationController @Inject()(
     implicit request =>
 
       val json = Json.obj(
-        "arrangementID" -> confirmationPanelText("GBA20210101ABB381"),
+        "panelTitle" -> confirmationPanelTitle,
+        "panelText" -> confirmationPanelText("GBA20210101ABB381"),
         "disclosureID" -> "GBD20210101AAA456",
         "email" -> "example@example.com",
         "secondEmail" -> "",
@@ -55,7 +56,10 @@ class NewDisclosureConfirmationController @Inject()(
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }
 
+  private def confirmationPanelTitle(implicit messages: Messages): String =
+    messages("disclosureConfirmation.panel.new")
+
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("disclosureConfirmation.panel.html") }}<br><strong>$id</strong>")
+    Html(s"${{ messages("disclosureConfirmation.panel.new") }}<br><strong>$id</strong>")
   }
 }

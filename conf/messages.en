@@ -895,8 +895,9 @@ confirmation.survey.link = What did you think of this service?
 confirmation.survey.text = (opens in a new tab)
 
 disclosureConfirmation.title = Disclosure received
-disclosureConfirmation.heading = Disclosure received
-disclosureConfirmation.panel.html = Your arrangement ID
+disclosureConfirmation.arrangement.title = Arrangement received
+disclosureConfirmation.panel.new = Your arrangement ID
+disclosureConfirmation.panel.add = Your disclosure ID
 disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
 disclosureConfirmation.secondEmail = and {0}
 disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.

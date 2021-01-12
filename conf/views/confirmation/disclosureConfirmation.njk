@@ -3,8 +3,14 @@
 {% from "macros/title.njk"                         import title %}
 {% from "govuk/components/panel/macro.njk"         import govukPanel %}
 
+{% if disclosureID %}
+    {% set panelKey = 'disclosureConfirmation.panel.disclosure' %}
+{% else %}
+    {% set panelKey = 'disclosureConfirmation.panel.arrangement' %}
+{% endif %}
+
 {% block pageTitle %}
-  {{ title(messages("disclosureConfirmation.title")) }}
+    {{ title(messages("disclosureConfirmation.title")) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -14,8 +20,8 @@
       <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
-          titleText: messages("disclosureConfirmation.heading"),
-          html: arrangementID
+          titleText: messages("disclosureConfirmation.title"),
+          html: panelText
         }) }}
 
         <div class="govuk-body">
