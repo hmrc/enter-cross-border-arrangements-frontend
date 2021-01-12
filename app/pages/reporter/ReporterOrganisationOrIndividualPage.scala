@@ -16,9 +16,14 @@
 
 package pages.reporter
 
-import models.ReporterOrganisationOrIndividual
+import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
+import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.QuestionPage
+import pages.reporter.individual._
+import pages.reporter.organisation._
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOrganisationOrIndividual] {
 
@@ -26,11 +31,36 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
   override def toString: String = "reporterOrganisationOrIndividual"
 
-//  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
-//    List(
-//      DisclosureNamePage,
-//      DisclosureTypePage,
-//      DisclosureIdentifyArrangementPage,
-//      DisclosureMarketablePage
-//    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
+  override def cleanup(value: Option[ReporterOrganisationOrIndividual], userAnswers: UserAnswers): Try[UserAnswers] = {
+
+    value match {
+      case Some(Organisation) =>
+        List(
+          ReporterIndividualNamePage,
+          ReporterIndividualDateOfBirthPage,
+          ReporterIndividualPlaceOfBirthPage,
+          ReporterIndividualEmailAddressQuestionPage,
+          ReporterIndividualEmailAddressPage,
+          ReporterIndividualAddressPage,
+          ReporterSelectedAddressLookupPage,
+          ReporterIndividualPostcodePage,
+          ReporterIndividualSelectAddressPage,
+          ReporterIsIndividualAddressUKPage
+        ).foldLeft(Try(userAnswers)) { case (ua: Try[UserAnswers], page) => ua.flatMap(x => x.remove(page)) }
+
+      case Some(Individual) =>
+        List(
+          ReporterOrganisationNamePage,
+          ReporterOrganisationEmailAddressQuestionPage,
+          ReporterOrganisationEmailAddressPage,
+          ReporterOrganisationAddressPage,
+          ReporterOrganisationIsAddressUkPage,
+          ReporterOrganisationPostcodePage,
+          ReporterOrganisationSelectAddressPage,
+          ReporterSelectedAddressLookupPage
+        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page)) }
+
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }

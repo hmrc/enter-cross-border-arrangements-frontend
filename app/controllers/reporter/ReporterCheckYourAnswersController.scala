@@ -65,15 +65,18 @@ class ReporterCheckYourAnswersController  @Inject()(
   private def getOrganisationOrIndividualSummary(ua: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
     ua.get(ReporterOrganisationOrIndividualPage) match {
       case Some(Organisation) =>
-        helper.reporterOrganisationOrIndividual.toSeq ++
-        helper.reporterOrganisationName.toSeq ++
+        Seq(helper.reporterOrganisationOrIndividual ++
+        helper.reporterOrganisationName ++
         helper.buildOrganisationReporterAddressGroup ++
-        helper.buildReporterOrganisationEmailGroup
+        helper.buildReporterOrganisationEmailGroup).flatten
 
-      case _ => helper.reporterOrganisationOrIndividual.toSeq ++
-        helper.reporterIndividualName.toSeq ++
+      case _ =>
+        Seq(helper.reporterOrganisationOrIndividual ++
+        helper.reporterIndividualName ++
+        helper.reporterIndividualDateOfBirth ++
+        helper.reporterIndividualPlaceOfBirth ++
         helper.buildIndividualReporterAddressGroup ++
-        helper.buildReporterIndividualEmailGroup
+        helper.buildReporterIndividualEmailGroup).flatten
     }
   }
 

@@ -113,7 +113,7 @@ trait ReporterRows extends RowBuilder {
 
   def reporterIndividualPlaceOfBirth: Option[Row] = userAnswers.get(ReporterIndividualPlaceOfBirthPage) map { answer =>
     toRow(
-      msgKey  = "reporterIndividualName",
+      msgKey  = "reporterIndividualPlaceOfBirth",
       content = Literal(s"${answer.capitalize}"),
       href    = controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(CheckMode).url
     )
@@ -121,7 +121,7 @@ trait ReporterRows extends RowBuilder {
 
   def reporterIndividualDateOfBirth: Option[Row] = userAnswers.get(ReporterIndividualDateOfBirthPage) map { answer =>
     toRow(
-      msgKey  = "reporterIndividualName",
+      msgKey  = "reporterIndividualDateOfBirth",
       content = Literal(s"${answer.format(dateFormatter)}"),
       href    = controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(CheckMode).url
     )

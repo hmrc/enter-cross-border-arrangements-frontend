@@ -21,10 +21,11 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.hasValueChanged
+import javax.inject.Inject
 import models.requests.DataRequest
 import models.{AddressLookup, Mode}
 import navigation.NavigatorForReporter
-import pages.SelectedAddressLookupPage
+import pages.reporter.ReporterSelectedAddressLookupPage
 import pages.reporter.individual.{ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -33,7 +34,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -128,7 +128,7 @@ class ReporterIndividualSelectAddressController @Inject()(
 
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualSelectAddressPage, value))
-                updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+                updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, addressToStore))
                 _ <- sessionRepository.set(updatedAnswersWithAddress)
                 checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
               } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))

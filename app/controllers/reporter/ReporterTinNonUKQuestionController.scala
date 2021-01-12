@@ -63,7 +63,7 @@ class ReporterTinNonUKQuestionController @Inject()(
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
-          val pageValue = value.lift(index).get.doYouKnowUTR
+          val pageValue = value.lift(index).get.doYouKnowTIN
           if (pageValue.isDefined) {
             form.fill(pageValue.get)
           } else {
