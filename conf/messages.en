@@ -26,7 +26,7 @@ global.error.pageNotFound404.heading = Sorry, there is a problem with this servi
 global.error.pageNotFound404.info = If you entered any information, your answers will be saved.
 global.error.pageNotFound404.message = Try again later.
 
-global.error.InternalServerError500 = Sorry, there is a problem with this service
+global.error.InternalServerError500.heading = Sorry, there is a problem with this service
 global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
 global.error.InternalServerError500.message = Try again later.
 
