@@ -25,4 +25,6 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "roleInArrangement"
+
+
 }

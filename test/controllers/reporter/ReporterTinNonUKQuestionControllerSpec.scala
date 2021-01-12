@@ -89,7 +89,7 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
         .set(ReporterTinNonUKQuestionPage, true)
         .success
         .value
-        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, selectedCountry, None, None, Some(true), None)))
+        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, selectedCountry, Some(true), None, None, None)))
         .success
         .value
 
