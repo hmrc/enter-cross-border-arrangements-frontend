@@ -35,6 +35,7 @@ import services.XMLGenerationService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
+import scala.util.Success
 
 class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with BeforeAndAfterEach {
   private val mockValidationConnector = mock[ValidationConnector]
@@ -59,14 +60,14 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       )
         .build()
 
-      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
+      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit(0).url)
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
-        .thenReturn(Submissions.validSubmission)
+        .thenReturn(Success(Submissions.validSubmission))
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Right("GBABC-123")))
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
@@ -95,14 +96,14 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
-        .thenReturn(Submissions.validSubmission)
+        .thenReturn(Success(Submissions.validSubmission))
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
 
       val result = route(application, postRequest).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad().url)
+      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url)
     }
   }
 

@@ -318,10 +318,11 @@ class XMLGenerationServiceSpec extends SpecBase {
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      val result = xmlGenerationService.createXmlSubmission(userAnswers, 0)
-      val expected = GeneratedXMLExamples.xmlForOrganisation
+      xmlGenerationService.createXmlSubmission(userAnswers, 0) map { result =>
 
-      prettyPrinter.format(result) mustBe expected
+        prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
+      }
+
     }
 
     "must build the full XML for a reporter that is an INDIVIDUAL" in {
@@ -361,9 +362,10 @@ class XMLGenerationServiceSpec extends SpecBase {
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      val result = xmlGenerationService.createXmlSubmission(userAnswers, 0)
+      xmlGenerationService.createXmlSubmission(userAnswers, 0) map { result =>
 
-      prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
+        prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
+      }
 
     }
   }

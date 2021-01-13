@@ -59,6 +59,7 @@ class DisclosureDetailsController @Inject()(
 
 
       val json = Json.obj(
+        "id"      -> id,
         "arrangementID" -> arrangementMessage,
         "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
         "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),

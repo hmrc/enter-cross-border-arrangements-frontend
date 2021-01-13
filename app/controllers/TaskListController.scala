@@ -18,7 +18,7 @@ package controllers
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import org.slf4j.LoggerFactory
 import pages.{GeneratedIDPage, ValidationErrorsPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,32 +41,42 @@ class TaskListController @Inject()(
   sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-     //generate xml from user answers
-     val xml = xmlGenerationService.createXmlSubmission(request.userAnswers, id)
-     //send it off to be validated and business rules
-      validationConnector.sendForValidation(xml).flatMap {
-        _.fold(
-            //did it fail? oh my god - hand back to the user to fix
-            errors => {
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
-            },
+      //generate xml from user answers
+      xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
+        error => {
+          // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
+          logger.error("""Xml generation failed before validation: """.stripMargin, error)
+          Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(id).url))
+        },
+        xml => {
+          //send it off to be validated and business rules
+          validationConnector.sendForValidation(xml).flatMap {
+            _.fold(
+              //did it fail? oh my god - hand back to the user to fix
+              errors => {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
+              },
 
-            //did it succeed - hand off to the backend to do it's generating thing
-            messageRefId => {
-              val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
-              val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
-              for {
-                ids <- crossBorderArrangementsConnector.submitXML(submission)
-                userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
-                _                  <- sessionRepository.set(userAnswersWithIDs)
-              } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
-            }
-          )
-      }
+              //did it succeed - hand off to the backend to do it's generating thing
+              messageRefId => {
+                val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
+                val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
+                for {
+                  ids <- crossBorderArrangementsConnector.submitXML(submission)
+                  userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
+                  _                  <- sessionRepository.set(userAnswersWithIDs)
+                } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
+              }
+            )
+          }
+        }
+      )
   }
 }

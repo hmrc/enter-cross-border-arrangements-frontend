@@ -1,8 +1,8 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 
 {% block pageTitle %}
   {{ title(messages("disclosureDetails.title")) }}
@@ -25,7 +25,6 @@
             <p class="govuk-body">{{ messages("disclosureDetails.p1") }}</p>
 
           <ol class="app-task-list govuk-!-margin-top-9">
-
             <li>
 
               <h2 class="app-task-list__section" id="disclosure-details">
@@ -90,7 +89,8 @@
 
 
         {% if userCanSubmit %}
-
+          <form action="{{ routes.controllers.TaskListController.onSubmit().url }}" method="post">
+            {{ csrf() | safe }}
             <h2 class="govuk-heading-m">
                 {{ messages("disclosureDetails.sendDisclosure") }}
             </h2>
@@ -103,7 +103,7 @@
                 "id": "submit"
                 }
               }) }}
-
+          </form>
           {% else %}
 
               <h2 class="govuk-heading-m">
