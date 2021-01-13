@@ -494,7 +494,9 @@ GET        /reporter/taxpayers/change-implementation-date           controllers.
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
 # CONFIRMATION PAGES
+GET        /manual/confirmation-type                                controllers.confirmation.FileTypeGatewayController.onRouting()
 GET        /manual/disclosure-received                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad()
+GET        /manual/addition-received                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad()
 
 ## REPORTER DETAILS - ORGANISATION
 

@@ -29,7 +29,7 @@ import uk.gov.hmrc.viewmodels.Html
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NewDisclosureConfirmationController @Inject()(
+class AdditionalDisclosureConfirmationController @Inject()(
     override val messagesApi: MessagesApi,
     appConfig: FrontendAppConfig,
     identify: IdentifierAction,
@@ -45,7 +45,6 @@ class NewDisclosureConfirmationController @Inject()(
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,
         "panelText" -> confirmationPanelText("GBA20210101ABB381"),
-        "disclosureID" -> "GBD20210101AAA456",
         "email" -> "example@example.com",
         "secondEmail" -> "",
         "messageRefID" -> "GBXDAC0001234567AAA00101",
@@ -57,9 +56,9 @@ class NewDisclosureConfirmationController @Inject()(
   }
 
   private def confirmationPanelTitle(implicit messages: Messages): String =
-    messages("disclosureConfirmation.panel.new")
+    messages("disclosureConfirmation.panel.add")
 
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("disclosureConfirmation.panel.new") }}<br><strong>$id</strong>")
+    Html(s"${{ messages("disclosureConfirmation.panel.add") }}<br><strong>$id</strong>")
   }
 }

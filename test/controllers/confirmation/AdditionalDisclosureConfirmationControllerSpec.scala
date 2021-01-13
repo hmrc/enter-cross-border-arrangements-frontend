@@ -17,7 +17,6 @@
 package controllers.confirmation
 
 import base.SpecBase
-import controllers.routes
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -28,9 +27,9 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar {
+class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar {
 
-  "NewDisclosureConfirmation Controller" - {
+  "AdditionalDisclosureConfirmation Controller" - {
 
     "return OK and the correct view for a GET" in {
 
@@ -38,7 +37,7 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

@@ -9,7 +9,7 @@ echo "GET        /newDisclosureConfirmation                       controllers.Ne
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "newDisclosureConfirmation.title = newDisclosureConfirmation" >> ../conf/messages.en
-echo "newDisclosureConfirmation.heading = newDisclosureConfirmation" >> ../conf/messages.en
+echo "disclosureConfirmation.title = newDisclosureConfirmation" >> ../conf/messages.en
+echo "disclosureConfirmation.heading = newDisclosureConfirmation" >> ../conf/messages.en
 
 echo "Migration NewDisclosureConfirmation completed"

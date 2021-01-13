@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package pages.disclosure
+package pages
 
-import models.disclosure.DisclosureDetails
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+import models.UserAnswers
 
-case object DisclosureNamePage extends DetailsPage[String, DisclosureDetails] {
+import scala.util.Try
 
-  override def path: JsPath = JsPath \ toString
+trait ModelPage[A] extends QuestionPage[A] {
 
-  override def toString: String = "disclosureName"
+  def restore(userAnswers: UserAnswers): Try[UserAnswers]
 
-  override def getFromModel(model: DisclosureDetails): String = model.disclosureName
+  def build(userAnswers: UserAnswers): A
 }

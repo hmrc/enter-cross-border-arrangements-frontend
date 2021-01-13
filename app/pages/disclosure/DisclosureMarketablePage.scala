@@ -16,12 +16,16 @@
 
 package pages.disclosure
 
-import pages.QuestionPage
+import models.disclosure.DisclosureDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object DisclosureMarketablePage extends QuestionPage[Boolean] {
+case object DisclosureMarketablePage extends DetailsPage[Boolean, DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "disclosureMarketable"
+
+  override def getFromModel(model: DisclosureDetails): Boolean = model.initialDisclosureMA
+
 }

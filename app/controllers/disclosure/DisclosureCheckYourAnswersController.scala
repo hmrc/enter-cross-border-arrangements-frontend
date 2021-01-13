@@ -18,18 +18,25 @@ package controllers.disclosure
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.mixins.DefaultRouting
+import models.NormalMode
+import navigation.NavigatorForDisclosure
+import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
+    sessionRepository: SessionRepository,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -42,15 +49,30 @@ class DisclosureCheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val disclosureDetails: Seq[SummaryList.Row] =
+      val disclosureSummary: Seq[SummaryList.Row] =
         helper.disclosureNamePage.toSeq ++
         helper.disclosureTypePage.toSeq ++
         helper.buildDisclosureSummaryDetails
 
       renderer.render(
         "disclosure/check-your-answers-disclosure.njk",
-        Json.obj("disclosureSummary" -> disclosureDetails
+        Json.obj("disclosureSummary" -> disclosureSummary
         )
       ).map(Ok(_))
     }
+
+  def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+//    TODO build the disclosure details model from pages
+//    val disclosureDetails: DisclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
+//
+//    for {
+//      updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
+//    } yield sessionRepository.set(updatedAnswers)
+
+      Future.successful(Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0)))
+  }
+
 }
+

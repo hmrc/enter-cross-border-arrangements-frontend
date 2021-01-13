@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package pages.disclosure
+package pages
 
-import models.disclosure.DisclosureDetails
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+import models.UserAnswers
 
-case object DisclosureNamePage extends DetailsPage[String, DisclosureDetails] {
+import scala.util.Try
 
-  override def path: JsPath = JsPath \ toString
+trait DetailsPage[A, M] extends QuestionPage[A] {
 
-  override def toString: String = "disclosureName"
+  def remove(userAnswers: Try[UserAnswers]): Try[UserAnswers] =
+    userAnswers.map(_.remove(this)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
 
-  override def getFromModel(model: DisclosureDetails): String = model.disclosureName
+  def getFromModel(model: M): A
 }

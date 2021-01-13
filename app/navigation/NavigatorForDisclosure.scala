@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import pages.Page
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -31,16 +31,24 @@ class NavigatorForDisclosure @Inject()() extends AbstractNavigator {
 
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
-    case DisclosureNamePage => checkRoute => value => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(checkRoute.mode)
+    case DisclosureNamePage =>
+      checkRoute => _ => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(checkRoute.mode)
 
-    case DisclosureTypePage => checkRoute => value => _ => value match {
-      case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
-      case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
-      case _             => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
-    }
+    case DisclosureTypePage =>
+      checkRoute => value => _ => value match {
+        case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
+        case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
+        case _             => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
+      }
 
-    case DisclosureMarketablePage => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
-    case DisclosureIdentifyArrangementPage => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
+    case DisclosureMarketablePage =>
+      _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
+
+    case DisclosureIdentifyArrangementPage =>
+      _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
+
+    case DisclosureDetailsPage =>
+      _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad()
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>

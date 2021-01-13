@@ -1,0 +1,54 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/panel/macro.njk"         import govukPanel %}
+
+{% if disclosureID %}
+    {% set panelKey = 'disclosureConfirmation.panel.disclosure' %}
+{% else %}
+    {% set panelKey = 'disclosureConfirmation.panel.arrangement' %}
+{% endif %}
+
+{% block pageTitle %}
+    {{ title(messages("disclosureConfirmation.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {{ govukPanel({
+          titleText: messages("disclosureConfirmation.title"),
+          html: panelText
+        }) }}
+
+        <div class="govuk-body">
+          {# TODO implement e-mails #}
+          {# <p>{{ messages("disclosureConfirmation.firstEmail", email) }}{{ secondEmail }}.</p> #}
+          {% if disclosureID %}
+            <p>{{ messages("disclosureConfirmation.p2") }}</p>
+            <p>{{ messages("disclosureConfirmation.p3", disclosureID) }}</p>
+            <p>
+              {{ messages("disclosureConfirmation.p4", messageRefID) }}
+              {{ messages("disclosureConfirmation.p5") }}
+            </p>
+          {% else %}
+            <p>
+              {{ messages("disclosureConfirmation.p4", messageRefID) }}
+              {{ messages("disclosureConfirmation.p6") }}
+            </p>
+            <p><strong>{{ messages("disclosureConfirmation.p7") }}</strong></p>
+            <p>{{ messages("disclosureConfirmation.p8") }}</p>
+          {% endif %}
+
+          <p>{{ homePageLink | safe }}</p>
+          <p>{{ betaFeedbackSurvey | safe }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
