@@ -39,16 +39,18 @@ class IntermediariesTypePageSpec extends PageBehaviours {
 
     beRemovable[SelectType](IntermediariesTypePage)
 
-    "must remove any unique individual journey pages if Organisation is selected" in {
+    "must remove any unique individual journey pages if Individual is selected" in {
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
-          val result = answers
+        val result = answers
             .set(IndividualNamePage, Name("First", "Last"))
             .success.value
             .set(IndividualDateOfBirthPage, LocalDate.now())
             .success.value
             .set(IsIndividualPlaceOfBirthKnownPage, true)
+            .success.value
+            .set(IsIndividualDateOfBirthKnownPage, true)
             .success.value
             .set(IndividualPlaceOfBirthPage, "Place of birth")
             .success.value
@@ -80,12 +82,13 @@ class IntermediariesTypePageSpec extends PageBehaviours {
             .success.value
             .set(IndividualLoopPage, loopDetails)
             .success.value
-            .set(IntermediariesTypePage, SelectType.Organisation)
+            .set(IntermediariesTypePage, SelectType.Individual)
             .success.value
 
           result.get(IndividualNamePage) mustBe None
           result.get(IndividualDateOfBirthPage) mustBe None
           result.get(IsIndividualPlaceOfBirthKnownPage) mustBe None
+          result.get(IsIndividualDateOfBirthKnownPage) mustBe None
           result.get(IndividualPlaceOfBirthPage) mustBe None
           result.get(IsIndividualAddressKnownPage) mustBe None
           result.get(IsIndividualAddressUkPage) mustBe None
@@ -104,11 +107,11 @@ class IntermediariesTypePageSpec extends PageBehaviours {
       }
     }
 
-    "must remove any unique individual journey pages if Individual is selected" in {
+    "must remove any unique organisation journey pages if Organisation is selected" in {
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
-          val result = answers
+        val result = answers
             .set(OrganisationNamePage, "Organisation name")
             .success.value
             .set(IsOrganisationAddressKnownPage, true)
@@ -139,7 +142,7 @@ class IntermediariesTypePageSpec extends PageBehaviours {
             .success.value
             .set(OrganisationLoopPage, loopDetails)
             .success.value
-            .set(IntermediariesTypePage, SelectType.Individual)
+            .set(IntermediariesTypePage, SelectType.Organisation)
             .success.value
 
           result.get(OrganisationNamePage) mustBe None

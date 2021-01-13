@@ -14,6 +14,15 @@ GET        /accessibility-statement                     controllers.Accessibilit
 
 GET        /sign-out                                    controllers.SignOutController.signOut
 
+GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
+
+
+
+# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
+
+GET        /manual/your-disclosure-details                         controllers.DisclosureDetailsController.onPageLoad()
+
+
 
 # HALLMARK ROUTES
 
@@ -299,8 +308,8 @@ POST       /taxpayers/choose-type                        controllers.taxpayer.Ta
 GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /taxpayers/is-marketable                      controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
-GET        /taxpayers/change-is-marketable               controllers.taxpayer.MarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
+GET        /taxpayers/is-marketable                      controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /taxpayers/change-is-marketable               controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
 
 GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
@@ -338,8 +347,7 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 
 GET        /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-update                   controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = NormalMode)
@@ -367,6 +375,7 @@ GET        /intermediaries/change-exemption-known           controllers.intermed
 POST       /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
 
 GET       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
+POST       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
 
 # DISCLOSURE
@@ -476,6 +485,9 @@ POST       /reporter/taxpayer/why-reporting                        controllers.r
 GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
 
+GET        /reporter/taxpayers/is-marketable                        controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
+GET        /reporter/taxpayers/change-is-marketable                 controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
+
 GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
@@ -569,4 +581,4 @@ GET        /reporter/individual/change-select-address        controllers.reporte
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
 # TASK LIST
-POST      /task-list                                                controllers.TaskListController.onSubmit
+POST      /task-list                                         controllers.TaskListController.onSubmit

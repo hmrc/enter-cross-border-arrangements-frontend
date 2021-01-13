@@ -17,27 +17,34 @@
 package controllers.intermediaries
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
+
 import javax.inject.Inject
-import models.SelectType
-import pages.intermediaries.IntermediariesTypePage
+import models.{Mode, SelectType}
+import models.intermediaries.Intermediary
+import navigation.{Navigator, NavigatorForIntermediaries}
+import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediariesCheckYourAnswersController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           identify: IdentifierAction,
                                                           getData: DataRetrievalAction,
                                                           requireData: DataRequiredAction,
+                                                          sessionRepository: SessionRepository,
+                                                          navigator: NavigatorForIntermediaries,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           renderer: Renderer
-                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport{
+                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -89,5 +96,27 @@ class IntermediariesCheckYourAnswersController @Inject()(
 
         )).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute): Call =
+    navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(None)(0)
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage) match {
+        case Some(list) => // append to existing list
+          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers)
+        case None => // start new list
+          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers))
+      }
+      for {
+        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, intermediaryLoopList))
+        _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
+        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop)
+      } yield {
+        Redirect(redirect(checkRoute))
+      }
+  }
+
 }
 

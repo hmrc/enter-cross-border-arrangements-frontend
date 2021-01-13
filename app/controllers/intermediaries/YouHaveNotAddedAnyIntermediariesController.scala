@@ -19,11 +19,12 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
+
 import javax.inject.Inject
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForIntermediaries
-import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
+import pages.intermediaries.{IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -55,9 +56,20 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         case Some(value) => form.fill(value)
       }
 
+      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.flatMap(_.get(IntermediaryLoopPage)) match {
+        case Some(list) =>
+          for {
+            intermediary <- list
+          } yield {
+            intermediary.nameAsString
+          }
+        case None => IndexedSeq.empty
+      }
+
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
+        "intermediaryList" -> namesOfIntermediaries,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
       )
 

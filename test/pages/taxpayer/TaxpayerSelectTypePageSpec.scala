@@ -50,6 +50,8 @@ class TaxpayerSelectTypePageSpec extends PageBehaviours {
             .success.value
             .set(IsIndividualPlaceOfBirthKnownPage, true)
             .success.value
+            .set(IsIndividualDateOfBirthKnownPage, true)
+            .success.value
             .set(IndividualPlaceOfBirthPage, "Place of birth")
             .success.value
             .set(IsIndividualAddressKnownPage, true)
@@ -86,6 +88,7 @@ class TaxpayerSelectTypePageSpec extends PageBehaviours {
           result.get(IndividualNamePage) mustBe None
           result.get(IndividualDateOfBirthPage) mustBe None
           result.get(IsIndividualPlaceOfBirthKnownPage) mustBe None
+          result.get(IsIndividualDateOfBirthKnownPage) mustBe None
           result.get(IndividualPlaceOfBirthPage) mustBe None
           result.get(IsIndividualAddressKnownPage) mustBe None
           result.get(IsIndividualAddressUkPage) mustBe None

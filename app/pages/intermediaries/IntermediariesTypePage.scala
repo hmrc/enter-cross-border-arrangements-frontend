@@ -33,8 +33,9 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] {
   override def cleanup(value: Option[SelectType], userAnswers: UserAnswers): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
     value match {
-      case Some(SelectType.Organisation) =>
+      case Some(SelectType.Individual) =>
         userAnswers.remove(IndividualNamePage)
+          .flatMap(_.remove(IsIndividualDateOfBirthKnownPage))
           .flatMap(_.remove(IndividualDateOfBirthPage))
           .flatMap(_.remove(IsIndividualPlaceOfBirthKnownPage))
           .flatMap(_.remove(IndividualPlaceOfBirthPage))
@@ -52,7 +53,11 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] {
           .flatMap(_.remove(DoYouKnowTINForNonUKIndividualPage))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKIndividualPage))
           .flatMap(_.remove(IndividualLoopPage))
-      case Some(SelectType.Individual) =>
+          .flatMap(_.remove(ExemptCountriesPage))
+          .flatMap(_.remove(IsExemptionCountryKnownPage))
+          .flatMap(_.remove(IsExemptionKnownPage))
+          .flatMap(_.remove(WhatTypeofIntermediaryPage))
+      case Some(SelectType.Organisation) =>
         userAnswers.remove(OrganisationNamePage)
           .flatMap(_.remove(IsOrganisationAddressKnownPage))
           .flatMap(_.remove(IsOrganisationAddressUkPage))
@@ -68,6 +73,10 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] {
           .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage))
           .flatMap(_.remove(OrganisationLoopPage))
+          .flatMap(_.remove(ExemptCountriesPage))
+          .flatMap(_.remove(IsExemptionCountryKnownPage))
+          .flatMap(_.remove(IsExemptionKnownPage))
+          .flatMap(_.remove(WhatTypeofIntermediaryPage))
       case None => super.cleanup(value, userAnswers)
     }
   }

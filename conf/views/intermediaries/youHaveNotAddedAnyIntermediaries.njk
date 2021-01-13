@@ -4,6 +4,7 @@
 {% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "add-to-a-list/macro.njk"            import hmrcAddToAList %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -31,9 +32,14 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
-            {{ messages('youHaveNotAddedAnyIntermediaries.title') }}
-          </h1>
+            {{ hmrcAddToAList({
+                itemList: intermediaryList,
+                itemType: {
+                  singular: messages("youHaveNotAddedAnyIntermediaries.singular"),
+                  plural: messages("youHaveNotAddedAnyIntermediaries.plural")
+                },
+                emptyList: messages('youHaveNotAddedAnyIntermediaries.emptyList')
+            }) }}
 
           <p class="govuk-body">{{ messages('youHaveNotAddedAnyIntermediaries.hint')}}</p>
 
@@ -41,7 +47,7 @@
               name: 'value',
               fieldset: {
                   legend: {
-                  text: messages('youHaveNotAddedAnyIntermediaries.heading'),
+                  text: messages('youHaveNotAddedAnyIntermediaries.subHeading'),
                   isPageHeading: false,
                   classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
               }
