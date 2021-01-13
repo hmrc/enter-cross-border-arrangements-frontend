@@ -27,11 +27,11 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -263,16 +263,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
         navigator
           .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
-      }
-
-      "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
-        "to 'What is [name] start date for implementing this arrangement' page " +
-        "when 'I DO NOT KNOW' is selected & its 'NOT' a marketable arrangement" in {
-
-        navigator
-          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(NormalMode))
       }
     }
 
@@ -555,6 +546,14 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
   }
 
   "on REPORTER DETAILS - TAXPAYER JOURNEY in Check Mode" - {
+
+    "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(CheckMode))(Some(TaxpayerWhyReportInUK.UkTaxResident))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
 
     "must go from 'Why are you reporting the arrangement as a taxpayer?' page " +
       "to 'Check your answers for your reporter details' page " in {

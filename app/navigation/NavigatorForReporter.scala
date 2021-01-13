@@ -83,7 +83,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(checkRoute.mode)
 
     case IntermediaryRolePage => checkRoute =>_ =>_ =>
-      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode), checkRoute)
 
     case IntermediaryExemptionInEUPage => checkRoute => value => _ => value match {
       case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(checkRoute.mode)
@@ -107,11 +107,11 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       case Some(DoNotKnow) =>
         controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
       case _ =>
-        controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
+        jumpOrCheckYourAnswers(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode), checkRoute)
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
-      controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode), checkRoute)
 
     case DisclosureMarketablePage =>
       checkRoute => value => _ =>

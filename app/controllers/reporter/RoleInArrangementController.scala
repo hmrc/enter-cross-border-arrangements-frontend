@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.RoleInArrangementFormProvider
 import javax.inject.Inject
 import models.reporter.RoleInArrangement
-import models.{Mode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.NavigatorForReporter
 import pages.reporter.RoleInArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,6 +40,7 @@ class RoleInArrangementController @Inject()(
     navigator: NavigatorForReporter,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
     formProvider: RoleInArrangementFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -47,10 +48,10 @@ class RoleInArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(RoleInArrangementPage)) match {
+      val preparedForm = request.userAnswers.get(RoleInArrangementPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,7 +69,7 @@ class RoleInArrangementController @Inject()(
     navigator.routeMap(RoleInArrangementPage)(checkRoute)(value)(0)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,13 +84,11 @@ class RoleInArrangementController @Inject()(
           renderer.render("reporter/roleInArrangement.njk", json).map(BadRequest(_))
         },
         value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(RoleInArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(RoleInArrangementPage, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
 
         }

@@ -19,6 +19,7 @@ package controllers.reporter.intermediary
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.intermediary.IntermediaryWhyReportInUKFormProvider
+import javax.inject.Inject
 import models.Mode
 import models.reporter.intermediary.IntermediaryWhyReportInUK
 import navigation.NavigatorForReporter
@@ -31,7 +32,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryWhyReportInUKController @Inject()(

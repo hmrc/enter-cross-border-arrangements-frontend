@@ -139,7 +139,7 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         rows.contains("""{"key":{"text":"Role in the arrangement","classes":"govuk-!-width-one-half"},"value":{"text":"Intermediary"}""") mustBe true
         rows.contains("""{"key":{"text":"Reason for reporting in the UK","classes":"govuk-!-width-one-half"},"value":{"text":"You are tax resident in the UK"}""") mustBe true
         rows.contains("""{"key":{"text":"Type of intermediary","classes":"govuk-!-width-one-half"},"value":{"text":"Promoter"}""") mustBe true
-        rows.contains("""{"key":{"text":"Are you exempt from reporting in anywhere?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+        rows.contains("""{"key":{"text":"Are you exempt from reporting anywhere?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know where?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Exempt Countries","classes":"govuk-!-width-one-half"},"value":{"html":"France"}""") mustBe true
       }
