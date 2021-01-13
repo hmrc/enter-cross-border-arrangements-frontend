@@ -18,11 +18,6 @@ GET        /keep-alive                                  controllers.KeepAliveCon
 
 
 
-# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
-
-GET        /manual/your-disclosure-details                         controllers.DisclosureDetailsController.onPageLoad()
-
-
 
 # HALLMARK ROUTES
 
@@ -499,8 +494,12 @@ GET        /reporter/taxpayers/change-implementation-date           controllers.
 POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
 
 # CONFIRMATION PAGES
-GET        /manual/confirmation-type                                controllers.confirmation.FileTypeGatewayController.onRouting()
+# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
+
+GET        /manual/your-disclosure-details                          controllers.DisclosureDetailsController.onPageLoad()
 GET        /manual/disclosure-received                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad()
+GET        /manual/there-is-a-problem                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad()
+GET        /manual/confirmation-type                                controllers.confirmation.FileTypeGatewayController.onRouting()
 GET        /manual/addition-received                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad()
 
 ## REPORTER DETAILS - ORGANISATION

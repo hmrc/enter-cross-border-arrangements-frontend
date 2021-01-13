@@ -20,13 +20,11 @@ import base.SpecBase
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.Submissions
 import models.{GeneratedIDs, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
-import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, route, status, _}
 import play.twirl.api.Html
@@ -57,7 +55,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any())(any()))
+      when(mockXMLGenerationService.createXmlSubmission(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Right("GBABC-123")))
@@ -69,12 +67,12 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       val result = route(application, postRequest).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(routes.IndexController.onPageLoad().url)
+      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.FileTypeGatewayController.onRouting().url)
 
       verify(mockCrossBorderArrangementsConnector, times(1)).submitXML(any())(any())
     }
 
-    "must return a sequence of errors to display back to the user when validation fails" in {
+    "must redirect to validation errors page when validation fails" in {
 
       val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId)))
         .overrides(
@@ -82,12 +80,8 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
           bind[ValidationConnector].toInstance(mockValidationConnector)
         )
         .build()
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any())(any()))
+      when(mockXMLGenerationService.createXmlSubmission(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
@@ -96,9 +90,8 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       val result = route(application, postRequest).value
 
-      status(result) mustEqual OK
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      templateCaptor.getValue mustBe "validationErrors.njk"
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad().url)
     }
   }
 
