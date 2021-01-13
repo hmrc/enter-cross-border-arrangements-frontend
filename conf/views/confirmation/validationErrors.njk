@@ -1,0 +1,59 @@
+{% extends "includes/layout.njk" %}
+{% from "govuk/components/table/macro.njk"         import govukTable %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("confirmation.validationError.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("confirmation.validationError.title") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("confirmation.validationError.heading") }}</p>
+
+        <h2 class="govuk-heading-m">
+          {{ messages("confirmation.validationError.info") }}
+        </h2>
+
+        <ol class="govuk-list govuk-list--number">
+          <li class="govuk-body">
+            <a href="#" id="printLink" class="govuk-link">{{ messages("confirmation.validationError.info.p1") }}</a>
+          </li>
+          <li class="govuk-body">{{ messages("confirmation.validationError.info.p2") }}
+            <a href="{{ routes.controllers.DisclosureDetailsController.onPageLoad().url }}" class="govuk-link">
+              {{ messages("confirmation.validationError.info.p3") }}
+            </a>
+            {{ messages("confirmation.validationError.info.p4") }}
+          </li>
+        </ol>
+
+        {{ govukTable({
+          caption: messages("confirmation.validationError.table.caption"),
+          firstCellIsHeader: false,
+          head: [
+            {
+              text: messages("confirmation.validationError.table.head1")
+            },
+            {
+              text: messages("confirmation.validationError.table.head2")
+            }
+          ],
+          rows: errorRows
+        }) }}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

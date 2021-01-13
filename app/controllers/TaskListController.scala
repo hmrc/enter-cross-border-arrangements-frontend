@@ -18,11 +18,10 @@ package controllers
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.GeneratedIDPage
+import models.UserAnswers
+import pages.{GeneratedIDPage, ValidationErrorsPage}
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -31,17 +30,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaskListController @Inject()(
-                                    val controllerComponents: MessagesControllerComponents,
-                                    xmlGenerationService: XMLGenerationService,
-                                    transformationService: TransformationService,
-                                    identify: IdentifierAction,
-                                    getData: DataRetrievalAction,
-                                    requireData: DataRequiredAction,
-                                    validationConnector: ValidationConnector,
-                                    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
-                                    sessionRepository: SessionRepository,
-                                    renderer: Renderer
-                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  val controllerComponents: MessagesControllerComponents,
+  xmlGenerationService: XMLGenerationService,
+  transformationService: TransformationService,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  validationConnector: ValidationConnector,
+  crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
+  sessionRepository: SessionRepository
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -52,10 +50,10 @@ class TaskListController @Inject()(
         _.fold(
             //did it fail? oh my god - hand back to the user to fix
             errors => {
-              val json = Json.obj(
-                "errors" -> errors
-              )
-              renderer.render("validationErrors.njk", json).map(Ok(_))
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
             },
 
             //did it succeed - hand off to the backend to do it's generating thing
@@ -66,9 +64,7 @@ class TaskListController @Inject()(
                 ids <- crossBorderArrangementsConnector.submitXML(submission)
                 userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
                 _                  <- sessionRepository.set(userAnswersWithIDs)
-              } yield {
-                Redirect(routes.IndexController.onPageLoad().url) //TODO: Correct to page
-              }
+              } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
             }
           )
       }
