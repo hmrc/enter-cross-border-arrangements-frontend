@@ -17,8 +17,11 @@
 package models.organisation
 
 import models.taxpayer.TaxResidency
-import models.{Address, UserAnswers}
+import models.{Address, AddressLookup, Country, UserAnswers}
+import pages.SelectedAddressLookupPage
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
+import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage}
 import play.api.libs.json.{Json, OFormat}
 
 case class Organisation(organisationName: String,
@@ -30,8 +33,27 @@ case class Organisation(organisationName: String,
 object Organisation {
   implicit val format: OFormat[Organisation] = Json.format[Organisation]
 
+  private def convertAddressLookupToAddress(address: AddressLookup) = {
+    val country = Country(state = "valid", code = "GB", description = "United Kingdom")
+
+    Address(
+      addressLine1 = address.addressLine1,
+      addressLine2 = address.addressLine2,
+      addressLine3 = address.addressLine3,
+      city = address.town,
+      postCode = Some(address.postcode),
+      country = country)
+  }
+
   def buildOrganisationDetails(ua: UserAnswers): Organisation = {
-    (ua.get(OrganisationNamePage), ua.get(OrganisationAddressPage),
+    val address: Option[Address] =
+      (ua.get(OrganisationAddressPage), ua.get(SelectedAddressLookupPage)) match {
+        case (Some(address), _) => Some(address)
+        case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
+        case _ => None
+      }
+
+    (ua.get(OrganisationNamePage), address,
       ua.get(EmailAddressForOrganisationPage), ua.get(OrganisationLoopPage)) match {
 
       case (Some(name), Some(address), Some(email), Some(loop)) => // All details
@@ -47,6 +69,34 @@ object Organisation {
         new Organisation(name, None, None, TaxResidency.buildTaxResidency(loop))
 
       case _ => throw new Exception("Organisation Taxpayer must contain a name and at minimum one tax residency")
+    }
+  }
+
+  def buildOrganisationDetailsForReporter(ua: UserAnswers): Organisation = {
+
+    val address: Option[Address] =
+      (ua.get(ReporterOrganisationAddressPage), ua.get(ReporterSelectedAddressLookupPage)) match {
+        case (Some(address), _) => Some(address)
+        case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
+        case _ => None
+      }
+
+    (ua.get(ReporterOrganisationNamePage), address,
+      ua.get(ReporterOrganisationEmailAddressPage), ua.get(ReporterTaxResidencyLoopPage)) match {
+
+      case (Some(name), Some(address), Some(email), Some(loop)) => // All details
+        new Organisation(name, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), None, Some(email), Some(loop)) => // No address
+        new Organisation(name, None, Some(email), TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), Some(address), None, Some(loop)) => // No email address
+        new Organisation(name, Some(address), None, TaxResidency.buildTaxResidency(loop))
+
+      case (Some(name), None, None, Some(loop)) => // No address or email address
+        new Organisation(name, None, None, TaxResidency.buildTaxResidency(loop))
+
+      case _ => throw new Exception("Organisation reporter must contain a name and at minimum one tax residency")
     }
   }
 }

@@ -20,17 +20,22 @@ import base.SpecBase
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.hallmarks.{HallmarkD, HallmarkD1}
+import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.requests.DataRequest
+import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
+import pages.taxpayer.{TaxpayerLoopPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+import play.api.mvc.AnyContent
 
 import java.time.LocalDate
 
@@ -38,7 +43,10 @@ class XMLRendererSpec extends SpecBase {
 
   val xmlRenderer: XMLRenderer = injector.instanceOf[XMLRenderer]
 
-  //      val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
+  val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
+  //TODO Need to clean up the tests
+
   val address: Address =
     Address(
       Some("value 1"),
@@ -52,16 +60,22 @@ class XMLRendererSpec extends SpecBase {
     LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")), Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("AnotherTIN"), None))),
     LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
 
+  val email = "email@email.com"
+  val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+  val organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
+  val taxpayers = IndexedSeq(Taxpayer("123", None, Some(organisation), Some(LocalDate.now)),
+    Taxpayer("Another ID", None, Some(organisation), Some(LocalDate.now.minusMonths(1))))
+
   "XMLRenderer" - {
 
     "buildIDForOrganisation must render an Elem" ignore {
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, "Name Here").success.value
-        .set(OrganisationLoopPage, organisationLoopDetails).success.value
-        .set(OrganisationAddressPage, address).success.value
-        .set(EmailAddressForOrganisationPage, "email@email.com").success.value
+//      val userAnswers = UserAnswers(userAnswersId)
+//        .set(OrganisationNamePage, "Name Here").success.value
+//        .set(OrganisationLoopPage, organisationLoopDetails).success.value
+//        .set(OrganisationAddressPage, address).success.value
+//        .set(EmailAddressForOrganisationPage, "email@email.com").success.value
 
-      val result = xmlRenderer.buildIDForOrganisation(userAnswers)
+      val result = RelevantTaxPayersXMLSection.buildIDForOrganisation(organisation)
 
       println(s"\n\n$result\n\n")
 
@@ -75,7 +89,7 @@ class XMLRendererSpec extends SpecBase {
         .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
         .set(TaxpayerWhyReportArrangementPage, TaxpayerWhyReportArrangement.ProfessionalPrivilege).success.value
 
-      val result = xmlRenderer.buildLiability(userAnswers)
+      val result = DisclosingXMLSection.buildLiability(userAnswers)
 
       println(s"\n\n$result\n\n")
 
@@ -83,17 +97,36 @@ class XMLRendererSpec extends SpecBase {
 
     }
 
+    "buildDisclosingSection must render an Elem" ignore {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ReporterOrganisationNamePage, "Reporter name").success.value
+        .set(ReporterOrganisationAddressPage, address).success.value
+        .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
+        .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
+        .set(TaxpayerLoopPage, taxpayers).success.value
+        .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
+        .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkTaxResident).success.value
+        .set(TaxpayerWhyReportArrangementPage, TaxpayerWhyReportArrangement.ProfessionalPrivilege).success.value
+
+      val result = DisclosingXMLSection.toXml(userAnswers)
+
+      println(s"\n\n${prettyPrinter.format(result)}\n\n")
+
+      result mustBe "<Disclosing></Disclosing>"
+    }
+
     "buildRelevantTaxPayers must render an Elem" ignore {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, "Name Here").success.value
-        .set(OrganisationLoopPage, organisationLoopDetails).success.value
-        .set(OrganisationAddressPage, address).success.value
-        .set(EmailAddressForOrganisationPage, "email@email.com").success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now.minusDays(10)).success.value
+//        .set(OrganisationNamePage, "Name Here").success.value
+//        .set(OrganisationLoopPage, organisationLoopDetails).success.value
+//        .set(OrganisationAddressPage, address).success.value
+//        .set(EmailAddressForOrganisationPage, "email@email.com").success.value
+//        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now.minusDays(10)).success.value
+        .set(TaxpayerLoopPage, taxpayers).success.value
 
-      val result = xmlRenderer.buildRelevantTaxPayers(userAnswers)
+      val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
 
-      println(s"\n\n$result\n\n")
+      println(s"\n\n${prettyPrinter.format(result)}\n\n")
 
       result mustBe "<RelevantTaxPayers></RelevantTaxPayers>"
 
@@ -113,11 +146,11 @@ class XMLRendererSpec extends SpecBase {
         .set(WhatIsTheExpectedValueOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
         .set(WhichExpectedInvolvedCountriesArrangementPage, countries).success.value
         .set(HallmarkDPage, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("D1a") ++
-          HallmarkD1.enumerable.withName("D1other")).toSet).success.value
+        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("DAC6D1a") ++
+          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
         .set(HallmarkD1OtherPage, "Hallllllllllmark D1 oooooother desciption").success.value
 
-      val result = xmlRenderer.buildDisclosureInformation(userAnswers)
+      val result = DisclosureInformationXMLSection.toXml(userAnswers)
 
       println(s"\n\n$result\n\n")
 
@@ -150,13 +183,20 @@ class XMLRendererSpec extends SpecBase {
         .set(WhatIsTheExpectedValueOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
         .set(WhichExpectedInvolvedCountriesArrangementPage, countries).success.value
         .set(HallmarkDPage, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("D1a") ++
-          HallmarkD1.enumerable.withName("D1other")).toSet).success.value
+        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("DAC6D1a") ++
+          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
         .set(HallmarkD1OtherPage, "Hallllllllllmark D1 oooooother desciption").success.value
+        .set(TaxpayerLoopPage, taxpayers).success.value
+        .set(ReporterOrganisationNamePage, "Reporter name").success.value
+        .set(ReporterOrganisationAddressPage, address).success.value
+        .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
+        .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
+
+      implicit val request: DataRequest[AnyContent] = DataRequest[AnyContent](fakeRequest, "XADAC0001122345", "enrolmentID", userAnswers)
 
       val result = xmlRenderer.renderXML(userAnswers)
 
-      println(s"\n\n$result\n\n")
+      println(s"\n\n${prettyPrinter.format(result)}\n\n")
 
       result mustBe "<DAC6_Arrangement></DAC6_Arrangement>"
 
