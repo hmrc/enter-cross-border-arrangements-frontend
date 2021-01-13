@@ -16,25 +16,27 @@
 
 package renderer
 
-import models.hallmarks.HallmarkD.{D1, D2}
+import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
+import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
+import models.taxpayer.TaxResidency
 import models.{Address, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
-import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
+import pages.taxpayer.TaxpayerLoopPage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
 
 import javax.inject.Inject
-import scala.xml.{Elem, NodeSeq}
+import scala.collection.mutable.ArrayBuffer
+import scala.xml.{Elem, Node, NodeSeq}
 
 class XMLRenderer @Inject()() {
 
@@ -54,41 +56,37 @@ class XMLRenderer @Inject()() {
     </Header>
   }
 
-  private[renderer] def buildTINData(userAnswers: UserAnswers): IndexedSeq[Option[TIN]] = {
-    userAnswers.get(OrganisationLoopPage) match {
-      case Some(value) =>
-        value.map {
-          loop =>
-            if (loop.doYouKnowTIN.isDefined && loop.doYouKnowTIN.get) {
-              loop.whichCountry.get.code match {
-                case "GB" =>
-                  Some(TIN("GB", loop.taxNumbersUK.get.firstTaxNumber)) //TODO What about the other optional taxNumbers?
-                case code: String =>
-                  Some(TIN(code, loop.taxNumbersNonUK.get.firstTaxNumber))
-              }
-            } else {
-              None
-            }
+  private[renderer] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): IndexedSeq[Option[TIN]] = {
+    taxResidencies.map {
+      loop =>
+        if (loop.country.isDefined && loop.taxReferenceNumbers.isDefined) {
+          loop.country.get.code match {
+            case "GB" =>
+              Some(TIN("GB", loop.taxReferenceNumbers.get.firstTaxNumber)) //TODO What about the other optional taxNumbers?
+            case code: String =>
+              Some(TIN(code, loop.taxReferenceNumbers.get.firstTaxNumber))
+          }
+        } else {
+          None
         }
-      case None => IndexedSeq[Option[TIN]]()
     }
   }
 
-  private[renderer] def buildResCountryCode(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(OrganisationLoopPage) match {
-      case Some(value) =>
-        value.map {
-          loop =>
-            <ResCountryCode>{loop.whichCountry.get.code}</ResCountryCode>
+  private[renderer] def buildResCountryCode(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
+    taxResidencies.flatMap {
+      taxResidency =>
+        if (taxResidency.country.isDefined) {
+          <ResCountryCode>{taxResidency.country.get.code}</ResCountryCode>
+        } else {
+          NodeSeq.Empty
         }
-      case None => NodeSeq.Empty //TODO Mandatory and Repeatable
     }
   }
 
-  private[renderer] def buildAddress(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(OrganisationAddressPage) match {
+  private[renderer] def buildAddress(address: Option[Address]): NodeSeq = {
+    address match {
       case Some(address) =>
-        Seq(
+        val addressNode = Seq(
           address.addressLine1.map(addressLine1 => <Street>{addressLine1}</Street>),
           address.addressLine2.map(addressLine2 => <BuildingIdentifier>{addressLine2}</BuildingIdentifier>),
           address.addressLine3.map(addressLine3 => <DistrictName>{addressLine3}</DistrictName>),
@@ -96,36 +94,31 @@ class XMLRenderer @Inject()() {
           Some(<City>{address.city}</City>),
           Some(<Country>{address.country.code}</Country>)
         ).filter(_.isDefined).map(_.get)
-      case None => Seq()
+
+        <Address>{addressNode}</Address>
+      case None => NodeSeq.Empty
     }
   }
 
-  private[renderer] def buildIDForOrganisation(userAnswers: UserAnswers): Elem = {
-    val mandatoryOrganisationName = userAnswers.get(OrganisationNamePage) match {
-      case Some(name) => name
-      case None => ""
-    }
+  private[renderer] def buildIDForOrganisation(organisation: Organisation): Elem = {
+    val mandatoryOrganisationName = <OrganisationName>{organisation.organisationName}</OrganisationName>
 
-    val tins: NodeSeq = buildTINData(userAnswers).filter(_.isDefined).map(_.get).map {
+    val tins: NodeSeq = buildTINData(organisation.taxResidencies).filter(_.isDefined).map(_.get).map {
       tin =>
         <TIN issuedBy={tin.issuedBy}>{tin.tin}</TIN>
     }
 
-    val address = Seq(<Address>{buildAddress(userAnswers)}</Address>) //TODO If None then it shouldn't be displayed
+    val email = organisation.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
 
-    val email = userAnswers.get(EmailAddressForOrganisationPage)
-      .fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
-
-    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(userAnswers)
+    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(organisation.taxResidencies)
 
     val nodeBuffer = new xml.NodeBuffer
-
     val organisationNodes = {
       <Organisation>
         {nodeBuffer ++
-        Seq(<OrganisationName>{mandatoryOrganisationName}</OrganisationName>) ++
+        mandatoryOrganisationName ++
         tins ++
-        address ++
+        buildAddress(organisation.address) ++
         email ++
         mandatoryResCountryCode}
       </Organisation>
@@ -136,6 +129,7 @@ class XMLRenderer @Inject()() {
 
   private[renderer] def buildLiability(userAnswers: UserAnswers): Elem = {
     //TODO This is optional. If value is don't know, don't include this section
+
     //Note: If Taxpayer is selected, it's mandatory
     val mandatoryRelevantTaxpayerNexus: NodeSeq =
       (userAnswers.get(RoleInArrangementPage), userAnswers.get(TaxpayerWhyReportInUKPage)) match {
@@ -150,7 +144,6 @@ class XMLRenderer @Inject()() {
       .fold(NodeSeq.Empty)(capacity => <Capacity>{capacity.toString}</Capacity>)
 
     val nodeBuffer = new xml.NodeBuffer
-
     val relevantTaxPayersNode = {
       nodeBuffer ++
         mandatoryRelevantTaxpayerNexus ++
@@ -162,26 +155,55 @@ class XMLRenderer @Inject()() {
     </Liability>
   }
 
-  private[renderer] def buildRelevantTaxPayers(userAnswers: UserAnswers) = {
+  private[renderer] def buildDisclosingSection(userAnswers: UserAnswers): Elem =  {
 
-    val mandatoryImplementingDate: NodeSeq =
-      (userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage),
-        userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage),
-        userAnswers.get(DisclosureMarketablePage)) match {
-        case (Some(implementingDate), _, _) =>
-          Seq(<TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
-        case (_, Some(implementingDate), _) =>
-          Seq(<TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
-        case _ => Seq() //TODO If Marketable then it's Mandatory.
-      }
+    //TODO Need to use ReporterCheckYourAnswersController - ReporterTaxResidencyLoopPage?
+    val discloseDetails = userAnswers.get(TaxpayerLoopPage) match {
+      case Some(taxpayers) =>
+        val nodeBuffer = new xml.NodeBuffer
 
-    val nodeBuffer = new xml.NodeBuffer
-    val relevantTaxPayersNode = {
-      <RelevantTaxpayer>
-        {nodeBuffer ++
-        buildIDForOrganisation(userAnswers) ++
-        mandatoryImplementingDate}
-      </RelevantTaxpayer>
+        taxpayers.map {
+          taxpayer =>
+            //TODO Add a check for individual
+            // if (taxpayer.organisation.isDefined)...
+            val organisationDetails = taxpayer.organisation.get
+
+            nodeBuffer ++
+              buildIDForOrganisation(organisationDetails) ++
+              buildLiability(userAnswers)
+        }
+      case None => throw new Exception("Unable to build Disclosing section due to missing data.")
+    }
+
+    <Disclosing>{discloseDetails}</Disclosing>
+  }
+
+  private[renderer] def buildRelevantTaxPayers(userAnswers: UserAnswers): Elem = {
+    val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] = userAnswers.get(TaxpayerLoopPage) match {
+      case Some(taxpayers) =>
+        val nodeBuffer = new xml.NodeBuffer
+
+        taxpayers.map {
+          taxpayer =>
+            //TODO Add a check for individual
+            // if (taxpayer.organisation.isDefined)...
+            val organisationDetails = taxpayer.organisation.get
+
+            //TODO Does this need to be a Seq[Elem]?
+            val mandatoryImplementingDate = {
+              Seq(
+                taxpayer.implementingDate.map(implementingDate =>
+                  <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
+              ).filter(_.isDefined).map(_.get)
+            }
+
+            nodeBuffer ++
+            <RelevantTaxpayer>
+              {buildIDForOrganisation(organisationDetails) ++
+              mandatoryImplementingDate}
+            </RelevantTaxpayer>
+        }
+      case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
     <RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>
@@ -242,7 +264,7 @@ class XMLRenderer @Inject()() {
                   case None => Set.empty[Elem]
                 }
               } else {
-                Set(<Hallmark>{D2.toString}</Hallmark>)
+                Set(<Hallmark>{"DAC6D2"}</Hallmark>)
               }
           }
         case _ => Set.empty[Elem]
@@ -314,7 +336,7 @@ class XMLRenderer @Inject()() {
   }
 
   def renderXML(userAnswers: UserAnswers)
-               (implicit request: DataRequest[AnyContent]): String = {
+               (implicit request: DataRequest[AnyContent]): Elem = {
     val mandatoryDisclosureImportInstruction = userAnswers.get(DisclosureTypePage) match {
       case Some(value) => value.toString.toUpperCase
       case None => ""
@@ -330,10 +352,7 @@ class XMLRenderer @Inject()() {
         {buildHeader(userAnswers)}
         <DAC6Disclosures>
           <DisclosureImportInstruction>{mandatoryDisclosureImportInstruction}</DisclosureImportInstruction>
-          <Disclosing>
-            {buildIDForOrganisation(userAnswers)}
-            {buildLiability(userAnswers)}
-          </Disclosing>
+          {buildDisclosingSection(userAnswers)}
           <InitialDisclosureMA>{mandatoryInitialDisclosureMA}</InitialDisclosureMA>
           {buildRelevantTaxPayers(userAnswers)}
           {buildDisclosureInformation(userAnswers)}
@@ -343,6 +362,7 @@ class XMLRenderer @Inject()() {
     val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
     prettyPrinter.format(xml)
+    xml
 
   }
 }
