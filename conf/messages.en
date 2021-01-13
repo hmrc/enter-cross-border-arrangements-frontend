@@ -903,8 +903,8 @@ disclosureConfirmation.secondEmail = and {0}
 disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
 disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
 disclosureConfirmation.p4 = Your message reference ID is {0}.
-disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one.
-disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one.
+disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
 disclosureConfirmation.p7 = What happens next
 disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
