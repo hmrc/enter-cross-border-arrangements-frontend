@@ -7,6 +7,7 @@ dist
 eclipse
 *.eml
 .history
+.bsp
 .idea
 /.idea_modules
 *.iml

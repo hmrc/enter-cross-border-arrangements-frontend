@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package models.requests
+package services
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import base.SpecBase
+import helpers.Submissions
 
-case class OptionalDataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+class TransformationServiceSpec extends SpecBase {
 
-case class DataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+  "TransformationService" - {
+    "must take a valid file and replace the messageRefID" in {
+      val service = app.injector.instanceOf[TransformationService]
+      val transformedFile = service.rewriteMessageRefID(
+        Submissions.validSubmission,
+        "GB0000000YYY"
+      )
+      transformedFile mustBe Submissions.updatedSubmission
+    }
+  }
+}

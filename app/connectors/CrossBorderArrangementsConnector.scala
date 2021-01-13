@@ -17,10 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.GeneratedIDs
+import play.api.http.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.{Elem, NodeSeq}
 
 class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfig,
                                                  httpClient: HttpClient)(implicit ec: ExecutionContext) {
@@ -45,6 +48,13 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
       case _: Exception => false
     }
   }
+
+  private val headers = Seq(
+    HeaderNames.CONTENT_TYPE -> "application/xml"
+  )
+
+  def submitXML(xml:NodeSeq)(implicit hc: HeaderCarrier): Future[GeneratedIDs] =
+    httpClient.POSTString[GeneratedIDs](s"$baseUrl/submit", xml.mkString, headers)
 
   def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](isMarketableArrangementUrl(arrangementId)).map { response =>

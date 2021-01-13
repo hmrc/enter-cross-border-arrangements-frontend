@@ -579,3 +579,6 @@ GET        /reporter/individual/select-address               controllers.reporte
 POST       /reporter/individual/select-address               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(mode: Mode = CheckMode)
+
+# TASK LIST
+POST      /task-list                                         controllers.TaskListController.onSubmit

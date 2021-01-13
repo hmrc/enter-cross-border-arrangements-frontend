@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package services
 
-import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
 
-case class OptionalDataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+import javax.inject.Inject
+import scala.xml.Elem
 
-case class DataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+class XMLGenerationService @Inject()() {
+
+  def createXmlSubmission(userAnswers: UserAnswers): Elem =
+    <trial><test></test></trial>
+
+}

@@ -46,6 +46,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val discloseArrangeLink: String = configuration.get[String]("urls.homepage")
 
   lazy val crossBorderArrangementsUrl: String = servicesConfig.baseUrl("cross-border-arrangements")
+  lazy val discloseCrossBorderArrangementsFrontendUrl: String = configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
 
   lazy val languageTranslationEnabled: Boolean =
