@@ -23,7 +23,7 @@ import models.ReporterOrganisationOrIndividual.Organisation
 import models.UserAnswers
 import models.reporter.RoleInArrangement.Intermediary
 import navigation.NavigatorForReporter
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage, ReporterCheckYourAnswersPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,8 +31,10 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
+import controllers.mixins.DefaultRouting
+import models.NormalMode
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterCheckYourAnswersController  @Inject()(
    override val messagesApi: MessagesApi,
@@ -97,4 +99,9 @@ class ReporterCheckYourAnswersController  @Inject()(
 
     }
   }
+
+    def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+      implicit request =>
+            Future.successful(Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
+    }
 }

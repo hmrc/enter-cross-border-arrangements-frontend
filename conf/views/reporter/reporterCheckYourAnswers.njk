@@ -42,6 +42,8 @@
           rows: roleDetails
         }) }}
 
+
+          <form action="{{ routes.controllers.reporter.ReporterCheckYourAnswersController.onContinue().url }}" method="post">
           {{ csrf() | safe }}
           <div class="govuk-!-margin-top-9">
                 {{ govukButton({
@@ -50,7 +52,7 @@
                     attributes: {id:"submit"}
                 }) }}
             </div>
-
+        </form>
       </div>
     </div>
   </div>

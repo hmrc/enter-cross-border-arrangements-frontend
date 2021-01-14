@@ -408,6 +408,7 @@ POST       /disclosure/change-identify                 controllers.disclosure.Di
 # REPORTER DETAILS
 
 GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
+POST        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onContinue
 
 GET        /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = NormalMode)
