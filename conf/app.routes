@@ -523,7 +523,7 @@ POST       /reporter/organisation/change-address                             con
 GET        /reporter/organisation/select-address                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/organisation/select-address                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /reporter/organisation/change-select-address                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/organisation/change-select-address                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /reporter/organisation/change-select-address                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /reporter/organisation/email-address                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onPageLoad(mode: Mode = NormalMode)
 POST       /reporter/organisation/email-address                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode: Mode = NormalMode)

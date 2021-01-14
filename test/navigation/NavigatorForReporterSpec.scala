@@ -546,15 +546,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
   }
 
   "on REPORTER DETAILS - TAXPAYER JOURNEY in Check Mode" - {
-
-    "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
-      "to 'Check your answers for your reporter details' page " in {
-
-      navigator
-        .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(CheckMode))(Some(TaxpayerWhyReportInUK.UkTaxResident))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
-    }
-
+    
     "must go from 'Why are you reporting the arrangement as a taxpayer?' page " +
       "to 'Check your answers for your reporter details' page " in {
 
