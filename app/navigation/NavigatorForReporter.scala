@@ -107,7 +107,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       case Some(DoNotKnow) =>
         controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
       case _ =>
-        jumpOrCheckYourAnswers(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode), checkRoute)
+        controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(checkRoute.mode)
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>

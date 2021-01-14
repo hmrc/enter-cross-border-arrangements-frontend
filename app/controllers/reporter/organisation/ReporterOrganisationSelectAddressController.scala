@@ -50,9 +50,9 @@ class ReporterOrganisationSelectAddressController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def manualAddressURL(mode: Mode): String = routes.ReporterOrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(mode: Mode): String = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(mode).url
 
-  def actionUrl(mode: Mode) = routes.ReporterOrganisationSelectAddressController.onPageLoad(mode).url
+  def actionUrl(mode: Mode) = controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onSubmit(mode).url
 
   private val form = formProvider()
 
