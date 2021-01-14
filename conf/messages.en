@@ -849,7 +849,7 @@ intermediaryRole.promoter = Promoter
 intermediaryRole.promoter.hint = Promoters design, market, organise, make available for implementation or manage the implementation of an arrangement.
 intermediaryRole.serviceProvider = Service provider
 intermediaryRole.serviceProvider.hint = Service providers provide aid, assistance or advice about the design, marketing, organising or implementation of a scheme. These include those who provide finance, expertise, knowledge, advice or share their experience.
-intermediaryRole.unknown = Unknown
+intermediaryRole.optionUnknown = Unknown
 intermediaryRole.checkYourAnswersLabel = Type of intermediary
 intermediaryRole.error.required = Select your role in this arrangement
 

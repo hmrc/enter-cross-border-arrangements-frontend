@@ -260,18 +260,21 @@ trait ReporterRows extends RowBuilder {
       href    = controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(CheckMode).url
     )
 
-  private def intermediaryWhichCountriesExemptPage: Option[Row] = userAnswers.get(IntermediaryWhichCountriesExemptPage) map { answer =>
+  private def intermediaryWhichCountriesExemptPage: Option[Row] = userAnswers.get(IntermediaryWhichCountriesExemptPage) map {
+    countryList =>
     toRow(
       msgKey  = "intermediaryWhichCountriesExempt",
-      content = Html(formatExemptCountriesList(answer)),
+      content = Html(formatExemptCountriesList(countryList, countryList.tail.isEmpty)),
       href    = controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(CheckMode).url
     )
   }
 
-  private def formatExemptCountriesList(selectedCountries: Set[CountriesListEUCheckboxes]) = {
-    val getCountryName = selectedCountries.map(countryCode => msg"countriesListCheckboxes.$countryCode".resolve)
+  private def formatExemptCountriesList(selectedCountries: Set[CountriesListEUCheckboxes], singleItem: Boolean) = {
 
-    if (selectedCountries.size == 1) {
+    val getCountryName = selectedCountries.map(_.toString).toSeq.map(
+      countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
+
+    if (singleItem) {
       getCountryName.head
     } else {
       s"<ul class='govuk-list govuk-list--bullet'>${getCountryName.foldLeft("")((a, b) => s"$a<li>$b</li>")}</ul>"

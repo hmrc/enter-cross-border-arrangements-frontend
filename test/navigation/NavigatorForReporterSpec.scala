@@ -566,6 +566,14 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
   "on REPORTER DETAILS - INTERMEDIARY JOURNEY in Normal mode" - {
 
+    "must go from 'As an intermediary, what is your role in this arrangement?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+          navigator
+            .routeMap(IntermediaryRolePage)(DefaultRouting(CheckMode))(Some(Seq(IntermediaryRole.Promoter)))(0)
+            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
     "must go from 'Which countries are you exempt from reporting in?' page " +
       "to 'Check your answers for your reporter details' page " in {
 
