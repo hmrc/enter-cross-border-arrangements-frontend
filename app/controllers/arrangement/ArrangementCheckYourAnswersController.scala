@@ -17,13 +17,13 @@
 package controllers.arrangement
 
 import controllers.actions._
-import controllers.mixins.{CheckRoute, RoutingSupport}
+import controllers.mixins.{RoutingSupport, DefaultRouting}
 import models.NormalMode
 import navigation.NavigatorForArrangement
 import pages.arrangement.ArrangementCheckYourAnswersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
@@ -60,13 +60,10 @@ class ArrangementCheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call = navigator.routeMap(ArrangementCheckYourAnswersPage)(checkRoute)(None)(0)
-
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val checkRoute = toCheckRoute(NormalMode, request.userAnswers)
-      Future.successful(Redirect(redirect(checkRoute)))
+      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
 
   }
 

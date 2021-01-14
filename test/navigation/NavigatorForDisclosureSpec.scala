@@ -22,7 +22,7 @@ import generators.Generators
 import models.NormalMode
 import models.disclosure.DisclosureType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
