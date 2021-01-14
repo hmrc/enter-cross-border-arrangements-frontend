@@ -1066,6 +1066,7 @@ reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax pu
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
 
+<<<<<<< HEAD
 # CONFIRMATION PAGES
 
 confirmation.link.text = Disclose a cross-border arrangement
@@ -1090,3 +1091,6 @@ disclosureConfirmation.p8 = You will need the disclosure ID if you need to make 
 # Temporary page for displaying generated XML
 generatedXML.title = Generated XML
 generatedXML.heading = Generated XML
+
+unsubmitted.title = You have unsubmitted disclosures
+unsubmitted.heading = You have {0} unsubmitted disclosure{1}

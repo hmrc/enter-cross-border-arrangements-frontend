@@ -21,7 +21,7 @@ GET        /keep-alive                                  controllers.KeepAliveCon
 # DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
 
 GET        /manual/your-disclosure-details                         controllers.DisclosureDetailsController.onPageLoad()
-
+GET        /manual/unsubmitted-disclosures                         controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 
 # HALLMARK ROUTES
