@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package renderer
+package helpers.xml
+
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
 import models.{Address, UserAnswers}
@@ -25,7 +26,7 @@ import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
-  private[renderer] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
+  private[xml] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
     taxResidencies.flatMap {
       loop =>
         if (loop.country.isDefined && loop.taxReferenceNumbers.isDefined) {
@@ -42,7 +43,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  private[renderer] def buildResCountryCode(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
+  private[xml] def buildResCountryCode(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
     taxResidencies.flatMap {
       taxResidency =>
         if (taxResidency.country.isDefined) {
@@ -53,7 +54,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  private[renderer] def buildAddress(address: Option[Address]): NodeSeq = {
+  private[xml] def buildAddress(address: Option[Address]): NodeSeq = {
     address match {
       case Some(address) =>
         val addressNode = Seq(
@@ -70,7 +71,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  private[renderer] def buildIDForOrganisation(organisation: Organisation): Elem = {
+  private[xml] def buildIDForOrganisation(organisation: Organisation): Elem = {
     val mandatoryOrganisationName = <OrganisationName>{organisation.organisationName}</OrganisationName>
 
     val email = organisation.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)

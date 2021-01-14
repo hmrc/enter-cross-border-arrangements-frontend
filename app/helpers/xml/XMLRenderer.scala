@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package renderer
+package helpers.xml
 
 import models.UserAnswers
 import models.requests.DataRequest
@@ -27,7 +27,7 @@ import scala.xml.Elem
 
 class XMLRenderer @Inject()() {
 
-  private[renderer] def buildHeader(userAnswers: UserAnswers)
+  private[xml] def buildHeader(userAnswers: UserAnswers)
                                    (implicit request: DataRequest[AnyContent]): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
       case Some(disclosureName) => "GB" + request.internalId + disclosureName

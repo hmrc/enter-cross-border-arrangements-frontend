@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package renderer
+package helpers.xml
 
 import models.UserAnswers
 

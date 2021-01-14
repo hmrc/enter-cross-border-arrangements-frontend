@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package renderer
+package helpers.xml
+
 import models.UserAnswers
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
+import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[renderer] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName = userAnswers.get(WhatIsThisArrangementCalledPage) match {
       case Some(name) => Seq(<Disclosure_Name>{name}</Disclosure_Name>)
       case None => NodeSeq.Empty
@@ -52,7 +53,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Summary>
   }
 
-  private[renderer] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
     val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
       case Some(countries) =>
         countries.map {
@@ -65,7 +66,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
-  private[renderer] def buildHallmarks(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildHallmarks(userAnswers: UserAnswers): Elem = {
 
     val mandatoryHallmarks: Set[Elem] = {
       userAnswers.get(HallmarkDPage) match {

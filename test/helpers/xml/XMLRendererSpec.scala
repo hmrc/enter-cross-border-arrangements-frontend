@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package renderer
+package helpers.xml
 
 import base.SpecBase
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
@@ -30,18 +30,19 @@ import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
-import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.{TaxpayerLoopPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
+import services.XMLGenerationService
 
 import java.time.LocalDate
 
 class XMLRendererSpec extends SpecBase {
 
-  val xmlRenderer: XMLRenderer = injector.instanceOf[XMLRenderer]
+  val xmlRenderer: XMLGenerationService = injector.instanceOf[XMLGenerationService]
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
