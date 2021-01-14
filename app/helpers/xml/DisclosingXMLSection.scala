@@ -19,7 +19,7 @@ package helpers.xml
 import models.UserAnswers
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
-import models.reporter.taxpayer.TaxpayerWhyReportInUK
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 
@@ -28,7 +28,6 @@ import scala.xml.{Elem, NodeSeq}
 object DisclosingXMLSection extends XMLBuilder {
 
   private[xml] def buildLiability(userAnswers: UserAnswers): NodeSeq = {
-    //TODO This is optional. If value is don't know, don't include this section
     userAnswers.get(TaxpayerWhyReportInUKPage).fold(NodeSeq.Empty) {
       case TaxpayerWhyReportInUK.DoNotKnow =>
         NodeSeq.Empty
@@ -42,7 +41,10 @@ object DisclosingXMLSection extends XMLBuilder {
           }
 
         val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage)
-          .fold(NodeSeq.Empty)(capacity => <Capacity>{capacity.toString}</Capacity>)
+          .fold(NodeSeq.Empty) {
+            case TaxpayerWhyReportArrangement.DoNotKnow => NodeSeq.Empty
+            case capacity: TaxpayerWhyReportArrangement => <Capacity>{capacity.toString}</Capacity>
+          }
 
         val nodeBuffer = new xml.NodeBuffer
         val relevantTaxPayersNode = {

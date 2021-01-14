@@ -20,7 +20,8 @@ import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
 import models.{Address, UserAnswers}
-import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
+import pages.reporter.RoleInArrangementPage
+import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.collection.mutable.ArrayBuffer
@@ -29,7 +30,7 @@ import scala.xml.{Elem, Node, NodeSeq}
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
   private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
-    (userAnswers.get(RoleInArrangementPage), userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)) match {
+    (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
       case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
         <RelevantTaxpayer>
           {DisclosingXMLSection.buildDiscloseDetailsForOrganisation(userAnswers)}

@@ -22,7 +22,8 @@ import models.reporter.RoleInArrangement
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, AddressLookup, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
+import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
+import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 
 import java.time.LocalDate
@@ -71,7 +72,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-        .set(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
         .set(ReporterOrganisationNamePage, "Reporter name").success.value
         .set(ReporterSelectedAddressLookupPage, addressLookupAddress).success.value
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
@@ -199,7 +200,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
     "toXml must build a complete RelevantTaxPayers section Elem" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-        .set(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
         .set(ReporterOrganisationNamePage, "Reporter name").success.value
         .set(ReporterOrganisationAddressPage, address).success.value
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
