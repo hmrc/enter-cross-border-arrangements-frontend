@@ -57,18 +57,21 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers): NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
-    //TODO Need to check here if reporter is an individual or organisation. Then add to nodeBuffer
     val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
 
-    val discloseDetails = {
-      nodeBuffer ++
-        RelevantTaxPayersXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
-        buildLiability(userAnswers)
-    }
+    nodeBuffer ++
+      RelevantTaxPayersXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
+      buildLiability(userAnswers)
+  }
 
-    <Disclosing>{discloseDetails}</Disclosing>
+  override def toXml(userAnswers: UserAnswers): Elem = {
+    //TODO Need to check here if reporter is an individual or organisation then return correct section
+
+    <Disclosing>
+      {buildDiscloseDetailsForOrganisation(userAnswers)}
+    </Disclosing>
   }
 }

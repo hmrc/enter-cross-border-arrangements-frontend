@@ -17,14 +17,27 @@
 package helpers.xml
 
 import models.organisation.Organisation
+import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
 import models.{Address, UserAnswers}
+import pages.reporter.{RoleInArrangementPage, WhatIsReporterTaxpayersStartDateForImplementingArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.collection.mutable.ArrayBuffer
 import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
+
+  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
+    (userAnswers.get(RoleInArrangementPage), userAnswers.get(WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)) match {
+      case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
+        <RelevantTaxpayer>
+          {DisclosingXMLSection.buildDiscloseDetailsForOrganisation(userAnswers)}
+          <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+        </RelevantTaxpayer>
+      case _ => NodeSeq.Empty
+    }
+  }
 
   private[xml] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
     taxResidencies.flatMap {
@@ -49,7 +62,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
         if (taxResidency.country.isDefined) {
           <ResCountryCode>{taxResidency.country.get.code}</ResCountryCode>
         } else {
-          NodeSeq.Empty
+          throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory resident country/countries.")
         }
     }
   }
@@ -98,20 +111,14 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case Some(taxpayers) =>
         val nodeBuffer = new xml.NodeBuffer
 
-
-        //TODO Need to add discloser information here too.
-
         taxpayers.map {
           taxpayer =>
             //TODO Need to check here if reporter is an individual or organisation. Then add to nodeBuffer
             val organisationDetails = taxpayer.organisation.get
 
-            //TODO Does this need to be a Seq[Elem]?
-            val mandatoryImplementingDate = {
-              Seq(
-                taxpayer.implementingDate.map(implementingDate =>
-                  <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>)
-              ).filter(_.isDefined).map(_.get)
+            val mandatoryImplementingDate = taxpayer.implementingDate match {
+              case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+              case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
             }
 
             nodeBuffer ++
@@ -123,6 +130,9 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
-    <RelevantTaxPayers>{relevantTaxPayersNode}</RelevantTaxPayers>
+    <RelevantTaxPayers>
+      {buildTaxPayerIsAReporter(userAnswers)}
+      {relevantTaxPayersNode}
+    </RelevantTaxPayers>
   }
 }
