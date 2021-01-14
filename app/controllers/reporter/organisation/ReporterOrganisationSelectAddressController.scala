@@ -52,7 +52,7 @@ class ReporterOrganisationSelectAddressController @Inject()(
 
   private def manualAddressURL(mode: Mode): String = routes.ReporterOrganisationAddressController.onPageLoad(mode).url
 
-  def actionUrl(mode: Mode) = routes.ReporterOrganisationSelectAddressController.onPageLoad(mode).url
+  def actionUrl(mode: Mode) = routes.ReporterOrganisationSelectAddressController.onSubmit(mode).url
 
   private val form = formProvider()
 

@@ -813,18 +813,21 @@ countriesListCheckboxes.SE =  Sweden
 
 ## REPORTER DETAILS
 
+reporterCheckYourAnswers.heading = Check your answers for your reporter details
+reporterTaxpayerImplementingArrangement.checkYourAnswersLabel = Taxpayer implementing date
+
 reporterOrganisationOrIndividual.title = Are you reporting as an organisation or individual?
 reporterOrganisationOrIndividual.heading = Are you reporting as an organisation or individual?
 reporterOrganisationOrIndividual.organisation = Organisation
 reporterOrganisationOrIndividual.individual = Individual
-reporterOrganisationOrIndividual.checkYourAnswersLabel = Are you reporting as an organisation or individual?
+reporterOrganisationOrIndividual.checkYourAnswersLabel = Organisation or individual
 reporterOrganisationOrIndividual.error.required = Select organisation or individual
 
 roleInArrangement.title = What is your role in this arrangement?
 roleInArrangement.heading = What is your role in this arrangement?
 roleInArrangement.intermediary = Intermediary
 roleInArrangement.taxpayer = Taxpayer
-roleInArrangement.checkYourAnswersLabel = What is your role in this arrangement?
+roleInArrangement.checkYourAnswersLabel = Role in the arrangement
 roleInArrangement.error.required = Select whether you are an intermediary or a taxpayer
 roleInArrangement.information = By providing your details here, you do not need to add yourself as an intermediary or taxpayer again in another section.
 
@@ -832,12 +835,12 @@ whyReportInUK.title = Why are you required to report this arrangement in the Uni
 whyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
 whyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
 whyReportInUK.hint = This list is in priority order. You only need to choose the first that applies.
-whyReportInUK.taxResidentUk = You are tax resident in the UK
+whyReportInUK.taxResidentUK = You are tax resident in the UK
 whyReportInUK.permanentEstablishment = You have a permanent establishment in the UK
 whyReportInUK.governedByLaw = You are governed by UK law, or, if relevant, your organisation was incorporated in the UK
 whyReportInUK.registeredWithAssociated = You are registered with a relevant professional association in the UK
 whyReportInUK.doNotKnow = I do not know
-whyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+whyReportInUK.checkYourAnswersLabel = Reason for reporting in the UK
 whyReportInUK.error.required = Select the first reason that applies
 
 intermediaryRole.title = As an intermediary, what is your role in this arrangement?
@@ -846,25 +849,28 @@ intermediaryRole.promoter = Promoter
 intermediaryRole.promoter.hint = Promoters design, market, organise, make available for implementation or manage the implementation of an arrangement.
 intermediaryRole.serviceProvider = Service provider
 intermediaryRole.serviceProvider.hint = Service providers provide aid, assistance or advice about the design, marketing, organising or implementation of a scheme. These include those who provide finance, expertise, knowledge, advice or share their experience.
-intermediaryRole.unknown = Unknown
-intermediaryRole.checkYourAnswersLabel = As an intermediary, what is your role in this arrangement?
+intermediaryRole.optionUnknown = Unknown
+intermediaryRole.checkYourAnswersLabel = Type of intermediary
 intermediaryRole.error.required = Select your role in this arrangement
 
 intermediaryExemptionInEU.title = Are you exempt from reporting in any of the EU member states?
 intermediaryExemptionInEU.heading = Are you exempt from reporting in any of the EU member states?
 intermediaryExemptionInEU.hint = Reporting in the UK may mean you do not have to report in one or more EU member states. You may also be exempt for other reasons, such as legal professional privilege.
-intermediaryExemptionInEU.checkYourAnswersLabel = Are you exempt from reporting in any of the EU member states?
+intermediaryExemptionInEU.checkYourAnswersLabel = Are you exempt from reporting anywhere?
 intermediaryExemptionInEU.error.required = Select yes if you are exempt. If unsure, choose I do not know
+intermediaryExemptionInEU.no = No
+intermediaryExemptionInEU.yes = Yes
+intermediaryExemptionInEU.doNotKnow = I do not know
 
 intermediaryDoYouKnowExemptions.title = Do you know which countries you are exempt from reporting in?
 intermediaryDoYouKnowExemptions.heading = Do you know which countries you are exempt from reporting in?
-intermediaryDoYouKnowExemptions.checkYourAnswersLabel = Do you know which countries you are exempt from reporting in?
+intermediaryDoYouKnowExemptions.checkYourAnswersLabel = Do you know where?
 intermediaryDoYouKnowExemptions.error.required = Select yes if you know which countries
 
 intermediaryWhichCountriesExempt.title = Which countries are you exempt from reporting in?
 intermediaryWhichCountriesExempt.heading = Which countries are you exempt from reporting in?
 intermediaryWhichCountriesExempt.hint = Select all that apply.
-intermediaryWhichCountriesExempt.checkYourAnswersLabel = Which countries are you exempt from reporting in?
+intermediaryWhichCountriesExempt.checkYourAnswersLabel = Exempt Countries
 intermediaryWhichCountriesExempt.error.required = Select one or more countries
 
 taxpayerWhyReportInUK.title = Why are you required to report this arrangement in the United Kingdom?
@@ -876,7 +882,7 @@ taxpayerWhyReportInUK.ukPermanentEstablishment = You have a permanent establishm
 taxpayerWhyReportInUK.incomeOrProfit = You receive income or generate profit in the UK
 taxpayerWhyReportInUK.ukActivity = You carry out any activity in the UK
 taxpayerWhyReportInUK.doNotKnow = I do not know
-taxpayerWhyReportInUK.checkYourAnswersLabel = Why are you required to report this arrangement in the United Kingdom?
+taxpayerWhyReportInUK.checkYourAnswersLabel = Reason for reporting in the UK
 taxpayerWhyReportInUK.error.required = Select the first reason that applies
 
 taxpayerWhyReportArrangement.title = Why are you reporting the arrangement as a taxpayer?
@@ -885,34 +891,14 @@ taxpayerWhyReportArrangement.noIntermediaries = There are no intermediaries invo
 taxpayerWhyReportArrangement.professionalPrivilege = The intermediaries involved have legal professional privilege
 taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outside of the UK and EU
 taxpayerWhyReportArrangement.doNotKnow = I do not know
-taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting the arrangement as a taxpayer?
+taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
-
-# CONFIRMATION PAGES
-
-confirmation.link.text = Disclose a cross-border arrangement
-confirmation.survey.link = What did you think of this service?
-confirmation.survey.text = (opens in a new tab)
-
-disclosureConfirmation.title = Disclosure received
-disclosureConfirmation.arrangement.title = Arrangement received
-disclosureConfirmation.panel.new = Your arrangement ID
-disclosureConfirmation.panel.add = Your disclosure ID
-disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
-disclosureConfirmation.secondEmail = and {0}
-disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
-disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
-disclosureConfirmation.p4 = Your message reference ID is {0}.
-disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p7 = What happens next
-disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
 ## REPORTER DETAILS - ORGANISATION
 
 reporterOrganisationName.title = What is the name of the organisation you’re reporting for?
 reporterOrganisationName.heading = What is the name of the organisation you’re reporting for?
-reporterOrganisationName.checkYourAnswersLabel = What is the name of the organisation you’re reporting for?
+reporterOrganisationName.checkYourAnswersLabel = Reporter’s name
 reporterOrganisationName.error.required = Provide a name
 reporterOrganisationName.error.length = Name must be 200 characters or less
 
@@ -922,6 +908,7 @@ reporterOrganisationIsAddressUk.checkYourAnswersLabel = Is {0}’s address in th
 reporterOrganisationIsAddressUk.error.required = Select yes if their address is in the UK
 
 reporterOrganisationAddress.title = What is its address?
+reporterOrganisationAddress.checkYourAnswersLabel = Address
 reporterOrganisationAddress.heading = What is {0}’s address?
 
 ## REPORTER DETAILS - INDIVIDUAL
@@ -930,7 +917,7 @@ reporterIndividualName.title = What is your full name?
 reporterIndividualName.heading = What is your full name?
 reporterIndividualName.firstName = First Name
 reporterIndividualName.secondName = Last Name
-reporterIndividualName.checkYourAnswersLabel = reporterIndividualName
+reporterIndividualName.checkYourAnswersLabel = Reporter’s name
 reporterIndividualName.error.firstName.required = Provide a first name
 reporterIndividualName.error.secondName.required = Provide a last name
 reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
@@ -939,7 +926,7 @@ reporterIndividualName.error.secondName.length = Last name must be 200 character
 reporterIndividualDateOfBirth.title = What is your date of birth?
 reporterIndividualDateOfBirth.heading = What is your date of birth?
 reporterIndividualDateOfBirth.hint = We use this to help confirm your identity. For example, 31 3 1980
-reporterIndividualDateOfBirth.checkYourAnswersLabel = ReporterIndividualDateOfBirth
+reporterIndividualDateOfBirth.checkYourAnswersLabel = Date of birth
 reporterIndividualDateOfBirth.error.required.all = Provide a date
 reporterIndividualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 reporterIndividualDateOfBirth.error.required = Date of birth must include {0}
@@ -951,7 +938,7 @@ reporterIndividualDateOfBirth.error.pastDate = Provide a date after 1 January 19
 reporterIndividualPlaceOfBirth.title = What is your place of birth?
 reporterIndividualPlaceOfBirth.heading = What is your place of birth?
 reporterIndividualPlaceOfBirth.hint = Provide the town or city and country
-reporterIndividualPlaceOfBirth.checkYourAnswersLabel = What is your place of birth?
+reporterIndividualPlaceOfBirth.checkYourAnswersLabel = Place of birth
 reporterIndividualPlaceOfBirth.error.required = Provide a place of birth
 reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
 
@@ -968,19 +955,19 @@ reporterIndividualPostcode.submit = Find address
 
 reporterIndividualAddress.title = What is your address?
 reporterIndividualAddress.heading = What is your address?
-reporterIndividualAddress.checkYourAnswersLabel = What is your address?
+reporterIndividualAddress.checkYourAnswersLabel = Address
 
 reporterIndividualSelectAddress.title = What is your address?
 reporterIndividualSelectAddress.heading = What is your address?
 reporterIndividualSelectAddress.1 = 2
 reporterIndividualSelectAddress.3 = 4
-reporterIndividualSelectAddress.checkYourAnswersLabel = What is your address?
+reporterIndividualSelectAddress.checkYourAnswersLabel = Address
 reporterIndividualSelectAddress.error.required = Select an address
 
 reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
 reporterIndividualEmailAddress.label = Email
-reporterIndividualEmailAddress.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
 reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
 
 ## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
@@ -992,7 +979,7 @@ reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email a
 reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
 reporterIndividualEmailAddressQuestion.title = Do you have a preferred email address?
 reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address for this disclosure?
+reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address?
 
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
@@ -1004,7 +991,7 @@ reporterOrganisationEmailAddress.heading = What is the email address at {0}?
 reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
 reporterIndividualEmailAddress.title = What is your preferred email address?
 reporterIndividualEmailAddress.heading = What is your preferred email address?
-reporterIndividualEmailAddress.checkYourAnswersLabel = What is your preferred email address?
+reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
 
@@ -1075,4 +1062,27 @@ reporterIndividualOtherTaxResidentQuestion.title = Are you resident for tax purp
 reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax purposes in any other countries?
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
+
+# CONFIRMATION PAGES
+
+confirmation.link.text = Disclose a cross-border arrangement
+confirmation.survey.link = What did you think of this service?
+confirmation.survey.text = (opens in a new tab)
+
+disclosureConfirmation.title = Disclosure received
+disclosureConfirmation.arrangement.title = Arrangement received
+disclosureConfirmation.panel.new = Your arrangement ID
+disclosureConfirmation.panel.add = Your disclosure ID
+disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
+disclosureConfirmation.secondEmail = and {0}
+disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+disclosureConfirmation.p4 = Your message reference ID is {0}.
+disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p7 = What happens next
+disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
+
+
+
 

@@ -25,122 +25,14 @@ import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
-import pages.intermediaries.WhatTypeofIntermediaryPage
-import pages.reporter.individual._
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows with ReporterRows {
-
-  def reporterIndividualSelectAddress: Option[Row] = userAnswers.get(ReporterIndividualSelectAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualSelectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"reporterIndividualSelectAddress.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualSelectAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIndividualAddress: Option[Row] = userAnswers.get(ReporterIndividualAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIndividualPostcode: Option[Row] = userAnswers.get(ReporterIndividualPostcodePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualPostcode.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIsIndividualAddressUK: Option[Row] = userAnswers.get(ReporterIsIndividualAddressUKPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIndividualPlaceOfBirth: Option[Row] = userAnswers.get(ReporterIndividualPlaceOfBirthPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualPlaceOfBirth.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualPlaceOfBirth.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIndividualDateOfBirth: Option[Row] = userAnswers.get(ReporterIndividualDateOfBirthPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualDateOfBirth.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Literal(answer.format(dateFormatter))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualDateOfBirth.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def reporterIndividualName: Option[Row] = userAnswers.get(ReporterIndividualNamePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"reporterIndividualName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.firstName} ${answer.secondName}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualName.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
 
   def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
     answer =>
@@ -296,15 +188,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
     )
 
-  }
-
-  def buildTaxpayerDetails(taxpayerDetails: Seq[Row], countryDetails: Seq[Row]) : Seq[SummaryList.Row] = {
-    Seq(
-      taxpayerSelectType,
-    ).flatten ++
-      taxpayerDetails ++
-      countryDetails ++
-      Seq(whatIsTaxpayersStartDateForImplementingArrangement).flatten
   }
 }
 

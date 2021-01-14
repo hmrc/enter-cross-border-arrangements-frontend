@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.ReporterOrganisationOrIndividualFormProvider
 import javax.inject.Inject
-import models.{Mode, ReporterOrganisationOrIndividual, UserAnswers}
+import models.{Mode, NormalMode, ReporterOrganisationOrIndividual}
 import navigation.NavigatorForReporter
 import pages.reporter.ReporterOrganisationOrIndividualPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,10 +47,10 @@ class ReporterOrganisationOrIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(ReporterOrganisationOrIndividualPage)) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationOrIndividualPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class ReporterOrganisationOrIndividualController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[ReporterOrganisationOrIndividual]): Call =
     navigator.routeMap(ReporterOrganisationOrIndividualPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -82,12 +82,12 @@ class ReporterOrganisationOrIndividualController @Inject()(
           renderer.render("reporter/reporterOrganisationOrIndividual.njk", json).map(BadRequest(_))
         },
         value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(ReporterOrganisationOrIndividualPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationOrIndividualPage, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(ReporterOrganisationOrIndividualPage, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
         }
       )

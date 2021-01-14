@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages.reporter
-
-import pages._
-import play.api.libs.json.JsPath
+package pages.reporter.taxpayer
 
 import java.time.LocalDate
 
-case object WhatIsReporterTaxpayersStartDateForImplementingArrangementPage extends QuestionPage[LocalDate] {
+import pages.QuestionPage
+import play.api.libs.json.JsPath
+
+case object ReporterTaxpayersStartDateForImplementingArrangementPage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 

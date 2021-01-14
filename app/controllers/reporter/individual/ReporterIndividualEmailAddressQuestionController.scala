@@ -92,6 +92,7 @@ class ReporterIndividualEmailAddressQuestionController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualEmailAddressQuestionPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )

@@ -19,7 +19,6 @@ package controllers.reporter.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.organisation.ReporterOrganisationNameFormProvider
-import helpers.JourneyHelpers.hasValueChanged
 import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForReporter
@@ -64,13 +63,8 @@ class ReporterOrganisationNameController @Inject()(
       renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
-    if (isAlt) {
-      navigator.routeAltMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
-    }
-    else {
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
       navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
-    }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -86,12 +80,11 @@ class ReporterOrganisationNameController @Inject()(
           renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(BadRequest(_))
         },
         value => {
-          val redirectUsers = hasValueChanged(value, ReporterOrganisationNamePage, mode, request.userAnswers)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
+          } yield Redirect(redirect(checkRoute, Some(value)))
         }
      )
   }

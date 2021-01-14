@@ -27,11 +27,11 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
-import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
+import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -156,7 +156,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
     }
 
-    "on INTERMEDIARY JOURNEY in Normal mode" - {
+    "on REPORTER DETAILS - INTERMEDIARY JOURNEY in Normal mode" - {
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'As an intermediary, what is your role in this arrangement' page " +
@@ -197,22 +197,20 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
         "to 'Check your answers' page " +
-        "when option NO is selected" ignore {
+        "when option NO is selected" in {
 
-        //TODO - redirect to CYA page when built
         navigator
           .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
       }
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
         "to 'Check your answers' page " +
-        "when option I DO NOT KNOW is selected" ignore {
+        "when option I DO NOT KNOW is selected" in {
 
-        //TODO - redirect to CYA page when built
         navigator
           .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.No))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
       }
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
@@ -226,31 +224,29 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
-        "when option NO is selected" ignore {
+        "when option NO is selected" in {
 
-        //TODO - redirect to CYA page when built
         navigator
           .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
       }
 
       "must go from 'Which countries are you exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
-        "when any option is selected" ignore {
+        "when any option is selected" in {
 
         forAll(arbitrary[CountriesListEUCheckboxes]) {
           answers =>
 
-            //TODO - redirect to CYA page when built
             navigator
               .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(Some(Seq(answers)))(0)
-                .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+                .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
 
         }
       }
     }
 
-    "on TAXPAYER JOURNEY in Normal Mode" - {
+    "on REPORTER DETAILS - TAXPAYER JOURNEY in Normal Mode" - {
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'Why are you reporting the arrangement as a taxpayer' page " +
@@ -263,26 +259,15 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
         "to 'What is [name] start date for implementing this arrangement' page " +
-        "when 'I DO NOT KNOW' is selected & its a marketable arrangement" ignore {
+        "when 'I DO NOT KNOW' is selected & its a marketable arrangement" in {
 
-        //TODO - redirect to implementing date page if marketable arrangement
         navigator
           .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
-      }
-
-      "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
-        "to 'What is [name] start date for implementing this arrangement' page " +
-        "when 'I DO NOT KNOW' is selected & its 'NOT' a marketable arrangement" ignore {
-
-        //TODO - redirect to CYA page
-        navigator
-          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .mustBe(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(NormalMode))
       }
     }
 
-    "on ORGANISATION JOURNEY in Normal Mode" - {
+    "on REPORTER DETAILS -  ORGANISATION JOURNEY in Normal Mode" - {
 
       "must go from 'What is the name of the organisation your're reporting for' page " +
         "to 'Is [name]'s address in the United Kingdom' page " +
@@ -342,7 +327,6 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to select 'What is the contact email for [name]' page " +
         "when option YES is selected" in {
 
-        // TODO - add redirec tto what is email address page
         navigator
           .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
           .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
@@ -359,7 +343,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
     }
 
 
-    "on INDIVIDUAL JOURNEY in Normal Mode" - {
+    "on REPORTER DETAILS - INDIVIDUAL JOURNEY in Normal Mode" - {
 
       "must go from 'What is your full name?' page " +
         "to 'What is your date of birth?' page " +
@@ -449,6 +433,149 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         navigator
           .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
           .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
+      }
+    }
+  }
+
+  "on REPORTER DETAILS -  ORGANISATION JOURNEY in CHECK Mode" - {
+
+    "must go from 'What is the name of the organisation your're reporting for' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterOrganisationNamePage)(DefaultRouting(CheckMode))(Some("name"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+
+    "must go from 'What is [name]'s address' manual address' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is [name]'s address' select address' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is the contact email for [name]' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterOrganisationEmailAddressPage)(DefaultRouting(CheckMode))(Some("email"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'Do you have a contact email address at [name]' page " +
+      "to 'Check your answers for your reporter details' page " +
+      "when option NO is selected" in {
+
+      navigator
+        .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+  }
+
+  "on REPORTER DETAILS - INDIVIDUAL JOURNEY in Normal Mode" - {
+
+    "must go from 'What is your full name?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+
+      navigator
+        .routeMap(ReporterIndividualNamePage)(DefaultRouting(CheckMode))(Some(Name("Some", "Name")))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is your date of birth?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(CheckMode))(Some(LocalDate.now()))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is your place of birth?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(CheckMode))(Some("Some place in some country"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is your address?' manual address' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterIndividualAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'What is your address?' select address' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'Do you have a contact email address at [name]' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+  }
+
+  "on REPORTER DETAILS - TAX RESIDENCY JOURNEY in Check mode" - {
+
+    "must go from '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+  }
+
+  "on REPORTER DETAILS - TAXPAYER JOURNEY in Check Mode" - {
+    
+    "must go from 'Why are you reporting the arrangement as a taxpayer?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      navigator
+        .routeMap(TaxpayerWhyReportArrangementPage)(DefaultRouting(CheckMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+  }
+
+  "on REPORTER DETAILS - INTERMEDIARY JOURNEY in Normal mode" - {
+
+    "must go from 'As an intermediary, what is your role in this arrangement?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+          navigator
+            .routeMap(IntermediaryRolePage)(DefaultRouting(CheckMode))(Some(Seq(IntermediaryRole.Promoter)))(0)
+            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'Which countries are you exempt from reporting in?' page " +
+      "to 'Check your answers for your reporter details' page " in {
+
+      forAll(arbitrary[CountriesListEUCheckboxes]) {
+        answers =>
+
+          navigator
+            .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(CheckMode))(Some(Seq(answers)))(0)
+            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+
       }
     }
   }

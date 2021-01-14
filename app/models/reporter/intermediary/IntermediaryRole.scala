@@ -28,7 +28,7 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
 
   case object Promoter extends WithName("promoter") with IntermediaryRole
   case object ServiceProvider extends WithName("serviceProvider") with IntermediaryRole
-  case object Unknown extends WithName("unknown") with IntermediaryRole
+  case object Unknown extends WithName("optionUnknown") with IntermediaryRole
 
   val values: Seq[IntermediaryRole] = Seq(
     Promoter,
@@ -48,7 +48,7 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
         value = ServiceProvider.toString,
         hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))),
 
-      Radios.Radio(msg"intermediaryRole.unknown", ServiceProvider.toString)
+      Radios.Radio(msg"intermediaryRole.optionUnknown", Unknown.toString)
     )
 
     Radios(field, items)

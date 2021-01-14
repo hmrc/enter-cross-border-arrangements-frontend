@@ -25,13 +25,13 @@ import models._
 import models.reporter.RoleInArrangement.Intermediary
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.DoNotKnow
 import pages._
-import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterOtherTaxResidentQuestionPage, ReporterTaxResidentCountryPage, ReporterTinNonUKQuestionPage, ReporterTinUKQuestionPage, ReporterUKTaxNumbersPage, RoleInArrangementPage}
 import pages.reporter.individual._
 import pages.disclosure.DisclosureMarketablePage
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter._
 import play.api.mvc.Call
 
 @Singleton
@@ -69,7 +69,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
 
     case ReporterOtherTaxResidentQuestionPage => checkRoute =>value => index => value match {
       case Some(true) => controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, index)
-      case _ => controllers.reporter.routes.RoleInArrangementController.onPageLoad(checkRoute.mode)
+      case _ => jumpOrCheckYourAnswers(controllers.reporter.routes.RoleInArrangementController.onPageLoad(checkRoute.mode), checkRoute)
     }
 
     case RoleInArrangementPage => checkRoute => value => _ => value match {
@@ -83,22 +83,23 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(checkRoute.mode)
 
     case IntermediaryRolePage => checkRoute =>_ =>_ =>
-      controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(checkRoute.mode), checkRoute)
 
     case IntermediaryExemptionInEUPage => checkRoute => value => _ => value match {
       case Some(Yes) =>      controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(checkRoute.mode)
-      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
-
+      case _ => routes.ReporterCheckYourAnswersController.onPageLoad()
     }
 
     case IntermediaryDoYouKnowExemptionsPage => checkRoute => value => _ => value match {
       case Some(true) => controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(checkRoute.mode)
-      case _ => routes.RoleInArrangementController.onPageLoad(checkRoute.mode) // TODO - Change redirect to CYA when built
+      case _ => routes.ReporterCheckYourAnswersController.onPageLoad()
     }
 
     case IntermediaryWhichCountriesExemptPage => checkRoute => _ => _ =>
-      routes.RoleInArrangementController.onPageLoad(checkRoute.mode) //TODO - Change redirect to CYA when built
+      jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(), checkRoute)
 
+    case ReporterTaxpayersStartDateForImplementingArrangementPage => _ =>_ =>_ =>
+      controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad()
 
     // Reporter - Taxpayer Journey Navigation
 
@@ -110,7 +111,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     }
 
     case TaxpayerWhyReportArrangementPage => checkRoute => _ =>_ =>
-      controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(checkRoute.mode), checkRoute)
 
     case DisclosureMarketablePage =>
       checkRoute => value => _ =>
@@ -120,11 +121,10 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
           case _ => jumpOrCheckYourAnswers(routes.ReporterCheckYourAnswersController.onPageLoad(), checkRoute)
         }
 
-
     // Reporter - Organisation Journey Navigation
 
-    case ReporterOrganisationNamePage => checkRoute => _ => _ =>
-      controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode)
+    case ReporterOrganisationNamePage =>
+      checkRoute => _ => _ => jumpOrCheckYourAnswers(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterOrganisationIsAddressUkPage => checkRoute => value => _ => value match {
       case Some(true) =>
@@ -137,29 +137,29 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(checkRoute.mode)
 
     case ReporterOrganisationSelectAddressPage | ReporterOrganisationAddressPage => checkRoute => _ => _ =>
-      controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterOrganisationEmailAddressQuestionPage => checkRoute => value => _ => value match {
       case Some(true) =>
         controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(checkRoute.mode)
       case _ =>
-        controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0)
+        jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0), checkRoute)
     }
 
     case ReporterOrganisationEmailAddressPage => checkRoute => _ => index =>
-      controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0)
+      jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0), checkRoute)
 
 
     // Reporter - Individual Journey Navigation
 
     case ReporterIndividualNamePage => checkRoute => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterIndividualDateOfBirthPage => checkRoute => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterIndividualPlaceOfBirthPage => checkRoute => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterIsIndividualAddressUKPage => checkRoute => value => _ => value match {
       case Some(true) => controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(checkRoute.mode)
@@ -170,17 +170,17 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
       controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(checkRoute.mode)
 
     case ReporterIndividualAddressPage | ReporterIndividualSelectAddressPage => checkRoute => _ => _ =>
-      controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode)
+      jumpOrCheckYourAnswers(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(checkRoute.mode), checkRoute)
 
     case ReporterIndividualEmailAddressQuestionPage => checkRoute =>value => _ => value match {
       case Some(true) =>
         controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(checkRoute.mode)
       case _ =>
-        controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0)
+        jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0), checkRoute)
     }
 
     case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>
-      controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0)
+      jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0), checkRoute)
 
 
     case _ => checkRoute => _ => _ => checkRoute.mode match {
@@ -188,6 +188,12 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
         case CheckMode  => routes.ReporterCheckYourAnswersController.onPageLoad()
       }
   }
+
+  private[navigation] def orCheckYourAnswers(mode: Mode, route: Call): Call =
+    mode match {
+      case NormalMode => route
+      case CheckMode  => routes.ReporterCheckYourAnswersController.onPageLoad()
+    }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
     _ => _ => _ => routes.ReporterCheckYourAnswersController.onPageLoad()

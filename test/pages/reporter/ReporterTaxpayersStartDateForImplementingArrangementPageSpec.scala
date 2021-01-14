@@ -18,11 +18,12 @@ package pages.reporter
 
 import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
-
 import java.time.LocalDate
 
+import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
+
 class
-WhatIsReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
+ReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
 
   "WhatIsTaxpayersStartDateForImplementingArrangementPage" - {
 
@@ -30,10 +31,10 @@ WhatIsReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageB
       datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
     }
 
-    beRetrievable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
+    beRetrievable[LocalDate](ReporterTaxpayersStartDateForImplementingArrangementPage)
 
-    beSettable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
+    beSettable[LocalDate](ReporterTaxpayersStartDateForImplementingArrangementPage)
 
-    beRemovable[LocalDate](WhatIsReporterTaxpayersStartDateForImplementingArrangementPage)
+    beRemovable[LocalDate](ReporterTaxpayersStartDateForImplementingArrangementPage)
   }
 }

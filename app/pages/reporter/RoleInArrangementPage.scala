@@ -16,13 +16,38 @@
 
 package pages.reporter
 
+import models.UserAnswers
 import models.reporter.RoleInArrangement
+import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import pages.QuestionPage
+import pages.reporter.intermediary._
+import pages.reporter.taxpayer._
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "roleInArrangement"
+
+  override def cleanup(value: Option[RoleInArrangement], userAnswers: UserAnswers): Try[UserAnswers] = {
+
+    value match {
+      case Some(Intermediary) =>
+        userAnswers.remove(TaxpayerWhyReportInUKPage)
+          .flatMap(_.remove(TaxpayerWhyReportArrangementPage))
+          .flatMap(_.remove(ReporterTaxpayersStartDateForImplementingArrangementPage))
+
+      case Some(Taxpayer) =>
+        userAnswers.remove(IntermediaryWhyReportInUKPage)
+          .flatMap(_.remove(IntermediaryRolePage))
+          .flatMap(_.remove(IntermediaryExemptionInEUPage))
+          .flatMap(_.remove(IntermediaryDoYouKnowExemptionsPage))
+          .flatMap(_.remove(IntermediaryWhichCountriesExemptPage))
+
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
