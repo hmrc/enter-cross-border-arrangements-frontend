@@ -164,6 +164,19 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       prettyPrinter.formatNodes(result) mustBe expected
     }
 
+    "buildAddress must build the optional address section with only the mandatory fields" in {
+      val result = RelevantTaxPayersXMLSection.buildAddress(
+        Some(Address(None, None, None, "City", None, Country("valid","FR","France"))))
+
+      val expected =
+        """<Address>
+          |    <City>City</City>
+          |    <Country>FR</Country>
+          |</Address>""".stripMargin
+
+      prettyPrinter.formatNodes(result) mustBe expected
+    }
+
     "buildAddress must not build the optional address section if it's missing" in {
       val result = RelevantTaxPayersXMLSection.buildAddress(None)
 
