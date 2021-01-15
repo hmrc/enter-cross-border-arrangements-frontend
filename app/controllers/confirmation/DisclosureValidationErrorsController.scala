@@ -17,7 +17,6 @@
 package controllers.confirmation
 
 import controllers.actions._
-import controllers.confirmation.DisclosureValidationErrorsController.mapErrorsToTableRows
 import pages.ValidationErrorsPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
@@ -25,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Table.Cell
+import uk.gov.hmrc.viewmodels._
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -49,18 +49,12 @@ class DisclosureValidationErrorsController @Inject()(
         )
       }
 
-      import DisclosureValidationErrorsController._
       val json = Json.obj(
         "errorList" -> mapErrorsToTableRows(errorList)
       )
 
       renderer.render("confirmation/validationErrors.njk", json).map(Ok(_))
   }
-}
-
-object DisclosureValidationErrorsController {
-
-  import uk.gov.hmrc.viewmodels._
 
   def mapErrorsToTableRows(errors: Seq[String])(implicit messages: Messages) : Seq[Seq[JsValue]] = {
 

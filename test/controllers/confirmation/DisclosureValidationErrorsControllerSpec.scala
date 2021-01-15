@@ -24,6 +24,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ValidationErrorsPage
+import play.api.Application
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,7 +41,9 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
 
     "map errors to table rows" in {
 
-      val rows: Seq[String] = DisclosureValidationErrorsController.mapErrorsToTableRows(errors).flatten.map(_.toString)
+      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+
+      val rows: Seq[String] = controller.mapErrorsToTableRows(errors).flatten.map(_.toString)
 
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_0"}}""")
       rows must contain("""{"html":"Error 1","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}""")
@@ -57,7 +60,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
         .set(ValidationErrorsPage, errors)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -69,7 +72,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "errorList" -> DisclosureValidationErrorsController.mapErrorsToTableRows(errors)
+        "errorList" -> injector.instanceOf[DisclosureValidationErrorsController].mapErrorsToTableRows(errors)
       )
 
       templateCaptor.getValue mustEqual "confirmation/validationErrors.njk"
