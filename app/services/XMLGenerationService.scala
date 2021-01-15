@@ -32,7 +32,7 @@ class XMLGenerationService @Inject()() {
                                    (implicit request: DataRequest[AnyContent]): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
       case Some(disclosureName) => "GB" + request.internalId + disclosureName
-      case None => ""
+      case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
     }
 
     //XML DateTime format e.g. 2021-01-06T12:25:14
@@ -44,37 +44,33 @@ class XMLGenerationService @Inject()() {
     </Header>
   }
 
-  def renderXML(userAnswers: UserAnswers)
-               (implicit request: DataRequest[AnyContent]): Elem = {
-    val mandatoryDisclosureImportInstruction = userAnswers.get(DisclosureTypePage) match {
-      case Some(value) => value.toString.toUpperCase
-      case None => ""
+  private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers): Elem = {
+    userAnswers.get(DisclosureTypePage) match {
+      case Some(value) => <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
+      case None => throw new Exception("Missing disclosure type answer")
     }
-
-    val mandatoryInitialDisclosureMA = userAnswers.get(DisclosureMarketablePage) match {//TODO Is this the right page?
-      case Some(value) => value
-      case None => false
-    }
-
-    val xml =
-      <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
-        {buildHeader(userAnswers)}
-        <DAC6Disclosures>
-          <DisclosureImportInstruction>{mandatoryDisclosureImportInstruction}</DisclosureImportInstruction>
-          {DisclosingXMLSection.toXml(userAnswers)}
-          <InitialDisclosureMA>{mandatoryInitialDisclosureMA}</InitialDisclosureMA>
-          {RelevantTaxPayersXMLSection.toXml(userAnswers)}
-          {DisclosureInformationXMLSection.toXml(userAnswers)}
-        </DAC6Disclosures>
-      </DAC6_Arrangement>
-
-    val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-    prettyPrinter.format(xml)
-    xml
   }
 
-  def createXmlSubmission(userAnswers: UserAnswers): Elem =
-    <trial><test></test></trial>
+  private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers): Elem = {
+    userAnswers.get(DisclosureMarketablePage) match {
+      case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
+      case None => throw new Exception("Missing InitialDisclosureMA answer")
+    }
+  }
+
+  def createXmlSubmission(userAnswers: UserAnswers)
+                         (implicit request: DataRequest[AnyContent]): Elem = {
+
+    <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+      {buildHeader(userAnswers)}
+      <DAC6Disclosures>
+        {buildDisclosureImportInstruction(userAnswers)}
+        {DisclosingXMLSection.toXml(userAnswers)}
+        {buildInitialDisclosureMA(userAnswers)}
+        {RelevantTaxPayersXMLSection.toXml(userAnswers)}
+        {DisclosureInformationXMLSection.toXml(userAnswers)}
+      </DAC6Disclosures>
+    </DAC6_Arrangement>
+  }
 
 }
