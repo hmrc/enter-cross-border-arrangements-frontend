@@ -28,7 +28,9 @@
         </h2>
 
         <ol class="govuk-list govuk-list--number">
-          <li class="govuk-body"><a href="#" onclick="window.print();return false;">{{ messages("confirmation.validationError.info.p1") }}</a></li>
+          <li class="govuk-body">
+            <a href="#" id="printLink" class="govuk-link">{{ messages("confirmation.validationError.info.p1") }}</a>
+          </li>
           <li class="govuk-body">{{ messages("confirmation.validationError.info.p2") }}
             <a href="{{ routes.controllers.DisclosureDetailsController.onPageLoad().url }}" class="govuk-link">
               {{ messages("confirmation.validationError.info.p3") }}
