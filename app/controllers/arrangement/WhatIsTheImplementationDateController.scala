@@ -50,10 +50,10 @@ class WhatIsTheImplementationDateController @Inject()(
   val form = formProvider()
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatIsTheImplementationDatePage) match {
+      val preparedForm = request.userAnswers.get(WhatIsTheImplementationDatePage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -70,7 +70,7 @@ class WhatIsTheImplementationDateController @Inject()(
       renderer.render("arrangement/whatIsTheImplementationDate.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -90,7 +90,7 @@ class WhatIsTheImplementationDateController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheImplementationDatePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheImplementationDatePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatIsTheImplementationDatePage, mode, updatedAnswers))
       )

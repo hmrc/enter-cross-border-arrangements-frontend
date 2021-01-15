@@ -51,11 +51,11 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
 
   private val form = formProvider(currencies)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val preparedForm = request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
+      val preparedForm = request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,13 +64,13 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "currencies" -> currencyJsonList(
-          request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage).map(_.currency),currencies)
+          request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id).map(_.currency),currencies)
       )
 
       renderer.render("arrangement/whatIsTheExpectedValueOfThisArrangement.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,7 +86,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheExpectedValueOfThisArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheExpectedValueOfThisArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatIsTheExpectedValueOfThisArrangementPage, mode, updatedAnswers))
       )

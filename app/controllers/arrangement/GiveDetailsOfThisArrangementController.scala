@@ -46,10 +46,10 @@ class GiveDetailsOfThisArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(GiveDetailsOfThisArrangementPage) match {
+      val preparedForm = request.userAnswers.get(GiveDetailsOfThisArrangementPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +62,7 @@ class GiveDetailsOfThisArrangementController @Inject()(
       renderer.render("arrangement/giveDetailsOfThisArrangement.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,7 +77,7 @@ class GiveDetailsOfThisArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(GiveDetailsOfThisArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(GiveDetailsOfThisArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(GiveDetailsOfThisArrangementPage, mode, updatedAnswers))
       )
