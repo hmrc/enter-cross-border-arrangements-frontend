@@ -48,10 +48,10 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
@@ -66,7 +66,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "index" -> index
       )
@@ -77,7 +77,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,7 +86,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers, id),
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "index" -> index
           )
@@ -99,7 +99,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
             case  _ => false
           }
 
-          val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage), mode) match {
+          val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage, id), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
                 list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
             case (Some(list), CheckMode) =>
@@ -113,8 +113,8 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))

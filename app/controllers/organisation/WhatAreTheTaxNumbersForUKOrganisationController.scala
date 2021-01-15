@@ -50,10 +50,10 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxNumbersUK = value.lift(index).get.taxNumbersUK
@@ -68,7 +68,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
         "lostUTRUrl" -> appConfig.lostUTRUrl,
         "index" -> index
       )
@@ -79,7 +79,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
     navigator.routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -88,7 +88,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers, id),
             "lostUTRUrl" -> appConfig.lostUTRUrl,
             "index" -> index
           )
@@ -96,7 +96,7 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
           renderer.render("organisation/whatAreTheTaxNumbersForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
             case None =>
               val newOrganisationLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
               IndexedSeq[LoopDetails](newOrganisationLoop)
@@ -110,8 +110,8 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKOrganisationPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKOrganisationPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))

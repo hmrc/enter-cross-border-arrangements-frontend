@@ -43,7 +43,7 @@ class TaskListController @Inject()(
                                     renderer: Renderer
                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
      //generate xml from user answers
      val xml = xmlGenerationService.createXmlSubmission(request.userAnswers)
@@ -64,7 +64,7 @@ class TaskListController @Inject()(
               val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
               for {
                 ids <- crossBorderArrangementsConnector.submitXML(submission)
-                userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, ids))
+                userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
                 _                  <- sessionRepository.set(userAnswersWithIDs)
               } yield {
                 Redirect(routes.IndexController.onPageLoad().url) //TODO: Correct to page

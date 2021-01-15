@@ -48,23 +48,22 @@ class OrganisationPostcodeController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.OrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(id: Int, mode: Mode): String = routes.OrganisationAddressController.onPageLoad(id, mode).url
 
-  private def actionUrl(mode: Mode) = routes.OrganisationPostcodeController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode) = routes.OrganisationPostcodeController.onSubmit(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
-      val preparedForm = request.userAnswers.get(PostcodePage) match {
+      val preparedForm = request.userAnswers.get(PostcodePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
       val json = Json.obj(
         "form" -> preparedForm,
-        "displayName" -> getOrganisationName(request.userAnswers),
-        "manualAddressURL" -> manualAddressURL(mode),
-        "actionUrl" -> actionUrl(mode),
+        "displayName" -> getOrganisationName(request.userAnswers, id),
+        "manualAddressURL" -> manualAddressURL(id, mode),
+        "actionUrl" -> actionUrl(id, mode),
         "individual" -> false,
         "mode" -> mode
       )
@@ -75,16 +74,16 @@ class OrganisationPostcodeController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
     navigator.routeMap(PostcodePage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
-            "displayName" -> getOrganisationName(request.userAnswers),
-            "manualAddressURL" -> manualAddressURL(mode),
-            "actionUrl" -> actionUrl(mode),
+            "displayName" -> getOrganisationName(request.userAnswers, id),
+            "manualAddressURL" -> manualAddressURL(id, mode),
+            "actionUrl" -> actionUrl(id, mode),
             "individual" -> false,
             "mode" -> mode
           )
@@ -93,7 +92,7 @@ class OrganisationPostcodeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

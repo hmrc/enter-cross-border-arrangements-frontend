@@ -50,10 +50,10 @@ class HallmarkDController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkDPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkDPage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class HallmarkDController @Inject()(
       renderer.render("hallmarks/hallmarkD.njk",json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,18 +86,18 @@ class HallmarkDController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            userAnswers <- Future.fromTry(removeD1Parts(userAnswers, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, value))
+            userAnswers <- Future.fromTry(removeD1Parts(userAnswers, id, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HallmarkDPage, mode, updatedAnswers))
         }
       )
   }
 
-private def removeD1Parts(userAnswers: UserAnswers, values: Set[HallmarkD]): Try[UserAnswers] =
-  userAnswers.get(HallmarkD1Page) match {
-    case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page)
-    case _ => Success(userAnswers)
-  }
+  private def removeD1Parts(userAnswers: UserAnswers, id:Int, values: Set[HallmarkD]): Try[UserAnswers] =
+    userAnswers.get(HallmarkD1Page, id) match {
+      case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page, id)
+      case _ => Success(userAnswers)
+    }
 
 }

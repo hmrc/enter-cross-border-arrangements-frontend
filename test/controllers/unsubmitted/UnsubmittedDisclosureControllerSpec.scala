@@ -17,7 +17,7 @@
 package controllers.unsubmitted
 
 import base.SpecBase
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -54,16 +54,16 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
 
     }
 
-    "must redirect first time users to the no unsubmitted disclosures page" ignore {
+    "must redirect first time users to the no unsubmitted disclosures page" in {
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
 
-    "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" ignore {
+    "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
       val unsubmittedDisclosures = Seq.empty[UnsubmittedDisclosure]
       val userAnswers = UserAnswers(userAnswersId).set(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -71,7 +71,7 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
   }
 }

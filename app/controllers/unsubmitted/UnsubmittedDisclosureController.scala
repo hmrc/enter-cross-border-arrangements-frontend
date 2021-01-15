@@ -17,6 +17,7 @@
 package controllers.unsubmitted
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.NormalMode
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -37,17 +38,21 @@ class UnsubmittedDisclosureController  @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
+
+      val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
+
       request.userAnswers.flatMap(_.get(UnsubmittedDisclosurePage)) match {
         case Some(unsubmittedDisclosures) if unsubmittedDisclosures.nonEmpty =>
 
           val json = Json.obj(
+            "url" -> disclosureNameUrl,
             "unsubmittedDisclosures" -> unsubmittedDisclosures,
             "plural" -> (if(unsubmittedDisclosures.length > 1) "s" else "")
           )
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
-        case _ =>  Future.successful(Redirect(???))
+        case _ =>  Future.successful(Redirect(disclosureNameUrl))
       }
   }
 

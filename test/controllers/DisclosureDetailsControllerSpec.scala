@@ -40,7 +40,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId).set(DisclosureIdentifyArrangementPage, "arrangement").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(1).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

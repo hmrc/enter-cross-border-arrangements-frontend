@@ -47,10 +47,10 @@ class HallmarkEController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkEPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkEPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +64,7 @@ class HallmarkEController @Inject()(
       renderer.render("hallmarks/hallmarkE.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -80,7 +80,7 @@ class HallmarkEController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkEPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkEPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HallmarkEPage, mode, updatedAnswers))
       )

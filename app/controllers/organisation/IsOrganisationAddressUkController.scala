@@ -48,10 +48,10 @@ class IsOrganisationAddressUkController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsOrganisationAddressUkPage) match {
+      val preparedForm = request.userAnswers.get(IsOrganisationAddressUkPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +60,7 @@ class IsOrganisationAddressUkController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "organisationName" -> getOrganisationName(request.userAnswers, id)
       )
 
       renderer.render("organisation/isOrganisationAddressUk.njk", json).map(Ok(_))
@@ -69,7 +69,7 @@ class IsOrganisationAddressUkController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(IsOrganisationAddressUkPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,14 +79,14 @@ class IsOrganisationAddressUkController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "organisationName" -> getOrganisationName(request.userAnswers, id)
           )
 
           renderer.render("organisation/isOrganisationAddressUk.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressUkPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressUkPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

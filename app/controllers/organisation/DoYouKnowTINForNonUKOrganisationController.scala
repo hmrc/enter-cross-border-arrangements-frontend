@@ -46,13 +46,13 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers)
+      val country = getCountry(request.userAnswers, id)
       val form = formProvider(country)
 
-      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val doYouKnowTIN = value.lift(index).get.doYouKnowTIN
@@ -68,7 +68,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
         "country" -> country,
         "index" -> index
       )
@@ -79,10 +79,10 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(DoYouKnowTINForNonUKOrganisationPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers)
+      val country = getCountry(request.userAnswers, id)
       val form = formProvider(country)
 
       form.bindFromRequest().fold(
@@ -92,7 +92,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers, id),
             "country" -> country,
             "index" -> index
           )
@@ -100,7 +100,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
           renderer.render("organisation/doYouKnowTINForNonUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
             case None =>
               val newOrganisationLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
               IndexedSeq[LoopDetails](newOrganisationLoop)
@@ -114,8 +114,8 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKOrganisationPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKOrganisationPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), currentIndexInsideLoop(request)))
@@ -123,8 +123,8 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
       )
   }
 
-  private def getCountry(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): String = {
-    userAnswers.get(OrganisationLoopPage) match {
+  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String = {
+    userAnswers.get(OrganisationLoopPage, id) match {
       case Some(loopDetailsSeq) =>
         val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
         if (whichCountry.isDefined) {

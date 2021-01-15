@@ -48,10 +48,10 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(OrganisationLoopPage) match {
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxNumbers = value.lift(index).get.taxNumbersNonUK
@@ -66,8 +66,8 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "organisationName" -> getOrganisationName(request.userAnswers),
-        "country" -> getCountry(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
+        "country" -> getCountry(request.userAnswers, id),
         "index" -> index
       )
 
@@ -77,7 +77,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
     navigator.routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,15 +86,15 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers),
-            "country" -> getCountry(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers, id),
+            "country" -> getCountry(request.userAnswers, id),
             "index" -> index
           )
 
           renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage) match {
+          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
             case None =>
               val newOrganisationLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
               IndexedSeq[LoopDetails](newOrganisationLoop)
@@ -108,8 +108,8 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, organisationLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))
@@ -117,8 +117,8 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
       )
   }
 
-  private def getCountry(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): String = {
-    userAnswers.get(OrganisationLoopPage) match {
+  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String = {
+    userAnswers.get(OrganisationLoopPage, id) match {
       case Some(loopDetailsSeq) =>
         val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
         if (whichCountry.isDefined) {

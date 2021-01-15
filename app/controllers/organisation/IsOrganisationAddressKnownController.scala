@@ -48,10 +48,10 @@ class IsOrganisationAddressKnownController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsOrganisationAddressKnownPage) match {
+      val preparedForm = request.userAnswers.get(IsOrganisationAddressKnownPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +60,7 @@ class IsOrganisationAddressKnownController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getOrganisationName(request.userAnswers)
+        "organisationName" -> getOrganisationName(request.userAnswers, id)
       )
 
       renderer.render("organisation/isOrganisationAddressKnown.njk", json).map(Ok(_))
@@ -69,7 +69,7 @@ class IsOrganisationAddressKnownController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
     navigator.routeMap(IsOrganisationAddressKnownPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -78,7 +78,7 @@ class IsOrganisationAddressKnownController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getOrganisationName(request.userAnswers)
+            "organisationName" -> getOrganisationName(request.userAnswers, id)
           )
 
           renderer.render("organisation/isOrganisationAddressKnown.njk", json).map(BadRequest(_))
@@ -91,7 +91,7 @@ class IsOrganisationAddressKnownController @Inject()(
           }
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

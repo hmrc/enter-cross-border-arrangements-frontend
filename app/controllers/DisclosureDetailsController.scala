@@ -39,11 +39,11 @@ class DisclosureDetailsController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       val arrangementMessage: String = request.userAnswers.fold("") {
-        value => value.get(DisclosureIdentifyArrangementPage)
+        value => value.get(DisclosureIdentifyArrangementPage, id)
           .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
           .getOrElse("")
       }

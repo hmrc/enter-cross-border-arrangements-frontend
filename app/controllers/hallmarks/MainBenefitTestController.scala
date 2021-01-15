@@ -46,10 +46,10 @@ class MainBenefitTestController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(MainBenefitTestPage) match {
+      val preparedForm = request.userAnswers.get(MainBenefitTestPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +63,7 @@ class MainBenefitTestController @Inject()(
       renderer.render("hallmarks/mainBenefitTest.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,7 +79,7 @@ class MainBenefitTestController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(MainBenefitTestPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(MainBenefitTestPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(MainBenefitTestPage, mode, updatedAnswers))
       )

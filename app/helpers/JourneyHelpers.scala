@@ -28,22 +28,22 @@ import uk.gov.hmrc.viewmodels.Html
 
 object JourneyHelpers {
 
-  def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(indName) => indName.displayName
       case _ => "the individual"
     }
   }
 
-  def getOrganisationName(userAnswers: UserAnswers): String = {
-    userAnswers.get(OrganisationNamePage) match {
+  def getOrganisationName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(OrganisationNamePage, id) match {
       case Some(organisationName) => organisationName
       case None => "the organisation"
     }
   }
 
-  def getReporterDetailsOrganisationName(userAnswers: UserAnswers): String = {
-    userAnswers.get(ReporterOrganisationNamePage) match {
+  def getReporterDetailsOrganisationName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(ReporterOrganisationNamePage, id) match {
       case Some(organisationName) => organisationName
       case None => "the organisation"
     }
@@ -82,8 +82,8 @@ object JourneyHelpers {
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
-  def incrementIndexIndividual(ua: UserAnswers, request: Request[AnyContent]): Int = {
-    ua.get(IndividualLoopPage) match {
+  def incrementIndexIndividual(ua: UserAnswers, id:Int, request: Request[AnyContent]): Int = {
+    ua.get(IndividualLoopPage, id) match {
       case Some(_) =>
         try {
           val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
@@ -97,8 +97,8 @@ object JourneyHelpers {
     }
   }
 
-  def incrementIndexOrganisation(ua: UserAnswers, request: Request[AnyContent]): Int = {
-    ua.get(OrganisationLoopPage) match {
+  def incrementIndexOrganisation(ua: UserAnswers, id:Int, request: Request[AnyContent]): Int = {
+    ua.get(OrganisationLoopPage, id) match {
       case Some(_) =>
         try {
           val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
@@ -118,17 +118,17 @@ object JourneyHelpers {
     index.toInt
   }
 
-  def hasValueChanged[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
+  def hasValueChanged[T](value: T, id: Int, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
                         (implicit rds: Reads[T]): Boolean = {
-    ua.get(page) match {
+    ua.get(page, id) match {
       case Some(ans) if (ans != value) && (mode == CheckMode) => true
       case _ => false
     }
   }
 
   @deprecated
-  def getCountry[A](userAnswers: UserAnswers, index: Int): Option[Country] = for {
-    loopPage <- userAnswers.get(IndividualLoopPage)
+  def getCountry[A](userAnswers: UserAnswers, id: Int, index: Int): Option[Country] = for {
+    loopPage <- userAnswers.get(IndividualLoopPage, id)
     loopDetails <- loopPage.lift(index)
     country <- loopDetails.whichCountry
   } yield country
