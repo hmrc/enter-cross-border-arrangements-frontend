@@ -16,34 +16,22 @@
 
 package navigation
 
-import controllers.taxpayer._
+import controllers.arrangement._
 import controllers.mixins.{CheckRoute, DefaultRouting}
-import models.taxpayer.UpdateTaxpayer.{Later, Now}
 import models.{CheckMode, NormalMode}
 import pages.Page
-import pages.disclosure.DisclosureMarketablePage
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.arrangement.ArrangementCheckYourAnswersPage
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
+class NavigatorForArrangement @Inject()() extends AbstractNavigator {
 
   override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
 
-    case UpdateTaxpayerPage =>
-     checkRoute => value => _ =>
-     value match { case Some(Now) => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(checkRoute.mode)
-      case _ => controllers.routes.DisclosureDetailsController.onPageLoad()
-    }
-
-    case DisclosureMarketablePage =>
-      checkRoute => value => _ =>
-        value match {
-          case Some(true) => routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(routes.TaxpayersCheckYourAnswersController.onPageLoad(), checkRoute)
-        }
+    case ArrangementCheckYourAnswersPage =>
+      _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad()
 
     case _ =>
       checkRoute => _ => _ => checkRoute.mode match {
@@ -54,11 +42,11 @@ class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.TaxpayersCheckYourAnswersController.onPageLoad()
+    _ => _ => _ => routes.ArrangementCheckYourAnswersController.onPageLoad()
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)               => routes.ArrangementCheckYourAnswersController.onPageLoad()
       case _                                       => jumpTo
     }
   }

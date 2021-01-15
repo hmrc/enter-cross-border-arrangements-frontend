@@ -17,7 +17,10 @@
 package controllers.arrangement
 
 import controllers.actions._
-import javax.inject.Inject
+import controllers.mixins.{RoutingSupport, DefaultRouting}
+import models.NormalMode
+import navigation.NavigatorForArrangement
+import pages.arrangement.ArrangementCheckYourAnswersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,16 +29,18 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementCheckYourAnswersController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                       override val messagesApi: MessagesApi,
+                                                       identify: IdentifierAction,
+                                                       getData: DataRetrievalAction,
+                                                       requireData: DataRequiredAction,
+                                                       navigator: NavigatorForArrangement,
+                                                       val controllerComponents: MessagesControllerComponents,
+                                                       renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -54,4 +59,12 @@ class ArrangementCheckYourAnswersController @Inject()(
         Json.obj("list" -> list)
       ).map(Ok(_))
   }
+
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
+
+  }
+
 }

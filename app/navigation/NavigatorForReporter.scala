@@ -182,6 +182,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
     case ReporterIndividualEmailAddressPage => checkRoute => _ => _ =>
       jumpOrCheckYourAnswers(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(checkRoute.mode, 0), checkRoute)
 
+    case ReporterCheckYourAnswersPage => _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad()
 
     case _ => checkRoute => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute

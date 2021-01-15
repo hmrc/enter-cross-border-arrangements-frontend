@@ -33,7 +33,7 @@
 
               <ul class="app-task-list__items">
                 <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="#" aria-describedby="disclosure-type">
+                  <a class="app-task-list__task-name" href="{{ disclosureUrl }}" aria-describedby="disclosure-type">
                   {{ messages("disclosureDetails.disclosureTypeLink") }}
                   </a>
                   <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">Completed</strong>
@@ -47,12 +47,12 @@
               </h2>
               <ul class="app-task-list__items">
                 <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="#" aria-describedby="hallmarks">
+                  <a class="app-task-list__task-name" href="{{ hallmarksUrl }}" aria-describedby="hallmarks">
                   {{ messages("disclosureDetails.hallmarksLink") }}
                   </a>
                 </li>
                 <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="#" aria-describedby="arrangement-details">
+                  <a class="app-task-list__task-name" href="{{ arrangementsUrl }}" aria-describedby="arrangement-details">
                   {{ messages("disclosureDetails.arrangementDetailsLink") }}
                   </a>
                 </li>
@@ -65,7 +65,7 @@
               </h2>
               <ul class="app-task-list__items">
                 <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="#" aria-describedby="reporter-details">
+                  <a class="app-task-list__task-name" href="{{ reportersUrl }}" aria-describedby="reporter-details">
                   {{ messages("disclosureDetails.reporterDetailsLink") }}
                   </a>
                 </li>
@@ -81,13 +81,13 @@
               <ul class="app-task-list__items">
 
                 <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="#" aria-describedby="relevant-taxpayers">
+                  <a class="app-task-list__task-name" href="{{ taxpayersUrl }}" aria-describedby="relevant-taxpayers">
                   {{ messages("disclosureDetails.relevantTaxpayersLink") }}
                   </a>
                 </li>
 
                 <li class="app-task-list__item">
-                    <a class="app-task-list__task-name" href="#" aria-describedby="intermediaries">
+                    <a class="app-task-list__task-name" href="{{ intermediariesUrl }}" aria-describedby="intermediaries">
                     {{ messages("disclosureDetails.intermediariesLink") }}
                     </a>
                 </li>

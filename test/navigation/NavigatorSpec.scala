@@ -252,24 +252,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
-        "to 'Which parts of hallmark E apply to this arrangement?' page if D1: Other is not selected and categories contains E" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
-                .success.value
-                .set(HallmarkD1Page, values.toSet.filter(_ != D1other))
-                .success.value
-
-            navigator
-              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkEController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
         "to 'Which parts of hallmark E apply to this arrangement?' page if D1: Other is not selected and categories does not contain E" in {
 
         forAll(arbitrary[UserAnswers]) {
@@ -306,26 +288,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'Which parts of hallmark D1 apply to this arrangement? D1: Other' page " +
-        "to 'Which parts of hallmark E apply to this arrangement?' if category E is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
-                .success.value
-                .set(HallmarkD1Page, values.toSet.filter(_ == D1other))
-                .success.value
-                .set(HallmarkD1OtherPage, "")
-                .success.value
-
-            navigator
-              .nextPage(HallmarkD1OtherPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkEController.onPageLoad(NormalMode))
-        }
-      }
-
       "must go from 'Which category E hallmarks apply to this arrangement?' page " +
         "to 'check your answers' if category E is selected" in {
 
@@ -345,21 +307,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
-        "if 'Yes, add now is selected'" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers.set(UpdateTaxpayerPage, Now)
-                .success.value
-
-            navigator
-              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(NormalMode))
-        }
-      }
 
       "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
         "if 'No, is selected'" in {
@@ -791,6 +738,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, NormalMode, updatedAnswers)
               .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "Hallmarks Check Your Answers page to " +
+        "Task list page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(HallmarksCheckYourAnswersPage, NormalMode, answers)
+              .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
         }
       }
     }

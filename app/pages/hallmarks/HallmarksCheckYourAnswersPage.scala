@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package pages.hallmarks
 
-import models.Mode
+import pages.Page
 
-sealed trait CheckRoute {
-
-  val mode: Mode
+case object HallmarksCheckYourAnswersPage extends Page {
+  override def toString: String = "hallmarksCheckYourAnswers"
 }
 
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute

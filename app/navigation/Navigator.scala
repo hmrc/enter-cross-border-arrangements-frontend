@@ -28,13 +28,12 @@ import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
 import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.taxpayer.UpdateTaxpayer.{Later, Now}
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
 import pages.intermediaries._
 import pages.organisation._
-import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.{AnyContent, Call, Request}
 
 import javax.inject.{Inject, Singleton}
@@ -55,7 +54,6 @@ class Navigator @Inject()() {
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
     case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
 
-    case UpdateTaxpayerPage => updateTaxpayerRoutes(NormalMode)
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
 
     case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
@@ -78,6 +76,8 @@ class Navigator @Inject()() {
     case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
     case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+
+    case HallmarksCheckYourAnswersPage => _ => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad())
 
     case _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -186,37 +186,22 @@ class Navigator @Inject()() {
     }
 
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkDPage) flatMap  {
-      case set: Set[HallmarkD] if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(mode))
-       case  _ => ua.get(HallmarkCategoriesPage).map {
-         case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-           controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-         case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+    ua.get(HallmarkDPage) match  {
+      case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(mode))
+       case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
        }
-    }
+
 
   private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkD1Page) flatMap  {
-      case set: Set[HallmarkD1] if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(mode))
-      case  _ => ua.get(HallmarkCategoriesPage).map {
-        case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-          controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
-      }
-    }
+    ua.get(HallmarkD1Page) match  {
+      case Some(set) if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(mode))
+      case  _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+        }
 
-   private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-     ua.get(HallmarkCategoriesPage) map {
-       case set: Set[HallmarkCategories] if set.contains(CategoryE) =>
-         controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-       case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
-     }
 
-  private def updateTaxpayerRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(UpdateTaxpayerPage) map {
-      case Now => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(mode)
-      case Later | models.taxpayer.UpdateTaxpayer.No => controllers.routes.IndexController.onPageLoad() // TODO: Link to disclose type page when ready
-    }
+  private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
+    Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+
 
   private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
     ua.get(TaxpayerSelectTypePage) map {

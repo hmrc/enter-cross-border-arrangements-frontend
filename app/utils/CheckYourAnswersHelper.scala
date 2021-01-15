@@ -159,13 +159,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
     }
 
     val hallmarkPages = Seq(
-      ua.get(HallmarkAPage),
-      ua.get(HallmarkBPage),
-      ua.get(HallmarkC1Page),
       ua.get(HallmarkD1Page),
-      hallmarkCPage,
-      hallmarkDPage,
-      ua.get(HallmarkEPage)
+      hallmarkDPage
     )
 
     val selectedHallmarkParts = hallmarkPages.collect{ case Some(value) => value }
@@ -182,7 +177,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       actions = List(
         Action(
           content            = msg"site.edit",
-          href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+          href               = controllers.hallmarks.routes.HallmarkDController.onPageLoad(CheckMode).url,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
         )
       )

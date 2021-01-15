@@ -16,7 +16,9 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
+
 import javax.inject.Inject
 import pages.disclosure.DisclosureIdentifyArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,6 +34,7 @@ class DisclosureDetailsController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -47,7 +50,13 @@ class DisclosureDetailsController @Inject()(
 
 
       val json = Json.obj(
-        "arrangementID" -> arrangementMessage
+        "arrangementID" -> arrangementMessage,
+        "hallmarksUrl" -> frontendAppConfig.hallmarksUrl,
+        "arrangementsUrl" -> frontendAppConfig.arrangementsUrl,
+        "reportersUrl" -> frontendAppConfig.reportersUrl,
+        "taxpayersUrl" -> frontendAppConfig.taxpayersUrl,
+        "intermediariesUrl" -> frontendAppConfig.intermediariesUrl,
+        "disclosureUrl" -> frontendAppConfig.disclosureUrl
       )
 
 

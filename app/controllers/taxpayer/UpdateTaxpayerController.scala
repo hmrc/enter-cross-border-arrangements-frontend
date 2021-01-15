@@ -17,33 +17,33 @@
 package controllers.taxpayer
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.UpdateTaxpayerFormProvider
-
-import javax.inject.Inject
 import models.taxpayer.UpdateTaxpayer
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForTaxpayer
 import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateTaxpayerController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    formProvider: UpdateTaxpayerFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                          override val messagesApi: MessagesApi,
+                                          sessionRepository: SessionRepository,
+                                          navigator: NavigatorForTaxpayer,
+                                          identify: IdentifierAction,
+                                          getData: DataRetrievalAction,
+                                          formProvider: UpdateTaxpayerFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
 
   private val form = formProvider()
 
@@ -75,6 +75,9 @@ class UpdateTaxpayerController @Inject()(
       renderer.render("taxpayer/updateTaxpayer.njk", json).map(Ok(_))
   }
 
+  def redirect(checkRoute: CheckRoute, value: Option[UpdateTaxpayer]): Call =
+    navigator.routeMap(UpdateTaxpayerPage)(checkRoute)(value)(0)
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
@@ -94,10 +97,11 @@ class UpdateTaxpayerController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(UpdateTaxpayerPage, value))
-            cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage)) // TODO test when userAnswers are properly supplied
-            _              <- sessionRepository.set(cleanAnswers)
-          } yield Redirect(navigator.nextPage(UpdateTaxpayerPage, mode, cleanAnswers))
+                updatedAnswers <- Future.fromTry(userAnswers.set(UpdateTaxpayerPage, value))
+                cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage)) // TODO test when userAnswers are properly supplied
+                _              <- sessionRepository.set(cleanAnswers)
+                checkRoute     =  toCheckRoute(mode, cleanAnswers)
+           } yield Redirect(redirect(checkRoute, Some(value)))
 
         }
       )
