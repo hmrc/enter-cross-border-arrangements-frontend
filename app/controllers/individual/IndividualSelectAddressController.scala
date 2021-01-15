@@ -54,16 +54,16 @@ class IndividualSelectAddressController @Inject()(
 
   implicit val alternativeText: String = "the individual's"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = getPostCodeFromRequest(request)
+      val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-        case Nil => Future.successful(Redirect(manualAddressURL(mode))) //ToDo handle no addresses found
+        case Nil => Future.successful(Redirect(manualAddressURL(mode, id))) //ToDo handle no addresses found
         case addresses =>
 
-          val preparedForm = request.userAnswers.get(IndividualSelectAddressPage) match {
+          val preparedForm = request.userAnswers.get(IndividualSelectAddressPage, id) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -74,16 +74,16 @@ class IndividualSelectAddressController @Inject()(
             val json = Json.obj(
               "form" -> preparedForm,
               "mode" -> mode,
-              "manualAddressURL" -> manualAddressURL(mode),
-              "actionUrl" -> actionUrl(mode),
+              "manualAddressURL" -> manualAddressURL(mode, id),
+              "actionUrl" -> actionUrl(mode, id),
               "pageTitle" -> "selectAddress.individual.title",
-              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
+              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers, id)),
               "radios" -> radios
             )
 
             renderer.render("selectAddress.njk", json).map(Ok(_))
       } recover {
-        case _: Exception => Redirect(manualAddressURL(mode)) //ToDo handle failure to lookup addresses
+        case _: Exception => Redirect(manualAddressURL(mode, id)) //ToDo handle failure to lookup addresses
       }
   }
 
@@ -94,10 +94,11 @@ class IndividualSelectAddressController @Inject()(
     else {
       navigator.routeMap(IndividualSelectAddressPage)(checkRoute)(value)(0)
     }
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = getPostCodeFromRequest(request)
+      val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         addresses =>
@@ -111,10 +112,10 @@ class IndividualSelectAddressController @Inject()(
             val json = Json.obj(
               "form" -> formWithErrors,
               "mode" -> mode,
-              "manualAddressURL" -> manualAddressURL(mode),
-              "actionUrl" -> actionUrl(mode),
+              "manualAddressURL" -> manualAddressURL(mode, id),
+              "actionUrl" -> actionUrl(mode, id),
               "pageTitle" -> "selectAddress.individual.title",
-              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers)),
+              "pageHeading" -> pageHeadingLegendProvider("selectAddress.individual.heading", getIndividualName(request.userAnswers, id)),
               "radios" -> radios
             )
 
@@ -124,11 +125,11 @@ class IndividualSelectAddressController @Inject()(
 
             val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
-            val redirectUsers = hasValueChanged(value, IndividualSelectAddressPage, mode, request.userAnswers)
+            val redirectUsers = hasValueChanged(value, id, IndividualSelectAddressPage, mode, request.userAnswers)
 
             for {
-              updatedAnswers            <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, value))
-              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+              updatedAnswers            <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, id, value))
+              updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, id, addressToStore))
               _                         <- sessionRepository.set(updatedAnswersWithAddress)
               checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
             } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
@@ -137,12 +138,12 @@ class IndividualSelectAddressController @Inject()(
       }
   }
 
-  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url
+  private def manualAddressURL(mode: Mode, id: Int): String = routes.IndividualAddressController.onPageLoad(id, mode).url
 
-  private def actionUrl(mode: Mode): String = routes.IndividualSelectAddressController.onSubmit(mode).url
+  private def actionUrl(mode: Mode, id: Int): String = routes.IndividualSelectAddressController.onSubmit(id, mode).url
 
-  private def getPostCodeFromRequest[A](request: DataRequest[A]): String =
-    request.userAnswers.get(IndividualUkPostcodePage) match {
+  private def getPostCodeFromRequest[A](request: DataRequest[A], id: Int): String =
+    request.userAnswers.get(IndividualUkPostcodePage, id) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
       case None => ""
     }

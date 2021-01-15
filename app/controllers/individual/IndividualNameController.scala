@@ -46,10 +46,10 @@ class IndividualNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(IndividualNamePage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(IndividualNamePage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -65,7 +65,7 @@ class IndividualNameController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Name]): Call =
     navigator.routeMap(IndividualNamePage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -84,7 +84,7 @@ class IndividualNameController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

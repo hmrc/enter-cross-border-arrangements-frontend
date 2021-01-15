@@ -48,10 +48,10 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val doYouKnowUTR = value.lift(index).get.doYouKnowUTR
@@ -67,7 +67,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers),
+        "name" -> getIndividualName(request.userAnswers, id),
         "index" -> index
       )
 
@@ -77,7 +77,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
     navigator.routeMap(DoYouKnowAnyTINForUKIndividualPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -87,7 +87,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "name" -> getIndividualName(request.userAnswers),
+            "name" -> getIndividualName(request.userAnswers, id),
             "index" -> index
           )
 
@@ -95,7 +95,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         },
         value => {
 
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
             case None =>
               val newIndividualLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
               IndexedSeq[LoopDetails](newIndividualLoop)
@@ -109,8 +109,8 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKIndividualPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKIndividualPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))
@@ -119,8 +119,8 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
 
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       case None => "their"
     }

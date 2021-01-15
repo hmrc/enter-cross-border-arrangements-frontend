@@ -47,13 +47,13 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers)
+      val country = getCountry(request.userAnswers, id)
       val form = formProvider(country)
 
-      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val doYouKnowTIN = value.lift(index).get.doYouKnowTIN
@@ -69,7 +69,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "individualName" -> getIndividualName(request.userAnswers),
+        "individualName" -> getIndividualName(request.userAnswers, id),
         "country" -> country,
         "index" -> index
       )
@@ -80,10 +80,10 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
     navigator.routeMap(DoYouKnowTINForNonUKIndividualPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers)
+      val country = getCountry(request.userAnswers, id)
       val form = formProvider(country)
 
       form.bindFromRequest().fold(
@@ -93,7 +93,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "individualName" -> getIndividualName(request.userAnswers),
+            "individualName" -> getIndividualName(request.userAnswers, id),
             "country" -> country,
             "index" -> index
           )
@@ -102,7 +102,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
         },
         value => {
 
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
             case None =>
               val newIndividualLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
               IndexedSeq[LoopDetails](newIndividualLoop)
@@ -116,8 +116,8 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))
@@ -125,8 +125,8 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
       )
   }
 
-  private def getCountry(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): String = {
-    userAnswers.get(IndividualLoopPage) match {
+  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String = {
+    userAnswers.get(IndividualLoopPage, id) match {
       case Some(loopDetailsSeq) =>
         val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
         if (whichCountry.isDefined) {

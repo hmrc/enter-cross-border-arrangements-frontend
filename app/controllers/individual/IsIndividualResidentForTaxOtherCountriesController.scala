@@ -48,10 +48,10 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
@@ -66,7 +66,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "individualName" -> getIndividualName(request.userAnswers),
+        "individualName" -> getIndividualName(request.userAnswers, id),
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "index" -> index
       )
@@ -77,7 +77,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
     navigator.routeMap(IsIndividualResidentForTaxOtherCountriesPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,7 +86,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "individualName" -> getIndividualName(request.userAnswers),
+            "individualName" -> getIndividualName(request.userAnswers, id),
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "index" -> index
           )
@@ -95,7 +95,7 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
         },
         value => {
 
-          val individualLoopList = (request.userAnswers.get(IndividualLoopPage), mode) match {
+          val individualLoopList = (request.userAnswers.get(IndividualLoopPage, id), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
               list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
             case (Some(list), CheckMode) =>
@@ -109,8 +109,8 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
           } yield Redirect(redirect(checkRoute, Some(value), index))

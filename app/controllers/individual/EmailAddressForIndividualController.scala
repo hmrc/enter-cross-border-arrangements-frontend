@@ -48,10 +48,10 @@ class EmailAddressForIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressForIndividualPage) match {
+      val preparedForm = request.userAnswers.get(EmailAddressForIndividualPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,7 +59,7 @@ class EmailAddressForIndividualController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "displayName" -> getIndividualName(request.userAnswers)
+        "displayName" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/emailAddressForIndividual.njk", json).map(Ok(_))
@@ -68,7 +68,7 @@ class EmailAddressForIndividualController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
     navigator.routeMap(EmailAddressForIndividualPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,7 +77,7 @@ class EmailAddressForIndividualController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "displayName" -> getIndividualName(request.userAnswers)
+            "displayName" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/emailAddressForIndividual.njk", json).map(BadRequest(_))
@@ -85,7 +85,7 @@ class EmailAddressForIndividualController @Inject()(
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForIndividualPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForIndividualPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

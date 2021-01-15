@@ -47,17 +47,17 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
                                             renderer: Renderer
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def actionUrl(mode: Mode) = routes.IndividualAddressController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode) = routes.IndividualAddressController.onSubmit(id, mode).url
 
   implicit val alternativeText: String = "the individual's"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(IndividualAddressPage) match {
+      val preparedForm = request.userAnswers.get(IndividualAddressPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,10 +66,10 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         "form"   -> preparedForm,
         "mode"   -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
-        "isUkAddress" -> isUkAddress(request.userAnswers),
-        "actionUrl" -> actionUrl(mode),
+        "isUkAddress" -> isUkAddress(request.userAnswers, id),
+        "actionUrl" -> actionUrl(id, mode),
         "pageTitle" -> "individualAddress.title",
-        "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers))
+        "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers, id))
       )
 
       renderer.render("address.njk", json).map(Ok(_))
@@ -78,7 +78,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
   def redirect(checkRoute: CheckRoute, value: Option[Address]): Call =
     navigator.routeMap(IndividualAddressPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -91,10 +91,10 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
-            "isUkAddress" -> isUkAddress(request.userAnswers),
-            "actionUrl" -> actionUrl(mode),
+            "isUkAddress" -> isUkAddress(request.userAnswers, id),
+            "actionUrl" -> actionUrl(id, mode),
             "pageTitle" -> "individualAddress.title",
-            "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers))
+            "pageHeading" -> pageHeadingProvider("individualAddress.heading", getIndividualName(request.userAnswers, id))
           )
 
           renderer.render("address.njk", json).map(BadRequest(_))
@@ -102,15 +102,16 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(IsIndividualAddressUkPage) match {
-    case Some(true) => true
-    case _ => false
-  }
+  private def isUkAddress(userAnswers: UserAnswers, id: Int): Boolean =
+    userAnswers.get(IsIndividualAddressUkPage, id) match {
+      case Some(true) => true
+      case _ => false
+    }
 }

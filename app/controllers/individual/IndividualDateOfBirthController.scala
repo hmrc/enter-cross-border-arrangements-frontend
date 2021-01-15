@@ -48,10 +48,10 @@ class IndividualDateOfBirthController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualDateOfBirthPage) match {
+      val preparedForm = request.userAnswers.get(IndividualDateOfBirthPage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -62,7 +62,7 @@ class IndividualDateOfBirthController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "date" -> viewModel,
-        "name" -> getIndividualName(request.userAnswers)
+        "name" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/individualDateOfBirth.njk", json).map(Ok(_))
@@ -71,7 +71,7 @@ class IndividualDateOfBirthController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[LocalDate]): Call =
     navigator.routeMap(IndividualDateOfBirthPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,7 +83,7 @@ class IndividualDateOfBirthController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "date" -> viewModel,
-            "name" -> getIndividualName(request.userAnswers)
+            "name" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/individualDateOfBirth.njk", json).map(BadRequest(_))
@@ -91,15 +91,15 @@ class IndividualDateOfBirthController @Inject()(
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       case None => "their"
     }
