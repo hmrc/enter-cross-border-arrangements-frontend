@@ -19,14 +19,16 @@ package connectors
 import config.FrontendAppConfig
 import models.GeneratedIDs
 import play.api.http.HeaderNames
+import play.mvc.Http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
-class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfig,
-                                                 httpClient: HttpClient)(implicit ec: ExecutionContext) {
+class CrossBorderArrangementsConnector @Inject()(
+  configuration: FrontendAppConfig,
+  httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
   val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
 
@@ -41,7 +43,7 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
   def verifyArrangementId(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](verificationUrl(arrangementId)).map { response =>
       response.status match {
-        case 204 => true
+        case NO_CONTENT => true
         case _ => false
       }
     } recover {
@@ -59,11 +61,11 @@ class CrossBorderArrangementsConnector @Inject()(configuration: FrontendAppConfi
   def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](isMarketableArrangementUrl(arrangementId)).map { response =>
       (response.status, response.body) match {
-        case (200, isMarketableArrangement) => isMarketableArrangement.toBoolean
-        case _ => false // throw exception TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
+        case (OK, isMarketableArrangement) => isMarketableArrangement.toBoolean
+        case _ => throw new Exception("Cannot retrieve marketable arrangement details")
       }
     } recover {
-      case _: Exception => false // TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
+      case _: Exception => throw new Exception("Cannot retrieve marketable arrangement details") // TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
     }
   }
 

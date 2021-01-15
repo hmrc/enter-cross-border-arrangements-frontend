@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
+import handlers.ErrorHandler
 import models.Mode
 import models.disclosure.DisclosureType
 import navigation.NavigatorForReporter
@@ -36,6 +37,7 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   navigator: NavigatorForReporter,
+  errorHandler: ErrorHandler,
   crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
@@ -58,6 +60,8 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
       }) map { isMarketableArrangement =>
 
         Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
+      } recoverWith {
+        case ex: Exception => errorHandler.onServerError(request, ex) //ToDo add testing
       }
   }
 }
