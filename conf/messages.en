@@ -1084,5 +1084,6 @@ disclosureConfirmation.p7 = What happens next
 disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
 
-
-
+# Temporary page for displaying generated XML
+generatedXML.title = Generated XML
+generatedXML.heading = Generated XML

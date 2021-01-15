@@ -31,7 +31,7 @@ class XMLGenerationService @Inject()() {
   private[services] def buildHeader(userAnswers: UserAnswers)
                                    (implicit request: DataRequest[AnyContent]): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
-      case Some(disclosureName) => "GB" + request.internalId + disclosureName
+      case Some(disclosureName) => "GB" + request.enrolmentID + disclosureName
       case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
     }
 

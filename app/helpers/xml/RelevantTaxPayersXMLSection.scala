@@ -29,17 +29,6 @@ import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
-  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
-    (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
-      case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
-        <RelevantTaxpayer>
-          {DisclosingXMLSection.buildDiscloseDetailsForOrganisation(userAnswers)}
-          <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-        </RelevantTaxpayer>
-      case _ => NodeSeq.Empty
-    }
-  }
-
   private[xml] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
     taxResidencies.flatMap {
       loop =>
@@ -105,6 +94,19 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
 
     <ID>{organisationNodes}</ID>
+  }
+
+  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
+    (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
+      case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
+        val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
+
+        <RelevantTaxpayer>
+          {buildIDForOrganisation(organisationDetailsForReporter)}
+          <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+        </RelevantTaxpayer>
+      case _ => NodeSeq.Empty
+    }
   }
 
   override def toXml(userAnswers: UserAnswers): Elem = {

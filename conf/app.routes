@@ -588,3 +588,5 @@ POST       /reporter/individual/change-select-address        controllers.reporte
 
 # TASK LIST
 POST      /task-list                                         controllers.TaskListController.onSubmit
+
+GET       /generated-xml                                     controllers.GeneratedXMLController.onPageLoad()

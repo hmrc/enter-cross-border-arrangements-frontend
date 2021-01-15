@@ -18,9 +18,14 @@ package helpers.xml
 
 import org.joda.time.DateTime
 
+import java.time.LocalDate
+
 object GeneratedXMLExamples {
 
   private val mandatoryTimestamp: String = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
+  private val today: LocalDate = LocalDate.now
+  private val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
+  private val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
 
   val xmlForOrganisation: String =
     s"""<DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
@@ -76,12 +81,7 @@ object GeneratedXMLExamples {
        |                        <ResCountryCode>FR</ResCountryCode>
        |                    </Organisation>
        |                </ID>
-       |                <Liability>
-       |                    <RelevantTaxpayerDiscloser>
-       |                        <RelevantTaxpayerNexus>RTNEXb</RelevantTaxpayerNexus>
-       |                    </RelevantTaxpayerDiscloser>
-       |                </Liability>
-       |                <TaxpayerImplementingDate>2021-01-15</TaxpayerImplementingDate>
+       |                <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
        |            </RelevantTaxpayer>
        |            <RelevantTaxpayer>
        |                <ID>
@@ -103,7 +103,7 @@ object GeneratedXMLExamples {
        |                        <ResCountryCode>FR</ResCountryCode>
        |                    </Organisation>
        |                </ID>
-       |                <TaxpayerImplementingDate>2020-12-15</TaxpayerImplementingDate>
+       |                <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
        |            </RelevantTaxpayer>
        |            <RelevantTaxpayer>
        |                <ID>
@@ -125,11 +125,11 @@ object GeneratedXMLExamples {
        |                        <ResCountryCode>FR</ResCountryCode>
        |                    </Organisation>
        |                </ID>
-       |                <TaxpayerImplementingDate>2020-11-15</TaxpayerImplementingDate>
+       |                <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
        |            </RelevantTaxpayer>
        |        </RelevantTaxPayers>
        |        <DisclosureInformation>
-       |            <ImplementingDate>2021-01-15</ImplementingDate>
+       |            <ImplementingDate>$today</ImplementingDate>
        |            <Reason>DAC6703</Reason>
        |            <Summary>
        |                <Disclosure_Name>Arrangement name</Disclosure_Name>

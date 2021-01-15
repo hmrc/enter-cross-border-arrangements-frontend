@@ -90,7 +90,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(DisclosureNamePage, "DisclosureName").success.value
 
       implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "XADAC0001122345", "enrolmentID", userAnswers)
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       val result = xmlGenerationService.buildHeader(userAnswers)
 
@@ -108,7 +108,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkDPage, HallmarkD.enumerable.withName("D1").toSet).success.value
 
       implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "XADAC0001122345", "enrolmentID", userAnswers)
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       assertThrows[Exception] {
         xmlGenerationService.buildHeader(userAnswers)
@@ -179,7 +179,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkD1OtherPage, "Hallmark D1 other description").success.value
 
       implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "XADAC0001122345", "enrolmentID", userAnswers)
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       val result = xmlGenerationService.createXmlSubmission(userAnswers)
 
