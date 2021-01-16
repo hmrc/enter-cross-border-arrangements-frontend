@@ -16,8 +16,6 @@
 
 package navigation
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.routes
 import generators.Generators
@@ -30,7 +28,7 @@ import models.hallmarks.HallmarkD1._
 import models.hallmarks._
 import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
 import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
-import models.taxpayer.UpdateTaxpayer.{Later, No, Now}
+import models.taxpayer.UpdateTaxpayer.{Later, No}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -42,6 +40,8 @@ import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+
+import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

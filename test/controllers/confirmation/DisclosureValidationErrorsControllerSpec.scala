@@ -39,11 +39,32 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
 
   "DisclosureValidationErrors Controller" - {
 
-    "map errors to table rows" in {
+    "map keys to errors" in {
 
       val controller = injector.instanceOf[DisclosureValidationErrorsController]
 
-      val rows: Seq[String] = controller.mapErrorsToTableRows(errors).flatten.map(_.toString)
+      val keysToErrors = Map[String, Option[String]](
+        "businessrules.initialDisclosure.needRelevantTaxPayer" ->
+          Some("""As this arrangement is not marketable, it must have at least one relevant taxpayer.
+            |If you are a relevant taxpayer, confirm this in your reporter’s details.
+            |If you are not, add at least one relevant taxpayer.""".stripMargin)
+        , "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates" ->
+          Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates.""")
+        , "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" ->
+          Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""  )
+        , "any.other.key" -> None
+      )
+
+      keysToErrors.keys.foreach { key =>
+        controller.keyMapper(key) must be (keysToErrors.get(key).flatten)
+      }
+    }
+
+    "map keys to table rows" in {
+
+      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+
+      val rows: Seq[String] = controller.toTableRows(errors, Option(_)).flatten.map(_.toString)
 
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_0"}}""")
       rows must contain("""{"html":"Error 1","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}""")
@@ -72,7 +93,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "errorList" -> injector.instanceOf[DisclosureValidationErrorsController].mapErrorsToTableRows(errors)
+        "errorRows" -> injector.instanceOf[DisclosureValidationErrorsController].toTableRows(errors)
       )
 
       templateCaptor.getValue mustEqual "confirmation/validationErrors.njk"

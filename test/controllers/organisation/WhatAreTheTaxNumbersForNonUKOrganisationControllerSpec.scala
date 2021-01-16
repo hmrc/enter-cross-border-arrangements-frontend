@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.organisation.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
-import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
