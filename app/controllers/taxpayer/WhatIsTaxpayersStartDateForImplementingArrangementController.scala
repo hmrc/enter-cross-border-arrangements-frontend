@@ -104,7 +104,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, mode, updatedAnswers))
       )
   }
 

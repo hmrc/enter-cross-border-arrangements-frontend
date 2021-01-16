@@ -62,8 +62,8 @@ class IndividualNameController @Inject()(
       renderer.render("individual/individualName.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Name]): Call =
-    navigator.routeMap(IndividualNamePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Name]): Call =
+    navigator.routeMap(IndividualNamePage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -87,7 +87,7 @@ class IndividualNameController @Inject()(
             updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
 
         }
       )

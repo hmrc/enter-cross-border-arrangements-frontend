@@ -68,8 +68,8 @@ class IndividualDateOfBirthController @Inject()(
       renderer.render("individual/individualDateOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[LocalDate]): Call =
-    navigator.routeMap(IndividualDateOfBirthPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[LocalDate]): Call =
+    navigator.routeMap(IndividualDateOfBirthPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -94,7 +94,7 @@ class IndividualDateOfBirthController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 

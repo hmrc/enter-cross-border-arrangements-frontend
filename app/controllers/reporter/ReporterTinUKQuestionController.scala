@@ -47,8 +47,8 @@ class ReporterTinUKQuestionController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
-    navigator.routeMap(ReporterTinUKQuestionPage)(checkRoute)(value)(index)
+  private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterTinUKQuestionPage)(checkRoute)(id)(value)(index)
 
   private val form = formProvider()
 
@@ -100,7 +100,7 @@ class ReporterTinUKQuestionController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

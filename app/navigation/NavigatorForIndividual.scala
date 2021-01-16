@@ -31,30 +31,30 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
   override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case IndividualNamePage =>
-      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualDateOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualDateOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualDateOfBirthKnownPage =>
       checkRoute => id => value => _ => value match {
         case Some(true) => routes.IndividualDateOfBirthController.onPageLoad(id, checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
+        case _          => jumpOrCheckYourAnswers(id, routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IndividualDateOfBirthPage =>
-      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualPlaceOfBirthKnownPage =>
       checkRoute => id => value => _ => value match {
         case Some(true) => routes.IndividualPlaceOfBirthController.onPageLoad(id, checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
+        case _          => jumpOrCheckYourAnswers(id, routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IndividualPlaceOfBirthPage =>
-      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualAddressKnownPage =>
       checkRoute => id => value => _ => value match {
         case Some(true) => routes.IsIndividualAddressUkController.onPageLoad(id, checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
+        case _          => jumpOrCheckYourAnswers(id, routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IsIndividualAddressUkPage =>
@@ -67,16 +67,16 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
       checkRoute => id => _ => _ => routes.IndividualSelectAddressController.onPageLoad(id, checkRoute.mode)
 
     case IndividualAddressPage | IndividualSelectAddressPage =>
-      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case EmailAddressQuestionForIndividualPage =>
       checkRoute => id => value => _ => value match {
         case Some(true) => routes.EmailAddressForIndividualController.onPageLoad(id, checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
+        case _          => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
       }
 
     case EmailAddressForIndividualPage =>
-      checkRoute => id => _ => index => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
+      checkRoute => id => _ => index => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
 
     case WhichCountryTaxForIndividualPage =>
       checkRoute => id => value => index => value match { case Some(country: Country) =>
@@ -121,7 +121,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
     case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
     case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
-    case _                                        => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(id), checkRoute)
+    case _                                        => jumpOrCheckYourAnswers(id, routes.IndividualCheckYourAnswersController.onPageLoad(id), checkRoute)
   }
 
   private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {

@@ -28,12 +28,12 @@ object SelectedAddressLookupPage  extends QuestionPage[AddressLookup] {
 
   override def toString: String = "selectedAddressLookup"
 
-  override def cleanup(value: Option[AddressLookup], userAnswers: UserAnswers): Try[UserAnswers] =
+  def cleanup(value: Option[AddressLookup], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(_) =>
         userAnswers
-          .remove(OrganisationAddressPage)
-          .flatMap(_.remove(IndividualAddressPage))
+          .remove(OrganisationAddressPage, id)
+          .flatMap(_.remove(IndividualAddressPage, id))
       case None => super.cleanup(value, userAnswers)
     }
 }

@@ -119,4 +119,3 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
        "name" -> getReporterDetailsOrganisationName(userAnswers, id))
    }
 }
-

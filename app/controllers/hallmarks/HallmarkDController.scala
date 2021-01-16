@@ -89,7 +89,7 @@ class HallmarkDController @Inject()(
             userAnswers <- Future.fromTry(removeD1Parts(userAnswers, id, value))
             updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkDPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkDPage, id, mode, updatedAnswers))
         }
       )
   }

@@ -82,7 +82,7 @@ class HallmarkBController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkBPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkBPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkBPage, id, mode, updatedAnswers))
       )
   }
 }

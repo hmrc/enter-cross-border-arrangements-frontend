@@ -79,7 +79,7 @@ class WhichNationalProvisionsIsThisArrangementBasedOnController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichNationalProvisionsIsThisArrangementBasedOnPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, id, mode, updatedAnswers))
       )
   }
 }

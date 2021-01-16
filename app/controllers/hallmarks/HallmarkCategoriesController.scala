@@ -84,7 +84,7 @@ class HallmarkCategoriesController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCategoriesPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, id, mode, updatedAnswers))
 
         }
       )

@@ -29,32 +29,32 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def toString: String = "disclosureMarketable"
 
-  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
+  def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     List(
       DisclosureNamePage,
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
       DisclosureMarketablePage
-    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
+    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua, id) }
 
-  def restore(userAnswers: UserAnswers): Try[UserAnswers] =
-    userAnswers.get(DisclosureDetailsPage)
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.get(DisclosureDetailsPage, id)
       .fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
-        userAnswers.set(DisclosureNamePage, DisclosureNamePage.getFromModel(disclosureDetails))
-          .flatMap(_.set(DisclosureTypePage, DisclosureTypePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureMarketablePage, DisclosureMarketablePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureIdentifyArrangementPage, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
-          .flatMap(_.remove(DisclosureDetailsPage))
+        userAnswers.set(DisclosureNamePage, id, DisclosureNamePage.getFromModel(disclosureDetails))
+          .flatMap(_.set(DisclosureTypePage, id, DisclosureTypePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureMarketablePage, id, DisclosureMarketablePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureIdentifyArrangementPage, id, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
+          .flatMap(_.remove(DisclosureDetailsPage, id))
       }
 
-  def build(userAnswers: UserAnswers): DisclosureDetails = {
+  def build(userAnswers: UserAnswers, id: Int): DisclosureDetails = {
 
-    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage)
+    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage, id)
       .orElse(Some(DisclosureDetails("")))
-    def getDisclosureName = userAnswers.get(DisclosureNamePage)
-    def getDisclosureType = userAnswers.get(DisclosureTypePage)
-    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage).orElse(Some(false))
-    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage)
+    def getDisclosureName = userAnswers.get(DisclosureNamePage, id)
+    def getDisclosureType = userAnswers.get(DisclosureTypePage, id)
+    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage, id).orElse(Some(false))
+    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage, id)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
 
     getDisclosureDetails

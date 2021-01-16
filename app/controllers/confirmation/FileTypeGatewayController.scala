@@ -41,7 +41,7 @@ class FileTypeGatewayController @Inject()(
     implicit request =>
 
       Future.successful(request.userAnswers.get(DisclosureTypePage, id)).map { disclosureType =>
-        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(disclosureType)(0))
+        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
       }
   }
 }

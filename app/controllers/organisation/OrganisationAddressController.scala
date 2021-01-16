@@ -73,12 +73,12 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       renderer.render("address.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Address], isAlt: Boolean): Call =
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Address], isAlt: Boolean): Call =
     if (isAlt) {
-      navigator.routeAltMap(OrganisationAddressPage)(checkRoute)(value)(0)
+      navigator.routeAltMap(OrganisationAddressPage)(checkRoute)(id)(value)(0)
     }
     else {
-      navigator.routeMap(OrganisationAddressPage)(checkRoute)(value)(0)
+      navigator.routeMap(OrganisationAddressPage)(checkRoute)(id)(value)(0)
     }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -110,7 +110,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
             updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
+          } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
         }
       )
   }

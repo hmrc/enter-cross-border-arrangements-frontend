@@ -68,8 +68,8 @@ class DisclosureIdentifyArrangementController @Inject()(
       renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(value)(0)
+  def redirect(id:Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -92,7 +92,7 @@ class DisclosureIdentifyArrangementController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureIdentifyArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

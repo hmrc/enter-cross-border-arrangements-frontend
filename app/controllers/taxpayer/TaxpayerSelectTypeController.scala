@@ -82,7 +82,7 @@ class TaxpayerSelectTypeController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, id, value))
             redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, redirectMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, id, redirectMode, updatedAnswers))
       )
   }
 }

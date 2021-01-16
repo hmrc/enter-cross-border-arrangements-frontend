@@ -79,7 +79,7 @@ class GiveDetailsOfThisArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(GiveDetailsOfThisArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(GiveDetailsOfThisArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(GiveDetailsOfThisArrangementPage, id, mode, updatedAnswers))
       )
   }
 }

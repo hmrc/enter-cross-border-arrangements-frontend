@@ -91,12 +91,12 @@ class ReporterOrganisationSelectAddressController @Inject()(
       }
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
     if (isAlt) {
-      navigator.routeAltMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeAltMap(ReporterOrganisationSelectAddressPage)(checkRoute)(id)(value)(0)
     }
     else {
-      navigator.routeMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeMap(ReporterOrganisationSelectAddressPage)(checkRoute)(id)(value)(0)
     }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -134,7 +134,7 @@ class ReporterOrganisationSelectAddressController @Inject()(
                 updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, id, addressToStore))
                 _ <- sessionRepository.set(updatedAnswersWithAddress)
                 checkRoute = toCheckRoute(mode, updatedAnswersWithAddress, id)
-              } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
+              } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
             }
           )
       }

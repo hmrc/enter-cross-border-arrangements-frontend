@@ -33,7 +33,7 @@ import utils.rows._
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows with ReporterRows {
 
-  def selectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
+  def selectType(id: Int): Option[Row] = userAnswers.get(TaxpayerSelectTypePage, id) map {
     answer =>
       Row(
         key     = Key(msg"selectType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -41,14 +41,14 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url,
+            href               = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectType.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+  def selectAddress(id: Int): Option[Row] = userAnswers.get(SelectAddressPage, id) map {
     answer =>
       Row(
         key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -56,14 +56,14 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
+  def postcode(id: Int): Option[Row] = userAnswers.get(PostcodePage, id) map {
     answer =>
       Row(
         key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -71,15 +71,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
+            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def hallmarkD1Other: Option[Row] = userAnswers.get(HallmarkD1OtherPage) flatMap {
-    answer => userAnswers.get(HallmarkD1Page) match {
+  def hallmarkD1Other(id: Int): Option[Row] = userAnswers.get(HallmarkD1OtherPage, id) flatMap {
+    answer => userAnswers.get(HallmarkD1Page, id) match {
       case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
         Some(Row(
           key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -87,7 +87,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content = msg"site.edit",
-              href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(CheckMode).url,
+              href = controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(id, CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkD1Other.checkYourAnswersLabel"))
             )
           )
@@ -103,14 +103,14 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
     }
   }
 
-  def mainBenefitTest: Option[Row] = if(
-    mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1bi) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1c) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page), C1d) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryA) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage), CategoryB)) {
+  def mainBenefitTest(id: Int): Option[Row] = if(
+    mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1bi) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1c) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1d) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage, id), CategoryA) ||
+      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage, id), CategoryB)) {
 
-    userAnswers.get(MainBenefitTestPage) map {
+    userAnswers.get(MainBenefitTestPage, id) map {
       answer =>
         Row(
           key     = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
@@ -118,7 +118,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
           actions = List(
             Action(
               content            = msg"site.edit",
-              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode).url,
+              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, CheckMode).url,
               visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
             )
           )
@@ -128,7 +128,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
     None
   }
 
-  def hallmarkCategories: Option[Row] = userAnswers.get(HallmarkCategoriesPage) map {
+  def hallmarkCategories(id: Int): Option[Row] = userAnswers.get(HallmarkCategoriesPage, id) map {
     answer =>
       Row(
         key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
@@ -136,29 +136,29 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(CheckMode).url,
+            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def buildHallmarksRow(ua: UserAnswers): Row = {
+  def buildHallmarksRow(ua: UserAnswers, id: Int): Row = {
 
-    val hallmarkCPage = ua.get(HallmarkCPage)  match {
+    val hallmarkCPage = ua.get(HallmarkCPage, id)  match {
       case Some(set) if set.contains(C1) && set.size == 1 => None
       case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
       case hallmarkSet => hallmarkSet
     }
 
-    val hallmarkDPage = ua.get(HallmarkDPage)  match {
+    val hallmarkDPage = ua.get(HallmarkDPage, id)  match {
       case Some(set) if set.contains(D1) && set.size == 1 => None
       case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
       case hallmarkSet => hallmarkSet
     }
 
     val hallmarkPages = Seq(
-      ua.get(HallmarkD1Page),
+      ua.get(HallmarkD1Page, id),
       hallmarkDPage
     )
 
@@ -176,7 +176,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       actions = List(
         Action(
           content            = msg"site.edit",
-          href               = controllers.hallmarks.routes.HallmarkDController.onPageLoad(CheckMode).url,
+          href               = controllers.hallmarks.routes.HallmarkDController.onPageLoad(id, CheckMode).url,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"checkYourAnswers.selectedHallmarks.label"))
         )
       )
@@ -184,4 +184,3 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
   }
 }
-

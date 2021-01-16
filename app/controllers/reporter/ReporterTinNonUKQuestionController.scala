@@ -51,8 +51,8 @@ class ReporterTinNonUKQuestionController @Inject()(
   with RoutingSupport
   with CountrySupport {
 
-  private def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
-    navigator.routeMap(ReporterTinNonUKQuestionPage)(checkRoute)(value)(index)
+  private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterTinNonUKQuestionPage)(checkRoute)(id)(value)(index)
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -110,7 +110,7 @@ class ReporterTinNonUKQuestionController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

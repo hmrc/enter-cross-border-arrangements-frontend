@@ -79,7 +79,7 @@ class HallmarkD1OtherController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1OtherPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkD1OtherPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkD1OtherPage, id, mode, updatedAnswers))
       )
   }
 }

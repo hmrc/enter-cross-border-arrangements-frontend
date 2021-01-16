@@ -74,8 +74,8 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
       renderer.render("individual/whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
-    navigator.routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
+    navigator.routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(checkRoute)(id)(value)(index)
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -112,7 +112,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

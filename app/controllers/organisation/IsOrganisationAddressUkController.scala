@@ -66,8 +66,8 @@ class IsOrganisationAddressUkController @Inject()(
       renderer.render("organisation/isOrganisationAddressUk.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
-    navigator.routeMap(IsOrganisationAddressUkPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(IsOrganisationAddressUkPage)(checkRoute)(id)(value)(index)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -89,7 +89,7 @@ class IsOrganisationAddressUkController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressUkPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

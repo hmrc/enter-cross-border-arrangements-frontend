@@ -65,8 +65,8 @@ class EmailAddressForIndividualController @Inject()(
       renderer.render("individual/emailAddressForIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(EmailAddressForIndividualPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(EmailAddressForIndividualPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -88,7 +88,7 @@ class EmailAddressForIndividualController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForIndividualPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

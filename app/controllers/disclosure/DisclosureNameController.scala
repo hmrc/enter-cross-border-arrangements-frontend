@@ -65,8 +65,8 @@ class DisclosureNameController @Inject()(
       renderer.render("disclosure/disclosureName.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(DisclosureNamePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureNamePage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -89,7 +89,7 @@ class DisclosureNameController @Inject()(
             updatedAnswers <- Future.fromTry(userAnswers.set(DisclosureNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
 
         }
       )

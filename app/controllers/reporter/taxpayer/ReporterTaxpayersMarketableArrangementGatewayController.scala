@@ -57,7 +57,7 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
 
       }) map { isMarketableArrangement =>
 
-        Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(Some(isMarketableArrangement))(0))
+        Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
       }
   }
 }

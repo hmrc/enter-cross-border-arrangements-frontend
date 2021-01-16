@@ -81,7 +81,7 @@ class DoYouKnowTheReasonToReportArrangementNowController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTheReasonToReportArrangementNowPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouKnowTheReasonToReportArrangementNowPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(DoYouKnowTheReasonToReportArrangementNowPage, id, mode, updatedAnswers))
       )
   }
 }

@@ -24,7 +24,7 @@ import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
 trait IntermediariesRows extends RowBuilder {
 
 
-  def intermediariesType: Option[Row] = userAnswers.get(IntermediariesTypePage) map {
+  def intermediariesType(id: Int): Option[Row] = userAnswers.get(IntermediariesTypePage, id) map {
     answer =>
       Row(
         key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -32,14 +32,14 @@ trait IntermediariesRows extends RowBuilder {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"intermediariesType.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def isExemptionKnown: Option[Row] = userAnswers.get(IsExemptionKnownPage) map {
+  def isExemptionKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionKnownPage, id) map {
     answer =>
       Row(
         key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -47,14 +47,14 @@ trait IntermediariesRows extends RowBuilder {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionKnown.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def isExemptionCountryKnown: Option[Row] = userAnswers.get(IsExemptionCountryKnownPage) map {
+  def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionCountryKnownPage, id) map {
     answer =>
       Row(
         key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -62,7 +62,7 @@ trait IntermediariesRows extends RowBuilder {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionCountryKnown.checkYourAnswersLabel"))
           )
         )
@@ -81,7 +81,7 @@ trait IntermediariesRows extends RowBuilder {
     }
   }
 
-  def exemptCountries: Option[Row] = userAnswers.get(ExemptCountriesPage) map {
+  def exemptCountries(id: Int): Option[Row] = userAnswers.get(ExemptCountriesPage, id) map {
     answer =>
 
       Row(
@@ -90,7 +90,7 @@ trait IntermediariesRows extends RowBuilder {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"exemptCountries.checkYourAnswersLabel"))
           )
         )
@@ -98,7 +98,7 @@ trait IntermediariesRows extends RowBuilder {
   }
 
   import pages.intermediaries.WhatTypeofIntermediaryPage
-  def whatTypeofIntermediary: Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage) map {
+  def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage, id) map {
     answer =>
       Row(
         key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -106,19 +106,19 @@ trait IntermediariesRows extends RowBuilder {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(CheckMode).url,
+            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatTypeofIntermediary.checkYourAnswersLabel"))
           )
         )
       )
   }
 
-  def youHaveNotAddedAnyIntermediaries: Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage) map {
+  def youHaveNotAddedAnyIntermediaries(id: Int): Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage, id) map {
     answer =>
       toRow(
         msgKey  = "youHaveNotAddedAnyIntermediaries",
         content = msg"youHaveNotAddedAnyIntermediaries.$answer",
-        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
+        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
       )
   }
 }

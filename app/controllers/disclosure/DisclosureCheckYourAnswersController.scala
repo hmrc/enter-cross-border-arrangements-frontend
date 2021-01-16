@@ -53,9 +53,9 @@ class DisclosureCheckYourAnswersController @Inject()(
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val disclosureSummary: Seq[SummaryList.Row] =
-        helper.disclosureNamePage.toSeq ++
-        helper.disclosureTypePage.toSeq ++
-        helper.buildDisclosureSummaryDetails
+        helper.disclosureNamePage(id).toSeq ++
+        helper.disclosureTypePage(id).toSeq ++
+        helper.buildDisclosureSummaryDetails(id)
 
       renderer.render(
         "disclosure/check-your-answers-disclosure.njk",
@@ -64,7 +64,8 @@ class DisclosureCheckYourAnswersController @Inject()(
       ).map(Ok(_))
     }
 
-  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 //    TODO build the disclosure details model from pages
@@ -74,20 +75,20 @@ class DisclosureCheckYourAnswersController @Inject()(
 //      updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
 //    } yield sessionRepository.set(updatedAnswers)
 
-      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage) match {
+      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage, id) match {
         case Some(Dac6add) =>
-          request.userAnswers.get(DisclosureIdentifyArrangementPage).fold(false)(
+          request.userAnswers.get(DisclosureIdentifyArrangementPage, id).fold(false)(
             arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
         case _ =>
-          request.userAnswers.get(DisclosureMarketablePage).fold(
+          request.userAnswers.get(DisclosureMarketablePage, id).fold(
             throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
             bool)
       }
 
       for {
-        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, isMarketable))
+        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, id, isMarketable))
         _ <- sessionRepository.set(updateAnswers)
-      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0))
+      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(None)(0))
   }
 }
 

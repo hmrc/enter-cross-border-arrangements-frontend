@@ -65,8 +65,8 @@ class IntermediaryWhyReportInUKController @Inject()(
       renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[IntermediaryWhyReportInUK]): Call =
-    navigator.routeMap(IntermediaryWhyReportInUKPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[IntermediaryWhyReportInUK]): Call =
+    navigator.routeMap(IntermediaryWhyReportInUKPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -88,7 +88,7 @@ class IntermediaryWhyReportInUKController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhyReportInUKPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
 
         }
       )

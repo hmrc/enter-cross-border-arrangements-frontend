@@ -50,23 +50,23 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
       val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(TaxpayerSelectTypePage, id) match {
         case Some(SelectType.Organisation) =>
-          (helper.taxpayerSelectType.toSeq ++ helper.organisationName.toSeq ++
-            helper.buildOrganisationAddressGroup ++ helper.buildOrganisationEmailAddressGroup,
-            helper.buildTaxResidencySummaryForOrganisation)
+          (helper.taxpayerSelectType(id).toSeq ++ helper.organisationName(id).toSeq ++
+            helper.buildOrganisationAddressGroup(id) ++ helper.buildOrganisationEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForOrganisation(id))
 
         case Some(SelectType.Individual) =>
 
-          (Seq(helper.taxpayerSelectType, helper.individualName).flatten ++
-            helper.buildIndividualDateOfBirthGroup ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-            helper.buildTaxResidencySummaryForIndividuals)
+          (Seq(helper.taxpayerSelectType(id), helper.individualName(id)).flatten ++
+            helper.buildIndividualDateOfBirthGroup(id) ++
+            helper.buildIndividualPlaceOfBirthGroup(id) ++
+            helper.buildIndividualAddressGroup(id) ++
+            helper.buildIndividualEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForIndividuals(id))
 
         case _ => throw new RuntimeException("Unable to retrieve select type for Taxpayer")
       }
 
-      val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement.toSeq
+      val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement(id).toSeq
 
       renderer.render(
         "taxpayer/check-your-answers-taxpayers.njk",
@@ -82,15 +82,15 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
       val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers)
+          list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers))
+          IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers, id))
       }
       for {
         userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, id, taxpayerLoopList))
         _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
-        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))
+        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, mode, userAnswersWithTaxpayerLoop))
       }
   }
 }

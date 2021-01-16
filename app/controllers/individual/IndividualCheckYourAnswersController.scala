@@ -44,14 +44,14 @@ class IndividualCheckYourAnswersController @Inject()(
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val individualSummary: Seq[SummaryList.Row] =
-        Seq(helper.individualName).flatten ++
-          helper.buildIndividualDateOfBirthGroup ++
-          helper.buildIndividualPlaceOfBirthGroup ++
-          helper.buildIndividualAddressGroup ++
-          helper.buildIndividualEmailAddressGroup
+        Seq(helper.individualName(id)).flatten ++
+          helper.buildIndividualDateOfBirthGroup(id) ++
+          helper.buildIndividualPlaceOfBirthGroup(id) ++
+          helper.buildIndividualAddressGroup(id) ++
+          helper.buildIndividualEmailAddressGroup(id)
 
       val countryDetails: Seq[SummaryList.Row] =
-        helper.buildTaxResidencySummaryForIndividuals
+        helper.buildTaxResidencySummaryForIndividuals(id)
 
       renderer.render(
         "individual/check-your-answers.njk",

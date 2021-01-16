@@ -24,45 +24,45 @@ import uk.gov.hmrc.viewmodels._
 
 trait DisclosureRows extends RowBuilder {
 
-  def disclosureNamePage: Option[Row] = userAnswers.get(DisclosureNamePage) map { answer =>
+  def disclosureNamePage(id: Int): Option[Row] = userAnswers.get(DisclosureNamePage, id) map { answer =>
     toRow(
       msgKey  = "disclosureName",
       content = formatMaxChars(answer),
-      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(id, CheckMode).url
     )
   }
 
-  private def disclosureMarketablePage: Option[Row] = userAnswers.get(DisclosureMarketablePage) map { answer =>
+  private def disclosureMarketablePage(id: Int): Option[Row] = userAnswers.get(DisclosureMarketablePage, id) map { answer =>
     toRow(
       msgKey  = "disclosureMarketable",
       content = yesOrNo(answer),
-      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def disclosureTypePage: Option[Row] = userAnswers.get(DisclosureTypePage) map { answer =>
+  def disclosureTypePage(id: Int): Option[Row] = userAnswers.get(DisclosureTypePage, id) map { answer =>
     toRow(
       msgKey  = "disclosureType",
       content = msg"disclosureType.$answer",
-      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(id, CheckMode).url
     )
   }
 
-  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map { answer =>
+  private def disclosureIdentifyArrangement(id: Int): Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage, id) map { answer =>
     val arrangementID = answer.toUpperCase
     toRow(
       msgKey  = "disclosureIdentifyArrangement",
       content = lit"$arrangementID",
-      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildDisclosureSummaryDetails: Seq[Row] =
-    userAnswers.get(DisclosureTypePage) match {
+  def buildDisclosureSummaryDetails(id: Int): Seq[Row] =
+    userAnswers.get(DisclosureTypePage, id) match {
       case Some(Dac6new) =>
-        disclosureMarketablePage.toSeq
+        disclosureMarketablePage(id).toSeq
       case Some(Dac6add) =>
-        disclosureIdentifyArrangement.toSeq
+        disclosureIdentifyArrangement(id).toSeq
 
     }
 }

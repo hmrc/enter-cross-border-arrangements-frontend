@@ -76,8 +76,8 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       renderer.render("intermediaries/youHaveNotAddedAnyIntermediaries.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyIntermediaries]): Call =
-    navigator.routeMap(YouHaveNotAddedAnyIntermediariesPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyIntermediaries]): Call =
+    navigator.routeMap(YouHaveNotAddedAnyIntermediariesPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -103,7 +103,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
             updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyIntermediariesPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

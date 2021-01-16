@@ -64,8 +64,8 @@ class IntermediariesTypeController @Inject()(
       renderer.render("intermediaries/intermediariesType.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[SelectType]): Call =
-    navigator.routeMap(IntermediariesTypePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[SelectType]): Call =
+    navigator.routeMap(IntermediariesTypePage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -87,7 +87,7 @@ class IntermediariesTypeController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
             redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, id, value)) NormalMode else mode
             checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

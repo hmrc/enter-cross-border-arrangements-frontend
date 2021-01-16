@@ -82,7 +82,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyAreYouReportingThisArrangementNowPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhyAreYouReportingThisArrangementNowPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhyAreYouReportingThisArrangementNowPage, id, mode, updatedAnswers))
       )
   }
 }

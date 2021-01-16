@@ -55,33 +55,33 @@ class IntermediariesCheckYourAnswersController @Inject()(
         request.userAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
-            (helper.intermediariesType.toSeq ++
-              helper.organisationName.toSeq ++
-              helper.buildOrganisationAddressGroup ++
-              helper.buildOrganisationEmailAddressGroup,
+            (helper.intermediariesType(id).toSeq ++
+              helper.organisationName(id).toSeq ++
+              helper.buildOrganisationAddressGroup(id) ++
+              helper.buildOrganisationEmailAddressGroup(id),
 
-              helper.buildTaxResidencySummaryForOrganisation,
+              helper.buildTaxResidencySummaryForOrganisation(id),
 
-              Seq(helper.whatTypeofIntermediary ++
-              helper.isExemptionKnown ++
-              helper.isExemptionCountryKnown).flatten ++
-              helper.exemptCountries.toSeq
+              Seq(helper.whatTypeofIntermediary(id) ++
+              helper.isExemptionKnown(id) ++
+              helper.isExemptionCountryKnown(id)).flatten ++
+              helper.exemptCountries(id).toSeq
               )
 
           case Some(SelectType.Individual) =>
-            (Seq(helper.intermediariesType ++
-              helper.individualName).flatten ++
-              helper.buildIndividualDateOfBirthGroup ++
-              helper.buildIndividualPlaceOfBirthGroup ++
-              helper.buildIndividualAddressGroup ++
-              helper.buildIndividualEmailAddressGroup,
+            (Seq(helper.intermediariesType(id) ++
+              helper.individualName(id)).flatten ++
+              helper.buildIndividualDateOfBirthGroup(id) ++
+              helper.buildIndividualPlaceOfBirthGroup(id) ++
+              helper.buildIndividualAddressGroup(id) ++
+              helper.buildIndividualEmailAddressGroup(id),
 
-              helper.buildTaxResidencySummaryForIndividuals,
+              helper.buildTaxResidencySummaryForIndividuals(id),
 
-              Seq(helper.whatTypeofIntermediary ++
-              helper.isExemptionKnown ++
-              helper.isExemptionCountryKnown).flatten ++
-              helper.exemptCountries.toSeq
+              Seq(helper.whatTypeofIntermediary(id) ++
+              helper.isExemptionKnown(id) ++
+              helper.isExemptionCountryKnown(id)).flatten ++
+              helper.exemptCountries(id).toSeq
             )
 
           case _ => throw new RuntimeException("Unable to retrieve select type for Intermediary")
@@ -97,8 +97,8 @@ class IntermediariesCheckYourAnswersController @Inject()(
         )).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call =
-    navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(None)(0)
+  def redirect(id: Int, checkRoute: CheckRoute): Call =
+    navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -114,7 +114,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {
-        Redirect(redirect(checkRoute))
+        Redirect(redirect(id, checkRoute))
       }
   }
 

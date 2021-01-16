@@ -74,8 +74,8 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
       renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
-    navigator.routeMap(DoYouKnowAnyTINForUKOrganisationPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(DoYouKnowAnyTINForUKOrganisationPage)(checkRoute)(id)(value)(index)
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -112,7 +112,7 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), currentIndexInsideLoop(request)))
+          } yield Redirect(redirect(id, checkRoute, Some(value), currentIndexInsideLoop(request)))
         }
       )
   }

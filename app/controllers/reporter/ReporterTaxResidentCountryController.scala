@@ -54,8 +54,8 @@ class ReporterTaxResidentCountryController @Inject()(
   with RoutingSupport
   with CountrySupport {
 
-  private def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
-    navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(value)(index)
+  private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
+    navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(id)(value)(index)
 
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
@@ -100,7 +100,7 @@ class ReporterTaxResidentCountryController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

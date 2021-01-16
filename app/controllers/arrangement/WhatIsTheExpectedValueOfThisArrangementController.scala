@@ -88,7 +88,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheExpectedValueOfThisArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTheExpectedValueOfThisArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsTheExpectedValueOfThisArrangementPage, id, mode, updatedAnswers))
       )
   }
 

@@ -45,9 +45,9 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
     case AssociatedEnterpriseTypePage =>
       checkRoute => id => value => _ => value match {
         case Some(SelectType.Organisation)  =>
-          jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(id, checkRoute.mode), checkRoute)
+          jumpOrCheckYourAnswers(id, controllers.organisation.routes.OrganisationNameController.onPageLoad(id, checkRoute.mode), checkRoute)
         case Some(SelectType.Individual)    =>
-          jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(id, checkRoute.mode), checkRoute)
+          jumpOrCheckYourAnswers(id, controllers.individual.routes.IndividualNameController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IsAssociatedEnterpriseAffectedPage =>
@@ -60,10 +60,10 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
     _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id:Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode) => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case DefaultRouting(CheckMode)               => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+      case AssociatedEnterprisesRouting(CheckMode) => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+      case DefaultRouting(CheckMode)               => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
       case _                                       => jumpTo
     }
   }

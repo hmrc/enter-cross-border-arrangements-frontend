@@ -82,7 +82,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichExpectedInvolvedCountriesArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhichExpectedInvolvedCountriesArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhichExpectedInvolvedCountriesArrangementPage, id, mode, updatedAnswers))
       )
   }
 }

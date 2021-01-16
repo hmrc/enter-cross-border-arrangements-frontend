@@ -51,8 +51,8 @@ class ReporterNonUKTaxNumbersController @Inject()(
   with RoutingSupport
   with CountrySupport {
 
-  def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
-    navigator.routeMap(ReporterNonUKTaxNumbersPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
+    navigator.routeMap(ReporterNonUKTaxNumbersPage)(checkRoute)(id)(value)(index)
 
   private val form = formProvider()
 
@@ -108,7 +108,7 @@ class ReporterNonUKTaxNumbersController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

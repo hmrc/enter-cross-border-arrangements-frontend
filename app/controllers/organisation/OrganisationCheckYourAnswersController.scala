@@ -44,12 +44,12 @@ class OrganisationCheckYourAnswersController @Inject()(
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val organisationDetails: Seq[SummaryList.Row] =
-        helper.organisationName.toSeq ++
-          helper.buildOrganisationAddressGroup ++
-          helper.buildOrganisationEmailAddressGroup
+        helper.organisationName(id).toSeq ++
+          helper.buildOrganisationAddressGroup(id) ++
+          helper.buildOrganisationEmailAddressGroup(id)
 
       val countryDetails: Seq[SummaryList.Row] =
-        helper.buildTaxResidencySummaryForOrganisation
+        helper.buildTaxResidencySummaryForOrganisation(id)
 
       renderer.render(
         "organisation/check-your-answers-organisation.njk",

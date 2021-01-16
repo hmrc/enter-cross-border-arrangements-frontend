@@ -68,8 +68,8 @@ class ReporterIndividualDateOfBirthController @Inject()(
       renderer.render("reporter/individual/reporterIndividualDateOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
-    navigator.routeMap(ReporterIndividualDateOfBirthPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
+    navigator.routeMap(ReporterIndividualDateOfBirthPage)(checkRoute)(id)(value)(index)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -92,7 +92,7 @@ class ReporterIndividualDateOfBirthController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualDateOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

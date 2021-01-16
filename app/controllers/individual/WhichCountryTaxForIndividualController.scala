@@ -70,8 +70,8 @@ class WhichCountryTaxForIndividualController @Inject()(
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int): Call =
-    navigator.routeMap(WhichCountryTaxForIndividualPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int): Call =
+    navigator.routeMap(WhichCountryTaxForIndividualPage)(checkRoute)(id)(value)(index)
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -98,7 +98,7 @@ class WhichCountryTaxForIndividualController @Inject()(
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopDetails))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }

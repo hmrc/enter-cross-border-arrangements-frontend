@@ -81,7 +81,7 @@ class MainBenefitTestController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(MainBenefitTestPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(MainBenefitTestPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(MainBenefitTestPage, id, mode, updatedAnswers))
       )
   }
 }

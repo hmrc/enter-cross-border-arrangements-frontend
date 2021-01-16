@@ -47,13 +47,13 @@ class ArrangementCheckYourAnswersController @Inject()(
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val list: Seq[SummaryList.Row] =
-        Seq(helper.whatIsThisArrangementCalledPage
-          , helper.whatIsTheImplementationDatePage).flatten ++
-          helper.buildReportingThisArrangement ++
-          Seq(helper.whichExpectedInvolvedCountriesArrangement
-          , helper.whatIsTheExpectedValueOfThisArrangement
-          , helper.whichNationalProvisionsIsThisArrangementBasedOn
-          , helper.giveDetailsOfThisArrangement).flatten
+        Seq(helper.whatIsThisArrangementCalledPage(id)
+          , helper.whatIsTheImplementationDatePage(id)).flatten ++
+          helper.buildReportingThisArrangement(id) ++
+          Seq(helper.whichExpectedInvolvedCountriesArrangement(id)
+          , helper.whatIsTheExpectedValueOfThisArrangement(id)
+          , helper.whichNationalProvisionsIsThisArrangementBasedOn(id)
+          , helper.giveDetailsOfThisArrangement(id)).flatten
 
       renderer.render("arrangement/check-your-answers-arrangement.njk",
         Json.obj("list" -> list)

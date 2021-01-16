@@ -57,23 +57,23 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
-          Seq(helper.associatedEnterpriseType, helper.organisationName).flatten ++
-          helper.buildOrganisationAddressGroup ++
-          helper.buildOrganisationEmailAddressGroup,
-          helper.buildTaxResidencySummaryForOrganisation
+          Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
+          helper.buildOrganisationAddressGroup(id) ++
+          helper.buildOrganisationEmailAddressGroup(id),
+          helper.buildTaxResidencySummaryForOrganisation(id)
         )
       } else {
         (
-          Seq(helper.associatedEnterpriseType, helper.individualName).flatten ++
-            helper.buildIndividualDateOfBirthGroup ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-          helper.buildTaxResidencySummaryForIndividuals
+          Seq(helper.associatedEnterpriseType(id), helper.individualName(id)).flatten ++
+            helper.buildIndividualDateOfBirthGroup(id) ++
+            helper.buildIndividualPlaceOfBirthGroup(id) ++
+            helper.buildIndividualAddressGroup(id) ++
+            helper.buildIndividualEmailAddressGroup(id),
+          helper.buildTaxResidencySummaryForIndividuals(id)
         )
       }
 
-      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
+      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
 
       val json = Json.obj(
         "id" -> id,
