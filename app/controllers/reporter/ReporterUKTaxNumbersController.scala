@@ -54,10 +54,10 @@ class ReporterUKTaxNumbersController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage) match {
+      val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxNumbersUK = value.lift(index).get.taxNumbersUK
@@ -74,12 +74,12 @@ class ReporterUKTaxNumbersController @Inject()(
         "mode" -> mode,
         "index" -> index,
         "lostUTRUrl" -> appConfig.lostUTRUrl,
-      ) ++ contentProvider(request.userAnswers)
+      ) ++ contentProvider(request.userAnswers, id)
 
       renderer.render("reporter/reporterUKTaxNumbers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -90,38 +90,39 @@ class ReporterUKTaxNumbersController @Inject()(
             "mode" -> mode,
             "index" -> index,
             "lostUTRUrl" -> appConfig.lostUTRUrl
-          ) ++ contentProvider(request.userAnswers)
+          ) ++ contentProvider(request.userAnswers, id)
 
           renderer.render("reporter/reporterUKTaxNumbers.njk", json).map(BadRequest(_))
         },
         value => {
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, index)
+          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterUKTaxNumbersPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, taxResidencyLoopDetails))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterUKTaxNumbersPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(checkRoute, Some(value), index))
         }
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers) = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
-    case Some(Individual) => //Display Individual Content
-      Json.obj("pageTitle" -> "reporterIndividualUKTaxNumbers.title",
-        "pageHeading" -> "reporterIndividualUKTaxNumbers.heading")
+  private def contentProvider(userAnswers: UserAnswers, id: Int) =
+    userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
+      case Some(Individual) => //Display Individual Content
+        Json.obj("pageTitle" -> "reporterIndividualUKTaxNumbers.title",
+          "pageHeading" -> "reporterIndividualUKTaxNumbers.heading")
 
-    case _ => //Display Organisation Content
-      Json.obj(
-        "pageTitle" -> "reporterOrganisationUKTaxNumbers.title",
-        "pageHeading" -> "reporterOrganisationUKTaxNumbers.heading",
-        "name" -> getReporterDetailsOrganisationName(userAnswers)
-      )
-  }
+      case _ => //Display Organisation Content
+        Json.obj(
+          "pageTitle" -> "reporterOrganisationUKTaxNumbers.title",
+          "pageHeading" -> "reporterOrganisationUKTaxNumbers.heading",
+          "name" -> getReporterDetailsOrganisationName(userAnswers, id)
+        )
+    }
 
-  private def getReporterTaxResidentLoopDetails(value: TaxReferenceNumbers, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
-    userAnswers.get(ReporterTaxResidencyLoopPage) match {
+  private def getReporterTaxResidentLoopDetails(value: TaxReferenceNumbers, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
+    userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
       case None =>
         val newResidencyLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
         IndexedSeq[LoopDetails](newResidencyLoop)

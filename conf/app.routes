@@ -405,53 +405,53 @@ POST       /disclosure/change-identify/:id                controllers.disclosure
 
 # REPORTER DETAILS
 
-GET        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad
-POST        /reporter/check-answers                              controllers.reporter.ReporterCheckYourAnswersController.onContinue
+GET        /reporter/check-answers/:id                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad(id: Int)
+POST       /reporter/check-answers/:id                              controllers.reporter.ReporterCheckYourAnswersController.onContinue(id: Int)
 
-GET        /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/organisation-or-individual                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/change-organisation-or-individual                  controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/organisation-or-individual/:id                         controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/organisation-or-individual/:id                         controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/change-organisation-or-individual/:id                  controllers.reporter.ReporterOrganisationOrIndividualController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/change-organisation-or-individual/:id                  controllers.reporter.ReporterOrganisationOrIndividualController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/role                        controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/role                        controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/change-role                 controllers.reporter.RoleInArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/change-role                 controllers.reporter.RoleInArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/role/:id                        controllers.reporter.RoleInArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/role/:id                        controllers.reporter.RoleInArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/change-role/:id                 controllers.reporter.RoleInArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/change-role/:id                 controllers.reporter.RoleInArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/resident-tax-country-:index                           controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST       /reporter/resident-tax-country-:index                           controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET        /reporter/change-resident-tax-country-:index                    controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST       /reporter/change-resident-tax-country-:index                    controllers.reporter.ReporterTaxResidentCountryController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET        /reporter/resident-tax-country-:index/:id                           controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST       /reporter/resident-tax-country-:index/:id                           controllers.reporter.ReporterTaxResidentCountryController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-resident-tax-country-:index/:id                    controllers.reporter.ReporterTaxResidentCountryController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-resident-tax-country-:index/:id                    controllers.reporter.ReporterTaxResidentCountryController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET        /reporter/uk-tin-known-:index                           controllers.reporter.ReporterTinUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST       /reporter/uk-tin-known-:index                           controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET        /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST       /reporter/change-uk-tin-known-:index                    controllers.reporter.ReporterTinUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET        /reporter/uk-tin-known-:index/:id                           controllers.reporter.ReporterTinUKQuestionController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST       /reporter/uk-tin-known-:index/:id                           controllers.reporter.ReporterTinUKQuestionController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-uk-tin-known-:index/:id                    controllers.reporter.ReporterTinUKQuestionController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-uk-tin-known-:index/:id                    controllers.reporter.ReporterTinUKQuestionController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET        /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST       /reporter/non-uk-tin-known-:index                           controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET        /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST       /reporter/change-non-uk-tin-known-:index                    controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET        /reporter/non-uk-tin-known-:index/:id                           controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST       /reporter/non-uk-tin-known-:index/:id                           controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET        /reporter/change-non-uk-tin-known-:index/:id                    controllers.reporter.ReporterTinNonUKQuestionController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST       /reporter/change-non-uk-tin-known-:index/:id                    controllers.reporter.ReporterTinNonUKQuestionController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET         /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST        /reporter/uk-tax-numbers-:index                            controllers.reporter.ReporterUKTaxNumbersController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET         /reporter/change-uk-tax-numbers-:index                     controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST        /reporter/change-uk-tax-numbers-:index                     controllers.reporter.ReporterUKTaxNumbersController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET         /reporter/uk-tax-numbers-:index/:id                            controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST        /reporter/uk-tax-numbers-:index/:id                            controllers.reporter.ReporterUKTaxNumbersController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-uk-tax-numbers-:index/:id                     controllers.reporter.ReporterUKTaxNumbersController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-uk-tax-numbers-:index/:id                     controllers.reporter.ReporterUKTaxNumbersController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET         /reporter/non-uk-tax-numbers-:index                            controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST        /reporter/non-uk-tax-numbers-:index                            controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET         /reporter/change-non-uk-tax-numbers-:index                     controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST        /reporter/change-non-uk-tax-numbers-:index                     controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET         /reporter/non-uk-tax-numbers-:index/:id                            controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST        /reporter/non-uk-tax-numbers-:index/:id                           controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-non-uk-tax-numbers-:index/:id                     controllers.reporter.ReporterNonUKTaxNumbersController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-non-uk-tax-numbers-:index/:id                     controllers.reporter.ReporterNonUKTaxNumbersController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET         /reporter/tax-resident-countries-:index                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST        /reporter/tax-resident-countries-:index                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET         /reporter/change-tax-resident-countries-:index                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST        /reporter/change-tax-resident-countries-:index                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET         /reporter/tax-resident-countries-:index/:id                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST        /reporter/tax-resident-countries-:index/:id                            controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET         /reporter/change-tax-resident-countries-:index/:id                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST        /reporter/change-tax-resident-countries-:index/:id                     controllers.reporter.ReporterOtherTaxResidentQuestionController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET        /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/intermediary/why-report-in-uk                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/intermediary/change-why-report-in-uk                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/why-report-in-uk/:id                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/intermediary/why-report-in-uk/:id                           controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-why-report-in-uk/:id                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-why-report-in-uk/:id                    controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # REPORTER DETAILS INTERMEDIARY
 

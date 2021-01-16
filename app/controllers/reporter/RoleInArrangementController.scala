@@ -48,10 +48,10 @@ class RoleInArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(RoleInArrangementPage) match {
+      val preparedForm = request.userAnswers.get(RoleInArrangementPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -69,7 +69,7 @@ class RoleInArrangementController @Inject()(
     navigator.routeMap(RoleInArrangementPage)(checkRoute)(value)(0)
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -85,12 +85,11 @@ class RoleInArrangementController @Inject()(
         },
         value => {
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, value))
-            redirectMode   =  if (request.userAnswers.hasNewValue(RoleInArrangementPage, value)) NormalMode else mode
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, id, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(RoleInArrangementPage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
-
         }
       )
   }
