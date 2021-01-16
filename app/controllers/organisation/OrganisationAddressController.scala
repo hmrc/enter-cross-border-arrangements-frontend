@@ -109,7 +109,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
         }
       )

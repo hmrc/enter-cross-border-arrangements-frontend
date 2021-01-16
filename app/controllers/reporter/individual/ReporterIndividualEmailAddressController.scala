@@ -45,14 +45,14 @@ class ReporterIndividualEmailAddressController @Inject()(
                                                           renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def actionUrl(mode: Mode): String = routes.ReporterIndividualEmailAddressController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode): String = routes.ReporterIndividualEmailAddressController.onSubmit(id, mode).url
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualEmailAddressPage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualEmailAddressPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,7 +61,7 @@ class ReporterIndividualEmailAddressController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "pageTitle" -> "reporterIndividualEmailAddress.title",
-        "actionUrl" -> actionUrl(mode),
+        "actionUrl" -> actionUrl(id, mode),
         "pageHeading" -> "reporterIndividualEmailAddress.heading"
       )
 
@@ -71,7 +71,7 @@ class ReporterIndividualEmailAddressController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
     navigator.routeMap(ReporterIndividualEmailAddressPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -81,7 +81,7 @@ class ReporterIndividualEmailAddressController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "pageTitle" -> "reporterIndividualEmailAddress.title",
-            "actionUrl" -> actionUrl(mode),
+            "actionUrl" -> actionUrl(id, mode),
             "pageHeading" -> "reporterIndividualEmailAddress.heading"
           )
 
@@ -89,9 +89,9 @@ class ReporterIndividualEmailAddressController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualEmailAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualEmailAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

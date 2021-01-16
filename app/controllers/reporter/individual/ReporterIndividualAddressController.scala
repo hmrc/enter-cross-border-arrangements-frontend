@@ -52,15 +52,15 @@ class ReporterIndividualAddressController @Inject()(
   with RoutingSupport
   with CountrySupport {
 
-  private def actionUrl(mode: Mode) = routes.ReporterIndividualAddressController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode) = routes.ReporterIndividualAddressController.onSubmit(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualAddressPage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualAddressPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -69,8 +69,8 @@ class ReporterIndividualAddressController @Inject()(
         "form" -> preparedForm,
         "mode" -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
-        "isUkAddress" -> isUkAddress(request.userAnswers),
-        "actionUrl" -> actionUrl(mode),
+        "isUkAddress" -> isUkAddress(request.userAnswers, id),
+        "actionUrl" -> actionUrl(id, mode),
         "pageTitle" -> "reporterIndividualAddress.title",
         "pageHeading" -> pageHeadingProvider("reporterIndividualAddress.heading",
           "")
@@ -83,7 +83,7 @@ class ReporterIndividualAddressController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Address], index: Int = 0): Call =
     navigator.routeMap(ReporterIndividualAddressPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -96,8 +96,8 @@ class ReporterIndividualAddressController @Inject()(
             "form" -> formWithErrors,
             "mode" -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
-            "isUkAddress" -> isUkAddress(request.userAnswers),
-            "actionUrl" -> actionUrl(mode),
+            "isUkAddress" -> isUkAddress(request.userAnswers, id),
+            "actionUrl" -> actionUrl(id, mode),
             "pageTitle" -> "reporterIndividualAddress.title",
             "pageHeading" -> pageHeadingProvider("reporterIndividualAddress.heading",
               "")
@@ -107,15 +107,16 @@ class ReporterIndividualAddressController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def isUkAddress(userAnswers: UserAnswers): Boolean = userAnswers.get(ReporterIsIndividualAddressUKPage) match {
-    case Some(true) => true
-    case _ => false
-  }
+  private def isUkAddress(userAnswers: UserAnswers, id: Int): Boolean =
+    userAnswers.get(ReporterIsIndividualAddressUKPage, id) match {
+      case Some(true) => true
+      case _ => false
+    }
 }

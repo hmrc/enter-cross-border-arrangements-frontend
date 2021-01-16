@@ -112,7 +112,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
       for {
         userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
-        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop)
+        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {
         Redirect(redirect(checkRoute))
       }

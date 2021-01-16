@@ -97,7 +97,7 @@ class WhichCountryTaxForIndividualController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, id, value))
             updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopDetails))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(checkRoute, Some(value), index))
         }
       )

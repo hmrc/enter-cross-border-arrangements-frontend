@@ -86,7 +86,7 @@ class AssociatedEnterpriseTypeController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, id, value))
             redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

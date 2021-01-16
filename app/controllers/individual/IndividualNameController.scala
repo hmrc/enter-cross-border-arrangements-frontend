@@ -86,7 +86,7 @@ class IndividualNameController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
 
         }

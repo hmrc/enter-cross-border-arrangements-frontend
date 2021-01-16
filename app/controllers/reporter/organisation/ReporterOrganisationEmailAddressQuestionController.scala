@@ -46,14 +46,14 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def actionUrl(mode: Mode): String = routes.ReporterOrganisationEmailAddressQuestionController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode): String = routes.ReporterOrganisationEmailAddressQuestionController.onSubmit(id, mode).url
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterOrganisationEmailAddressQuestionPage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationEmailAddressQuestionPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,8 +62,8 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "pageTitle" -> "reporterOrganisationEmailAddressQuestion.title",
-        "actionUrl" -> actionUrl(mode),
-        "pageHeading" -> pageHeadingLegendProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers)),
+        "actionUrl" -> actionUrl(id, mode),
+        "pageHeading" -> pageHeadingLegendProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers, id)),
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
@@ -73,7 +73,7 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterOrganisationEmailAddressQuestionPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,8 +83,8 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "pageTitle" -> "reporterOrganisationEmailAddressQuestion.title",
-            "actionUrl" -> actionUrl(mode),
-            "pageHeading" -> pageHeadingLegendProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers)),
+            "actionUrl" -> actionUrl(id, mode),
+            "pageHeading" -> pageHeadingLegendProvider("reporterOrganisationEmailAddressQuestion.heading", getReporterDetailsOrganisationName(request.userAnswers, id)),
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 
@@ -92,9 +92,9 @@ class ReporterOrganisationEmailAddressQuestionController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationEmailAddressQuestionPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationEmailAddressQuestionPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

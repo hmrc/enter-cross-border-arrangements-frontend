@@ -48,23 +48,23 @@ class ReporterOrganisationPostcodeController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String = routes.ReporterOrganisationAddressController.onSubmit(mode).url
+  private def manualAddressURL(id: Int, mode: Mode): String = routes.ReporterOrganisationAddressController.onSubmit(id, mode).url
 
-  private def actionUrl(mode: Mode) = routes.ReporterOrganisationPostcodeController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode) = routes.ReporterOrganisationPostcodeController.onSubmit(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterOrganisationPostcodePage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationPostcodePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "displayName" -> getReporterDetailsOrganisationName(request.userAnswers),
-        "manualAddressURL" -> manualAddressURL(mode),
-        "actionUrl" -> actionUrl(mode),
+        "displayName" -> getReporterDetailsOrganisationName(request.userAnswers, id),
+        "manualAddressURL" -> manualAddressURL(id, mode),
+        "actionUrl" -> actionUrl(id, mode),
         "individual" -> false,
         "mode" -> mode
       )
@@ -75,7 +75,7 @@ class ReporterOrganisationPostcodeController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
     navigator.routeMap(ReporterOrganisationPostcodePage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,9 +83,9 @@ class ReporterOrganisationPostcodeController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
-            "displayName" -> getReporterDetailsOrganisationName(request.userAnswers),
-            "manualAddressURL" -> manualAddressURL(mode),
-            "actionUrl" -> actionUrl(mode),
+            "displayName" -> getReporterDetailsOrganisationName(request.userAnswers, id),
+            "manualAddressURL" -> manualAddressURL(id, mode),
+            "actionUrl" -> actionUrl(id, mode),
             "individual" -> false,
             "mode" -> mode
           )
@@ -94,9 +94,9 @@ class ReporterOrganisationPostcodeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationPostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationPostcodePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

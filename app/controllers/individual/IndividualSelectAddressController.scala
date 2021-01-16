@@ -131,7 +131,7 @@ class IndividualSelectAddressController @Inject()(
               updatedAnswers            <- Future.fromTry(request.userAnswers.set(IndividualSelectAddressPage, id, value))
               updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, id, addressToStore))
               _                         <- sessionRepository.set(updatedAnswersWithAddress)
-              checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress)
+              checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress, id)
             } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
           }
         )

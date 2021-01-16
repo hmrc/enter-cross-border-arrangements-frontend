@@ -86,7 +86,7 @@ class IntermediariesTypeController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediariesTypePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, id, value)) NormalMode else mode
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

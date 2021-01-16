@@ -29,30 +29,30 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForDisclosure @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case DisclosureNamePage =>
-      checkRoute => _ => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(checkRoute.mode)
+      checkRoute => id => _ => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(id, checkRoute.mode)
 
     case DisclosureTypePage =>
-      checkRoute => value => _ => value match {
-        case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
-        case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
-        case _             => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
+      checkRoute => id => value => _ => value match {
+        case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(id, checkRoute.mode)
+        case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(id, checkRoute.mode)
+        case _             => routes.DisclosureMarketableController.onPageLoad(id, checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
       }
 
     case DisclosureMarketablePage =>
-      _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
+      _ => id => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad(id)
 
     case DisclosureIdentifyArrangementPage =>
-      _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
+      _ => id => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(id)
 
     case DisclosureDetailsPage =>
-      _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad(???)
+      _ => id => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad(???)
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
+    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {

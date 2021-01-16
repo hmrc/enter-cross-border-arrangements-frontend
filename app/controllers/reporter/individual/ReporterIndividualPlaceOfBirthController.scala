@@ -47,10 +47,10 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualPlaceOfBirthPage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualPlaceOfBirthPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +66,7 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
     navigator.routeMap(ReporterIndividualPlaceOfBirthPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -81,9 +81,9 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPlaceOfBirthPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPlaceOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

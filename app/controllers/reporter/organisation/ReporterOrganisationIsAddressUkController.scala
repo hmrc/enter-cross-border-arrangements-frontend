@@ -48,10 +48,10 @@ class ReporterOrganisationIsAddressUkController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterOrganisationIsAddressUkPage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationIsAddressUkPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +60,7 @@ class ReporterOrganisationIsAddressUkController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers)
+        "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers, id)
       )
 
       renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(Ok(_))
@@ -69,7 +69,7 @@ class ReporterOrganisationIsAddressUkController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterOrganisationIsAddressUkPage)(checkRoute)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,16 +79,16 @@ class ReporterOrganisationIsAddressUkController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers)
+            "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers, id)
           )
 
           renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationIsAddressUkPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationIsAddressUkPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

@@ -104,7 +104,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

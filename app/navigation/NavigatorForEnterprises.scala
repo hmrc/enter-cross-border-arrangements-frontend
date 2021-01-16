@@ -29,36 +29,36 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case YouHaveNotAddedAnyAssociatedEnterprisesPage =>
-      checkRoute => value => _ => value match {
+      checkRoute => id => value => _ => value match {
         case Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)  =>
-          routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(checkRoute.mode)
+          routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, checkRoute.mode)
         case _ =>
-          routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(checkRoute.mode)
+          routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, checkRoute.mode)
       }
 
     case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage =>
-      checkRoute => _ => _ => routes.AssociatedEnterpriseTypeController.onPageLoad(checkRoute.mode) // TODO redirect
+      checkRoute => id => _ => _ => routes.AssociatedEnterpriseTypeController.onPageLoad(id, checkRoute.mode) // TODO redirect
 
     case AssociatedEnterpriseTypePage =>
-      checkRoute => value => _ => value match {
+      checkRoute => id => value => _ => value match {
         case Some(SelectType.Organisation)  =>
-          jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(checkRoute.mode), checkRoute)
+          jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(id, checkRoute.mode), checkRoute)
         case Some(SelectType.Individual)    =>
-          jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(checkRoute.mode), checkRoute)
+          jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IsAssociatedEnterpriseAffectedPage =>
-      _ => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+      _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
 
     case AssociatedEnterpriseCheckYourAnswersPage =>
       checkRoute => _ => _ => routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(checkRoute.mode)
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
+    _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
