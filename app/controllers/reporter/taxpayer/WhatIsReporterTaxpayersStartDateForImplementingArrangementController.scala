@@ -57,12 +57,12 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
   private def redirect(checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
     navigator.routeMap(ReporterTaxpayersStartDateForImplementingArrangementPage)(checkRoute)(value)(index)
 
-  private def actionUrl(mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage) match {
+      val preparedForm = request.userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -74,14 +74,14 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "actionUrl" -> actionUrl(mode)
-      ) ++ contentProvider(request.userAnswers)
+        "actionUrl" -> actionUrl(id, mode)
+      ) ++ contentProvider(request.userAnswers, id)
 
       renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -94,21 +94,21 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
             "mode" -> mode,
             "date" -> viewModel,
             "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "actionUrl" -> actionUrl(mode)
-          ) ++ contentProvider(request.userAnswers)
+            "actionUrl" -> actionUrl(id, mode)
+          ) ++ contentProvider(request.userAnswers, id)
 
           renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswers)
+            checkRoute                    =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers): JsObject = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+  private def contentProvider(userAnswers: UserAnswers, id: Int): JsObject = userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
      case Some(Individual) => Json.obj(
        "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.title",
        "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.heading")
@@ -116,7 +116,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
        Json.obj(
          "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.title",
          "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.heading",
-       "name" -> getReporterDetailsOrganisationName(userAnswers))
+       "name" -> getReporterDetailsOrganisationName(userAnswers, id))
    }
 }
 

@@ -49,10 +49,10 @@ class TaxpayerWhyReportInUKController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TaxpayerWhyReportInUKPage) match {
+      val preparedForm = request.userAnswers.get(TaxpayerWhyReportInUKPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -69,7 +69,7 @@ class TaxpayerWhyReportInUKController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[TaxpayerWhyReportInUK]): Call =
     navigator.routeMap(TaxpayerWhyReportInUKPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -85,9 +85,9 @@ class TaxpayerWhyReportInUKController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerWhyReportInUKPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerWhyReportInUKPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

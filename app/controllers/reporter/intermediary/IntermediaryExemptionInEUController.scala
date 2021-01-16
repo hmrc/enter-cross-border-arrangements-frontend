@@ -47,10 +47,10 @@ class IntermediaryExemptionInEUController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IntermediaryExemptionInEUPage) match {
+      val preparedForm = request.userAnswers.get(IntermediaryExemptionInEUPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class IntermediaryExemptionInEUController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[YesNoDoNotKnowRadios]): Call =
     navigator.routeMap(IntermediaryExemptionInEUPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,9 +83,9 @@ class IntermediaryExemptionInEUController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

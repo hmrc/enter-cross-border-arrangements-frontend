@@ -455,45 +455,45 @@ POST       /reporter/intermediary/change-why-report-in-uk/:id                   
 
 # REPORTER DETAILS INTERMEDIARY
 
-GET        /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/intermediary/role                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/intermediary/change-role                    controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/role/:id                           controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/intermediary/role/:id                           controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-role/:id                    controllers.reporter.intermediary.IntermediaryRoleController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-role/:id                    controllers.reporter.intermediary.IntermediaryRoleController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/intermediary/exemption-known                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/intermediary/exemption-known                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/intermediary/change-exemption-known                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/exemption-known/:id                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/intermediary/exemption-known/:id                        controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exemption-known/:id                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exemption-known/:id                 controllers.reporter.intermediary.IntermediaryExemptionInEUController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/intermediary/exemption-country-known                       controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/intermediary/exemption-country-known                         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/intermediary/change-exemption-country-known                  controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/exemption-country-known/:id                controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/intermediary/exemption-country-known/:id                controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exemption-country-known/:id         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exemption-country-known/:id         controllers.reporter.intermediary.IntermediaryDoYouKnowExemptionsController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/intermediary/exempt-countries                        controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/intermediary/change-exempt-countries                  controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/intermediary/exempt-countries/:id                       controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/intermediary/exempt-countries/:id                       controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/intermediary/change-exempt-countries/:id                controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/intermediary/change-exempt-countries/:id                controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # REPORTER DETAILS TAXPAYER
 
-GET        /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/taxpayer/why-report-in-uk                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/taxpayer/change-why-report-in-uk                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/taxpayer/why-report-in-uk/:id                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-report-in-uk/:id                          controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-report-in-uk/:id                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-report-in-uk/:id                   controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/taxpayer/why-reporting                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/taxpayer/change-why-reporting                  controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/taxpayer/why-reporting/:id                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/taxpayer/why-reporting/:id                        controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/taxpayer/change-why-reporting/:id                 controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/taxpayer/change-why-reporting/:id                 controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/taxpayers/is-marketable                        controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
-GET        /reporter/taxpayers/change-is-marketable                 controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
+GET        /reporter/taxpayers/is-marketable/:id                        controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(id: Int, mode: Mode = NormalMode)
+GET        /reporter/taxpayers/change-is-marketable/:id                 controllers.reporter.taxpayer.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(id: Int, mode: Mode = CheckMode)
 
-GET        /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /reporter/taxpayers/implementation-date                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /reporter/taxpayers/change-implementation-date           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /reporter/taxpayers/implementation-date/:id                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /reporter/taxpayers/implementation-date/:id                  controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /reporter/taxpayers/change-implementation-date/:id           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/taxpayers/change-implementation-date/:id           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # CONFIRMATION PAGES
 GET        /manual/confirmation-type                                controllers.confirmation.FileTypeGatewayController.onRouting()
