@@ -26,19 +26,20 @@ import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
-
 import java.time.LocalDate
+
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 
 class XMLGenerationServiceSpec extends SpecBase {
 
@@ -56,7 +57,7 @@ class XMLGenerationServiceSpec extends SpecBase {
       Country("valid","FR","France")
     )
 
-  val organisationLoopDetails = IndexedSeq(
+  val loopDetails = IndexedSeq(
     LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
       Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
     LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
@@ -70,7 +71,7 @@ class XMLGenerationServiceSpec extends SpecBase {
 
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
-  val today: LocalDate = LocalDate.now
+  def today: LocalDate = LocalDate.now
   val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
   val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
   val taxpayers = IndexedSeq(
@@ -151,17 +152,18 @@ class XMLGenerationServiceSpec extends SpecBase {
       }
     }
 
-    "must build the full XML for an organisation" in {
+    "must build the full XML for a reporter that is an ORGANISTION" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(DisclosureNamePage, "DisclosureName").success.value
         .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
+        .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
         .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
         .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
         .set(ReporterOrganisationNamePage, "Reporter name").success.value
         .set(ReporterOrganisationAddressPage, address).success.value
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
-        .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
+        .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
         .set(DisclosureMarketablePage, true).success.value
         .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
         .set(TaxpayerLoopPage, taxpayers).success.value
@@ -184,6 +186,44 @@ class XMLGenerationServiceSpec extends SpecBase {
       val result = xmlGenerationService.createXmlSubmission(userAnswers)
 
       prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
+    }
+
+    "must build the full XML for a reporter that is an INDIVIDUAL" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DisclosureNamePage, "DisclosureName").success.value
+        .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
+        .set(DisclosureMarketablePage, true).success.value
+        .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Individual).success.value
+        .set(ReporterIndividualNamePage, Name("Reporter", "Name")).success.value
+        .set(ReporterIndividualDateOfBirthPage, LocalDate.of(1990,1,1)).success.value
+        .set(ReporterIndividualPlaceOfBirthPage, "SomePlace").success.value
+        .set(ReporterIndividualAddressPage, address).success.value
+        .set(ReporterIndividualEmailAddressPage, "email@email.com").success.value
+        .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
+        .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
+        .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
+        .set(TaxpayerLoopPage, taxpayers).success.value
+        .set(WhatIsTheImplementationDatePage, today).success.value
+        .set(DoYouKnowTheReasonToReportArrangementNowPage, true).success.value
+        .set(WhyAreYouReportingThisArrangementNowPage, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
+        .set(WhatIsThisArrangementCalledPage, "Arrangement name").success.value
+        .set(GiveDetailsOfThisArrangementPage, "Some description").success.value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, "National provisions description").success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, countries).success.value
+        .set(HallmarkDPage, HallmarkD.values.toSet).success.value
+        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("DAC6D1a") ++
+          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
+        .set(HallmarkD1OtherPage, "Hallmark D1 other description").success.value
+
+      implicit val request: DataRequest[AnyContent] =
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+
+      val result = xmlGenerationService.createXmlSubmission(userAnswers)
+
+      prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
     }
   }
 

@@ -16,11 +16,12 @@
 
 package helpers.xml
 
-import models.UserAnswers
+import models.{ReporterOrganisationOrIndividual, UserAnswers}
+import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import pages.reporter.RoleInArrangementPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 
 import scala.util.Try
@@ -44,7 +45,9 @@ object DisclosingXMLSection extends XMLBuilder {
         val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage)
           .fold(NodeSeq.Empty) {
             case TaxpayerWhyReportArrangement.DoNotKnow => NodeSeq.Empty
-            case capacity: TaxpayerWhyReportArrangement => <Capacity>{capacity.toString}</Capacity>
+            case capacity: TaxpayerWhyReportArrangement => <Capacity>
+              {capacity.toString}
+            </Capacity>
           }
 
         val nodeBuffer = new xml.NodeBuffer
@@ -55,7 +58,9 @@ object DisclosingXMLSection extends XMLBuilder {
         }
 
         <Liability>
-          <RelevantTaxpayerDiscloser>{relevantTaxPayersNode}</RelevantTaxpayerDiscloser>
+          <RelevantTaxpayerDiscloser>
+            {relevantTaxPayersNode}
+          </RelevantTaxpayerDiscloser>
         </Liability>
     }
   }
@@ -70,13 +75,30 @@ object DisclosingXMLSection extends XMLBuilder {
       buildLiability(userAnswers)
   }
 
+
+  private[xml] def buildDiscloseDetailsForIndividual(userAnswers: UserAnswers): NodeSeq = {
+    val nodeBuffer = new xml.NodeBuffer
+
+    val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
+
+    nodeBuffer ++
+      RelevantTaxPayersXMLSection.buildIDForIndividual(individualDetailsForReporter) ++
+      buildLiability(userAnswers)
+  }
+
   override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-    //TODO Need to check here if reporter is an individual or organisation then return correct section
 
     Try {
-      <Disclosing>
-        {buildDiscloseDetailsForOrganisation(userAnswers)}
-      </Disclosing>
+      userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+        case Some(ReporterOrganisationOrIndividual.Organisation) =>
+          <Disclosing>
+            {buildDiscloseDetailsForOrganisation(userAnswers)}
+          </Disclosing>
+        case _ =>
+          <Disclosing>
+            {buildDiscloseDetailsForIndividual(userAnswers)}
+          </Disclosing>
+      }
     }.toEither
   }
 }

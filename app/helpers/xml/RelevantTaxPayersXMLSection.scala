@@ -16,16 +16,16 @@
 
 package helpers.xml
 
+import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
-import models.{Address, UserAnswers}
-import pages.reporter.RoleInArrangementPage
+import models.{Address, ReporterOrganisationOrIndividual, UserAnswers}
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.collection.mutable.ArrayBuffer
-import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
@@ -97,48 +97,99 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     <ID>{organisationNodes}</ID>
   }
 
-  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
+  private[xml] def buildIDForIndividual(individual: Individual): Elem = {
+    val mandatoryIndividualName =
+      <IndividualName><FirstName>{individual.individualName.firstName}</FirstName><LastName>{individual.individualName.secondName}</LastName></IndividualName>
+
+    val mandatoryDOB = <BirthDate>{individual.birthDate}</BirthDate>
+    val mandatoryPOB = <BirthPlace>{individual.birthPlace.fold("Unknown")(pob => pob)}</BirthPlace>
+    val optionalEmail = individual.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
+
+    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(individual.taxResidencies.filter(_.country.isDefined))
+
+    val nodeBuffer = new xml.NodeBuffer
+    val individualNodes = {
+      <Individual>
+        {nodeBuffer ++
+        mandatoryIndividualName ++
+        mandatoryDOB ++
+        mandatoryPOB ++
+        buildTINData(individual.taxResidencies) ++
+        buildAddress(individual.address) ++
+        optionalEmail ++
+        mandatoryResCountryCode}
+      </Individual>
+    }
+
+    <ID>{individualNodes}</ID>
+  }
+
+  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): NodeSeq = {
     (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
       case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
-        val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
 
-        <RelevantTaxpayer>
-          {buildIDForOrganisation(organisationDetailsForReporter)}
-          <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-        </RelevantTaxpayer>
+        userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+
+          case Some(ReporterOrganisationOrIndividual.Organisation) =>
+            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
+
+            <RelevantTaxpayer>
+              {buildIDForOrganisation(organisationDetailsForReporter)}
+              <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+            </RelevantTaxpayer>
+
+          case _ =>
+            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
+
+            <RelevantTaxpayer>
+              {buildIDForIndividual(individualDetailsForReporter)}
+              <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+            </RelevantTaxpayer>
+        }
       case _ => NodeSeq.Empty
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-    val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] = userAnswers.get(TaxpayerLoopPage) match {
+  override def toXml(userAnswers: UserAnswers): Elem = {
+    val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] =
+      userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
         val nodeBuffer = new xml.NodeBuffer
 
         taxpayers.map {
           taxpayer =>
+            val taxpayerIndividualOrganisation =
+              if (taxpayer.individual.isDefined) {
+                val individualDetails = taxpayer.individual.get
+
+                val individualImplementingDate = taxpayer.implementingDate match {
+                  case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+                  case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
+                }
+
+                buildIDForIndividual(individualDetails) ++ individualImplementingDate
+              } else {
+                val organisationDetails = taxpayer.organisation.get
+
+                val organisationImplementingDate = taxpayer.implementingDate match {
+                  case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
+                  case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
+                }
+                buildIDForOrganisation(organisationDetails) ++ organisationImplementingDate
+              }
+
             //TODO Need to check here if reporter is an individual or organisation. Then add to nodeBuffer
-            val organisationDetails = taxpayer.organisation.get
-
-            val mandatoryImplementingDate = taxpayer.implementingDate match {
-              case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-              case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
-            }
-
             nodeBuffer ++
               <RelevantTaxpayer>
-                {buildIDForOrganisation(organisationDetails) ++
-                mandatoryImplementingDate}
+                {taxpayerIndividualOrganisation}
               </RelevantTaxpayer>
         }
       case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
-    Try {
-      <RelevantTaxPayers>
-        {buildTaxPayerIsAReporter(userAnswers)}
-        {relevantTaxPayersNode}
-      </RelevantTaxPayers>
-    }.toEither
+    <RelevantTaxPayers>
+      {buildReporterAsTaxpayer(userAnswers)}
+      {relevantTaxPayersNode}
+    </RelevantTaxPayers>
   }
 }
