@@ -79,7 +79,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
 
     val email = organisation.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
 
-    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(organisation.taxResidencies)
+    val mandatoryResCountryCode: NodeSeq = buildResCountryCode(organisation.taxResidencies.filter(_.country.isDefined))
 
     val nodeBuffer = new xml.NodeBuffer
     val organisationNodes = {
