@@ -111,8 +111,8 @@ final case class UserAnswers(
   def removeAll(pageList: Seq[_ <: QuestionPage[Any]]): Try[UserAnswers] =
     pageList.foldLeft(removeBase(pageList.head)) { case (result, step) => result.flatMap(_.removeBase(step)) }
 
-  def hasNewValue[A](page: QuestionPage[A], value: A)(implicit rds: Reads[A]): Boolean =
-    getBase(page).exists(_ != value)
+  def hasNewValue[A](page: QuestionPage[A], id: Int, value: A)(implicit rds: Reads[A]): Boolean =
+    get(page, id).exists(_ != value)
 
 }
 

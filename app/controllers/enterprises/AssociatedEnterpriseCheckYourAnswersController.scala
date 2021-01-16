@@ -45,12 +45,12 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
         case Some(SelectType.Organisation) => true
         case _ => false
       }
@@ -76,6 +76,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
 
       val json = Json.obj(
+        "id" -> id,
         "mode" -> mode,
         "summaryRows" -> summaryRows,
         "countrySummary" -> countrySummary,
@@ -88,10 +89,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
   def redirect(checkRoute: CheckRoute): Call =
     navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(None)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
         case Some(list) => // append to existing list
           list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers)
         case None => // start new list
@@ -99,8 +100,8 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       }
 
       for {
-        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, enterpriseLoopList))
+        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, enterpriseLoopList))
         _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {

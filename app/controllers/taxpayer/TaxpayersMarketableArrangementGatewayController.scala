@@ -40,16 +40,16 @@ class TaxpayersMarketableArrangementGatewayController @Inject()(
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      (request.userAnswers.get(DisclosureTypePage) match {
+      (request.userAnswers.get(DisclosureTypePage, id) match {
         case Some(DisclosureType.Dac6new) =>
 
-          Future.successful(request.userAnswers.get(DisclosureMarketablePage).contains(true))
+          Future.successful(request.userAnswers.get(DisclosureMarketablePage, id).contains(true))
         case Some(DisclosureType.Dac6add) =>
 
-          request.userAnswers.get(DisclosureIdentifyArrangementPage) match {
+          request.userAnswers.get(DisclosureIdentifyArrangementPage, id) match {
             case Some(arrangementId) =>
               crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
           }

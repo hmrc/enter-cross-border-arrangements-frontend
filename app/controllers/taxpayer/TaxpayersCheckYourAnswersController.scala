@@ -44,11 +44,11 @@ class TaxpayersCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(TaxpayerSelectTypePage) match {
+      val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(TaxpayerSelectTypePage, id) match {
         case Some(SelectType.Organisation) =>
           (helper.taxpayerSelectType.toSeq ++ helper.organisationName.toSeq ++
             helper.buildOrganisationAddressGroup ++ helper.buildOrganisationEmailAddressGroup,
@@ -77,17 +77,17 @@ class TaxpayersCheckYourAnswersController @Inject()(
         )).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage) match {
+      val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage, id) match {
         case Some(list) => // append to existing list
           list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers)
         case None => // start new list
           IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers))
       }
       for {
-        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
+        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, id, taxpayerLoopList))
         _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))

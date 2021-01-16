@@ -299,52 +299,49 @@ POST       /arrangement/change-details/:id                  controllers.arrangem
 
 # TAXPAYER ROUTES
 
-GET        /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad()
-POST       /taxpayers/check-answers                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad(id: Int)
+POST       /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
-GET        /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode: Mode = NormalMode)
-POST       /taxpayers/update                               controllers.taxpayer.UpdateTaxpayerController.onSubmit(mode: Mode = NormalMode)
+GET        /taxpayers/update/:id                            controllers.taxpayer.UpdateTaxpayerController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /taxpayers/update/:id                            controllers.taxpayer.UpdateTaxpayerController.onSubmit(id: Int, mode: Mode = NormalMode)
 
-GET        /taxpayers/choose-type                        controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /taxpayers/choose-type                        controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /taxpayers/change-choose-type                 controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /taxpayers/choose-type/:id                       controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /taxpayers/choose-type/:id                       controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /taxpayers/change-choose-type/:id                controllers.taxpayer.TaxpayerSelectTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /taxpayers/change-choose-type/:id                controllers.taxpayer.TaxpayerSelectTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /taxpayers/is-marketable                      controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = NormalMode)
-GET        /taxpayers/change-is-marketable               controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(mode: Mode = CheckMode)
+GET        /taxpayers/is-marketable/:id                     controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(id: Int, mode: Mode = NormalMode)
+GET        /taxpayers/change-is-marketable/:id              controllers.taxpayer.TaxpayersMarketableArrangementGatewayController.onRouting(id: Int, mode: Mode = CheckMode)
 
-GET        /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /taxpayers/implementation-date                  controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /taxpayers/change-implementation-date                        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /taxpayers/change-implementation-date                        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(mode: Mode = CheckMode)
-
+GET        /taxpayers/implementation-date/:id               controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /taxpayers/implementation-date/:id               controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /taxpayers/change-implementation-date/:id        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /taxpayers/change-implementation-date/:id        controllers.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # ASSOCIATED ENTERPRISES
 
-GET        /associated-enterprises/check-answers           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/check-answers           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET        /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
-GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-update           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = CheckMode)
+GET        /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/change-update/:id           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /associated-enterprises/change-update/:id           controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /associated-enterprises/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/taxpayers                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-taxpayers         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode: Mode = CheckMode)
+GET        /associated-enterprises/taxpayers/:id                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /associated-enterprises/taxpayers/:id                controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/change-taxpayers/:id         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /associated-enterprises/change-taxpayers/:id         controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /associated-enterprises/type                    controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/type                    controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-type             controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-type             controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /associated-enterprises/type/:id                    controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /associated-enterprises/type/:id                    controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/change-type/:id             controllers.enterprises.AssociatedEnterpriseTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /associated-enterprises/change-type/:id             controllers.enterprises.AssociatedEnterpriseTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /associated-enterprises/affected-by             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = NormalMode)
-POST       /associated-enterprises/affected-by             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = NormalMode)
-GET        /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(mode: Mode = CheckMode)
-POST       /associated-enterprises/change-affected-by      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(mode: Mode = CheckMode)
-
-#GET        /associated-enterprises/check-answers           controllers.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+GET        /associated-enterprises/affected-by/:id             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /associated-enterprises/affected-by/:id             controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # INTERMEDIARIES
 

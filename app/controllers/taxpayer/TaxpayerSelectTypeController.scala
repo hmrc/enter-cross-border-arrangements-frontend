@@ -46,10 +46,10 @@ class TaxpayerSelectTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TaxpayerSelectTypePage) match {
+      val preparedForm = request.userAnswers.get(TaxpayerSelectTypePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +63,7 @@ class TaxpayerSelectTypeController @Inject()(
       renderer.render("taxpayer/selectType.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,7 +79,7 @@ class TaxpayerSelectTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, id, value))
             redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, redirectMode, updatedAnswers))

@@ -47,10 +47,10 @@ class UpdateTaxpayerController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.flatMap(_.get(TaxpayerLoopPage)) match {
+      val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.flatMap(_.get(TaxpayerLoopPage, id)) match {
         case Some(list) =>
           for {
             taxpayer <- list
@@ -60,7 +60,7 @@ class UpdateTaxpayerController @Inject()(
         case None => IndexedSeq.empty
       }
 
-      val preparedForm =  request.userAnswers.flatMap(_.get(UpdateTaxpayerPage)) match {
+      val preparedForm =  request.userAnswers.flatMap(_.get(UpdateTaxpayerPage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -78,7 +78,7 @@ class UpdateTaxpayerController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[UpdateTaxpayer]): Call =
     navigator.routeMap(UpdateTaxpayerPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -97,12 +97,11 @@ class UpdateTaxpayerController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-                updatedAnswers <- Future.fromTry(userAnswers.set(UpdateTaxpayerPage, value))
-                cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage)) // TODO test when userAnswers are properly supplied
+                updatedAnswers <- Future.fromTry(userAnswers.set(UpdateTaxpayerPage, id, value))
+                cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) // TODO test when userAnswers are properly supplied
                 _              <- sessionRepository.set(cleanAnswers)
                 checkRoute     =  toCheckRoute(mode, cleanAnswers)
            } yield Redirect(redirect(checkRoute, Some(value)))
-
         }
       )
   }

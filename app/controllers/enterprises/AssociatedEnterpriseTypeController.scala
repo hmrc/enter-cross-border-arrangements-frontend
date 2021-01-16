@@ -47,10 +47,10 @@ class AssociatedEnterpriseTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+      val preparedForm = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class AssociatedEnterpriseTypeController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[SelectType]): Call =
     navigator.routeMap(AssociatedEnterpriseTypePage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,8 +83,8 @@ class AssociatedEnterpriseTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, value))
-            redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, value)) NormalMode else mode
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, id, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))
