@@ -49,10 +49,10 @@ class DisclosureNameController @Inject()(
 
   //TODO - read require Data when pages before this are implemented
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(DisclosureNamePage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(DisclosureNamePage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,7 +68,7 @@ class DisclosureNameController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
     navigator.routeMap(DisclosureNamePage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,9 +86,9 @@ class DisclosureNameController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(DisclosureNamePage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(DisclosureNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
 
         }

@@ -49,10 +49,10 @@ class IsExemptionKnownController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsExemptionKnownPage) match {
+      val preparedForm = request.userAnswers.get(IsExemptionKnownPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,7 +61,7 @@ class IsExemptionKnownController @Inject()(
         "form"   -> preparedForm,
         "mode"   -> mode,
         "radios"  -> IsExemptionKnown.radios(preparedForm),
-        "intermediary" -> getName(request.userAnswers)
+        "intermediary" -> getName(request.userAnswers, id)
       )
 
       renderer.render("intermediaries/isExemptionKnown.njk", json).map(Ok(_))
@@ -70,7 +70,7 @@ class IsExemptionKnownController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[IsExemptionKnown]): Call =
     navigator.routeMap(IsExemptionKnownPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -80,21 +80,21 @@ class IsExemptionKnownController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> IsExemptionKnown.radios(formWithErrors),
-            "intermediary" -> getName(request.userAnswers)
+            "intermediary" -> getName(request.userAnswers, id)
           )
 
           renderer.render("intermediaries/isExemptionKnown.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsExemptionKnownPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsExemptionKnownPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
-  private def getName(userAnswers: UserAnswers) = {
-    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+  private def getName(userAnswers: UserAnswers, id: Int) = {
+    (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
       case _ => "this intermediary"

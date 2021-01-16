@@ -345,37 +345,37 @@ POST       /associated-enterprises/change-affected-by/:id      controllers.enter
 
 # INTERMEDIARIES
 
-GET        /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = NormalMode)
+GET        /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(id: Int, mode: Mode = NormalMode)
 
 
-GET        /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/type/:id                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/type/:id                            controllers.intermediaries.IntermediariesTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /intermediaries/change-type/:id                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /intermediaries/change-type/:id                     controllers.intermediaries.IntermediariesTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /intermediaries/choose-type                      controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/choose-type                      controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-choose-type               controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-choose-type               controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/choose-type/:id                      controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/choose-type/:id                      controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /intermediaries/change-choose-type/:id               controllers.intermediaries.WhatTypeofIntermediaryController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /intermediaries/change-choose-type/:id               controllers.intermediaries.WhatTypeofIntermediaryController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exempt-countries                 controllers.intermediaries.ExemptCountriesController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exempt-countries          controllers.intermediaries.ExemptCountriesController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exempt-countries          controllers.intermediaries.ExemptCountriesController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exempt-countries/:id                 controllers.intermediaries.ExemptCountriesController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/exempt-countries/:id                 controllers.intermediaries.ExemptCountriesController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /intermediaries/change-exempt-countries/:id          controllers.intermediaries.ExemptCountriesController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /intermediaries/change-exempt-countries/:id          controllers.intermediaries.ExemptCountriesController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /intermediaries/exemption-country-known          controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exemption-country-known          controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exemption-country-known   controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exemption-country-known   controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exemption-country-known/:id          controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/exemption-country-known/:id          controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-country-known/:id   controllers.intermediaries.IsExemptionCountryKnownController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-country-known/:id   controllers.intermediaries.IsExemptionCountryKnownController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /intermediaries/exemption-known                  controllers.intermediaries.IsExemptionKnownController.onPageLoad(mode: Mode = NormalMode)
-POST       /intermediaries/exemption-known                  controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = NormalMode)
-GET        /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onPageLoad(mode: Mode = CheckMode)
-POST       /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
+GET        /intermediaries/exemption-known/:id                  controllers.intermediaries.IsExemptionKnownController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /intermediaries/exemption-known/:id                  controllers.intermediaries.IsExemptionKnownController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /intermediaries/change-exemption-known/:id           controllers.intermediaries.IsExemptionKnownController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /intermediaries/change-exemption-known/:id           controllers.intermediaries.IsExemptionKnownController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
-POST       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
+GET       /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad(id: Int)
+POST      /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
 
 # DISCLOSURE
@@ -383,25 +383,25 @@ POST       /intermediaries/check-answers                     controllers.interme
 GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
 POST        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue
 
-GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/name/:id                         controllers.disclosure.DisclosureNameController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /disclosure/name/:id                         controllers.disclosure.DisclosureNameController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /disclosure/change-name/:id                  controllers.disclosure.DisclosureNameController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /disclosure/change-name/:id                  controllers.disclosure.DisclosureNameController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /disclosure/type                             controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/type                             controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/type/:id                             controllers.disclosure.DisclosureTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /disclosure/type/:id                             controllers.disclosure.DisclosureTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /disclosure/change-type/:id                      controllers.disclosure.DisclosureTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /disclosure/change-type/:id                      controllers.disclosure.DisclosureTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/marketable/:id                           controllers.disclosure.DisclosureMarketableController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /disclosure/marketable/:id                           controllers.disclosure.DisclosureMarketableController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /disclosure/change-marketable/:id                    controllers.disclosure.DisclosureMarketableController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /disclosure/change-marketable/:id                    controllers.disclosure.DisclosureMarketableController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/identify/:id                        controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /disclosure/identify/:id                        controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /disclosure/change-identify/:id                 controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /disclosure/change-identify/:id                controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 # REPORTER DETAILS
 

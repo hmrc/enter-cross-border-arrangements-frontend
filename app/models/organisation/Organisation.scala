@@ -45,16 +45,16 @@ object Organisation {
       country = country)
   }
 
-  def buildOrganisationDetails(ua: UserAnswers): Organisation = {
+  def buildOrganisationDetails(ua: UserAnswers, id: Int): Organisation = {
     val address: Option[Address] =
-      (ua.get(OrganisationAddressPage), ua.get(SelectedAddressLookupPage)) match {
+      (ua.get(OrganisationAddressPage, id), ua.get(SelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
         case _ => None
       }
 
-    (ua.get(OrganisationNamePage), address,
-      ua.get(EmailAddressForOrganisationPage), ua.get(OrganisationLoopPage)) match {
+    (ua.get(OrganisationNamePage, id), address,
+      ua.get(EmailAddressForOrganisationPage, id), ua.get(OrganisationLoopPage, id)) match {
 
       case (Some(name), Some(address), Some(email), Some(loop)) => // All details
         new Organisation(name, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))
@@ -72,17 +72,17 @@ object Organisation {
     }
   }
 
-  def buildOrganisationDetailsForReporter(ua: UserAnswers): Organisation = {
+  def buildOrganisationDetailsForReporter(ua: UserAnswers, id: Int): Organisation = {
 
     val address: Option[Address] =
-      (ua.get(ReporterOrganisationAddressPage), ua.get(ReporterSelectedAddressLookupPage)) match {
+      (ua.get(ReporterOrganisationAddressPage, id), ua.get(ReporterSelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
         case _ => None
       }
 
-    (ua.get(ReporterOrganisationNamePage), address,
-      ua.get(ReporterOrganisationEmailAddressPage), ua.get(ReporterTaxResidencyLoopPage)) match {
+    (ua.get(ReporterOrganisationNamePage, id), address,
+      ua.get(ReporterOrganisationEmailAddressPage, id), ua.get(ReporterTaxResidencyLoopPage, id)) match {
 
       case (Some(name), Some(address), Some(email), Some(loop)) => // All details
         new Organisation(name, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))

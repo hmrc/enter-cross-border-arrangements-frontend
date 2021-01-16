@@ -46,13 +46,13 @@ class IntermediariesCheckYourAnswersController @Inject()(
                                                           renderer: Renderer
                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
 
-        request.userAnswers.get(IntermediariesTypePage) match {
+        request.userAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (helper.intermediariesType.toSeq ++
@@ -100,17 +100,17 @@ class IntermediariesCheckYourAnswersController @Inject()(
   def redirect(checkRoute: CheckRoute): Call =
     navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(None)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage) match {
+      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers)
+          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers))
+          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers, id))
       }
       for {
-        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, intermediaryLoopList))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop)
       } yield {

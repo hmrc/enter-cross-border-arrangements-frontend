@@ -47,10 +47,10 @@ class DisclosureMarketableController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DisclosureMarketablePage) match {
+      val preparedForm = request.userAnswers.get(DisclosureMarketablePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -67,7 +67,7 @@ class DisclosureMarketableController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
     navigator.routeMap(DisclosureMarketablePage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,9 +83,9 @@ class DisclosureMarketableController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }

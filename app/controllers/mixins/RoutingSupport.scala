@@ -23,10 +23,10 @@ import pages.taxpayer.TaxpayerSelectTypePage
 
 trait RoutingSupport {
 
-  def toCheckRoute(mode: Mode, userAnswers: UserAnswers): CheckRoute =
-    (userAnswers.get(AssociatedEnterpriseTypePage)
-      , userAnswers.get(TaxpayerSelectTypePage)
-      , userAnswers.get(IntermediariesTypePage)) match {
+  def toCheckRoute(mode: Mode, userAnswers: UserAnswers, id: Int): CheckRoute =
+    (userAnswers.get(AssociatedEnterpriseTypePage, id)
+      , userAnswers.get(TaxpayerSelectTypePage, id)
+      , userAnswers.get(IntermediariesTypePage, id)) match {
       case (Some(_), _, _) => AssociatedEnterprisesRouting(mode)
       case (_, Some(_), _) => TaxpayersRouting(mode)
       case (_, _, Some(_)) => IntermediariesRouting(mode)

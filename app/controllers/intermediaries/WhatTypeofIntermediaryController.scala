@@ -50,10 +50,10 @@ class WhatTypeofIntermediaryController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatTypeofIntermediaryPage) match {
+      val preparedForm = request.userAnswers.get(WhatTypeofIntermediaryPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,7 +61,7 @@ class WhatTypeofIntermediaryController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "intermediary" -> getName(request.userAnswers),
+        "intermediary" -> getName(request.userAnswers, id),
         "radios"  -> WhatTypeofIntermediary.radios(preparedForm)
       )
 
@@ -71,7 +71,7 @@ class WhatTypeofIntermediaryController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[WhatTypeofIntermediary]): Call =
     navigator.routeMap(WhatTypeofIntermediaryPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -80,7 +80,7 @@ class WhatTypeofIntermediaryController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "intermediary" -> getName(request.userAnswers),
+            "intermediary" -> getName(request.userAnswers, id),
             "radios" -> WhatTypeofIntermediary.radios(formWithErrors)
           )
 
@@ -88,15 +88,15 @@ class WhatTypeofIntermediaryController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatTypeofIntermediaryPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatTypeofIntermediaryPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 
-  private def getName(userAnswers: UserAnswers) = {
-    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+  private def getName(userAnswers: UserAnswers, id: Int) = {
+    (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
       case _ => "this intermediary"
