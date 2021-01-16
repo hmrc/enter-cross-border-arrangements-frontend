@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package pages.affected
 
-import models.Mode
+import models.affected.Affected
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-sealed trait CheckRoute {
+case object AffectedLoopPage extends QuestionPage[IndexedSeq[Affected]] {
 
-  val mode: Mode
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "affectedLoop"
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute

@@ -351,7 +351,6 @@ POST       /associated-enterprises/change-affected-by      controllers.enterpris
 GET        /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/update                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode: Mode = NormalMode)
 
-
 GET        /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /intermediaries/type                            controllers.intermediaries.IntermediariesTypeController.onSubmit(mode: Mode = NormalMode)
 GET        /intermediaries/change-type                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(mode: Mode = CheckMode)
@@ -377,9 +376,21 @@ POST       /intermediaries/exemption-known                  controllers.intermed
 GET        /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onPageLoad(mode: Mode = CheckMode)
 POST       /intermediaries/change-exemption-known           controllers.intermediaries.IsExemptionKnownController.onSubmit(mode: Mode = CheckMode)
 
-GET       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
+GET        /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad()
 POST       /intermediaries/check-answers                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
+# OTHER PARTIES AFFECTED
+
+GET        /others-affected/update                          controllers.affected.YouHaveNotAddedAnyAffectedController.onPageLoad(mode: Mode = NormalMode)
+POST       /others-affected/update                          controllers.affected.YouHaveNotAddedAnyAffectedController.onSubmit(mode: Mode = NormalMode)
+
+GET        /others-affected/type                            controllers.affected.AffectedTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /others-affected/type                            controllers.affected.AffectedTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /others-affected/change-type                     controllers.affected.AffectedTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /others-affected/change-type                     controllers.affected.AffectedTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /others-affected/check-answers                   controllers.affected.AffectedCheckYourAnswersController.onPageLoad()
+POST       /others-affected/check-answers                   controllers.affected.AffectedCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
 # DISCLOSURE
 

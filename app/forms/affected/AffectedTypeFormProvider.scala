@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package forms.affected
 
-import models.Mode
+import forms.mappings.Mappings
+import models.SelectType
+import play.api.data.Form
 
-sealed trait CheckRoute {
+import javax.inject.Inject
 
-  val mode: Mode
+class AffectedTypeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[SelectType] =
+    Form(
+      "selectType" -> enumerable[SelectType]("affectedType.error.required")
+    )
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute

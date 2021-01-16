@@ -23,13 +23,74 @@ import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 
 trait ReporterRows extends RowBuilder {
 
+  def reporterIndividualSelectAddress: Option[Row] = userAnswers.get(ReporterIndividualSelectAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualSelectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(msg"reporterIndividualSelectAddress.$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualSelectAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def reporterIndividualAddress: Option[Row] = userAnswers.get(ReporterIndividualAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIndividualAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def reporterIndividualPostcode: Option[Row] = userAnswers.get(ReporterIndividualPostcodePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIndividualPostcode.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def reporterIsIndividualAddressUK: Option[Row] = userAnswers.get(ReporterIsIndividualAddressUKPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"reporterIsIndividualAddressUK.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def roleInArrangementPage: Option[Row] = userAnswers.get(RoleInArrangementPage) map { answer =>
+
     toRow(
       msgKey  = "roleInArrangement",
       content = Literal(s"${answer.toString.capitalize}"),

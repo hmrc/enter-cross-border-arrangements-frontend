@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package utils.rows
 
-import models.Mode
+import models.CheckMode
+import pages.affected.AffectedTypePage
+import uk.gov.hmrc.viewmodels.MessageInterpolators
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 
-sealed trait CheckRoute {
+trait AffectedRows extends RowBuilder {
 
-  val mode: Mode
+  def affectedType: Option[Row] = userAnswers.get(AffectedTypePage) map { answer =>
+
+    toRow(
+      msgKey  = "affectedType",
+      content = msg"affectedType.$answer",
+      href    = controllers.affected.routes.AffectedTypeController.onPageLoad(CheckMode).url
+    )
+  }
+
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute

@@ -17,6 +17,7 @@
 package generators
 
 import models._
+import models.affected.YouHaveNotAddedAnyAffected
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
@@ -46,6 +47,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryYouHaveNotAddedAnyIntermediaries: Arbitrary[YouHaveNotAddedAnyIntermediaries] =
     Arbitrary {
       Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
+    }
+
+  implicit lazy val arbitraryYouHaveNotAddedAnyAffected: Arbitrary[YouHaveNotAddedAnyAffected] =
+    Arbitrary {
+      Gen.oneOf(YouHaveNotAddedAnyAffected.values.toSeq)
     }
 
   implicit lazy val arbitraryIsExemptionKnown: Arbitrary[IsExemptionKnown] =

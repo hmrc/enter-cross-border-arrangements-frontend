@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.individual.routes
-import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
+import controllers.mixins.{AffectedRouting, AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
 import models._
 import pages._
 import pages.individual.{IndividualNamePage, _}
@@ -121,6 +121,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
     case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode)
     case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode)
+    case AffectedRouting(NormalMode)              => controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad()
     case _                                        => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
   }
 
@@ -129,6 +130,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
       case IntermediariesRouting(CheckMode)          => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad()
       case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad()
       case _                                        => jumpTo
     }

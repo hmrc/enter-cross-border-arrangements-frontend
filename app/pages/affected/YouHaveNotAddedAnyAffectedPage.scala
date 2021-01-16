@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package pages.affected
 
-import models.Mode
+import models.UserAnswers
+import models.affected.YouHaveNotAddedAnyAffected
+import pages._
+import play.api.libs.json.JsPath
 
-sealed trait CheckRoute {
+import scala.util.Try
 
-  val mode: Mode
+case object YouHaveNotAddedAnyAffectedPage extends QuestionPage[YouHaveNotAddedAnyAffected] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "youHaveNotAddedAnyAffected"
+
+  override def cleanup(value: Option[YouHaveNotAddedAnyAffected], userAnswers: UserAnswers): Try[UserAnswers] = {
+    //Clear answers from unique pages in each journey
+
+        userAnswers.remove(AffectedTypePage)
+
+  }
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute
