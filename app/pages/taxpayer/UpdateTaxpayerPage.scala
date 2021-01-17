@@ -70,8 +70,8 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
           .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage))
           .flatMap(_.remove(OrganisationLoopPage))
-          .flatMap(_.remove(WhatIsTheImplementationDatePage))
-
+          .flatMap(_.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage))
+        
       case None => super.cleanup(value, userAnswers)
     }
   }

@@ -70,7 +70,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("D1other").toSet)
+        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
         .success
         .value
         .set(HallmarkD1OtherPage, "Other page text")
@@ -94,7 +94,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       val list = (json \ "list").toString
 
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-      list.contains("D1other") mustBe true
+      list.contains("DAC6D1Other") mustBe true
       list.contains("Other page text") mustBe true
 
       application.stop()
@@ -106,7 +106,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("D1a").toSet)
+        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("DAC6D1a").toSet)
         .success
         .value
         .set(HallmarkD1OtherPage, "Other page text")

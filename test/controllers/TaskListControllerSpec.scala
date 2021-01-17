@@ -57,7 +57,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any()))
+      when(mockXMLGenerationService.createXmlSubmission(any())(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Right("GBABC-123")))
@@ -87,7 +87,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any()))
+      when(mockXMLGenerationService.createXmlSubmission(any())(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))

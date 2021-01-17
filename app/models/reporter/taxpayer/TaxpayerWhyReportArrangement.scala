@@ -24,9 +24,9 @@ sealed trait TaxpayerWhyReportArrangement
 
 object TaxpayerWhyReportArrangement extends Enumerable.Implicits {
 
-  case object NoIntermediaries extends WithName("noIntermediaries") with TaxpayerWhyReportArrangement
-  case object ProfessionalPrivilege extends WithName("professionalPrivilege") with TaxpayerWhyReportArrangement
-  case object OutsideUKOrEU extends WithName("outsideUKOrEU") with TaxpayerWhyReportArrangement
+  case object NoIntermediaries extends WithName("DAC61106") with TaxpayerWhyReportArrangement
+  case object ProfessionalPrivilege extends WithName("DAC61104") with TaxpayerWhyReportArrangement
+  case object OutsideUKOrEU extends WithName("DAC61105") with TaxpayerWhyReportArrangement
   case object DoNotKnow extends WithName("doNotKnow") with TaxpayerWhyReportArrangement
 
   val values: Seq[TaxpayerWhyReportArrangement] = Seq(

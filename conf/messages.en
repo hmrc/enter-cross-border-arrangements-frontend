@@ -877,19 +877,19 @@ taxpayerWhyReportInUK.title = Why are you required to report this arrangement in
 taxpayerWhyReportInUK.heading = Why are you required to report this arrangement in the United Kingdom?
 taxpayerWhyReportInUK.hint = The list is in priority order. You only need to choose the first one that applies.
 taxpayerWhyReportInUK.info = If you are reporting this arrangement on behalf of an organisation like your employer, choose the first option that applies to them.
-taxpayerWhyReportInUK.ukTaxResident = You are tax resident in the UK
-taxpayerWhyReportInUK.ukPermanentEstablishment = You have a permanent establishment in the UK
-taxpayerWhyReportInUK.incomeOrProfit = You receive income or generate profit in the UK
-taxpayerWhyReportInUK.ukActivity = You carry out any activity in the UK
+taxpayerWhyReportInUK.RTNEXa = You are tax resident in the UK
+taxpayerWhyReportInUK.RTNEXb = You have a permanent establishment in the UK
+taxpayerWhyReportInUK.RTNEXc = You receive income or generate profit in the UK
+taxpayerWhyReportInUK.RTNEXd = You carry out any activity in the UK
 taxpayerWhyReportInUK.doNotKnow = I do not know
 taxpayerWhyReportInUK.checkYourAnswersLabel = Reason for reporting in the UK
 taxpayerWhyReportInUK.error.required = Select the first reason that applies
 
 taxpayerWhyReportArrangement.title = Why are you reporting the arrangement as a taxpayer?
 taxpayerWhyReportArrangement.heading = Why are you reporting the arrangement as a taxpayer?
-taxpayerWhyReportArrangement.noIntermediaries = There are no intermediaries involved
-taxpayerWhyReportArrangement.professionalPrivilege = The intermediaries involved have legal professional privilege
-taxpayerWhyReportArrangement.outsideUKOrEU = The intermediaries are based outside of the UK and EU
+taxpayerWhyReportArrangement.DAC61106 = There are no intermediaries involved
+taxpayerWhyReportArrangement.DAC61104 = The intermediaries involved have legal professional privilege
+taxpayerWhyReportArrangement.DAC61105 = The intermediaries are based outside of the UK and EU
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
@@ -1084,5 +1084,6 @@ disclosureConfirmation.p7 = What happens next
 disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
 
-
-
+# Temporary page for displaying generated XML
+generatedXML.title = Generated XML
+generatedXML.heading = Generated XML
