@@ -116,7 +116,7 @@ class XMLGenerationServiceSpec extends SpecBase {
       }
     }
 
-    "buildDisclosureImportInstruction must build the import instruction section" in {
+    "buildDisclosureImportInstruction must build the import instruction section if additional arrangement" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(DisclosureTypePage, DisclosureType.Dac6add).success.value
@@ -128,13 +128,37 @@ class XMLGenerationServiceSpec extends SpecBase {
       prettyPrinter.format(result) mustBe expected
     }
 
+    "buildDisclosureImportInstruction must build the import instruction section if new arrangement" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
+
+      val result = xmlGenerationService.buildDisclosureImportInstruction(userAnswers)
+
+      val expected = "<DisclosureImportInstruction>DAC6NEW</DisclosureImportInstruction>"
+
+      prettyPrinter.format(result) mustBe expected
+    }
+
     "buildDisclosureImportInstruction must throw an exception if import instruction is missing" in {
       assertThrows[Exception] {
         xmlGenerationService.buildDisclosureImportInstruction(UserAnswers(userAnswersId))
       }
     }
 
-    "buildInitialDisclosureMA must build the disclosure MA section" in {
+    "buildInitialDisclosureMA must build the disclosure MA section when arrangement is marketable" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DisclosureMarketablePage, true).success.value
+
+      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers)
+
+      val expected = "<InitialDisclosureMA>true</InitialDisclosureMA>"
+
+      prettyPrinter.format(result) mustBe expected
+    }
+
+    "buildInitialDisclosureMA must build the disclosure MA section when arrangement is not marketable" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(DisclosureMarketablePage, false).success.value
