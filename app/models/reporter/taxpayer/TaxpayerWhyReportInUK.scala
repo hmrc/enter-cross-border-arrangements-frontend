@@ -42,10 +42,10 @@ object TaxpayerWhyReportInUK extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"taxpayerWhyReportInUK.ukTaxResident", UkTaxResident.toString),
-      Radios.Radio(msg"taxpayerWhyReportInUK.ukPermanentEstablishment", UkPermanentEstablishment.toString),
-      Radios.Radio(msg"taxpayerWhyReportInUK.incomeOrProfit", IncomeOrProfit.toString),
-      Radios.Radio(msg"taxpayerWhyReportInUK.ukActivity", UkActivity.toString),
+      Radios.Radio(msg"taxpayerWhyReportInUK.RTNEXa", UkTaxResident.toString),
+      Radios.Radio(msg"taxpayerWhyReportInUK.RTNEXb", UkPermanentEstablishment.toString),
+      Radios.Radio(msg"taxpayerWhyReportInUK.RTNEXc", IncomeOrProfit.toString),
+      Radios.Radio(msg"taxpayerWhyReportInUK.RTNEXd", UkActivity.toString),
       Radios.Radio(msg"taxpayerWhyReportInUK.doNotKnow", DoNotKnow.toString)
     )
 

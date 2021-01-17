@@ -40,9 +40,9 @@ object TaxpayerWhyReportArrangement extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"taxpayerWhyReportArrangement.noIntermediaries", NoIntermediaries.toString),
-      Radios.Radio(msg"taxpayerWhyReportArrangement.professionalPrivilege", ProfessionalPrivilege.toString),
-      Radios.Radio(msg"taxpayerWhyReportArrangement.outsideUKOrEU", OutsideUKOrEU.toString),
+      Radios.Radio(msg"taxpayerWhyReportArrangement.DAC61106", NoIntermediaries.toString),
+      Radios.Radio(msg"taxpayerWhyReportArrangement.DAC61104", ProfessionalPrivilege.toString),
+      Radios.Radio(msg"taxpayerWhyReportArrangement.DAC61105", OutsideUKOrEU.toString),
       Radios.Radio(msg"taxpayerWhyReportArrangement.doNotKnow", DoNotKnow.toString)
     )
 
