@@ -19,7 +19,6 @@ package pages.taxpayer
 import models.UserAnswers
 import models.taxpayer.UpdateTaxpayer
 import pages.QuestionPage
-import pages.arrangement.WhatIsTheImplementationDatePage
 import pages.individual._
 import pages.organisation._
 import play.api.libs.json.JsPath
@@ -71,7 +70,7 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage))
           .flatMap(_.remove(OrganisationLoopPage))
           .flatMap(_.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage))
-        
+
       case None => super.cleanup(value, userAnswers)
     }
   }
