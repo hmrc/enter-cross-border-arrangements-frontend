@@ -21,12 +21,11 @@ import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
 import models.{Address, ReporterOrganisationOrIndividual, UserAnswers}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 
-import scala.collection.mutable.ArrayBuffer
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
@@ -150,46 +149,42 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
-    val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] =
-      userAnswers.get(TaxpayerLoopPage) match {
+  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers) = {
+    userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
-        val nodeBuffer = new xml.NodeBuffer
 
         taxpayers.map {
           taxpayer =>
-            val taxpayerIndividualOrganisation =
-              if (taxpayer.individual.isDefined) {
-                val individualDetails = taxpayer.individual.get
+            (taxpayer.individual.isDefined, taxpayer.organisation.isDefined, taxpayer.implementingDate.isDefined) match {
+              case (true, false, false) =>
+                <RelevantTaxpayer>
+                  {buildIDForIndividual(taxpayer.individual.get)}
+                </RelevantTaxpayer>
 
-                val individualImplementingDate = taxpayer.implementingDate match {
-                  case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-                  case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
-                }
+              case (false, true, false) =>
+                <RelevantTaxpayer>
+                  {buildIDForOrganisation(taxpayer.organisation.get)}
+                </RelevantTaxpayer>
 
-                buildIDForIndividual(individualDetails) ++ individualImplementingDate
-              } else {
-                val organisationDetails = taxpayer.organisation.get
+              case (true, false, true) =>
+                <RelevantTaxpayer>{buildIDForIndividual(taxpayer.individual.get)}
+                  <TaxpayerImplementingDate>{taxpayer.implementingDate.get}</TaxpayerImplementingDate>
+                </RelevantTaxpayer>
 
-                val organisationImplementingDate = taxpayer.implementingDate match {
-                  case Some(implementingDate) => <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-                  case None => throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory implementing date.")
-                }
-                buildIDForOrganisation(organisationDetails) ++ organisationImplementingDate
-              }
-
-            //TODO Need to check here if reporter is an individual or organisation. Then add to nodeBuffer
-            nodeBuffer ++
-              <RelevantTaxpayer>
-                {taxpayerIndividualOrganisation}
-              </RelevantTaxpayer>
+              case _ =>
+                <RelevantTaxpayer>
+                  {buildIDForOrganisation(taxpayer.organisation.get)}
+                  <TaxpayerImplementingDate>{taxpayer.implementingDate.get}</TaxpayerImplementingDate>
+                </RelevantTaxpayer>
+            }
         }
-      case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
+      case _ => NodeSeq.Empty
     }
+  }
 
+  override def toXml(userAnswers: UserAnswers): Elem = {
     <RelevantTaxPayers>
-      {buildReporterAsTaxpayer(userAnswers)}
-      {relevantTaxPayersNode}
+      {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
     </RelevantTaxPayers>
   }
 }
