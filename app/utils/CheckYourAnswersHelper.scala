@@ -16,7 +16,6 @@
 
 package utils
 
-import models.hallmarks.HallmarkA._
 import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1._
 import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
@@ -165,10 +164,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
 
     val selectedHallmarkParts = hallmarkPages.collect{ case Some(value) => value }
 
-    val hallmarksList = for {
+    val hallmarksList: Seq[String] = for {
       selectedHallmark <- selectedHallmarkParts
     } yield {
-      selectedHallmark.map(_.toString).toList.sorted.map(hallmark => msg"$hallmark".resolve).mkString(", ")
+      selectedHallmark.map(_.toString.replace("DAC6", "")).toList.sorted.map(hallmark => msg"$hallmark".resolve).mkString(", ")
     }
 
     Row(
