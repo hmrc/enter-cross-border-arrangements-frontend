@@ -121,7 +121,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
     case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode)
     case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode)
-    case AffectedRouting(NormalMode)              => controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad()
+    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad()
     case _                                        => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
   }
 
