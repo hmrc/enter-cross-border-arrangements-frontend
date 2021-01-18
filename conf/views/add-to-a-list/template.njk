@@ -36,10 +36,8 @@
     {% for item in params.itemList %}
     <li class="hmrc-add-to-a-list__contents">
       <span class="hmrc-add-to-a-list__identifier hmrc-add-to-a-list__identifier--light">
-        {{ item }}
+        {{ item.name }}
       </span>
-
-      {# remove this line to add Change / Remove Links
 
       <span class="hmrc-add-to-a-list__change">
         <a class="govuk-link" href="{{ item.changeUrl }}">
@@ -53,8 +51,6 @@
           <span class="govuk-visually-hidden">{{messages.aria.before}} {{ item.name }} {{messages.aria.after}}</span>
         </a>
       </span>
-
-       remove this line add Change / Remove Links #}
 
     </li>
     {% else %}

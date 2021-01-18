@@ -22,7 +22,7 @@ import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.{Mode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesStatusPage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +33,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyIntermediariesController @Inject()(
@@ -57,12 +58,12 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
+      val namesOfIntermediaries: IndexedSeq[ItemList] = request.userAnswers.get(IntermediaryLoopPage, id) match {
         case Some(list) =>
           for {
             intermediary <- list
           } yield {
-            intermediary.nameAsString
+            ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
           }
         case None => IndexedSeq.empty
       }
@@ -71,7 +72,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "intermediaryList" -> namesOfIntermediaries,
+        "intermediaryList" -> Json.toJson(namesOfIntermediaries),
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
       )
 

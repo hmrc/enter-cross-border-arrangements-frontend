@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
-import models.{Mode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,12 +55,12 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
+      val namesOfAffected: IndexedSeq[ItemList] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
         case Some(list) =>
           for {
             affected <- list
           } yield {
-            affected.nameAsString
+            ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
           }
         case None => IndexedSeq.empty
       }
@@ -68,7 +68,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "affectedList" -> namesOfAffected,
+        "affectedList" -> Json.toJson(namesOfAffected),
         "radios" -> YouHaveNotAddedAnyAffected.radios(preparedForm)
       )
 

@@ -19,13 +19,14 @@ package controllers.taxpayer
 import base.SpecBase
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import matchers.JsonMatchers
-import models.taxpayer.UpdateTaxpayer
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.individual.Individual
+import models.taxpayer.{TaxResidency, Taxpayer, UpdateTaxpayer}
+import models.{Country, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.taxpayer.UpdateTaxpayerPage
+import pages.taxpayer.{TaxpayerLoopPage, UpdateTaxpayerPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -35,6 +36,7 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
@@ -64,6 +66,47 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val expectedJson = Json.obj(
         "form"   -> form,
+        "taxpayerList" -> Json.arr(),
+        "mode"   -> NormalMode,
+        "radios" -> UpdateTaxpayer.radios(form)
+      )
+
+      templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return OK and the correct view with the list of all taxpayers for a GET" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val individual = Individual(
+        individualName = Name("John", "Smith"),
+        birthDate =  LocalDate.now(), None, None,
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
+      )
+
+      val taxpayerLoop = IndexedSeq(Taxpayer("id", Some(individual), None, None))
+      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerLoopPage, taxpayerLoop).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, updateTaxpayerRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedList = Json.arr(Json.obj("name" -> "John Smith", "changeUrl" -> "#", "removeUrl" -> "#"))
+
+      val expectedJson = Json.obj(
+        "form"   -> form,
+        "taxpayerList" -> expectedList,
         "mode"   -> NormalMode,
         "radios" -> UpdateTaxpayer.radios(form)
       )
