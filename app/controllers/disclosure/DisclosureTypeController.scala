@@ -16,6 +16,7 @@
 
 package controllers.disclosure
 
+import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureTypeFormProvider
@@ -42,6 +43,7 @@ class DisclosureTypeController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DisclosureTypeFormProvider,
+    connector: HistoryConnector,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -50,19 +52,21 @@ class DisclosureTypeController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(DisclosureTypePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val json = Json.obj(
+    for {
+      hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+      radios = if (hasHistory) DisclosureType.radiosComplete(preparedForm) else DisclosureType.radios(preparedForm)
+       json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios"  -> DisclosureType.radios(preparedForm)
+        "radios"  -> radios
       )
-
-      renderer.render("disclosure/disclosureType.njk", json).map(Ok(_))
+      renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+    } yield Ok(renderedForm)
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
@@ -74,13 +78,17 @@ class DisclosureTypeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> DisclosureType.radios(formWithErrors)
-          )
+          for {
+            hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+            radios = if (hasHistory) DisclosureType.radiosComplete(formWithErrors) else DisclosureType.radios(formWithErrors)
+            json = Json.obj(
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "radios"  -> radios
+            )
+            renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+          } yield BadRequest(renderedForm)
 
-          renderer.render("disclosure/disclosureType.njk", json).map(BadRequest(_))
         },
         value =>
           for {
