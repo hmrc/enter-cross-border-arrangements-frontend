@@ -19,12 +19,14 @@ package controllers
 import base.SpecBase
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.Submissions
+import models.requests.DataRequest
 import models.{GeneratedIDs, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, route, status, _}
 import play.twirl.api.Html
@@ -34,24 +36,30 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with BeforeAndAfterEach {
-  val mockValidationConnector = mock[ValidationConnector]
-  val mockXMLGenerationService = mock[XMLGenerationService]
-  val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+  private val mockValidationConnector = mock[ValidationConnector]
+  private val mockXMLGenerationService = mock[XMLGenerationService]
+  private val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
-  override def beforeEach(): Unit = {
+  override def beforeEach: Unit = {
     reset(mockCrossBorderArrangementsConnector)
   }
+
+  private val userAnswers = UserAnswers(userAnswersId)
 
   "TaskListController" - {
     "must redirect to confirmation page when user submits a completed application" in {
 
-      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
       bind[XMLGenerationService].toInstance(mockXMLGenerationService),
       bind[ValidationConnector].toInstance(mockValidationConnector),
       bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
       )
         .build()
+
+      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
+      implicit val request: DataRequest[AnyContent] =
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -62,7 +70,6 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
 
-      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
 
       val result = route(application, postRequest).value
 
@@ -74,19 +81,21 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
     "must redirect to validation errors page when validation fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[XMLGenerationService].toInstance(mockXMLGenerationService),
           bind[ValidationConnector].toInstance(mockValidationConnector)
         )
         .build()
 
+      implicit val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
+      implicit val request: DataRequest[AnyContent] =
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+
       when(mockXMLGenerationService.createXmlSubmission(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
-
-      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
 
       val result = route(application, postRequest).value
 
