@@ -19,12 +19,13 @@ package controllers.reporter.intermediary
 import base.SpecBase
 import forms.IntermediaryWhichCountriesExemptFormProvider
 import matchers.JsonMatchers
-import models.{CountriesListEUCheckboxes, NormalMode, UserAnswers}
+import models.{CountriesListEUCheckboxes, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.intermediary.IntermediaryWhichCountriesExemptPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -37,7 +38,7 @@ import scala.concurrent.Future
 
 class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val intermediaryWhichCountriesExemptRoute = routes.IntermediaryWhichCountriesExemptController.onPageLoad(NormalMode).url
+  lazy val intermediaryWhichCountriesExemptRoute = routes.IntermediaryWhichCountriesExemptController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IntermediaryWhichCountriesExemptFormProvider()
   val form = formProvider()
@@ -75,7 +76,9 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryWhichCountriesExemptPage, CountriesListEUCheckboxes.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

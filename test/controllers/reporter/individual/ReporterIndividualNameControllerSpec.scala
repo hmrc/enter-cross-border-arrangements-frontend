@@ -19,12 +19,13 @@ package controllers.reporter.individual
 import base.SpecBase
 import forms.reporter.individual.ReporterIndividualNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.individual.ReporterIndividualNamePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -43,17 +44,13 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
   val formProvider = new ReporterIndividualNameFormProvider()
   val form = formProvider()
 
-  lazy val reporterIndividualNameRoute = routes.ReporterIndividualNameController.onPageLoad(NormalMode).url
+  lazy val reporterIndividualNameRoute = routes.ReporterIndividualNameController.onPageLoad(0, NormalMode).url
 
-  val userAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      ReporterIndividualNamePage.toString -> Json.obj(
-        "firstName" -> "value 1",
-        "secondName" -> "value 2"
-      )
-    )
-  )
+  val userAnswers = UserAnswers(userAnswersId)
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success.value
+    .set(ReporterIndividualNamePage, 0, Name("value 1","value 2"))
+    .success.value
 
   "ReporterIndividualName Controller" - {
 
@@ -140,7 +137,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/date-of-birth"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/date-of-birth/0"
 
       application.stop()
     }

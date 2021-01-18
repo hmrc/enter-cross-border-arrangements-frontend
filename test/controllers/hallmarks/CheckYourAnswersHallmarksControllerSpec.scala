@@ -17,12 +17,14 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import models.UserAnswers
-import models.hallmarks.{HallmarkA, HallmarkD1}
+
+import models.{UnsubmittedDisclosure, UserAnswers}
+import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.hallmarks._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,16 +42,17 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkAPage, HallmarkA.enumerable.withName("A1").toSet)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkAPage, 0, HallmarkA.enumerable.withName("A1").toSet)
         .success
         .value
-        .set(MainBenefitTestPage, true)
+        .set(MainBenefitTestPage, 0, true)
         .success
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
       val result = route(application, request).value
 
@@ -70,16 +73,17 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
         .success
         .value
-        .set(HallmarkD1OtherPage, "Other page text")
+        .set(HallmarkD1OtherPage, 0, "Other page text")
         .success
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
       val result = route(application, request).value
 
@@ -106,16 +110,17 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkD1Page, HallmarkD1.enumerable.withName("DAC6D1a").toSet)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1a").toSet)
         .success
         .value
-        .set(HallmarkD1OtherPage, "Other page text")
+        .set(HallmarkD1OtherPage, 0, "Other page text")
         .success
         .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
       val result = route(application, request).value
 
@@ -141,7 +146,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
       val result = route(application, request).value
 

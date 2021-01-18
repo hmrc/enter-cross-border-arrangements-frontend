@@ -19,12 +19,13 @@ package controllers.reporter.organisation
 import base.SpecBase
 import forms.reporter.organisation.ReporterOrganisationIsAddressUkFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.organisation.ReporterOrganisationIsAddressUkPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Mockit
   val formProvider = new ReporterOrganisationIsAddressUkFormProvider()
   val form = formProvider()
 
-  lazy val reporterOrganisationisAddressUkRoute = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode).url
+  lazy val reporterOrganisationisAddressUkRoute = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(0, NormalMode).url
 
   "ReporterOrganisationIsAddressUk Controller" - {
 
@@ -77,7 +78,9 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Mockit
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationIsAddressUkPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationIsAddressUkPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

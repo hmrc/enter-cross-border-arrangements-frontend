@@ -18,7 +18,7 @@ package controllers.enterprises
 
 import base.SpecBase
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.{Country, LoopDetails, Name, SelectType, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -28,6 +28,7 @@ import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAf
 import pages.individual._
 import pages.organisation._
 import play.api.inject.bind
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -50,7 +51,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, NormalMode).url)
 
     val result = route(application, request).value
 
@@ -81,17 +82,18 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     "must return rows for an associated enterprise who is an organisation" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
         .success.value
-        .set(OrganisationNamePage, "Name")
+        .set(OrganisationNamePage, 0, "Name")
         .success.value
-        .set(IsOrganisationAddressKnownPage, false)
+        .set(IsOrganisationAddressKnownPage, 0, false)
         .success.value
-        .set(EmailAddressQuestionForOrganisationPage, true)
+        .set(EmailAddressQuestionForOrganisationPage, 0, true)
         .success.value
-        .set(EmailAddressForOrganisationPage, "email@email.com")
+        .set(EmailAddressForOrganisationPage, 0, "email@email.com")
         .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, true).success.value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
 
       verifyList(userAnswers) { rows =>
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
@@ -107,21 +109,22 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, SelectType.Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
         .success.value
-        .set(IndividualNamePage, Name("First", "Last"))
+        .set(IndividualNamePage, 0, Name("First", "Last"))
         .success.value
-        .set(IsIndividualDateOfBirthKnownPage, true)
+        .set(IsIndividualDateOfBirthKnownPage, 0, true)
         .success.value
-        .set(IndividualDateOfBirthPage, dob)
+        .set(IndividualDateOfBirthPage, 0, dob)
         .success.value
-        .set(IsIndividualPlaceOfBirthKnownPage, false)
+        .set(IsIndividualPlaceOfBirthKnownPage, 0, false)
         .success.value
-        .set(EmailAddressQuestionForIndividualPage, true)
+        .set(EmailAddressQuestionForIndividualPage, 0, true)
         .success.value
-        .set(EmailAddressForIndividualPage, "email@email.com")
+        .set(EmailAddressForIndividualPage, 0, "email@email.com")
         .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, false).success.value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, false).success.value
 
       verifyList(userAnswers) { rows =>
         rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
@@ -139,17 +142,17 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
       val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
         .success.value
-        .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
         .success.value
-        .set(OrganisationNamePage, "Organisation name")
+        .set(OrganisationNamePage, 0, "Organisation name")
         .success.value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Associated taxpayer"))
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer"))
         .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, false)
+        .set(IsAssociatedEnterpriseAffectedPage, 0, false)
         .success.value
-        .set(OrganisationLoopPage, loopDetails)
+        .set(OrganisationLoopPage, 0, loopDetails)
         .success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -177,17 +180,17 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
       val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
         .success.value
-        .set(AssociatedEnterpriseTypePage, SelectType.Individual)
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
         .success.value
-        .set(IndividualNamePage, Name("Name", "Name"))
+        .set(IndividualNamePage, 0, Name("Name", "Name"))
         .success.value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Associated taxpayer"))
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer"))
         .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, false)
+        .set(IsAssociatedEnterpriseAffectedPage, 0, false)
         .success.value
-        .set(IndividualLoopPage, loopDetails)
+        .set(IndividualLoopPage, 0, loopDetails)
         .success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)

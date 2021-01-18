@@ -29,7 +29,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def toString: String = "disclosureMarketable"
 
-  def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     List(
       DisclosureNamePage,
       DisclosureTypePage,

@@ -20,13 +20,14 @@ import base.SpecBase
 import forms.intermediaries.WhatTypeofIntermediaryFormProvider
 import matchers.JsonMatchers
 import models.intermediaries.WhatTypeofIntermediary
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.WhatTypeofIntermediaryPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -39,7 +40,7 @@ import scala.concurrent.Future
 
 class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val whatTypeofIntermediaryRoute = routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode).url
+  lazy val whatTypeofIntermediaryRoute = routes.WhatTypeofIntermediaryController.onPageLoad(0, NormalMode).url
 
   val formProvider = new WhatTypeofIntermediaryFormProvider()
   val form = formProvider()
@@ -79,7 +80,9 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whatTypeofIntermediaryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-known"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-known/0"
       application.stop()
     }
 

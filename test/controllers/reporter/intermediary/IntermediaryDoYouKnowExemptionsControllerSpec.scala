@@ -19,12 +19,13 @@ package controllers.reporter.intermediary
 import base.SpecBase
 import forms.reporter.intermediary.IntermediaryDoYouKnowExemptionsFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.intermediary.IntermediaryDoYouKnowExemptionsPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with Mockit
   val formProvider = new IntermediaryDoYouKnowExemptionsFormProvider()
   val form = formProvider()
 
-  lazy val intermediaryDoYouKnowExemptionsRoute = routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode).url
+  lazy val intermediaryDoYouKnowExemptionsRoute = routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(0, NormalMode).url
 
   "IntermediaryDoYouKnowExemptions Controller" - {
 
@@ -77,7 +78,9 @@ class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with Mockit
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryDoYouKnowExemptionsPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

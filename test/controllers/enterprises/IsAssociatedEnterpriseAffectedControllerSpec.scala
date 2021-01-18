@@ -19,12 +19,13 @@ package controllers.enterprises
 import base.SpecBase
 import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.IsAssociatedEnterpriseAffectedPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
   private val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
   private val form = formProvider()
 
-  lazy private val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode).url
+  lazy private val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(0, NormalMode).url
 
   "IsAssociatedEnterpriseAffected Controller" - {
 
@@ -77,7 +78,9 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsAssociatedEnterpriseAffectedPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/check-answers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/check-answers/0"
 
       application.stop()
     }

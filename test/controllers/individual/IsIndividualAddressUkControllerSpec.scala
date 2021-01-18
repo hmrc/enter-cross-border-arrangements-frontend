@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IsIndividualAddressUkPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -42,7 +43,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val isIndividualAddressUkRoute: String = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(NormalMode).url
+  lazy val isIndividualAddressUkRoute: String = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(0, NormalMode).url
 
   "IsIndividualAddressUk Controller" - {
 
@@ -79,7 +80,9 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsIndividualAddressUkPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualAddressUkPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/postcode"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/postcode/0"
 
       application.stop()
     }
@@ -152,7 +155,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/address/0"
 
       application.stop()
     }

@@ -52,8 +52,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when any 'ORGANISATION' option is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Organisation))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(0)(Some(ReporterOrganisationOrIndividual.Organisation))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Are you reporting as an organisation or individual?' page " +
@@ -61,8 +61,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when any 'INDIVIDUAL' option is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(Some(ReporterOrganisationOrIndividual.Individual))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationOrIndividualPage)(DefaultRouting(NormalMode))(0)(Some(ReporterOrganisationOrIndividual.Individual))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Which country *are you/is org* resident in for tax purposes?' page " +
@@ -70,8 +70,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when UNITED KINGDOM is selected" in {
 
         navigator
-          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(Some(Country("valid", "GB", "United Kingdom")))(0)
-          .mustBe(controllers.reporter.routes.ReporterTinUKQuestionController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(0)(Some(Country("valid", "GB", "United Kingdom")))(0)
+          .mustBe(controllers.reporter.routes.ReporterTinUKQuestionController.onPageLoad(0, NormalMode, 0))
       }
 
       "must go from 'Which country *are you/is org* resident in for tax purposes?' page " +
@@ -79,8 +79,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when UNITED KINGDOM is NOT selected" in {
 
         navigator
-          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
-          .mustBe(controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterTaxResidentCountryPage)(DefaultRouting(NormalMode))(0)(Some(Country("valid", "FR", "France")))(0)
+          .mustBe(controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(0, NormalMode, 0))
       }
 
       "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the United Kingdom?' page " +
@@ -88,8 +88,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when YES is selected" in {
 
         navigator
-          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.routes.ReporterUKTaxNumbersController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterUKTaxNumbersController.onPageLoad(0, NormalMode, 0))
       }
 
       "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the United Kingdom?' page " +
@@ -97,8 +97,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when NO is selected" in {
 
         navigator
-          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(NormalMode, 1))
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(0, NormalMode, 1))
       }
 
       "must go from 'Do you *have any/ know organisation's* tax identification numbers for *country*' page " +
@@ -106,8 +106,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when YES is selected" in {
 
         navigator
-          .routeMap(ReporterTinNonUKQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.routes.ReporterNonUKTaxNumbersController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterTinNonUKQuestionPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterNonUKTaxNumbersController.onPageLoad(0, NormalMode, 0))
       }
 
       "must go from 'Do *you have any/you know any of organisations* tax identification numbers for the *country*' page " +
@@ -115,8 +115,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when NO is selected" in {
 
         navigator
-          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(NormalMode, 1))
+          .routeMap(ReporterTinUKQuestionPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterOtherTaxResidentQuestionController.onPageLoad(0, NormalMode, 1))
       }
 
       "must go from '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
@@ -124,8 +124,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when NO is selected" in {
 
         navigator
-          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode))
+          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.RoleInArrangementController.onPageLoad(0, NormalMode))
       }
 
       "must go from '*Are you/Is organisation* resident for tax purposes in any other countries?' page " +
@@ -133,8 +133,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when YES is selected" in {
 
         navigator
-          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(0, NormalMode, 0))
       }
 
       "must go from 'What is your role in this arrangement?' page " +
@@ -142,8 +142,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when any 'INTERMEDIARY' option is selected" in {
 
         navigator
-          .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Intermediary))(0)
-          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(NormalMode))
+          .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(0)(Some(RoleInArrangement.Intermediary))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(0, NormalMode))
       }
     }
 
@@ -152,8 +152,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "when 'TAXPAYER' option is selected" in {
 
       navigator
-        .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(Some(RoleInArrangement.Taxpayer))(0)
-        .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode))
+        .routeMap(RoleInArrangementPage)(DefaultRouting(NormalMode))(0)(Some(RoleInArrangement.Taxpayer))(0)
+        .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(0, NormalMode))
     }
 
     "on REPORTER DETAILS - INTERMEDIARY JOURNEY in Normal mode" - {
@@ -166,8 +166,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           answers =>
 
             navigator
-              .routeMap(IntermediaryWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(answers))(0)
-                .mustBe(controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(NormalMode))
+              .routeMap(IntermediaryWhyReportInUKPage)(DefaultRouting(NormalMode))(0)(Some(answers))(0)
+                .mustBe(controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(0, NormalMode))
 
         }
       }
@@ -180,8 +180,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           answers =>
 
             navigator
-              .routeMap(IntermediaryRolePage)(DefaultRouting(NormalMode))(Some(answers))(0)
-                .mustBe(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(NormalMode))
+              .routeMap(IntermediaryRolePage)(DefaultRouting(NormalMode))(0)(Some(answers))(0)
+                .mustBe(controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(0, NormalMode))
 
         }
       }
@@ -191,8 +191,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.Yes))(0)
-          .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(NormalMode))
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(0)(Some(YesNoDoNotKnowRadios.Yes))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
@@ -200,8 +200,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.DoNotKnow))(0)
-          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(0)(Some(YesNoDoNotKnowRadios.DoNotKnow))(0)
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
       }
 
       "must go from 'Are you exempt from reporting in any of the EU member states?' page " +
@@ -209,8 +209,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option I DO NOT KNOW is selected" in {
 
         navigator
-          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(Some(YesNoDoNotKnowRadios.No))(0)
-          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+          .routeMap(IntermediaryExemptionInEUPage)(DefaultRouting(NormalMode))(0)(Some(YesNoDoNotKnowRadios.No))(0)
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
       }
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
@@ -218,8 +218,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(NormalMode))
+          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you know which countries you are exempt from reporting in?' page " +
@@ -227,8 +227,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+          .routeMap(IntermediaryDoYouKnowExemptionsPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
       }
 
       "must go from 'Which countries are you exempt from reporting in?' page " +
@@ -239,9 +239,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
           answers =>
 
             navigator
-              .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(Some(Seq(answers)))(0)
-                .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
-
+              .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(0)(Some(Seq(answers)))(0)
+                .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
         }
       }
     }
@@ -253,8 +252,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when 'I DO NOT KNOW' is 'NOT' selected" in {
 
         navigator
-          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.UkTaxResident))(0)
-          .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(NormalMode))
+          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(0)(Some(TaxpayerWhyReportInUK.UkTaxResident))(0)
+          .mustBe(controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Why are you required to report this arrangement in the United Kingdom?' page " +
@@ -262,8 +261,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when 'I DO NOT KNOW' is selected & its a marketable arrangement" in {
 
         navigator
-          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-          .mustBe(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(NormalMode))
+          .routeMap(TaxpayerWhyReportInUKPage)(DefaultRouting(NormalMode))(0)(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
+          .mustBe(controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode))
       }
     }
 
@@ -274,8 +273,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid name is entered" in {
 
         navigator
-          .routeMap(ReporterOrganisationNamePage)(DefaultRouting(NormalMode))(Some("name"))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationNamePage)(DefaultRouting(NormalMode))(0)(Some("name"))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Is [name]'s address in the United Kingdom' page " +
@@ -283,8 +282,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationPostcodeController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Is [name]'s address in the United Kingdom' page " +
@@ -292,8 +291,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationIsAddressUkPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is [name]'s postcode' page " +
@@ -301,8 +300,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when valid postcode is entered" in {
 
         navigator
-          .routeMap(ReporterOrganisationPostcodePage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationPostcodePage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is [name]'s address' manual address' page " +
@@ -310,8 +309,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid address is entered" in {
 
         navigator
-          .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is [name]'s address' select address' page " +
@@ -319,8 +318,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid address is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you have a contact email address at [name]' page " +
@@ -328,8 +327,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you have a contact email address at [name]' page " +
@@ -337,8 +336,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(0, NormalMode, 0))
       }
     }
 
@@ -350,8 +349,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid name is entered" in {
 
         navigator
-          .routeMap(ReporterIndividualNamePage)(DefaultRouting(NormalMode))(Some(Name("Some", "Name")))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualNamePage)(DefaultRouting(NormalMode))(0)(Some(Name("Some", "Name")))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is your date of birth?' page " +
@@ -359,8 +358,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid DOB is entered" in {
 
         navigator
-          .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(NormalMode))(Some(LocalDate.now()))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(NormalMode))(0)(Some(LocalDate.now()))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is your place of birth?' page " +
@@ -368,8 +367,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid POB is entered" in {
 
         navigator
-          .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(NormalMode))(Some("Some place in some country"))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(NormalMode))(0)(Some("Some place in some country"))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you live in the United Kingdom?' page " +
@@ -377,8 +376,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(NormalMode))
+          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualPostcodeController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you live in the United Kingdom?' page " +
@@ -386,8 +385,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(NormalMode))
+          .routeMap(ReporterIsIndividualAddressUKPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is your postcode?' page " +
@@ -395,8 +394,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when valid postcode is entered" in {
 
         navigator
-          .routeMap(ReporterIndividualPostcodePage)(DefaultRouting(NormalMode))(Some("postcode"))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualPostcodePage)(DefaultRouting(NormalMode))(0)(Some("postcode"))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualSelectAddressController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is your address?' manual address' page " +
@@ -404,8 +403,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid address is entered" in {
 
         navigator
-          .routeMap(ReporterIndividualAddressPage)(DefaultRouting(NormalMode))(Some(addressUK))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualAddressPage)(DefaultRouting(NormalMode))(0)(Some(addressUK))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'What is your address?' select address' page " +
@@ -413,8 +412,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when a valid address is selected" in {
 
         navigator
-          .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(NormalMode))(Some(addressUK))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(NormalMode))(0)(Some(addressUK))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you have a contact email address at [name]' page " +
@@ -422,8 +421,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option YES is selected" in {
 
         navigator
-          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(true))(0)
-          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(NormalMode))
+          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+          .mustBe(controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'Do you have a contact email address at [name]' page " +
@@ -431,8 +430,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "when option NO is selected" in {
 
         navigator
-          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(Some(false))(0)
-          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, 0))
+          .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+          .mustBe(controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(0, NormalMode, 0))
       }
     }
   }
@@ -443,8 +442,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterOrganisationNamePage)(DefaultRouting(CheckMode))(Some("name"))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOrganisationNamePage)(DefaultRouting(CheckMode))(0)(Some("name"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
 
@@ -452,24 +451,24 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOrganisationAddressPage)(DefaultRouting(CheckMode))(0)(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is [name]'s address' select address' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOrganisationSelectAddressPage)(DefaultRouting(CheckMode))(0)(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is the contact email for [name]' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterOrganisationEmailAddressPage)(DefaultRouting(CheckMode))(Some("email"))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOrganisationEmailAddressPage)(DefaultRouting(CheckMode))(0)(Some("email"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'Do you have a contact email address at [name]' page " +
@@ -477,8 +476,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "when option NO is selected" in {
 
       navigator
-        .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOrganisationEmailAddressQuestionPage)(DefaultRouting(CheckMode))(0)(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
   }
 
@@ -489,48 +488,48 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
 
       navigator
-        .routeMap(ReporterIndividualNamePage)(DefaultRouting(CheckMode))(Some(Name("Some", "Name")))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualNamePage)(DefaultRouting(CheckMode))(0)(Some(Name("Some", "Name")))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is your date of birth?' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(CheckMode))(Some(LocalDate.now()))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualDateOfBirthPage)(DefaultRouting(CheckMode))(0)(Some(LocalDate.now()))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is your place of birth?' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(CheckMode))(Some("Some place in some country"))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualPlaceOfBirthPage)(DefaultRouting(CheckMode))(0)(Some("Some place in some country"))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is your address?' manual address' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterIndividualAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualAddressPage)(DefaultRouting(CheckMode))(0)(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'What is your address?' select address' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(CheckMode))(Some(addressUK))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualSelectAddressPage)(DefaultRouting(CheckMode))(0)(Some(addressUK))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'Do you have a contact email address at [name]' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterIndividualEmailAddressQuestionPage)(DefaultRouting(CheckMode))(0)(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
   }
 
@@ -540,8 +539,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(CheckMode))(Some(false))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(ReporterOtherTaxResidentQuestionPage)(DefaultRouting(CheckMode))(0)(Some(false))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
   }
 
@@ -551,8 +550,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
-        .routeMap(TaxpayerWhyReportArrangementPage)(DefaultRouting(CheckMode))(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
-        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+        .routeMap(TaxpayerWhyReportArrangementPage)(DefaultRouting(CheckMode))(0)(Some(TaxpayerWhyReportInUK.DoNotKnow))(0)
+        .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
   }
 
@@ -562,8 +561,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "to 'Check your answers for your reporter details' page " in {
 
           navigator
-            .routeMap(IntermediaryRolePage)(DefaultRouting(CheckMode))(Some(Seq(IntermediaryRole.Promoter)))(0)
-            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+            .routeMap(IntermediaryRolePage)(DefaultRouting(CheckMode))(0)(Some(Seq(IntermediaryRole.Promoter)))(0)
+            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
     }
 
     "must go from 'Which countries are you exempt from reporting in?' page " +
@@ -573,8 +572,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         answers =>
 
           navigator
-            .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(CheckMode))(Some(Seq(answers)))(0)
-            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad())
+            .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(CheckMode))(0)(Some(Seq(answers)))(0)
+            .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
 
       }
     }
@@ -583,8 +582,8 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
         "to 'task list' page "  in {
 
         navigator
-          .routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)
-          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+          .routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(0)(None)(0)
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
   }
 }

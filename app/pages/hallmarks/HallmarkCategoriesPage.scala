@@ -31,13 +31,13 @@ case object HallmarkCategoriesPage extends QuestionPage[Set[HallmarkCategories]]
 
   override def toString: String = "hallmarkCategories"
 
-  def cleanup(value: Option[Set[HallmarkCategories]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[Set[HallmarkCategories]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     value match {
       case Some(selected) =>
        val unselectedHallmarks = HallmarkCategories.values.filterNot(selected)
 
-        super.cleanup(value, cleanupPages(unselectedHallmarks, userAnswers, id))
-      case _ => super.cleanup(value, userAnswers)
+        super.cleanup(value, cleanupPages(unselectedHallmarks, userAnswers, id), id)
+      case _ => super.cleanup(value, userAnswers, id)
     }
   }
 

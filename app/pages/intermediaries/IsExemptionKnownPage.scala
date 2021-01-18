@@ -29,11 +29,11 @@ case object IsExemptionKnownPage extends QuestionPage[IsExemptionKnown] {
 
   override def toString: String = "isExemptionKnown"
 
-  def cleanup(value: Option[IsExemptionKnown], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[IsExemptionKnown], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear following answers
     value match {
       case Some(No | Unknown) => userAnswers.remove(IsExemptionCountryKnownPage, id).flatMap(_.remove(ExemptCountriesPage, id))
-      case _ => super.cleanup(value, userAnswers)
+      case _ => super.cleanup(value, userAnswers, id)
     }
   }
 }

@@ -17,12 +17,13 @@
 package controllers.individual
 
 import base.SpecBase
-import models.{Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.individual.IndividualLoopPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -52,7 +53,7 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -78,7 +79,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country rows for UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryUK),
           doYouKnowTIN = Some(false),
           taxNumbersNonUK = None,
@@ -97,7 +99,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country rows with UTR for UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryUK),
           doYouKnowTIN = Some(false),
           taxNumbersNonUK = None,
@@ -117,7 +120,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country rows with multiple UTRs for UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryUK),
           doYouKnowTIN = Some(false),
           taxNumbersNonUK = None,
@@ -137,7 +141,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country row for non UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryNonUK),
           doYouKnowTIN = Some(false),
           taxNumbersNonUK = None,
@@ -156,7 +161,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country rows with TIN for non UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryNonUK),
           doYouKnowTIN = Some(true),
           taxNumbersNonUK = Some(taxReferenceNumberSingle),
@@ -176,7 +182,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country rows with multiple TINs for non UK, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryNonUK),
           doYouKnowTIN = Some(true),
           taxNumbersNonUK = Some(taxReferenceNumberMultiple),
@@ -196,7 +203,8 @@ class IndividualCheckYourAnswersController_TaxResidencySpec extends SpecBase wit
     "must return country combination rows" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualLoopPage, IndexedSeq(
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(
           LoopDetails(taxResidentOtherCountries = Some(false),
           whichCountry = Some(countryUK),
           doYouKnowTIN = Some(false),

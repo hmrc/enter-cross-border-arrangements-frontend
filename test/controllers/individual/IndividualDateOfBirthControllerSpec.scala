@@ -17,17 +17,17 @@
 package controllers.individual
 
 import java.time.LocalDate
-
 import base.SpecBase
 import forms.individual.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IndividualDateOfBirthPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -53,9 +53,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
       "value.year"  -> validAnswer.getYear.toString
     )
 
-  lazy val individualDateOfBirthRoute = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(NormalMode).url
-
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
+  lazy val individualDateOfBirthRoute = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(0, NormalMode).url
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, individualDateOfBirthRoute)
@@ -104,7 +102,9 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualDateOfBirthPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualDateOfBirthPage, 0, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -148,7 +148,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-birthplace"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-birthplace/0"
 
       application.stop()
     }

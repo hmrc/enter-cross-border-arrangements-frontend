@@ -32,7 +32,7 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
   override def toString: String = "updateTaxpayer"
 
   //TODO - refactor below method.
-  def cleanup(value: Option[UpdateTaxpayer], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[UpdateTaxpayer], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     value match {
       case Some(_) =>
         userAnswers.remove(TaxpayerSelectTypePage, id)
@@ -70,7 +70,8 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
           .flatMap(_.remove(OrganisationLoopPage, id))
           .flatMap(_.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id))
-      case None => super.cleanup(value, userAnswers)
+
+      case None => super.cleanup(value, userAnswers, id)
     }
   }
 }

@@ -44,7 +44,7 @@ final case class UserAnswers(
     updatedData.flatMap {
       d =>
         val updatedAnswers = copy (data = d)
-        page.cleanup(Some(value), updatedAnswers)
+        page.cleanupBase(Some(value), updatedAnswers)
     }
   }
 
@@ -60,7 +60,7 @@ final case class UserAnswers(
     updatedData.flatMap {
       d =>
         val updatedAnswers = copy (data = d)
-        page.cleanup(None, updatedAnswers)
+        page.cleanupBase(None, updatedAnswers)
     }
   }
 

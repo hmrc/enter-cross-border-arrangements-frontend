@@ -19,13 +19,14 @@ package controllers.taxpayer
 import base.SpecBase
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, SelectType, UserAnswers}
+import models.{NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxpayer.TaxpayerSelectTypePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -41,7 +42,7 @@ class TaxpayerSelectTypeControllerSpec extends SpecBase with MockitoSugar with N
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(NormalMode).url
+  lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url
 
   val formProvider = new TaxpayerSelectTypeFormProvider()
   val form = formProvider()
@@ -81,7 +82,9 @@ class TaxpayerSelectTypeControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerSelectTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, selectTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

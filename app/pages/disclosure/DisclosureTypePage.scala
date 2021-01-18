@@ -29,13 +29,13 @@ case object DisclosureTypePage extends DetailsPage[DisclosureType, DisclosureDet
 
   override def toString: String = "disclosureType"
 
-  def cleanup(value: Option[DisclosureType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+  override def cleanup(value: Option[DisclosureType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(DisclosureType.Dac6new) =>
         userAnswers.remove(DisclosureIdentifyArrangementPage, id)
       case Some(DisclosureType.Dac6add) =>
         userAnswers.remove(DisclosureMarketablePage, id)
-      case None =>     super.cleanup(value, userAnswers)
+      case None =>     super.cleanup(value, userAnswers, id)
     }
 
   override def getFromModel(model: DisclosureDetails): DisclosureType = model.disclosureType

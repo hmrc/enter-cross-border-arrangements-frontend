@@ -20,12 +20,13 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -49,7 +50,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
 
-  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForUKIndividualRoute: String = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(0, NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKIndividual Controller" - {
 
@@ -58,7 +59,9 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, Name("First", "Last")).success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualNamePage, 0, Name("First", "Last")).success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForUKIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,8 +93,9 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
       val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatAreTheTaxNumbersForUKIndividualPage, taxReferenceNumbers).success.value
-        .set(IndividualLoopPage, IndexedSeq(
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatAreTheTaxNumbersForUKIndividualPage, 0, taxReferenceNumbers).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(
           LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
         )
         .success
@@ -148,7 +152,7 @@ class WhatAreTheTaxNumbersForUKIndividualControllerSpec extends SpecBase with Mo
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1/0"
 
       application.stop()
     }

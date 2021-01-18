@@ -56,7 +56,7 @@ class AuthenticatedIdentifierAction @Inject()(
           } yield enrolmentIdentifier.value)
             .getOrElse(throw new Exception("EnrolmentID Required for DAC6"))
         }
-        println(s"-----InternalID: $internalID")
+
         block(IdentifierRequest(request, internalID, enrolmentID))
       case None ~ _ => throw new UnauthorizedException("Unable to retrieve internal Id")
     } recover {

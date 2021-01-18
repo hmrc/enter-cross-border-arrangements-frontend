@@ -113,8 +113,8 @@ object JourneyHelpers {
   }
 
   def currentIndexInsideLoop(request: Request[AnyContent]): Int = {
-    val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
-    val uriPattern(_, index) = request.uri
+    val uriPattern = "([A-Za-z/-]+)([0-9]+)/([0-9]+)".r
+    val uriPattern(_, index, _) = request.uri
     index.toInt
   }
 

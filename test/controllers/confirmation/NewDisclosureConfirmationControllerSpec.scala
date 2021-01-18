@@ -38,7 +38,7 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

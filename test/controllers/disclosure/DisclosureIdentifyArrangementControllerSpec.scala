@@ -20,12 +20,13 @@ import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, UserAnswers}
+import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.DisclosureIdentifyArrangementPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -50,7 +51,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
   val formProvider = new DisclosureIdentifyArrangementFormProvider()
   val form: Form[String] = formProvider(countriesSeq, mockCrossBorderArrangementsConnector)
 
-  lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode).url
+  lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(0, NormalMode).url
 
   "DisclosureIdentifyArrangement Controller" - {
 
@@ -87,7 +88,9 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
         .thenReturn(Future.successful(Html("")))
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
-      val userAnswers = UserAnswers(userAnswersId).set(DisclosureIdentifyArrangementPage, validArrangementID).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureIdentifyArrangementPage, 0, validArrangementID).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
@@ -138,7 +141,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/check-your-answers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/check-your-answers/0"
 
       application.stop()
     }

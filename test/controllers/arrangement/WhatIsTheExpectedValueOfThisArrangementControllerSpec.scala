@@ -20,13 +20,14 @@ import base.SpecBase
 import forms.arrangement.WhatIsTheExpectedValueOfThisArrangementFormProvider
 import matchers.JsonMatchers
 import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
-import models.{Currency, NormalMode, UserAnswers}
+import models.{Currency, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.WhatIsTheExpectedValueOfThisArrangementPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -48,7 +49,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
 
   val form = formProvider(Seq( Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)")))
 
-  lazy val whatIsTheExpectedValueOfThisArrangementRoute = routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode).url
+  lazy val whatIsTheExpectedValueOfThisArrangementRoute = routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(0, NormalMode).url
 
 
   "WhatIsTheExpectedValueOfThisArrangement Controller" - {
@@ -87,7 +88,8 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
 
       when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatIsTheExpectedValueOfThisArrangementPage,
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage,0,
           WhatIsTheExpectedValueOfThisArrangement("ALL", 0))
         .success.value
 

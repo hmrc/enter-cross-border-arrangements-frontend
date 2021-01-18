@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.EmailAddressQuestionForOrganisationPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,8 +42,8 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
   val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val contactEmailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode).url
-  lazy val contactEmailAddressForOrganisationCheckModeRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url
+  lazy val contactEmailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, NormalMode).url
+  lazy val contactEmailAddressForOrganisationCheckModeRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, CheckMode).url
 
   "ContactEmailAddressForOrganisation Controller" - {
 
@@ -79,7 +80,9 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressQuestionForOrganisationPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(EmailAddressQuestionForOrganisationPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Mo
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/what-is-email-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/what-is-email-address/0"
 
       application.stop()
     }

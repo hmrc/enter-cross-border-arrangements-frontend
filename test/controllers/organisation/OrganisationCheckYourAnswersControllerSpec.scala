@@ -18,12 +18,13 @@ package controllers.organisation
 
 import base.SpecBase
 import controllers.RowJsonReads
-import models.{Address, Country, UserAnswers}
+import models.{Address, Country, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.organisation._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val checkYourAnswersOrganisationRoute: String = controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url
+  lazy val checkYourAnswersOrganisationRoute: String = controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0).url
 
   val address: Address = Address(
     addressLine1 = Some("value 1")
@@ -63,7 +64,7 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -94,13 +95,13 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
   def assertName(row: Row): Unit = {
     row.key.text mustBe Some(Literal("What is the name of the organisation?"))
     row.value.text mustBe Some(Literal("Organisation"))
-    assertAction("/enter-cross-border-arrangements/organisation/change-name")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/organisation/change-name/0")(row.actions.head)
   }
 
   def assertAddressKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-do-you-know-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/organisation/change-do-you-know-address/0")(row.actions.head)
   }
 
   def assertAddress(address: Address)(row: Row): Unit = {
@@ -116,19 +117,19 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
                |        United Kingdom
                |     """.stripMargin)
     }
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-main-address-in-uk")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/organisation/change-main-address-in-uk/0")(row.actions.head)
   }
 
   def assertEmailKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their email address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-email-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/organisation/change-email-address/0")(row.actions.head)
   }
 
   def assertEmail(email: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Email address"))
     row.value.text mustBe Some(Literal(email))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-what-is-email-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/organisation/change-what-is-email-address/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -136,7 +137,8 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
     "must return name row" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, name)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(OrganisationNamePage, 0, name)
         .success.value
       verifyList(userAnswers) { list =>
         assertName(list.head)
@@ -149,9 +151,10 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
     "must return address rows, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IsOrganisationAddressKnownPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsOrganisationAddressKnownPage, 0, true)
         .success.value
-        .set(OrganisationAddressPage, address)
+        .set(OrganisationAddressPage, 0, address)
         .success.value
       verifyList(userAnswers) { list =>
         assertAddressKnown(yesOrNo = true)(list.head)
@@ -164,9 +167,10 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
     "must return e-mail rows, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(EmailAddressQuestionForOrganisationPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(EmailAddressQuestionForOrganisationPage, 0, true)
         .success.value
-        .set(EmailAddressForOrganisationPage, "email@email.org")
+        .set(EmailAddressForOrganisationPage, 0, "email@email.org")
         .success.value
       verifyList(userAnswers) { list =>
         assertAddressKnown(yesOrNo = false)(list.head)

@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.EmailAddressForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.EmailAddressForOrganisationPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,7 +42,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
   val formProvider = new EmailAddressForOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val emailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode).url
+  lazy val emailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, NormalMode).url
 
   "EmailAddressForOrganisation Controller" - {
 
@@ -77,7 +78,9 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressForOrganisationPage, "email@email.com").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(EmailAddressForOrganisationPage, 0, "email@email.com").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, emailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -123,7 +126,7 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSug
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/which-country-tax-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/which-country-tax-0/0"
 
       application.stop()
     }

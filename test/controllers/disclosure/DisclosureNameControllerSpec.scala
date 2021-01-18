@@ -19,12 +19,13 @@ package controllers.disclosure
 import base.SpecBase
 import forms.disclosure.DisclosureNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.DisclosureNamePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new DisclosureNameFormProvider()
   val form = formProvider()
 
-  lazy val disclosureNameRoute = routes.DisclosureNameController.onPageLoad(NormalMode).url
+  lazy val disclosureNameRoute = routes.DisclosureNameController.onPageLoad(0, NormalMode).url
 
   "DisclosureName Controller" - {
 
@@ -76,7 +77,9 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(DisclosureNamePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureNamePage, 0, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

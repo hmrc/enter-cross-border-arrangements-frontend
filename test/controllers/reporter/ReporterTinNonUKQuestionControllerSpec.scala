@@ -19,13 +19,14 @@ package controllers.reporter
 import base.SpecBase
 import forms.reporter.ReporterTinNonUKQuestionFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.{ReporterTaxResidencyLoopPage, ReporterTinNonUKQuestionPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,7 +40,7 @@ import scala.concurrent.Future
 
 class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/non-uk-tax-numbers-0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/non-uk-tax-numbers-0/0")
 
   val formProvider = new ReporterTinNonUKQuestionFormProvider()
   val form = formProvider("the country")
@@ -48,7 +49,7 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
   val index: Int = 0
 
 
-  lazy val reporterTinNonUKQuestionRoute = controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(NormalMode, index).url
+  lazy val reporterTinNonUKQuestionRoute = controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(0, NormalMode, index).url
 
   "ReporterTinNonUKQuestion Controller" - {
 
@@ -86,10 +87,11 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockitoSugar 
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterTinNonUKQuestionPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterTinNonUKQuestionPage, 0, true)
         .success
         .value
-        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, selectedCountry, Some(true), None, None, None)))
+        .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, selectedCountry, Some(true), None, None, None)))
         .success
         .value
 

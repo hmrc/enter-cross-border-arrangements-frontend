@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualDateOfBirthKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IsIndividualDateOfBirthKnownPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with MockitoSu
   private val formProvider = new IsIndividualDateOfBirthKnownFormProvider()
   private val form = formProvider()
 
-  lazy private val isIndividualDateOfBirthKnownRoute = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(NormalMode).url
+  lazy private val isIndividualDateOfBirthKnownRoute = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(0, NormalMode).url
 
   "IsIndividualDateOfBirthKnown Controller" - {
 
@@ -77,7 +78,9 @@ class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with MockitoSu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsIndividualDateOfBirthKnownPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualDateOfBirthKnownPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isIndividualDateOfBirthKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/date-of-birth"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/date-of-birth/0"
 
       application.stop()
     }
@@ -150,7 +153,7 @@ class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-birthplace"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-birthplace/0"
 
       application.stop()
     }

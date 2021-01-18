@@ -18,12 +18,13 @@ package controllers.hallmarks
 
 import base.SpecBase
 import models.hallmarks.HallmarkCategories
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.hallmarks.HallmarkCategoriesPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,9 +40,11 @@ class MainBenefitProblemControllerSpec extends SpecBase with MockitoSugar {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(HallmarkCategoriesPage, HallmarkCategories.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkCategoriesPage, 0, HallmarkCategories.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value
@@ -58,11 +61,11 @@ class MainBenefitProblemControllerSpec extends SpecBase with MockitoSugar {
     "redirect to Hallmarks Category page if hallmark category is empty" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.MainBenefitProblemController.onPageLoad(0).url)
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.HallmarkCategoriesController.onPageLoad(NormalMode).url
+      redirectLocation(result).value mustEqual routes.HallmarkCategoriesController.onPageLoad(0, NormalMode).url
 
       application.stop()
     }

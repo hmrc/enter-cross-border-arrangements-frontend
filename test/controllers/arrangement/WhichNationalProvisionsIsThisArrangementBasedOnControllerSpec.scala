@@ -19,13 +19,14 @@ package controllers.arrangement
 import base.SpecBase
 import forms.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.arrangement.WhichNationalProvisionsIsThisArrangementBasedOnPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +45,7 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
   val formProvider = new WhichNationalProvisionsIsThisArrangementBasedOnFormProvider()
   val form = formProvider()
 
-  lazy val whichNationalProvisionsIsThisArrangementBasedOnRoute = routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode).url
+  lazy val whichNationalProvisionsIsThisArrangementBasedOnRoute = routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(0, NormalMode).url
 
   "WhichNationalProvisionsIsThisArrangementBasedOn Controller" - {
 
@@ -80,7 +81,9 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhichNationalProvisionsIsThisArrangementBasedOnPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whichNationalProvisionsIsThisArrangementBasedOnRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

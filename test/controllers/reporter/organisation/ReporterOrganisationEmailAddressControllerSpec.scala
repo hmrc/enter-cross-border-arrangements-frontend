@@ -19,13 +19,14 @@ package controllers.reporter.organisation
 import base.SpecBase
 import forms.reporter.ReporterEmailAddressFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.organisation.ReporterOrganisationEmailAddressPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,12 +40,12 @@ import scala.concurrent.Future
 
 class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-tax-country-0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/resident-tax-country-0/0")
 
   val formProvider = new ReporterEmailAddressFormProvider()
   val form = formProvider()
 
-  lazy val reporterEmailAddressRoute = routes.ReporterOrganisationEmailAddressController.onPageLoad(NormalMode).url
+  lazy val reporterEmailAddressRoute = routes.ReporterOrganisationEmailAddressController.onPageLoad(0, NormalMode).url
 
   "ReporterEmailAddress Controller" - {
 
@@ -80,7 +81,9 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationEmailAddressPage, "email@address.com").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationEmailAddressPage, 0, "email@address.com").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterEmailAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

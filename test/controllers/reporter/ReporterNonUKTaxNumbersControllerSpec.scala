@@ -19,13 +19,14 @@ package controllers.reporter
 import base.SpecBase
 import forms.reporter.ReporterNonUKTaxNumbersFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterTaxResidencyLoopPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,7 +40,7 @@ import scala.concurrent.Future
 
 class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/tax-resident-countries-1")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/tax-resident-countries-1/0")
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
   val form = formProvider()
@@ -49,7 +50,7 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
   val selectedCountry: Country = Country("valid", "FR", "France")
 
-  lazy val reporterNonUKTaxNumbersRoute = routes.ReporterNonUKTaxNumbersController.onPageLoad(NormalMode, index).url
+  lazy val reporterNonUKTaxNumbersRoute = routes.ReporterNonUKTaxNumbersController.onPageLoad(0, NormalMode, index).url
 
   "ReporterNonUKTaxNumbers Controller" - {
 
@@ -86,9 +87,10 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterNonUKTaxNumbersPage, taxReferenceNumbers)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterNonUKTaxNumbersPage, 0, taxReferenceNumbers)
         .success.value
-        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
+        .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

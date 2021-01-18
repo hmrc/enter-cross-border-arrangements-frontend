@@ -19,10 +19,11 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.JourneyHelpers._
-import models.{CheckMode, Country, Currency, LoopDetails, Name, UserAnswers}
+import models.{CheckMode, Country, Currency, LoopDetails, Name, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.individual.IndividualNamePage
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -35,11 +36,12 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
     "getIndividualName" - {
       "must return the individuals name if it's available" in {
             val userAnswers = UserAnswers(userAnswersId)
-              .set(IndividualNamePage, Name("firstName", "lastName"))
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+              .set(IndividualNamePage, 0, Name("firstName", "lastName"))
                 .success
                 .value
 
-            getIndividualName(userAnswers) mustBe ("firstName lastName")
+            getIndividualName(userAnswers, 0) mustBe ("firstName lastName")
         }
     }
 
@@ -48,16 +50,17 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         forAll(validOrganisationName) {
           orgName =>
             val userAnswers = UserAnswers(userAnswersId)
-              .set(OrganisationNamePage, orgName)
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+              .set(OrganisationNamePage, 0, orgName)
               .success
               .value
 
-            getOrganisationName(userAnswers) mustBe orgName
+            getOrganisationName(userAnswers, 0) mustBe orgName
         }
       }
 
       "must return 'the organisation' if organisation name isn't available" in {
-        getOrganisationName(emptyUserAnswers) mustBe "the organisation"
+        getOrganisationName(emptyUserAnswers, 0) mustBe "the organisation"
       }
     }
 
@@ -100,11 +103,12 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(OrganisationLoopPage, organisationLoopDetails)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationLoopPage, 0, organisationLoopDetails)
           .success
           .value
 
-        incrementIndexOrganisation(userAnswers, request) mustBe 1
+        incrementIndexOrganisation(userAnswers, 0, request) mustBe 1
       }
 
       "must add 1 to index from uri if users go through the loop more than once" in {
@@ -113,23 +117,24 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/1")
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(OrganisationLoopPage, organisationLoopDetails)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationLoopPage, 0, organisationLoopDetails)
           .success
           .value
 
-        incrementIndexOrganisation(userAnswers, request) mustBe 2
+        incrementIndexOrganisation(userAnswers, 0, request) mustBe 2
       }
 
       "must return 0 if it's the first iteration in the loop" in {
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
 
-        incrementIndexOrganisation(emptyUserAnswers, request) mustBe 0
+        incrementIndexOrganisation(emptyUserAnswers, 0, request) mustBe 0
       }
     }
 
     "currentIndexInsideLoop" - {
       "must return the current index in the URI" in {
-        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/3")
+        val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/3/0")
 
         currentIndexInsideLoop(request) mustBe 3
       }
@@ -138,22 +143,24 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
     "calling hasValueChanged" - {
       "must return true if mode is CheckMode and user answer has changed" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(OrganisationNamePage, "Organisation")
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationNamePage, 0, "Organisation")
           .success
           .value
 
-        val result = hasValueChanged("new Organisation", OrganisationNamePage, CheckMode, userAnswers)
+        val result = hasValueChanged("new Organisation", 0, OrganisationNamePage, CheckMode, userAnswers)
 
         result mustBe true
       }
 
       "must return false if user answer has not changed (NormalMode or CheckMode)" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(OrganisationNamePage, "Organisation")
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationNamePage, 0, "Organisation")
           .success
           .value
 
-        val result = hasValueChanged("Organisation", OrganisationNamePage, CheckMode, userAnswers)
+        val result = hasValueChanged("Organisation", 0, OrganisationNamePage, CheckMode, userAnswers)
 
         result mustBe false
       }

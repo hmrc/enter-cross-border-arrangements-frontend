@@ -37,7 +37,7 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

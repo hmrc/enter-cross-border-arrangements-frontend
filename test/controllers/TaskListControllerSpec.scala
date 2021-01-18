@@ -47,7 +47,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
   "TaskListController" - {
     "must redirect to confirmation page when user submits a completed application" in {
 
-      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
       bind[XMLGenerationService].toInstance(mockXMLGenerationService),
       bind[ValidationConnector].toInstance(mockValidationConnector),
@@ -64,7 +64,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
 
-      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
+      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit(0).url)
 
       val result = route(application, postRequest).value
 
@@ -92,7 +92,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
 
-      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit.url)
+      val postRequest = FakeRequest(POST, routes.TaskListController.onSubmit(0).url)
 
       val result = route(application, postRequest).value
 

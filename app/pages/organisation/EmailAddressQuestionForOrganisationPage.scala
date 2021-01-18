@@ -28,9 +28,9 @@ case object EmailAddressQuestionForOrganisationPage extends QuestionPage[Boolean
 
   override def toString: String = "emailAddressQuestionForOrganisation"
 
-  def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(false) => userAnswers.remove(EmailAddressForOrganisationPage, id)
-      case _ =>  super.cleanup(value, userAnswers)
+      case _ =>  super.cleanup(value, userAnswers, id)
     }
 }

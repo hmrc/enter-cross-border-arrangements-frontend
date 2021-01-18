@@ -20,13 +20,14 @@ import base.SpecBase
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.individual.{ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,8 +45,8 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val reporterIndividualSelectAddressRoute = routes.ReporterIndividualSelectAddressController.onPageLoad(NormalMode).url
-  lazy val manualAddressURL = routes.ReporterIndividualAddressController.onPageLoad(NormalMode).url
+  lazy val reporterIndividualSelectAddressRoute = routes.ReporterIndividualSelectAddressController.onPageLoad(0, NormalMode).url
+  lazy val manualAddressURL = routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode).url
 
   val formProvider = new SelectAddressFormProvider()
   val form = formProvider()
@@ -76,7 +77,8 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
     "must return OK and the correct view for a GET" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterIndividualPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -110,9 +112,10 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterIndividualSelectAddressPage, selectedAddress)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualSelectAddressPage, 0, selectedAddress)
         .success.value
-        .set(ReporterIndividualPostcodePage, "ZZ1 1ZZ")
+        .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
         .success.value
 
 
@@ -153,7 +156,8 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterIndividualPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
         .success.value
 
       val application =
@@ -173,7 +177,7 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/email-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/email-address/0"
 
       application.stop()
     }
@@ -181,7 +185,8 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Mockit
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterIndividualPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))

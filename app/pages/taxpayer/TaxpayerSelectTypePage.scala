@@ -30,7 +30,7 @@ case object TaxpayerSelectTypePage extends QuestionPage[SelectType] {
 
   override def toString: String = "selectType"
 
-  def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
     value match {
       case Some(SelectType.Organisation) =>
@@ -69,7 +69,7 @@ case object TaxpayerSelectTypePage extends QuestionPage[SelectType] {
           .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage, id))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
           .flatMap(_.remove(OrganisationLoopPage, id))
-      case None => super.cleanup(value, userAnswers)
+      case None => super.cleanup(value, userAnswers, id)
     }
   }
 }

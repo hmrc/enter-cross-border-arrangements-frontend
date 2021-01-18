@@ -39,7 +39,7 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
 
       val unsubmittedDisclosures = Seq(UnsubmittedDisclosure("1", "My First Disclosure"), UnsubmittedDisclosure("2", "The Revenge"))
 
-      val userAnswers = UserAnswers(userAnswersId).set(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+      val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -60,18 +60,18 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(0, NormalMode).url
     }
 
     "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
       val unsubmittedDisclosures = Seq.empty[UnsubmittedDisclosure]
-      val userAnswers = UserAnswers(userAnswersId).set(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+      val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(0, NormalMode).url
     }
   }
 }

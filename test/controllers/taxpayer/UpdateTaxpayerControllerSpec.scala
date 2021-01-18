@@ -20,12 +20,13 @@ import base.SpecBase
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import matchers.JsonMatchers
 import models.taxpayer.UpdateTaxpayer
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxpayer.UpdateTaxpayerPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -38,7 +39,7 @@ import scala.concurrent.Future
 
 class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad().url
+  lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 
   val formProvider = new UpdateTaxpayerFormProvider()
   val form = formProvider()
@@ -78,7 +79,9 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(UpdateTaxpayerPage, UpdateTaxpayer.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(UpdateTaxpayerPage, 0, UpdateTaxpayer.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, updateTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

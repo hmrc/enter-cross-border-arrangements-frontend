@@ -34,7 +34,7 @@ class UnsubmittedIndexSpec extends SpecBase with MockitoSugar {
         .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
 
       val index = UnsubmittedIndex.fromQuestionPage(SelectTypePage, 0)
-      index mustBe UnsubmittedIndex(JsPath \ "1-selectType", SelectTypePage)
+      index mustBe UnsubmittedIndex(JsPath \ "1-selectType", 0, SelectTypePage)
     }
 
     "must not construct from an index when useranswers doesn't have that index" in {

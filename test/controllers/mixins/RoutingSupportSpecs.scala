@@ -16,11 +16,12 @@
 
 package controllers.mixins
 
-import models.{CheckMode, NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.{FreeSpec, MustMatchers, TryValues}
 import pages.enterprises.AssociatedEnterpriseTypePage
 import pages.intermediaries.IntermediariesTypePage
 import pages.taxpayer.TaxpayerSelectTypePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
 
@@ -33,11 +34,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(AssociatedEnterpriseTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe AssociatedEnterprisesRouting(NormalMode)
+        toCheckRoute(NormalMode, userAnswers, 0) mustBe AssociatedEnterprisesRouting(NormalMode)
       }
     }
 
@@ -46,11 +48,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(TaxpayerSelectTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(TaxpayerSelectTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe TaxpayersRouting(NormalMode)
+        toCheckRoute(NormalMode, userAnswers, 0) mustBe TaxpayersRouting(NormalMode)
       }
     }
 
@@ -59,11 +62,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(IntermediariesTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(IntermediariesTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(NormalMode, userAnswers) mustBe IntermediariesRouting(NormalMode)
+        toCheckRoute(NormalMode, userAnswers, 0) mustBe IntermediariesRouting(NormalMode)
       }
     }
 
@@ -72,11 +76,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(AssociatedEnterpriseTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe AssociatedEnterprisesRouting(CheckMode)
+        toCheckRoute(CheckMode, userAnswers,0) mustBe AssociatedEnterprisesRouting(CheckMode)
       }
     }
 
@@ -85,11 +90,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(TaxpayerSelectTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(TaxpayerSelectTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe TaxpayersRouting(CheckMode)
+        toCheckRoute(CheckMode, userAnswers, 0) mustBe TaxpayersRouting(CheckMode)
       }
     }
 
@@ -98,11 +104,12 @@ class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(IntermediariesTypePage, SelectType.values.head)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(IntermediariesTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers) mustBe IntermediariesRouting(CheckMode)
+        toCheckRoute(CheckMode, userAnswers, 0) mustBe IntermediariesRouting(CheckMode)
       }
     }
 
