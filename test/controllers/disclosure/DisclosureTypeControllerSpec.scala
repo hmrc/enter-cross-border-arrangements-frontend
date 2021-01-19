@@ -36,6 +36,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
+import connectors.HistoryConnector
+
 
 class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
@@ -44,6 +46,8 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new DisclosureTypeFormProvider()
   val form = formProvider()
 
+  val mockConnector = mock[HistoryConnector]
+
   "DisclosureType Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -51,7 +55,12 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[HistoryConnector].toInstance(mockConnector))
+        .build()
+
       val request = FakeRequest(GET, disclosureTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -79,10 +88,12 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureTypePage, DisclosureType.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
+
+      val userAnswers = UserAnswers(userAnswersId).set(DisclosureTypePage, DisclosureType.values.head).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[HistoryConnector].toInstance(mockConnector))
+            .build()
       val request = FakeRequest(GET, disclosureTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -113,10 +124,13 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
+
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[HistoryConnector].toInstance(mockConnector)
           )
           .build()
 
@@ -136,7 +150,11 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+                  .overrides(bind[HistoryConnector].toInstance(mockConnector))
+                  .build()
       val request = FakeRequest(POST, disclosureTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
