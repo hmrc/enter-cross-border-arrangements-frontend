@@ -25,6 +25,7 @@ import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangem
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
@@ -109,7 +110,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] = userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
         val nodeBuffer = new xml.NodeBuffer
@@ -133,9 +134,11 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
-    <RelevantTaxPayers>
-      {buildTaxPayerIsAReporter(userAnswers)}
-      {relevantTaxPayersNode}
-    </RelevantTaxPayers>
+    Try {
+      <RelevantTaxPayers>
+        {buildTaxPayerIsAReporter(userAnswers)}
+        {relevantTaxPayersNode}
+      </RelevantTaxPayers>
+    }.toEither
   }
 }
