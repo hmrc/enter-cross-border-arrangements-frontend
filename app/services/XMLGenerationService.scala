@@ -24,7 +24,7 @@ import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, Disclosur
 import play.api.mvc.AnyContent
 
 import javax.inject.Inject
-import scala.xml.Elem
+import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
 
@@ -65,10 +65,10 @@ class XMLGenerationService @Inject()() {
       {buildHeader(userAnswers)}
       <DAC6Disclosures>
         {buildDisclosureImportInstruction(userAnswers)}
-        {DisclosingXMLSection.toXml(userAnswers)}
+        {DisclosingXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers)}
-        {RelevantTaxPayersXMLSection.toXml(userAnswers)}
-        {DisclosureInformationXMLSection.toXml(userAnswers)}
+        {RelevantTaxPayersXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {DisclosureInformationXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>
   }

@@ -23,6 +23,7 @@ import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReport
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosingXMLSection extends XMLBuilder {
@@ -69,11 +70,13 @@ object DisclosingXMLSection extends XMLBuilder {
       buildLiability(userAnswers)
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //TODO Need to check here if reporter is an individual or organisation then return correct section
 
-    <Disclosing>
-      {buildDiscloseDetailsForOrganisation(userAnswers)}
-    </Disclosing>
+    Try {
+      <Disclosing>
+        {buildDiscloseDetailsForOrganisation(userAnswers)}
+      </Disclosing>
+    }.toEither
   }
 }

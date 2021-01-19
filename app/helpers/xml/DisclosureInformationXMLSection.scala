@@ -23,6 +23,7 @@ import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
@@ -142,17 +143,19 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    <DisclosureInformation>
-      {buildImplementingDate(userAnswers)}
-      {buildReason(userAnswers)}
-      {buildDisclosureInformationSummary(userAnswers)}
-      {buildNationalProvision(userAnswers)}
-      {buildAmountType(userAnswers)}
-      {buildConcernedMS(userAnswers)}
-      <MainBenefitTest1>false</MainBenefitTest1>
-      {buildHallmarks(userAnswers)}
-    </DisclosureInformation>
+    Try {
+      <DisclosureInformation>
+        {buildImplementingDate(userAnswers)}
+        {buildReason(userAnswers)}
+        {buildDisclosureInformationSummary(userAnswers)}
+        {buildNationalProvision(userAnswers)}
+        {buildAmountType(userAnswers)}
+        {buildConcernedMS(userAnswers)}
+        <MainBenefitTest1>false</MainBenefitTest1>
+        {buildHallmarks(userAnswers)}
+      </DisclosureInformation>
+    }.toEither
   }
 }
