@@ -21,7 +21,7 @@ import controllers.mixins.{AssociatedEnterprisesRouting, CheckRoute, DefaultRout
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{CheckMode, SelectType}
 import pages.Page
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises._
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -52,6 +52,9 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
 
     case IsAssociatedEnterpriseAffectedPage =>
       _ => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
+
+    case AssociatedEnterpriseCheckYourAnswersPage =>
+      checkRoute => _ => _ => routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(checkRoute.mode)
   }
 
   override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>

@@ -17,28 +17,35 @@
 package controllers.enterprises
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
+import models.enterprises.AssociatedEnterprise
+
 import javax.inject.Inject
-import models.SelectType
-import pages.enterprises.AssociatedEnterpriseTypePage
+import models.{Mode, SelectType}
+import navigation.NavigatorForEnterprises
+import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
+    navigator: NavigatorForEnterprises,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    sessionRepository: SessionRepository,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -69,11 +76,34 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
 
       val json = Json.obj(
+        "mode" -> mode,
         "summaryRows" -> summaryRows,
         "countrySummary" -> countrySummary,
         "isEnterpriseAffected" -> isEnterpriseAffected
       )
 
       renderer.render("enterprises/associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
+  }
+
+  def redirect(checkRoute: CheckRoute): Call =
+    navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(None)(0)
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+        case Some(list) => // append to existing list
+          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers)
+        case None => // start new list
+          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers))
+      }
+
+      for {
+        userAnswersWithEnterpriseLoop <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseLoopPage, enterpriseLoopList))
+        _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
+        checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
+      } yield {
+        Redirect(redirect(checkRoute))
+      }
   }
 }

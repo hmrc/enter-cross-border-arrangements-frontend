@@ -23,26 +23,32 @@
           {{ messages("associatedEnterpriseCheckYourAnswers.heading") }}
         </h1>
 
-         {{ govukSummaryList({
-           rows: summaryRows
-         }) }}
+        <form action="{{ routes.controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(mode).url }}" method="post">
 
-         {{ govukSummaryList({
-           classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
-           rows: countrySummary
-         }) }}
+          {{ csrf() | safe }}
 
-         <hr>
+          {{ govukSummaryList({
+            rows: summaryRows
+          }) }}
 
-         {{ govukSummaryList({
-           rows: isEnterpriseAffected
-         }) }}
+          {{ govukSummaryList({
+            classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
+            rows: countrySummary
+          }) }}
 
-         {{ govukButton({
-           text: messages("site.continue"),
-           preventDoubleClick: true,
-           attributes: {id:"submit"}
-         }) }}
+          <hr>
+
+          {{ govukSummaryList({
+            rows: isEnterpriseAffected
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.continue"),
+            preventDoubleClick: true,
+            attributes: {id:"submit"}
+          }) }}
+
+         </form>
 
       </div>
     </div>
