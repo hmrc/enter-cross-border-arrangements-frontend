@@ -20,10 +20,8 @@ import base.SpecBase
 import models.UserAnswers
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.hallmarks.{HallmarkD, HallmarkD1}
-import pages.arrangement._
+import pages.arrangement.{WhatIsTheExpectedValueOfThisArrangementPage, _}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-
 import java.time.LocalDate
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {

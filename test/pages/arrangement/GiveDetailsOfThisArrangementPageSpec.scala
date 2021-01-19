@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package pages.arrangement
 
-import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object WhatIsTheExpectedValueOfThisArrangementPage extends QuestionPage[WhatIsTheExpectedValueOfThisArrangement] {
 
-  override def path: JsPath = JsPath \ toString
+class GiveDetailsOfThisArrangementPageSpec extends PageBehaviours {
 
-  override def toString: String = "whatIsTheExpectedValueOfThisArrangement"
+  "GiveDetailsOfThisArrangementPage" - {
+
+    beRetrievable[String](GiveDetailsOfThisArrangementPage)
+
+    beSettable[String](GiveDetailsOfThisArrangementPage)
+
+    beRemovable[String](GiveDetailsOfThisArrangementPage)
+  }
 }

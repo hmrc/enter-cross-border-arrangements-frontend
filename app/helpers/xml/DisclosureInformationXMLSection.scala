@@ -19,9 +19,8 @@ package helpers.xml
 import models.UserAnswers
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
-import pages.arrangement._
+import pages.arrangement.{WhatIsTheExpectedValueOfThisArrangementPage, _}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}

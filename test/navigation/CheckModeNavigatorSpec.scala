@@ -28,7 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
 import pages.hallmarks._
 import pages.intermediaries._
-import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
+import pages.QuestionPage
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 

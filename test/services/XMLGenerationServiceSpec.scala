@@ -28,16 +28,14 @@ import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UserAnswers}
 import org.joda.time.DateTime
-import pages.arrangement._
+import pages.arrangement.{WhatIsTheExpectedValueOfThisArrangementPage, _}
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
-
 import java.time.LocalDate
 
 class XMLGenerationServiceSpec extends SpecBase {
