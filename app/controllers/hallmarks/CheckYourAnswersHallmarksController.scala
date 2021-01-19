@@ -57,10 +57,10 @@ class CheckYourAnswersHallmarksController @Inject()(
       ).map(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, NormalMode, request.userAnswers)))
+      Future.successful(Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers)))
 
   }
 }

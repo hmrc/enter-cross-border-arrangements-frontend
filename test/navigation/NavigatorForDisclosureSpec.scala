@@ -99,8 +99,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
     "must go from 'Disclosure check your answers' page" +
       "to 'Task list' page" in {
 
-      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0)
-        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(0))(None)(0)
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
     }
   }
 }

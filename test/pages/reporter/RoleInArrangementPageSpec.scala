@@ -17,8 +17,7 @@
 package pages.reporter
 
 import java.time.LocalDate
-
-import models.{CountriesListEUCheckboxes, UserAnswers}
+import models.{CountriesListEUCheckboxes, UnsubmittedDisclosure, UserAnswers}
 import models.YesNoDoNotKnowRadios.Yes
 import models.reporter.RoleInArrangement
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
@@ -30,6 +29,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class RoleInArrangementPageSpec extends PageBehaviours {
 
@@ -45,18 +45,19 @@ class RoleInArrangementPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(TaxpayerWhyReportInUKPage, UkTaxResident)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident)
             .success.value
-            .set(TaxpayerWhyReportArrangementPage, NoIntermediaries)
+            .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries)
             .success.value
-            .set(ReporterTaxpayersStartDateForImplementingArrangementPage, LocalDate.now())
+            .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
             .success.value
-            .set(RoleInArrangementPage, Intermediary)
+            .set(RoleInArrangementPage, 0, Intermediary)
             .success.value
 
-          result.get(TaxpayerWhyReportInUKPage) must not be defined
-          result.get(TaxpayerWhyReportArrangementPage) must not be defined
-          result.get(ReporterTaxpayersStartDateForImplementingArrangementPage) must not be defined
+          result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
+          result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+          result.get(ReporterTaxpayersStartDateForImplementingArrangementPage, 0) must not be defined
 
       }
     }
@@ -65,24 +66,25 @@ class RoleInArrangementPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(IntermediaryWhyReportInUKPage, TaxResidentUK)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK)
             .success.value
-            .set(IntermediaryRolePage, Promoter)
+            .set(IntermediaryRolePage, 0, Promoter)
             .success.value
-            .set(IntermediaryExemptionInEUPage, Yes)
+            .set(IntermediaryExemptionInEUPage, 0, Yes)
             .success.value
-            .set(IntermediaryDoYouKnowExemptionsPage, true)
+            .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
             .success.value
-            .set(IntermediaryWhichCountriesExemptPage, CountriesListEUCheckboxes.enumerable.withName("Austria").toSet)
+            .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("Austria").toSet)
             .success.value
-            .set(RoleInArrangementPage, Taxpayer)
+            .set(RoleInArrangementPage, 0, Taxpayer)
             .success.value
 
-          result.get(IntermediaryWhyReportInUKPage) must not be defined
-          result.get(IntermediaryRolePage) must not be defined
-          result.get(IntermediaryExemptionInEUPage) must not be defined
-          result.get(IntermediaryDoYouKnowExemptionsPage) must not be defined
-          result.get(IntermediaryWhichCountriesExemptPage) must not be defined
+          result.get(IntermediaryWhyReportInUKPage, 0) must not be defined
+          result.get(IntermediaryRolePage, 0) must not be defined
+          result.get(IntermediaryExemptionInEUPage, 0) must not be defined
+          result.get(IntermediaryDoYouKnowExemptionsPage, 0) must not be defined
+          result.get(IntermediaryWhichCountriesExemptPage, 0) must not be defined
 
       }
     }

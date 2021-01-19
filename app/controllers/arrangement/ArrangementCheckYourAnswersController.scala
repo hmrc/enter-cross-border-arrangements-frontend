@@ -60,10 +60,10 @@ class ArrangementCheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
+      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0)))
 
   }
 

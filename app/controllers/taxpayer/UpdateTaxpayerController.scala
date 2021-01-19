@@ -75,8 +75,8 @@ class UpdateTaxpayerController @Inject()(
       renderer.render("taxpayer/updateTaxpayer.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[UpdateTaxpayer]): Call =
-    navigator.routeMap(UpdateTaxpayerPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[UpdateTaxpayer]): Call =
+    navigator.routeMap(UpdateTaxpayerPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -101,7 +101,7 @@ class UpdateTaxpayerController @Inject()(
                 cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) // TODO test when userAnswers are properly supplied
                 _              <- sessionRepository.set(cleanAnswers)
                 checkRoute     =  toCheckRoute(mode, cleanAnswers, id)
-           } yield Redirect(redirect(checkRoute, Some(value)))
+           } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

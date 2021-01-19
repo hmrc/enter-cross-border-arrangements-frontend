@@ -65,8 +65,8 @@ class RoleInArrangementController @Inject()(
       renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[RoleInArrangement]): Call = {
-    navigator.routeMap(RoleInArrangementPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[RoleInArrangement]): Call = {
+    navigator.routeMap(RoleInArrangementPage)(checkRoute)(id)(value)(0)
   }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -89,7 +89,7 @@ class RoleInArrangementController @Inject()(
             redirectMode   =  if (request.userAnswers.hasNewValue(RoleInArrangementPage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

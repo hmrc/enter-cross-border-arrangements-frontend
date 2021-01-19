@@ -33,10 +33,11 @@ class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
   override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case UpdateTaxpayerPage =>
-     checkRoute => value => _ =>
-     value match { case Some(Now) => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(checkRoute.mode)
-      case _ => controllers.routes.DisclosureDetailsController.onPageLoad()
-    }
+     checkRoute => id => value => _ =>
+     value match {
+        case Some(Now) => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(id, checkRoute.mode)
+        case _ => controllers.routes.DisclosureDetailsController.onPageLoad(id)
+      }
 
     case DisclosureMarketablePage =>
       checkRoute => id => value => _ =>

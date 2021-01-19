@@ -54,8 +54,8 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
   val numberOfMonthsToAdd = 6
   val form = formProvider()
 
-  private def redirect(checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
-    navigator.routeMap(ReporterTaxpayersStartDateForImplementingArrangementPage)(checkRoute)(value)(index)
+  private def redirect(id: Int, checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
+    navigator.routeMap(ReporterTaxpayersStartDateForImplementingArrangementPage)(checkRoute)(id)(value)(index)
 
   private def actionUrl(id: Int, mode: Mode): String = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(id, mode).url
 
@@ -104,7 +104,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute                    =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 

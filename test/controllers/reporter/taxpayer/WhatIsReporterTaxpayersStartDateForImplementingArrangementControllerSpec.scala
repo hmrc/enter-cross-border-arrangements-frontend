@@ -48,7 +48,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
   val formProvider = new WhatIsTaxpayersStartDateForImplementingArrangementFormProvider()
   private def form = formProvider()
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/check-answers")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/check-answers/0")
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 

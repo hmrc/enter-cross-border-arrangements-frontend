@@ -28,30 +28,30 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildImplementingDate(userAnswers: UserAnswers, id: Int): Elem = {
 
-    userAnswers.get(WhatIsTheImplementationDatePage) match {
+    userAnswers.get(WhatIsTheImplementationDatePage, id) match {
       case Some(date) => <ImplementingDate>{date}</ImplementingDate>
       case None => throw new Exception("Missing disclosure information implementing date")
     }
   }
 
-  private[xml] def buildReason(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
+  private[xml] def buildReason(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage, id) match {
       case Some(true) =>
-        userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
+        userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id)
           .fold(NodeSeq.Empty)(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
       case _ => NodeSeq.Empty
     }
   }
 
-  private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
-    val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage) match {
+  private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers, id: Int): Elem = {
+    val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage, id) match {
       case Some(name) => <Disclosure_Name>{name}</Disclosure_Name>
       case None => throw new Exception("Missing arrangement name when building DisclosureInformationSummary")
     }
 
-    val mandatoryDisclosureDescription: NodeSeq = userAnswers.get(GiveDetailsOfThisArrangementPage) match {
+    val mandatoryDisclosureDescription: NodeSeq = userAnswers.get(GiveDetailsOfThisArrangementPage, id) match {
       case Some(description) =>
         val splitString = description.grouped(4000).toList
 
@@ -67,8 +67,8 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Summary>
   }
 
-  private[xml] def buildNationalProvision(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) match {
+  private[xml] def buildNationalProvision(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) match {
       case Some(nationalProvisions) =>
         val splitString = nationalProvisions.grouped(4000).toList
 
@@ -79,15 +79,15 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
-  private[xml] def buildAmountType(userAnswers: UserAnswers): Elem = {
-    userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
+  private[xml] def buildAmountType(userAnswers: UserAnswers, id: Int): Elem = {
+    userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {
       case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
       case None => throw new Exception("Missing amount type in disclosure information")
     }
   }
 
-  private[xml] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
-    val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
+  private[xml] def buildConcernedMS(userAnswers: UserAnswers, id: Int): Elem = {
+    val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage, id) match {
       case Some(countries) =>
         countries.map {
           country =>
@@ -99,15 +99,15 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
-  private[xml] def buildHallmarks(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildHallmarks(userAnswers: UserAnswers, id: Int): Elem = {
 
     val mandatoryHallmarks: Set[Elem] = {
-      userAnswers.get(HallmarkDPage) match {
+      userAnswers.get(HallmarkDPage, id) match {
         case Some(hallmarkDSet) =>
           hallmarkDSet.flatMap {
             hallmark =>
               if (hallmark == D1) {
-                userAnswers.get(HallmarkD1Page) match {
+                userAnswers.get(HallmarkD1Page, id) match {
                   case Some(hallmarkSet) =>
                     hallmarkSet.map(hallmark =>
                       <Hallmark>{hallmark.toString}</Hallmark>
@@ -122,9 +122,9 @@ object DisclosureInformationXMLSection extends XMLBuilder {
       }
     }
 
-    val dac6D1OtherInfo: NodeSeq = userAnswers.get(HallmarkD1Page) match {
+    val dac6D1OtherInfo: NodeSeq = userAnswers.get(HallmarkD1Page, id: Int) match {
       case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
-        userAnswers.get(HallmarkD1OtherPage) match {
+        userAnswers.get(HallmarkD1OtherPage, id) match {
           case Some(description) =>
             val splitString = description.grouped(4000).toList
 
@@ -144,18 +144,18 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>
-        {buildImplementingDate(userAnswers)}
-        {buildReason(userAnswers)}
-        {buildDisclosureInformationSummary(userAnswers)}
-        {buildNationalProvision(userAnswers)}
-        {buildAmountType(userAnswers)}
-        {buildConcernedMS(userAnswers)}
+        {buildImplementingDate(userAnswers, id)}
+        {buildReason(userAnswers, id)}
+        {buildDisclosureInformationSummary(userAnswers, id)}
+        {buildNationalProvision(userAnswers, id)}
+        {buildAmountType(userAnswers, id)}
+        {buildConcernedMS(userAnswers, id)}
         <MainBenefitTest1>false</MainBenefitTest1>
-        {buildHallmarks(userAnswers)}
+        {buildHallmarks(userAnswers, id)}
       </DisclosureInformation>
     }.toEither
   }

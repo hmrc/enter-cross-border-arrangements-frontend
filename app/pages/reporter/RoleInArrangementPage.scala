@@ -32,22 +32,22 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
 
   override def toString: String = "roleInArrangement"
 
-  override def cleanup(value: Option[RoleInArrangement], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[RoleInArrangement], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
 
     value match {
       case Some(Intermediary) =>
-        userAnswers.remove(TaxpayerWhyReportInUKPage)
-          .flatMap(_.remove(TaxpayerWhyReportArrangementPage))
-          .flatMap(_.remove(ReporterTaxpayersStartDateForImplementingArrangementPage))
+        userAnswers.remove(TaxpayerWhyReportInUKPage, id)
+          .flatMap(_.remove(TaxpayerWhyReportArrangementPage, id))
+          .flatMap(_.remove(ReporterTaxpayersStartDateForImplementingArrangementPage, id))
 
       case Some(Taxpayer) =>
-        userAnswers.remove(IntermediaryWhyReportInUKPage)
-          .flatMap(_.remove(IntermediaryRolePage))
-          .flatMap(_.remove(IntermediaryExemptionInEUPage))
-          .flatMap(_.remove(IntermediaryDoYouKnowExemptionsPage))
-          .flatMap(_.remove(IntermediaryWhichCountriesExemptPage))
+        userAnswers.remove(IntermediaryWhyReportInUKPage, id)
+          .flatMap(_.remove(IntermediaryRolePage, id))
+          .flatMap(_.remove(IntermediaryExemptionInEUPage, id))
+          .flatMap(_.remove(IntermediaryDoYouKnowExemptionsPage, id))
+          .flatMap(_.remove(IntermediaryWhichCountriesExemptPage, id))
 
-      case _ => super.cleanup(value, userAnswers)
+      case _ => super.cleanup(value, userAnswers, id)
     }
   }
 }

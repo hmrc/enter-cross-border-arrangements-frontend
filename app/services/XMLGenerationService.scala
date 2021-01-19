@@ -31,7 +31,7 @@ class XMLGenerationService @Inject()() {
 
   private[services] def buildHeader(userAnswers: UserAnswers)
                                    (implicit request: DataRequest[AnyContent]): Elem = {
-    val mandatoryMessageRefId = userAnswers.get(DisclosureNamePage) match {
+    val mandatoryMessageRefId = userAnswers.getBase(DisclosureNamePage) match {
       case Some(disclosureName) => "GB" + request.enrolmentID + disclosureName
       case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
     }
@@ -45,40 +45,40 @@ class XMLGenerationService @Inject()() {
   }
 
   private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers): Elem = {
-    userAnswers.get(DisclosureTypePage) match {
+    userAnswers.getBase(DisclosureTypePage) match {
       case Some(value) => <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
       case None => throw new Exception("Missing disclosure type answer")
     }
   }
 
   private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers): Elem = {
-    userAnswers.get(DisclosureMarketablePage) match {
+    userAnswers.getBase(DisclosureMarketablePage) match {
       case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
       case None => throw new Exception("Missing InitialDisclosureMA answer")
     }
   }
 
-  private[services] def buildArrangementID(userAnswers: UserAnswers): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
-    userAnswers.get(DisclosureTypePage) match {
-      case Some(Dac6add) => userAnswers.get(DisclosureIdentifyArrangementPage).fold(NodeSeq.Empty)(arrangementID =>
+  private[services] def buildArrangementID(userAnswers: UserAnswers, id: Int): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
+    userAnswers.get(DisclosureTypePage, id) match {
+      case Some(Dac6add) => userAnswers.get(DisclosureIdentifyArrangementPage, id).fold(NodeSeq.Empty)(arrangementID =>
         <ArrangementID>{arrangementID}</ArrangementID>)
       case _ => NodeSeq.Empty
     }
   }
 
-  def createXmlSubmission(userAnswers: UserAnswers)
+  def createXmlSubmission(userAnswers: UserAnswers, id: Int)
                          (implicit request: DataRequest[AnyContent]): Elem = {
 
     <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
       {buildHeader(userAnswers)}
-      {buildArrangementID(userAnswers)}
+      {buildArrangementID(userAnswers, id)}
       <DAC6Disclosures>
         {buildDisclosureImportInstruction(userAnswers)}
-        {DisclosingXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers)}
-        {RelevantTaxPayersXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
-        {DisclosureInformationXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>
   }

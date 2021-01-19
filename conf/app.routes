@@ -27,7 +27,7 @@ POST       /manual/your-disclosure-details/:id                     controllers.T
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad(id: Int)
-POST       /hallmarks/check-answers                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onSubmit
+POST       /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onSubmit(id: Int)
 
 GET        /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = NormalMode)
@@ -525,7 +525,7 @@ POST       /reporter/organisation/change-address/:id                            
 GET        /reporter/organisation/select-address/:id                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /reporter/organisation/select-address/:id                                   controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /reporter/organisation/change-select-address/:id                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /reporter/organisation/change-select-address/:id                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /reporter/organisation/change-select-address/:id                            controllers.reporter.organisation.ReporterOrganisationSelectAddressController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 GET        /reporter/organisation/email-address/:id                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /reporter/organisation/email-address/:id                          controllers.reporter.organisation.ReporterOrganisationEmailAddressQuestionController.onSubmit(id: Int, mode: Mode = NormalMode)
@@ -583,7 +583,3 @@ GET        /reporter/individual/select-address/:id               controllers.rep
 POST       /reporter/individual/select-address/:id               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-# TASK LIST
-POST      /task-list                                         controllers.TaskListController.onSubmit
-

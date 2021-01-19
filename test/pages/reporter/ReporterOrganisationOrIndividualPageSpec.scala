@@ -17,12 +17,12 @@
 package pages.reporter
 
 import java.time.LocalDate
-
-import models.{Address, AddressLookup, Country, Name, ReporterOrganisationOrIndividual, UserAnswers}
+import models.{Address, AddressLookup, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
 import pages.behaviours.PageBehaviours
 import org.scalacheck.Arbitrary.arbitrary
 import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage, ReporterIsIndividualAddressUKPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
 
@@ -56,33 +56,34 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
     forAll(arbitrary[UserAnswers]) {
       answers =>
         val result = answers
-          .set(ReporterOrganisationNamePage, "name")
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(ReporterOrganisationNamePage, 0, "name")
           .success.value
-          .set(ReporterOrganisationEmailAddressQuestionPage, true)
+          .set(ReporterOrganisationEmailAddressQuestionPage, 0, true)
           .success.value
-          .set(ReporterOrganisationEmailAddressPage, "email@email.com")
+          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.com")
           .success.value
-          .set(ReporterOrganisationAddressPage, manualAddress)
+          .set(ReporterOrganisationAddressPage, 0, manualAddress)
           .success.value
-          .set(ReporterOrganisationIsAddressUkPage, true)
+          .set(ReporterOrganisationIsAddressUkPage, 0, true)
           .success.value
-          .set(ReporterOrganisationPostcodePage, "NE1")
+          .set(ReporterOrganisationPostcodePage, 0, "NE1")
           .success.value
-          .set(ReporterOrganisationSelectAddressPage, "selectAddress")
+          .set(ReporterOrganisationSelectAddressPage, 0, "selectAddress")
           .success.value
-          .set(ReporterSelectedAddressLookupPage, addressLookup)
+          .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
           .success.value
-          .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Individual)
+          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual)
           .success.value
 
-        result.get(ReporterOrganisationNamePage) must not be defined
-        result.get(ReporterOrganisationEmailAddressQuestionPage) must not be defined
-        result.get(ReporterOrganisationEmailAddressPage) must not be defined
-        result.get(ReporterOrganisationAddressPage) must not be defined
-        result.get(ReporterOrganisationIsAddressUkPage) must not be defined
-        result.get(ReporterOrganisationPostcodePage) must not be defined
-        result.get(ReporterOrganisationSelectAddressPage) must not be defined
-        result.get(ReporterSelectedAddressLookupPage) must not be defined
+        result.get(ReporterOrganisationNamePage, 0) must not be defined
+        result.get(ReporterOrganisationEmailAddressQuestionPage, 0) must not be defined
+        result.get(ReporterOrganisationEmailAddressPage, 0) must not be defined
+        result.get(ReporterOrganisationAddressPage, 0) must not be defined
+        result.get(ReporterOrganisationIsAddressUkPage, 0) must not be defined
+        result.get(ReporterOrganisationPostcodePage, 0) must not be defined
+        result.get(ReporterOrganisationSelectAddressPage, 0) must not be defined
+        result.get(ReporterSelectedAddressLookupPage, 0) must not be defined
     }
   }
 
@@ -91,39 +92,40 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(ReporterIndividualNamePage, Name("firstName","surname"))
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(ReporterIndividualNamePage, 0, Name("firstName","surname"))
             .success.value
-            .set(ReporterIndividualDateOfBirthPage, LocalDate.now())
+            .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.now())
             .success.value
-            .set(ReporterIndividualPlaceOfBirthPage, "Place of Birth")
+            .set(ReporterIndividualPlaceOfBirthPage, 0, "Place of Birth")
             .success.value
-            .set(ReporterIndividualEmailAddressQuestionPage, true)
+            .set(ReporterIndividualEmailAddressQuestionPage, 0, true)
             .success.value
-            .set(ReporterIndividualEmailAddressPage, "email@email.com")
+            .set(ReporterIndividualEmailAddressPage, 0, "email@email.com")
             .success.value
-            .set(ReporterIndividualAddressPage, manualAddress)
+            .set(ReporterIndividualAddressPage, 0, manualAddress)
             .success.value
-            .set(ReporterIsIndividualAddressUKPage, true)
+            .set(ReporterIsIndividualAddressUKPage, 0, true)
             .success.value
-            .set(ReporterIndividualPostcodePage, "NE1")
+            .set(ReporterIndividualPostcodePage, 0, "NE1")
             .success.value
-            .set(ReporterIndividualSelectAddressPage, "selectAddress")
+            .set(ReporterIndividualSelectAddressPage, 0, "selectAddress")
             .success.value
-            .set(ReporterSelectedAddressLookupPage, addressLookup)
+            .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
             .success.value
-            .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation)
+            .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation)
             .success.value
 
-          result.get(ReporterIndividualNamePage) must not be defined
-          result.get(ReporterIndividualDateOfBirthPage) must not be defined
-          result.get(ReporterIndividualPlaceOfBirthPage) must not be defined
-          result.get(ReporterIndividualEmailAddressQuestionPage) must not be defined
-          result.get(ReporterIndividualEmailAddressPage) must not be defined
-          result.get(ReporterIndividualAddressPage) must not be defined
-          result.get(ReporterIsIndividualAddressUKPage) must not be defined
-          result.get(ReporterIndividualPostcodePage) must not be defined
-          result.get(ReporterIndividualSelectAddressPage) must not be defined
-          result.get(ReporterSelectedAddressLookupPage) must not be defined
+          result.get(ReporterIndividualNamePage, 0) must not be defined
+          result.get(ReporterIndividualDateOfBirthPage, 0) must not be defined
+          result.get(ReporterIndividualPlaceOfBirthPage, 0) must not be defined
+          result.get(ReporterIndividualEmailAddressQuestionPage, 0) must not be defined
+          result.get(ReporterIndividualEmailAddressPage, 0) must not be defined
+          result.get(ReporterIndividualAddressPage, 0) must not be defined
+          result.get(ReporterIsIndividualAddressUKPage, 0) must not be defined
+          result.get(ReporterIndividualPostcodePage, 0) must not be defined
+          result.get(ReporterIndividualSelectAddressPage, 0) must not be defined
+          result.get(ReporterSelectedAddressLookupPage, 0) must not be defined
       }
     }
 

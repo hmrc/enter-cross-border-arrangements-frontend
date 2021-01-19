@@ -46,7 +46,7 @@ class TaskListController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
      //generate xml from user answers
-     val xml = xmlGenerationService.createXmlSubmission(request.userAnswers)
+     val xml = xmlGenerationService.createXmlSubmission(request.userAnswers, id)
      //send it off to be validated and business rules
       validationConnector.sendForValidation(xml).flatMap {
         _.fold(

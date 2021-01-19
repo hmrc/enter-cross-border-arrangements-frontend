@@ -22,6 +22,6 @@ import scala.xml.Elem
 
 trait XMLBuilder {
 
-  def toXml(userAnswers: UserAnswers): Either[Throwable, Elem]
+  def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem]
 
 }

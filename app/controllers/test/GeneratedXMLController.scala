@@ -37,13 +37,13 @@ class GeneratedXMLController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       //TODO Delete later if no longer needed
 
       val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-      val xml = prettyPrinter.format(xmlGenerationService.createXmlSubmission(request.userAnswers))
+      val xml = prettyPrinter.format(xmlGenerationService.createXmlSubmission(request.userAnswers, id))
 
       val json = Json.obj(
         "xml" -> xml

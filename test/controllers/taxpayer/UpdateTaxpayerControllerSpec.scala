@@ -130,7 +130,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/choose-type"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/choose-type/0"
 
       application.stop()
     }

@@ -1066,7 +1066,6 @@ reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax pu
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
 
-<<<<<<< HEAD
 # CONFIRMATION PAGES
 
 confirmation.link.text = Disclose a cross-border arrangement
