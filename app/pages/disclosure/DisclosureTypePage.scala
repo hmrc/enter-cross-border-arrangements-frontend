@@ -36,7 +36,7 @@ case object DisclosureTypePage extends DetailsPage[DisclosureType, DisclosureDet
         userAnswers.remove(DisclosureIdentifyArrangementPage)
       case Some(DisclosureType.Dac6add) =>
         userAnswers.remove(DisclosureMarketablePage)
-      case None =>     super.cleanup(value, userAnswers)
+      case _ =>     super.cleanup(value, userAnswers) //ToDo handle replace and delete separately when necessary
     }
 
   override def getFromModel(model: DisclosureDetails): DisclosureType = model.disclosureType
