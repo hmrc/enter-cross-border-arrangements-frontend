@@ -27,7 +27,7 @@ import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLo
 import pages.taxpayer.TaxpayerLoopPage
 
 import java.time.LocalDate
-import scala.xml.PrettyPrinter
+import scala.xml.{NodeSeq, PrettyPrinter}
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
@@ -220,8 +220,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
         .set(TaxpayerLoopPage, taxpayers).success.value
 
-      val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
-
       val expected =
         s"""<RelevantTaxPayers>
            |    <RelevantTaxpayer>
@@ -291,7 +289,11 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
            |    </RelevantTaxpayer>
            |</RelevantTaxPayers>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      RelevantTaxPayersXMLSection.toXml(userAnswers).map { result =>
+
+        prettyPrinter.format(result) mustBe expected
+      }
+
     }
 
     "toXml must throw an exception if taxpayer loop details are missing" in {

@@ -138,8 +138,6 @@ class DisclosingXMLSectionSpec extends SpecBase {
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
         .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
 
-      val result = DisclosingXMLSection.toXml(userAnswers)
-
       val expected =
         """<Disclosing>
           |    <ID>
@@ -167,7 +165,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
           |    </Liability>
           |</Disclosing>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      DisclosingXMLSection.toXml(userAnswers).map { result =>
+
+        prettyPrinter.format(result) mustBe expected
+      }
     }
 
     "toXml must build the disclosing section without the optional liability section for an organisation" in {
@@ -177,7 +178,6 @@ class DisclosingXMLSectionSpec extends SpecBase {
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
         .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
 
-      val result = DisclosingXMLSection.toXml(userAnswers)
 
       val expected =
         """<Disclosing>
@@ -201,7 +201,11 @@ class DisclosingXMLSectionSpec extends SpecBase {
           |    </ID>
           |</Disclosing>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      DisclosingXMLSection.toXml(userAnswers).map { result =>
+
+        prettyPrinter.format(result) mustBe expected
+      }
+
     }
   }
 

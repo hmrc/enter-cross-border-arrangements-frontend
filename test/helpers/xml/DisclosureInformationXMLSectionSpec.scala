@@ -236,8 +236,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
         .set(HallmarkD1OtherPage, "Hallmark D1 other description").success.value
 
-      val result = DisclosureInformationXMLSection.toXml(userAnswers)
-
       val expected =
         s"""<DisclosureInformation>
           |    <ImplementingDate>$today</ImplementingDate>
@@ -263,7 +261,11 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           |    </Hallmarks>
           |</DisclosureInformation>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      DisclosureInformationXMLSection.toXml(userAnswers).map { result =>
+
+        prettyPrinter.format(result) mustBe expected
+      }
+
     }
   }
 
