@@ -18,7 +18,7 @@ package pages.disclosure
 
 import models.UserAnswers
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import pages.ModelPage
+import pages.{ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.{Success, Try}
@@ -29,13 +29,13 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def toString: String = "disclosureMarketable"
 
-  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+  override def cleanupBase(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
     List(
       DisclosureNamePage,
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
       DisclosureMarketablePage
-    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua, id) }
+    ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
   def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers.get(DisclosureDetailsPage, id)
@@ -47,14 +47,14 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
           .flatMap(_.remove(DisclosureDetailsPage, id))
       }
 
-  def build(userAnswers: UserAnswers, id: Int): DisclosureDetails = {
+  def build(userAnswers: UserAnswers): DisclosureDetails = {
 
-    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage, id)
+    def getDisclosureDetails = userAnswers.getBase(DisclosureDetailsPage)
       .orElse(Some(DisclosureDetails("")))
-    def getDisclosureName = userAnswers.get(DisclosureNamePage, id)
-    def getDisclosureType = userAnswers.get(DisclosureTypePage, id)
-    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage, id).orElse(Some(false))
-    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage, id)
+    def getDisclosureName = userAnswers.getBase(DisclosureNamePage)
+    def getDisclosureType = userAnswers.getBase(DisclosureTypePage)
+    def getDisclosureMarketable = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
+    def getDisclosureIdentifyArrangement = userAnswers.getBase(DisclosureIdentifyArrangementPage)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
 
     getDisclosureDetails

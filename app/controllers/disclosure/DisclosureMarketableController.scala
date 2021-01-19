@@ -47,10 +47,10 @@ class DisclosureMarketableController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DisclosureMarketablePage, id) match {
+      val preparedForm = request.userAnswers.getBase(DisclosureMarketablePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,10 +64,10 @@ class DisclosureMarketableController @Inject()(
       renderer.render("disclosure/disclosureMarketable.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(DisclosureMarketablePage)(checkRoute)(id)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(DisclosureMarketablePage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -83,10 +83,10 @@ class DisclosureMarketableController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, id, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

@@ -37,9 +37,9 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(0).url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
 
-  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(0).url
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
 
   override def beforeEach: Unit = {
     reset(
@@ -83,31 +83,31 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   private def assertDisclosureName(name: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Disclosure name"))
     row.value.text mustBe Some(Literal(name))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-name/0")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/disclosure/change-name")(row.actions.head)
   }
 
   private def assertTypeDac6new()(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Type of disclosure"))
     row.value.text mustBe Some(Literal("A new arrangement"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-type/0")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
   }
 
   private def assertTypeDac6add()(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Type of disclosure"))
     row.value.text mustBe Some(Literal("An addition to an existing arrangement"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-type/0")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
   }
 
   private def assertArrangementID(arrangementID: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Arrangement ID"))
     row.value.text mustBe Some(Literal(arrangementID))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-identify/0")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/disclosure/change-identify")(row.actions.head)
   }
 
   private def assertMarketableArrangement(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Is this a marketable arrangement?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-marketable/0")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/disclosure/change-marketable")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -116,12 +116,12 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureNamePage, 0, "My arrangement")
+        .setBase(DisclosureNamePage,"My arrangement")
         .success.value
-        .set(DisclosureTypePage, 0, DisclosureType.Dac6new)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6new)
         .success
         .value
-        .set(DisclosureMarketablePage, 0, false)
+        .setBase(DisclosureMarketablePage, false)
         .success
         .value
       verifyList(userAnswers) { list =>
@@ -136,12 +136,12 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureNamePage, 0, "My arrangement")
+        .setBase(DisclosureNamePage, "My arrangement")
         .success.value
-        .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value
-        .set(DisclosureIdentifyArrangementPage, 0, "GBA20210101ABC123")
+        .setBase(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
         .success
         .value
       verifyList(userAnswers) { list =>
@@ -155,12 +155,12 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must be able to build disclosure details from user answers and redirect to task list" ignore {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureNamePage, 0, "My arrangement")
+        .setBase(DisclosureNamePage, "My arrangement")
         .success.value
-        .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value
-        .set(DisclosureIdentifyArrangementPage, 0, "GBA20210101ABC123")
+        .setBase(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
         .success
         .value
 
@@ -172,7 +172,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details/0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details"
 
       application.stop()
     }

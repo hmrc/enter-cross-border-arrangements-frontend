@@ -49,13 +49,13 @@ class DisclosureIdentifyArrangementController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries, crossBorderArrangementsConnector)
 
-      val preparedForm = request.userAnswers.get(DisclosureIdentifyArrangementPage, id) match {
+      val preparedForm = request.userAnswers.getBase(DisclosureIdentifyArrangementPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,10 +68,10 @@ class DisclosureIdentifyArrangementController @Inject()(
       renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(id:Int, checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(id)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -89,10 +89,10 @@ class DisclosureIdentifyArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureIdentifyArrangementPage, id, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureIdentifyArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

@@ -49,10 +49,10 @@ class DisclosureNameController @Inject()(
 
   //TODO - read require Data when pages before this are implemented
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(DisclosureNamePage, id)) match {
+      val preparedForm = request.userAnswers.flatMap(_.getBase(DisclosureNamePage)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -65,10 +65,10 @@ class DisclosureNameController @Inject()(
       renderer.render("disclosure/disclosureName.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(DisclosureNamePage)(checkRoute)(id)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(DisclosureNamePage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,10 +86,10 @@ class DisclosureNameController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(DisclosureNamePage, id, value))
+            updatedAnswers <- Future.fromTry(userAnswers.setBase(DisclosureNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
 
         }
       )

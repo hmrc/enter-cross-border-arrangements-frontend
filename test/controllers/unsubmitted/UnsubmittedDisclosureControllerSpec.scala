@@ -60,7 +60,7 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(0, NormalMode).url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
 
     "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
@@ -71,7 +71,7 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(0, NormalMode).url
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
   }
 }

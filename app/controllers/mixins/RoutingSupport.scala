@@ -23,6 +23,9 @@ import pages.taxpayer.TaxpayerSelectTypePage
 
 trait RoutingSupport {
 
+  def toCheckRoute(mode: Mode, userAnswers: UserAnswers): CheckRoute =
+    DefaultRouting(mode)
+
   def toCheckRoute(mode: Mode, userAnswers: UserAnswers, id: Int): CheckRoute =
     (userAnswers.get(AssociatedEnterpriseTypePage, id)
       , userAnswers.get(TaxpayerSelectTypePage, id)

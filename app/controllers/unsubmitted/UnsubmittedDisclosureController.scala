@@ -39,21 +39,23 @@ class UnsubmittedDisclosureController  @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      def disclosureNameUrl(id: Int) = controllers.disclosure.routes.DisclosureNameController.onPageLoad(id, NormalMode).url
+      val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
 
       request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
         case Some(unsubmittedDisclosures) if unsubmittedDisclosures.nonEmpty =>
 
-          //TODO - look at this
           val json = Json.obj(
-            "url" -> disclosureNameUrl(0),
-            "unsubmittedDisclosures" -> unsubmittedDisclosures,
+            "url" -> disclosureNameUrl,
+            "unsubmittedDisclosures" -> unsubmittedDisclosures.zipWithIndex.map(d => Json.obj(
+              "name" -> d._1.name,
+              "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(d._2).url
+            )),
             "plural" -> (if(unsubmittedDisclosures.length > 1) "s" else "")
           )
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
-        case _ =>  Future.successful(Redirect(disclosureNameUrl(0)))
+        case _ =>  Future.successful(Redirect(disclosureNameUrl))
       }
   }
 

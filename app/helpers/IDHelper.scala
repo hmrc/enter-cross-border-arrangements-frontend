@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package helpers
 
-import models.UserAnswers
+import scala.annotation.tailrec
+import scala.util.Random
 
-import scala.util.Try
-
-trait ModelPage[A] extends QuestionPage[A] {
-
-  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers]
-
-  def build(userAnswers: UserAnswers): A
+object IDHelper {
+  @tailrec
+  def generateID(existingIDs: Seq[String], suffixLength: Int = 6) : String = {
+    val id = Random.alphanumeric.take(suffixLength).mkString("").toUpperCase
+    if (existingIDs.contains(id)) generateID(existingIDs, suffixLength)
+    else id
+  }
 }

@@ -22,8 +22,13 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import models.NormalMode
 import models.disclosure.DisclosureType.Dac6add
+import controllers.mixins.DefaultRouting
+import helpers.IDHelper
+import models.{NormalMode, UnsubmittedDisclosure}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,15 +52,15 @@ class DisclosureCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val disclosureSummary: Seq[SummaryList.Row] =
-        helper.disclosureNamePage(id).toSeq ++
-        helper.disclosureTypePage(id).toSeq ++
-        helper.buildDisclosureSummaryDetails(id)
+        helper.disclosureNamePage.toSeq ++
+        helper.disclosureTypePage.toSeq ++
+        helper.buildDisclosureSummaryDetails
 
       renderer.render(
         "disclosure/check-your-answers-disclosure.njk",
@@ -64,16 +69,10 @@ class DisclosureCheckYourAnswersController @Inject()(
       ).map(Ok(_))
     }
 
-
   def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-//    TODO build the disclosure details model from pages
-//    val disclosureDetails: DisclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
-//
-//    for {
-//      updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
-//    } yield sessionRepository.set(updatedAnswers)
+      val openDisclosures: Seq[UnsubmittedDisclosure] = request.userAnswers.getBase(UnsubmittedDisclosurePage).getOrElse(Seq.empty)
 
       val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage, id) match {
         case Some(Dac6add) =>
@@ -85,10 +84,21 @@ class DisclosureCheckYourAnswersController @Inject()(
             bool)
       }
 
+      //generate an id for the disclosure submission
+      val submissionID = IDHelper.generateID(openDisclosures.map(_.id), suffixLength = 6)
+
+      //generate model for disclosure name and id and shove at the end of the list
+      val disclosureName = request.userAnswers.getBase(DisclosureNamePage)
+      val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
+      val index = updatedUnsubmittedDisclosures.zipWithIndex.last._2
+
+      //build the disclosure details model from pages and store under id
       for {
         updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, id, isMarketable))
-        _ <- sessionRepository.set(updateAnswers)
-      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(None)(0))
+        disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
+        updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
+        newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
+        _  <- sessionRepository.set(newAnswers)
+      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
-

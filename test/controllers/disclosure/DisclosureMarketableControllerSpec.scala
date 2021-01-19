@@ -41,7 +41,7 @@ class DisclosureMarketableControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new DisclosureMarketableFormProvider()
   val form = formProvider()
 
-  lazy val disclosureMarketableRoute = routes.DisclosureMarketableController.onPageLoad(0, NormalMode).url
+  lazy val disclosureMarketableRoute = routes.DisclosureMarketableController.onPageLoad(NormalMode).url
 
   "DisclosureMarketable Controller" - {
 
@@ -80,7 +80,7 @@ class DisclosureMarketableControllerSpec extends SpecBase with MockitoSugar with
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureMarketablePage, 0, true).success.value
+        .setBase(DisclosureMarketablePage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureMarketableRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

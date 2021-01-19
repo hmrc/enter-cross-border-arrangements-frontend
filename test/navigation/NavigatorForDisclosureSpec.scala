@@ -40,16 +40,16 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "to 'What type of disclosure would you like to make?' page " +
         "when a disclosure name is entered" in {
 
-          navigator.routeMap(DisclosureNamePage)(DefaultRouting(NormalMode))(0)(Some("Disclosure Name"))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(0, NormalMode))
+          navigator.routeMap(DisclosureNamePage)(DefaultRouting(NormalMode))(None)(Some("Disclosure Name"))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
       }
 
       "must go from 'What type of disclosure would you like to make?' page" +
         "to 'Is this a marketable arrangement?' page" +
         "when 'A NEW ARRANGEMENT' option is selected" in {
 
-          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6new))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(0, NormalMode))
+          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6new))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(NormalMode))
       }
 
 
@@ -57,8 +57,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "to 'Disclosure check your answers' page" +
         "when an option is selected" in {
 
-        navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(0))
+        navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(NormalMode))(None)(Some(true))(0)
+          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
         }
       }
 
@@ -66,8 +66,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "to 'What is the arrangement ID?' page" +
         "when 'AN ADDITION TO AN EXISTING ARRANGEMENT' option is selected" in {
 
-          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6add))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(0, NormalMode))
+          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6add))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode))
       }
 
       "must go from 'What type of disclosure would you like to make?' page" +
@@ -75,8 +75,8 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "when 'A REPLACEMENT OF AN EXISTING DISCLOSURE' option is selected" ignore {
 
           //TODO - Redirect to replace disclosure when page is built
-          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6rep))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(0, NormalMode))
+          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6rep))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
       }
 
       "must go from 'What type of disclosure would you like to make?' page" +
@@ -84,16 +84,16 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "when 'A DELETION OF AN EXISTING DISCLOSURE' option is selected" ignore {
 
           //TODO - Redirect to delete disclosure when page is built
-          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6del))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(0, NormalMode))
+          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6del))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
       }
 
       "must go from 'What is the arrangement ID for this disclosure?' page" +
         "to 'Disclosure check your answers' page" +
         "when an arrangement ID is entered" in {
 
-          navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(0)(Some("FRA20210101ABC123"))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad(0))
+          navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(None)(Some("FRA20210101ABC123"))(0)
+            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
       }
 
     "must go from 'Disclosure check your answers' page" +

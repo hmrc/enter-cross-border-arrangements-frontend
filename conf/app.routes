@@ -207,10 +207,10 @@ POST       /individual/non-uk-tax-numbers-:index/:id              controllers.in
 GET        /individual/change-non-uk-tax-numbers-:index/:id       controllers.individual.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
 POST       /individual/change-non-uk-tax-numbers-:index/:id       controllers.individual.WhatAreTheTaxNumbersForNonUKIndividualController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
-GET        /individual/tax-resident-countries-:index          controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
-POST       /individual/tax-resident-countries-:index          controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
-GET        /individual/change-tax-resident-countries-:index   controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
-POST       /individual/change-tax-resident-countries-:index   controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
+GET        /individual/tax-resident-countries-:index/:id          controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id: Int, mode: Mode = NormalMode, index: Int)
+POST       /individual/tax-resident-countries-:index/:id          controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onSubmit(id: Int, mode: Mode = NormalMode, index: Int)
+GET        /individual/change-tax-resident-countries-:index/:id   controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id: Int, mode: Mode = CheckMode, index: Int)
+POST       /individual/change-tax-resident-countries-:index/:id   controllers.individual.IsIndividualResidentForTaxOtherCountriesController.onSubmit(id: Int, mode: Mode = CheckMode, index: Int)
 
 GET        /individual/do-you-know-birthplace/:id                      controllers.individual.IsIndividualPlaceOfBirthKnownController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /individual/do-you-know-birthplace/:id                      controllers.individual.IsIndividualPlaceOfBirthKnownController.onSubmit(id: Int, mode: Mode = NormalMode)
@@ -380,28 +380,28 @@ POST      /intermediaries/check-answers/:id                     controllers.inte
 
 # DISCLOSURE
 
-GET        /disclosure/check-your-answers                    controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
-POST        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue
+GET        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
+POST       /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue
 
-GET        /disclosure/name/:id                         controllers.disclosure.DisclosureNameController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /disclosure/name/:id                         controllers.disclosure.DisclosureNameController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /disclosure/change-name/:id                  controllers.disclosure.DisclosureNameController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /disclosure/change-name/:id                  controllers.disclosure.DisclosureNameController.onSubmit(id: Int, mode: Mode = CheckMode)
+GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/type/:id                             controllers.disclosure.DisclosureTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /disclosure/type/:id                             controllers.disclosure.DisclosureTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /disclosure/change-type/:id                      controllers.disclosure.DisclosureTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /disclosure/change-type/:id                      controllers.disclosure.DisclosureTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
+GET        /disclosure/type                             controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/type                             controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/marketable/:id                           controllers.disclosure.DisclosureMarketableController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /disclosure/marketable/:id                           controllers.disclosure.DisclosureMarketableController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /disclosure/change-marketable/:id                    controllers.disclosure.DisclosureMarketableController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /disclosure/change-marketable/:id                    controllers.disclosure.DisclosureMarketableController.onSubmit(id: Int, mode: Mode = CheckMode)
+GET        /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/identify/:id                        controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /disclosure/identify/:id                        controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /disclosure/change-identify/:id                 controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /disclosure/change-identify/:id                controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
+GET        /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
 
 # REPORTER DETAILS
 

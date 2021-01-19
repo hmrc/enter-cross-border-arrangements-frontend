@@ -51,7 +51,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
   val formProvider = new DisclosureIdentifyArrangementFormProvider()
   val form: Form[String] = formProvider(countriesSeq, mockCrossBorderArrangementsConnector)
 
-  lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(0, NormalMode).url
+  lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode).url
 
   "DisclosureIdentifyArrangement Controller" - {
 
@@ -90,7 +90,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureIdentifyArrangementPage, 0, validArrangementID).success.value
+        .setBase(DisclosureIdentifyArrangementPage, validArrangementID).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
@@ -141,7 +141,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/check-your-answers/0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/disclosure/check-your-answers"
 
       application.stop()
     }

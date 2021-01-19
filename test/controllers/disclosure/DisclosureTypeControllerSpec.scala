@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val disclosureTypeRoute = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(0, NormalMode).url
+  lazy val disclosureTypeRoute = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode).url
 
   val formProvider = new DisclosureTypeFormProvider()
   val form = formProvider()
@@ -81,7 +81,7 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureTypePage, 0, DisclosureType.values.head).success.value
+        .setBase(DisclosureTypePage, DisclosureType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

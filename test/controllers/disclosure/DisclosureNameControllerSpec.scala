@@ -41,7 +41,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new DisclosureNameFormProvider()
   val form = formProvider()
 
-  lazy val disclosureNameRoute = routes.DisclosureNameController.onPageLoad(0, NormalMode).url
+  lazy val disclosureNameRoute = routes.DisclosureNameController.onPageLoad(NormalMode).url
 
   "DisclosureName Controller" - {
 
@@ -69,6 +69,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
       templateCaptor.getValue mustEqual "disclosure/disclosureName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
+
       application.stop()
     }
 
@@ -79,7 +80,7 @@ class DisclosureNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureNamePage, 0, "answer").success.value
+        .setBase(DisclosureNamePage, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

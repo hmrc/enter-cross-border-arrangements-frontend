@@ -48,10 +48,10 @@ class DisclosureTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DisclosureTypePage, id) match {
+      val preparedForm = request.userAnswers.getBase(DisclosureTypePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -65,10 +65,10 @@ class DisclosureTypeController @Inject()(
       renderer.render("disclosure/disclosureType.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
-    navigator.routeMap(DisclosureTypePage)(checkRoute)(id)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
+    navigator.routeMap(DisclosureTypePage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -84,10 +84,10 @@ class DisclosureTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureTypePage, id, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }
