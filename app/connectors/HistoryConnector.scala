@@ -37,7 +37,9 @@ class HistoryConnector @Inject()(configuration: FrontendAppConfig,
                     case Seq() => false
                     case _ => true
                   }
-            } 
+            } recover {
+                case _: Exception => false
+            }
     }
   
 }
