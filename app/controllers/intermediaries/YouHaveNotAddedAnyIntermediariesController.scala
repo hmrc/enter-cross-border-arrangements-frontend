@@ -22,7 +22,7 @@ import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.{ItemList, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesStatusPage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -58,12 +58,14 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfIntermediaries: IndexedSeq[ItemList] = request.userAnswers.get(IntermediaryLoopPage, id) match {
+      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.flatMap(_.get(IntermediaryLoopPage, id)) match {
         case Some(list) =>
           for {
             intermediary <- list
           } yield {
-            ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
+            //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
+            //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
+            intermediary.nameAsString
           }
         case None => IndexedSeq.empty
       }
@@ -72,7 +74,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "intermediaryList" -> Json.toJson(namesOfIntermediaries),
+        "intermediaryList" -> namesOfIntermediaries,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
       )
 
@@ -88,10 +90,23 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage) match {
+            case Some(list) =>
+              for {
+                intermediary <- list
+              } yield {
+                //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
+                //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
+                intermediary.nameAsString
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
+            "intermediaryList" -> namesOfIntermediaries,
             "radios" -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
           )
 

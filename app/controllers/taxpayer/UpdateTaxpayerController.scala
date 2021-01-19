@@ -25,7 +25,7 @@ import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.taxpayer.UpdateTaxpayer
-import models.{ItemList, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForTaxpayer
 import pages.disclosure.DisclosureDetailsPage
 import pages.reporter.RoleInArrangementPage
@@ -57,12 +57,14 @@ class UpdateTaxpayerController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val namesOfTaxpayers: IndexedSeq[ItemList] = request.userAnswers.get(TaxpayerLoopPage, id) match {
+      val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.get(TaxpayerLoopPage, id) match {
         case Some(list) =>
           for {
             taxpayer <- list
           } yield {
-            ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+            //TODO Uncomment for change and remove links and change to "taxpayerList" -> Json.toJson(namesOfTaxpayers)
+            //ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+            taxpayer.nameAsString
           }
         case None => IndexedSeq.empty
       }
@@ -74,7 +76,7 @@ class UpdateTaxpayerController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "taxpayerList" -> Json.toJson(namesOfTaxpayers),
+        "taxpayerList" -> namesOfTaxpayers,
         "id" -> id,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
@@ -92,9 +94,22 @@ class UpdateTaxpayerController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.get(TaxpayerLoopPage, id) match {
+            case Some(list) =>
+              for {
+                taxpayer <- list
+              } yield {
+                //TODO Uncomment for change and remove links and change to "taxpayerList" -> Json.toJson(namesOfTaxpayers)
+                //ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+                taxpayer.nameAsString
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "id" -> id,
+            "taxpayerList" -> namesOfTaxpayers,
             "mode"   -> mode,
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )

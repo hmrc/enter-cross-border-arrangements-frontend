@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
-import models.{ItemList, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,12 +55,14 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfAffected: IndexedSeq[ItemList] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
+      val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
         case Some(list) =>
           for {
             affected <- list
           } yield {
-            ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
+            //TODO Uncomment for change and remove links and change to "affectedList" -> Json.toJson(namesOfAffected)
+            //ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
+            affected.nameAsString
           }
         case None => IndexedSeq.empty
       }
@@ -68,7 +70,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       val json = Json.obj(
         "form"       -> preparedForm,
         "mode"       -> mode,
-        "affectedList" -> Json.toJson(namesOfAffected),
+        "affectedList" -> namesOfAffected,
         "radios" -> YouHaveNotAddedAnyAffected.radios(preparedForm)
       )
 
@@ -84,16 +86,28 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
+            case Some(list) =>
+              for {
+                affected <- list
+              } yield {
+                //TODO Uncomment for change and remove links and change to "affectedList" -> Json.toJson(namesOfAffected)
+                //ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
+                affected.nameAsString
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
+            "affectedList" -> namesOfAffected,
             "radios" -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
           )
 
           renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(BadRequest(_))
         },
         value => {
-
 
           val initialUserAnswers = UserAnswers(request.internalId)
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
