@@ -20,14 +20,14 @@ import java.time.LocalDate
 
 import base.SpecBase
 import models.IsExemptionKnown.Yes
-import models.intermediaries.WhatTypeofIntermediary.Promoter
+import models.intermediaries.WhatTypeofIntermediary.{Promoter, Serviceprovider}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.TaxResidency
 import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers, YesNoDoNotKnowRadios}
-import pages.intermediaries.{IntermediaryLoopPage, WhatTypeofIntermediaryPage}
+import pages.intermediaries.IntermediaryLoopPage
 import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
@@ -78,6 +78,12 @@ class IntermediariesXMLSectionSpec extends SpecBase {
     isExemptionCountryKnown = Some(true),
     exemptCountries = Some(exemptCountry))
 
+  val intermediaryServiceProvider: Intermediary = intermediary.copy(
+    whatTypeofIntermediary = Serviceprovider,
+    isExemptionKnown = Yes,
+    isExemptionCountryKnown = Some(false),
+    exemptCountries = None)
+
   val intermediaryLoop = IndexedSeq(intermediary)
 
   "IntermediariesXMLSection" - {
@@ -86,36 +92,21 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional intermediary capacity for PROMOTER" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
-          .success
-          .value
-
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(userAnswers)
+        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediaryCountriesKnown)
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must build optional intermediary capacity for SERVICE PROVIDER" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Serviceprovider)
-          .success
-          .value
-
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(userAnswers)
+        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediaryServiceProvider)
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must NOT build optional intermediary capacity for 'I DO NOT KNOW'" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.IDoNotKnow)
-          .success
-          .value
-
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(userAnswers)
+        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediary)
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }

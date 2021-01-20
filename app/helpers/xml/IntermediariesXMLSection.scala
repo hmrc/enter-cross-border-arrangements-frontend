@@ -18,11 +18,12 @@ package helpers.xml
 
 import models.IsExemptionKnown.{No, Unknown, Yes}
 import models.individual.Individual
-import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
+import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
+import models.intermediaries.{ExemptCountries, Intermediary}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.{ReporterOrganisationOrIndividual, UserAnswers}
-import pages.intermediaries.{IntermediaryLoopPage, WhatTypeofIntermediaryPage}
+import pages.intermediaries.IntermediaryLoopPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 
 import scala.util.Try
@@ -58,11 +59,11 @@ object IntermediariesXMLSection extends XMLBuilder {
     }
   }
 
-  private[xml] def getIntermediaryCapacity(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(WhatTypeofIntermediaryPage).fold(NodeSeq.Empty) {
-      case WhatTypeofIntermediary.IDoNotKnow => NodeSeq.Empty
-      case intermediaryType: WhatTypeofIntermediary =>
-        <Capacity>{intermediaryType.toString}</Capacity>
+  private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
+    if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
+      NodeSeq.Empty
+    } else {
+      <Capacity>{intermediary.whatTypeofIntermediary.toString}</Capacity>
     }
   }
 
@@ -104,13 +105,13 @@ object IntermediariesXMLSection extends XMLBuilder {
             if (intermediary.individual.isDefined) {
               <Intermediary>
                 {IndividualXMLSection.buildIDForIndividual(intermediary.individual.get) ++
-                getIntermediaryCapacity(userAnswers) ++
+                getIntermediaryCapacity(intermediary) ++
                 buildNationalExemption(intermediary)}
               </Intermediary>
             } else {
               <Intermediary>
                 {OrganisationXMLSection.buildIDForOrganisation(intermediary.organisation.get) ++
-                getIntermediaryCapacity(userAnswers) ++
+                getIntermediaryCapacity(intermediary) ++
                 buildNationalExemption(intermediary)}
               </Intermediary>
             }

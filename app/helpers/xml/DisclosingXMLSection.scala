@@ -80,11 +80,12 @@ object DisclosingXMLSection extends XMLBuilder {
       userAnswers.get(IntermediaryDoYouKnowExemptionsPage).fold(NodeSeq.Empty) {
         case false => NodeSeq.Empty
         case true =>
-          userAnswers.get(IntermediaryWhichCountriesExemptPage).fold(NodeSeq.Empty)(setOfCountries =>
-          setOfCountries.toList.map((country: CountriesListEUCheckboxes) =>
+          val countryList = userAnswers.get(IntermediaryWhichCountriesExemptPage).fold(NodeSeq.Empty)(setOfCountries =>
+          setOfCountries.toList.map((country: CountriesListEUCheckboxes) => <CountryExemption>{country}</CountryExemption>))
+
             <CountryExemptions>
-              <CountryExemption>{country}</CountryExemption>
-            </CountryExemptions>))
+              {countryList}
+            </CountryExemptions>
       }
 
     userAnswers.get(IntermediaryExemptionInEUPage).fold(NodeSeq.Empty) {
