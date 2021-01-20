@@ -16,7 +16,7 @@
 
 package helpers.xml
 
-import models.{CompletionState, UserAnswers}
+import models.UserAnswers
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import pages.arrangement._
@@ -29,6 +29,7 @@ import scala.xml.{Elem, NodeSeq}
 object DisclosureInformationXMLSection extends XMLBuilder {
 
   private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
+
     userAnswers.get(WhatIsTheImplementationDatePage) match {
       case Some(date) => <ImplementingDate>{date}</ImplementingDate>
       case None => throw new Exception("Missing disclosure information implementing date")
@@ -143,7 +144,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>

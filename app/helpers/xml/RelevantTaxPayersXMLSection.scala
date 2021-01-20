@@ -19,14 +19,13 @@ package helpers.xml
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
-import models.{Address, CompletionState, InProgress, NotStarted, UserAnswers}
+import models.{Address, UserAnswers}
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.taxpayer.TaxpayerLoopPage
 
-import scala.collection.AbstractSeq
 import scala.collection.mutable.ArrayBuffer
-import scala.util.{Success, Try}
+import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
@@ -98,22 +97,20 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     <ID>{organisationNodes}</ID>
   }
 
-  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
+  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
     (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
       case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
         val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
 
-        Right(
-          <RelevantTaxpayer>
+        <RelevantTaxpayer>
           {buildIDForOrganisation(organisationDetailsForReporter)}
           <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-          </RelevantTaxpayer>
-        )
-      case _ => Left(NotStarted)
+        </RelevantTaxpayer>
+      case _ => NodeSeq.Empty
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] = userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
         val nodeBuffer = new xml.NodeBuffer
@@ -137,29 +134,11 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
-    val relevantTaxpayers: Either[CompletionState, NodeSeq] = for {
-      taxPayerIsAReporter <- buildTaxPayerIsAReporter(userAnswers)
-    } yield {
-      (taxPayerIsAReporter ++ relevantTaxPayersNode).flatten
-    }
-
-    relevantTaxpayers.fold(
-      error => Left(error),
-      nodes => {
-        val result = <RelevantTaxPayers>
-          {nodes}
-        </RelevantTaxPayers>
-        Right(result)
-      }
-    )
-
-//    Try {
-//      relevantTaxpayers
-//    } match {
-//      case Success(result) =>
-//      case _ =>
-//        Left(InProgress)
-//        Left(NotStarted)
-//    }
+    Try {
+      <RelevantTaxPayers>
+        {buildTaxPayerIsAReporter(userAnswers)}
+        {relevantTaxPayersNode}
+      </RelevantTaxPayers>
+    }.toEither
   }
 }
