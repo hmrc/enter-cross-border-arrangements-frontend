@@ -25,10 +25,10 @@ trait XMLBuilder {
 
   def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
 
-  def toXml(content: Either[CompletionState, NodeSeq])(f: NodeSeq => Elem): Either[CompletionState, Elem] =
-    content.fold(
+  def build(from: Either[CompletionState, NodeSeq])(as: NodeSeq => Elem): Either[CompletionState, Elem] =
+    from.fold(
       error => Left(error),
-      nodes => Try { f(nodes) }.toEither.left.map(_ => InProgress)
+      nodes => Try { as(nodes) }.toEither.left.map(_ => InProgress)
     )
 
 }

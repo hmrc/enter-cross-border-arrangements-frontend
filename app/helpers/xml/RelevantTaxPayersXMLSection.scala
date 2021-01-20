@@ -143,7 +143,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       (taxPayerIsAReporter ++ relevantTaxPayersNode).flatten
     }
 
-    toXml(content) { nodes =>
+    build(content) { nodes =>
       <RelevantTaxPayers>{nodes}</RelevantTaxPayers>
     }
 

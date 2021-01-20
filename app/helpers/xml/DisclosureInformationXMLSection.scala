@@ -16,7 +16,9 @@
 
 package helpers.xml
 
-import models.{CompletionState, UserAnswers}
+import helpers.xml.DisclosureInformationXMLSection.buildNationalProvision
+import models.arrangement.WhyAreYouReportingThisArrangementNow
+import models.{CompletionState, InProgress, NotStarted, UserAnswers}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import pages.arrangement._
@@ -28,25 +30,31 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
     userAnswers.get(WhatIsTheImplementationDatePage) match {
-      case Some(date) => <ImplementingDate>{date}</ImplementingDate>
-      case None => throw new Exception("Missing disclosure information implementing date")
+      case Some(date) => Right(<ImplementingDate>
+        {date}
+      </ImplementingDate>)
+      case None => Left(NotStarted)
     }
   }
 
-  private[xml] def buildReason(userAnswers: UserAnswers): NodeSeq = {
+  private[xml] def buildReason(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
     userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
       case Some(true) =>
         userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
-          .fold(NodeSeq.Empty)(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
-      case _ => NodeSeq.Empty
+          .toRight(InProgress).map(reason => <Reason>
+          {reason.toString.toUpperCase}
+        </Reason>)
+      case _ => Left(InProgress)
     }
   }
 
   private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage) match {
-      case Some(name) => <Disclosure_Name>{name}</Disclosure_Name>
+      case Some(name) => <Disclosure_Name>
+        {name}
+      </Disclosure_Name>
       case None => throw new Exception("Missing arrangement name when building DisclosureInformationSummary")
     }
 
@@ -55,14 +63,15 @@ object DisclosureInformationXMLSection extends XMLBuilder {
         val splitString = description.grouped(4000).toList
 
         splitString.map(string =>
-          <Disclosure_Description>{string}</Disclosure_Description>
+          <Disclosure_Description>
+            {string}
+          </Disclosure_Description>
         )
       case None => throw new Exception("Missing disclosure description when building DisclosureInformationSummary")
     }
 
     <Summary>
-      {mandatoryDisclosureName}
-      {mandatoryDisclosureDescription}
+      {mandatoryDisclosureName}{mandatoryDisclosureDescription}
     </Summary>
   }
 
@@ -72,7 +81,9 @@ object DisclosureInformationXMLSection extends XMLBuilder {
         val splitString = nationalProvisions.grouped(4000).toList
 
         splitString.map { string =>
-          <NationalProvision>{string}</NationalProvision>
+          <NationalProvision>
+            {string}
+          </NationalProvision>
         }
       case None => throw new Exception("Missing national provision in disclosure information")
     }
@@ -80,7 +91,9 @@ object DisclosureInformationXMLSection extends XMLBuilder {
 
   private[xml] def buildAmountType(userAnswers: UserAnswers): Elem = {
     userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
-      case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
+      case Some(value) => <Amount currCode={value.currency}>
+        {value.amount}
+      </Amount>
       case None => throw new Exception("Missing amount type in disclosure information")
     }
   }
@@ -90,12 +103,16 @@ object DisclosureInformationXMLSection extends XMLBuilder {
       case Some(countries) =>
         countries.map {
           country =>
-            <ConcernedMS>{country.toString}</ConcernedMS>
+            <ConcernedMS>
+              {country.toString}
+            </ConcernedMS>
         }
       case None => throw new Exception("Missing countries when building ConcernedMS")
     }
 
-    <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
+    <ConcernedMSs>
+      {mandatoryConcernedMS}
+    </ConcernedMSs>
   }
 
   private[xml] def buildHallmarks(userAnswers: UserAnswers): Elem = {
@@ -109,12 +126,16 @@ object DisclosureInformationXMLSection extends XMLBuilder {
                 userAnswers.get(HallmarkD1Page) match {
                   case Some(hallmarkSet) =>
                     hallmarkSet.map(hallmark =>
-                      <Hallmark>{hallmark.toString}</Hallmark>
+                      <Hallmark>
+                        {hallmark.toString}
+                      </Hallmark>
                     )
                   case None => throw new Exception("Missing D1 hallmarks when building the section")
                 }
               } else {
-                Set(<Hallmark>{"DAC6D2"}</Hallmark>)
+                Set(<Hallmark>
+                  {"DAC6D2"}
+                </Hallmark>)
               }
           }
         case _ => throw new Exception("Missing hallmarks when building the section")
@@ -128,7 +149,9 @@ object DisclosureInformationXMLSection extends XMLBuilder {
             val splitString = description.grouped(4000).toList
 
             splitString.map(string =>
-              <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>
+              <DAC6D1OtherInfo>
+                {string}
+              </DAC6D1OtherInfo>
             )
           case None => NodeSeq.Empty
         }
@@ -138,24 +161,37 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     <Hallmarks>
       <ListHallmarks>
         {mandatoryHallmarks}
-      </ListHallmarks>
-      {dac6D1OtherInfo}
+      </ListHallmarks>{dac6D1OtherInfo}
     </Hallmarks>
   }
 
   override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    Try {
+    val content: Either[CompletionState, NodeSeq] = for {
+      implementingDate <- buildImplementingDate(userAnswers)
+      reason <- buildReason(userAnswers)
+      disclosureInformationSummary = buildDisclosureInformationSummary(userAnswers)
+      nationalProvision = buildNationalProvision(userAnswers)
+      amountType = buildAmountType(userAnswers)
+      concernedMS = buildConcernedMS(userAnswers)
+      mainBenefitTest1 = <MainBenefitTest1>false</MainBenefitTest1>
+      hallmarks = buildHallmarks(userAnswers)
+    } yield {
+      (implementingDate
+        ++ reason
+        ++ disclosureInformationSummary
+        ++ nationalProvision
+        ++ amountType
+        ++ concernedMS
+        ++ mainBenefitTest1
+        ++ hallmarks
+        ).flatten
+    }
+
+    build(content) { nodes =>
       <DisclosureInformation>
-        {buildImplementingDate(userAnswers)}
-        {buildReason(userAnswers)}
-        {buildDisclosureInformationSummary(userAnswers)}
-        {buildNationalProvision(userAnswers)}
-        {buildAmountType(userAnswers)}
-        {buildConcernedMS(userAnswers)}
-        <MainBenefitTest1>false</MainBenefitTest1>
-        {buildHallmarks(userAnswers)}
+        {nodes}
       </DisclosureInformation>
-    }.toEither
+    }
   }
 }
