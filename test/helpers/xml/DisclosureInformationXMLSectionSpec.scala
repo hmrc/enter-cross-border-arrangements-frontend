@@ -25,6 +25,7 @@ import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import java.time.LocalDate
+import scala.xml.{Elem, NodeSeq}
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 
@@ -41,11 +42,13 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       val userAnswers = UserAnswers(userAnswersId)
         .set(WhatIsTheImplementationDatePage, today).success.value
 
-      val result = DisclosureInformationXMLSection.buildImplementingDate(userAnswers)
-
       val expected = s"<ImplementingDate>$today</ImplementingDate>"
 
-      prettyPrinter.format(result) mustBe expected
+      DisclosureInformationXMLSection.buildImplementingDate(userAnswers).map { result =>
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
     }
 
     "buildImplementingDate must throw an exception if date is missing" in {
@@ -59,20 +62,23 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         .set(DoYouKnowTheReasonToReportArrangementNowPage, true).success.value
         .set(WhyAreYouReportingThisArrangementNowPage, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
 
-      val result = DisclosureInformationXMLSection.buildReason(userAnswers)
-
       val expected = "<Reason>DAC6703</Reason>"
 
-      prettyPrinter.formatNodes(result) mustBe expected
+      DisclosureInformationXMLSection.buildReason(userAnswers).map { result =>
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
     }
 
     "buildReason must not build the optional reason section" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(DoYouKnowTheReasonToReportArrangementNowPage, false).success.value
 
-      val result = DisclosureInformationXMLSection.buildReason(userAnswers)
+      DisclosureInformationXMLSection.buildReason(userAnswers).map { result =>
 
-      prettyPrinter.formatNodes(result) mustBe ""
+        prettyPrinter.formatNodes(result) mustBe ""
+      }
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {

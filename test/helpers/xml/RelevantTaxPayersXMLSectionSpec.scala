@@ -78,8 +78,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
         .set(ReporterTaxResidencyLoopPage, organisationLoopDetails).success.value
 
-      val result = RelevantTaxPayersXMLSection.buildTaxPayerIsAReporter(userAnswers)
-
       val expected =
         s"""<RelevantTaxpayer>
           |    <ID>
@@ -103,16 +101,22 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           |    <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
           |</RelevantTaxpayer>""".stripMargin
 
-      prettyPrinter.formatNodes(result) mustBe expected
+      RelevantTaxPayersXMLSection.buildTaxPayerIsAReporter(userAnswers).map { result =>
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+
     }
 
     "buildTaxPayerIsAReporter must not build a taxpayer section if they're not a reporter" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
 
-      val result = RelevantTaxPayersXMLSection.buildTaxPayerIsAReporter(userAnswers)
+      RelevantTaxPayersXMLSection.buildTaxPayerIsAReporter(userAnswers).map { result =>
 
-      prettyPrinter.formatNodes(result) mustBe ""
+        prettyPrinter.formatNodes(result) mustBe ""
+      }
     }
 
     "buildTINData must build a sequence of optional tax residencies" in {
