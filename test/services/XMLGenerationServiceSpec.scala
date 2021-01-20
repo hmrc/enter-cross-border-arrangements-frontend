@@ -22,6 +22,7 @@ import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
+import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.hallmarks.{HallmarkD, HallmarkD1}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
@@ -32,7 +33,7 @@ import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
-import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
@@ -182,6 +183,33 @@ class XMLGenerationServiceSpec extends SpecBase {
       assertThrows[Exception] {
         xmlGenerationService.buildInitialDisclosureMA(UserAnswers(userAnswersId))
       }
+    }
+
+    "buildArrangementID" - {
+
+      "must build arrangement ID when user Selects DAC6ADD & enters a valid arrangementID" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(DisclosureTypePage, Dac6add).success.value
+          .set(DisclosureIdentifyArrangementPage, "GBA20210120FOK5BT").success.value
+
+        val result = xmlGenerationService.buildArrangementID(userAnswers)
+
+        val expected = "<ArrangementID>GBA20210120FOK5BT</ArrangementID>"
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must NOT build arrangement ID when user Selects DAC6NEW" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(DisclosureTypePage, Dac6new).success.value
+
+        val result = xmlGenerationService.buildArrangementID(userAnswers)
+
+        val expected = ""
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
     }
 
     "must build the full XML for a reporter that is an ORGANISTION" in {

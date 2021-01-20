@@ -71,11 +71,13 @@ object IntermediariesXMLSection extends XMLBuilder {
     val countryExemptions = intermediary.isExemptionCountryKnown.fold(NodeSeq.Empty) {
       case false => NodeSeq.Empty
       case true =>
-        intermediary.exemptCountries.fold(NodeSeq.Empty)(setOfCountries =>
+        val getCountries = intermediary.exemptCountries.fold(NodeSeq.Empty)(setOfCountries =>
           setOfCountries.toList.map((country: ExemptCountries) =>
-            <CountryExemptions>
-              <CountryExemption>{country}</CountryExemption>
-            </CountryExemptions>))
+              <CountryExemption>{country}</CountryExemption>))
+
+        <CountryExemptions>
+          {getCountries}
+        </CountryExemptions>
     }
 
     val nationalExemption = intermediary.isExemptionKnown match {

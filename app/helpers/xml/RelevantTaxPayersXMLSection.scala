@@ -58,34 +58,22 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case _ => NodeSeq.Empty
     }
   }
-
   private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers) = {
     userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
-
         taxpayers.map {
           taxpayer =>
-            (taxpayer.individual.isDefined, taxpayer.organisation.isDefined, taxpayer.implementingDate.isDefined) match {
-              case (true, false, false) =>
-                <RelevantTaxpayer>
-                  {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}
-                </RelevantTaxpayer>
-
-              case (false, true, false) =>
-                <RelevantTaxpayer>
-                  {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}
-                </RelevantTaxpayer>
-
-              case (true, false, true) =>
-                <RelevantTaxpayer>{IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}
-                  <TaxpayerImplementingDate>{taxpayer.implementingDate.get}</TaxpayerImplementingDate>
-                </RelevantTaxpayer>
-
-              case _ =>
-                <RelevantTaxpayer>
-                  {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}
-                  <TaxpayerImplementingDate>{taxpayer.implementingDate.get}</TaxpayerImplementingDate>
-                </RelevantTaxpayer>
+            val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
+            if (taxpayer.individual.isDefined) {
+              <RelevantTaxpayer>
+                {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}
+                {date}
+              </RelevantTaxpayer>
+            } else {
+              <RelevantTaxpayer>
+                {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}
+                {date}
+              </RelevantTaxpayer>
             }
         }
       case _ => NodeSeq.Empty
