@@ -235,8 +235,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
           .set(TaxpayerLoopPage, taxpayersAsOrganisation).success.value
 
-        val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
-
         val expected =
           s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
@@ -311,7 +309,11 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        prettyPrinter.format(result) mustBe expected
+        RelevantTaxPayersXMLSection.toXml(userAnswers).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+
+        }
       }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
@@ -326,8 +328,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
           .set(TaxpayerLoopPage, taxpayersAsOrganisation).success.value
-
-        val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -398,7 +398,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        prettyPrinter.format(result) mustBe expected
+        RelevantTaxPayersXMLSection.toXml(userAnswers).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
       }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
@@ -415,8 +418,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterIndividualEmailAddressPage, "email@email.com").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
           .set(TaxpayerLoopPage, taxpayersAsIndividuals).success.value
-
-        val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -502,7 +503,11 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        prettyPrinter.format(result) mustBe expected
+
+        RelevantTaxPayersXMLSection.toXml(userAnswers).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
       }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation " +
@@ -517,8 +522,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
           .set(TaxpayerLoopPage, taxpayersAsIndividuals).success.value
-
-        val result = RelevantTaxPayersXMLSection.toXml(userAnswers)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -599,7 +602,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        prettyPrinter.format(result) mustBe expected
+        RelevantTaxPayersXMLSection.toXml(userAnswers).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
       }
     }
   }

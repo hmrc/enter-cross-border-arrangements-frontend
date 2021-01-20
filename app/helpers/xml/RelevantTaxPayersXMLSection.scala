@@ -24,6 +24,7 @@ import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangem
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
@@ -91,9 +92,11 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
-    <RelevantTaxPayers>
-      {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
-    </RelevantTaxPayers>
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+    Try {
+      <RelevantTaxPayers>
+        {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
+      </RelevantTaxPayers>
+    }.toEither
   }
 }

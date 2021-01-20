@@ -25,6 +25,7 @@ import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.intermediaries.{IntermediaryLoopPage, WhatTypeofIntermediaryPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 
+import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
 object IntermediariesXMLSection extends XMLBuilder {
@@ -116,9 +117,11 @@ object IntermediariesXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Elem = {
-    <Intermediaries>
-      {buildReporterAsIntermediary(userAnswers) ++ getIntermediaries(userAnswers)}
-    </Intermediaries>
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+    Try {
+      <Intermediaries>
+        {buildReporterAsIntermediary(userAnswers) ++ getIntermediaries(userAnswers)}
+      </Intermediaries>
+    }.toEither
   }
 }

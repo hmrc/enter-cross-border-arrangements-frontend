@@ -17,14 +17,13 @@
 package services
 
 import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import javax.inject.Inject
 import models.UserAnswers
 import models.requests.DataRequest
 import org.joda.time.DateTime
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContent
-import javax.inject.Inject
 
-import scala.xml.Elem
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
@@ -69,7 +68,7 @@ class XMLGenerationService @Inject()() {
         {DisclosingXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers)}
         {RelevantTaxPayersXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
-        {IntermediariesXMLSection.toXml(userAnswers)}
+        {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {DisclosureInformationXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>

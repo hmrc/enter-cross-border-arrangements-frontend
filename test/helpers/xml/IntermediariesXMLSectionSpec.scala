@@ -290,8 +290,6 @@ class IntermediariesXMLSectionSpec extends SpecBase {
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
           .set(IntermediaryLoopPage, intermediaryLoop).success.value
 
-        val result = IntermediariesXMLSection.toXml(userAnswers)
-
         val expected =
           """<Intermediaries>
             |    <Intermediary>
@@ -344,8 +342,10 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    </Intermediary>
             |</Intermediaries>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
+        IntermediariesXMLSection.toXml(userAnswers).map { result =>
 
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
       }
     }
   }

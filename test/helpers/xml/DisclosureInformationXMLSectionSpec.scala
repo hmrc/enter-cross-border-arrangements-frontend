@@ -265,8 +265,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
         prettyPrinter.format(result) mustBe expected
       }
-
     }
-  }
 
+  }
 }
