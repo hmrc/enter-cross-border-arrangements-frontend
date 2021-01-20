@@ -19,6 +19,7 @@ package helpers.xml
 import helpers.xml.DisclosureInformationXMLSection.buildNationalProvision
 import models.arrangement.WhyAreYouReportingThisArrangementNow
 import models.{CompletionState, InProgress, NotStarted, UserAnswers}
+
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import pages.arrangement._
@@ -31,6 +32,7 @@ import scala.xml.{Elem, NodeSeq}
 object DisclosureInformationXMLSection extends XMLBuilder {
 
   private[xml] def buildImplementingDate(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
+
     userAnswers.get(WhatIsTheImplementationDatePage) match {
       case Some(date) => Right(<ImplementingDate>
         {date}
@@ -165,7 +167,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     val content: Either[CompletionState, NodeSeq] = for {
       implementingDate <- buildImplementingDate(userAnswers)
