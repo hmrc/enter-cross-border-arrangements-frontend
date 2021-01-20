@@ -97,10 +97,16 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     <ID>{organisationNodes}</ID>
   }
 
-  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
+  //should this be an either?
+  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers)= {
     (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
 
+      case (None, _) => "not started"
+
+
         // additional case for if role in arrangement is none => exception with not started
+
+        // not exception as valid
 
       case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
         val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)

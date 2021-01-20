@@ -165,6 +165,10 @@ disclosureDetails.relevantTaxpayersLink = Relevant taxpayers
 disclosureDetails.associatedEnterpriseLink = Taxpayers’ associated enterprises
 disclosureDetails.intermediariesLink = Intermediaries
 disclosureDetails.othersAffectedLink = Any others affected
+disclosureDetails.completed = Completed
+disclosureDetails.inProgress = In Progress
+disclosureDetails.notStarted = Not Started
+disclosureDetails.cannotStart = Cannot Start
 
 hallmarkCategories.title =Which categories of hallmarks are relevant to this arrangement?
 hallmarkCategories.heading =Which categories of hallmarks are relevant to this arrangement?

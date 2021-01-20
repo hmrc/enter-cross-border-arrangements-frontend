@@ -56,14 +56,22 @@ class DisclosureDetailsController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+
+
       val arrangementMessage: String = request.userAnswers.get(DisclosureIdentifyArrangementPage).getOrElse("")
 
+
+
       val diclosureTypeStatus = if (request.userAnswers.get(DisclosureTypePage).contains(Dac6new)
+
+        // new and marketable
         && request.userAnswers.get(DisclosureMarketablePage).contains(true)
 
+        // OR add and arrangement ID
         || request.userAnswers.get(DisclosureTypePage).contains(Dac6add)
         && request.userAnswers.get(DisclosureIdentifyArrangementPage).isDefined
 
+        // OR replace or delete AND BOTH DisclosureID and ArrangementId
         || (request.userAnswers.get(DisclosureTypePage).contains(Dac6add) || request.userAnswers.get(DisclosureTypePage).contains(Dac6add))
         && request.userAnswers.get(DisclosureIdentifyArrangementPage).isDefined
         && request.userAnswers.get(DisclosureIdentifyArrangementPage).isDefined)

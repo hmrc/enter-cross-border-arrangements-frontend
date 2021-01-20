@@ -36,7 +36,7 @@
                   <a class="app-task-list__task-name" href="{{ disclosureUrl }}" aria-describedby="disclosure-type">
                   {{ messages("disclosureDetails.disclosureTypeLink") }}
                   </a>
-                  <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">Completed</strong>
+                  <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
                 </li>
               </ul>
             </li>
@@ -50,11 +50,29 @@
                   <a class="app-task-list__task-name" href="{{ hallmarksUrl }}" aria-describedby="hallmarks">
                   {{ messages("disclosureDetails.hallmarksLink") }}
                   </a>
+
+                  {%- if hallmarkStatus == "complete" -%}
+                   <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
+                  {%- elif arrangementDetails == "in progress"  %}
+                   <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="disclosure-type">messages("disclosureDetails.inProgress")</strong>
+                  {%- else %}
+                  <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="disclosure-type">Not Started</strong>
+                  {%- endif -%}
+
                 </li>
                 <li class="app-task-list__item">
                   <a class="app-task-list__task-name" href="{{ arrangementsUrl }}" aria-describedby="arrangement-details">
                   {{ messages("disclosureDetails.arrangementDetailsLink") }}
                   </a>
+
+                {%- if arrangementDetailsStatus == "complete" -%}
+                 <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
+                {%- elif arrangementDetails == "in progress"  %}
+                 <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="disclosure-type">messages("disclosureDetails.inProgress")</strong>
+                {%- else %}
+                <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="disclosure-type">Not Started</strong>
+                {%- endif -%}
+
                 </li>
               </ul>
             </li>
@@ -68,6 +86,14 @@
                   <a class="app-task-list__task-name" href="{{ reportersUrl }}" aria-describedby="reporter-details">
                   {{ messages("disclosureDetails.reporterDetailsLink") }}
                   </a>
+
+                {%- if reporterDetailsStatus == "complete" -%}
+                 <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
+                {%- elif arrangementDetails == "in progress"  %}
+                 <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="disclosure-type">messages("disclosureDetails.inProgress")</strong>
+                {%- else %}
+                <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="disclosure-type">Not Started</strong>
+                {%- endif -%}
                 </li>
               </ul>
             </li>
@@ -84,12 +110,29 @@
                   <a class="app-task-list__task-name" href="{{ taxpayersUrl }}" aria-describedby="relevant-taxpayers">
                   {{ messages("disclosureDetails.relevantTaxpayersLink") }}
                   </a>
+
+                  {%- if relevantTaxPayerStatus == "complete" -%}
+                   <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
+                  {%- elif arrangementDetails == "in progress"  %}
+                   <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="disclosure-type">messages("disclosureDetails.inProgress")</strong>
+                  {%- else %}
+                  <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="disclosure-type">Not Started</strong>
+                  {%- endif -%}
                 </li>
 
                 <li class="app-task-list__item">
                     <a class="app-task-list__task-name" href="{{ intermediariesUrl }}" aria-describedby="intermediaries">
                     {{ messages("disclosureDetails.intermediariesLink") }}
                     </a>
+
+                {%- if reporterDetailsStatus == "complete" -%}
+                 <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">messages("disclosureDetails.completed")</strong>
+                {%- elif arrangementDetails == "in progress"  %}
+                 <strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="disclosure-type">messages("disclosureDetails.inProgress")</strong>
+                {%- else %}
+                <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="disclosure-type">Not Started</strong>
+                {%- endif -%}
+
                 </li>
 
               </ul>
