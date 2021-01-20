@@ -248,8 +248,9 @@ class XMLGenerationServiceSpec extends SpecBase {
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       val result = xmlGenerationService.createXmlSubmission(userAnswers, 0)
+      val expected = GeneratedXMLExamples.xmlForOrganisation
 
-      prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
+      prettyPrinter.format(result) mustBe expected
     }
 
     "must build the full XML for a reporter that is an INDIVIDUAL" in {

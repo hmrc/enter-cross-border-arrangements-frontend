@@ -25,8 +25,8 @@
           {{ messages("unsubmitted.heading", unsubmittedDisclosures.length, plural) }}
         </h1>
 
-        <p>{{ messages("unsubmitted.advice") }}</p>
-        <a href="{{url}}">{{ messages("unsubmitted.link") }}</a>
+        <p class="govuk-body">{{ messages("unsubmitted.advice") }}</p>
+        <a class="govuk-link" href="{{url}}">{{ messages("unsubmitted.link") }}</a>
 
         {{ hmrcUnsubmittedList({
             itemList: unsubmittedDisclosures,

@@ -51,12 +51,12 @@ class DisclosureDetailsController @Inject()(
 
       val json = Json.obj(
         "arrangementID" -> arrangementMessage,
-        "hallmarksUrl" -> frontendAppConfig.hallmarksUrl,
-        "arrangementsUrl" -> frontendAppConfig.arrangementsUrl,
-        "reportersUrl" -> frontendAppConfig.reportersUrl,
-        "taxpayersUrl" -> frontendAppConfig.taxpayersUrl,
-        "intermediariesUrl" -> frontendAppConfig.intermediariesUrl,
-        "disclosureUrl" -> frontendAppConfig.disclosureUrl
+        "hallmarksUrl" -> s"${frontendAppConfig.hallmarksUrl}/$id",
+        "arrangementsUrl" -> s"${frontendAppConfig.arrangementsUrl}/$id",
+        "reportersUrl" -> s"${frontendAppConfig.reportersUrl}/$id",
+        "taxpayersUrl" -> s"${frontendAppConfig.taxpayersUrl}/$id",
+        "intermediariesUrl" -> s"${frontendAppConfig.intermediariesUrl}/$id",
+        "disclosureUrl" -> s"${frontendAppConfig.disclosureUrl}/$id"
       )
 
 
