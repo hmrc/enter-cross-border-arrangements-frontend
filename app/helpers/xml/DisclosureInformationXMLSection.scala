@@ -16,7 +16,7 @@
 
 package helpers.xml
 
-import models.UserAnswers
+import models.{CompletionState, UserAnswers}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import pages.arrangement._
@@ -143,7 +143,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>

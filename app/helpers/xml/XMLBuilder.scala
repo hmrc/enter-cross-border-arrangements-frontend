@@ -16,12 +16,12 @@
 
 package helpers.xml
 
-import models.UserAnswers
+import models.{CompletionState, UserAnswers}
 
 import scala.xml.Elem
 
 trait XMLBuilder {
 
-  def toXml(userAnswers: UserAnswers): Either[Throwable, Elem]
+  def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
 
 }
