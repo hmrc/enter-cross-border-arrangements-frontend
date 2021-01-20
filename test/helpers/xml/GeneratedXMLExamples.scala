@@ -128,6 +128,7 @@ object GeneratedXMLExamples {
        |                <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
        |            </RelevantTaxpayer>
        |        </RelevantTaxPayers>
+       |        <Intermediaries> </Intermediaries>
        |        <DisclosureInformation>
        |            <ImplementingDate>$today</ImplementingDate>
        |            <Reason>DAC6703</Reason>
@@ -265,6 +266,7 @@ object GeneratedXMLExamples {
        |                <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
        |            </RelevantTaxpayer>
        |        </RelevantTaxPayers>
+       |        <Intermediaries> </Intermediaries>
        |        <DisclosureInformation>
        |            <ImplementingDate>$today</ImplementingDate>
        |            <Reason>DAC6703</Reason>

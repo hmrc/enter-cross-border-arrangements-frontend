@@ -29,6 +29,7 @@ import scala.xml.{Elem, NodeSeq}
 object DisclosureInformationXMLSection extends XMLBuilder {
 
   private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
+
     userAnswers.get(WhatIsTheImplementationDatePage) match {
       case Some(date) => <ImplementingDate>{date}</ImplementingDate>
       case None => throw new Exception("Missing disclosure information implementing date")

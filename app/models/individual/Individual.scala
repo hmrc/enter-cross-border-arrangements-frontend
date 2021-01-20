@@ -16,12 +16,15 @@
 
 package models.individual
 
-import models.taxpayer.TaxResidency
-import models.{Address, Name, UserAnswers}
-import pages.individual._
-import play.api.libs.json.{Json, OFormat}
-
 import java.time.LocalDate
+
+import models.taxpayer.TaxResidency
+import models.{Address, AddressLookup, Country, Name, UserAnswers}
+import pages.SelectedAddressLookupPage
+import pages.individual._
+import pages.reporter.individual._
+import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage}
+import play.api.libs.json.{Json, OFormat}
 
 case class Individual(individualName: Name,
                       birthDate: LocalDate,
@@ -35,6 +38,18 @@ case class Individual(individualName: Name,
 
 object Individual {
   implicit val format: OFormat[Individual] = Json.format[Individual]
+
+  private def convertAddressLookupToAddress(address: AddressLookup) = {
+    val country = Country(state = "valid", code = "GB", description = "United Kingdom")
+
+    Address(
+      addressLine1 = address.addressLine1,
+      addressLine2 = address.addressLine2,
+      addressLine3 = address.addressLine3,
+      city = address.town,
+      postCode = Some(address.postcode),
+      country = country)
+  }
 
   private def getIndividualName(ua: UserAnswers): Name = {
     ua.get(IndividualNamePage) match {
@@ -58,13 +73,61 @@ object Individual {
   }
 
   def buildIndividualDetails(ua: UserAnswers): Individual = {
+
+    val address: Option[Address] =
+      (ua.get(IndividualAddressPage), ua.get(SelectedAddressLookupPage)) match {
+        case (Some(address), _) => Some(address)
+        case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
+        case _ => None
+      }
+
     new Individual(
       individualName = getIndividualName(ua),
       birthDate = getIndividualDateOfBirth(ua),
       birthPlace = ua.get(IndividualPlaceOfBirthPage),
-      address = ua.get(IndividualAddressPage),
+      address,
       emailAddress = ua.get(EmailAddressForIndividualPage),
       taxResidencies = getTaxResidencies(ua)
+    )
+  }
+
+  private def getReporterIndividualName(ua: UserAnswers): Name = {
+    ua.get(ReporterIndividualNamePage) match {
+      case Some(name) => name
+      case None => throw new Exception("Individual Reporter must contain name")
+    }
+  }
+
+  private def getReporterIndividualDOB(ua: UserAnswers): LocalDate = {
+    ua.get(ReporterIndividualDateOfBirthPage) match {
+      case Some(dob) => dob
+      case None => throw new Exception("Individual Reporter must contain date of birth")
+    }
+  }
+
+  private def getReporterTaxResidencies(ua: UserAnswers): IndexedSeq[TaxResidency] = {
+    ua.get(ReporterTaxResidencyLoopPage) match {
+      case Some(loop) => TaxResidency.buildTaxResidency(loop)
+      case None => throw new Exception("Individual Reporter must contain date of birth")
+    }
+  }
+
+  def buildIndividualDetailsForReporter(ua: UserAnswers): Individual = {
+
+    val address: Option[Address] =
+      (ua.get(ReporterIndividualAddressPage), ua.get(ReporterSelectedAddressLookupPage)) match {
+        case (Some(address), _) => Some(address)
+        case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
+        case _ => None
+      }
+
+    new Individual(
+      individualName = getReporterIndividualName(ua),
+      birthDate = getReporterIndividualDOB(ua),
+      birthPlace = ua.get(ReporterIndividualPlaceOfBirthPage),
+      address,
+      emailAddress = ua.get(ReporterIndividualEmailAddressPage),
+      taxResidencies = getReporterTaxResidencies(ua)
     )
   }
 }

@@ -121,6 +121,45 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
+      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
+        "when arrangement is NOT MARKETABLE" in {
+        val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
+          .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
+          .set(ReporterOrganisationNamePage, "Reporter name").success.value
+          .set(ReporterSelectedAddressLookupPage, addressLookupAddress).success.value
+          .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
+          .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
+
+        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+
+        val expected =
+          s"""<RelevantTaxpayer>
+             |    <ID>
+             |        <Organisation>
+             |            <OrganisationName>Reporter name</OrganisationName>
+             |            <TIN issuedBy="GB">1234567890</TIN>
+             |            <TIN issuedBy="GB">0987654321</TIN>
+             |            <Address>
+             |                <Street>value 1</Street>
+             |                <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                <DistrictName>value 3</DistrictName>
+             |                <PostCode>XX9 9XX</PostCode>
+             |                <City>value 5</City>
+             |                <Country>GB</Country>
+             |            </Address>
+             |            <EmailAddress>email@email.co.uk</EmailAddress>
+             |            <ResCountryCode>GB</ResCountryCode>
+             |            <ResCountryCode>FR</ResCountryCode>
+             |        </Organisation>
+             |    </ID>
+             |</RelevantTaxpayer>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
         "on 'reporter/organisation-or-individual page" in {
         val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
@@ -176,152 +215,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
 
         prettyPrinter.formatNodes(result) mustBe ""
-      }
-    }
-
-
-    "buildTINData" - {
-
-      "buildTINData must build a sequence of optional tax residencies" in {
-        val result = RelevantTaxPayersXMLSection.buildTINData(taxResidencies)
-
-        val expected =
-          """<TIN issuedBy="GB">UTR1234</TIN><TIN issuedBy="FR">CS700100A</TIN><TIN issuedBy="FR">UTR5678</TIN>"""
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "buildTINData must not build a sequence of optional tax residencies" in {
-        val result = RelevantTaxPayersXMLSection.buildTINData(IndexedSeq())
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-    }
-
-
-    "buildResCountryCode" - {
-
-      "buildResCountryCode must build a sequence of resident countries" in {
-        val result = RelevantTaxPayersXMLSection.buildResCountryCode(taxResidencies)
-
-        val expected = """<ResCountryCode>GB</ResCountryCode><ResCountryCode>FR</ResCountryCode>"""
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "buildResCountryCode must throw an exception if resident countries are missing" in {
-        val taxResidencies = IndexedSeq(
-          TaxResidency(None, Some(TaxReferenceNumbers("UTR1234", None, None)))
-        )
-
-        assertThrows[Exception] {
-          RelevantTaxPayersXMLSection.buildResCountryCode(taxResidencies)
-        }
-      }
-    }
-
-
-    "buildAddress" - {
-
-      "must build the optional address section" in {
-        val result = RelevantTaxPayersXMLSection.buildAddress(Some(address))
-
-        val expected =
-          """<Address>
-            |    <Street>value 1</Street>
-            |    <BuildingIdentifier>value 2</BuildingIdentifier>
-            |    <DistrictName>value 3</DistrictName>
-            |    <PostCode>XX9 9XX</PostCode>
-            |    <City>value 4</City>
-            |    <Country>FR</Country>
-            |</Address>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build the optional address section with only the mandatory fields" in {
-        val result = RelevantTaxPayersXMLSection.buildAddress(
-          Some(Address(None, None, None, "City", None, Country("valid", "FR", "France"))))
-
-        val expected =
-          """<Address>
-            |    <City>City</City>
-            |    <Country>FR</Country>
-            |</Address>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must not build the optional address section if it's missing" in {
-        val result = RelevantTaxPayersXMLSection.buildAddress(None)
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-    }
-
-
-    "buildIDForOrganisation" - {
-
-      "must build the ID section in taxpayers" in {
-        val result = RelevantTaxPayersXMLSection.buildIDForOrganisation(organisation)
-
-        val expected =
-          """<ID>
-            |    <Organisation>
-            |        <OrganisationName>Taxpayers Ltd</OrganisationName>
-            |        <TIN issuedBy="GB">UTR1234</TIN>
-            |        <TIN issuedBy="FR">CS700100A</TIN>
-            |        <TIN issuedBy="FR">UTR5678</TIN>
-            |        <Address>
-            |            <Street>value 1</Street>
-            |            <BuildingIdentifier>value 2</BuildingIdentifier>
-            |            <DistrictName>value 3</DistrictName>
-            |            <PostCode>XX9 9XX</PostCode>
-            |            <City>value 4</City>
-            |            <Country>FR</Country>
-            |        </Address>
-            |        <EmailAddress>email@email.com</EmailAddress>
-            |        <ResCountryCode>GB</ResCountryCode>
-            |        <ResCountryCode>FR</ResCountryCode>
-            |    </Organisation>
-            |</ID>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-    }
-
-    "buildIDForIndividual" - {
-
-      "must build the ID section in taxpayers" in {
-        val result = RelevantTaxPayersXMLSection.buildIDForIndividual(individual)
-
-        val expected =
-          """<ID>
-            |    <Individual>
-            |        <IndividualName>
-            |            <FirstName>FirstName</FirstName>
-            |            <LastName>Surname</LastName>
-            |        </IndividualName>
-            |        <BirthDate>1990-01-01</BirthDate>
-            |        <BirthPlace>SomePlace</BirthPlace>
-            |        <TIN issuedBy="GB">UTR1234</TIN>
-            |        <TIN issuedBy="FR">CS700100A</TIN>
-            |        <TIN issuedBy="FR">UTR5678</TIN>
-            |        <Address>
-            |            <Street>value 1</Street>
-            |            <BuildingIdentifier>value 2</BuildingIdentifier>
-            |            <DistrictName>value 3</DistrictName>
-            |            <PostCode>XX9 9XX</PostCode>
-            |            <City>value 4</City>
-            |            <Country>FR</Country>
-            |        </Address>
-            |        <EmailAddress>email@email.com</EmailAddress>
-            |        <ResCountryCode>GB</ResCountryCode>
-            |        <ResCountryCode>FR</ResCountryCode>
-            |    </Individual>
-            |</ID>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
       }
     }
 

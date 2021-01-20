@@ -61,8 +61,47 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
-
   "DisclosingXMLSection" - {
+
+    "buildReporterCapacity" - {
+
+      "must build optional reporter capacity for intermediary promoter" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(IntermediaryRolePage, IntermediaryRole.Promoter)
+          .success
+          .value
+
+        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
+        val expected = "<Capacity>DAC61101</Capacity>"
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must build optional reporter capacity for intermediary service provider" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(IntermediaryRolePage, IntermediaryRole.ServiceProvider)
+          .success
+          .value
+
+        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
+        val expected = "<Capacity>DAC61102</Capacity>"
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must not build the optional reporter capacity if answer is 'doNotKnow' in intermediary/why-report-in-uk" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(IntermediaryRolePage, IntermediaryRole.Unknown)
+          .success
+          .value
+
+        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
+        val expected = ""
+        prettyPrinter.formatNodes(result) mustBe expected
+
+      }
+    }
 
     "buildLiability" - {
 
@@ -188,6 +227,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
     "toXml" - {
 
       "must build the full disclosing section for an organisation" in {
+
         val userAnswers = UserAnswers(userAnswersId)
           .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
           .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
@@ -229,13 +269,55 @@ class DisclosingXMLSectionSpec extends SpecBase {
         prettyPrinter.format(result) mustBe expected
       }
 
-      "must build the disclosing section without the optional liability section for an organisation" in {
+      "must build the disclosing section without the optional liability section for an organisation" +
+        "when 'do not know' is selected on taxpayer/why-report-in-uk" in {
+
         val userAnswers = UserAnswers(userAnswersId)
           .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
           .set(ReporterOrganisationNamePage, "Reporter name").success.value
           .set(ReporterOrganisationAddressPage, address).success.value
           .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
+          .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.DoNotKnow).success.value
+
+
+        val result = DisclosingXMLSection.toXml(userAnswers)
+
+        val expected =
+          """<Disclosing>
+            |    <ID>
+            |        <Organisation>
+            |            <OrganisationName>Reporter name</OrganisationName>
+            |            <TIN issuedBy="GB">1234567890</TIN>
+            |            <TIN issuedBy="GB">0987654321</TIN>
+            |            <Address>
+            |                <Street>value 1</Street>
+            |                <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                <DistrictName>value 3</DistrictName>
+            |                <PostCode>XX9 9XX</PostCode>
+            |                <City>value 4</City>
+            |                <Country>FR</Country>
+            |            </Address>
+            |            <EmailAddress>email@email.co.uk</EmailAddress>
+            |            <ResCountryCode>GB</ResCountryCode>
+            |            <ResCountryCode>FR</ResCountryCode>
+            |        </Organisation>
+            |    </ID>
+            |</Disclosing>""".stripMargin
+
+        prettyPrinter.format(result) mustBe expected
+      }
+
+      "must build the disclosing section without the optional liability section for an organisation" +
+        "when 'do not know' is selected on intermediary/why-report-in-uk" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
+          .set(ReporterOrganisationNamePage, "Reporter name").success.value
+          .set(ReporterOrganisationAddressPage, address).success.value
+          .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
+          .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
+          .set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.DoNotKnow).success.value
 
         val result = DisclosingXMLSection.toXml(userAnswers)
 
@@ -307,6 +389,52 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |        <RelevantTaxpayerDiscloser>
             |            <RelevantTaxpayerNexus>RTNEXb</RelevantTaxpayerNexus>
             |        </RelevantTaxpayerDiscloser>
+            |    </Liability>
+            |</Disclosing>""".stripMargin
+
+        prettyPrinter.format(result) mustBe expected
+      }
+
+      "must build the full disclosing section for an organisation as an INTERMEDIARY" +
+        "When a PROMOTER & RESIDENT IN UK" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
+          .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
+          .set(IntermediaryRolePage, IntermediaryRole.Promoter).success.value
+          .set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.TaxResidentUK).success.value
+          .set(ReporterOrganisationNamePage, "Reporter name").success.value
+          .set(ReporterOrganisationAddressPage, address).success.value
+          .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
+          .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
+
+        val result = DisclosingXMLSection.toXml(userAnswers)
+
+        val expected =
+          """<Disclosing>
+            |    <ID>
+            |        <Organisation>
+            |            <OrganisationName>Reporter name</OrganisationName>
+            |            <TIN issuedBy="GB">1234567890</TIN>
+            |            <TIN issuedBy="GB">0987654321</TIN>
+            |            <Address>
+            |                <Street>value 1</Street>
+            |                <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                <DistrictName>value 3</DistrictName>
+            |                <PostCode>XX9 9XX</PostCode>
+            |                <City>value 4</City>
+            |                <Country>FR</Country>
+            |            </Address>
+            |            <EmailAddress>email@email.co.uk</EmailAddress>
+            |            <ResCountryCode>GB</ResCountryCode>
+            |            <ResCountryCode>FR</ResCountryCode>
+            |        </Organisation>
+            |    </ID>
+            |    <Liability>
+            |        <IntermediaryDiscloser>
+            |            <IntermediaryNexus>INEXa</IntermediaryNexus>
+            |            <Capacity>DAC61101</Capacity>
+            |        </IntermediaryDiscloser>
             |    </Liability>
             |</Disclosing>""".stripMargin
 

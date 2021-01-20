@@ -16,13 +16,14 @@
 
 package helpers.xml
 
+import models.YesNoDoNotKnowRadios.{DoNotKnow, No, Yes}
 import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import models.{ReporterOrganisationOrIndividual, UserAnswers}
-import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
+import models.{CountriesListEUCheckboxes, ReporterOrganisationOrIndividual, UserAnswers}
+import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 
@@ -65,27 +66,53 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  private[xml] def buildReporterCapacity(userAnswers: UserAnswers): NodeSeq = {
+    userAnswers.get(IntermediaryRolePage).fold(NodeSeq.Empty) {
+      case IntermediaryRole.Unknown => NodeSeq.Empty
+      case role: IntermediaryRole =>
+        <Capacity>{role.toString}</Capacity>
+    }
+  }
+
+  private[xml] def buildReporterExemptions(userAnswers: UserAnswers): NodeSeq = {
+
+    val reporterCountryExemptions =
+      userAnswers.get(IntermediaryDoYouKnowExemptionsPage).fold(NodeSeq.Empty) {
+        case false => NodeSeq.Empty
+        case true =>
+          userAnswers.get(IntermediaryWhichCountriesExemptPage).fold(NodeSeq.Empty)(setOfCountries =>
+          setOfCountries.toList.map((country: CountriesListEUCheckboxes) =>
+            <CountryExemptions>
+              <CountryExemption>{country}</CountryExemption>
+            </CountryExemptions>))
+      }
+
+    userAnswers.get(IntermediaryExemptionInEUPage).fold(NodeSeq.Empty) {
+      case DoNotKnow => NodeSeq.Empty
+      case No =>
+        <NationalExemption>
+          <Exemption>false</Exemption>
+        </NationalExemption>
+      case Yes =>
+        <NationalExemption>
+          <Exemption>true</Exemption>
+          {reporterCountryExemptions}
+        </NationalExemption>
+    }
+  }
+
   private[xml] def buildIntermediaryLiability(userAnswers: UserAnswers): NodeSeq = {
-    lazy val nodeBuffer = new xml.NodeBuffer
 
     userAnswers.get(IntermediaryWhyReportInUKPage).fold(NodeSeq.Empty) {
       case IntermediaryWhyReportInUK.DoNotKnow =>
         NodeSeq.Empty
 
       case intermediaryWhyReportInUK: IntermediaryWhyReportInUK =>
-        val intermediaryNexus = <IntermediaryNexus>{intermediaryWhyReportInUK.toString}</IntermediaryNexus>
-
-        val capacity: NodeSeq = userAnswers.get(IntermediaryRolePage).fold(NodeSeq.Empty) {
-          case IntermediaryRole.Unknown => NodeSeq.Empty
-          case role: IntermediaryRole =>
-            <Capacity>{role.toString}</Capacity>
-        }
 
         <Liability>
           <IntermediaryDiscloser>
-            {nodeBuffer ++
-            intermediaryNexus ++
-            capacity}
+            <IntermediaryNexus>{intermediaryWhyReportInUK.toString}</IntermediaryNexus>
+            {buildReporterCapacity(userAnswers)}
           </IntermediaryDiscloser>
         </Liability>
     }
@@ -97,7 +124,7 @@ object DisclosingXMLSection extends XMLBuilder {
     val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
 
     nodeBuffer ++
-      RelevantTaxPayersXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
+      OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
       buildLiability(userAnswers)
   }
 
@@ -108,7 +135,7 @@ object DisclosingXMLSection extends XMLBuilder {
     val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
 
     nodeBuffer ++
-      RelevantTaxPayersXMLSection.buildIDForIndividual(individualDetailsForReporter) ++
+      IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter) ++
       buildLiability(userAnswers)
   }
 

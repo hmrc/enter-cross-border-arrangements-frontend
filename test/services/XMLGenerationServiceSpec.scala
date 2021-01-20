@@ -16,30 +16,31 @@
 
 package services
 
+import java.time.LocalDate
+
 import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.hallmarks.{HallmarkD, HallmarkD1}
+import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
 import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
+import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
-import java.time.LocalDate
-
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 
 class XMLGenerationServiceSpec extends SpecBase {
 
@@ -77,6 +78,13 @@ class XMLGenerationServiceSpec extends SpecBase {
   val taxpayers = IndexedSeq(
     Taxpayer("123", None, Some(organisation), Some(todayMinusOneMonth)),
     Taxpayer("Another ID", None, Some(organisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths)))
+
+  val exemptCountries: Set[ExemptCountries] = Seq(ExemptCountries.UnitedKingdom, ExemptCountries.France).toSet
+
+  val intermediaries = IndexedSeq(
+    Intermediary("123", None, Some(organisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.Yes, Some(true), Some(exemptCountries)),
+    Intermediary("Another ID", None, Some(organisation.copy(organisationName = "Other Taxpayers Ltd")),
+      WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
 
   val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
     Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
@@ -248,6 +256,7 @@ class XMLGenerationServiceSpec extends SpecBase {
       val result = xmlGenerationService.createXmlSubmission(userAnswers)
 
       prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
+
     }
   }
 

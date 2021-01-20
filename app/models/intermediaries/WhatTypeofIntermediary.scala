@@ -26,8 +26,8 @@ sealed trait WhatTypeofIntermediary
 
 object WhatTypeofIntermediary extends Enumerable.Implicits {
 
-  case object Promoter extends WithName("promoter") with WhatTypeofIntermediary
-  case object Serviceprovider extends WithName("serviceProvider") with WhatTypeofIntermediary
+  case object Promoter extends WithName("DAC61101") with WhatTypeofIntermediary
+  case object Serviceprovider extends WithName("DAC61102") with WhatTypeofIntermediary
   case object IDoNotKnow extends WithName("iDoNotKnow") with WhatTypeofIntermediary
 
   val values: Seq[WhatTypeofIntermediary] = Seq(
@@ -40,9 +40,9 @@ object WhatTypeofIntermediary extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      RadiosHint.Radio(msg"whatTypeofIntermediary.promoter", Promoter.toString,
+      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61101", Promoter.toString,
         Some(RadiosHint.Hint(msg"whatTypeofIntermediary.promoter.hint"))),
-      RadiosHint.Radio(msg"whatTypeofIntermediary.serviceProvider", Serviceprovider.toString,
+      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61102", Serviceprovider.toString,
         Some(RadiosHint.Hint(msg"whatTypeofIntermediary.serviceProvider.hint"))),
       RadiosHint.Radio(msg"whatTypeofIntermediary.iDoNotKnow", IDoNotKnow.toString, None)
     )
