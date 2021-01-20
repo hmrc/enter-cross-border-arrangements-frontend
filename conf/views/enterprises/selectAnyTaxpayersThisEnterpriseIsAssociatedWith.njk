@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -36,7 +36,7 @@
             </h1>
 
             <p class="govuk-body">{{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1") }}
-              <a href="{{ routes.controllers.taxpayer.UpdateTaxpayerController.onPageLoad(mode).url }}" class="govuk-link">
+              <a href="{{ routes.controllers.taxpayer.UpdateTaxpayerController.onPageLoad(id, mode).url }}" class="govuk-link">
                 {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2") }}
               </a>
               {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3") }}

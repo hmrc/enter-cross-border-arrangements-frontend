@@ -62,6 +62,7 @@ class WhatIsTheImplementationDateController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
@@ -81,6 +82,7 @@ class WhatIsTheImplementationDateController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "date" -> viewModel,
             "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)

@@ -66,6 +66,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "organisationName" -> getOrganisationName(request.userAnswers, id),
@@ -90,6 +91,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "organisationName" -> getOrganisationName(request.userAnswers, id),

@@ -57,6 +57,7 @@ class HallmarkAController @Inject()(
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id"         -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkA.checkboxes(preparedForm)
       )
@@ -72,6 +73,7 @@ class HallmarkAController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id"         -> id,
             "mode"       -> mode,
             "checkboxes" -> HallmarkA.checkboxes(formWithErrors)
           )

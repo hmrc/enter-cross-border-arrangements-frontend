@@ -67,6 +67,7 @@ class ReporterIndividualAddressController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers, id),
@@ -94,6 +95,7 @@ class ReporterIndividualAddressController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
             "isUkAddress" -> isUkAddress(request.userAnswers, id),

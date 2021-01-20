@@ -23,7 +23,7 @@ import controllers.mixins.DefaultRouting
 import models.Mode
 import models.disclosure.DisclosureType
 import navigation.NavigatorForTaxpayer
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,13 +43,13 @@ class TaxpayersMarketableArrangementGatewayController @Inject()(
   def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      (request.userAnswers.get(DisclosureTypePage, id) match {
+      (request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
         case Some(DisclosureType.Dac6new) =>
 
-          Future.successful(request.userAnswers.get(DisclosureMarketablePage, id).contains(true))
+          Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA))
         case Some(DisclosureType.Dac6add) =>
 
-          request.userAnswers.get(DisclosureIdentifyArrangementPage, id) match {
+          request.userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID) match {
             case Some(arrangementId) =>
               crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
           }

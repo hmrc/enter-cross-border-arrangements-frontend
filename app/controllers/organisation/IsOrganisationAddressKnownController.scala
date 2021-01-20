@@ -58,6 +58,7 @@ class IsOrganisationAddressKnownController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "organisationName" -> getOrganisationName(request.userAnswers, id)
@@ -76,6 +77,7 @@ class IsOrganisationAddressKnownController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "organisationName" -> getOrganisationName(request.userAnswers, id)

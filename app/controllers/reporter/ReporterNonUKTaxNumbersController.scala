@@ -75,6 +75,7 @@ class ReporterNonUKTaxNumbersController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "index" -> index,
         "country" -> country
@@ -93,6 +94,7 @@ class ReporterNonUKTaxNumbersController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "index" -> index,
             "country" -> country

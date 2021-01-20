@@ -58,6 +58,7 @@ class RoleInArrangementController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> RoleInArrangement.radios(preparedForm)
       )
@@ -77,6 +78,7 @@ class RoleInArrangementController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> RoleInArrangement.radios(formWithErrors)
           )

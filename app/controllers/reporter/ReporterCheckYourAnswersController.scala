@@ -60,8 +60,8 @@ class ReporterCheckYourAnswersController  @Inject()(
         "reporter/reporterCheckYourAnswers.njk",
         Json.obj("reporterDetails" -> reporterDetails,
           "residentCountryDetails" -> residentCountryDetails,
-          "roleDetails" -> roleDetails
-
+          "roleDetails" -> roleDetails,
+          "id" -> id
         )
       ).map(Ok(_))
   }

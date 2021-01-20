@@ -60,6 +60,7 @@ class IsIndividualAddressUkController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "displayName" -> getIndividualName(request.userAnswers, id)
@@ -79,6 +80,7 @@ class IsIndividualAddressUkController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "displayName" -> getIndividualName(request.userAnswers, id)

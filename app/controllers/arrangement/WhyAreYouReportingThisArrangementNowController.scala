@@ -57,6 +57,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> WhyAreYouReportingThisArrangementNow.radios(preparedForm)
       )
@@ -72,6 +73,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> WhyAreYouReportingThisArrangementNow.radios(formWithErrors)
           )

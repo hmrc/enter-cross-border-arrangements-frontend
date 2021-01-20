@@ -18,10 +18,10 @@ package controllers.reporter.taxpayer
 
 import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -52,11 +52,15 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
       "either from a new arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6new,
+          initialDisclosureMA = true
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DisclosureTypePage, 0, DisclosureType.Dac6new)
-          .success.value
-          .set(DisclosureMarketablePage, 0, true)
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -73,13 +77,16 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
       "or from an added arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6add,
+          arrangementID = Some(id),
+          initialDisclosureMA = true
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
-          .success.value
-          .set(DisclosureIdentifyArrangementPage, 0, id)
-          .success.value
-          .set(DisclosureMarketablePage, 0, true)
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -105,11 +112,15 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
       "either from a new arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6new,
+          initialDisclosureMA = false
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DisclosureTypePage, 0, DisclosureType.Dac6new)
-          .success.value
-          .set(DisclosureMarketablePage, 0, false)
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -125,14 +136,16 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
       }
 
       "or from an added arrangement " in {
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6add,
+          arrangementID = Some(id),
+          initialDisclosureMA = false
+        )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
-          .success.value
-          .set(DisclosureIdentifyArrangementPage, 0, id)
-          .success.value
-          .set(DisclosureMarketablePage, 0, false)
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))

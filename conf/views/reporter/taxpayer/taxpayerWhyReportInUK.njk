@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.reporter.taxpayer.TaxpayerWhyReportInUKController.onSubmit(id, mode).url }}" method="post">
           <fieldset class="govuk-fieldset">
 
           {{ csrf() | safe }}

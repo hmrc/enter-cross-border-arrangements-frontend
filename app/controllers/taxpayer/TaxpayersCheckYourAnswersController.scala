@@ -19,7 +19,7 @@ package controllers.taxpayer
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.taxpayer.Taxpayer
-import models.{Mode, SelectType}
+import models.{Mode, NormalMode, SelectType}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -73,7 +73,9 @@ class TaxpayersCheckYourAnswersController @Inject()(
         Json.obj(
           "taxpayersSummary" -> taxpayerSummary,
           "countrySummary" -> countrySummary,
-          "implementingDateSummary" -> implementingDateSummary
+          "implementingDateSummary" -> implementingDateSummary,
+          "id" -> id,
+          "mode" -> NormalMode
         )).map(Ok(_))
   }
 

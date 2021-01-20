@@ -57,6 +57,7 @@ class ReporterIsIndividualAddressUKController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
@@ -75,6 +76,7 @@ class ReporterIsIndividualAddressUKController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )

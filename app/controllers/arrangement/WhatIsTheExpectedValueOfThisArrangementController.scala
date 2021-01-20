@@ -62,6 +62,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "currencies" -> currencyJsonList(
           request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id).map(_.currency),currencies)
@@ -78,6 +79,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "currencies" -> currencyJsonList(formWithErrors.data.get("currency"),currencies)
           )

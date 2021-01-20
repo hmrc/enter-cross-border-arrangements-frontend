@@ -71,6 +71,7 @@ class ReporterUKTaxNumbersController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "index" -> index,
         "lostUTRUrl" -> appConfig.lostUTRUrl,
@@ -87,6 +88,7 @@ class ReporterUKTaxNumbersController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "index" -> index,
             "lostUTRUrl" -> appConfig.lostUTRUrl

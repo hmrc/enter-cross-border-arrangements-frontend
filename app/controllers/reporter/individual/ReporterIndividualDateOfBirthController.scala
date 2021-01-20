@@ -61,6 +61,7 @@ class ReporterIndividualDateOfBirthController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "date" -> viewModel
       )
@@ -81,6 +82,7 @@ class ReporterIndividualDateOfBirthController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "date" -> viewModel
           )

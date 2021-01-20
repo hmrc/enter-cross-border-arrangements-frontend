@@ -60,6 +60,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
           val json = Json.obj(
             "form" -> preparedForm,
+            "id" -> id,
             "mode" -> mode,
             "checkboxes" -> taxpayerCheckboxes(preparedForm, request.userAnswers, id)
           )
@@ -77,6 +78,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> taxpayerCheckboxes(formWithErrors, request.userAnswers, id)
           )

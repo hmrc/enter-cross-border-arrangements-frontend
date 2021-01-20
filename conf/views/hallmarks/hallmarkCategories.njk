@@ -34,7 +34,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.hallmarks.HallmarkCategoriesController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.hallmarks.HallmarkCategoriesController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

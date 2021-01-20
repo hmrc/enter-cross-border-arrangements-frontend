@@ -74,6 +74,7 @@ class ReporterTinNonUKQuestionController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "index" -> index,
@@ -94,6 +95,7 @@ class ReporterTinNonUKQuestionController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "index" -> index,

@@ -56,7 +56,8 @@ class TaxpayerSelectTypeController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "mode"   -> mode,
+        "id"      -> id,
+        "mode"    -> mode,
         "radios"  -> SelectType.radios(preparedForm)
       )
 
@@ -71,6 +72,7 @@ class TaxpayerSelectTypeController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> SelectType.radios(formWithErrors)
           )

@@ -57,6 +57,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(preparedForm)
       )
@@ -72,6 +73,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(formWithErrors)
           )

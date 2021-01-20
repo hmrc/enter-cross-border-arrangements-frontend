@@ -56,6 +56,7 @@ class HallmarkD1OtherController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
@@ -70,6 +71,7 @@ class HallmarkD1OtherController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 

@@ -58,6 +58,7 @@ class EmailAddressForIndividualController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "displayName" -> getIndividualName(request.userAnswers, id)
       )
@@ -76,6 +77,7 @@ class EmailAddressForIndividualController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "displayName" -> getIndividualName(request.userAnswers, id)
           )

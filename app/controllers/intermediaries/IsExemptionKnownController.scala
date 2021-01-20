@@ -59,6 +59,7 @@ class IsExemptionKnownController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> IsExemptionKnown.radios(preparedForm),
         "intermediary" -> getName(request.userAnswers, id)
@@ -78,6 +79,7 @@ class IsExemptionKnownController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> IsExemptionKnown.radios(formWithErrors),
             "intermediary" -> getName(request.userAnswers, id)

@@ -57,6 +57,7 @@ class IsIndividualAddressKnownController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "name" -> getIndividualName(request.userAnswers, id)
@@ -76,6 +77,7 @@ class IsIndividualAddressKnownController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "name" -> getIndividualName(request.userAnswers, id)

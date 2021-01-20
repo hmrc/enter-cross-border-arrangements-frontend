@@ -65,6 +65,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
         "radios" -> Radios.yesNo(preparedForm("confirm")),
@@ -85,6 +86,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
             "radios" -> Radios.yesNo(formWithErrors("confirm")),

@@ -59,6 +59,7 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "associatedEnterprise" -> getName(request.userAnswers, id),
         "radios" -> Radios.yesNo(preparedForm("confirm"))
@@ -78,6 +79,7 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "associatedEnterprise" -> getName(request.userAnswers, id),
             "radios" -> Radios.yesNo(formWithErrors("confirm"))

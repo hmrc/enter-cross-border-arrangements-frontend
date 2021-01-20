@@ -56,6 +56,7 @@ class IndividualNameController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
@@ -73,6 +74,7 @@ class IndividualNameController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 

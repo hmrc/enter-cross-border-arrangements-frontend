@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 
 import javax.inject.Inject
-import models.{Mode, SelectType}
+import models.{Mode, NormalMode, SelectType}
 import models.intermediaries.Intermediary
 import navigation.{Navigator, NavigatorForIntermediaries}
 import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage}
@@ -91,9 +91,10 @@ class IntermediariesCheckYourAnswersController @Inject()(
         "intermediaries/intermediariesCheckYourAnswers.njk",
         Json.obj(
           "intermediarySummary" -> intermediarySummary,
-          "tinCountrySummary" -> tinCountrySummary,
-          "intermediarySummary2" -> intermediarySummary2
-
+          "tinCountrySummary"          -> tinCountrySummary,
+          "intermediarySummary2"      -> intermediarySummary2,
+          "id"                        -> id,
+          "mode"       -> NormalMode
         )).map(Ok(_))
   }
 

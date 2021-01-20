@@ -57,6 +57,7 @@ class IndividualPlaceOfBirthController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers, id)
       )
@@ -75,6 +76,7 @@ class IndividualPlaceOfBirthController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "name" -> getIndividualName(request.userAnswers, id)
 

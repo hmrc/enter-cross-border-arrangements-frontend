@@ -67,6 +67,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "individualName" -> getIndividualName(request.userAnswers, id),
@@ -91,6 +92,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "individualName" -> getIndividualName(request.userAnswers, id),

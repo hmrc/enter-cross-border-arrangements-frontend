@@ -57,6 +57,7 @@ class IntermediaryWhichCountriesExemptController @Inject()(
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "checkboxes" -> CountriesListEUCheckboxes.checkboxes(preparedForm)
       )
@@ -75,6 +76,7 @@ class IntermediaryWhichCountriesExemptController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> CountriesListEUCheckboxes.checkboxes(formWithErrors)
           )

@@ -60,6 +60,7 @@ class IndividualDateOfBirthController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "date" -> viewModel,
         "name" -> getIndividualName(request.userAnswers, id)
@@ -81,6 +82,7 @@ class IndividualDateOfBirthController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "date" -> viewModel,
             "name" -> getIndividualName(request.userAnswers, id)

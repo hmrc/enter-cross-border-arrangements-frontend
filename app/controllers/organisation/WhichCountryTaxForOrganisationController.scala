@@ -61,6 +61,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
         "countries" -> countryJsonList(preparedForm.data, countries),
@@ -81,6 +82,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
             "countries" -> countryJsonList(formWithErrors.data, countries),

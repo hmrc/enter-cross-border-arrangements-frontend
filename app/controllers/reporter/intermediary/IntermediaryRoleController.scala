@@ -58,6 +58,7 @@ class IntermediaryRoleController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> IntermediaryRole.radios(preparedForm)
       )
@@ -76,6 +77,7 @@ class IntermediaryRoleController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> IntermediaryRole.radios(formWithErrors)
           )

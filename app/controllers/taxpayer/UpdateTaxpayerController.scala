@@ -68,6 +68,7 @@ class UpdateTaxpayerController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "taxpayerList" -> namesOfTaxpayers,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
       )
@@ -86,6 +87,7 @@ class UpdateTaxpayerController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )

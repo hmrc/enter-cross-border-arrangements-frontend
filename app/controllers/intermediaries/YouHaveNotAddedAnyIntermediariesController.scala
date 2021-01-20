@@ -68,6 +68,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "intermediaryList" -> namesOfIntermediaries,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
@@ -87,6 +88,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "radios" -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
           )

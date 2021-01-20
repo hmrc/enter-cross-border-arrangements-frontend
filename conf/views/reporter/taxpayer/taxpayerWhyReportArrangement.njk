@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.reporter.taxpayer.TaxpayerWhyReportArrangementController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

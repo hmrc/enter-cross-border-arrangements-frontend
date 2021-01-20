@@ -65,6 +65,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
         "country" -> getCountry(request.userAnswers, id),
@@ -85,6 +86,7 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
             "country" -> getCountry(request.userAnswers, id),

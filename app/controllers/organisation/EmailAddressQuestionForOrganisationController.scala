@@ -59,6 +59,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
@@ -78,6 +79,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )

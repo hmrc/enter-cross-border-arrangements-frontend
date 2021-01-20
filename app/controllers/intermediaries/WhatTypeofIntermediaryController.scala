@@ -60,6 +60,7 @@ class WhatTypeofIntermediaryController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "intermediary" -> getName(request.userAnswers, id),
         "radios"  -> WhatTypeofIntermediary.radios(preparedForm)
@@ -79,6 +80,7 @@ class WhatTypeofIntermediaryController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "intermediary" -> getName(request.userAnswers, id),
             "radios" -> WhatTypeofIntermediary.radios(formWithErrors)

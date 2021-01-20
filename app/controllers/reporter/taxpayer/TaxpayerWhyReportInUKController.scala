@@ -59,6 +59,7 @@ class TaxpayerWhyReportInUKController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> TaxpayerWhyReportInUK.radios(preparedForm)
       )
@@ -77,6 +78,7 @@ class TaxpayerWhyReportInUKController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> TaxpayerWhyReportInUK.radios(formWithErrors)
           )
