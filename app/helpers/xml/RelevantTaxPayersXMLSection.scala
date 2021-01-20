@@ -137,29 +137,15 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case None => throw new Exception("Unable to build Relevant taxpayers section due to missing data.")
     }
 
-    val relevantTaxpayers: Either[CompletionState, NodeSeq] = for {
+    val content: Either[CompletionState, NodeSeq] = for {
       taxPayerIsAReporter <- buildTaxPayerIsAReporter(userAnswers)
     } yield {
       (taxPayerIsAReporter ++ relevantTaxPayersNode).flatten
     }
 
-    relevantTaxpayers.fold(
-      error => Left(error),
-      nodes => {
-        val result = <RelevantTaxPayers>
-          {nodes}
-        </RelevantTaxPayers>
-        Right(result)
-      }
-    )
+    toXml(content) { nodes =>
+      <RelevantTaxPayers>{nodes}</RelevantTaxPayers>
+    }
 
-//    Try {
-//      relevantTaxpayers
-//    } match {
-//      case Success(result) =>
-//      case _ =>
-//        Left(InProgress)
-//        Left(NotStarted)
-//    }
   }
 }

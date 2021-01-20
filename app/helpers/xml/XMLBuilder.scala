@@ -16,12 +16,19 @@
 
 package helpers.xml
 
-import models.{CompletionState, UserAnswers}
+import models.{CompletionState, InProgress, UserAnswers}
 
-import scala.xml.Elem
+import scala.util.Try
+import scala.xml.{Elem, NodeSeq}
 
 trait XMLBuilder {
 
   def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
+
+  def toXml(content: Either[CompletionState, NodeSeq])(f: NodeSeq => Elem): Either[CompletionState, Elem] =
+    content.fold(
+      error => Left(error),
+      nodes => Try { f(nodes) }.toEither.left.map(_ => InProgress)
+    )
 
 }
