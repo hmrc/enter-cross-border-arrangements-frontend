@@ -16,7 +16,7 @@
 
 package helpers.xml
 
-import models.{CompletionState, UserAnswers}
+import models.{CompletionState, NotStarted, UserAnswers}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -61,16 +61,19 @@ object DisclosingXMLSection extends XMLBuilder {
   }
 
   private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
-    val nodeBuffer = new xml.NodeBuffer
 
-    val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
-
-    nodeBuffer ++
-      RelevantTaxPayersXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
-      buildLiability(userAnswers)
+    // TODO refactor organisation builder to have an Option
+    for {
+      organisationDetailsForReporter <- Try { Organisation.buildOrganisationDetailsForReporter(userAnswers) }.toEither.left.map(_ => NotStarted)
+      idForOrganisation              =  RelevantTaxPayersXMLSection.buildIDForOrganisation(organisationDetailsForReporter)
+    } yield {
+      new xml.NodeBuffer ++
+        idForOrganisation ++
+        buildLiability(userAnswers)
+    }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
     //TODO Need to check here if reporter is an individual or organisation then return correct section
 
     val content: Either[CompletionState, NodeSeq] = for {
@@ -80,13 +83,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
 
     build(content) { nodes =>
-      <RelevantTaxPayers>{nodes}</RelevantTaxPayers>
+      <Disclosing>{nodes}</Disclosing>
     }
-
-    Try {
-      <Disclosing>
-        {buildDiscloseDetailsForOrganisation(userAnswers)}
-      </Disclosing>
-    }.toEither
   }
 }
