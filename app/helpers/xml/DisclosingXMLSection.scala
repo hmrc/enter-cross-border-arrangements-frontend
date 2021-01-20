@@ -16,7 +16,7 @@
 
 package helpers.xml
 
-import models.UserAnswers
+import models.{CompletionState, UserAnswers}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -60,7 +60,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
-  private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers): NodeSeq = {
+  private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
     val nodeBuffer = new xml.NodeBuffer
 
     val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
@@ -72,6 +72,16 @@ object DisclosingXMLSection extends XMLBuilder {
 
   override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //TODO Need to check here if reporter is an individual or organisation then return correct section
+
+    val content: Either[CompletionState, NodeSeq] = for {
+      discloseDetailsForOrganisation <- buildDiscloseDetailsForOrganisation(userAnswers)
+    } yield {
+      discloseDetailsForOrganisation
+    }
+
+    build(content) { nodes =>
+      <RelevantTaxPayers>{nodes}</RelevantTaxPayers>
+    }
 
     Try {
       <Disclosing>

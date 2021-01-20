@@ -189,9 +189,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
 
     build(content) { nodes =>
-      <DisclosureInformation>
-        {nodes}
-      </DisclosureInformation>
+      <DisclosureInformation>{nodes}</DisclosureInformation>
     }
   }
 }
