@@ -21,14 +21,13 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.affected.Affected
 import models.{Mode, SelectType}
 import navigation.NavigatorForAffected
-import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage}
+import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
@@ -49,23 +48,28 @@ class AffectedCheckYourAnswersController @Inject()(
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val affectedSummary: Seq[SummaryList.Row] =
+      val (affectedSummary, countrySummary) =
 
         request.userAnswers.get(AffectedTypePage) match {
 
           case Some(SelectType.Organisation) =>
-            helper.affectedType.toSeq ++
+            (
+              helper.affectedType.toSeq ++
               helper.organisationName.toSeq ++
               helper.buildOrganisationAddressGroup ++
-              helper.buildOrganisationEmailAddressGroup
-
+              helper.buildOrganisationEmailAddressGroup,
+              helper.buildTaxResidencySummaryForOrganisation
+            )
           case Some(SelectType.Individual) =>
-            Seq(helper.affectedType ++
-              helper.individualName).flatten ++
-              helper.buildIndividualDateOfBirthGroup ++
-              helper.buildIndividualPlaceOfBirthGroup ++
-              helper.buildIndividualAddressGroup ++
-              helper.buildIndividualEmailAddressGroup
+            (
+              Seq(helper.affectedType ++
+                helper.individualName).flatten ++
+                helper.buildIndividualDateOfBirthGroup ++
+                helper.buildIndividualPlaceOfBirthGroup ++
+                helper.buildIndividualAddressGroup ++
+                helper.buildIndividualEmailAddressGroup,
+              helper.buildTaxResidencySummaryForIndividuals
+            )
 
           case _ => throw new RuntimeException("Unable to retrieve select type for other parties affected")
       }
@@ -73,7 +77,8 @@ class AffectedCheckYourAnswersController @Inject()(
       renderer.render(
         "affected/affectedCheckYourAnswers.njk",
         Json.obj(
-          "affectedSummary" -> affectedSummary
+          "affectedSummary" -> affectedSummary,
+          "countrySummary" -> countrySummary
         )).map(Ok(_))
   }
 
@@ -90,7 +95,8 @@ class AffectedCheckYourAnswersController @Inject()(
           IndexedSeq[Affected](Affected.buildDetails(request.userAnswers))
       }
       for {
-        userAnswersWithAffectedLoop <- Future.fromTry(request.userAnswers.set(AffectedLoopPage, affectedLoopList))
+        userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, affectedLoopList))
         _                               <- sessionRepository.set(userAnswersWithAffectedLoop)
         checkRoute                      =  toCheckRoute(mode, userAnswersWithAffectedLoop)
       } yield Redirect(redirect(checkRoute))
