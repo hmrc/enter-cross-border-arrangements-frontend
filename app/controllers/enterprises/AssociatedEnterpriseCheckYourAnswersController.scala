@@ -23,7 +23,7 @@ import models.enterprises.AssociatedEnterprise
 import javax.inject.Inject
 import models.{Mode, SelectType}
 import navigation.NavigatorForEnterprises
-import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage}
+import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -99,7 +99,8 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       }
 
       for {
-        userAnswersWithEnterpriseLoop <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseLoopPage, enterpriseLoopList))
+        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, enterpriseLoopList))
         _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {

@@ -53,11 +53,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
       val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
         case Some(list) =>
-          for {
-            enterprise <- list
-          } yield {
-            enterprise.nameAsString
-          }
+          list.map(_.nameAsString)
         case None => IndexedSeq.empty
       }
 
@@ -87,11 +83,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
           val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
             case Some(list) =>
-              for {
-                enterprise <- list
-              } yield {
-                enterprise.nameAsString
-              }
+              list.map(_.nameAsString)
             case None => IndexedSeq.empty
           }
 
