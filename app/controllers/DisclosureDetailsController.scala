@@ -85,12 +85,12 @@ class DisclosureDetailsController @Inject()(
 
       val hallmarkStatus =  if(request.userAnswers.get(HallmarkDPage).isEmpty){
         "not started"
-      } else if ((request.userAnswers.get(HallmarkDPage).contains(Set(D1))
+      }
+      else if ((request.userAnswers.get(HallmarkDPage).contains(Set(D1))
         && request.userAnswers.get(HallmarkD1Page).isEmpty)
 
         || (request.userAnswers.get(HallmarkD1Page).contains(Set(D1other))
-        && request.userAnswers.get(HallmarkD1OtherPage).isEmpty)
-      ){
+        && request.userAnswers.get(HallmarkD1OtherPage).isEmpty)){
         "in progress"
       } else {
         "complete"
