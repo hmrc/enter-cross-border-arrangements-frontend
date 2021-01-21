@@ -23,15 +23,16 @@ import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
 import org.joda.time.DateTime
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContent
 
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
 
-  private[services] def buildHeader(userAnswers: UserAnswers)
+  private[services] def buildHeader(userAnswers: UserAnswers, id: Int)
                                    (implicit request: DataRequest[AnyContent]): Elem = {
-    val mandatoryMessageRefId = userAnswers.getBase(DisclosureNamePage) match {
+    val mandatoryMessageRefId = userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureName) match {
       case Some(disclosureName) => "GB" + request.enrolmentID + disclosureName
       case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
     }
@@ -44,15 +45,15 @@ class XMLGenerationService @Inject()() {
     </Header>
   }
 
-  private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers): Elem = {
-    userAnswers.getBase(DisclosureTypePage) match {
+  private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers, id: Int): Elem = {
+    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
       case Some(value) => <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
       case None => throw new Exception("Missing disclosure type answer")
     }
   }
 
-  private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers): Elem = {
-    userAnswers.getBase(DisclosureMarketablePage) match {
+  private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers, id: Int): Elem = {
+    userAnswers.get(DisclosureDetailsPage, id).map(_.initialDisclosureMA) match {
       case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
       case None => throw new Exception("Missing InitialDisclosureMA answer")
     }
@@ -70,12 +71,12 @@ class XMLGenerationService @Inject()() {
                          (implicit request: DataRequest[AnyContent]): Elem = {
 
     <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
-      {buildHeader(userAnswers)}
+      {buildHeader(userAnswers, id)}
       {buildArrangementID(userAnswers, id)}
       <DAC6Disclosures>
-        {buildDisclosureImportInstruction(userAnswers)}
+        {buildDisclosureImportInstruction(userAnswers, id)}
         {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        {buildInitialDisclosureMA(userAnswers)}
+        {buildInitialDisclosureMA(userAnswers, id)}
         {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}

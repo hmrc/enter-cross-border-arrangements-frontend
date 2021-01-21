@@ -17,12 +17,13 @@
 package controllers
 
 import base.SpecBase
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.DisclosureIdentifyArrangementPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -39,9 +40,18 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        arrangementID = Some("arrangement"),
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"), UnsubmittedDisclosure("2", "The Revenge"))).success.value
-        .set(DisclosureIdentifyArrangementPage, 1, "arrangement").success.value
+        .set(DisclosureDetailsPage, 1, disclosureDetails)
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(1).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

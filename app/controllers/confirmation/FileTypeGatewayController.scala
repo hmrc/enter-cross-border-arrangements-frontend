@@ -40,7 +40,7 @@ class FileTypeGatewayController @Inject()(
   def onRouting(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(request.userAnswers.get(DisclosureTypePage, id)).map { disclosureType =>
+      Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).map { disclosureType =>
         Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
       }
   }

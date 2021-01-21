@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 
 import javax.inject.Inject
-import pages.disclosure.DisclosureIdentifyArrangementPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -43,7 +43,7 @@ class DisclosureDetailsController @Inject()(
     implicit request =>
 
       val arrangementMessage: String = request.userAnswers.fold("") {
-        value => value.get(DisclosureIdentifyArrangementPage, id)
+        value => value.get(DisclosureDetailsPage, id).map(_.arrangementID)
           .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
           .getOrElse("")
       }

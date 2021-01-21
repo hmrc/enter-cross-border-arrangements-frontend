@@ -18,9 +18,9 @@ package controllers.confirmation
 
 import base.SpecBase
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.DisclosureTypePage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureTypePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,9 +31,15 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to NEW disclosure received when disclosure type is NEW" in {
 
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureTypePage, 0, DisclosureType.Dac6new)
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -49,10 +55,15 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "redirect to ADDED disclosure received when disclosure type is ADDED" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6add,
+        initialDisclosureMA = true
+      )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
