@@ -39,8 +39,8 @@ lazy val root = (project in file("."))
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js", "lib/hmrc-frontend/hmrc/all.js", "javascripts/dac.js"))
     ),
-    /*uglifyCompressOptions := Seq("unused=false", "dead_code=false"),*/
-    pipelineStages in Assets := Seq(concat/*,uglify*/),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+    pipelineStages in Assets := Seq(concat,uglify),
     useSuperShell in ThisBuild     := false
   )
 
