@@ -35,7 +35,7 @@ class XMLBuilderSpec extends SpecBase {
 
         val content = Right(NodeSeq.Empty)
         val result = builder.build(content)(nodes => <SomeTag>{nodes}</SomeTag>)
-        result must be (content)
+        result must be (Right(<SomeTag></SomeTag>))
       }
     }
   }
