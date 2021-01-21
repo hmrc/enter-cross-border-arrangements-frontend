@@ -19,13 +19,15 @@ package controllers.enterprises
 import base.SpecBase
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import matchers.JsonMatchers
-import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.{NormalMode, UserAnswers}
+import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnterprises}
+import models.organisation.Organisation
+import models.taxpayer.TaxResidency
+import models.{Country, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.enterprises.{AssociatedEnterpriseLoopPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -64,7 +66,8 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(form)
+        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(form),
+        "associatedEnterpriseList" -> Json.arr()
       )
 
       templateCaptor.getValue mustEqual "enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk"
@@ -73,12 +76,27 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view with a list of enterprises correctly on a GET when the question has previously been answered" in {
+
+      val organisation = Organisation(
+        organisationName = "Organisation Ltd.",
+        address = None,
+        emailAddress = None,
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
+      )
+
+      val enterpriseLoop = IndexedSeq(
+        AssociatedEnterprise("id", None, Some(organisation), List("Associated Enterprise"), isAffectedBy = false))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.values.head)
+        .success.value
+        .set(AssociatedEnterpriseLoopPage, enterpriseLoop)
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -92,10 +110,13 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
 
       val filledForm = form.bind(Map("value" -> YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
 
+      val expectedList = Json.arr("Organisation Ltd.")
+
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(filledForm)
+        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(filledForm),
+        "associatedEnterpriseList" -> expectedList
       )
 
       templateCaptor.getValue mustEqual "enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk"

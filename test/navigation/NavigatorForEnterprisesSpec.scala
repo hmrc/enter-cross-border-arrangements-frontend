@@ -24,7 +24,7 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{CheckMode, NormalMode, SelectType}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -86,6 +86,12 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
             navigator.routeMap(IsAssociatedEnterpriseAffectedPage)(DefaultRouting(NormalMode))(Some(affectedPageAnswer))(0)
               .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
         }
+      }
+
+      s"must go from $E11 to $E2 in the associated enterprise journey" in {
+
+        navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)
+          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode))
       }
     }
 
