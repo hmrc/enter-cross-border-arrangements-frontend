@@ -34,6 +34,13 @@
                   rows: affectedSummary
                }) }}
 
+               {{ govukSummaryList({
+                 classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
+                 rows: countrySummary
+               }) }}
+
+               <hr>
+
                {{ csrf() | safe }}
 
                 <div class="govuk-!-margin-top-9">

@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.taxpayer.Taxpayer
 import models.{Mode, SelectType}
 import navigation.Navigator
-import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage}
+import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -87,7 +87,8 @@ class TaxpayersCheckYourAnswersController @Inject()(
           IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers))
       }
       for {
-        userAnswersWithTaxpayerLoop <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
+        userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage))
+        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, taxpayerLoopList))
         _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, mode, userAnswersWithTaxpayerLoop))

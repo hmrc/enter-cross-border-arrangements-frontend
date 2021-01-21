@@ -23,7 +23,7 @@ import javax.inject.Inject
 import models.{Mode, SelectType}
 import models.intermediaries.Intermediary
 import navigation.{Navigator, NavigatorForIntermediaries}
-import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage}
+import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -110,8 +110,9 @@ class IntermediariesCheckYourAnswersController @Inject()(
           IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers))
       }
       for {
-        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, intermediaryLoopList))
-        _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
+        userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, intermediaryLoopList))
+        _              <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop)
       } yield {
         Redirect(redirect(checkRoute))
