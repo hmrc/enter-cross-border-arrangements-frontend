@@ -30,7 +30,7 @@ class HistoryConnector @Inject()(configuration: FrontendAppConfig,
     val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
 
     def getSubmissionsUrl(enrolmentid: String) = s"$baseUrl/history/submissions/$enrolmentid"
-
+    
     def getSubmissionDetails(enrolmentid: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
             httpClient.GET[SubmissionHistory](getSubmissionsUrl(enrolmentid)).map { subs =>
                   subs.details match {
@@ -38,8 +38,8 @@ class HistoryConnector @Inject()(configuration: FrontendAppConfig,
                     case _ => true
                   }
             } recover {
-                case _: Exception => false
-            }
+                 case _ => throw new Exception("History unavailble")
     }
   
+  }
 }

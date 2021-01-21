@@ -31,7 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
+import handlers.ErrorHandler
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,6 +44,7 @@ class DisclosureTypeController @Inject()(
     requireData: DataRequiredAction,
     formProvider: DisclosureTypeFormProvider,
     connector: HistoryConnector,
+    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -58,7 +59,7 @@ class DisclosureTypeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-    for {
+    { for {
       hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
       radios = if (hasHistory) DisclosureType.radiosComplete(preparedForm) else DisclosureType.radios(preparedForm)
        json = Json.obj(
@@ -67,7 +68,7 @@ class DisclosureTypeController @Inject()(
         "radios"  -> radios
       )
       renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
-    } yield Ok(renderedForm)
+    } yield Ok(renderedForm)}.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
@@ -79,7 +80,7 @@ class DisclosureTypeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          for {
+        {for {
             hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
             radios = if (hasHistory) DisclosureType.radiosComplete(formWithErrors) else DisclosureType.radios(formWithErrors)
             json = Json.obj(
@@ -90,7 +91,7 @@ class DisclosureTypeController @Inject()(
             renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
           } yield BadRequest(renderedForm)
 
-
+        }.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
         },
         value =>
           for {
