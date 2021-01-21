@@ -43,7 +43,7 @@ class DisclosureDetailsController @Inject()(
     implicit request =>
 
       val arrangementMessage: String = request.userAnswers.fold("") {
-        value => value.get(DisclosureDetailsPage, id).map(_.arrangementID)
+        value => value.get(DisclosureDetailsPage, id).flatMap(_.arrangementID)
           .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
           .getOrElse("")
       }
