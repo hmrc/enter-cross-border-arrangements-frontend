@@ -32,6 +32,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosingXMLSection extends XMLBuilder {
 
+  //1
   private[xml] def buildLiability(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(RoleInArrangementPage) match {
       case Some(RoleInArrangement.Taxpayer) => buildTaxpayerLiability(userAnswers)
@@ -39,6 +40,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  //2
   private[xml] def buildTaxpayerLiability(userAnswers: UserAnswers): NodeSeq = {
     lazy val nodeBuffer = new xml.NodeBuffer
 
@@ -66,6 +68,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  //3
   private[xml] def buildReporterCapacity(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(IntermediaryRolePage).fold(NodeSeq.Empty) {
       case IntermediaryRole.Unknown => NodeSeq.Empty
@@ -74,6 +77,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  //4
   private[xml] def buildReporterExemptions(userAnswers: UserAnswers): NodeSeq = {
 
     val reporterCountryExemptions =
@@ -102,6 +106,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  //5
   private[xml] def buildIntermediaryLiability(userAnswers: UserAnswers): NodeSeq = {
 
     userAnswers.get(IntermediaryWhyReportInUKPage).fold(NodeSeq.Empty) {
@@ -119,6 +124,7 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
+  //6
   private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers): NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
@@ -129,7 +135,7 @@ object DisclosingXMLSection extends XMLBuilder {
       buildLiability(userAnswers)
   }
 
-
+  //7
   private[xml] def buildDiscloseDetailsForIndividual(userAnswers: UserAnswers): NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
@@ -140,6 +146,7 @@ object DisclosingXMLSection extends XMLBuilder {
       buildLiability(userAnswers)
   }
 
+  //8
   override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
 
     Try {
@@ -155,4 +162,19 @@ object DisclosingXMLSection extends XMLBuilder {
       }
     }.toEither
   }
+//  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+//
+//    Try {
+//      userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+//        case Some(ReporterOrganisationOrIndividual.Organisation) =>
+//          <Disclosing>
+//            {buildDiscloseDetailsForOrganisation(userAnswers)}
+//          </Disclosing>
+//        case _ =>
+//          <Disclosing>
+//            {buildDiscloseDetailsForIndividual(userAnswers)}
+//          </Disclosing>
+//      }
+//    }.toEither
+//  }
 }

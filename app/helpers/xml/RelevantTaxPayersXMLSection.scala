@@ -29,6 +29,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
+  //1
   private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(RoleInArrangementPage) match {
       case Some(RoleInArrangement.Taxpayer) =>
@@ -58,6 +59,8 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case _ => NodeSeq.Empty
     }
   }
+
+  //2
   private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers) = {
     userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
@@ -80,6 +83,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
+  //3
   override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     Try {
       <RelevantTaxPayers>
@@ -87,4 +91,11 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       </RelevantTaxPayers>
     }.toEither
   }
+//  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+//    Try {
+//      <RelevantTaxPayers>
+//        {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
+//      </RelevantTaxPayers>
+//    }.toEither
+//  }
 }

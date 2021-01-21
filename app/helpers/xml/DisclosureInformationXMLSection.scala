@@ -28,6 +28,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
+  //1
   private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
 
     userAnswers.get(WhatIsTheImplementationDatePage) match {
@@ -36,6 +37,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
+  //2
   private[xml] def buildReason(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
       case Some(true) =>
@@ -45,6 +47,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
+  //3
   private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage) match {
       case Some(name) => <Disclosure_Name>{name}</Disclosure_Name>
@@ -67,6 +70,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Summary>
   }
 
+  //4
   private[xml] def buildNationalProvision(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) match {
       case Some(nationalProvisions) =>
@@ -79,6 +83,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
+  //5
   private[xml] def buildAmountType(userAnswers: UserAnswers): Elem = {
     userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
       case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
@@ -86,6 +91,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
+  //6
   private[xml] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
     val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
       case Some(countries) =>
@@ -99,6 +105,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
+  //7
   private[xml] def buildHallmarks(userAnswers: UserAnswers): Elem = {
 
     val mandatoryHallmarks: Set[Elem] = {
@@ -144,6 +151,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
+  //8
   override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
@@ -159,4 +167,19 @@ object DisclosureInformationXMLSection extends XMLBuilder {
       </DisclosureInformation>
     }.toEither
   }
+//  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+//    //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
+//    Try {
+//      <DisclosureInformation>
+//        {buildImplementingDate(userAnswers)}
+//        {buildReason(userAnswers)}
+//        {buildDisclosureInformationSummary(userAnswers)}
+//        {buildNationalProvision(userAnswers)}
+//        {buildAmountType(userAnswers)}
+//        {buildConcernedMS(userAnswers)}
+//        <MainBenefitTest1>false</MainBenefitTest1>
+//        {buildHallmarks(userAnswers)}
+//      </DisclosureInformation>
+//    }.toEither
+//  }
 }
