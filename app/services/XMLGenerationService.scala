@@ -16,14 +16,15 @@
 
 package services
 
-import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, RelevantTaxPayersXMLSection}
+import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import javax.inject.Inject
 import models.UserAnswers
+import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
 import org.joda.time.DateTime
-import pages.disclosure.{DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
 import play.api.mvc.AnyContent
 
-import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
@@ -37,7 +38,6 @@ class XMLGenerationService @Inject()() {
 
     //XML DateTime format e.g. 2021-01-06T12:25:14
     val mandatoryTimestamp = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
-
     <Header>
       <MessageRefId>{mandatoryMessageRefId}</MessageRefId>
       <Timestamp>{mandatoryTimestamp}</Timestamp>
@@ -58,16 +58,26 @@ class XMLGenerationService @Inject()() {
     }
   }
 
+  private[services] def buildArrangementID(userAnswers: UserAnswers): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
+    userAnswers.get(DisclosureTypePage) match {
+      case Some(Dac6add) => userAnswers.get(DisclosureIdentifyArrangementPage).fold(NodeSeq.Empty)(arrangementID =>
+        <ArrangementID>{arrangementID}</ArrangementID>)
+      case _ => NodeSeq.Empty
+    }
+  }
+
   def createXmlSubmission(userAnswers: UserAnswers)
                          (implicit request: DataRequest[AnyContent]): Elem = {
 
     <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
       {buildHeader(userAnswers)}
+      {buildArrangementID(userAnswers)}
       <DAC6Disclosures>
         {buildDisclosureImportInstruction(userAnswers)}
         {DisclosingXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers)}
         {RelevantTaxPayersXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {DisclosureInformationXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>

@@ -25,10 +25,10 @@ sealed trait IntermediaryWhyReportInUK
 
 object IntermediaryWhyReportInUK extends Enumerable.Implicits {
 
-  case object TaxResidentUK extends WithName("taxResidentUK") with IntermediaryWhyReportInUK
-  case object PermanentEstablishment extends WithName("permanentEstablishment") with IntermediaryWhyReportInUK
-  case object GovernedByLaw extends WithName("governedByLaw") with IntermediaryWhyReportInUK
-  case object RegisteredWithAssociated extends WithName("registeredWithAssociated") with IntermediaryWhyReportInUK
+  case object TaxResidentUK extends WithName("INEXa") with IntermediaryWhyReportInUK
+  case object PermanentEstablishment extends WithName("INEXb") with IntermediaryWhyReportInUK
+  case object GovernedByLaw extends WithName("INEXc") with IntermediaryWhyReportInUK
+  case object RegisteredWithAssociated extends WithName("INEXd") with IntermediaryWhyReportInUK
   case object DoNotKnow extends WithName("doNotKnow") with IntermediaryWhyReportInUK
 
   val values: Seq[IntermediaryWhyReportInUK] = Seq(
@@ -43,10 +43,10 @@ object IntermediaryWhyReportInUK extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"whyReportInUK.taxResidentUK", TaxResidentUK.toString),
-      Radios.Radio(msg"whyReportInUK.permanentEstablishment", PermanentEstablishment.toString),
-      Radios.Radio(msg"whyReportInUK.governedByLaw", GovernedByLaw.toString),
-      Radios.Radio(msg"whyReportInUK.registeredWithAssociated", RegisteredWithAssociated.toString),
+      Radios.Radio(msg"whyReportInUK.INEXa", TaxResidentUK.toString),
+      Radios.Radio(msg"whyReportInUK.INEXb", PermanentEstablishment.toString),
+      Radios.Radio(msg"whyReportInUK.INEXc", GovernedByLaw.toString),
+      Radios.Radio(msg"whyReportInUK.INEXd", RegisteredWithAssociated.toString),
       Radios.Radio(msg"whyReportInUK.doNotKnow", DoNotKnow.toString)
     )
 

@@ -18,7 +18,7 @@ package controllers.hallmarks
 
 import base.SpecBase
 import models.UserAnswers
-import models.hallmarks.{HallmarkA, HallmarkB, HallmarkC1, HallmarkCategories, HallmarkD1}
+import models.hallmarks.{HallmarkA, HallmarkD1}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -94,7 +94,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       val list = (json \ "list").toString
 
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-      list.contains("DAC6D1Other") mustBe true
+      list.contains("D1Other") mustBe true
       list.contains("Other page text") mustBe true
 
       application.stop()

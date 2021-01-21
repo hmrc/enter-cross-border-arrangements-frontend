@@ -26,8 +26,8 @@ sealed trait IntermediaryRole
 
 object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
 
-  case object Promoter extends WithName("promoter") with IntermediaryRole
-  case object ServiceProvider extends WithName("serviceProvider") with IntermediaryRole
+  case object Promoter extends WithName("DAC61101") with IntermediaryRole
+  case object ServiceProvider extends WithName("DAC61102") with IntermediaryRole
   case object Unknown extends WithName("optionUnknown") with IntermediaryRole
 
   val values: Seq[IntermediaryRole] = Seq(
@@ -40,11 +40,11 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(label = msg"intermediaryRole.promoter",
+      Radios.Radio(label = msg"intermediaryRole.DAC61101",
         value = Promoter.toString,
         hint = Some(Hint(msg"intermediaryRole.promoter.hint", "promoter-hint"))),
 
-      Radios.Radio(label = msg"intermediaryRole.serviceProvider",
+      Radios.Radio(label = msg"intermediaryRole.DAC61102",
         value = ServiceProvider.toString,
         hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))),
 

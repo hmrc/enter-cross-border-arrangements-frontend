@@ -23,13 +23,13 @@ import models.{IsExemptionKnown, SelectType, UserAnswers}
 import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class Intermediary (intermediaryId: String, individual: Option[Individual] = None,
-                         organisation: Option[Organisation] = None,
-                         whatTypeofIntermediary: WhatTypeofIntermediary,
-                         isExemptionKnown: IsExemptionKnown,
-                         isExemptionCountryKnown: Option[Boolean],
-                         exemptCountries: Option[Set[ExemptCountries]]
-                        ) {
+case class Intermediary(intermediaryId: String,
+                        individual: Option[Individual] = None,
+                        organisation: Option[Organisation] = None,
+                        whatTypeofIntermediary: WhatTypeofIntermediary,
+                        isExemptionKnown: IsExemptionKnown,
+                        isExemptionCountryKnown: Option[Boolean],
+                        exemptCountries: Option[Set[ExemptCountries]]){
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString

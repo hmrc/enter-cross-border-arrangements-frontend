@@ -17,9 +17,11 @@
 package controllers.disclosure
 
 import com.google.inject.Inject
+import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.mixins.DefaultRouting
+import controllers.mixins.{DefaultRouting, RoutingSupport}
 import models.NormalMode
+import models.disclosure.DisclosureType.Dac6add
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,9 +42,10 @@ class DisclosureCheckYourAnswersController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -61,7 +64,7 @@ class DisclosureCheckYourAnswersController @Inject()(
       ).map(Ok(_))
     }
 
-  def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 //    TODO build the disclosure details model from pages
@@ -71,8 +74,20 @@ class DisclosureCheckYourAnswersController @Inject()(
 //      updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
 //    } yield sessionRepository.set(updatedAnswers)
 
-      Future.successful(Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0)))
-  }
+      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage) match {
+        case Some(Dac6add) =>
+          request.userAnswers.get(DisclosureIdentifyArrangementPage).fold(false)(
+            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
+        case _ =>
+          request.userAnswers.get(DisclosureMarketablePage).fold(
+            throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
+            bool)
+      }
 
+      for {
+        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, isMarketable))
+        _ <- sessionRepository.set(updateAnswers)
+      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0))
+  }
 }
 

@@ -27,7 +27,7 @@ import scala.util.Try
 object ReporterSelectedAddressLookupPage  extends QuestionPage[AddressLookup] {
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "selectedAddressLookup"
+  override def toString: String = "reporterSelectedAddressLookup"
 
   override def cleanup(value: Option[AddressLookup], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
