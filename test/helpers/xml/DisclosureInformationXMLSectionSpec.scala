@@ -17,7 +17,7 @@
 package helpers.xml
 
 import base.SpecBase
-import models.UserAnswers
+import models.{NotStarted, UserAnswers}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.hallmarks.{HallmarkD, HallmarkD1}
 import pages.arrangement._
@@ -51,9 +51,9 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     }
 
-    "buildImplementingDate must throw an exception if date is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildImplementingDate(UserAnswers(userAnswersId))
+    "buildImplementingDate must give a CompletionState.NotStarted if date is missing" in {
+      DisclosureInformationXMLSection.buildImplementingDate(UserAnswers(userAnswersId)).foreach { implementationDate =>
+        implementationDate must be (Left(NotStarted))
       }
     }
 
