@@ -16,43 +16,26 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
-import base.SpecBase
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
-import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.taxpayer.TaxResidency
-import models.{Address, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
+import models.{Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import pages.reporter.individual._
 import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 
-import scala.xml.PrettyPrinter
+import java.time.LocalDate
 
-class DisclosingXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+class DisclosingXMLSectionSpec extends XmlBase {
 
   val loopDetails = IndexedSeq(
     LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
       Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
     LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
-
-  val email = "email@email.com"
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
@@ -62,167 +45,6 @@ class DisclosingXMLSectionSpec extends SpecBase {
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
   "DisclosingXMLSection" - {
-
-    "buildReporterCapacity" - {
-
-      "must build optional reporter capacity for intermediary promoter" in {
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(IntermediaryRolePage, IntermediaryRole.Promoter)
-          .success
-          .value
-
-        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
-        val expected = "<Capacity>DAC61101</Capacity>"
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build optional reporter capacity for intermediary service provider" in {
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(IntermediaryRolePage, IntermediaryRole.ServiceProvider)
-          .success
-          .value
-
-        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
-        val expected = "<Capacity>DAC61102</Capacity>"
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must not build the optional reporter capacity if answer is 'doNotKnow' in intermediary/why-report-in-uk" in {
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(IntermediaryRolePage, IntermediaryRole.Unknown)
-          .success
-          .value
-
-        val result = DisclosingXMLSection.buildReporterCapacity(userAnswers)
-        val expected = ""
-        prettyPrinter.formatNodes(result) mustBe expected
-
-      }
-    }
-
-    "buildLiability" - {
-
-      "must build the optional liability section for TAXPAYER" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-          .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
-          .set(TaxpayerWhyReportArrangementPage, TaxpayerWhyReportArrangement.ProfessionalPrivilege).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        val expected =
-          """<Liability>
-            |    <RelevantTaxpayerDiscloser>
-            |        <RelevantTaxpayerNexus>RTNEXb</RelevantTaxpayerNexus>
-            |        <Capacity>DAC61104</Capacity>
-            |    </RelevantTaxpayerDiscloser>
-            |</Liability>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build the optional liability section for INTERMEDIARY" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
-          .set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.TaxResidentUK).success.value
-          .set(IntermediaryRolePage, IntermediaryRole.Promoter).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        val expected =
-          """<Liability>
-            |    <IntermediaryDiscloser>
-            |        <IntermediaryNexus>INEXa</IntermediaryNexus>
-            |        <Capacity>DAC61101</Capacity>
-            |    </IntermediaryDiscloser>
-            |</Liability>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must not build the optional liability section if data is missing" in {
-        val result = DisclosingXMLSection.buildLiability(UserAnswers(userAnswersId))
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-
-      "must not build the optional liability section if answer is 'doNotKnow' in intermediary/why-report-in-uk" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
-          .set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.DoNotKnow).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-
-      "must not build the optional liability section if answer is 'doNotKnow' in taxpayer/why-report-in-uk" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-          .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.DoNotKnow).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-
-      "must not include the optional capacity section if answer is missing in taxpayer/why-reporting" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-          .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        val expected =
-          """<Liability>
-            |    <RelevantTaxpayerDiscloser>
-            |        <RelevantTaxpayerNexus>RTNEXb</RelevantTaxpayerNexus>
-            |    </RelevantTaxpayerDiscloser>
-            |</Liability>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must not include the optional capacity section if answer is 'Unknown' in intermediary/role" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
-          .set(IntermediaryWhyReportInUKPage, IntermediaryWhyReportInUK.TaxResidentUK).success.value
-          .set(IntermediaryRolePage, IntermediaryRole.Unknown).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        val expected =
-          """<Liability>
-            |    <IntermediaryDiscloser>
-            |        <IntermediaryNexus>INEXa</IntermediaryNexus>
-            |    </IntermediaryDiscloser>
-            |</Liability>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must not include the optional capacity section if answer is 'doNotKnow' in taxpayer/why-reporting" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-          .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
-          .set(TaxpayerWhyReportArrangementPage, TaxpayerWhyReportArrangement.DoNotKnow).success.value
-
-        val result = DisclosingXMLSection.buildLiability(userAnswers)
-
-        val expected =
-          """<Liability>
-            |    <RelevantTaxpayerDiscloser>
-            |        <RelevantTaxpayerNexus>RTNEXb</RelevantTaxpayerNexus>
-            |    </RelevantTaxpayerDiscloser>
-            |</Liability>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-    }
-
 
     "toXml" - {
 

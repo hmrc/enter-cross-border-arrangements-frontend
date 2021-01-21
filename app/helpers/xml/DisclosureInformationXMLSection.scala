@@ -16,42 +16,33 @@
 
 package helpers.xml
 
-import models.UserAnswers
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
+import models.{CompletionState, InProgress, NotStarted, UserAnswers}
 import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
-import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  //1
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Elem = {
+  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
 
-    userAnswers.get(WhatIsTheImplementationDatePage) match {
-      case Some(date) => <ImplementingDate>{date}</ImplementingDate>
-      case None => throw new Exception("Missing disclosure information implementing date")
-    }
-  }
+    userAnswers.get(WhatIsTheImplementationDatePage).toRight(NotStarted) map { date => <ImplementingDate>{date}</ImplementingDate> }
 
-  //2
-  private[xml] def buildReason(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
-      case Some(true) =>
+  private[xml] def buildReason(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+
+    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage).toRight(InProgress) flatMap {
+      case true =>
         userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
-          .fold(NodeSeq.Empty)(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
-      case _ => NodeSeq.Empty
+          .toRight(InProgress).map(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
     }
-  }
 
-  //3
   private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage) match {
       case Some(name) => <Disclosure_Name>{name}</Disclosure_Name>
-      case None => throw new Exception("Missing arrangement name when building DisclosureInformationSummary")
+      case None       => throw new Exception("Missing arrangement name when building DisclosureInformationSummary")
     }
 
     val mandatoryDisclosureDescription: NodeSeq = userAnswers.get(GiveDetailsOfThisArrangementPage) match {
@@ -64,13 +55,9 @@ object DisclosureInformationXMLSection extends XMLBuilder {
       case None => throw new Exception("Missing disclosure description when building DisclosureInformationSummary")
     }
 
-    <Summary>
-      {mandatoryDisclosureName}
-      {mandatoryDisclosureDescription}
-    </Summary>
+    <Summary>{mandatoryDisclosureName}{mandatoryDisclosureDescription}</Summary>
   }
 
-  //4
   private[xml] def buildNationalProvision(userAnswers: UserAnswers): NodeSeq = {
     userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) match {
       case Some(nationalProvisions) =>
@@ -83,21 +70,18 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
   }
 
-  //5
   private[xml] def buildAmountType(userAnswers: UserAnswers): Elem = {
     userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) match {
       case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
-      case None => throw new Exception("Missing amount type in disclosure information")
+      case None        => throw new Exception("Missing amount type in disclosure information")
     }
   }
 
-  //6
   private[xml] def buildConcernedMS(userAnswers: UserAnswers): Elem = {
     val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) match {
       case Some(countries) =>
         countries.map {
-          country =>
-            <ConcernedMS>{country.toString}</ConcernedMS>
+          country => <ConcernedMS>{country.toString}</ConcernedMS>
         }
       case None => throw new Exception("Missing countries when building ConcernedMS")
     }
@@ -105,7 +89,6 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
-  //7
   private[xml] def buildHallmarks(userAnswers: UserAnswers): Elem = {
 
     val mandatoryHallmarks: Set[Elem] = {
@@ -144,42 +127,36 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     }
 
     <Hallmarks>
-      <ListHallmarks>
-        {mandatoryHallmarks}
-      </ListHallmarks>
-      {dac6D1OtherInfo}
+      <ListHallmarks>{mandatoryHallmarks}</ListHallmarks>{dac6D1OtherInfo}
     </Hallmarks>
   }
 
-  //8
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    Try {
-      <DisclosureInformation>
-        {buildImplementingDate(userAnswers)}
-        {buildReason(userAnswers)}
-        {buildDisclosureInformationSummary(userAnswers)}
-        {buildNationalProvision(userAnswers)}
-        {buildAmountType(userAnswers)}
-        {buildConcernedMS(userAnswers)}
-        <MainBenefitTest1>false</MainBenefitTest1>
-        {buildHallmarks(userAnswers)}
-      </DisclosureInformation>
-    }.toEither
+    val content: Either[CompletionState, NodeSeq] = for {
+      implementingDate <- buildImplementingDate(userAnswers)
+      reason <- buildReason(userAnswers)
+      disclosureInformationSummary = buildDisclosureInformationSummary(userAnswers)
+      nationalProvision = buildNationalProvision(userAnswers)
+      amountType = buildAmountType(userAnswers)
+      concernedMS = buildConcernedMS(userAnswers)
+      mainBenefitTest1 = <MainBenefitTest1>false</MainBenefitTest1>
+      hallmarks = buildHallmarks(userAnswers)
+    } yield {
+      (implementingDate
+        ++ reason
+        ++ disclosureInformationSummary
+        ++ nationalProvision
+        ++ amountType
+        ++ concernedMS
+        ++ mainBenefitTest1
+        ++ hallmarks
+        ).flatten
+    }
+
+    build(content) { nodes =>
+      <DisclosureInformation>{nodes}</DisclosureInformation>
+    }
   }
-//  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-//    //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-//    Try {
-//      <DisclosureInformation>
-//        {buildImplementingDate(userAnswers)}
-//        {buildReason(userAnswers)}
-//        {buildDisclosureInformationSummary(userAnswers)}
-//        {buildNationalProvision(userAnswers)}
-//        {buildAmountType(userAnswers)}
-//        {buildConcernedMS(userAnswers)}
-//        <MainBenefitTest1>false</MainBenefitTest1>
-//        {buildHallmarks(userAnswers)}
-//      </DisclosureInformation>
-//    }.toEither
-//  }
 }

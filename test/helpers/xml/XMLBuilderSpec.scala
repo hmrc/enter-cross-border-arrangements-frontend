@@ -16,19 +16,28 @@
 
 package helpers.xml
 
-import models.{CompletionState, InProgress, UserAnswers}
+import base.SpecBase
+import models.{CannotStart, CompletionState, UserAnswers}
 
-import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
-trait XMLBuilder {
+class XMLBuilderSpec extends SpecBase {
 
-  def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
+  "XMLBuilderSpec" - {
 
-  def build(from: Either[CompletionState, NodeSeq])(as: NodeSeq => Elem): Either[CompletionState, Elem] =
-    from.fold(
-      error => Left(error),
-      nodes => Try { as(nodes) }.toEither.left.map(_ => InProgress)
-    )
+    "build either a CompletionState or an XML Element from a NodeSeq and a funcion" - {
+
+      val builder = new XMLBuilder {
+        override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = Left(CannotStart)
+      }
+
+      "if the conversion has no exceptions" in {
+
+        val content = Right(NodeSeq.Empty)
+        val result = builder.build(content)(nodes => <SomeTag>{nodes}</SomeTag>)
+        result must be (Right(<SomeTag></SomeTag>))
+      }
+    }
+  }
 
 }

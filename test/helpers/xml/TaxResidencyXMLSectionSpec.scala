@@ -16,16 +16,10 @@
 
 package helpers.xml
 
-import base.SpecBase
 import models.taxpayer.TaxResidency
 import models.{Country, TaxReferenceNumbers}
 
-import scala.xml.PrettyPrinter
-
-class TaxResidencyXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
+class TaxResidencyXMLSectionSpec extends XmlBase {
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),

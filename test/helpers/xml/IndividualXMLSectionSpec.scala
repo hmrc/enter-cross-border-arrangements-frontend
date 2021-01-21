@@ -16,35 +16,19 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
-import base.SpecBase
 import models.individual.Individual
 import models.taxpayer.TaxResidency
-import models.{Address, Country, Name, TaxReferenceNumbers}
+import models.{Country, Name, TaxReferenceNumbers}
 
-import scala.xml.PrettyPrinter
+import java.time.LocalDate
 
-class IndividualXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+class IndividualXMLSectionSpec extends XmlBase {
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
-  val email = "email@email.com"
   val individualName: Name = Name("FirstName", "Surname")
   val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
   val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)

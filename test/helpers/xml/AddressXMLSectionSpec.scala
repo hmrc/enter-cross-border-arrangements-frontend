@@ -16,24 +16,9 @@
 
 package helpers.xml
 
-import base.SpecBase
 import models.{Address, Country}
 
-import scala.xml.PrettyPrinter
-
-class AddressXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+class AddressXMLSectionSpec extends XmlBase {
 
   "buildAddress" - {
 

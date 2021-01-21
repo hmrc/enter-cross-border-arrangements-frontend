@@ -16,19 +16,28 @@
 
 package helpers.xml
 
-import models.{CompletionState, InProgress, UserAnswers}
+import base.SpecBase
+import models.{Address, Country}
 
-import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import java.time.LocalDate
+import scala.xml.PrettyPrinter
 
-trait XMLBuilder {
+trait XmlBase extends SpecBase {
 
-  def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
+  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-  def build(from: Either[CompletionState, NodeSeq])(as: NodeSeq => Elem): Either[CompletionState, Elem] =
-    from.fold(
-      error => Left(error),
-      nodes => Try { as(nodes) }.toEither.left.map(_ => InProgress)
+  val today: LocalDate = LocalDate.now
+
+  val address: Address =
+    Address(
+      Some("value 1"),
+      Some("value 2"),
+      Some("value 3"),
+      "value 4",
+      Some("XX9 9XX"),
+      Country("valid","FR","France")
     )
+
+  val email = "email@email.com"
 
 }

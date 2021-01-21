@@ -16,9 +16,6 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
-import base.SpecBase
 import models.IsExemptionKnown.Yes
 import models.intermediaries.WhatTypeofIntermediary.{Promoter, Serviceprovider}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
@@ -26,28 +23,16 @@ import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers, YesNoDoNotKnowRadios}
+import models.{AddressLookup, CountriesListEUCheckboxes, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers, YesNoDoNotKnowRadios}
 import pages.intermediaries.IntermediaryLoopPage
 import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 
-import scala.xml.PrettyPrinter
+import java.time.LocalDate
 
-class IntermediariesXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+class IntermediariesXMLSectionSpec extends XmlBase {
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
@@ -170,8 +155,6 @@ class IntermediariesXMLSectionSpec extends SpecBase {
         .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
         .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
 
-      val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers)
-
       val expected =
         """<Intermediary>
           |    <ID>
@@ -201,7 +184,10 @@ class IntermediariesXMLSectionSpec extends SpecBase {
           |    </NationalExemption>
           |</Intermediary>""".stripMargin
 
-      prettyPrinter.formatNodes(result) mustBe expected
+      IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers) map { result =>
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
     }
 
     "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
@@ -222,8 +208,6 @@ class IntermediariesXMLSectionSpec extends SpecBase {
         .set(ReporterSelectedAddressLookupPage, addressLookupAddress).success.value
         .set(ReporterIndividualEmailAddressPage, "email@email.co.uk").success.value
         .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
-
-      val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers)
 
       val expected =
         s"""<Intermediary>
@@ -259,7 +243,10 @@ class IntermediariesXMLSectionSpec extends SpecBase {
            |    </NationalExemption>
            |</Intermediary>""".stripMargin
 
-       prettyPrinter.formatNodes(result) mustBe expected
+        IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers) map { result =>
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
       }
     }
 

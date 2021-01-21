@@ -19,20 +19,18 @@ package helpers.xml
 import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
-import models.{ReporterOrganisationOrIndividual, UserAnswers}
+import models.{CompletionState, InProgress, ReporterOrganisationOrIndividual, UserAnswers}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 
-import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
-  //1
-  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage) match {
-      case Some(RoleInArrangement.Taxpayer) =>
+  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+    userAnswers.get(RoleInArrangementPage).toRight(InProgress) map {
+      case RoleInArrangement.Taxpayer =>
 
         val implementingDate = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage).fold(NodeSeq.Empty)(
           date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
@@ -56,14 +54,11 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
               {implementingDate}
             </RelevantTaxpayer>
         }
-      case _ => NodeSeq.Empty
     }
-  }
 
-  //2
-  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers) = {
-    userAnswers.get(TaxpayerLoopPage) match {
-      case Some(taxpayers) =>
+  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+    userAnswers.get(TaxpayerLoopPage).toRight(InProgress) map {
+      case taxpayers =>
         taxpayers.map {
           taxpayer =>
             val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
@@ -79,23 +74,20 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
               </RelevantTaxpayer>
             }
         }
-      case _ => NodeSeq.Empty
+    }
+
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+
+    val content: Either[CompletionState, NodeSeq] = for {
+      reporterAsTaxpayer <- buildReporterAsTaxpayer(userAnswers)
+      relevantTaxpayers  <- getRelevantTaxpayers(userAnswers)
+    } yield {
+      (reporterAsTaxpayer ++ relevantTaxpayers).flatten
+    }
+
+    build(content) {
+      nodes =>
+        <RelevantTaxPayers>{nodes}</RelevantTaxPayers>
     }
   }
-
-  //3
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-    Try {
-      <RelevantTaxPayers>
-        {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
-      </RelevantTaxPayers>
-    }.toEither
-  }
-//  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-//    Try {
-//      <RelevantTaxPayers>
-//        {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
-//      </RelevantTaxPayers>
-//    }.toEither
-//  }
 }

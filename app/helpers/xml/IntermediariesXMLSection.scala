@@ -16,24 +16,25 @@
 
 package helpers.xml
 
+import helpers.xml.disclosing.DiscloseDetailsLiability
 import models.IsExemptionKnown.{No, Unknown, Yes}
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
-import models.{ReporterOrganisationOrIndividual, UserAnswers}
+import models.{CompletionState, InProgress, NotStarted, ReporterOrganisationOrIndividual, UserAnswers}
 import pages.intermediaries.IntermediaryLoopPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 
-import scala.util.Try
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Elem, NodeSeq}
 
 object IntermediariesXMLSection extends XMLBuilder {
 
-  private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage) match {
-      case Some(RoleInArrangement.Intermediary) =>
+  private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+
+    userAnswers.get(RoleInArrangementPage).toRight(NotStarted) map {
+      case RoleInArrangement.Intermediary =>
 
         userAnswers.get(ReporterOrganisationOrIndividualPage) match {
 
@@ -42,8 +43,8 @@ object IntermediariesXMLSection extends XMLBuilder {
 
             <Intermediary>
               {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers)}
+              {DiscloseDetailsLiability.buildReporterCapacity(userAnswers)}
+              {DiscloseDetailsLiability.buildReporterExemptions(userAnswers)}
             </Intermediary>
 
           case _ =>
@@ -51,13 +52,11 @@ object IntermediariesXMLSection extends XMLBuilder {
 
             <Intermediary>
               {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers)}
+              {DiscloseDetailsLiability.buildReporterCapacity(userAnswers)}
+              {DiscloseDetailsLiability.buildReporterExemptions(userAnswers)}
             </Intermediary>
         }
-      case _ => NodeSeq.Empty
     }
-  }
 
   private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
     if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
@@ -76,9 +75,7 @@ object IntermediariesXMLSection extends XMLBuilder {
           setOfCountries.toList.map((country: ExemptCountries) =>
               <CountryExemption>{country}</CountryExemption>))
 
-        <CountryExemptions>
-          {getCountries}
-        </CountryExemptions>
+        <CountryExemptions>{getCountries}</CountryExemptions>
     }
 
     val nationalExemption = intermediary.isExemptionKnown match {
@@ -96,10 +93,10 @@ object IntermediariesXMLSection extends XMLBuilder {
     nationalExemption
   }
 
-  private[xml] def getIntermediaries(userAnswers: UserAnswers): Seq[Node] = {
+  private[xml] def getIntermediaries(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
 
-    userAnswers.get(IntermediaryLoopPage) match {
-      case Some(intermediariesList) =>
+    userAnswers.get(IntermediaryLoopPage).toRight(InProgress) map {
+      case intermediariesList =>
         intermediariesList.map {
           intermediary =>
             if (intermediary.individual.isDefined) {
@@ -116,15 +113,19 @@ object IntermediariesXMLSection extends XMLBuilder {
               </Intermediary>
             }
         }
-      case _ => NodeSeq.Empty
     }
-  }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
-    Try {
-      <Intermediaries>
-        {buildReporterAsIntermediary(userAnswers) ++ getIntermediaries(userAnswers)}
-      </Intermediaries>
-    }.toEither
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+    val content: Either[CompletionState, NodeSeq] = for {
+      reporterAsIntermediary <- buildReporterAsIntermediary(userAnswers)
+      intermediaries         <- getIntermediaries(userAnswers)
+    } yield {
+      (reporterAsIntermediary ++ intermediaries).flatten
+    }
+
+    build(content) {
+      nodes =>
+        <Intermediaries>{nodes}</Intermediaries>
+    }
   }
 }

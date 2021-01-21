@@ -16,42 +16,26 @@
 
 package helpers.xml
 
-import base.SpecBase
+import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, AddressLookup, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import models.{AddressLookup, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
+
 import java.time.LocalDate
 
-import models.individual.Individual
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
-
-import scala.xml.PrettyPrinter
-
-class RelevantTaxPayersXMLSectionSpec extends SpecBase {
-
-  val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+class RelevantTaxPayersXMLSectionSpec extends XmlBase {
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
-  val email = "email@email.com"
   val individualName: Name = Name("FirstName", "Surname")
   val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
   val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)
@@ -64,7 +48,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
-  val today: LocalDate = LocalDate.now
   val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
   val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
   val taxpayersAsOrganisation = IndexedSeq(
@@ -93,8 +76,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
-
         val expected =
           s"""<RelevantTaxpayer>
              |    <ID>
@@ -118,7 +99,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
+        RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers) map { result =>
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
       }
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
@@ -132,8 +116,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterSelectedAddressLookupPage, addressLookupAddress).success.value
           .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -157,7 +139,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </ID>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
+        RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers) map { result =>
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
       }
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
@@ -174,8 +159,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterSelectedAddressLookupPage, addressLookupAddress).success.value
           .set(ReporterIndividualEmailAddressPage, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -205,16 +188,20 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
+        RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers) map { result =>
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
       }
 
       "buildTaxPayerIsAReporter must not build a taxpayer section if they're not a reporter" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(RoleInArrangementPage, RoleInArrangement.Intermediary).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+        RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers) map { result =>
 
-        prettyPrinter.formatNodes(result) mustBe ""
+          prettyPrinter.formatNodes(result) mustBe ""
+        }
       }
     }
 
