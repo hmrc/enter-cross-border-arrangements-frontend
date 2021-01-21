@@ -19,8 +19,10 @@ package filters
 import akka.stream.Materializer
 import com.google.inject.Inject
 import play.api.Configuration
-import play.api.mvc.Call
+import play.api.mvc.{Call, RequestHeader, Result}
 import uk.gov.hmrc.allowlist.AkamaiAllowlistFilter
+
+import scala.concurrent.Future
 
 class AllowlistFilter @Inject() (
                                   config: Configuration,
@@ -45,6 +47,14 @@ class AllowlistFilter @Inject() (
     config.underlying.getString("filters.allowlist.excluded").split(",").map {
       path =>
         Call("GET", path.trim)
+    }
+  }
+
+  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
+    if(config.get[Boolean]("filters.allowlist.enabled")) {
+      super.apply(f)(rh)
+    }  else {
+      f(rh)
     }
   }
 }
