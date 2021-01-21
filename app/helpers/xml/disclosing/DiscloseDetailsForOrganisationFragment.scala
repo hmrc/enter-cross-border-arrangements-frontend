@@ -18,14 +18,14 @@ package helpers.xml.disclosing
 
 import helpers.xml.{OrganisationXMLSection, RelevantTaxPayersXMLSection, XMLFragmentBuilder}
 import models.organisation.Organisation
-import models.{CompletionState, NotStarted, UserAnswers}
+import models.{JourneyStatus, NotStarted, UserAnswers}
 
 import scala.util.Try
 import scala.xml.NodeSeq
 
 object DiscloseDetailsForOrganisationFragment extends XMLFragmentBuilder {
 
-  def build(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+  def build(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] =
 
     for {
       // TODO refactor organisation builder to have an Option

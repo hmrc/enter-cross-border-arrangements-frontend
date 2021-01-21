@@ -17,7 +17,7 @@
 package helpers.xml
 
 import base.SpecBase
-import models.{CannotStart, CompletionState, UserAnswers}
+import models.{CannotStart, JourneyStatus, UserAnswers}
 
 import scala.xml.{Elem, NodeSeq}
 
@@ -28,7 +28,7 @@ class XMLBuilderSpec extends SpecBase {
     "build either a CompletionState or an XML Element from a NodeSeq and a funcion" - {
 
       val builder = new XMLBuilder {
-        override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = Left(CannotStart)
+        override def toXml(userAnswers: UserAnswers): Either[JourneyStatus, Elem] = Left(CannotStart)
       }
 
       "if the conversion has no exceptions" in {

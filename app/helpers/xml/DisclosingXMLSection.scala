@@ -17,16 +17,16 @@
 package helpers.xml
 
 import helpers.xml.disclosing.{DiscloseDetailsForIndividualFragment, DiscloseDetailsForOrganisationFragment}
-import models.{CompletionState, NotStarted, ReporterOrganisationOrIndividual, UserAnswers}
+import models.{JourneyStatus, NotStarted, ReporterOrganisationOrIndividual, UserAnswers}
 import pages.reporter.ReporterOrganisationOrIndividualPage
 
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosingXMLSection extends XMLBuilder {
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[JourneyStatus, Elem] = {
 
-    val content: Either[CompletionState, NodeSeq] = userAnswers.get(ReporterOrganisationOrIndividualPage).toRight(NotStarted) flatMap {
+    val content: Either[JourneyStatus, NodeSeq] = userAnswers.get(ReporterOrganisationOrIndividualPage).toRight(NotStarted) flatMap {
       case ReporterOrganisationOrIndividual.Organisation => DiscloseDetailsForOrganisationFragment.build(userAnswers)
       case ReporterOrganisationOrIndividual.Individual   => DiscloseDetailsForIndividualFragment.build(userAnswers)
     }

@@ -16,10 +16,7 @@
 
 package services
 
-import java.time.LocalDate
-
-import base.SpecBase
-import helpers.xml.GeneratedXMLExamples
+import helpers.xml.{GeneratedXMLExamples, XmlBase}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
@@ -30,7 +27,7 @@ import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import models.{Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
@@ -43,28 +40,16 @@ import pages.taxpayer.TaxpayerLoopPage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
 
-class XMLGenerationServiceSpec extends SpecBase {
+import java.time.LocalDate
+
+class XMLGenerationServiceSpec extends XmlBase {
 
   val xmlGenerationService: XMLGenerationService = injector.instanceOf[XMLGenerationService]
-
-  val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
 
   val loopDetails = IndexedSeq(
     LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
       Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
     LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
-
-  val email = "email@email.com"
 
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
@@ -73,7 +58,6 @@ class XMLGenerationServiceSpec extends SpecBase {
 
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
-  def today: LocalDate = LocalDate.now
   val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
   val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
   val taxpayers = IndexedSeq(
@@ -212,7 +196,7 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     }
 
-    "must build the full XML for a reporter that is an ORGANISTION" in {
+    "must build the full XML for a reporter that is an ORGANISATION" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(DisclosureNamePage, "DisclosureName").success.value

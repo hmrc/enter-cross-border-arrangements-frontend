@@ -17,7 +17,7 @@
 package helpers.xml.disclosing
 
 import helpers.xml.XMLFragmentBuilder
-import models.{CompletionState, CountriesListEUCheckboxes, InProgress, UserAnswers}
+import models.{JourneyStatus, CountriesListEUCheckboxes, InProgress, UserAnswers}
 import models.YesNoDoNotKnowRadios.{DoNotKnow, No, Yes}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
@@ -30,7 +30,7 @@ import scala.xml.NodeSeq
 
 object DiscloseDetailsLiability extends XMLFragmentBuilder {
 
-  def build(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+  def build(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] =
 
     userAnswers.get(RoleInArrangementPage).toRight(InProgress) map {
       case RoleInArrangement.Taxpayer     => buildTaxpayerLiability(userAnswers)

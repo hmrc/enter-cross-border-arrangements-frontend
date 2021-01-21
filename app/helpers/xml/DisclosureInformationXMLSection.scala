@@ -18,7 +18,7 @@ package helpers.xml
 
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
-import models.{CompletionState, InProgress, NotStarted, UserAnswers}
+import models.{JourneyStatus, InProgress, NotStarted, UserAnswers}
 import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
@@ -27,17 +27,19 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+  private[xml] def buildImplementingDate(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] =
 
     userAnswers.get(WhatIsTheImplementationDatePage).toRight(NotStarted) map { date => <ImplementingDate>{date}</ImplementingDate> }
 
-  private[xml] def buildReason(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+  private[xml] def buildReason(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] = {
 
-    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage).toRight(InProgress) flatMap {
-      case true =>
-        userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
-          .toRight(InProgress).map(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
-    }
+    (for {
+      yes    <- userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage)
+      if yes
+      reason <- userAnswers.get(WhyAreYouReportingThisArrangementNowPage)
+    } yield <Reason>{reason.toString.toUpperCase}</Reason>).toRight(InProgress)
+
+  }
 
   private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers): Elem = {
     val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage) match {
@@ -131,10 +133,10 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[JourneyStatus, Elem] = {
 
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    val content: Either[CompletionState, NodeSeq] = for {
+    val content: Either[JourneyStatus, NodeSeq] = for {
       implementingDate <- buildImplementingDate(userAnswers)
       reason <- buildReason(userAnswers)
       disclosureInformationSummary = buildDisclosureInformationSummary(userAnswers)

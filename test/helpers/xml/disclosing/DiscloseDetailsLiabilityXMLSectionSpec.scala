@@ -25,7 +25,7 @@ import pages.reporter.RoleInArrangementPage
 import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 
-class DiscloseDetailsLiabilitySpec extends XmlBase {
+class DiscloseDetailsLiabilityXMLSectionSpec extends XmlBase {
 
   "DiscloseDetailsLiability" - {
 

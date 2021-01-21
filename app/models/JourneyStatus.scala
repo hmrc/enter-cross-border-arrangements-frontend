@@ -16,9 +16,9 @@
 
 package models
 
-sealed trait CompletionState
+sealed trait JourneyStatus
 
-case object CannotStart extends CompletionState
-case object NotStarted  extends CompletionState
-case object InProgress  extends CompletionState
-case object Complete    extends CompletionState
+case object CannotStart extends JourneyStatus
+case object NotStarted  extends JourneyStatus
+case object InProgress  extends JourneyStatus
+case object Complete    extends JourneyStatus

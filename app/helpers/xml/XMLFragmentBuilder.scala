@@ -16,11 +16,11 @@
 
 package helpers.xml
 
-import models.{CompletionState, UserAnswers}
+import models.{JourneyStatus, UserAnswers}
 
 import scala.xml.NodeSeq
 
 trait XMLFragmentBuilder {
 
-  def build(userAnswers: UserAnswers): Either[CompletionState, NodeSeq]
+  def build(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq]
 }

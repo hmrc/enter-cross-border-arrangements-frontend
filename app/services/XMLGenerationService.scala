@@ -77,7 +77,7 @@ class XMLGenerationService @Inject()() {
         {DisclosingXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers)}
         {RelevantTaxPayersXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
-        {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {IntermediariesXMLSection.toXml(userAnswers).getOrElse(<Intermediaries> </Intermediaries>)}
         {DisclosureInformationXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>

@@ -16,10 +16,12 @@
 
 package helpers.xml
 
+import helpers.xml.IntermediariesXMLSection.build
+import helpers.xml.disclosing.DiscloseDetailsLiability
 import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
-import models.{CompletionState, InProgress, ReporterOrganisationOrIndividual, UserAnswers}
+import models.{InProgress, JourneyStatus, ReporterOrganisationOrIndividual, UserAnswers}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
@@ -28,35 +30,37 @@ import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
-  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
-    userAnswers.get(RoleInArrangementPage).toRight(InProgress) map {
-      case RoleInArrangement.Taxpayer =>
+  private def implementingDate(userAnswers: UserAnswers) =
+    userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage).map {date =>
+      <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
+    }
 
-        val implementingDate = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage).fold(NodeSeq.Empty)(
-          date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
-        )
+  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] = {
 
-        userAnswers.get(ReporterOrganisationOrIndividualPage) match {
-
-          case Some(ReporterOrganisationOrIndividual.Organisation) =>
-            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
-
-            <RelevantTaxpayer>
-              {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
-              {implementingDate}
-            </RelevantTaxpayer>
-
-          case _ =>
-            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
-
-            <RelevantTaxpayer>
-              {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
-              {implementingDate}
-            </RelevantTaxpayer>
+    val organisationOrIndividual: Option[NodeSeq] = userAnswers.get(ReporterOrganisationOrIndividualPage) map {
+      case ReporterOrganisationOrIndividual.Organisation =>
+        OrganisationXMLSection.buildIDForOrganisation {
+          Organisation.buildOrganisationDetailsForReporter(userAnswers)
+        }
+      case ReporterOrganisationOrIndividual.Individual   =>
+        IndividualXMLSection.buildIDForIndividual {
+          Individual.buildIndividualDetailsForReporter(userAnswers)
         }
     }
 
-  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] =
+    val content: Option[NodeSeq] = for {
+      roleInArrangementPage    <- userAnswers.get(RoleInArrangementPage)
+      if roleInArrangementPage == RoleInArrangement.Taxpayer
+      reporter                 <- organisationOrIndividual
+      date                     =  implementingDate(userAnswers)
+    } yield reporter ++ date
+
+    build(content.toRight(InProgress)) { nodes =>
+      <RelevantTaxpayer>{nodes}</RelevantTaxpayer>
+    }
+  }
+
+  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers): Either[JourneyStatus, NodeSeq] =
     userAnswers.get(TaxpayerLoopPage).toRight(InProgress) map {
       case taxpayers =>
         taxpayers.map {
@@ -76,9 +80,9 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
         }
     }
 
-  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[JourneyStatus, Elem] = {
 
-    val content: Either[CompletionState, NodeSeq] = for {
+    val content: Either[JourneyStatus, NodeSeq] = for {
       reporterAsTaxpayer <- buildReporterAsTaxpayer(userAnswers)
       relevantTaxpayers  <- getRelevantTaxpayers(userAnswers)
     } yield {

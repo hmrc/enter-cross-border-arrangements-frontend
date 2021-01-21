@@ -18,6 +18,7 @@ package helpers.xml
 
 import base.SpecBase
 import models.{Address, Country}
+import org.scalatest.Tag
 
 import java.time.LocalDate
 import scala.xml.PrettyPrinter
@@ -41,3 +42,5 @@ trait XmlBase extends SpecBase {
   val email = "email@email.com"
 
 }
+
+object XmlBase extends Tag("XmlTest")
