@@ -23,7 +23,7 @@ import scala.xml.{Elem, NodeSeq}
 
 trait XMLBuilder {
 
-  def toXml(userAnswers: UserAnswers): Either[Throwable, Elem]
+  def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem]
 
   def build(from: Either[CompletionState, NodeSeq])(as: NodeSeq => Elem): Either[CompletionState, Elem] =
     from.fold(

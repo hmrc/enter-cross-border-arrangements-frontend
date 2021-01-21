@@ -19,13 +19,12 @@ package helpers.xml
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.TaxResidency
-import models.{Address, UserAnswers}
+import models.{Address, CompletionState, NotStarted, UserAnswers}
 import pages.reporter.RoleInArrangementPage
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.collection.mutable.ArrayBuffer
-import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
@@ -97,20 +96,22 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     <ID>{organisationNodes}</ID>
   }
 
-  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): NodeSeq = {
+  private[xml] def buildTaxPayerIsAReporter(userAnswers: UserAnswers): Either[CompletionState, NodeSeq] = {
     (userAnswers.get(RoleInArrangementPage), userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage)) match {
       case (Some(RoleInArrangement.Taxpayer), Some(implementingDate)) =>
         val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
 
-        <RelevantTaxpayer>
+        Right(
+          <RelevantTaxpayer>
           {buildIDForOrganisation(organisationDetailsForReporter)}
           <TaxpayerImplementingDate>{implementingDate}</TaxpayerImplementingDate>
-        </RelevantTaxpayer>
-      case _ => NodeSeq.Empty
+          </RelevantTaxpayer>
+        )
+      case _ => Left(NotStarted)
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
     val relevantTaxPayersNode: IndexedSeq[ArrayBuffer[Node]] = userAnswers.get(TaxpayerLoopPage) match {
       case Some(taxpayers) =>
         val nodeBuffer = new xml.NodeBuffer
