@@ -16,17 +16,13 @@
 
 package helpers.xml
 
-import helpers.xml.DisclosureInformationXMLSection.buildNationalProvision
-import models.arrangement.WhyAreYouReportingThisArrangementNow
-import models.{CompletionState, InProgress, NotStarted, UserAnswers}
-
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
+import models.{CompletionState, InProgress, NotStarted, UserAnswers}
 import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
-import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
@@ -167,7 +163,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     </Hallmarks>
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers): Either[CompletionState, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     val content: Either[CompletionState, NodeSeq] = for {
       implementingDate <- buildImplementingDate(userAnswers)
