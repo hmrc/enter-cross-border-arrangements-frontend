@@ -17,23 +17,31 @@
 package controllers.enterprises
 
 import base.SpecBase
-import models.{Name, SelectType, UserAnswers}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.{Country, LoopDetails, Name, SelectType, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.individual._
 import pages.organisation._
+import play.api.inject.bind
 import play.api.libs.json.JsObject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import repositories.SessionRepository
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/associated-enterprises/update")
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 
@@ -124,6 +132,82 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
         rows.contains("""{"key":{"text":"Are they affected by the arrangement?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
       }
+    }
+
+    "must redirect to the associated enterprise update page when valid data is submitted for an organisation" in {
+      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit().url
+      val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+        .success.value
+        .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+        .success.value
+        .set(OrganisationNamePage, "Organisation name")
+        .success.value
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Associated taxpayer"))
+        .success.value
+        .set(IsAssociatedEnterpriseAffectedPage, false)
+        .success.value
+        .set(OrganisationLoopPage, loopDetails)
+        .success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "must redirect to the associated enterprise update page when valid data is submitted for an individual" in {
+      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit().url
+      val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+        .success.value
+        .set(AssociatedEnterpriseTypePage, SelectType.Individual)
+        .success.value
+        .set(IndividualNamePage, Name("Name", "Name"))
+        .success.value
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Associated taxpayer"))
+        .success.value
+        .set(IsAssociatedEnterpriseAffectedPage, false)
+        .success.value
+        .set(IndividualLoopPage, loopDetails)
+        .success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
     }
   }
 }

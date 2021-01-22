@@ -5,6 +5,7 @@
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
+{% from "add-to-a-list/macro.njk"                  import hmrcAddToAList %}
 
 {% block pageTitle %}
   {{ title(messages("youHaveNotAddedAnyAssociatedEnterprises.title"), form.errors) }}
@@ -31,9 +32,14 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
-            {{ messages('youHaveNotAddedAnyAssociatedEnterprises.title') }}
-          </h1>
+          {{ hmrcAddToAList({
+            itemList: associatedEnterpriseList,
+            itemType: {
+              singular: messages("youHaveNotAddedAnyAssociatedEnterprises.singular"),
+              plural: messages("youHaveNotAddedAnyAssociatedEnterprises.plural")
+            },
+            emptyList: messages("youHaveNotAddedAnyAssociatedEnterprises.emptyList")
+          }) }}
 
           {{ govukRadios({
             name: 'value',

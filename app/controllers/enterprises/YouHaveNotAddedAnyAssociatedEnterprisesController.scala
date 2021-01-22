@@ -19,10 +19,10 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
+import models.Mode
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.{Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.enterprises.{AssociatedEnterpriseLoopPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -40,6 +40,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
     navigator: NavigatorForEnterprises,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
     formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -47,10 +48,16 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(YouHaveNotAddedAnyAssociatedEnterprisesPage)) match {
+      val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+        case Some(list) =>
+          list.map(_.nameAsString)
+        case None => IndexedSeq.empty
+      }
+
+      val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -58,7 +65,8 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios"  -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm)
+        "radios"  -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm),
+        "associatedEnterpriseList" -> namesOfAssociatedEnterprises
       )
 
       renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
@@ -67,27 +75,31 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAssociatedEnterprises]): Call =
     navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(checkRoute)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+            case Some(list) =>
+              list.map(_.nameAsString)
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors)
+            "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
+            "associatedEnterpriseList" -> namesOfAssociatedEnterprises
           )
 
           renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
         },
         value => {
 
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

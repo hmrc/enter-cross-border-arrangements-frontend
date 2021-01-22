@@ -321,7 +321,8 @@ POST       /taxpayers/change-implementation-date                        controll
 
 # ASSOCIATED ENTERPRISES
 
-GET        /associated-enterprises/check-answers        controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad
+GET        /associated-enterprises/check-answers           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
+POST       /associated-enterprises/check-answers           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(mode: Mode = NormalMode)
 
 GET        /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(mode: Mode = NormalMode)
 POST       /associated-enterprises/update                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(mode: Mode = NormalMode)
@@ -589,4 +590,3 @@ POST       /reporter/individual/change-select-address        controllers.reporte
 # TASK LIST
 POST      /task-list                                         controllers.TaskListController.onSubmit
 
-GET       /generated-xml                                     controllers.GeneratedXMLController.onPageLoad()
