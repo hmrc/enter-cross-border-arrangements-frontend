@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("replaceOrDeleteADisclosure.title"), form.errors) }}
+  {{ title(messages("replaceOrDeleteADisclosure.title.replace") if replaceOrDelete else  messages("replaceOrDeleteADisclosure.title.delete"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
         <h1 class="govuk-heading-xl">
-          {{ messages("replaceOrDeleteADisclosure.heading") }}
+          {{ messages("replaceOrDeleteADisclosure.heading.replace") if replaceOrDelete else messages("replaceOrDeleteADisclosure.heading.delete")}}
         </h1>
 
           {{ govukInput({

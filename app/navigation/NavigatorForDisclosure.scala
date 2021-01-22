@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import pages.Page
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DeleteDisclosurePage, DisclosureDeleteCheckYourAnswersPage, DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -44,6 +44,9 @@ class NavigatorForDisclosure @Inject()() {
     case ReplaceOrDeleteADisclosurePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
+    case DeleteDisclosurePage =>
+      _ => _ => _ => _ => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
+
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
@@ -55,6 +58,10 @@ class NavigatorForDisclosure @Inject()() {
         case Some(n) => controllers.routes.DisclosureDetailsController.onPageLoad(n)
         case None => controllers.routes.IndexController.onPageLoad()
       }
+
+
+    case  DisclosureDeleteCheckYourAnswersPage  =>
+    _ =>  _ => _ => _ => controllers.disclosure.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =

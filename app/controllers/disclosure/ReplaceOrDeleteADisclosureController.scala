@@ -20,10 +20,11 @@ import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
-import models.disclosure.{IDVerificationStatus, ReplaceOrDeleteADisclosure}
-import models.{Country, Mode}
+import models.disclosure.DisclosureType.{Dac6del, Dac6rep}
+import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
+import models.{Country, Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.ReplaceOrDeleteADisclosurePage
+import pages.disclosure.{DeleteDisclosurePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -65,27 +66,32 @@ class ReplaceOrDeleteADisclosureController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "arrangementIDLabel" -> arrangementIDLabel
+        "arrangementIDLabel" -> arrangementIDLabel,
+        "replaceOrDelete" -> replaceOrDelete(request.userAnswers)
       )
 
       renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[ReplaceOrDeleteADisclosure]): Call =
-    navigator.routeMap(ReplaceOrDeleteADisclosurePage)(checkRoute)(None)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[ReplaceOrDeleteADisclosure], disclosureType: Option[DisclosureType]): Call = disclosureType match {
+    case None|Some(Dac6rep) => navigator.routeMap (ReplaceOrDeleteADisclosurePage) (checkRoute) (None) (value) (0)
+    case Some(Dac6del) => navigator.routeMap (DeleteDisclosurePage) (checkRoute) (None) (value) (0)
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
       val formReturned: Form[ReplaceOrDeleteADisclosure] =  form.bindFromRequest()
+      val disclosureType: Option[DisclosureType] = request.userAnswers.getBase(DisclosureTypePage)
 
       formReturned.fold(
         formWithErrors => {
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "arrangementIDLabel" -> arrangementIDLabel
+            "arrangementIDLabel" -> arrangementIDLabel,
+            "replaceOrDelete" -> replaceOrDelete(request.userAnswers)
           )
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
@@ -105,7 +111,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
                     updatedAnswers <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
                     _              <- sessionRepository.set(updatedAnswers)
                     checkRoute = toCheckRoute(mode, updatedAnswers)
-                  } yield Redirect(redirect(checkRoute, Some(value)))
+                  } yield Redirect(redirect(checkRoute, Some(value), disclosureType))
                 }
           }
         }
@@ -135,4 +141,9 @@ class ReplaceOrDeleteADisclosureController @Inject()(
           .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
     }
   }
+
+  private def replaceOrDelete(userAnswers: UserAnswers): Boolean = userAnswers.getBase(DisclosureTypePage) match {
+      case Some(Dac6rep) => true
+      case _ => false
+    }
 }
