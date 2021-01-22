@@ -23,11 +23,11 @@ import pages.QuestionPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Html
 
-object TaskListHelper {
+object TaskListHelper  {
 
   def taskListItemRestricted(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
     Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
+      s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
   }
 
   def taskListHtmlProvider(url: String, status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
