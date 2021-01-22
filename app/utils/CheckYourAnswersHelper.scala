@@ -27,12 +27,28 @@ import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
+import pages.ReplaceOrDeleteADisclosurePage
 import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows
     with IntermediariesRows with DisclosureRows with ReporterRows with AffectedRows {
+
+  def replaceOrDeleteADisclosure: Option[Row] = userAnswers.get(ReplaceOrDeleteADisclosurePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"replaceOrDeleteADisclosure.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${answer.arrangementID} ${answer.disclosureID}"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = controllers.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"replaceOrDeleteADisclosure.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
 
   def selectType(id: Int): Option[Row] = userAnswers.get(TaxpayerSelectTypePage, id) map {
     answer =>

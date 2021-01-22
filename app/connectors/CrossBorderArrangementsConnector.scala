@@ -41,7 +41,22 @@ class CrossBorderArrangementsConnector @Inject()(
   }
 
   def verifyArrangementId(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.GET[HttpResponse](verificationUrl(arrangementId)).map { response =>
+    val verificationUrl = s"$baseUrl/verify-arrangement-id/$arrangementId"
+
+    httpClient.GET[HttpResponse](verificationUrl).map { response =>
+      response.status match {
+        case 204 => true
+        case _ => false
+      }
+    } recover {
+      case _: Exception => false
+    }
+  }
+
+  def verifyDisclosureId(disclosureId: String, enrolmentId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val verificationUrl = s"$baseUrl/verify-disclosure-id/$disclosureId-$enrolmentId"
+
+    httpClient.GET[HttpResponse](verificationUrl).map { response =>
       response.status match {
         case NO_CONTENT => true
         case _ => false

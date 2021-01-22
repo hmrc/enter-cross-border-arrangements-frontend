@@ -599,3 +599,8 @@ POST       /others-affected/change-type/:id                      controllers.aff
 
 GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
 POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+
+GET        /manual/disclosure/identify                       controllers.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = NormalMode)
+POST       /manual/disclosure/identify                       controllers.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = NormalMode)
+GET        /manual/disclosure/change-identify                controllers.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = CheckMode)
+POST       /manual/disclosure/change-identify                controllers.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = CheckMode)

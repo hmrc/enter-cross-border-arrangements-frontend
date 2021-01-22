@@ -33,6 +33,14 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryReplaceOrDeleteADisclosure: Arbitrary[ReplaceOrDeleteADisclosure] =
+    Arbitrary {
+      for {
+        arrangementID <- arbitrary[String]
+        disclosureID <- arbitrary[String]
+      } yield ReplaceOrDeleteADisclosure(arrangementID, disclosureID)
+    }
+
   implicit lazy val arbitraryReporterOrganisationOrIndividual: Arbitrary[ReporterOrganisationOrIndividual] =
     Arbitrary {
       Gen.oneOf(ReporterOrganisationOrIndividual.values.toSeq)

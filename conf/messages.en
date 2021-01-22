@@ -1147,3 +1147,19 @@ unsubmitted.title = You have unsubmitted disclosures
 unsubmitted.heading = You have {0} unsubmitted disclosure{1}
 unsubmitted.advice = We save unsubmitted disclosures for 28 days from the last date you saved changes.
 unsubmitted.link = Create a new disclosure
+
+
+replaceOrDeleteADisclosure.title = Which disclosure do you want to replace?
+replaceOrDeleteADisclosure.heading = Which disclosure do you want to replace?
+replaceOrDeleteADisclosure.arrangementID = Arrangement ID
+replaceOrDeleteADisclosure.arrangementID.p = Also called an arrangement reference number.
+replaceOrDeleteADisclosure.arrangementID.hint = For example, GBA20210101ABC123
+replaceOrDeleteADisclosure.disclosureID = Disclosure ID
+replaceOrDeleteADisclosure.disclosureID.hint = For example, GBD20210101ABC123
+replaceOrDeleteADisclosure.checkYourAnswersLabel = replaceOrDeleteADisclosure
+replaceOrDeleteADisclosure.error.arrangementID.required = Provide an arrangement ID
+replaceOrDeleteADisclosure.error.disclosureID.required = Provide a disclosure ID
+replaceOrDeleteADisclosure.error.arrangementID.invalid = Provide a valid arrangement ID
+replaceOrDeleteADisclosure.error.disclosureID.invalid = Provide a disclosure ID for one of your previous disclosures
+replaceOrDeleteADisclosure.error.arrangementID.notFound = Disclosure not found. Check the arrangement ID and disclosure ID are correct
+replaceOrDeleteADisclosure.error.disclosureID.notFound = Provide a disclosure ID for one of your previous disclosures

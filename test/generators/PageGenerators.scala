@@ -42,6 +42,9 @@ import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryReplaceOrDeleteADisclosurePage: Arbitrary[ReplaceOrDeleteADisclosurePage.type] =
+    Arbitrary(ReplaceOrDeleteADisclosurePage)
+
   implicit lazy val arbitraryReporterOtherTaxResidentQuestionPage: Arbitrary[ReporterOtherTaxResidentQuestionPage.type] =
     Arbitrary(ReporterOtherTaxResidentQuestionPage)
 
