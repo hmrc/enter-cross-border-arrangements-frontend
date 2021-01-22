@@ -20,13 +20,10 @@ import com.google.inject.Inject
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import models.NormalMode
-import models.disclosure.DisclosureType.Dac6add
-import controllers.mixins.DefaultRouting
 import helpers.IDHelper
-import models.{NormalMode, UnsubmittedDisclosure}
-import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.disclosure.DisclosureType.Dac6add
 import models.hallmarks.JourneyStatus
+import models.{NormalMode, UnsubmittedDisclosure}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage

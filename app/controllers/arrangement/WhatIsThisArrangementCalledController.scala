@@ -82,9 +82,6 @@ class WhatIsThisArrangementCalledController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsThisArrangementCalledPage, id, value))
-
-            // set status to hallmarksStatusPage
-//            status = TaskListHelper.updateJourneyStatus(WhatIsThisArrangementCalledPage, request.userAnswers, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(ArrangementStatusPage, id, JourneyStatus.InProgress))
             _ <- sessionRepository.set(updatedAnswersWithStatus)
 

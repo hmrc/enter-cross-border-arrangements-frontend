@@ -1,5 +1,6 @@
 // initialise GovUK lib
 GOVUKFrontend.initAll();
+HMRCFrontend.initAll();
 
 // =====================================================
 // Back link mimics browser back functionality

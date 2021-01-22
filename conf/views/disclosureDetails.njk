@@ -44,7 +44,7 @@
 
               <h2 class="app-task-list__section" id="arrangementDetails">
                 <span class="app-task-list__section-number">2. </span>
-                  {{ messages("disclosureDetails.section2") }}
+                  {{ messages("disclosureDetails.section2", displaySectionOptional) }}
               </h2>
 
               <ul class="app-task-list__items">
@@ -89,7 +89,7 @@
           </ol>
 
 
-        {% if submissionContent %}
+        {% if userCanSubmit %}
 
             <h2 class="govuk-heading-m">
                 {{ messages("disclosureDetails.sendDisclosure") }}

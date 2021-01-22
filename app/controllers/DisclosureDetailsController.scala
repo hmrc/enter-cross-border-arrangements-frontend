@@ -68,7 +68,8 @@ class DisclosureDetailsController @Inject()(
         "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage),
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage),
-        "submissionContent" -> submissionContent(request.userAnswers.get)
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get),
+        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
   }
@@ -164,12 +165,5 @@ class DisclosureDetailsController @Inject()(
       case _ => taskListItemRestricted(
         "disclosureDetails.intermediariesLink", "connected-parties")
     }
-  }
-
-  private def submissionContent(ua: UserAnswers) = {
-    val listOfPages = Seq(HallmarkStatusPage, ArrangementStatusPage, ReporterStatusPage, RelevantTaxpayerStatusPage,
-      IntermediariesStatusPage, DisclosureStatusPage)
-
-    haveAllJourneysBeenCompleted(listOfPages, ua)
   }
 }

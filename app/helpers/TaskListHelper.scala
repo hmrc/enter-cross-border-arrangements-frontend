@@ -17,9 +17,17 @@
 package helpers
 
 import models.UserAnswers
+import models.disclosure.DisclosureType
+import models.disclosure.DisclosureType.Dac6add
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import pages.QuestionPage
+import pages.arrangement.ArrangementStatusPage
+import pages.disclosure.{DisclosureMarketablePage, DisclosureStatusPage, DisclosureTypePage}
+import pages.hallmarks.HallmarkStatusPage
+import pages.intermediaries.IntermediariesStatusPage
+import pages.reporter.ReporterStatusPage
+import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Html
 
@@ -57,4 +65,29 @@ object TaskListHelper  {
       case _ => url
     }
   }
+
+  def displaySectionOptional(ua: UserAnswers): String =  {
+    (ua.get(DisclosureTypePage), ua.get(DisclosureMarketablePage)) match {
+      case (Some(Dac6add), Some(true)) =>
+        "disclosureDetails.optional"
+      case _ =>
+        ""
+    }
+  }
+
+  def userCanSubmit(ua: UserAnswers): Boolean = {
+
+    val mandatoryCompletion = Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
+    val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
+
+    val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
+      (ua.get(DisclosureTypePage), ua.get(DisclosureMarketablePage)) match {
+        case (Some(DisclosureType.Dac6add), Some(true)) =>
+          mandatoryCompletion
+        case _ =>
+          mandatoryCompletion ++ optionalCompletion
+      }
+    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua)
+  }
+
 }

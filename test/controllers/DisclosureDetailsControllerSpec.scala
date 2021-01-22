@@ -17,6 +17,8 @@
 package controllers
 
 import base.SpecBase
+import matchers.JsonMatchers
+import models.UserAnswers
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -28,10 +30,11 @@ import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar {
+class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   "DisclosureDetails Controller" - {
 
