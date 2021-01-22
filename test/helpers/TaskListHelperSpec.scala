@@ -18,12 +18,13 @@ package helpers
 
 import base.SpecBase
 import generators.Generators
+import helpers.TaskListHelper._
 import models.UserAnswers
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.disclosure.DisclosureStatusPage
 import pages.reporter.ReporterStatusPage
 import uk.gov.hmrc.viewmodels.Html
-import TaskListHelper._
 
 class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -92,6 +93,63 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong> </li>")
       }
 
+      "haveAllJourneysBeenCompleted" - {
+
+        "must return TRUE when all Journeys are COMPLETED status" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .set(ReporterStatusPage, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, Completed)
+            .success
+            .value
+
+          val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
+
+          haveAllJourneysBeenCompleted(listOfPages, userAnswers) mustBe true
+
+        }
+
+        "must return FALSE when all Journeys are NOT COMPLETE status" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .set(ReporterStatusPage, InProgress)
+            .success
+            .value
+            .set(DisclosureStatusPage, Completed)
+            .success
+            .value
+
+          val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
+
+          haveAllJourneysBeenCompleted(listOfPages, userAnswers) mustBe false
+
+        }
+      }
+
+      "startJourneyOrCya" - {
+
+        "must return Alternative URL (cya url) when relevant Journey status is COMPLETE" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .set(ReporterStatusPage, Completed)
+            .success
+            .value
+
+          startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL) mustBe mockAltURL
+        }
+
+        "must return standard URL (journey start url) when relevant Journey status is NOT COMPLETE" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .set(ReporterStatusPage, InProgress)
+            .success
+            .value
+
+          startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL) mustBe mockUrl
+        }
+      }
     }
   }
 }
