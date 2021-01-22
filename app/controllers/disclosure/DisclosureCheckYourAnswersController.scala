@@ -82,19 +82,20 @@ class DisclosureCheckYourAnswersController @Inject()(
       val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
       val index = updatedUnsubmittedDisclosures.zipWithIndex.last._2
 
-      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage, index) match {
+      def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
         case Some(Dac6add) =>
-          request.userAnswers.get(DisclosureIdentifyArrangementPage, index).fold(false)(
-            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
+          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(Future.successful(false))(
+            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
         case _ =>
-          request.userAnswers.get(DisclosureMarketablePage, index).fold(
+          request.userAnswers.getBase(DisclosureMarketablePage).fold(
             throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
-            bool)
+            Future.successful(bool))
       }
 
       //build the disclosure details model from pages and store under id
       for {
-        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, index, isMarketable))
+        isMarketableResult <- isMarketable
+        updateAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
         disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
         updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
