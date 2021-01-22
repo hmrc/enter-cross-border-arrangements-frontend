@@ -25,9 +25,9 @@ import uk.gov.hmrc.viewmodels.Html
 
 object TaskListHelper {
 
-  def restrictiveTaskListHtmlProvider(url: String, status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
-    Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$url' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
+  def taskListItemRestricted(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
   }
 
   def taskListHtmlProvider(url: String, status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
@@ -35,14 +35,26 @@ object TaskListHelper {
       s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
   }
 
-  def statusRetriever(ua: UserAnswers, page: QuestionPage[JourneyStatus],
-                      url: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
-
+  def retrieveRowWithStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus],
+                            url: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
     ua.get(page) match {
       case Some(Completed) => taskListHtmlProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel)
       case Some(InProgress) => taskListHtmlProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel)
       case _ => taskListHtmlProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel)
     }
+  }
 
+  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]], ua: UserAnswers): Boolean = {
+    pageList.map(page => ua.get(page) match {
+      case Some(Completed) => true
+      case _ => false
+    }).forall(bool => bool)
+  }
+
+  def startJourneyOrCya(ua: UserAnswers, page: QuestionPage[JourneyStatus], url: String, altUrl: String): String = {
+    ua.get(page) match {
+      case Some(Completed) => altUrl
+      case _ => url
+    }
   }
 }

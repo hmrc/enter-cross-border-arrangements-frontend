@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
@@ -27,19 +28,14 @@
 
             <li>
 
-              <h2 class="app-task-list__section">
+              <h2 class="app-task-list__section" id="disclosure-details">
                 <span class="app-task-list__section-number">1. </span>
                 {{ messages("disclosureDetails.section1") }}
               </h2>
 
               <ul class="app-task-list__items">
 
-                <li class="app-task-list__item">
-                  {# <a class="app-task-list__task-name" href="{{ disclosureUrl }}" aria-describedby="disclosure-type"> #}
-                  {{ messages("disclosureDetails.disclosureTypeLink") }}
-                  {#</a> #}
-                  <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">Completed</strong>
-                </li>
+                {{ disclosureTaskListItem | safe }}
 
               </ul>
             </li>
@@ -92,11 +88,32 @@
             </li>
           </ol>
 
-          <h2 class="govuk-heading-m">
-            {{ messages("disclosureDetails.disclosureNotReady") }}
-          </h2>
 
-          <p class="govuk-body">{{ messages("disclosureDetails.disclosureNotReady.p1") }}</p>
+        {% if submissionContent %}
+
+            <h2 class="govuk-heading-m">
+                {{ messages("disclosureDetails.sendDisclosure") }}
+            </h2>
+
+            <p class="govuk-body">{{ messages("disclosureDetails.sendDisclosure.p1") }}</p>
+
+            {{ govukButton({
+                text: messages("disclosureDetails.acceptAndSend"),
+                attributes: {
+                "id": "submit"
+                }
+              }) }}
+
+          {% else %}
+
+              <h2 class="govuk-heading-m">
+                {{ messages("disclosureDetails.disclosureNotReady") }}
+              </h2>
+
+                <p class="govuk-body">{{ messages("disclosureDetails.disclosureNotReady.p1") }}</p>
+
+          {% endif %}
+
 
         </div>
       </div>

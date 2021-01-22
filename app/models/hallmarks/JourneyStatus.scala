@@ -28,7 +28,7 @@ object JourneyStatus extends Enumerable.Implicits {
 
   case object NotStarted extends WithName("Not Started") with JourneyStatus
 
-  case object Restricted extends WithName("Cannot start yet") with JourneyStatus
+  case object Restricted extends WithName("Cannot start") with JourneyStatus
 
   val values: Set[JourneyStatus] =
     Set(Completed, InProgress, NotStarted, Restricted)

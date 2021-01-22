@@ -26,6 +26,7 @@ import controllers.mixins.DefaultRouting
 import helpers.IDHelper
 import models.{NormalMode, UnsubmittedDisclosure}
 import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.hallmarks.JourneyStatus
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -99,7 +100,8 @@ class DisclosureCheckYourAnswersController @Inject()(
         disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
         updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
-        _  <- sessionRepository.set(newAnswers)
+        updateNewAnswersWithStatus <- Future.fromTry(newAnswers.set(DisclosureStatusPage, index, JourneyStatus.Completed))
+        _  <- sessionRepository.set(updateNewAnswersWithStatus)
       } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
