@@ -16,18 +16,13 @@
 
 package pages.hallmarks
 
-import models.UserAnswers
-import models.hallmarks.HallmarkD
+import models.hallmarks.JourneyStatus
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object HallmarkDPage extends QuestionPage[Set[HallmarkD]] {
+case object HallmarkStatusPage extends QuestionPage[JourneyStatus] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "hallmarkD"
-
-  override def cleanup(value: Option[Set[HallmarkD]], userAnswers: UserAnswers): Try[UserAnswers] = super.cleanup(value, userAnswers)
+  override def toString: String = "hallmarkStatus"
 }

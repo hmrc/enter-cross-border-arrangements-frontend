@@ -24,6 +24,7 @@
             <p class="govuk-body">{{ messages("disclosureDetails.p1") }}</p>
 
           <ol class="app-task-list govuk-!-margin-top-9">
+
             <li>
 
               <h2 class="app-task-list__section">
@@ -32,67 +33,62 @@
               </h2>
 
               <ul class="app-task-list__items">
+
                 <li class="app-task-list__item">
                   {# <a class="app-task-list__task-name" href="{{ disclosureUrl }}" aria-describedby="disclosure-type"> #}
                   {{ messages("disclosureDetails.disclosureTypeLink") }}
                   {#</a> #}
                   <strong class="govuk-tag app-task-list__task-completed" id="disclosure-type">Completed</strong>
                 </li>
+
               </ul>
             </li>
+
             <li>
-              <h2 class="app-task-list__section">
+
+              <h2 class="app-task-list__section" id="arrangementDetails">
                 <span class="app-task-list__section-number">2. </span>
                   {{ messages("disclosureDetails.section2") }}
               </h2>
+
               <ul class="app-task-list__items">
-                <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="{{ hallmarksUrl }}" aria-describedby="hallmarks">
-                  {{ messages("disclosureDetails.hallmarksLink") }}
-                  </a>
-                </li>
-                <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="{{ arrangementsUrl }}" aria-describedby="arrangement-details">
-                  {{ messages("disclosureDetails.arrangementDetailsLink") }}
-                  </a>
-                </li>
+
+                {{ hallmarksTaskListItem | safe }}
+
+                {{ arrangementDetailsTaskListItem | safe }}
+
+
               </ul>
             </li>
+
             <li>
-              <h2 class="app-task-list__section">
+              <h2 class="app-task-list__section" id="reporterDetails">
                 <span class="app-task-list__section-number">3. </span>
                 {{ messages("disclosureDetails.section3") }}
               </h2>
+
               <ul class="app-task-list__items">
-                <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="{{ reportersUrl }}" aria-describedby="reporter-details">
-                  {{ messages("disclosureDetails.reporterDetailsLink") }}
-                  </a>
-                </li>
+
+                {{ reporterDetailsTaskListItem | safe }}
+
               </ul>
+
             </li>
-
-
             <li>
-              <h2 class="app-task-list__section">
+
+              <h2 class="app-task-list__section" id="connected-parties">
                 <span class="app-task-list__section-number">4. </span>
                 {{ messages("disclosureDetails.section4") }}
               </h2>
+
               <ul class="app-task-list__items">
 
-                <li class="app-task-list__item">
-                  <a class="app-task-list__task-name" href="{{ taxpayersUrl }}" aria-describedby="relevant-taxpayers">
-                  {{ messages("disclosureDetails.relevantTaxpayersLink") }}
-                  </a>
-                </li>
+                {{ relevantTaxpayerTaskListItem | safe }}
 
-                <li class="app-task-list__item">
-                    <a class="app-task-list__task-name" href="{{ intermediariesUrl }}" aria-describedby="intermediaries">
-                    {{ messages("disclosureDetails.intermediariesLink") }}
-                    </a>
-                </li>
+                {{ intermediariesTaskListItem | safe }}
 
               </ul>
+
             </li>
           </ol>
 
