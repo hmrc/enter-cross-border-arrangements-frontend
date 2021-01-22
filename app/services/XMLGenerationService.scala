@@ -17,15 +17,14 @@
 package services
 
 import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
-import javax.inject.Inject
 import models.UserAnswers
 import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
 import org.joda.time.DateTime
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
-import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.DisclosureDetailsPage
 import play.api.mvc.AnyContent
 
+import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
@@ -60,9 +59,12 @@ class XMLGenerationService @Inject()() {
   }
 
   private[services] def buildArrangementID(userAnswers: UserAnswers, id: Int): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
-    userAnswers.get(DisclosureTypePage, id) match {
-      case Some(Dac6add) => userAnswers.get(DisclosureIdentifyArrangementPage, id).fold(NodeSeq.Empty)(arrangementID =>
-        <ArrangementID>{arrangementID}</ArrangementID>)
+    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
+      case Some(Dac6add) =>
+        userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID).fold(NodeSeq.Empty){
+          arrangementID =>
+            <ArrangementID>{arrangementID}</ArrangementID>
+        }
       case _ => NodeSeq.Empty
     }
   }
@@ -78,7 +80,7 @@ class XMLGenerationService @Inject()() {
         {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         {buildInitialDisclosureMA(userAnswers, id)}
         {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        {IntermediariesXMLSection.toXml(userAnswers).getOrElse(NodeSeq.Empty)}
+        {IntermediariesXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
       </DAC6Disclosures>
     </DAC6_Arrangement>

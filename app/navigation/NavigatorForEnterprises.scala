@@ -54,7 +54,7 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
       _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
 
     case AssociatedEnterpriseCheckYourAnswersPage =>
-      checkRoute => _ => _ => routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(checkRoute.mode)
+      checkRoute => id => _ => _ => routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, checkRoute.mode)
   }
 
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>

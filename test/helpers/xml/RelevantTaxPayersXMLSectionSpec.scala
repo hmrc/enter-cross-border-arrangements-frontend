@@ -97,7 +97,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -138,7 +138,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -181,7 +181,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .set(ReporterIndividualEmailAddressPage, 0, "email@email.co.uk").success.value
           .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -219,7 +219,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
 
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers)
+        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
         prettyPrinter.formatNodes(result) mustBe ""
       }

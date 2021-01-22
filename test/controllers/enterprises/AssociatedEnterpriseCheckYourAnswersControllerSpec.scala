@@ -24,6 +24,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.disclosure.DisclosureDetailsPage
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.individual._
 import pages.organisation._
@@ -42,7 +43,7 @@ import scala.concurrent.Future
 class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/associated-enterprises/update")
+  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/associated-enterprises/update/0")
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 
@@ -51,7 +52,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, NormalMode).url)
+    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -138,10 +139,11 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
     }
 
     "must redirect to the associated enterprise update page when valid data is submitted for an organisation" in {
-      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit().url
+      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit(0).url
       val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
         .success.value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
@@ -176,10 +178,11 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
     }
 
     "must redirect to the associated enterprise update page when valid data is submitted for an individual" in {
-      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit().url
+      val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit(0).url
       val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
         .success.value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)

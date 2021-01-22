@@ -31,28 +31,28 @@ import scala.xml.{Elem, Node, NodeSeq}
 
 object IntermediariesXMLSection extends XMLBuilder {
 
-  private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage) match {
+  private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(RoleInArrangementPage, id) match {
       case Some(RoleInArrangement.Intermediary) =>
 
-        userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+        userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
 
           case Some(ReporterOrganisationOrIndividual.Organisation) =>
-            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
+            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers, id)
 
             <Intermediary>
               {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers)}
+              {DisclosingXMLSection.buildReporterCapacity(userAnswers, id)}
+              {DisclosingXMLSection.buildReporterExemptions(userAnswers, id)}
             </Intermediary>
 
           case _ =>
-            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
+            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers, id)
 
             <Intermediary>
               {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers)}
+              {DisclosingXMLSection.buildReporterCapacity(userAnswers, id)}
+              {DisclosingXMLSection.buildReporterExemptions(userAnswers, id)}
             </Intermediary>
         }
       case _ => NodeSeq.Empty
@@ -96,9 +96,9 @@ object IntermediariesXMLSection extends XMLBuilder {
     nationalExemption
   }
 
-  private[xml] def getIntermediaries(userAnswers: UserAnswers): Seq[Node] = {
+  private[xml] def getIntermediaries(userAnswers: UserAnswers, id: Int): Seq[Node] = {
 
-    userAnswers.get(IntermediaryLoopPage) match {
+    userAnswers.get(IntermediaryLoopPage, id) match {
       case Some(intermediariesList) =>
         intermediariesList.map {
           intermediary =>
@@ -120,10 +120,10 @@ object IntermediariesXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
     Try {
       <Intermediaries>
-        {buildReporterAsIntermediary(userAnswers) ++ getIntermediaries(userAnswers)}
+        {buildReporterAsIntermediary(userAnswers, id) ++ getIntermediaries(userAnswers, id)}
       </Intermediaries>
     }.toEither
   }

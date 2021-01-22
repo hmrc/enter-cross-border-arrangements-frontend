@@ -69,20 +69,10 @@ class DisclosureCheckYourAnswersController @Inject()(
       ).map(Ok(_))
     }
 
-  def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val openDisclosures: Seq[UnsubmittedDisclosure] = request.userAnswers.getBase(UnsubmittedDisclosurePage).getOrElse(Seq.empty)
-
-      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage, id) match {
-        case Some(Dac6add) =>
-          request.userAnswers.get(DisclosureIdentifyArrangementPage, id).fold(false)(
-            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
-        case _ =>
-          request.userAnswers.get(DisclosureMarketablePage, id).fold(
-            throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
-            bool)
-      }
 
       //generate an id for the disclosure submission
       val submissionID = IDHelper.generateID(openDisclosures.map(_.id), suffixLength = 6)
@@ -92,9 +82,19 @@ class DisclosureCheckYourAnswersController @Inject()(
       val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
       val index = updatedUnsubmittedDisclosures.zipWithIndex.last._2
 
+      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage, index) match {
+        case Some(Dac6add) =>
+          request.userAnswers.get(DisclosureIdentifyArrangementPage, index).fold(false)(
+            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
+        case _ =>
+          request.userAnswers.get(DisclosureMarketablePage, index).fold(
+            throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
+            bool)
+      }
+
       //build the disclosure details model from pages and store under id
       for {
-        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, id, isMarketable))
+        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, index, isMarketable))
         disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
         updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))

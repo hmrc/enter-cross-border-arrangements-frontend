@@ -90,8 +90,8 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
 
       s"must go from $E11 to $E2 in the associated enterprise journey" in {
 
-        navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)
-          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode))
+        navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(DefaultRouting(NormalMode))(0)(None)(0)
+          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode))
       }
     }
 

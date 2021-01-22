@@ -16,26 +16,21 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.TaxResidency
-import models.{Address, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
+import models.{Address, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import pages.reporter.individual._
 import pages.reporter.intermediary.{IntermediaryRolePage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
-import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class DisclosingXMLSectionSpec extends SpecBase {
@@ -85,6 +80,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
       "must build optional reporter capacity for intermediary service provider" in {
 
         val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(IntermediaryRolePage, 0, IntermediaryRole.ServiceProvider)
           .success
           .value
@@ -97,6 +93,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
       "must not build the optional reporter capacity if answer is 'doNotKnow' in intermediary/why-report-in-uk" in {
 
         val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(IntermediaryRolePage, 0, IntermediaryRole.Unknown)
           .success
           .value

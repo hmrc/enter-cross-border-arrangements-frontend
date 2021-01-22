@@ -27,7 +27,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "disclosureMarketable"
+  override def toString: String = "disclosureDetails"
 
   override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, index: Int): Try[UserAnswers] =
     List(

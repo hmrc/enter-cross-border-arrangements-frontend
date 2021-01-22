@@ -86,17 +86,17 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       renderer.render("enterprises/associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call =
-    navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(None)(0)
+  def redirect(id: Int, checkRoute: CheckRoute): Call =
+    navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers)
+          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers))
+          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id))
       }
 
       for {
@@ -105,7 +105,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
         _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {
-        Redirect(redirect(checkRoute))
+        Redirect(redirect(id, checkRoute))
       }
   }
 }

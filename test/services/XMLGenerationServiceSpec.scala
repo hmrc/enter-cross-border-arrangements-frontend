@@ -16,13 +16,9 @@
 
 package services
 
-import java.time.LocalDate
-
 import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.{HallmarkD, HallmarkD1}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
@@ -31,12 +27,10 @@ import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
-import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
-import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
@@ -46,6 +40,8 @@ import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
+
+import java.time.LocalDate
 
 class XMLGenerationServiceSpec extends SpecBase {
 
@@ -268,11 +264,11 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     }
 
-    "must build the full XML for a reporter that is an ORGANISTION" in {
+    "must build the full XML for a reporter that is an ORGANISATION" in {
       val disclosureDetails = DisclosureDetails(
         disclosureName = "DisclosureName",
         disclosureType = DisclosureType.Dac6new,
-        initialDisclosureMA = false
+        initialDisclosureMA = true
       )
 
       val userAnswers = UserAnswers(userAnswersId)
@@ -353,5 +349,4 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     }
   }
-
 }

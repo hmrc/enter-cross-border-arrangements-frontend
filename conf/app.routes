@@ -380,8 +380,8 @@ POST      /intermediaries/check-answers/:id                     controllers.inte
 
 # DISCLOSURE
 
-GET        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad
-POST       /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue
+GET        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad()
+POST       /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue()
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
