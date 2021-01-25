@@ -47,27 +47,28 @@ class IndividualPlaceOfBirthController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualPlaceOfBirthPage) match {
+      val preparedForm = request.userAnswers.get(IndividualPlaceOfBirthPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
-        "name" -> getIndividualName(request.userAnswers)
+        "name" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/individualPlaceOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(IndividualPlaceOfBirthPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(IndividualPlaceOfBirthPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,8 +76,9 @@ class IndividualPlaceOfBirthController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers)
+            "name" -> getIndividualName(request.userAnswers, id)
 
           )
 
@@ -84,15 +86,15 @@ class IndividualPlaceOfBirthController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualPlaceOfBirthPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualPlaceOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${"was " + name.firstName + " " + name.secondName}"
       case None => "were they"
     }

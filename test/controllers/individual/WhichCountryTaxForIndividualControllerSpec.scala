@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualLoopPage, WhichCountryTaxForIndividualPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -45,7 +46,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
   val index: Int = 0
 
-  lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(NormalMode, index).url
+  lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(0, NormalMode, index).url
 
   "WhichCountryTaxForIndividual Controller" - {
 
@@ -84,10 +85,11 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhichCountryTaxForIndividualPage, country)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichCountryTaxForIndividualPage, 0, country)
         .success
         .value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
@@ -138,7 +140,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/uk-tin-known-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/uk-tin-known-0/0"
 
       application.stop()
     }
@@ -163,7 +165,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/resident-country-tin-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/resident-country-tin-0/0"
 
       application.stop()
     }

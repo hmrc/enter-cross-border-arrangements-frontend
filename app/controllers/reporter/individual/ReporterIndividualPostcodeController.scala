@@ -49,48 +49,50 @@ class ReporterIndividualPostcodeController @Inject()(
 
   private val form = formProvider()
 
-  private def manualAddressURL(mode: Mode): String =
-    controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(mode).url
+  private def manualAddressURL(id: Int, mode: Mode): String =
+    controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualPostcodePage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualPostcodePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
-        "manualAddressURL" -> manualAddressURL(mode)
+        "manualAddressURL" -> manualAddressURL(id, mode)
       )
 
       renderer.render("reporter/individual/reporterIndividualPostcode.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
-    navigator.routeMap(ReporterIndividualPostcodePage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
+    navigator.routeMap(ReporterIndividualPostcodePage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
-            "manualAddressURL" -> manualAddressURL(mode)
+            "manualAddressURL" -> manualAddressURL(id, mode)
           )
 
           renderer.render("reporter/individual/reporterIndividualPostcode.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPostcodePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

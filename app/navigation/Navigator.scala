@@ -41,7 +41,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Request[AnyContent] => Option[Call] = {
+  private val normalRoutes: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkAPage => hallmarkARoutes(NormalMode)
@@ -52,37 +52,37 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
-    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+    case HallmarkEPage => _ => id => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
 
-    case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
-    case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
+    case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, NormalMode))
+    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id, NormalMode))
     case DoYouKnowTheReasonToReportArrangementNowPage =>  doYouKnowTheReasonToReportArrangementNowRoutes(NormalMode)
-    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
-    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode))
-    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode))
-    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
-    case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
+    case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, NormalMode))
+    case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, NormalMode))
+    case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, NormalMode))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => id => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, NormalMode))
+    case GiveDetailsOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case PostcodePage => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, NormalMode))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
-    case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
+    case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
     case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(NormalMode)
     case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
     case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(NormalMode)
     case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
-    case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+    case ExemptCountriesPage => _ => id => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id))
 
-    case HallmarksCheckYourAnswersPage => _ => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad())
+    case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
 
-    case _ => _ => _ => Some(routes.IndexController.onPageLoad())
+    case _ => _ => id => _ => Some(routes.IndexController.onPageLoad())
   }
 
-  private val checkRouteMap: Page => UserAnswers => Request[AnyContent] => Option[Call] = {
+  private val checkRouteMap: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
     case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkAPage => hallmarkARoutes(CheckMode)
@@ -93,34 +93,34 @@ class Navigator @Inject()() {
     case HallmarkDPage => hallmarkDRoutes(CheckMode)
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
-    case HallmarkEPage => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
-    case PostcodePage => _ => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+    case HallmarkEPage => _ => id => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
+    case PostcodePage => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, CheckMode))
 
-    case WhatIsThisArrangementCalledPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case WhatIsTheImplementationDatePage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case DoYouKnowTheReasonToReportArrangementNowPage => doYouKnowTheReasonToReportArrangementNowRoutes(CheckMode)
-    case WhyAreYouReportingThisArrangementNowPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case WhichExpectedInvolvedCountriesArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case WhatIsTheExpectedValueOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
-    case GiveDetailsOfThisArrangementPage => _ => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad())
+    case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case GiveDetailsOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
 
-    case TaxpayerCheckYourAnswersPage => _ => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad())
+    case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
     case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(CheckMode)
     case IntermediariesTypePage => intermediaryTypeRoutes(CheckMode)
     case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(CheckMode)
     case IsExemptionKnownPage => isExemptionKnownRoutes(CheckMode)
     case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(CheckMode)
-    case ExemptCountriesPage => _ => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+    case ExemptCountriesPage => _ => id => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id))
 
-    case _ => _ => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+    case _ => _ => id => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
   }
 
- def catRoutes(key: HallmarkCategories): Mode => Call = key match {
+ def catRoutes(key: HallmarkCategories): (Int, Mode) => Call = key match {
    case CategoryA => controllers.hallmarks.routes.HallmarkAController.onPageLoad
    case CategoryB => controllers.hallmarks.routes.HallmarkBController.onPageLoad
    case CategoryC => controllers.hallmarks.routes.HallmarkCController.onPageLoad
@@ -128,137 +128,134 @@ class Navigator @Inject()() {
    case CategoryE => controllers.hallmarks.routes.HallmarkEController.onPageLoad
  }
 
-  private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map  {catSet  =>  catRoutes(catSet.min(orderingByName))(mode)}
+  private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkCategoriesPage, id) map  {catSet  =>  catRoutes(catSet.min(orderingByName))(id, mode)}
 
-  private def hallmarkARoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map {
+  private def hallmarkARoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkCategoriesPage, id) map {
       case set: Set[HallmarkCategories] if set.contains(CategoryB) =>
-        controllers.hallmarks.routes.HallmarkBController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkBController.onPageLoad(id, mode)
       case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
-        controllers.hallmarks.routes.HallmarkCController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkCController.onPageLoad(id, mode)
       case _ =>
-        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, mode)
     }
 
-  private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage) map {
+  private def hallmarkBRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkCategoriesPage, id) map {
       case set: Set[HallmarkCategories] if set.contains(CategoryC) =>
-        controllers.hallmarks.routes.HallmarkCController.onPageLoad(mode)
+        controllers.hallmarks.routes.HallmarkCController.onPageLoad(id, mode)
       case _ =>
-        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, mode)
     }
 
-  private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(MainBenefitTestPage) map {
+  private def mainBenefitTestRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(MainBenefitTestPage, id) map {
       case true =>
-        ua.get(HallmarkCategoriesPage) match {
-          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+        ua.get(HallmarkCategoriesPage, id) match {
+          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(id, mode)
+          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(id, mode)
+          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id)
         }
-      case false => controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad()
+      case false => controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad(id)
     }
 
-  private def hallmarkCRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCPage) map {
-      case set: Set[HallmarkC] if set.contains(C1) => controllers.hallmarks.routes.HallmarkC1Controller.onPageLoad(mode)
-      case  _ =>  ua.get(HallmarkCategoriesPage) match {
-        case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
-        case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
-        case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+  private def hallmarkCRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkCPage, id) map {
+      case set: Set[HallmarkC] if set.contains(C1) => controllers.hallmarks.routes.HallmarkC1Controller.onPageLoad(id, mode)
+      case  _ =>  ua.get(HallmarkCategoriesPage, id) match {
+        case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) => controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, mode)
+        case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(id, mode)
+        case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(id, mode)
+        case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id)
       }
     }
 
-  private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkC1Page) map {
+  private def hallmarkC1Routes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkC1Page, id) map {
       case set: Set[HallmarkC1] if set.contains(C1c) || set.contains(C1bi) || set.contains(C1d) =>
-        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
+        controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, mode)
       case  _ =>
-        ua.get(HallmarkCategoriesPage) match {
+        ua.get(HallmarkCategoriesPage, id) match {
           case Some(set) if set.contains(CategoryA) | set.contains(CategoryB) =>
-            controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(mode)
-          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(mode)
-          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad()
+            controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, mode)
+          case Some(set) if set.contains(CategoryD) => controllers.hallmarks.routes.HallmarkDController.onPageLoad(id, mode)
+          case Some(set) if set.contains(CategoryE) => controllers.hallmarks.routes.HallmarkEController.onPageLoad(id, mode)
+          case _ => controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id)
         }
     }
 
-  private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkDPage) match  {
-      case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(mode))
-       case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+  private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkDPage, id) match  {
+      case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(id, mode))
+       case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
        }
 
-
-  private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkD1Page) match  {
-      case Some(set) if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(mode))
-      case  _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+  private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(HallmarkD1Page, id) match  {
+      case Some(set) if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(id, mode))
+      case  _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
         }
 
+  private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
 
-  private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
-
-
-  private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(TaxpayerSelectTypePage) map {
-      case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
-      case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
+  private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(TaxpayerSelectTypePage, id) map {
+      case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
+      case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
     }
 
-  private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(DoYouKnowTheReasonToReportArrangementNowPage) map {
-      case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(mode)
-      case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(mode)
-      case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()
+  private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(DoYouKnowTheReasonToReportArrangementNowPage, id) map {
+      case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, mode)
+      case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, mode)
+      case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id)
     }
   }
 
-  private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(YouHaveNotAddedAnyIntermediariesPage) map {
-      case YouHaveNotAddedAnyIntermediaries.YesAddNow => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(mode)
+  private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(YouHaveNotAddedAnyIntermediariesPage, id) map {
+      case YouHaveNotAddedAnyIntermediaries.YesAddNow => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(id, mode)
       case _ => controllers.routes.IndexController.onPageLoad()
     }
   }
 
-  private def intermediaryTypeRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(IntermediariesTypePage) map {
-      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(mode)
-      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(mode)
+  private def intermediaryTypeRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(IntermediariesTypePage, id) map {
+      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
+      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
     }
   }
 
-  private def whatTypeofIntermediaryRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(WhatTypeofIntermediaryPage) map {
-      case Promoter => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(mode)
-      case Serviceprovider | IDoNotKnow => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+  private def whatTypeofIntermediaryRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(WhatTypeofIntermediaryPage, id) map {
+      case Promoter => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(id, mode)
+      case Serviceprovider | IDoNotKnow => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
     }
   }
 
-  private def isExemptionKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(IsExemptionKnownPage) map {
-      case Yes => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(mode)
-      case models.IsExemptionKnown.No | Unknown => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+  private def isExemptionKnownRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
+    ua.get(IsExemptionKnownPage, id) map {
+      case Yes => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(id, mode)
+      case models.IsExemptionKnown.No | Unknown => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
     }
   }
 
-  private def isExemptionCountryKnownRoutes(mode: Mode)(ua: UserAnswers)(request: Request[AnyContent]): Option[Call] =
-    ua.get(IsExemptionCountryKnownPage) map {
-      case true  => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(mode)
-      case false => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
+  private def isExemptionCountryKnownRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
+    ua.get(IsExemptionCountryKnownPage, id) map {
+      case true  => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(id, mode)
+      case false => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
     }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
+  def nextPage(page: Page, id: Int, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)(request) match {
+      normalRoutes(page)(userAnswers)(id)(request) match {
         case Some(call) => call
         case None => routes.SessionExpiredController.onPageLoad()
       }
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)(request) match {
+      checkRouteMap(page)(userAnswers)(id)(request) match {
         case Some(call) => call
         case None => routes.SessionExpiredController.onPageLoad()
 

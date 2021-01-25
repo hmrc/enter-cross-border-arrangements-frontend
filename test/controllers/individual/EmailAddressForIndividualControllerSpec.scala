@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.EmailAddressForIndividualFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.EmailAddressForIndividualPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -44,7 +45,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
   private val validData = Map("email" -> validAnswer)
 
-  lazy private val emailAddressForIndividualRoute = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(NormalMode).url
+  lazy private val emailAddressForIndividualRoute = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(0, NormalMode).url
 
   "EmailAddressForIndividual Controller" - {
 
@@ -80,7 +81,9 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(EmailAddressForIndividualPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(EmailAddressForIndividualPage, 0, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, emailAddressForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class EmailAddressForIndividualControllerSpec extends SpecBase with MockitoSugar
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/which-country-tax-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/which-country-tax-0/0"
 
       application.stop()
     }

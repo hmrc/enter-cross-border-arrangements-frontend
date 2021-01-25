@@ -29,19 +29,19 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForConfirmation @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
-    case DisclosureDetailsPage => _ => value => _ => value match {
-      case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad()
-      case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad()
+    case DisclosureDetailsPage => _ => id => value => _ => value match {
+      case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad(id)
+      case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad(id)
       case disclosureType => throw new IllegalStateException(s"Navigation to $disclosureType not yet implemented") //TODO - implement other cases
     }
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => controllers.routes.IndexController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
+    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
       case DefaultRouting(CheckMode)               => controllers.routes.IndexController.onPageLoad()
       case _                                       => jumpTo

@@ -41,10 +41,10 @@ class TaskListController @Inject()(
   sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
      //generate xml from user answers
-     val xml = xmlGenerationService.createXmlSubmission(request.userAnswers)
+     val xml = xmlGenerationService.createXmlSubmission(request.userAnswers, id)
      //send it off to be validated and business rules
       validationConnector.sendForValidation(xml).flatMap {
         _.fold(
@@ -62,7 +62,7 @@ class TaskListController @Inject()(
               val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
               for {
                 ids <- crossBorderArrangementsConnector.submitXML(submission)
-                userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, ids))
+                userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
                 _                  <- sessionRepository.set(userAnswersWithIDs)
               } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting().url)
             }

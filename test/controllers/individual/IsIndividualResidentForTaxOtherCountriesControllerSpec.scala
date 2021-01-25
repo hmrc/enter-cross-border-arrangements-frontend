@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, Name, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -43,7 +44,7 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
   val selectedCountry: Country = Country("valid", "FR", "France")
 
   lazy val isIndividualResidentForTaxOtherCountriesRoute =
-    controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index).url
+    controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(0, NormalMode, index).url
 
   "IsIndividualResidentForTaxOtherCountries Controller" - {
 
@@ -52,7 +53,9 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(IndividualNamePage, Name("firstName","lastName")).success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualNamePage, 0, Name("firstName","lastName")).success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -84,9 +87,10 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(IsIndividualResidentForTaxOtherCountriesPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualResidentForTaxOtherCountriesPage, 0, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

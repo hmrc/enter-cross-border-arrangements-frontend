@@ -20,13 +20,14 @@ import base.SpecBase
 import forms.hallmarks.HallmarkEFormProvider
 import matchers.JsonMatchers
 import models.hallmarks.HallmarkE
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.hallmarks.HallmarkEPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -42,7 +43,7 @@ class HallmarkEControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val hallmarkERoute = routes.HallmarkEController.onPageLoad(NormalMode).url
+  lazy val hallmarkERoute = routes.HallmarkEController.onPageLoad(0, NormalMode).url
 
   val formProvider = new HallmarkEFormProvider()
   val form = formProvider()
@@ -80,7 +81,9 @@ class HallmarkEControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(HallmarkEPage, HallmarkE.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkEPage, 0, HallmarkE.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, hallmarkERoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

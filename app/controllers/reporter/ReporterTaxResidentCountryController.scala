@@ -54,31 +54,32 @@ class ReporterTaxResidentCountryController @Inject()(
   with RoutingSupport
   with CountrySupport {
 
-  private def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
-    navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(value)(index)
+  private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
+    navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(id)(value)(index)
 
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-    val preparedForm: Form[Country] = getCountry(request.userAnswers, ReporterTaxResidencyLoopPage, index) match {
+    val preparedForm: Form[Country] = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index) match {
         case Some(value) => form.fill(value)
         case _ => form
       }
 
         val json = Json.obj(
           "form" -> preparedForm,
-            "mode" -> mode,
+          "id" -> id,
+          "mode" -> mode,
             "countries" -> countryJsonList(preparedForm.data, countries),
             "index" -> index
-          ) ++ contentProvider(request.userAnswers, index)
+          ) ++ contentProvider(request.userAnswers, id, index)
 
       renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -86,31 +87,32 @@ class ReporterTaxResidentCountryController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "countries" -> countryJsonList(formWithErrors.data, countries),
             "index" -> index
-          ) ++ contentProvider(request.userAnswers, index)
+          ) ++ contentProvider(request.userAnswers, id, index)
 
           renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(BadRequest(_))
         },
         value => {
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, index)
+          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxResidentCountryPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, taxResidencyLoopDetails))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxResidentCountryPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers, index: Int) = {
+  private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int) = {
 
     val dynamicGuidance = if (index >= 1) "reporterOrganisationTaxResidentCountry.moreThanOne.hint" else "reporterOrganisationTaxResidentCountry.hint"
     val dynamicAlso = if (index >= 1) "also" else ""
 
-    userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+    userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
         Json.obj("pageTitle" -> "reporterIndividualTaxResidentCountry.title",
           "pageHeading" -> "reporterIndividualTaxResidentCountry.heading",
@@ -121,14 +123,14 @@ class ReporterTaxResidentCountryController @Inject()(
         Json.obj(
           "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
           "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
-          "name" -> getReporterDetailsOrganisationName(userAnswers),
+          "name" -> getReporterDetailsOrganisationName(userAnswers, id),
           "dynamicAlso" -> dynamicAlso,
           "guidance" -> dynamicGuidance)
     }
   }
 
-  private def getReporterTaxResidentLoopDetails(value: Country, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
-    userAnswers.get(ReporterTaxResidencyLoopPage) match {
+  private def getReporterTaxResidentLoopDetails(value: Country, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
+    userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
       case None =>
         val newResidencyLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
         IndexedSeq(newResidencyLoop)

@@ -17,17 +17,17 @@
 package controllers.arrangement
 
 import java.time.{LocalDate, ZoneOffset}
-
 import base.SpecBase
 import forms.arrangement.WhatIsTheImplementationDateFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.arrangement.WhatIsTheImplementationDatePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -48,9 +48,7 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSug
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val whatIsTheImplementationDateRoute = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode).url
-
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
+  lazy val whatIsTheImplementationDateRoute = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(0, NormalMode).url
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, whatIsTheImplementationDateRoute)
@@ -99,7 +97,9 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSug
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsTheImplementationDatePage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsTheImplementationDatePage, 0, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])

@@ -30,10 +30,10 @@ case object YouHaveNotAddedAnyIntermediariesPage extends QuestionPage[YouHaveNot
 
   override def toString: String = "youHaveNotAddedAnyIntermediaries"
 
-  override def cleanup(value: Option[YouHaveNotAddedAnyIntermediaries], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[YouHaveNotAddedAnyIntermediaries], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
 
-        userAnswers.remove(IntermediariesTypePage)
+        userAnswers.remove(IntermediariesTypePage, id)
 
   }
 }

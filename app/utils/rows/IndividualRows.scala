@@ -27,120 +27,120 @@ import java.time.LocalDate
 
 trait IndividualRows extends RowBuilder {
 
-  def individualName: Option[Row] = userAnswers.get(IndividualNamePage) map { answer =>
+  def individualName(id: Int): Option[Row] = userAnswers.get(IndividualNamePage, id) map { answer =>
 
     toRow(
       msgKey  = "individualName",
       content = lit"${answer.firstName} ${answer.secondName}",
-      href    = controllers.individual.routes.IndividualNameController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualNameController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildIndividualDateOfBirthGroup: Seq[Row] =
-    (userAnswers.get(IsIndividualDateOfBirthKnownPage), userAnswers.get(IndividualDateOfBirthPage)) match {
+  def buildIndividualDateOfBirthGroup(id: Int): Seq[Row] =
+    (userAnswers.get(IsIndividualDateOfBirthKnownPage, id), userAnswers.get(IndividualDateOfBirthPage, id)) match {
 
       case (Some(true), Some(dateOfBirth)) =>
-        Seq(isIndividualDateOfBirthKnown(true), individualDateOfBirth(dateOfBirth))
+        Seq(isIndividualDateOfBirthKnown(true, id), individualDateOfBirth(dateOfBirth, id))
       case _ =>
-        Seq(isIndividualDateOfBirthKnown(false))
+        Seq(isIndividualDateOfBirthKnown(false, id))
     }
 
-  def isIndividualDateOfBirthKnown(isKnown: Boolean): Row =
+  def isIndividualDateOfBirthKnown(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "isIndividualDateOfBirthKnown",
       content = yesOrNo(isKnown),
-      href    = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(id, CheckMode).url
     )
 
-  def individualDateOfBirth(dateOfBirth: LocalDate): Row =
+  def individualDateOfBirth(dateOfBirth: LocalDate, id: Int): Row =
     toRow(
       msgKey  = "individualDateOfBirth",
       content = Literal(dateOfBirth.format(dateFormatter)),
-      href    = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualPlaceOfBirthGroup: Seq[Row] =
-    (userAnswers.get(IsIndividualPlaceOfBirthKnownPage), userAnswers.get(IndividualPlaceOfBirthPage)) match {
+  def buildIndividualPlaceOfBirthGroup(id: Int): Seq[Row] =
+    (userAnswers.get(IsIndividualPlaceOfBirthKnownPage, id), userAnswers.get(IndividualPlaceOfBirthPage, id)) match {
 
       case (Some(true), Some(placeOfBirth)) =>
-        Seq(isIndividualPlaceOfBirthKnown(true), individualPlaceOfBirth(placeOfBirth))
+        Seq(isIndividualPlaceOfBirthKnown(true, id), individualPlaceOfBirth(placeOfBirth, id))
       case _ =>
-        Seq(isIndividualPlaceOfBirthKnown(false))
+        Seq(isIndividualPlaceOfBirthKnown(false, id))
     }
 
-  private def isIndividualPlaceOfBirthKnown(isKnown: Boolean): Row =
+  private def isIndividualPlaceOfBirthKnown(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
       content = yesOrNo(isKnown),
-      href    = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, CheckMode).url
     )
 
-  private def individualPlaceOfBirth(placeOfBirth: String): Row =
+  private def individualPlaceOfBirth(placeOfBirth: String, id: Int): Row =
     toRow(
       msgKey  = "individualPlaceOfBirth",
       content = lit"$placeOfBirth",
-      href    = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualAddressGroup: Seq[Row] =
-    (userAnswers.get(IsIndividualAddressKnownPage)
-      , userAnswers.get(IndividualAddressPage)
-      , userAnswers.get(SelectedAddressLookupPage)) match {
+  def buildIndividualAddressGroup(id: Int): Seq[Row] =
+    (userAnswers.get(IsIndividualAddressKnownPage, id)
+      , userAnswers.get(IndividualAddressPage, id)
+      , userAnswers.get(SelectedAddressLookupPage, id)) match {
       case (Some(true), Some(manualAddress), _) =>
-        Seq(isIndividualAddressKnown(true), individualAddress(manualAddress))
+        Seq(isIndividualAddressKnown(true, id), individualAddress(manualAddress, id))
       case (Some(true), _, Some(addressLookup)) =>
-        Seq(isIndividualAddressKnown(true), individualAddress(addressLookup))
+        Seq(isIndividualAddressKnown(true, id), individualAddress(addressLookup, id))
       case _ =>
-        Seq(isIndividualAddressKnown(false))
+        Seq(isIndividualAddressKnown(false, id))
     }
 
-  private def isIndividualAddressKnown(addressKnown: Boolean): Row =
+  private def isIndividualAddressKnown(addressKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "isIndividualAddressKnown",
       content = yesOrNo(addressKnown),
-      href    = controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(id, CheckMode).url
     )
 
-  private def individualAddress(manualAddress: Address): Row =
+  private def individualAddress(manualAddress: Address, id: Int): Row =
     toRow(
       msgKey  = "individualAddress",
       content = formatAddress(manualAddress),
-      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  private def individualAddress(addressLookup: AddressLookup): Row =
+  private def individualAddress(addressLookup: AddressLookup, id: Int): Row =
     toRow(
       msgKey  = "individualAddress",
       content = formatAddress(addressLookup),
-      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualEmailAddressGroup: Seq[Row] =
-    (userAnswers.get(EmailAddressQuestionForIndividualPage)
-      , userAnswers.get(EmailAddressForIndividualPage)) match {
+  def buildIndividualEmailAddressGroup(id: Int): Seq[Row] =
+    (userAnswers.get(EmailAddressQuestionForIndividualPage, id)
+      , userAnswers.get(EmailAddressForIndividualPage, id)) match {
 
       case (Some(true), Some(email)) =>
-        Seq(emailAddressQuestionForIndividual(true)
-          , emailAddressForIndividual(email))
+        Seq(emailAddressQuestionForIndividual(true, id)
+          , emailAddressForIndividual(email, id))
       case _ =>
-        Seq(emailAddressQuestionForIndividual(false))
+        Seq(emailAddressQuestionForIndividual(false, id))
     }
 
-  private def emailAddressQuestionForIndividual(isKnown: Boolean): Row =
+  private def emailAddressQuestionForIndividual(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "emailAddressQuestionForIndividual",
       content = yesOrNo(isKnown),
-      href    = controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(id, CheckMode).url
     )
 
-  private def emailAddressForIndividual(email: String): Row =
+  private def emailAddressForIndividual(email: String, id: Int): Row =
     toRow(
       msgKey  = "emailAddressForIndividual",
       content = lit"$email",
-      href    = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(CheckMode).url
+      href    = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(id, CheckMode).url
     )
 
-  def buildTaxResidencySummaryForIndividuals: Seq[Row] = (userAnswers.get(IndividualLoopPage) map { answer =>
+  def buildTaxResidencySummaryForIndividuals(id: Int): Seq[Row] = (userAnswers.get(IndividualLoopPage, id) map { answer =>
 
     val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
       .filter(_.whichCountry.isDefined)
@@ -149,7 +149,7 @@ trait IndividualRows extends RowBuilder {
     toRow(
       msgKey = "whichCountryTaxForIndividual",
       content = lit"",
-      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 0).url
+      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 0).url
     ) +:
       validDetailsWithIndex.flatMap {
 
@@ -195,39 +195,39 @@ trait IndividualRows extends RowBuilder {
     ))
   }
 
-  def whichCountryTaxForIndividual: Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage) map {
+  def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
     answer =>
       toRow(
         msgKey  = "whichCountryTaxForIndividual",
         content = lit"$answer",
-        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def doYouKnowAnyTINForUKIndividual: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage) map {
+  def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
     answer =>
       toRow(
         msgKey  = "doYouKnowAnyTINForUKIndividual",
         content = yesOrNo(answer),
-        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def whatAreTheTaxNumbersForUKIndividual: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage) map {
+  def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
     answer =>
       toRow(
         msgKey  = "whatAreTheTaxNumbersForUKIndividual",
         content = lit"$answer",
-        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def isIndividualResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage) map {
+  def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
     answer =>
       toRow(
         msgKey  = "isIndividualResidentForTaxOtherCountries",
         content = yesOrNo(answer),
-        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
+        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
       )
   }
 

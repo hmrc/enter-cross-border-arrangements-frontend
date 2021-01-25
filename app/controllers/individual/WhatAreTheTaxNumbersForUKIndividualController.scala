@@ -50,10 +50,10 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxNumbersUK = value.lift(index).get.taxNumbersUK //TODO - change this and add UKTaxNumbersToModel
@@ -67,8 +67,9 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
-        "name" -> getIndividualName(request.userAnswers),
+        "name" -> getIndividualName(request.userAnswers, id),
         "lostUTRUrl" -> appConfig.lostUTRUrl,
         "index" -> index
       )
@@ -76,10 +77,10 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
       renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
-    navigator.routeMap(WhatAreTheTaxNumbersForUKIndividualPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
+    navigator.routeMap(WhatAreTheTaxNumbersForUKIndividualPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -87,15 +88,16 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers),
+            "name" -> getIndividualName(request.userAnswers, id),
             "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 
           renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
             case None =>
               val newIndividualLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
               IndexedSeq[LoopDetails](newIndividualLoop)
@@ -109,17 +111,17 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
           }
           for {
 
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       case None => "their"
     }

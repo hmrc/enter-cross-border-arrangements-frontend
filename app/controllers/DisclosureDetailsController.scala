@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 
 import javax.inject.Inject
-import pages.disclosure.DisclosureIdentifyArrangementPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,11 +39,11 @@ class DisclosureDetailsController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       val arrangementMessage: String = request.userAnswers.fold("") {
-        value => value.get(DisclosureIdentifyArrangementPage)
+        value => value.get(DisclosureDetailsPage, id).flatMap(_.arrangementID)
           .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
           .getOrElse("")
       }
@@ -51,12 +51,12 @@ class DisclosureDetailsController @Inject()(
 
       val json = Json.obj(
         "arrangementID" -> arrangementMessage,
-        "hallmarksUrl" -> frontendAppConfig.hallmarksUrl,
-        "arrangementsUrl" -> frontendAppConfig.arrangementsUrl,
-        "reportersUrl" -> frontendAppConfig.reportersUrl,
-        "taxpayersUrl" -> frontendAppConfig.taxpayersUrl,
-        "intermediariesUrl" -> frontendAppConfig.intermediariesUrl,
-        "disclosureUrl" -> frontendAppConfig.disclosureUrl
+        "hallmarksUrl" -> s"${frontendAppConfig.hallmarksUrl}/$id",
+        "arrangementsUrl" -> s"${frontendAppConfig.arrangementsUrl}/$id",
+        "reportersUrl" -> s"${frontendAppConfig.reportersUrl}/$id",
+        "taxpayersUrl" -> s"${frontendAppConfig.taxpayersUrl}/$id",
+        "intermediariesUrl" -> s"${frontendAppConfig.intermediariesUrl}/$id",
+        "disclosureUrl" -> s"${frontendAppConfig.disclosureUrl}/$id"
       )
 
 

@@ -16,10 +16,11 @@
 
 package pages.disclosure
 
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.DisclosureType
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class DisclosureTypePageSpec extends PageBehaviours {
 
@@ -36,14 +37,15 @@ class DisclosureTypePageSpec extends PageBehaviours {
     forAll(arbitrary[UserAnswers]) {
       answers =>
         val result = answers
-          .set(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureIdentifyArrangementPage, 0, "GBA20210101ABC123")
           .success
           .value
-          .set(DisclosureTypePage, DisclosureType.Dac6new)
+          .set(DisclosureTypePage, 0, DisclosureType.Dac6new)
           .success
           .value
 
-        result.get(DisclosureIdentifyArrangementPage) mustBe None
+        result.get(DisclosureIdentifyArrangementPage, 0) mustBe None
     }
   }
 
@@ -51,14 +53,15 @@ class DisclosureTypePageSpec extends PageBehaviours {
     forAll(arbitrary[UserAnswers]) {
       answers =>
         val result = answers
-          .set(DisclosureMarketablePage, true)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureMarketablePage, 0, true)
           .success
           .value
-          .set(DisclosureTypePage, DisclosureType.Dac6add)
+          .set(DisclosureTypePage, 0, DisclosureType.Dac6add)
           .success
           .value
 
-        result.get(DisclosureMarketablePage) mustBe None
+        result.get(DisclosureMarketablePage, 0) mustBe None
     }
   }
 

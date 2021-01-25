@@ -37,11 +37,11 @@ class FileTypeGatewayController @Inject()(
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onRouting(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(request.userAnswers.get(DisclosureTypePage)).map { disclosureType =>
-        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(disclosureType)(0))
+      Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).map { disclosureType =>
+        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
       }
   }
 }

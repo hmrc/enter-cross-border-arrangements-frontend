@@ -29,10 +29,48 @@ final case class UserAnswers(
                               lastUpdated: LocalDateTime = LocalDateTime.now
                             ) {
 
-  def get[A](page: QuestionPage[A])(implicit rds: Reads[A]): Option[A] =
+  def getBase[A](page: QuestionPage[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-  def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
+  def setBase[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
+
+    val updatedData = data.setObject(page.path, Json.toJson(value)) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(errors) =>
+        Failure(JsResultException(errors))
+    }
+
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy (data = d)
+        page.cleanupBase(Some(value), updatedAnswers)
+    }
+  }
+
+  def removeBase[A](page: QuestionPage[A]): Try[UserAnswers] = {
+
+    val updatedData = data.setObject(page.path, JsNull) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(_) =>
+        Success(data)
+    }
+
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy (data = d)
+        page.cleanupBase(None, updatedAnswers)
+    }
+  }
+
+  def get[A](page: UnsubmittedIndex[A])(implicit rds: Reads[A]): Option[A] =
+    Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def get[A](page: QuestionPage[A], index: Int)(implicit rds: Reads[A]): Option[A] =
+    get(UnsubmittedIndex.fromQuestionPage(page, index)(this))
+
+  def set[A](page: UnsubmittedIndex[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
@@ -48,7 +86,10 @@ final case class UserAnswers(
     }
   }
 
-  def remove[A](page: QuestionPage[A]): Try[UserAnswers] = {
+  def set[A](page: QuestionPage[A], index: Int, value: A)(implicit writes: Writes[A]): Try[UserAnswers] =
+    set(UnsubmittedIndex.fromQuestionPage(page, index)(this), value)
+
+  def remove[A](page: UnsubmittedIndex[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, JsNull) match {
       case JsSuccess(jsValue, _) =>
@@ -64,11 +105,14 @@ final case class UserAnswers(
     }
   }
 
-  def removeAll(pageList: Seq[_ <: QuestionPage[Any]]): Try[UserAnswers] =
-    pageList.foldLeft(remove(pageList.head)) { case (result, step) => result.flatMap(_.remove(step)) }
+  def remove[A](page: QuestionPage[A], index: Int): Try[UserAnswers] =
+    remove(UnsubmittedIndex.fromQuestionPage(page, index)(this))
 
-  def hasNewValue[A](page: QuestionPage[A], value: A)(implicit rds: Reads[A]): Boolean =
-    get(page).exists(_ != value)
+  def removeAll(pageList: Seq[_ <: QuestionPage[Any]]): Try[UserAnswers] =
+    pageList.foldLeft(removeBase(pageList.head)) { case (result, step) => result.flatMap(_.removeBase(step)) }
+
+  def hasNewValue[A](page: QuestionPage[A], id: Int, value: A)(implicit rds: Reads[A]): Boolean =
+    get(page, id).exists(_ != value)
 
 }
 

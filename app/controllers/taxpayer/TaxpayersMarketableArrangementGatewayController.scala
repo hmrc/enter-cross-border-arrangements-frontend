@@ -23,7 +23,7 @@ import controllers.mixins.DefaultRouting
 import models.Mode
 import models.disclosure.DisclosureType
 import navigation.NavigatorForTaxpayer
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,16 +40,16 @@ class TaxpayersMarketableArrangementGatewayController @Inject()(
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      (request.userAnswers.get(DisclosureTypePage) match {
+      (request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
         case Some(DisclosureType.Dac6new) =>
 
-          Future.successful(request.userAnswers.get(DisclosureMarketablePage).contains(true))
+          Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA))
         case Some(DisclosureType.Dac6add) =>
 
-          request.userAnswers.get(DisclosureIdentifyArrangementPage) match {
+          request.userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID) match {
             case Some(arrangementId) =>
               crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
           }
@@ -57,7 +57,7 @@ class TaxpayersMarketableArrangementGatewayController @Inject()(
 
       }) map { isMarketableArrangement =>
 
-        Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(Some(isMarketableArrangement))(0))
+        Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
       }
   }
 }

@@ -29,18 +29,18 @@ import scala.xml.{Elem, NodeSeq}
 
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
-  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage) match {
+  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(RoleInArrangementPage, id) match {
       case Some(RoleInArrangement.Taxpayer) =>
 
-        val implementingDate = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage).fold(NodeSeq.Empty)(
+        val implementingDate = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id).fold(NodeSeq.Empty)(
           date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
         )
 
-        userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+        userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
 
           case Some(ReporterOrganisationOrIndividual.Organisation) =>
-            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers)
+            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers, id)
 
             <RelevantTaxpayer>
               {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
@@ -48,7 +48,7 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
             </RelevantTaxpayer>
 
           case _ =>
-            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers)
+            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers, id)
 
             <RelevantTaxpayer>
               {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
@@ -58,8 +58,9 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
       case _ => NodeSeq.Empty
     }
   }
-  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers) = {
-    userAnswers.get(TaxpayerLoopPage) match {
+
+  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers, id: Int) = {
+    userAnswers.get(TaxpayerLoopPage, id) match {
       case Some(taxpayers) =>
         taxpayers.map {
           taxpayer =>
@@ -80,10 +81,10 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
     }
   }
 
-  override def toXml(userAnswers: UserAnswers): Either[Throwable, Elem] = {
+  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
     Try {
       <RelevantTaxPayers>
-        {buildReporterAsTaxpayer(userAnswers) ++ getRelevantTaxpayers(userAnswers)}
+        {buildReporterAsTaxpayer(userAnswers, id) ++ getRelevantTaxpayers(userAnswers, id)}
       </RelevantTaxPayers>
     }.toEither
   }

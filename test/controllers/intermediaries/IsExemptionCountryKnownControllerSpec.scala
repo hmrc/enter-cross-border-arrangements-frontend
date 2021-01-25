@@ -19,12 +19,13 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.IsExemptionCountryKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.IsExemptionCountryKnownPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new IsExemptionCountryKnownFormProvider()
   val form = formProvider()
 
-  lazy val isExemptionCountryKnownRoute = routes.IsExemptionCountryKnownController.onPageLoad(NormalMode).url
+  lazy val isExemptionCountryKnownRoute = routes.IsExemptionCountryKnownController.onPageLoad(0, NormalMode).url
 
   "isExemptionCountryKnown Controller" - {
 
@@ -77,7 +78,9 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsExemptionCountryKnownPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsExemptionCountryKnownPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isExemptionCountryKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with MockitoSugar w
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exempt-countries"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exempt-countries/0"
 
       application.stop()
     }

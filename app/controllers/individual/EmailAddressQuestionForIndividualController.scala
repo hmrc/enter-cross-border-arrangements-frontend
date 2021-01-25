@@ -48,28 +48,29 @@ class EmailAddressQuestionForIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressQuestionForIndividualPage) match {
+      val preparedForm = request.userAnswers.get(EmailAddressQuestionForIndividualPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "displayName" -> getIndividualName(request.userAnswers)
+        "displayName" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/emailAddressQuestionForIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(EmailAddressQuestionForIndividualPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(EmailAddressQuestionForIndividualPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,9 +78,10 @@ class EmailAddressQuestionForIndividualController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "displayName" -> getIndividualName(request.userAnswers)
+            "displayName" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/emailAddressQuestionForIndividual.njk", json).map(BadRequest(_))
@@ -87,10 +89,10 @@ class EmailAddressQuestionForIndividualController @Inject()(
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForIndividualPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForIndividualPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

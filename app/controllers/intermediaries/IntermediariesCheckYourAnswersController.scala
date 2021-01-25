@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 
 import javax.inject.Inject
-import models.{Mode, SelectType}
+import models.{Mode, NormalMode, SelectType}
 import models.intermediaries.Intermediary
 import navigation.{Navigator, NavigatorForIntermediaries}
 import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage}
@@ -46,42 +46,42 @@ class IntermediariesCheckYourAnswersController @Inject()(
                                                           renderer: Renderer
                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
 
-        request.userAnswers.get(IntermediariesTypePage) match {
+        request.userAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
-            (helper.intermediariesType.toSeq ++
-              helper.organisationName.toSeq ++
-              helper.buildOrganisationAddressGroup ++
-              helper.buildOrganisationEmailAddressGroup,
+            (helper.intermediariesType(id).toSeq ++
+              helper.organisationName(id).toSeq ++
+              helper.buildOrganisationAddressGroup(id) ++
+              helper.buildOrganisationEmailAddressGroup(id),
 
-              helper.buildTaxResidencySummaryForOrganisation,
+              helper.buildTaxResidencySummaryForOrganisation(id),
 
-              Seq(helper.whatTypeofIntermediary ++
-              helper.isExemptionKnown ++
-              helper.isExemptionCountryKnown).flatten ++
-              helper.exemptCountries.toSeq
+              Seq(helper.whatTypeofIntermediary(id) ++
+              helper.isExemptionKnown(id) ++
+              helper.isExemptionCountryKnown(id)).flatten ++
+              helper.exemptCountries(id).toSeq
               )
 
           case Some(SelectType.Individual) =>
-            (Seq(helper.intermediariesType ++
-              helper.individualName).flatten ++
-              helper.buildIndividualDateOfBirthGroup ++
-              helper.buildIndividualPlaceOfBirthGroup ++
-              helper.buildIndividualAddressGroup ++
-              helper.buildIndividualEmailAddressGroup,
+            (Seq(helper.intermediariesType(id) ++
+              helper.individualName(id)).flatten ++
+              helper.buildIndividualDateOfBirthGroup(id) ++
+              helper.buildIndividualPlaceOfBirthGroup(id) ++
+              helper.buildIndividualAddressGroup(id) ++
+              helper.buildIndividualEmailAddressGroup(id),
 
-              helper.buildTaxResidencySummaryForIndividuals,
+              helper.buildTaxResidencySummaryForIndividuals(id),
 
-              Seq(helper.whatTypeofIntermediary ++
-              helper.isExemptionKnown ++
-              helper.isExemptionCountryKnown).flatten ++
-              helper.exemptCountries.toSeq
+              Seq(helper.whatTypeofIntermediary(id) ++
+              helper.isExemptionKnown(id) ++
+              helper.isExemptionCountryKnown(id)).flatten ++
+              helper.exemptCountries(id).toSeq
             )
 
           case _ => throw new RuntimeException("Unable to retrieve select type for Intermediary")
@@ -91,30 +91,31 @@ class IntermediariesCheckYourAnswersController @Inject()(
         "intermediaries/intermediariesCheckYourAnswers.njk",
         Json.obj(
           "intermediarySummary" -> intermediarySummary,
-          "tinCountrySummary" -> tinCountrySummary,
-          "intermediarySummary2" -> intermediarySummary2
-
+          "tinCountrySummary"          -> tinCountrySummary,
+          "intermediarySummary2"      -> intermediarySummary2,
+          "id"                        -> id,
+          "mode"       -> NormalMode
         )).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call =
-    navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(None)(0)
+  def redirect(id: Int, checkRoute: CheckRoute): Call =
+    navigator.routeMap(IntermediariesCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage) match {
+      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers)
+          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers))
+          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers, id))
       }
       for {
-        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, intermediaryLoopList))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
-        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop)
+        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {
-        Redirect(redirect(checkRoute))
+        Redirect(redirect(id, checkRoute))
       }
   }
 

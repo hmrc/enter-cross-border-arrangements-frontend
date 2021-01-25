@@ -68,7 +68,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
       case object UnknownPage extends Page
 
-      navigator.routeMap(UnknownPage)(DefaultRouting(NormalMode))(None)(0)
+      navigator.routeMap(UnknownPage)(DefaultRouting(NormalMode))(0)(None)(0)
         .mustBe(controllers.routes.IndexController.onPageLoad())
     }
 
@@ -79,51 +79,51 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D1 to $D2" in {
 
           navigator
-            .routeMap(OrganisationNamePage)(DefaultRouting(NormalMode))(Some("name"))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode))
+            .routeMap(OrganisationNamePage)(DefaultRouting(NormalMode))(0)(Some("name"))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D2 to $D7 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationAddressKnownPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationAddressUkPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
-            .routeMap(PostcodePage)(DefaultRouting(NormalMode))(Some("ZZ1 ZZ4"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(NormalMode))
+            .routeMap(PostcodePage)(DefaultRouting(NormalMode))(0)(Some("ZZ1 ZZ4"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(0, NormalMode))
 
         }
 
         s"must go from $D5 to $D7 " in {
 
           navigator
-            .routeMap(SelectAddressPage)(DefaultRouting(NormalMode))(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+            .routeMap(SelectAddressPage)(DefaultRouting(NormalMode))(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, NormalMode))
         }
 
         // manual?
@@ -134,99 +134,99 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             Country("valid", "FR", "France"))
 
           navigator
-            .routeMap(OrganisationAddressPage)(DefaultRouting(NormalMode))(Some(address))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(NormalMode))
+            .routeMap(OrganisationAddressPage)(DefaultRouting(NormalMode))(0)(Some(address))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(NormalMode))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, NormalMode))
         }
 
         s"must go from $D7 to $D9 if the answer is false " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D8 to $D9 " in {
 
           navigator
-            .routeMap(EmailAddressForOrganisationPage)(DefaultRouting(NormalMode))(Some("email@email.com"))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(EmailAddressForOrganisationPage)(DefaultRouting(NormalMode))(0)(Some("email@email.com"))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(Some(country))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(country))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(Some(Country("valid", "FR", "France")))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, NormalMode, index + 1))
         }
 
         s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, NormalMode, index + 1))
         }
 
         s"must go from $D12 to $D14 " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(DefaultRouting(NormalMode))(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, NormalMode, index + 1))
         }
 
         s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(DefaultRouting(NormalMode))(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(NormalMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(DefaultRouting(NormalMode))(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, NormalMode, index + 1))
         }
 
         s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index))
         }
 
         s"must go from $D14 to $D15 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -237,51 +237,51 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D1 to $D15" in {
 
           navigator
-            .routeMap(OrganisationNamePage)(defaultRoutingInCheckMode)(Some("name"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationNamePage)(defaultRoutingInCheckMode)(0)(Some("name"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D2 to $D15 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
-            .routeMap(PostcodePage)(defaultRoutingInCheckMode)(Some("ZZ1 ZZ4"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+            .routeMap(PostcodePage)(defaultRoutingInCheckMode)(0)(Some("ZZ1 ZZ4"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(0, CheckMode))
 
         }
 
         s"must go from $D5 to $D15 " in {
 
           navigator
-            .routeMap(SelectAddressPage)(defaultRoutingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(SelectAddressPage)(defaultRoutingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         // manual?
@@ -292,99 +292,99 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             Country("valid", "FR", "France"))
 
           navigator
-            .routeMap(OrganisationAddressPage)(defaultRoutingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationAddressPage)(defaultRoutingInCheckMode)(0)(Some(address))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D7 to $D15 if the answer is false " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D8 to $D15 " in {
 
           navigator
-            .routeMap(EmailAddressForOrganisationPage)(defaultRoutingInCheckMode)(Some("email@email.com"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some("email@email.com"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(defaultRoutingInCheckMode)(Some(country))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(country))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(defaultRoutingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D12 to $D14 " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(defaultRoutingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(defaultRoutingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D14 to $D15 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
       }
     }
@@ -396,8 +396,8 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D14 to $E10 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(AssociatedEnterprisesRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(AssociatedEnterprisesRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -408,51 +408,51 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D1 to $E11" in {
 
           navigator
-            .routeMap(OrganisationNamePage)(routingInCheckMode)(Some("name"))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationNamePage)(routingInCheckMode)(0)(Some("name"))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D2 to $E11 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
-            .routeMap(PostcodePage)(routingInCheckMode)(Some("ZZ1 ZZ4"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+            .routeMap(PostcodePage)(routingInCheckMode)(0)(Some("ZZ1 ZZ4"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(0, CheckMode))
 
         }
 
         s"must go from $D5 to $E11 " in {
 
           navigator
-            .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(SelectAddressPage)(routingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         // manual?
@@ -463,99 +463,99 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             Country("valid", "FR", "France"))
 
           navigator
-            .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D7 to $E11 if the answer is false " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D8 to $E11 " in {
 
           navigator
-            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(Some("email@email.com"))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(0)(Some("email@email.com"))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(country))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(country))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D12 to $D14 " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D14 to $E11 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -568,8 +568,8 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D14 to $T9 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(TaxpayersRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(TaxpayersRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode))
         }
       }
 
@@ -580,51 +580,51 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D1 to $T11" in {
 
           navigator
-            .routeMap(OrganisationNamePage)(routingInCheckMode)(Some("name"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationNamePage)(routingInCheckMode)(0)(Some("name"))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D2 to $T11 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
-            .routeMap(PostcodePage)(routingInCheckMode)(Some("ZZ1 ZZ4"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+            .routeMap(PostcodePage)(routingInCheckMode)(0)(Some("ZZ1 ZZ4"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(0, CheckMode))
 
         }
 
         s"must go from $D5 to $T11 " in {
 
           navigator
-            .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(SelectAddressPage)(routingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         // manual?
@@ -635,99 +635,99 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             Country("valid", "FR", "France"))
 
           navigator
-            .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D7 to $T11 if the answer is false " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D8 to $T11 " in {
 
           navigator
-            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(Some("email@email.com"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(0)(Some("email@email.com"))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(country))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(country))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D12 to $D14 " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D14 to $T11 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -740,8 +740,8 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D14 to $I9 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(IntermediariesRouting(NormalMode))(Some(false))(0)
-            .mustBe(controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(IntermediariesRouting(NormalMode))(0)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -752,51 +752,51 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
         s"must go from $D1 to $I13" in {
 
           navigator
-            .routeMap(OrganisationNamePage)(routingInCheckMode)(Some("name"))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationNamePage)(routingInCheckMode)(0)(Some("name"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D2 to $I13 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D3 to $D6 when the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode))
+            .routeMap(IsOrganisationAddressUkPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D4 to $D5 when the answer has multiple entries " in {
 
           navigator
-            .routeMap(PostcodePage)(routingInCheckMode)(Some("ZZ1 ZZ4"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode))
+            .routeMap(PostcodePage)(routingInCheckMode)(0)(Some("ZZ1 ZZ4"))(0)
+            .mustBe(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(0, CheckMode))
 
         }
 
         s"must go from $D5 to $I13 " in {
 
           navigator
-            .routeMap(SelectAddressPage)(routingInCheckMode)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(SelectAddressPage)(routingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         // manual?
@@ -807,99 +807,99 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             Country("valid", "FR", "France"))
 
           navigator
-            .routeMap(OrganisationAddressPage)(routingInCheckMode)(Some(address))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode))
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, CheckMode))
         }
 
         s"must go from $D7 to $I13 if the answer is false " in {
 
           navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D8 to $I13 " in {
 
           navigator
-            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(Some("email@email.com"))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(0)(Some("email@email.com"))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(country))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(country))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D9 to $D11 if the answer is not GB" in {
 
           navigator
-            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(Some(Country("valid", "FR", "France")))(0)
-            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(WhichCountryTaxForOrganisationPage)(routingInCheckMode)(0)(Some(Country("valid", "FR", "France")))(0)
+            .mustBe(controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D12 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D10 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowAnyTINForUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D11 to $D13 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhatAreTheTaxNumbersForNonUKOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D11 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(DoYouKnowTINForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D12 to $D14 " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(index)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D13 to $D14 if the answer is 'No' " in {
 
           navigator
-            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
-            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, index + 1))
+            .routeMap(WhatAreTheTaxNumbersForNonUKOrganisationPage)(routingInCheckMode)(0)(Some(TaxReferenceNumbers("1234567890", None, None)))(0)
+            .mustBe(controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index + 1))
         }
 
         s"must go from $D14 to $D9 if the answer is 'Yes' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(true))(0)
-            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, index))
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
+            .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
         s"must go from $D14 to $I13 if the answer is 'No' " in {
 
           navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(Some(false))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
+            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
     }

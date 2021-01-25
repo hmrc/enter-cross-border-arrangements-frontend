@@ -16,13 +16,10 @@
 
 package services
 
-import java.time.LocalDate
-
 import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.{Dac6add, Dac6new}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.{HallmarkD, HallmarkD1}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
@@ -30,18 +27,21 @@ import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.requests.DataRequest
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.AnyContent
+
+import java.time.LocalDate
 
 class XMLGenerationServiceSpec extends SpecBase {
 
@@ -96,13 +96,20 @@ class XMLGenerationServiceSpec extends SpecBase {
     "buildHeader must build the XML header" in {
       val mandatoryTimestamp: String = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
 
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "DisclosureName",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "DisclosureName").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      val result = xmlGenerationService.buildHeader(userAnswers)
+      val result = xmlGenerationService.buildHeader(userAnswers, 0)
 
       val expected =
       s"""<Header>
@@ -115,22 +122,30 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     "buildHeader must throw an exception if disclosure name is missing" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(HallmarkDPage, HallmarkD.enumerable.withName("D1").toSet).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet).success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
       assertThrows[Exception] {
-        xmlGenerationService.buildHeader(userAnswers)
+        xmlGenerationService.buildHeader(userAnswers, 0)
       }
     }
 
     "buildDisclosureImportInstruction must build the import instruction section if additional arrangement" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6add,
+        initialDisclosureMA = true
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureTypePage, DisclosureType.Dac6add).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
 
-      val result = xmlGenerationService.buildDisclosureImportInstruction(userAnswers)
+      val result = xmlGenerationService.buildDisclosureImportInstruction(userAnswers, 0)
 
       val expected = "<DisclosureImportInstruction>DAC6ADD</DisclosureImportInstruction>"
 
@@ -138,11 +153,18 @@ class XMLGenerationServiceSpec extends SpecBase {
     }
 
     "buildDisclosureImportInstruction must build the import instruction section if new arrangement" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = false
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
 
-      val result = xmlGenerationService.buildDisclosureImportInstruction(userAnswers)
+      val result = xmlGenerationService.buildDisclosureImportInstruction(userAnswers, 0)
 
       val expected = "<DisclosureImportInstruction>DAC6NEW</DisclosureImportInstruction>"
 
@@ -151,16 +173,23 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     "buildDisclosureImportInstruction must throw an exception if import instruction is missing" in {
       assertThrows[Exception] {
-        xmlGenerationService.buildDisclosureImportInstruction(UserAnswers(userAnswersId))
+        xmlGenerationService.buildDisclosureImportInstruction(UserAnswers(userAnswersId), 0)
       }
     }
 
     "buildInitialDisclosureMA must build the disclosure MA section when arrangement is marketable" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureMarketablePage, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
 
-      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers)
+      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers, 0)
 
       val expected = "<InitialDisclosureMA>true</InitialDisclosureMA>"
 
@@ -168,11 +197,18 @@ class XMLGenerationServiceSpec extends SpecBase {
     }
 
     "buildInitialDisclosureMA must build the disclosure MA section when arrangement is not marketable" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = false
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureMarketablePage, false).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
 
-      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers)
+      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers, 0)
 
       val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
 
@@ -181,18 +217,26 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     "buildInitialDisclosureMA must throw an exception if disclosure MA is missing" in {
       assertThrows[Exception] {
-        xmlGenerationService.buildInitialDisclosureMA(UserAnswers(userAnswersId))
+        xmlGenerationService.buildInitialDisclosureMA(UserAnswers(userAnswersId), 0)
       }
     }
 
     "buildArrangementID" - {
 
       "must build arrangement ID when user Selects DAC6ADD & enters a valid arrangementID" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6add).success.value
-          .set(DisclosureIdentifyArrangementPage, "GBA20210120FOK5BT").success.value
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6add,
+          arrangementID = Some("GBA20210120FOK5BT"),
+          initialDisclosureMA = false
+        )
 
-        val result = xmlGenerationService.buildArrangementID(userAnswers)
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
+          .success.value
+
+        val result = xmlGenerationService.buildArrangementID(userAnswers, 0)
 
         val expected = "<ArrangementID>GBA20210120FOK5BT</ArrangementID>"
 
@@ -200,10 +244,18 @@ class XMLGenerationServiceSpec extends SpecBase {
       }
 
       "must NOT build arrangement ID when user Selects DAC6NEW" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6new).success.value
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6new,
+          initialDisclosureMA = false
+        )
 
-        val result = xmlGenerationService.buildArrangementID(userAnswers)
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
+          .success.value
+
+        val result = xmlGenerationService.buildArrangementID(userAnswers, 0)
 
         val expected = ""
 
@@ -212,80 +264,89 @@ class XMLGenerationServiceSpec extends SpecBase {
 
     }
 
-    "must build the full XML for a reporter that is an ORGANISTION" in {
+    "must build the full XML for a reporter that is an ORGANISATION" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "DisclosureName",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "DisclosureName").success.value
-        .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
-        .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Organisation).success.value
-        .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-        .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
-        .set(ReporterOrganisationNamePage, "Reporter name").success.value
-        .set(ReporterOrganisationAddressPage, address).success.value
-        .set(ReporterOrganisationEmailAddressPage, "email@email.co.uk").success.value
-        .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
-        .set(DisclosureMarketablePage, true).success.value
-        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
-        .set(TaxpayerLoopPage, taxpayers).success.value
-        .set(WhatIsTheImplementationDatePage, today).success.value
-        .set(DoYouKnowTheReasonToReportArrangementNowPage, true).success.value
-        .set(WhyAreYouReportingThisArrangementNowPage, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
-        .set(WhatIsThisArrangementCalledPage, "Arrangement name").success.value
-        .set(GiveDetailsOfThisArrangementPage, "Some description").success.value
-        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, countries).success.value
-        .set(HallmarkDPage, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("DAC6D1a") ++
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
+        .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
+        .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
+        .set(ReporterOrganisationAddressPage, 0, address).success.value
+        .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
+        .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+        .set(DisclosureMarketablePage, 0, true).success.value
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
+        .set(TaxpayerLoopPage, 0, taxpayers).success.value
+        .set(WhatIsTheImplementationDatePage, 0, today).success.value
+        .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
+        .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
+        .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
+        .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
+        .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
+        .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
           HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
-        .set(HallmarkD1OtherPage, "Hallmark D1 other description").success.value
+        .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      val result = xmlGenerationService.createXmlSubmission(userAnswers)
+      val result = xmlGenerationService.createXmlSubmission(userAnswers, 0)
+      val expected = GeneratedXMLExamples.xmlForOrganisation
 
-      prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
+      prettyPrinter.format(result) mustBe expected
     }
 
     "must build the full XML for a reporter that is an INDIVIDUAL" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "DisclosureName",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "DisclosureName").success.value
-        .set(DisclosureTypePage, DisclosureType.Dac6new).success.value
-        .set(DisclosureMarketablePage, true).success.value
-        .set(ReporterOrganisationOrIndividualPage, ReporterOrganisationOrIndividual.Individual).success.value
-        .set(ReporterIndividualNamePage, Name("Reporter", "Name")).success.value
-        .set(ReporterIndividualDateOfBirthPage, LocalDate.of(1990,1,1)).success.value
-        .set(ReporterIndividualPlaceOfBirthPage, "SomePlace").success.value
-        .set(ReporterIndividualAddressPage, address).success.value
-        .set(ReporterIndividualEmailAddressPage, "email@email.com").success.value
-        .set(ReporterTaxResidencyLoopPage, loopDetails).success.value
-        .set(RoleInArrangementPage, RoleInArrangement.Taxpayer).success.value
-        .set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
-        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, today).success.value
-        .set(TaxpayerLoopPage, taxpayers).success.value
-        .set(WhatIsTheImplementationDatePage, today).success.value
-        .set(DoYouKnowTheReasonToReportArrangementNowPage, true).success.value
-        .set(WhyAreYouReportingThisArrangementNowPage, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
-        .set(WhatIsThisArrangementCalledPage, "Arrangement name").success.value
-        .set(GiveDetailsOfThisArrangementPage, "Some description").success.value
-        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, countries).success.value
-        .set(HallmarkDPage, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, (HallmarkD1.enumerable.withName("DAC6D1a") ++
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual).success.value
+        .set(ReporterIndividualNamePage, 0, Name("Reporter", "Name")).success.value
+        .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.of(1990,1,1)).success.value
+        .set(ReporterIndividualPlaceOfBirthPage, 0, "SomePlace").success.value
+        .set(ReporterIndividualAddressPage, 0, address).success.value
+        .set(ReporterIndividualEmailAddressPage, 0, "email@email.com").success.value
+        .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
+        .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
+        .set(TaxpayerLoopPage, 0, taxpayers).success.value
+        .set(WhatIsTheImplementationDatePage, 0, today).success.value
+        .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
+        .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
+        .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
+        .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
+        .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
+        .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
           HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
-        .set(HallmarkD1OtherPage, "Hallmark D1 other description").success.value
+        .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      val result = xmlGenerationService.createXmlSubmission(userAnswers)
+      val result = xmlGenerationService.createXmlSubmission(userAnswers, 0)
 
       prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
 
     }
   }
-
 }

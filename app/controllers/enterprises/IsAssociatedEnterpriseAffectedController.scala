@@ -49,28 +49,29 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsAssociatedEnterpriseAffectedPage) match {
+      val preparedForm = request.userAnswers.get(IsAssociatedEnterpriseAffectedPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
-        "associatedEnterprise" -> getName(request.userAnswers),
+        "associatedEnterprise" -> getName(request.userAnswers, id),
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
 
       renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(IsAssociatedEnterpriseAffectedPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(IsAssociatedEnterpriseAffectedPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -78,8 +79,9 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
-            "associatedEnterprise" -> getName(request.userAnswers),
+            "associatedEnterprise" -> getName(request.userAnswers, id),
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
@@ -87,15 +89,15 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsAssociatedEnterpriseAffectedPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsAssociatedEnterpriseAffectedPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 
-  private def getName(userAnswers: UserAnswers) = {
-    (userAnswers.get(IndividualNamePage), userAnswers.get(OrganisationNamePage)) match {
+  private def getName(userAnswers: UserAnswers, id: Int) = {
+    (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
       case _ => "this associated enterprise"

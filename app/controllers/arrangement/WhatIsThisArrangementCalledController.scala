@@ -46,23 +46,24 @@ class WhatIsThisArrangementCalledController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(WhatIsThisArrangementCalledPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(WhatIsThisArrangementCalledPage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
       renderer.render("arrangement/whatIsThisArrangementCalled.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -70,6 +71,7 @@ class WhatIsThisArrangementCalledController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 
@@ -81,9 +83,9 @@ class WhatIsThisArrangementCalledController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(WhatIsThisArrangementCalledPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(WhatIsThisArrangementCalledPage, id, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsThisArrangementCalledPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsThisArrangementCalledPage, id, mode, updatedAnswers))
         }
       )
   }

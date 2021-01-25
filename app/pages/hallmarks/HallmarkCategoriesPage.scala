@@ -31,40 +31,40 @@ case object HallmarkCategoriesPage extends QuestionPage[Set[HallmarkCategories]]
 
   override def toString: String = "hallmarkCategories"
 
-  override def cleanup(value: Option[Set[HallmarkCategories]], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Set[HallmarkCategories]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     value match {
       case Some(selected) =>
        val unselectedHallmarks = HallmarkCategories.values.filterNot(selected)
 
-        super.cleanup(value, cleanupPages(unselectedHallmarks, userAnswers))
-      case _ => super.cleanup(value, userAnswers)
+        super.cleanup(value, cleanupPages(unselectedHallmarks, userAnswers, id), id)
+      case _ => super.cleanup(value, userAnswers, id)
     }
   }
 
-  private def cleanupPages(unselectedHallmarks: Seq[HallmarkCategories], userAnswers: UserAnswers): UserAnswers = {
+  private def cleanupPages(unselectedHallmarks: Seq[HallmarkCategories], userAnswers: UserAnswers, id: Int): UserAnswers = {
     @tailrec
-    def recursiveRemove(hallmarks: Seq[HallmarkCategories], userAnswers: UserAnswers): UserAnswers = {
+    def recursiveRemove(hallmarks: Seq[HallmarkCategories], userAnswers: UserAnswers, id: Int): UserAnswers = {
       hallmarks match {
         case Nil => userAnswers
         case head :: tail =>
           val updatedUserAnswers = head match {
             case CategoryA if !unselectedHallmarks.contains(CategoryB) =>
-              userAnswers.remove(HallmarkAPage)
-                .flatMap(_.remove(MainBenefitTestPage))
-            case CategoryA => userAnswers.remove(HallmarkAPage)
+              userAnswers.remove(HallmarkAPage, id)
+                .flatMap(_.remove(MainBenefitTestPage, id))
+            case CategoryA => userAnswers.remove(HallmarkAPage, id)
             case CategoryB if !unselectedHallmarks.contains(CategoryA) =>
-              userAnswers.remove(HallmarkBPage)
-                .flatMap(_.remove(MainBenefitTestPage))
-            case CategoryB => userAnswers.remove(HallmarkBPage)
-            case CategoryC => userAnswers.remove(HallmarkCPage).flatMap(_.remove(HallmarkC1Page))
-            case CategoryD => userAnswers.remove(HallmarkDPage).flatMap(_.remove(HallmarkD1Page)).flatMap(_.remove(HallmarkD1OtherPage))
-            case CategoryE => userAnswers.remove(HallmarkEPage)
+              userAnswers.remove(HallmarkBPage, id)
+                .flatMap(_.remove(MainBenefitTestPage, id))
+            case CategoryB => userAnswers.remove(HallmarkBPage, id)
+            case CategoryC => userAnswers.remove(HallmarkCPage, id).flatMap(_.remove(HallmarkC1Page, id))
+            case CategoryD => userAnswers.remove(HallmarkDPage, id).flatMap(_.remove(HallmarkD1Page, id)).flatMap(_.remove(HallmarkD1OtherPage, id))
+            case CategoryE => userAnswers.remove(HallmarkEPage, id)
           }
 
-          recursiveRemove(tail, updatedUserAnswers.getOrElse(userAnswers))
+          recursiveRemove(tail, updatedUserAnswers.getOrElse(userAnswers), id)
       }
     }
-    recursiveRemove(unselectedHallmarks, userAnswers)
+    recursiveRemove(unselectedHallmarks, userAnswers, id)
   }
 
 }

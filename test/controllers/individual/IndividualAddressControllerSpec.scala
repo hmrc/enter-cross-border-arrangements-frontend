@@ -21,12 +21,13 @@ import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IndividualAddressPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -61,7 +62,7 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       "country"      -> "FR"
     )
 
-  lazy val individualAddressRoute: String = controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode).url
+  lazy val individualAddressRoute: String = controllers.individual.routes.IndividualAddressController.onPageLoad(0, NormalMode).url
 
   "OrganisationAddress Controller" - {
 
@@ -105,7 +106,9 @@ class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualAddressPage, 0, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
       val request = FakeRequest(GET, individualAddressRoute)

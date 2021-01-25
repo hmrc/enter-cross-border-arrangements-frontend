@@ -24,73 +24,73 @@ import uk.gov.hmrc.viewmodels._
 
 trait OrganisationRows extends RowBuilder {
 
-  def organisationName: Option[Row] = userAnswers.get(OrganisationNamePage) map { answer =>
+  def organisationName(id: Int): Option[Row] = userAnswers.get(OrganisationNamePage, id) map { answer =>
     toRow(
       msgKey  = "organisationName",
       content = lit"$answer",
-      href    = controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.OrganisationNameController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildOrganisationAddressGroup: Seq[Row] =
-    (userAnswers.get(IsOrganisationAddressKnownPage)
-      , userAnswers.get(OrganisationAddressPage)
-      , userAnswers.get(SelectedAddressLookupPage)) match {
+  def buildOrganisationAddressGroup(id: Int): Seq[Row] =
+    (userAnswers.get(IsOrganisationAddressKnownPage, id)
+      , userAnswers.get(OrganisationAddressPage, id)
+      , userAnswers.get(SelectedAddressLookupPage, id)) match {
       case (Some(true), Some(manualAddress), _) =>
-        Seq(isOrganisationAddressKnown(true), organisationAddress(manualAddress))
+        Seq(isOrganisationAddressKnown(true, id), organisationAddress(manualAddress, id))
       case (Some(true), _, Some(addressLookup)) =>
-        Seq(isOrganisationAddressKnown(true), organisationLookupAddress(addressLookup))
+        Seq(isOrganisationAddressKnown(true, id), organisationLookupAddress(addressLookup, id))
       case _ =>
-        Seq(isOrganisationAddressKnown(false))
+        Seq(isOrganisationAddressKnown(false, id))
     }
 
-  private def isOrganisationAddressKnown(addressKnown: Boolean): Row =
+  private def isOrganisationAddressKnown(addressKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "isOrganisationAddressKnown",
       content = yesOrNo(addressKnown),
-      href    = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(id, CheckMode).url
     )
 
-  private def organisationAddress(manualAddress: Address): Row =
+  private def organisationAddress(manualAddress: Address, id: Int): Row =
     toRow(
       msgKey  = "organisationAddress",
       content = formatAddress(manualAddress),
-      href    = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  private def organisationLookupAddress(addressLookup: AddressLookup): Row =
+  private def organisationLookupAddress(addressLookup: AddressLookup, id: Int): Row =
     toRow(
       msgKey  = "organisationAddress",
       content = formatAddress(addressLookup),
-      href    = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  def buildOrganisationEmailAddressGroup: Seq[Row] =
-    (userAnswers.get(EmailAddressQuestionForOrganisationPage)
-      , userAnswers.get(EmailAddressForOrganisationPage)) match {
+  def buildOrganisationEmailAddressGroup(id: Int): Seq[Row] =
+    (userAnswers.get(EmailAddressQuestionForOrganisationPage, id)
+      , userAnswers.get(EmailAddressForOrganisationPage, id)) match {
 
       case (Some(true), Some(email)) =>
-        Seq(emailAddressQuestionForOrganisation(true)
-          , emailAddressForOrganisation(email))
+        Seq(emailAddressQuestionForOrganisation(true, id)
+          , emailAddressForOrganisation(email, id))
       case _ =>
-        Seq(emailAddressQuestionForOrganisation(false))
+        Seq(emailAddressQuestionForOrganisation(false, id))
     }
 
-  private def emailAddressQuestionForOrganisation(isKnown: Boolean): Row =
+  private def emailAddressQuestionForOrganisation(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "emailAddressQuestionForOrganisation",
       content = yesOrNo(isKnown),
-      href    = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(id, CheckMode).url
     )
 
-  private def emailAddressForOrganisation(email: String): Row =
+  private def emailAddressForOrganisation(email: String, id: Int): Row =
     toRow(
       msgKey  = "emailAddressForOrganisation",
       content = lit"$email",
-      href    = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(CheckMode).url
+      href    = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(id, CheckMode).url
     )
 
-  def buildTaxResidencySummaryForOrganisation: Seq[Row] = (userAnswers.get(OrganisationLoopPage) map { answer =>
+  def buildTaxResidencySummaryForOrganisation(id: Int): Seq[Row] = (userAnswers.get(OrganisationLoopPage, id) map { answer =>
 
     val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
       .filter(_.whichCountry.isDefined)
@@ -99,7 +99,7 @@ trait OrganisationRows extends RowBuilder {
     toRow(
       msgKey = "whichCountryTaxForOrganisation",
       content = lit"",
-      href = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 0).url
+      href = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(id, CheckMode, 0).url
     ) +:
       validDetailsWithIndex.flatMap {
 
@@ -145,39 +145,39 @@ trait OrganisationRows extends RowBuilder {
     ))
   }
 
-  def whichCountryTaxForOrganisation: Option[Row] = userAnswers.get(WhichCountryTaxForOrganisationPage) map {
+  def whichCountryTaxForOrganisation(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForOrganisationPage, id) map {
     answer =>
       toRow(
         msgKey  = "whichCountryTaxForOrganisation",
         content = lit"$answer",
-        href    = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(CheckMode, 1).url
+        href    = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def doYouKnowAnyTINForUKOrganisation: Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage) map {
+  def doYouKnowAnyTINForUKOrganisation(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKOrganisationPage, id) map {
     answer =>
       toRow(
         msgKey  = "doYouKnowAnyTINForUKOrganisation",
         content = yesOrNo(answer),
-        href    = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(CheckMode, 1).url
+        href    = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def whatAreTheTaxNumbersForUKOrganisation: Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage) map {
+  def whatAreTheTaxNumbersForUKOrganisation(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage, id) map {
     answer =>
       toRow(
         msgKey  = "whatAreTheTaxNumbersForUKOrganisation",
         content = lit"$answer",
-        href    = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(CheckMode, 1).url
+        href    = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(id, CheckMode, 1).url
       )
   }
 
-  def isOrganisationResidentForTaxOtherCountries: Option[Row] = userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage) map {
+  def isOrganisationResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage, id) map {
     answer =>
       toRow(
         msgKey  = "isOrganisationResidentForTaxOtherCountries",
         content = yesOrNo(answer),
-        href    = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(CheckMode, 1).url
+        href    = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
       )
   }
 

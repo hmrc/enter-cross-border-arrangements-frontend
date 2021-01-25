@@ -41,28 +41,28 @@ object AssociatedEnterprise {
 
   private def generateId: String = UUID.randomUUID.toString
 
-  private def getAssociatedEnterpriseAnswers(ua: UserAnswers): (List[String], Boolean) = {
-    (ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage), ua.get(IsAssociatedEnterpriseAffectedPage)) match {
+  private def getAssociatedEnterpriseAnswers(ua: UserAnswers, id: Int): (List[String], Boolean) = {
+    (ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), ua.get(IsAssociatedEnterpriseAffectedPage, id)) match {
       case (Some(associatedTaxpayers), Some(isAffectedBy)) => (associatedTaxpayers, isAffectedBy)
       case _ => throw new Exception("Unable to build associated enterprise")
     }
   }
 
-  def buildAssociatedEnterprise(ua: UserAnswers): AssociatedEnterprise = {
-    ua.get(AssociatedEnterpriseTypePage) match {
+  def buildAssociatedEnterprise(ua: UserAnswers, id: Int): AssociatedEnterprise = {
+    ua.get(AssociatedEnterpriseTypePage, id) match {
       case Some(SelectType.Organisation) =>
         new AssociatedEnterprise(
           enterpriseId = generateId,
-          organisation = Some(Organisation.buildOrganisationDetails(ua)),
-          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua)._1,
-          isAffectedBy = getAssociatedEnterpriseAnswers(ua)._2
+          organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
+          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua, id)._1,
+          isAffectedBy = getAssociatedEnterpriseAnswers(ua, id)._2
         )
       case Some(SelectType.Individual) =>
         new AssociatedEnterprise(
           enterpriseId = generateId,
-          individual = Some(Individual.buildIndividualDetails(ua)),
-          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua)._1,
-          isAffectedBy = getAssociatedEnterpriseAnswers(ua)._2
+          individual = Some(Individual.buildIndividualDetails(ua, id)),
+          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua, id)._1,
+          isAffectedBy = getAssociatedEnterpriseAnswers(ua, id)._2
         )
       case None => throw new Exception("Missing associated enterprise type")
     }

@@ -19,13 +19,14 @@ package controllers.reporter.individual
 import base.SpecBase
 import forms.reporter.individual.ReporterIndividualAddressFormProvider
 import matchers.JsonMatchers
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.individual.ReporterIndividualAddressPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -58,7 +59,7 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with MockitoSugar
       "country"      -> "FR"
     )
 
-  lazy val reporterIndividualAddressRoute = routes.ReporterIndividualAddressController.onPageLoad(NormalMode).url
+  lazy val reporterIndividualAddressRoute = routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode).url
 
   "ReporterIndividualAddress Controller" - {
 
@@ -94,7 +95,9 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with MockitoSugar
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterIndividualAddressPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualAddressPage, 0, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterIndividualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -140,7 +143,7 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with MockitoSugar
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/email-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/email-address/0"
 
       application.stop()
     }

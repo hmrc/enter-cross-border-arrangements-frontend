@@ -51,7 +51,7 @@ class DisclosureTypeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DisclosureTypePage) match {
+      val preparedForm = request.userAnswers.getBase(DisclosureTypePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +66,7 @@ class DisclosureTypeController @Inject()(
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
-    navigator.routeMap(DisclosureTypePage)(checkRoute)(value)(0)
+    navigator.routeMap(DisclosureTypePage)(checkRoute)(None)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,7 +84,7 @@ class DisclosureTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureTypePage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

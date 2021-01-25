@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
-import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
+import models.{Address, CheckMode, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.OrganisationAddressPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -50,8 +51,8 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
   val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
     Country("valid","FR","France"))
 
-  lazy val organisationAddressRoute: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(NormalMode).url
-  lazy val organisationAddressCheckModeRoute = controllers.organisation.routes.OrganisationAddressController.onPageLoad(CheckMode).url
+  lazy val organisationAddressRoute: String = controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, NormalMode).url
+  lazy val organisationAddressCheckModeRoute = controllers.organisation.routes.OrganisationAddressController.onPageLoad(0, CheckMode).url
 
   "OrganisationAddress Controller" - {
 
@@ -93,7 +94,9 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
-      val userAnswers = UserAnswers(userAnswersId).set(OrganisationAddressPage, address).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(OrganisationAddressPage, 0, address).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
       val request = FakeRequest(GET, organisationAddressRoute)
@@ -150,7 +153,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address/0"
 
       application.stop()
     }

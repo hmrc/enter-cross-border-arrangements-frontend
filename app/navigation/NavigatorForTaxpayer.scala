@@ -30,35 +30,36 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case UpdateTaxpayerPage =>
-     checkRoute => value => _ =>
-     value match { case Some(Now) => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(checkRoute.mode)
-      case _ => controllers.routes.DisclosureDetailsController.onPageLoad()
-    }
+     checkRoute => id => value => _ =>
+     value match {
+        case Some(Now) => controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(id, checkRoute.mode)
+        case _ => controllers.routes.DisclosureDetailsController.onPageLoad(id)
+      }
 
     case DisclosureMarketablePage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
-          case Some(true) => routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(routes.TaxpayersCheckYourAnswersController.onPageLoad(), checkRoute)
+          case Some(true) => routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, checkRoute.mode)
+          case _ => jumpOrCheckYourAnswers(id, routes.TaxpayersCheckYourAnswersController.onPageLoad(id), checkRoute)
         }
 
     case _ =>
-      checkRoute => _ => _ => checkRoute.mode match {
+      checkRoute => id => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => controllers.routes.IndexController.onPageLoad()
       }
 
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.TaxpayersCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
+    _ => _ => id => _ => _ => routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.TaxpayersCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)               => routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
       case _                                       => jumpTo
     }
   }

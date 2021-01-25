@@ -22,8 +22,13 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import models.NormalMode
 import models.disclosure.DisclosureType.Dac6add
+import controllers.mixins.DefaultRouting
+import helpers.IDHelper
+import models.{NormalMode, UnsubmittedDisclosure}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -64,30 +69,37 @@ class DisclosureCheckYourAnswersController @Inject()(
       ).map(Ok(_))
     }
 
-  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-//    TODO build the disclosure details model from pages
-//    val disclosureDetails: DisclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
-//
-//    for {
-//      updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureDetailsPage, disclosureDetails))
-//    } yield sessionRepository.set(updatedAnswers)
+      val openDisclosures: Seq[UnsubmittedDisclosure] = request.userAnswers.getBase(UnsubmittedDisclosurePage).getOrElse(Seq.empty)
 
-      val isMarketable: Boolean = request.userAnswers.get(DisclosureTypePage) match {
+      //generate an id for the disclosure submission
+      val submissionID = IDHelper.generateID(openDisclosures.map(_.id), suffixLength = 6)
+
+      //generate model for disclosure name and id and shove at the end of the list
+      val disclosureName = request.userAnswers.getBase(DisclosureNamePage)
+      val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
+      val index = updatedUnsubmittedDisclosures.zipWithIndex.last._2
+
+      def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
         case Some(Dac6add) =>
-          request.userAnswers.get(DisclosureIdentifyArrangementPage).fold(false)(
-            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId).isCompleted)
+          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(Future.successful(false))(
+            arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
         case _ =>
-          request.userAnswers.get(DisclosureMarketablePage).fold(
+          request.userAnswers.getBase(DisclosureMarketablePage).fold(
             throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
-            bool)
+            Future.successful(bool))
       }
 
+      //build the disclosure details model from pages and store under id
       for {
-        updateAnswers <- Future.fromTry(request.userAnswers.set(DisclosureMarketablePage, isMarketable))
-        _ <- sessionRepository.set(updateAnswers)
-      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(0))
+        isMarketableResult <- isMarketable
+        updateAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
+        disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
+        updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
+        newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
+        _  <- sessionRepository.set(newAnswers)
+      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
-

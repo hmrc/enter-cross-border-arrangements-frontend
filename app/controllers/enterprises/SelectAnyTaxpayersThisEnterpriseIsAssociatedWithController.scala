@@ -50,26 +50,27 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-          val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) match {
+          val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) match {
             case None => form
             case Some(value) => form.fill(value)
           }
 
           val json = Json.obj(
             "form" -> preparedForm,
+            "id" -> id,
             "mode" -> mode,
-            "checkboxes" -> taxpayerCheckboxes(preparedForm, request.userAnswers)
+            "checkboxes" -> taxpayerCheckboxes(preparedForm, request.userAnswers, id)
           )
           renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[List[String]]): Call =
-    navigator.routeMap(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[List[String]]): Call =
+    navigator.routeMap(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,23 +78,24 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
-            "checkboxes" -> taxpayerCheckboxes(formWithErrors, request.userAnswers)
+            "checkboxes" -> taxpayerCheckboxes(formWithErrors, request.userAnswers, id)
           )
 
           renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 
-  private def taxpayerCheckboxes(form: Form[_], ua: UserAnswers): Seq[Checkboxes.Item] = {
-    ua.get(TaxpayerLoopPage) match {
+  private def taxpayerCheckboxes(form: Form[_], ua: UserAnswers, id: Int): Seq[Checkboxes.Item] = {
+    ua.get(TaxpayerLoopPage, id) match {
       case Some(taxpayersList) =>
         val field = form("value")
         val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>

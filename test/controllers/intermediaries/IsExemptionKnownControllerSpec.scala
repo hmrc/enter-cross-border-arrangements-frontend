@@ -19,12 +19,13 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.IsExemptionKnownFormProvider
 import matchers.JsonMatchers
-import models.{IsExemptionKnown, NormalMode, UserAnswers}
+import models.{IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.IsExemptionKnownPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -37,7 +38,7 @@ import scala.concurrent.Future
 
 class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(NormalMode).url
+  lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IsExemptionKnownFormProvider()
   val form = formProvider()
@@ -77,7 +78,9 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsExemptionKnownPage, IsExemptionKnown.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsExemptionKnownPage, 0, IsExemptionKnown.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isExemptionKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-country-known"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-country-known/0"
       application.stop()
     }
 

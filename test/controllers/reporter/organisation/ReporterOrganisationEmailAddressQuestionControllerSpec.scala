@@ -19,13 +19,14 @@ package controllers.reporter.organisation
 import base.SpecBase
 import forms.reporter.ReporterEmailAddressQuestionFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.organisation.ReporterOrganisationEmailAddressQuestionPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -39,12 +40,12 @@ import scala.concurrent.Future
 
 class ReporterOrganisationEmailAddressQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/organisation/what-is-email-address")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/organisation/what-is-email-address/0")
 
   val formProvider = new ReporterEmailAddressQuestionFormProvider()
   val form = formProvider()
 
-  lazy val reporterOrganisationEmailAddressQuestionRoute = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(NormalMode).url
+  lazy val reporterOrganisationEmailAddressQuestionRoute = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(0, NormalMode).url
 
   "ReporterOrganisationEmailAddressQuestion Controller" - {
 
@@ -81,7 +82,9 @@ class ReporterOrganisationEmailAddressQuestionControllerSpec extends SpecBase wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationEmailAddressQuestionPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationEmailAddressQuestionPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterOrganisationEmailAddressQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

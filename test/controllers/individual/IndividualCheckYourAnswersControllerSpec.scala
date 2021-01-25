@@ -18,15 +18,15 @@ package controllers.individual
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import base.SpecBase
 import controllers.RowJsonReads
-import models.{Address, Country, Name, UserAnswers}
+import models.{Address, Country, Name, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.individual._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -67,7 +67,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.individual.routes.IndividualCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -98,38 +98,38 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   def assertName(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Name"))
     row.value.text mustBe Some(Literal("FirstName LastName"))
-    assertAction("/enter-cross-border-arrangements/individual/change-name")(row.actions.head)
+    assertAction("/enter-cross-border-arrangements/individual/change-name/0")(row.actions.head)
   }
 
   def assertBirthDateKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their date of birth?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-date-of-birth")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-date-of-birth/0")(row.actions.head)
   }
 
   def assertDateOfBirth(birthDateAsString: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Date of birth"))
     row.value.text mustBe Some(Literal(birthDateAsString))
-    assertAction("/enter-cross-border-arrangements/individual/change-date-of-birth"
+    assertAction("/enter-cross-border-arrangements/individual/change-date-of-birth/0"
       , text = Some(Literal("Change")))(row.actions.head)
   }
 
   def assertBirthPlaceKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know where they were born?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-birthplace")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-birthplace/0")(row.actions.head)
   }
 
   def assertBirthPlace(birthplace: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Birthplace"))
     row.value.text mustBe Some(Literal(birthplace))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-birthplace")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-birthplace/0")(row.actions.head)
   }
 
   def assertAddressKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-address/0")(row.actions.head)
   }
 
   def assertAddress(address: Address)(row: Row): Unit = {
@@ -145,19 +145,19 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
                |        United Kingdom
                |     """.stripMargin)
     }
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-live-in-uk")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-live-in-uk/0")(row.actions.head)
   }
 
   def assertEmailKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their email address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-email-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-email-address/0")(row.actions.head)
   }
 
   def assertEmail(email: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Email address"))
     row.value.text mustBe Some(Literal(email))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-what-is-email-address")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/individual/change-what-is-email-address/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -165,7 +165,8 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return name row" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IndividualNamePage, name)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualNamePage, 0, name)
         .success.value
       verifyList(userAnswers) { list =>
         assertName(list.head)
@@ -182,9 +183,10 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       val dateOfBirth = LocalDate.now()
       val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IsIndividualDateOfBirthKnownPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualDateOfBirthKnownPage, 0, true)
         .success.value
-        .set(IndividualDateOfBirthPage, LocalDate.now())
+        .set(IndividualDateOfBirthPage, 0, LocalDate.now())
         .success.value
       verifyList(userAnswers) { list =>
         assertBirthDateKnown(yesOrNo = true)(list.head)
@@ -199,9 +201,10 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return birth place rows, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IsIndividualPlaceOfBirthKnownPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualPlaceOfBirthKnownPage, 0, true)
         .success.value
-        .set(IndividualPlaceOfBirthPage, "BIRTHPLACE")
+        .set(IndividualPlaceOfBirthPage, 0, "BIRTHPLACE")
         .success.value
       verifyList(userAnswers) { list =>
         assertBirthDateKnown(yesOrNo = false)(list.head)
@@ -216,9 +219,10 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return address rows, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(IsIndividualAddressKnownPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualAddressKnownPage, 0, true)
         .success.value
-        .set(IndividualAddressPage, address)
+        .set(IndividualAddressPage, 0, address)
         .success.value
       verifyList(userAnswers) { list =>
         assertBirthDateKnown(yesOrNo = false)(list.head)
@@ -233,9 +237,10 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return e-mail rows, if known" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(EmailAddressQuestionForIndividualPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(EmailAddressQuestionForIndividualPage, 0, true)
         .success.value
-        .set(EmailAddressForIndividualPage, "email@email.org")
+        .set(EmailAddressForIndividualPage, 0, "email@email.org")
         .success.value
       verifyList(userAnswers) { list =>
         assertBirthDateKnown(yesOrNo = false)(list.head)

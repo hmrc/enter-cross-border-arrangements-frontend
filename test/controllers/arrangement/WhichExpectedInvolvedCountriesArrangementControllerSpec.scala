@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -36,13 +36,15 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import models.arrangement.WhichExpectedInvolvedCountriesArrangement
+import pages.unsubmitted.UnsubmittedDisclosurePage
+
 import scala.concurrent.Future
 
 class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val whichExpectedInvolvedCountriesArrangementRoute = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode).url
+  lazy val whichExpectedInvolvedCountriesArrangementRoute = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode).url
 
   val formProvider = new WhichExpectedInvolvedCountriesArrangementFormProvider()
   val form = formProvider()
@@ -80,7 +82,9 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhichExpectedInvolvedCountriesArrangementPage, WhichExpectedInvolvedCountriesArrangement.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

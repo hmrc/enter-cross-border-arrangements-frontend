@@ -51,18 +51,19 @@ class WhichCountryTaxForIndividualController @Inject()(
 
   private val form = formProvider(countries)
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = getCountry(request.userAnswers, IndividualLoopPage, index) match {
+      val preparedForm = getCountry(request.userAnswers, id, IndividualLoopPage, index) match {
         case Some(value) => form.fill(value)
         case _ => form
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
-        "name" -> getIndividualName(request.userAnswers),
+        "name" -> getIndividualName(request.userAnswers, id),
         "countries" -> countryJsonList(preparedForm.data, countries),
         "index" -> index
       )
@@ -70,10 +71,10 @@ class WhichCountryTaxForIndividualController @Inject()(
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Country], index: Int): Call =
-    navigator.routeMap(WhichCountryTaxForIndividualPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int): Call =
+    navigator.routeMap(WhichCountryTaxForIndividualPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -81,8 +82,9 @@ class WhichCountryTaxForIndividualController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers),
+            "name" -> getIndividualName(request.userAnswers, id),
             "countries" -> countryJsonList(formWithErrors.data, countries),
             "index" -> index
           )
@@ -91,27 +93,27 @@ class WhichCountryTaxForIndividualController @Inject()(
         },
         value => {
 
-          val individualLoopDetails = getIndividualLoopDetails(value, request.userAnswers, index)
+          val individualLoopDetails = getIndividualLoopDetails(value, request.userAnswers, id, index)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopDetails))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopDetails))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${"is " + name.firstName + " " + name.secondName}"
       case None => "are they"
     }
   }
 
-  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, index: Int): IndexedSeq[LoopDetails] =
-      userAnswers.get(IndividualLoopPage) match {
+  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, id: Int,  index: Int): IndexedSeq[LoopDetails] =
+      userAnswers.get(IndividualLoopPage, id) match {
     case None =>
       val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
       IndexedSeq(newIndividualLoop)

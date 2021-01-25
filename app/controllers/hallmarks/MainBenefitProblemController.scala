@@ -38,16 +38,16 @@ class MainBenefitProblemController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      request.userAnswers.get(HallmarkCategoriesPage) match {
-        case None => Future.successful(Redirect(routes.HallmarkCategoriesController.onPageLoad(NormalMode)))
+      request.userAnswers.get(HallmarkCategoriesPage, id) match {
+        case None => Future.successful(Redirect(routes.HallmarkCategoriesController.onPageLoad(id, NormalMode)))
         case Some(hallmarkCategories) =>
 
         val json = Json.obj(
-          "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(NormalMode).url,
-          "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(NormalMode).url,
+          "hallmarkCategoryPageLink" -> routes.HallmarkCategoriesController.onPageLoad(id, NormalMode).url,
+          "mainBenefitTestPageLink" -> routes.MainBenefitTestController.onPageLoad(id, NormalMode).url,
           "hallmarkSet"-> hallmarkCategories.diff(Set(CategoryD, CategoryE)).toSeq.sorted
         )
 

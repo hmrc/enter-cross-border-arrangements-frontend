@@ -33,22 +33,22 @@ class NavigatorForTaxpayerSpec extends SpecBase  with ScalaCheckPropertyChecks w
       "must go from 'You have not added any taxpayers' page to " +
         "'Is this an organisation or an individual?' if answer is yes" in {
         navigator
-          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(Some(UpdateTaxpayer.Now))(0)
-          .mustBe(controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(NormalMode))
+          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.Now))(0)
+          .mustBe(controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode))
       }
 
       "must go from 'You have not added any taxpayers' page to " +
         "'Task List page' if answer is 'No'" in {
         navigator
-          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(Some(UpdateTaxpayer.No))(0)
-          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.No))(0)
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
         }
 
       "must go from 'You have not added any taxpayers' page to " +
         "'Task List page' if answer is 'Add Later'" in {
         navigator
-          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(Some(UpdateTaxpayer.Later))(0)
-          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+          .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.Later))(0)
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
     }

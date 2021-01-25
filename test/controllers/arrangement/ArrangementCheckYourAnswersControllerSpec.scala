@@ -19,13 +19,14 @@ package controllers.arrangement
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.arrangement._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.libs.json._
 import play.api.test.FakeRequest
@@ -53,7 +54,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -87,7 +88,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
   def assertReasonToReportKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Reason for reporting known?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason-known")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason-known/0")(row.actions.head)
   }
 
   def assertReasonToReport(reasonAsString: String)(row: Row): Unit = {
@@ -95,7 +96,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
     val msg: String = msg"whyAreYouReportingThisArrangementNow.$reasonAsString".resolve
     row.key.text mustBe Some(Literal("Reason for reporting"))
     row.value.text mustBe Some(Literal(msg))
-    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason")(row.actions.head)
+    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -105,12 +106,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertName(name: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Name of arrangement"))
         row.value.text mustBe Some(Literal(name))
-        assertAction("/enter-cross-border-arrangements/arrangement/change-name")(row.actions.head)
+        assertAction("/enter-cross-border-arrangements/arrangement/change-name/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(WhatIsThisArrangementCalledPage, given)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(WhatIsThisArrangementCalledPage,0, given)
           .success.value
         verifyList(userAnswers) { list =>
           assertName(expected)(list.head)
@@ -125,14 +127,15 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertImplementationDate(implementationDateAsString: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Implementing date"))
         row.value.text mustBe Some(Literal(implementationDateAsString))
-        assertAction("/enter-cross-border-arrangements/arrangement/change-implementation-date"
+        assertAction("/enter-cross-border-arrangements/arrangement/change-implementation-date/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
       val implementationDate = LocalDate.now()
       val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(WhatIsTheImplementationDatePage, LocalDate.now())
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
         .success.value
       verifyList(userAnswers) { list =>
         assertImplementationDate(dateFormatter.format(implementationDate))(list.head)
@@ -145,9 +148,10 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
       WhyAreYouReportingThisArrangementNow.values.map { reportReason =>
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DoYouKnowTheReasonToReportArrangementNowPage, true)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
           .success.value
-          .set(WhyAreYouReportingThisArrangementNowPage, reportReason)
+          .set(WhyAreYouReportingThisArrangementNowPage, 0, reportReason)
           .success.value
         verifyList(userAnswers) { list =>
           assertReasonToReportKnown(yesOrNo = true)(list.head)
@@ -167,12 +171,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         row.value.html.map { html =>
           html.value mustBe Html("United Kingdom")
         }
-        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved"
+        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(WhichExpectedInvolvedCountriesArrangementPage, countries)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
         .success.value
       verifyList(userAnswers) { list =>
         assertReasonToReportKnown(yesOrNo = false)(list.head)
@@ -196,12 +201,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
               |<li>Sweden</li>
               |</ul>""".stripMargin)
         }
-        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved"
+        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(WhichExpectedInvolvedCountriesArrangementPage, countries)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
         .success.value
       verifyList(userAnswers) { list =>
         assertReasonToReportKnown(yesOrNo = false)(list.head)
@@ -222,11 +228,12 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         row.value.html.map { html =>
           html.value mustBe Html("CURRENCY 1")
         }
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-value")(row.actions.head)
+        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-value/0")(row.actions.head)
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, expectedValue)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
         .success.value
       verifyList(userAnswers) { list =>
         assertReasonToReportKnown(yesOrNo = false)(list.head)
@@ -240,12 +247,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertNationalProvisions(content: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("National provisions"))
         row.value.text mustBe Some(Literal(content))
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-national-provisions")(row.actions.head)
+        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-national-provisions/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, given)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, given)
           .success.value
         verifyList(userAnswers) { list =>
           assertReasonToReportKnown(yesOrNo = false)(list.head)
@@ -260,12 +268,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertNationalProvisions(content: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Description"))
         row.value.text mustBe Some(Literal(content))
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-details")(row.actions.head)
+        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-details/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(GiveDetailsOfThisArrangementPage, given)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(GiveDetailsOfThisArrangementPage, 0, given)
           .success.value
         verifyList(userAnswers) { list =>
           assertReasonToReportKnown(yesOrNo = false)(list.head)

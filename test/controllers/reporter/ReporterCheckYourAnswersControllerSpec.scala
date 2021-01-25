@@ -17,7 +17,6 @@
 package controllers.reporter
 
 import java.time.LocalDate
-
 import base.SpecBase
 import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.YesNoDoNotKnowRadios.Yes
@@ -26,7 +25,7 @@ import models.reporter.intermediary.IntermediaryRole.Promoter
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
-import models.{AddressLookup, CountriesListEUCheckboxes, Country, LoopDetails, Name, TaxReferenceNumbers, UserAnswers}
+import models.{AddressLookup, CountriesListEUCheckboxes, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -36,6 +35,7 @@ import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -61,7 +61,7 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -98,31 +98,32 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       val loopDetailsUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(unitedKingdom), Some(false), None, Some(true), Some(utr)))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(ReporterOrganisationOrIndividualPage, Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, Organisation)
         .success.value
-        .set(ReporterOrganisationNamePage, "Name")
+        .set(ReporterOrganisationNamePage, 0, "Name")
         .success.value
-        .set(ReporterOrganisationIsAddressUkPage, true)
+        .set(ReporterOrganisationIsAddressUkPage, 0, true)
         .success.value
-        .set(ReporterSelectedAddressLookupPage, addressLookup)
+        .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
         .success.value
-        .set(ReporterOrganisationEmailAddressQuestionPage, true)
+        .set(ReporterOrganisationEmailAddressQuestionPage, 0, true)
         .success.value
-        .set(ReporterOrganisationEmailAddressPage, "email@email.com")
+        .set(ReporterOrganisationEmailAddressPage, 0, "email@email.com")
         .success.value
-        .set(ReporterTaxResidencyLoopPage, loopDetailsUK)
+        .set(ReporterTaxResidencyLoopPage, 0, loopDetailsUK)
         .success.value
-        .set(RoleInArrangementPage, Intermediary)
+        .set(RoleInArrangementPage, 0, Intermediary)
         .success.value
-        .set(IntermediaryWhyReportInUKPage, TaxResidentUK)
+        .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK)
         .success.value
-        .set(IntermediaryRolePage, Promoter)
+        .set(IntermediaryRolePage, 0, Promoter)
         .success.value
-        .set(IntermediaryExemptionInEUPage, Yes)
+        .set(IntermediaryExemptionInEUPage, 0, Yes)
         .success.value
-        .set(IntermediaryDoYouKnowExemptionsPage, true)
+        .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
         .success.value
-        .set(IntermediaryWhichCountriesExemptPage, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
         .success.value
 
       verifyList(userAnswers) { rows =>
@@ -153,31 +154,32 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       val loopDetailsNonUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(france), Some(true), Some(tins),Some(false), None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(ReporterOrganisationOrIndividualPage, Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, Individual)
         .success.value
-        .set(ReporterIndividualNamePage, Name("firstname","surname"))
+        .set(ReporterIndividualNamePage, 0, Name("firstname","surname"))
         .success.value
-        .set(ReporterIndividualDateOfBirthPage,  LocalDate.of(1990, 1, 1))
+        .set(ReporterIndividualDateOfBirthPage,  0, LocalDate.of(1990, 1, 1))
         .success.value
-        .set(ReporterIndividualPlaceOfBirthPage, "Place of Birth")
+        .set(ReporterIndividualPlaceOfBirthPage, 0, "Place of Birth")
         .success.value
-        .set(ReporterSelectedAddressLookupPage, addressLookup)
+        .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
         .success.value
-        .set(ReporterIndividualEmailAddressQuestionPage, true)
+        .set(ReporterIndividualEmailAddressQuestionPage, 0, true)
         .success.value
-        .set(ReporterIndividualEmailAddressPage, "email@email.com")
+        .set(ReporterIndividualEmailAddressPage, 0, "email@email.com")
         .success.value
-        .set(ReporterTaxResidencyLoopPage, loopDetailsNonUK)
+        .set(ReporterTaxResidencyLoopPage, 0, loopDetailsNonUK)
         .success.value
-        .set(RoleInArrangementPage, Taxpayer)
+        .set(RoleInArrangementPage, 0, Taxpayer)
         .success.value
-        .set(IntermediaryWhyReportInUKPage, TaxResidentUK)
+        .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK)
         .success.value
-        .set(TaxpayerWhyReportInUKPage, UkTaxResident)
+        .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident)
         .success.value
-        .set(TaxpayerWhyReportArrangementPage, NoIntermediaries)
+        .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries)
         .success.value
-        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, LocalDate.of(2020, 1, 1))
+        .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.of(2020, 1, 1))
         .success.value
 
       verifyList(userAnswers) { rows =>

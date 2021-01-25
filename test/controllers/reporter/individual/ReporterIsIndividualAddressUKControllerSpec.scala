@@ -19,13 +19,14 @@ package controllers.reporter.individual
 import base.SpecBase
 import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.individual.ReporterIsIndividualAddressUKPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +45,7 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
   val formProvider = new ReporterIsIndividualAddressUKFormProvider()
   val form = formProvider()
 
-  lazy val reporterIsIndividualAddressUKRoute = routes.ReporterIsIndividualAddressUKController.onPageLoad(NormalMode).url
+  lazy val reporterIsIndividualAddressUKRoute = routes.ReporterIsIndividualAddressUKController.onPageLoad(0, NormalMode).url
 
   "ReporterIsIndividualAddressUK Controller" - {
 
@@ -81,7 +82,9 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterIsIndividualAddressUKPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIsIndividualAddressUKPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterIsIndividualAddressUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -129,7 +132,7 @@ class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockitoS
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/postcode"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/postcode/0"
 
       application.stop()
     }

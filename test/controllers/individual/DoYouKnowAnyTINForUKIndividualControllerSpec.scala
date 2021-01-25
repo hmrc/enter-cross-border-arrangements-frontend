@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -42,7 +43,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
   val form = formProvider()
 
-  lazy val doYouKnowAnyTINForUKIndividualRoute = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowAnyTINForUKIndividualRoute = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(0, NormalMode, index).url
 
   "DoYouKnowAnyTINForUKIndividual Controller" - {
 
@@ -80,10 +81,11 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowAnyTINForUKIndividualPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DoYouKnowAnyTINForUKIndividualPage, 0, true)
         .success
         .value
-        .set(IndividualLoopPage, IndexedSeq(
+        .set(IndividualLoopPage, 0, IndexedSeq(
           LoopDetails(None, selectedCountry, None,None, Some(true), None))
         )
         .success
@@ -136,7 +138,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/uk-tax-numbers-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/uk-tax-numbers-0/0"
 
       application.stop()
     }
@@ -162,7 +164,7 @@ class DoYouKnowAnyTINForUKIndividualControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1/0"
 
       application.stop()
     }

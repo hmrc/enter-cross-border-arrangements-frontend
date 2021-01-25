@@ -22,10 +22,11 @@ import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.Promoter
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.{LocalDate, LocalDateTime}
 
@@ -44,37 +45,37 @@ class IntermediarySpec extends SpecBase {
 
 
       val userAnswers: UserAnswers = new UserAnswers("1")
-        .set(IntermediariesTypePage, SelectType.Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediariesTypePage, 0, SelectType.Individual)
         .success.value
-        .set(IndividualNamePage, Name("John", "Smith"))
+        .set(IndividualNamePage, 0, Name("John", "Smith"))
         .success.value
-        .set(IndividualDateOfBirthPage, LocalDate.now())
+        .set(IndividualDateOfBirthPage, 0, LocalDate.now())
         .success.value
-        .set(WhichCountryTaxForIndividualPage, country)
+        .set(WhichCountryTaxForIndividualPage, 0, country)
         .success.value
-        .set(DoYouKnowAnyTINForUKIndividualPage, true)
+        .set(DoYouKnowAnyTINForUKIndividualPage, 0, true)
         .success.value
-        .set(WhatAreTheTaxNumbersForUKIndividualPage, taxRefNumbers)
+        .set(WhatAreTheTaxNumbersForUKIndividualPage, 0, taxRefNumbers)
         .success.value
-        .set(IsIndividualResidentForTaxOtherCountriesPage, true)
+        .set(IsIndividualResidentForTaxOtherCountriesPage, 0, true)
         .success.value
-        .set(DoYouKnowTINForNonUKIndividualPage, true)
+        .set(DoYouKnowTINForNonUKIndividualPage, 0, true)
         .success.value
-        .set(WhatAreTheTaxNumbersForUKIndividualPage, taxRefNumbers)
+        .set(WhatAreTheTaxNumbersForUKIndividualPage, 0, taxRefNumbers)
+        .success.value
+        .set(IndividualLoopPage, 0,  loopDetails)
+        .success.value
+        .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.Promoter)
+        .success.value
+        .set(IsExemptionKnownPage, 0, IsExemptionKnown.Yes)
+        .success.value
+        .set(IsExemptionCountryKnownPage, 0, true)
+        .success.value
+        .set(ExemptCountriesPage, 0, exemptCountries)
         .success.value
 
-        .set(IndividualLoopPage, loopDetails)
-        .success.value
-        .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
-        .success.value
-        .set(IsExemptionKnownPage, IsExemptionKnown.Yes)
-        .success.value
-        .set(IsExemptionCountryKnownPage, true)
-        .success.value
-        .set(ExemptCountriesPage, exemptCountries)
-        .success.value
-
-      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers)
+      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers, 0)
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
@@ -94,51 +95,52 @@ class IntermediarySpec extends SpecBase {
     "or must be created from an organisation" in {
 
       val userAnswers: UserAnswers = new UserAnswers("1")
-        .set(IntermediariesTypePage, SelectType.Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediariesTypePage, 0, SelectType.Organisation)
         .success.value
-        .set(OrganisationNamePage, "Organisation name")
+        .set(OrganisationNamePage, 0, "Organisation name")
         .success.value
-        .set(IsOrganisationAddressKnownPage, true)
+        .set(IsOrganisationAddressKnownPage, 0, true)
         .success.value
-        .set(IsOrganisationAddressUkPage, true)
+        .set(IsOrganisationAddressUkPage, 0, true)
         .success.value
-        .set(SelectAddressPage, "Some address")
+        .set(SelectAddressPage, 0, "Some address")
         .success.value
-        .set(PostcodePage, "ZZ1 1ZZ")
+        .set(PostcodePage, 0, "ZZ1 1ZZ")
         .success.value
-        .set(OrganisationAddressPage, address)
+        .set(OrganisationAddressPage, 0, address)
         .success.value
-        .set(EmailAddressQuestionForOrganisationPage, true)
+        .set(EmailAddressQuestionForOrganisationPage, 0, true)
         .success.value
-        .set(EmailAddressForOrganisationPage, "email@email.com")
+        .set(EmailAddressForOrganisationPage, 0, "email@email.com")
         .success.value
-        .set(WhichCountryTaxForOrganisationPage, country)
+        .set(WhichCountryTaxForOrganisationPage, 0, country)
         .success.value
-        .set(DoYouKnowAnyTINForUKOrganisationPage, true)
+        .set(DoYouKnowAnyTINForUKOrganisationPage, 0, true)
         .success.value
-        .set(WhatAreTheTaxNumbersForUKOrganisationPage, taxRefNumbers)
+        .set(WhatAreTheTaxNumbersForUKOrganisationPage, 0, taxRefNumbers)
         .success.value
-        .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+        .set(IsOrganisationResidentForTaxOtherCountriesPage, 0, true)
         .success.value
-        .set(DoYouKnowTINForNonUKOrganisationPage, true)
+        .set(DoYouKnowTINForNonUKOrganisationPage, 0, true)
         .success.value
-        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxRefNumbers)
+        .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0, taxRefNumbers)
         .success.value
-        .set(OrganisationLoopPage, loopDetails)
+        .set(OrganisationLoopPage, 0, loopDetails)
         .success.value
-        .set(WhatTypeofIntermediaryPage, WhatTypeofIntermediary.Promoter)
+        .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.Promoter)
         .success.value
-        .set(IsExemptionKnownPage, IsExemptionKnown.Yes)
+        .set(IsExemptionKnownPage, 0, IsExemptionKnown.Yes)
         .success.value
-        .set(IsExemptionCountryKnownPage, true)
+        .set(IsExemptionCountryKnownPage, 0, true)
         .success.value
-        .set(ExemptCountriesPage, exemptCountries)
+        .set(ExemptCountriesPage, 0, exemptCountries)
         .success.value
 
       val organisation = Organisation(
         organisationName = "Organisation name",Some(address),Some("email@email.com"), Seq(TaxResidency(Some(country),Some(taxRefNumbers))).toIndexedSeq)
 
-      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers)
+      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers, 0)
 
       intermediary.organisation.get mustEqual organisation
       intermediary.whatTypeofIntermediary mustEqual Promoter

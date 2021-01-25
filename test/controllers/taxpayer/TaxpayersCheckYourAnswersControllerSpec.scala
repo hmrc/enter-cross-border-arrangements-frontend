@@ -17,11 +17,10 @@
 package controllers.taxpayer
 
 import java.time.LocalDate
-
 import base.SpecBase
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -30,6 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.mvc.Call
@@ -49,7 +49,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -83,15 +83,16 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
     "must return rows for a taxpayer who is an organisation" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
         .success.value
-        .set(OrganisationNamePage, "Name")
+        .set(OrganisationNamePage, 0, "Name")
         .success.value
-        .set(IsOrganisationAddressKnownPage, false)
+        .set(IsOrganisationAddressKnownPage, 0, false)
         .success.value
-        .set(EmailAddressQuestionForOrganisationPage, true)
+        .set(EmailAddressQuestionForOrganisationPage, 0, true)
         .success.value
-        .set(EmailAddressForOrganisationPage, "email@email.com")
+        .set(EmailAddressForOrganisationPage, 0, "email@email.com")
         .success.value
 
       verifyList(userAnswers) { rows =>
@@ -107,19 +108,20 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
         .success.value
-        .set(IndividualNamePage, Name("First", "Last"))
+        .set(IndividualNamePage, 0, Name("First", "Last"))
         .success.value
-        .set(IsIndividualDateOfBirthKnownPage, true)
+        .set(IsIndividualDateOfBirthKnownPage, 0, true)
         .success.value
-        .set(IndividualDateOfBirthPage, dob)
+        .set(IndividualDateOfBirthPage, 0, dob)
         .success.value
-        .set(IsIndividualPlaceOfBirthKnownPage, false)
+        .set(IsIndividualPlaceOfBirthKnownPage, 0, false)
         .success.value
-        .set(EmailAddressQuestionForIndividualPage, true)
+        .set(EmailAddressQuestionForIndividualPage, 0, true)
         .success.value
-        .set(EmailAddressForIndividualPage, "email@email.com")
+        .set(EmailAddressForIndividualPage, 0, "email@email.com")
         .success.value
 
       verifyList(userAnswers) { rows =>
@@ -137,11 +139,12 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
     "must return an implementing date an organisation" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
         .success.value
-        .set(OrganisationNamePage, "Name")
+        .set(OrganisationNamePage, 0, "Name")
         .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0,
           LocalDate.of(2002,1,1))
         .success.value
 
@@ -149,7 +152,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
       val result = route(application, request).value
       status(result) mustEqual OK
 
@@ -171,13 +174,14 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
         .success.value
-        .set(IndividualNamePage, Name("First", "Last"))
+        .set(IndividualNamePage, 0, Name("First", "Last"))
         .success.value
-        .set(IndividualDateOfBirthPage, dob)
+        .set(IndividualDateOfBirthPage, 0, dob)
         .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage,
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0,
           LocalDate.of(2002,1,1))
         .success.value
 
@@ -185,7 +189,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
       val result = route(application, request).value
       status(result) mustEqual OK
 
@@ -205,20 +209,21 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
   "TaxpayersCheckYourAnswersController - onSubmit" - {
 
-    lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad().url
+    lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url
 
     "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
 
       val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Organisation)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
         .success
         .value
-        .set(OrganisationNamePage, "CheckYourAnswers Ltd")
+        .set(OrganisationNamePage, 0, "CheckYourAnswers Ltd")
         .success
         .value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
         .success.value
 
       val mockSessionRepository = mock[SessionRepository]
@@ -250,16 +255,17 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
       val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerSelectTypePage, SelectType.Individual)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
         .success
         .value
-        .set(IndividualNamePage, Name("Check", "YourAnswers"))
+        .set(IndividualNamePage, 0, Name("Check", "YourAnswers"))
         .success
         .value
-        .set(IndividualDateOfBirthPage, LocalDate.now())
+        .set(IndividualDateOfBirthPage, 0, LocalDate.now())
         .success
         .value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
         .success.value
 
       val mockSessionRepository = mock[SessionRepository]

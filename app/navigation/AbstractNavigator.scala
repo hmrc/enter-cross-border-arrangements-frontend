@@ -23,11 +23,11 @@ import play.api.mvc.Call
 
 abstract class AbstractNavigator {
 
-  val routeMap:  Page => CheckRoute => Option[Any] => Int => Call
+  val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call
 
-  val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ => _ => _ => _ => Call("GET", "/")
+  val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ => _ => _ => _ => _ => Call("GET", "/")
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call
 
   val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
 

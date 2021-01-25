@@ -20,12 +20,13 @@ import base.SpecBase
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{IndividualSelectAddressPage, IndividualUkPostcodePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,8 +42,8 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
   private val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   private val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-  lazy private val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(NormalMode).url
-  lazy private val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(NormalMode).canonical()
+  lazy private val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(0, NormalMode).url
+  lazy private val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(0, NormalMode).canonical()
 
   private val formProvider = new SelectAddressFormProvider()
   private val form = formProvider()
@@ -66,7 +67,8 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 
@@ -103,10 +105,11 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(IndividualSelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualSelectAddressPage, 0, "1 Address line 1, Town, ZZ1 1ZZ")
         .success
         .value
-        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 
@@ -146,7 +149,8 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 
@@ -166,7 +170,7 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/email-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/email-address/0"
 
       application.stop()
     }
@@ -179,7 +183,8 @@ class IndividualSelectAddressControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 

@@ -19,13 +19,14 @@ package controllers.reporter
 import base.SpecBase
 import forms.reporter.ReporterTaxResidentCountryFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.{ReporterTaxResidencyLoopPage, ReporterTaxResidentCountryPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -41,7 +42,7 @@ import scala.concurrent.Future
 
 class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/non-uk-tin-known-0")
+  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/non-uk-tin-known-0/0")
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
@@ -51,7 +52,7 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new ReporterTaxResidentCountryFormProvider()
   val form: Form[Country] = formProvider(countriesSeq)
 
-  lazy val reporterTaxResidentCountryRoute = routes.ReporterTaxResidentCountryController.onPageLoad(NormalMode, index).url
+  lazy val reporterTaxResidentCountryRoute = routes.ReporterTaxResidentCountryController.onPageLoad(0, NormalMode, index).url
 
   "ReporterTaxResidentCountry Controller" - {
 
@@ -90,10 +91,11 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockitoSuga
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ReporterTaxResidentCountryPage, selectedCountry)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterTaxResidentCountryPage, 0, selectedCountry)
         .success
         .value
-        .set(ReporterTaxResidencyLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success
         .value
 

@@ -17,9 +17,12 @@
 package controllers
 
 import base.SpecBase
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.mockito.Matchers.any
+import pages.unsubmitted.UnsubmittedDisclosurePage
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -30,7 +33,27 @@ class IndexControllerSpec extends SpecBase {
 
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must redirect to unsubmitted disclosures when at least one is in progress" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("foo")))
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).get mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to start a disclosure when none is in progress" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
@@ -41,13 +64,8 @@ class IndexControllerSpec extends SpecBase {
 
       val result = route(application, request).value
 
-      status(result) mustEqual OK
-
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "index.njk"
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
 
       application.stop()
     }

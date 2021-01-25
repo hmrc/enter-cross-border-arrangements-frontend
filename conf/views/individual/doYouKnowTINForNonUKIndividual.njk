@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.individual.DoYouKnowTINForNonUKIndividualController.onSubmit(mode, index).url }}" method="post">
+        <form action="{{ routes.controllers.individual.DoYouKnowTINForNonUKIndividualController.onSubmit(id, mode, index).url }}" method="post">
 
           {{ csrf() | safe }}
 

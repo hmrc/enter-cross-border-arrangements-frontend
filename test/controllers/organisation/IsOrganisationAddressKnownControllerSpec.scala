@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.IsOrganisationAddressKnownPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,8 +42,8 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new IsOrganisationAddressKnownFormProvider()
   val form = formProvider()
 
-  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(NormalMode).url
-  lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(CheckMode).url
+  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, NormalMode).url
+  lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, CheckMode).url
 
   "IsOrganisationAddressKnown Controller" - {
 
@@ -79,7 +80,9 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressKnownPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsOrganisationAddressKnownPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/main-address-in-uk"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/main-address-in-uk/0"
 
       application.stop()
     }

@@ -17,9 +17,9 @@
 package utils.rows
 
 import java.time.format.DateTimeFormatter
-
 import models.{Address, AddressLookup, TaxReferenceNumbers, UserAnswers}
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 
@@ -61,25 +61,25 @@ trait RowBuilder {
   private[utils] def formatAddress(address: Address): Html = {
 
     Html(s"""
-        ${address.addressLine1.fold("")(address => s"$address<br>")}
-        ${address.addressLine2.fold("")(address => s"$address<br>")}
-        ${address.addressLine3.fold("")(address => s"$address<br>")}
-        ${s"${address.city}<br>"}
-        ${address.postCode.fold("")(postcode => s"$postcode<br>")}
-        ${address.country.description}
+        ${address.addressLine1.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${address.addressLine2.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${address.addressLine3.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${s"${HtmlFormat.escape(address.city)}<br>"}
+        ${address.postCode.fold("")(postcode => s"${HtmlFormat.escape(postcode)}<br>")}
+        ${HtmlFormat.escape(address.country.description)}
      """)
   }
 
   private[utils] def formatAddress(addressLookup: AddressLookup): Html = {
 
     Html(s"""
-        ${addressLookup.addressLine1.fold("")(address => s"$address<br>")}
-        ${addressLookup.addressLine2.fold("")(address => s"$address<br>")}
-        ${addressLookup.addressLine3.fold("")(address => s"$address<br>")}
-        ${addressLookup.addressLine4.fold("")(address => s"$address<br>")}
-        ${s"${addressLookup.town}<br>"}
-        ${addressLookup.county.fold("")(county => s"$county<br>")}
-        ${addressLookup.postcode}
+        ${addressLookup.addressLine1.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${addressLookup.addressLine2.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${addressLookup.addressLine3.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${addressLookup.addressLine4.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${s"${HtmlFormat.escape(addressLookup.town)}<br>"}
+        ${addressLookup.county.fold("")(county => s"${HtmlFormat.escape(county)}<br>")}
+        ${HtmlFormat.escape(addressLookup.postcode)}
      """)
   }
 

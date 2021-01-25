@@ -22,8 +22,8 @@ import scala.util.Try
 
 trait DetailsPage[A, M] extends QuestionPage[A] {
 
-  def remove(userAnswers: Try[UserAnswers]): Try[UserAnswers] =
-    userAnswers.map(_.remove(this)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
+  def remove(userAnswers: Try[UserAnswers], id: Int): Try[UserAnswers] =
+    userAnswers.map(_.remove(this, id)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
 
   def getFromModel(model: M): A
 }
