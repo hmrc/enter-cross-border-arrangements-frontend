@@ -20,12 +20,13 @@ import base.SpecBase
 import forms.reporter.RoleInArrangementFormProvider
 import matchers.JsonMatchers
 import models.reporter.RoleInArrangement
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.RoleInArrangementPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -38,7 +39,7 @@ import scala.concurrent.Future
 
 class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val roleInArrangementRoute = controllers.reporter.routes.RoleInArrangementController.onPageLoad(NormalMode).url
+  lazy val roleInArrangementRoute = controllers.reporter.routes.RoleInArrangementController.onPageLoad(0, NormalMode).url
 
   val formProvider = new RoleInArrangementFormProvider()
   val form = formProvider()
@@ -78,7 +79,9 @@ class RoleInArrangementControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(RoleInArrangementPage, RoleInArrangement.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, roleInArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

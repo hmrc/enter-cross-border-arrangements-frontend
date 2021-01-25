@@ -47,16 +47,17 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhyAreYouReportingThisArrangementNowPage) match {
+      val preparedForm = request.userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> WhyAreYouReportingThisArrangementNow.radios(preparedForm)
       )
@@ -64,7 +65,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
       renderer.render("arrangement/whyAreYouReportingThisArrangementNow.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -72,6 +73,7 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> WhyAreYouReportingThisArrangementNow.radios(formWithErrors)
           )
@@ -80,9 +82,9 @@ class WhyAreYouReportingThisArrangementNowController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyAreYouReportingThisArrangementNowPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyAreYouReportingThisArrangementNowPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhyAreYouReportingThisArrangementNowPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhyAreYouReportingThisArrangementNowPage, id, mode, updatedAnswers))
       )
   }
 }

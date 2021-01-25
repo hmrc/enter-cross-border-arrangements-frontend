@@ -41,13 +41,13 @@ class CheckYourAnswersHallmarksController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val hallmarks = helper.buildHallmarksRow(request.userAnswers)
-      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest, helper.hallmarkD1Other).flatten
+      val hallmarks = helper.buildHallmarksRow(request.userAnswers, id)
+      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest(id), helper.hallmarkD1Other(id)).flatten
 
       //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
 
@@ -57,10 +57,10 @@ class CheckYourAnswersHallmarksController @Inject()(
       ).map(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, NormalMode, request.userAnswers)))
+      Future.successful(Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers)))
 
   }
 }

@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.PostcodeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.PostcodePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,7 +42,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()
 
-  lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(NormalMode).url
+  lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, NormalMode).url
 
   "Postcode Controller" - {
 
@@ -77,7 +78,9 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(PostcodePage, "AA1 1AA").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(PostcodePage, 0, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -123,7 +126,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/select-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/select-address/0"
 
       application.stop()
     }

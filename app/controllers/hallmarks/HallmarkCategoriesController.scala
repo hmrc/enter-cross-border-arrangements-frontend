@@ -46,16 +46,17 @@ class HallmarkCategoriesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkCategoriesPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkCategoriesPage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkCategories.checkboxes(preparedForm)
       )
@@ -63,7 +64,7 @@ class HallmarkCategoriesController @Inject()(
       renderer.render("hallmarks/hallmarkCategories.njk",json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -71,6 +72,7 @@ class HallmarkCategoriesController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> HallmarkCategories.checkboxes(formWithErrors)
           )
@@ -82,9 +84,9 @@ class HallmarkCategoriesController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCategoriesPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCategoriesPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkCategoriesPage, id, mode, updatedAnswers))
 
         }
       )

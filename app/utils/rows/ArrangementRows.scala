@@ -26,47 +26,47 @@ import uk.gov.hmrc.viewmodels._
 
 trait ArrangementRows extends RowBuilder {
 
-  def whatIsThisArrangementCalledPage: Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage) map { answer =>
+  def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map { answer =>
 
     toRow(
       msgKey  = "whatIsThisArrangementCalled",
       content = formatMaxChars(answer),
-      href    = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def whatIsTheImplementationDatePage: Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage) map { answer =>
+  def whatIsTheImplementationDatePage(id: Int): Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage, id) map { answer =>
 
     toRow(
       msgKey  = "whatIsTheImplementationDate",
       content = Literal(answer.format(dateFormatter)),
-      href    = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildReportingThisArrangement: Seq[Row] =
-    (userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage), userAnswers.get(WhyAreYouReportingThisArrangementNowPage)) match {
+  def buildReportingThisArrangement(id: Int): Seq[Row] =
+    (userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage, id), userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id)) match {
 
       case (Some(true), Some(reason)) =>
-        Seq(doYouKnowTheReasonToReportArrangementNow(true), whyAreYouReportingThisArrangementNow(reason))
+        Seq(doYouKnowTheReasonToReportArrangementNow(true, id), whyAreYouReportingThisArrangementNow(reason, id))
       case _ =>
-        Seq(doYouKnowTheReasonToReportArrangementNow(false))
+        Seq(doYouKnowTheReasonToReportArrangementNow(false, id))
     }
 
-  private def doYouKnowTheReasonToReportArrangementNow(answer: Boolean): Row =
+  private def doYouKnowTheReasonToReportArrangementNow(answer: Boolean, id: Int): Row =
 
     toRow(
       msgKey  = "doYouKnowTheReasonToReportArrangementNow",
       content = yesOrNo(answer),
-      href    = controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id, CheckMode).url
     )
 
-  private def whyAreYouReportingThisArrangementNow(answer: WhyAreYouReportingThisArrangementNow): Row =
+  private def whyAreYouReportingThisArrangementNow(answer: WhyAreYouReportingThisArrangementNow, id: Int): Row =
 
     toRow(
       msgKey  = "whyAreYouReportingThisArrangementNow",
       content = msg"whyAreYouReportingThisArrangementNow.$answer",
-      href    = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, CheckMode).url
     )
 
   private def formatCountries(countries: Set[WhichExpectedInvolvedCountriesArrangement]): Html = {
@@ -81,39 +81,39 @@ trait ArrangementRows extends RowBuilder {
     Html(list)
   }
 
-  def whichExpectedInvolvedCountriesArrangement: Option[Row] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage) map { answer =>
+  def whichExpectedInvolvedCountriesArrangement(id: Int): Option[Row] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage, id) map { answer =>
 
     toRow(
       msgKey  = "whichExpectedInvolvedCountriesArrangement",
       content = formatCountries(answer),
-      href    = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def whatIsTheExpectedValueOfThisArrangement: Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage) map { answer =>
+  def whatIsTheExpectedValueOfThisArrangement(id: Int): Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) map { answer =>
 
     toRow(
       msgKey  = "whatIsTheExpectedValueOfThisArrangement",
       content = lit"${answer.currency} ${answer.amount}",
-      href    = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def whichNationalProvisionsIsThisArrangementBasedOn: Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage) map { answer =>
+  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int): Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) map { answer =>
 
     toRow(
       msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
       content = formatMaxChars(answer),
-      href    = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def giveDetailsOfThisArrangement: Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage) map { answer =>
+  def giveDetailsOfThisArrangement(id: Int): Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage, id) map { answer =>
 
     toRow(
       msgKey  = "giveDetailsOfThisArrangement",
       content = formatMaxChars(answer),
-      href    = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, CheckMode).url
     )
   }
 

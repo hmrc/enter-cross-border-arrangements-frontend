@@ -47,16 +47,17 @@ class IntermediariesTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IntermediariesTypePage) match {
+      val preparedForm = request.userAnswers.get(IntermediariesTypePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> SelectType.radios(preparedForm)
       )
@@ -64,10 +65,10 @@ class IntermediariesTypeController @Inject()(
       renderer.render("intermediaries/intermediariesType.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[SelectType]): Call =
-    navigator.routeMap(IntermediariesTypePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[SelectType]): Call =
+    navigator.routeMap(IntermediariesTypePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,6 +76,7 @@ class IntermediariesTypeController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> SelectType.radios(formWithErrors)
           )
@@ -83,11 +85,11 @@ class IntermediariesTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediariesTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediariesTypePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, value)) NormalMode else mode
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, id, value)) NormalMode else mode
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

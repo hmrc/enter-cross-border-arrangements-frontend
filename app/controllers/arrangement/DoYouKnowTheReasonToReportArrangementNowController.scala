@@ -46,16 +46,17 @@ class DoYouKnowTheReasonToReportArrangementNowController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage) match {
+      val preparedForm = request.userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
@@ -63,7 +64,7 @@ class DoYouKnowTheReasonToReportArrangementNowController @Inject()(
       renderer.render("arrangement/doYouKnowTheReasonToReportArrangementNow.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -71,6 +72,7 @@ class DoYouKnowTheReasonToReportArrangementNowController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
@@ -79,9 +81,9 @@ class DoYouKnowTheReasonToReportArrangementNowController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTheReasonToReportArrangementNowPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTheReasonToReportArrangementNowPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouKnowTheReasonToReportArrangementNowPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(DoYouKnowTheReasonToReportArrangementNowPage, id, mode, updatedAnswers))
       )
   }
 }

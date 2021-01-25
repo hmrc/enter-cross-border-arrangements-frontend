@@ -47,26 +47,27 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualPlaceOfBirthPage) match {
+      val preparedForm = request.userAnswers.get(ReporterIndividualPlaceOfBirthPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
       renderer.render("reporter/individual/reporterIndividualPlaceOfBirth.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
-    navigator.routeMap(ReporterIndividualPlaceOfBirthPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
+    navigator.routeMap(ReporterIndividualPlaceOfBirthPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -74,6 +75,7 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 
@@ -81,10 +83,10 @@ class ReporterIndividualPlaceOfBirthController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPlaceOfBirthPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualPlaceOfBirthPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

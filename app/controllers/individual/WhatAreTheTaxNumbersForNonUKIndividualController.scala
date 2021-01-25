@@ -48,10 +48,10 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IndividualLoopPage) match {
+      val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxNumbers = value.lift(index).get.taxNumbersNonUK
@@ -65,19 +65,20 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
-        "individualName" -> getIndividualName(request.userAnswers),
-        "country" -> getCountry(request.userAnswers),
+        "individualName" -> getIndividualName(request.userAnswers, id),
+        "country" -> getCountry(request.userAnswers, id),
         "index" -> index
       )
 
       renderer.render("individual/whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
-    navigator.routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int): Call =
+    navigator.routeMap(WhatAreTheTaxNumbersForNonUKIndividualPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -85,16 +86,17 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
-            "individualName" -> getIndividualName(request.userAnswers),
-            "country" -> getCountry(request.userAnswers),
+            "individualName" -> getIndividualName(request.userAnswers, id),
+            "country" -> getCountry(request.userAnswers, id),
             "index" -> index
           )
 
           renderer.render("individual/whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage) match {
+          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
             case None =>
               val newIndividualLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
               IndexedSeq[LoopDetails](newIndividualLoop)
@@ -108,17 +110,17 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
           }
 
           for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, individualLoopList))
+            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }
 
-  private def getCountry(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): String = {
-    userAnswers.get(IndividualLoopPage) match {
+  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String = {
+    userAnswers.get(IndividualLoopPage, id) match {
       case Some(loopDetailsSeq) =>
         val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
         if (whichCountry.isDefined) {

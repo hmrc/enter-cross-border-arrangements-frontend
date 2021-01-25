@@ -30,59 +30,60 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case YouHaveNotAddedAnyIntermediariesPage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
-          case Some(YesAddNow) => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(checkRoute.mode)
-          case _ => controllers.routes.DisclosureDetailsController.onPageLoad()
+          case Some(YesAddNow) => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(id, checkRoute.mode)
+          case _ => controllers.routes.DisclosureDetailsController.onPageLoad(id)
         }
 
     case IntermediariesTypePage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
           case Some(SelectType.Organisation) =>
-            jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(checkRoute.mode), checkRoute)
+            jumpOrCheckYourAnswers(id, controllers.organisation.routes.OrganisationNameController.onPageLoad(id, checkRoute.mode), checkRoute)
           case Some(SelectType.Individual)   =>
-            jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(checkRoute.mode), checkRoute)
+            jumpOrCheckYourAnswers(id, controllers.individual.routes.IndividualNameController.onPageLoad(id, checkRoute.mode), checkRoute)
         }
 
     case WhatTypeofIntermediaryPage =>
-      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsExemptionKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsExemptionKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsExemptionKnownPage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
-          case Some(Yes) => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(routes.IntermediariesCheckYourAnswersController.onPageLoad(), checkRoute)
+          case Some(Yes) => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(id, checkRoute.mode)
+          case _ => jumpOrCheckYourAnswers(id, routes.IntermediariesCheckYourAnswersController.onPageLoad(id), checkRoute)
         }
 
     case IsExemptionCountryKnownPage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
-          case Some(true) => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(routes.IntermediariesCheckYourAnswersController.onPageLoad(), checkRoute)
+          case Some(true) => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(id, checkRoute.mode)
+          case _ => jumpOrCheckYourAnswers(id, routes.IntermediariesCheckYourAnswersController.onPageLoad(id), checkRoute)
         }
 
     case ExemptCountriesPage =>
-      _ => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      _ => id => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
 
-    case IntermediariesCheckYourAnswersPage => _=> _ => _ => routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad()
+    case IntermediariesCheckYourAnswersPage =>
+      _=> id => _ => _ => routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(id)
 
     case _ =>
-      checkRoute => _ => _ => checkRoute.mode match {
+      checkRoute => id => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => controllers.routes.IndexController.onPageLoad()
       }
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
+    _ => id => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case IntermediariesRouting(CheckMode)        => routes.IntermediariesCheckYourAnswersController.onPageLoad()
+      case IntermediariesRouting(CheckMode)        => routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
       case _                                       => jumpTo
     }
   }

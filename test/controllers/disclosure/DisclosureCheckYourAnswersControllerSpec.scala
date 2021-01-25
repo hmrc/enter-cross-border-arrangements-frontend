@@ -18,13 +18,14 @@ package controllers.disclosure
 
 import base.SpecBase
 import controllers.RowJsonReads
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.DisclosureType
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,9 +37,9 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
 
-  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
 
   override def beforeEach: Unit = {
     reset(
@@ -114,12 +115,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return correct rows for a new arrangement" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "My arrangement")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage,"My arrangement")
         .success.value
-        .set(DisclosureTypePage, DisclosureType.Dac6new)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6new)
         .success
         .value
-        .set(DisclosureMarketablePage, false)
+        .setBase(DisclosureMarketablePage, false)
         .success
         .value
       verifyList(userAnswers) { list =>
@@ -133,12 +135,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     "must return correct rows for an additional arrangement" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "My arrangement")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
         .success.value
-        .set(DisclosureTypePage, DisclosureType.Dac6add)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value
-        .set(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
+        .setBase(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
         .success
         .value
       verifyList(userAnswers) { list =>
@@ -151,12 +154,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     "must be able to build disclosure details from user answers and redirect to task list" ignore {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureNamePage, "My arrangement")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
         .success.value
-        .set(DisclosureTypePage, DisclosureType.Dac6add)
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value
-        .set(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
+        .setBase(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
         .success
         .value
 

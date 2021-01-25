@@ -42,28 +42,28 @@ class ArrangementCheckYourAnswersController @Inject()(
                                                        renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val list: Seq[SummaryList.Row] =
-        Seq(helper.whatIsThisArrangementCalledPage
-          , helper.whatIsTheImplementationDatePage).flatten ++
-          helper.buildReportingThisArrangement ++
-          Seq(helper.whichExpectedInvolvedCountriesArrangement
-          , helper.whatIsTheExpectedValueOfThisArrangement
-          , helper.whichNationalProvisionsIsThisArrangementBasedOn
-          , helper.giveDetailsOfThisArrangement).flatten
+        Seq(helper.whatIsThisArrangementCalledPage(id)
+          , helper.whatIsTheImplementationDatePage(id)).flatten ++
+          helper.buildReportingThisArrangement(id) ++
+          Seq(helper.whichExpectedInvolvedCountriesArrangement(id)
+          , helper.whatIsTheExpectedValueOfThisArrangement(id)
+          , helper.whichNationalProvisionsIsThisArrangementBasedOn(id)
+          , helper.giveDetailsOfThisArrangement(id)).flatten
 
       renderer.render("arrangement/check-your-answers-arrangement.njk",
         Json.obj("list" -> list)
       ).map(Ok(_))
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
+      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0)))
 
   }
 

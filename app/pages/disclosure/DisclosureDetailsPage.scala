@@ -18,7 +18,7 @@ package pages.disclosure
 
 import models.UserAnswers
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import pages.ModelPage
+import pages.{ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.{Success, Try}
@@ -27,34 +27,34 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "disclosureMarketable"
+  override def toString: String = "disclosureDetails"
 
-  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, index: Int): Try[UserAnswers] =
     List(
       DisclosureNamePage,
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
       DisclosureMarketablePage
-    ).foldLeft(Try(userAnswers)) { case (ua, page) => page.remove(ua) }
+    ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
-  def restore(userAnswers: UserAnswers): Try[UserAnswers] =
-    userAnswers.get(DisclosureDetailsPage)
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.get(DisclosureDetailsPage, id)
       .fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
-        userAnswers.set(DisclosureNamePage, DisclosureNamePage.getFromModel(disclosureDetails))
-          .flatMap(_.set(DisclosureTypePage, DisclosureTypePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureMarketablePage, DisclosureMarketablePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureIdentifyArrangementPage, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
-          .flatMap(_.remove(DisclosureDetailsPage))
+        userAnswers.set(DisclosureNamePage, id, DisclosureNamePage.getFromModel(disclosureDetails))
+          .flatMap(_.set(DisclosureTypePage, id, DisclosureTypePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureMarketablePage, id, DisclosureMarketablePage.getFromModel(disclosureDetails)))
+          .flatMap(_.set(DisclosureIdentifyArrangementPage, id, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
+          .flatMap(_.remove(DisclosureDetailsPage, id))
       }
 
   def build(userAnswers: UserAnswers): DisclosureDetails = {
 
-    def getDisclosureDetails = userAnswers.get(DisclosureDetailsPage)
+    def getDisclosureDetails = userAnswers.getBase(DisclosureDetailsPage)
       .orElse(Some(DisclosureDetails("")))
-    def getDisclosureName = userAnswers.get(DisclosureNamePage)
-    def getDisclosureType = userAnswers.get(DisclosureTypePage)
-    def getDisclosureMarketable = userAnswers.get(DisclosureMarketablePage).orElse(Some(false))
-    def getDisclosureIdentifyArrangement = userAnswers.get(DisclosureIdentifyArrangementPage)
+    def getDisclosureName = userAnswers.getBase(DisclosureNamePage)
+    def getDisclosureType = userAnswers.getBase(DisclosureTypePage)
+    def getDisclosureMarketable = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
+    def getDisclosureIdentifyArrangement = userAnswers.getBase(DisclosureIdentifyArrangementPage)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
 
     getDisclosureDetails

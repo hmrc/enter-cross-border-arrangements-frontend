@@ -47,15 +47,15 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
-    navigator.routeMap(ReporterOtherTaxResidentQuestionPage)(checkRoute)(value)(index)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
+    navigator.routeMap(ReporterOtherTaxResidentQuestionPage)(checkRoute)(id)(value)(index)
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage) match {
+      val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
           val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
@@ -69,15 +69,16 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "index" -> index
-      ) ++ contentProvider(request.userAnswers)
+      ) ++ contentProvider(request.userAnswers, id)
 
       renderer.render("reporter/reporterOtherTaxResidentQuestion.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -85,29 +86,30 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "index" -> index
-          ) ++ contentProvider(request.userAnswers)
+          ) ++ contentProvider(request.userAnswers, id)
 
           renderer.render("reporter/reporterOtherTaxResidentQuestion.njk", json).map(BadRequest(_))
         },
 
         value => {
 
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, mode)
+          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, mode)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOtherTaxResidentQuestionPage, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, taxResidencyLoopDetails))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOtherTaxResidentQuestionPage, id, value))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
             _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails)
-          } yield Redirect(redirect(checkRoute, Some(value), index))
+            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value), index))
         }
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers) = userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+  private def contentProvider(userAnswers: UserAnswers, id: Int) = userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
     case Some(Individual) => //Display Individual Content
       Json.obj("pageTitle" -> "reporterIndividualOtherTaxResidentQuestion.title",
         "pageHeading" -> "reporterIndividualOtherTaxResidentQuestion.heading")
@@ -116,15 +118,15 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
       Json.obj(
         "pageTitle" -> "reporterOrganisationOtherTaxResidentQuestion.title",
         "pageHeading" -> "reporterOrganisationOtherTaxResidentQuestion.heading",
-        "name" -> getReporterDetailsOrganisationName(userAnswers)
+        "name" -> getReporterDetailsOrganisationName(userAnswers, id)
       )
   }
 
   private def getReporterTaxResidentLoopDetails(
-    value: Boolean, userAnswers: UserAnswers, mode: Mode
+    value: Boolean, userAnswers: UserAnswers, id: Int, mode: Mode
      )(implicit request: Request[AnyContent]): IndexedSeq[LoopDetails] = {
 
-    (userAnswers.get(ReporterTaxResidencyLoopPage), mode) match {
+    (userAnswers.get(ReporterTaxResidencyLoopPage, id), mode) match {
       case (Some(list), NormalMode) => // Add to Loop in NormalMode
         list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
       case (Some(list), CheckMode) =>

@@ -50,28 +50,29 @@ class IsIndividualAddressUkController @Inject()(
 
   implicit val alternativeText: String = "the individual's"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsIndividualAddressUkPage) match {
+      val preparedForm = request.userAnswers.get(IsIndividualAddressUkPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "displayName" -> getIndividualName(request.userAnswers)
+        "displayName" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/isIndividualAddressUk.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(IsIndividualAddressUkPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(IsIndividualAddressUkPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,9 +80,10 @@ class IsIndividualAddressUkController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "displayName" -> getIndividualName(request.userAnswers)
+            "displayName" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/isIndividualAddressUk.njk", json).map(BadRequest(_))
@@ -89,10 +91,10 @@ class IsIndividualAddressUkController @Inject()(
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressUkPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressUkPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

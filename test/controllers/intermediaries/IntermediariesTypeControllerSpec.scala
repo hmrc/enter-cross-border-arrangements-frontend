@@ -19,13 +19,14 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.IntermediariesTypeFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.IntermediariesTypePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -42,7 +43,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
   private val formProvider = new IntermediariesTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(NormalMode).url
+  lazy private val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(0, NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -79,7 +80,9 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediariesTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediariesTypePage, 0, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name/0"
 
       application.stop()
     }
@@ -161,10 +164,11 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
     }
 
     "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
-      val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(CheckMode).url
+      val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(0, CheckMode).url
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers = UserAnswers(userAnswersId)
-        .set(IntermediariesTypePage, SelectType.values.head)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediariesTypePage, 0, SelectType.values.head)
         .success
         .value
 
@@ -185,7 +189,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers/0"
 
       application.stop()
     }

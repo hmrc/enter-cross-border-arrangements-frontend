@@ -21,13 +21,14 @@ import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormPro
 import matchers.JsonMatchers
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.taxpayer.TaxpayerLoopPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -42,7 +43,7 @@ import scala.concurrent.Future
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(NormalMode).url
+  lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode).url
 
   private val formProvider = new SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider()
   private val form = formProvider()
@@ -65,7 +66,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must return OK and the correct view for a GET" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerLoopPage, taxpayers)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerLoopPage, 0, taxpayers)
         .success
         .value
 
@@ -97,10 +99,11 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(TaxpayerLoopPage, taxpayers)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerLoopPage, 0, taxpayers)
         .success
         .value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Taxpayer Ltd"))
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer Ltd"))
         .success
         .value
 
@@ -152,7 +155,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/type"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/type/0"
 
       application.stop()
     }

@@ -22,8 +22,8 @@ import play.api.libs.json.{JsObject, Json}
 
 trait CountrySupport {
 
-  def getCountry[A](userAnswers: UserAnswers, page: QuestionPage[IndexedSeq[LoopDetails]], index: Int): Option[Country] = for {
-    loopPage <- userAnswers.get(page)
+  def getCountry[A](userAnswers: UserAnswers, id:Int, page: QuestionPage[IndexedSeq[LoopDetails]], index: Int): Option[Country] = for {
+    loopPage <- userAnswers.get(page, id)
     loopDetails <- loopPage.lift(index)
     country <- loopDetails.whichCountry
   } yield country

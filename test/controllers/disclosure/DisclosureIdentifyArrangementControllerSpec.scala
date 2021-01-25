@@ -20,12 +20,13 @@ import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import matchers.JsonMatchers
-import models.{Country, NormalMode, UserAnswers}
+import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.DisclosureIdentifyArrangementPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -87,7 +88,9 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
         .thenReturn(Future.successful(Html("")))
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
-      val userAnswers = UserAnswers(userAnswersId).set(DisclosureIdentifyArrangementPage, validArrangementID).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureIdentifyArrangementPage, validArrangementID).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)

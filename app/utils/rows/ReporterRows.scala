@@ -29,152 +29,152 @@ import uk.gov.hmrc.viewmodels._
 
 trait ReporterRows extends RowBuilder {
 
-  def roleInArrangementPage: Option[Row] = userAnswers.get(RoleInArrangementPage) map { answer =>
+  def roleInArrangementPage(id: Int): Option[Row] = userAnswers.get(RoleInArrangementPage, id) map { answer =>
     toRow(
       msgKey  = "roleInArrangement",
       content = Literal(s"${answer.toString.capitalize}"),
-      href    = controllers.reporter.routes.RoleInArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.routes.RoleInArrangementController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def reporterOrganisationOrIndividual: Option[Row] = userAnswers.get(ReporterOrganisationOrIndividualPage) map {
+  def reporterOrganisationOrIndividual(id: Int): Option[Row] = userAnswers.get(ReporterOrganisationOrIndividualPage, id) map {
     answer =>
 
     toRow(
       msgKey  = "reporterOrganisationOrIndividual",
       content = Literal(s"${answer.toString.capitalize}"),
-      href    = controllers.reporter.routes.ReporterOrganisationOrIndividualController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.routes.ReporterOrganisationOrIndividualController.onPageLoad(id, CheckMode).url
     )
   }
 
   //Reporter - Organisation Journey
 
-  def reporterOrganisationName: Option[Row] = userAnswers.get(ReporterOrganisationNamePage) map { answer =>
+  def reporterOrganisationName(id: Int): Option[Row] = userAnswers.get(ReporterOrganisationNamePage, id) map { answer =>
     toRow(
       msgKey  = "reporterOrganisationName",
       content = Literal(s"${answer.capitalize}"),
-      href    = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildOrganisationReporterAddressGroup: Seq[Row] = {
-    (userAnswers.get(ReporterOrganisationAddressPage), userAnswers.get(ReporterSelectedAddressLookupPage)) match {
-      case (Some(address), _) => Seq(reporterOrganisationAddress(address))
-      case (_, Some(addressLookup)) => Seq(reporterOrganisationAddressLookup(addressLookup))
+  def buildOrganisationReporterAddressGroup(id: Int): Seq[Row] = {
+    (userAnswers.get(ReporterOrganisationAddressPage, id), userAnswers.get(ReporterSelectedAddressLookupPage, id)) match {
+      case (Some(address), _) => Seq(reporterOrganisationAddress(address, id))
+      case (_, Some(addressLookup)) => Seq(reporterOrganisationAddressLookup(addressLookup, id))
       case _ => throw new Exception("Unable to retrieve Organisation reporter details address from user answers")
     }
   }
 
-  private def reporterOrganisationAddress(manualAddress: Address): Row =
+  private def reporterOrganisationAddress(manualAddress: Address, id: Int): Row =
     toRow(
       msgKey = "reporterOrganisationAddress",
       content = formatAddress(manualAddress),
-      href = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(CheckMode).url
+      href = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  private def reporterOrganisationAddressLookup(addressLookup: AddressLookup): Row =
+  private def reporterOrganisationAddressLookup(addressLookup: AddressLookup, id: Int): Row =
     toRow(
       msgKey = "reporterOrganisationAddress",
       content = formatAddress(addressLookup),
-      href = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(CheckMode).url
+      href = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  def buildReporterOrganisationEmailGroup: Seq[Row] =
-    (userAnswers.get(ReporterOrganisationEmailAddressQuestionPage), userAnswers.get(ReporterOrganisationEmailAddressPage)) match {
+  def buildReporterOrganisationEmailGroup(id: Int): Seq[Row] =
+    (userAnswers.get(ReporterOrganisationEmailAddressQuestionPage, id), userAnswers.get(ReporterOrganisationEmailAddressPage, id)) match {
       case (Some(true), Some(email)) =>
-        Seq(reporterOrganisationEmailAddressQuestion(true), reporterOrganisationEmailAddress(email))
+        Seq(reporterOrganisationEmailAddressQuestion(true, id), reporterOrganisationEmailAddress(email, id))
       case _ =>
-        Seq(reporterOrganisationEmailAddressQuestion(false))
+        Seq(reporterOrganisationEmailAddressQuestion(false, id))
     }
 
-  private def reporterOrganisationEmailAddressQuestion(isKnown: Boolean): Row =
+  private def reporterOrganisationEmailAddressQuestion(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "reporterOrganisationEmailAddressQuestion",
       content = yesOrNo(isKnown),
-      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressQuestionController.onPageLoad(id, CheckMode).url
     )
 
-  private def reporterOrganisationEmailAddress(email: String): Row =
+  private def reporterOrganisationEmailAddress(email: String, id: Int): Row =
     toRow(
       msgKey  = "reporterOrganisationEmailAddress",
       content = Literal(s"$email"),
-      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.organisation.routes.ReporterOrganisationEmailAddressController.onPageLoad(id, CheckMode).url
     )
 
   //Reporter - Individual Journey
 
-  def reporterIndividualName: Option[Row] = userAnswers.get(ReporterIndividualNamePage) map { answer =>
+  def reporterIndividualName(id: Int): Option[Row] = userAnswers.get(ReporterIndividualNamePage, id) map { answer =>
     toRow(
       msgKey  = "reporterIndividualName",
       content = Literal(s"${answer.displayName.capitalize}"),
-      href    = controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.individual.routes.ReporterIndividualNameController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def reporterIndividualPlaceOfBirth: Option[Row] = userAnswers.get(ReporterIndividualPlaceOfBirthPage) map { answer =>
+  def reporterIndividualPlaceOfBirth(id: Int): Option[Row] = userAnswers.get(ReporterIndividualPlaceOfBirthPage, id) map { answer =>
     toRow(
       msgKey  = "reporterIndividualPlaceOfBirth",
       content = Literal(s"${answer.capitalize}"),
-      href    = controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.individual.routes.ReporterIndividualPlaceOfBirthController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def reporterIndividualDateOfBirth: Option[Row] = userAnswers.get(ReporterIndividualDateOfBirthPage) map { answer =>
+  def reporterIndividualDateOfBirth(id: Int): Option[Row] = userAnswers.get(ReporterIndividualDateOfBirthPage, id) map { answer =>
     toRow(
       msgKey  = "reporterIndividualDateOfBirth",
       content = Literal(s"${answer.format(dateFormatter)}"),
-      href    = controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.individual.routes.ReporterIndividualDateOfBirthController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def buildReporterIndividualEmailGroup: Seq[Row] =
-    (userAnswers.get(ReporterIndividualEmailAddressQuestionPage), userAnswers.get(ReporterIndividualEmailAddressPage)) match {
+  def buildReporterIndividualEmailGroup(id: Int): Seq[Row] =
+    (userAnswers.get(ReporterIndividualEmailAddressQuestionPage, id), userAnswers.get(ReporterIndividualEmailAddressPage, id)) match {
       case (Some(true), Some(email)) =>
-        Seq(reporterIndividualEmailAddressQuestion(true), reporterIndividualEmailAddress(email))
+        Seq(reporterIndividualEmailAddressQuestion(true, id), reporterIndividualEmailAddress(email, id))
       case _ =>
-        Seq(reporterIndividualEmailAddressQuestion(false))
+        Seq(reporterIndividualEmailAddressQuestion(false, id))
     }
 
-  private def reporterIndividualEmailAddressQuestion(isKnown: Boolean): Row =
+  private def reporterIndividualEmailAddressQuestion(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey  = "reporterIndividualEmailAddressQuestion",
       content = yesOrNo(isKnown),
-      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressQuestionController.onPageLoad(id, CheckMode).url
     )
 
-  private def reporterIndividualEmailAddress(email: String): Row =
+  private def reporterIndividualEmailAddress(email: String, id: Int): Row =
     toRow(
       msgKey  = "reporterIndividualEmailAddress",
       content = Literal(s"$email"),
-      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.individual.routes.ReporterIndividualEmailAddressController.onPageLoad(id, CheckMode).url
     )
 
 
-  def buildIndividualReporterAddressGroup: Seq[Row]= {
-    (userAnswers.get(ReporterIndividualAddressPage), userAnswers.get(ReporterSelectedAddressLookupPage)) match {
-      case (Some(address), _) => Seq(reporterIndividualAddress(address))
-      case (_, Some(addressLookup)) => Seq(reporterIndividualAddressLookup(addressLookup))
+  def buildIndividualReporterAddressGroup(id: Int): Seq[Row]= {
+    (userAnswers.get(ReporterIndividualAddressPage, id), userAnswers.get(ReporterSelectedAddressLookupPage, id)) match {
+      case (Some(address), _) => Seq(reporterIndividualAddress(address, id))
+      case (_, Some(addressLookup)) => Seq(reporterIndividualAddressLookup(addressLookup, id))
       case _ => throw new Exception("Unable to retrieve Individual reporter details address from user answers")
     }
   }
 
-  private def reporterIndividualAddress(manualAddress: Address): Row =
+  private def reporterIndividualAddress(manualAddress: Address, id: Int): Row =
     toRow(
       msgKey = "reporterIndividualAddress",
       content = formatAddress(manualAddress),
-      href = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(CheckMode).url
+      href = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(id, CheckMode).url
     )
 
-  private def reporterIndividualAddressLookup(addressLookup: AddressLookup): Row =
+  private def reporterIndividualAddressLookup(addressLookup: AddressLookup, id: Int): Row =
     toRow(
       msgKey = "reporterIndividualAddress",
       content = formatAddress(addressLookup),
-      href = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(CheckMode).url
+      href = controllers.reporter.individual.routes.ReporterIsIndividualAddressUKController.onPageLoad(id, CheckMode).url
     )
 
   //Reporter - TaxResidency Loop
 
-  def buildTaxResidencySummaryForReporter: Seq[Row] = (userAnswers.get(ReporterTaxResidencyLoopPage) map {
+  def buildTaxResidencySummaryForReporter(id: Int): Seq[Row] = (userAnswers.get(ReporterTaxResidencyLoopPage, id) map {
     answer =>
 
     val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
@@ -183,7 +183,7 @@ trait ReporterRows extends RowBuilder {
     toRow(
       msgKey = "reporterTaxResidentCountry",
       content = lit"",
-      href = controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(CheckMode, 0).url
+      href = controllers.reporter.routes.ReporterTaxResidentCountryController.onPageLoad(id, CheckMode, 0).url
     ) +:
       validDetailsWithIndex.flatMap {
         case (loopDetail, index) =>
@@ -228,44 +228,44 @@ trait ReporterRows extends RowBuilder {
   }
   //Reporter - Intermediary Journey
 
-  def intermediaryWhyReportInUKPage: Option[Row] = userAnswers.get(IntermediaryWhyReportInUKPage) map { answer =>
+  def intermediaryWhyReportInUKPage(id: Int): Option[Row] = userAnswers.get(IntermediaryWhyReportInUKPage, id) map { answer =>
 
     toRow(
       msgKey  = "whyReportInUK",
       content = msg"whyReportInUK.$answer",
-      href    = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def intermediaryRolePage: Option[Row] = userAnswers.get(IntermediaryRolePage) map { answer =>
+  def intermediaryRolePage(id: Int): Option[Row] = userAnswers.get(IntermediaryRolePage, id) map { answer =>
 
     toRow(
       msgKey  = "intermediaryRole",
       content = msg"intermediaryRole.$answer",
-      href    = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(id, CheckMode).url
     )
   }
 
-  private def intermediaryExemptionInEUPage(answer: YesNoDoNotKnowRadios): Row =
+  private def intermediaryExemptionInEUPage(answer: YesNoDoNotKnowRadios, id: Int): Row =
     toRow(
       msgKey  = "intermediaryExemptionInEU",
       content = msg"intermediaryExemptionInEU.$answer",
-      href    = controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.intermediary.routes.IntermediaryExemptionInEUController.onPageLoad(id, CheckMode).url
     )
 
-  private def intermediaryDoYouKnowExemptionsPage(answer: Boolean): Row =
+  private def intermediaryDoYouKnowExemptionsPage(answer: Boolean, id: Int): Row =
     toRow(
       msgKey  = "intermediaryDoYouKnowExemptions",
       content = yesOrNo(answer),
-      href    = controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.intermediary.routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(id, CheckMode).url
     )
 
-  private def intermediaryWhichCountriesExemptPage: Option[Row] = userAnswers.get(IntermediaryWhichCountriesExemptPage) map {
+  private def intermediaryWhichCountriesExemptPage(id: Int): Option[Row] = userAnswers.get(IntermediaryWhichCountriesExemptPage, id) map {
     countryList =>
     toRow(
       msgKey  = "intermediaryWhichCountriesExempt",
       content = Html(formatExemptCountriesList(countryList, countryList.tail.isEmpty)),
-      href    = controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.intermediary.routes.IntermediaryWhichCountriesExemptController.onPageLoad(id, CheckMode).url
     )
   }
 
@@ -281,49 +281,49 @@ trait ReporterRows extends RowBuilder {
     }
   }
 
-  def buildExemptCountriesSummary: Seq[Row] = {
-    (userAnswers.get(IntermediaryExemptionInEUPage), userAnswers.get(IntermediaryDoYouKnowExemptionsPage)) match {
+  def buildExemptCountriesSummary(id: Int): Seq[Row] = {
+    (userAnswers.get(IntermediaryExemptionInEUPage, id), userAnswers.get(IntermediaryDoYouKnowExemptionsPage, id)) match {
       case (Some(YesNoDoNotKnowRadios.Yes), Some(true)) =>
-        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.Yes),
-          intermediaryDoYouKnowExemptionsPage(true)) ++ intermediaryWhichCountriesExemptPage.toSeq
+        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.Yes, id),
+          intermediaryDoYouKnowExemptionsPage(true, id)) ++ intermediaryWhichCountriesExemptPage(id).toSeq
       case (Some(YesNoDoNotKnowRadios.Yes), Some(false)) =>
-        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.Yes), intermediaryDoYouKnowExemptionsPage(false))
+        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.Yes, id), intermediaryDoYouKnowExemptionsPage(false, id))
       case (Some(YesNoDoNotKnowRadios.No), _) =>
-        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.No))
+        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.No, id))
       case _ =>
-        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.DoNotKnow))
+        Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.DoNotKnow, id))
     }
   }
 
   //Reporter - Taxpayer Journey
 
-  private def taxpayerWhyReportArrangementPage(answer: TaxpayerWhyReportArrangement): Row = toRow(
+  private def taxpayerWhyReportArrangementPage(answer: TaxpayerWhyReportArrangement, id: Int): Row = toRow(
       msgKey = "taxpayerWhyReportArrangement",
       content = msg"taxpayerWhyReportArrangement.$answer",
-      href = controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(CheckMode).url
+      href = controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(id, CheckMode).url
     )
 
-  private def taxpayerWhyReportInUKPage(answer: TaxpayerWhyReportInUK): Row =
+  private def taxpayerWhyReportInUKPage(answer: TaxpayerWhyReportInUK, id: Int): Row =
     toRow(
       msgKey  = "taxpayerWhyReportInUK",
       content = msg"taxpayerWhyReportInUK.$answer",
-      href    = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(CheckMode).url
+      href    = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(id, CheckMode).url
     )
 
-  def taxpayerImplementationDate: Option[Row] = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage) map {
+  def taxpayerImplementationDate(id: Int): Option[Row] = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id) map {
     answer =>
       toRow(
         msgKey  = "reporterTaxpayerImplementingArrangement",
         content = Literal(answer.format(dateFormatter)),
-        href    = controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(CheckMode).url
+        href    = controllers.reporter.taxpayer.routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
       )
   }
 
-  def buildTaxpayerReporterReasonGroup: Seq[Row] =
-    (userAnswers.get(TaxpayerWhyReportInUKPage), userAnswers.get(TaxpayerWhyReportArrangementPage)) match {
-      case (Some(TaxpayerWhyReportInUK.DoNotKnow), _) => Seq(taxpayerWhyReportInUKPage(TaxpayerWhyReportInUK.DoNotKnow))
+  def buildTaxpayerReporterReasonGroup(id: Int): Seq[Row] =
+    (userAnswers.get(TaxpayerWhyReportInUKPage, id), userAnswers.get(TaxpayerWhyReportArrangementPage, id)) match {
+      case (Some(TaxpayerWhyReportInUK.DoNotKnow), _) => Seq(taxpayerWhyReportInUKPage(TaxpayerWhyReportInUK.DoNotKnow, id))
       case (Some(otherValue), Some(answer)) =>
-        Seq(taxpayerWhyReportInUKPage(otherValue), taxpayerWhyReportArrangementPage(answer))
+        Seq(taxpayerWhyReportInUKPage(otherValue, id), taxpayerWhyReportArrangementPage(answer, id))
       case _ => throw new Exception("Unable to retrieve reporter details taxpayer's reason for reporting")
     }
 }

@@ -18,12 +18,13 @@ package models.organisation
 
 import generators.ModelGenerators
 import models.taxpayer.TaxResidency
-import models.{Address, LoopDetails, UserAnswers}
+import models.{Address, LoopDetails, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class OrganisationSpec extends FreeSpec
   with MustMatchers
@@ -39,9 +40,11 @@ class OrganisationSpec extends FreeSpec
           (name, loop) =>
 
             val userAnswers =
-              UserAnswers("id").set(OrganisationNamePage, name)
+              UserAnswers("id")
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(OrganisationNamePage, 0, name)
                 .success.value
-                .set(OrganisationLoopPage, loop)
+                .set(OrganisationLoopPage, 0, loop)
                 .success.value
 
             val expected = Organisation(
@@ -51,7 +54,7 @@ class OrganisationSpec extends FreeSpec
               taxResidencies = TaxResidency.buildTaxResidency(loop)
             )
 
-            val organisation = Organisation.buildOrganisationDetails(userAnswers)
+            val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)
 
             organisation mustBe expected
         }
@@ -62,13 +65,15 @@ class OrganisationSpec extends FreeSpec
           (name,address, email, loop) =>
 
             val userAnswers =
-              UserAnswers("id").set(OrganisationNamePage, name)
+              UserAnswers("id")
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(OrganisationNamePage, 0, name)
                 .success.value
-                .set(OrganisationAddressPage, address)
+                .set(OrganisationAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForOrganisationPage, email)
+                .set(EmailAddressForOrganisationPage, 0, email)
                 .success.value
-                .set(OrganisationLoopPage, loop)
+                .set(OrganisationLoopPage, 0, loop)
                 .success.value
 
             val expected = Organisation(
@@ -78,7 +83,7 @@ class OrganisationSpec extends FreeSpec
               taxResidencies = TaxResidency.buildTaxResidency(loop)
             )
 
-            val organisation = Organisation.buildOrganisationDetails(userAnswers)
+            val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)
 
             organisation mustBe expected
         }
@@ -90,15 +95,16 @@ class OrganisationSpec extends FreeSpec
 
             val userAnswers =
               UserAnswers("id")
-                .set(OrganisationAddressPage, address)
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(OrganisationAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForOrganisationPage, email)
+                .set(EmailAddressForOrganisationPage, 0, email)
                 .success.value
-                .set(OrganisationLoopPage, loop)
+                .set(OrganisationLoopPage, 0, loop)
                 .success.value
 
             val ex = intercept[Exception] {
-                Organisation.buildOrganisationDetails(userAnswers)
+                Organisation.buildOrganisationDetails(userAnswers, 0)
               }
 
             ex.getMessage mustEqual "Organisation Taxpayer must contain a name and at minimum one tax residency"

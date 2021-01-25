@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IndividualPlaceOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IndividualPlaceOfBirthPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -42,7 +43,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
   val validAnswer: String = "answer"
   val validData = Map("value" -> validAnswer)
 
-  lazy val individualPlaceOfBirthRoute = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(NormalMode).url
+  lazy val individualPlaceOfBirthRoute = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(0, NormalMode).url
 
   "IndividualPlaceOfBirth Controller" - {
 
@@ -78,7 +79,9 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualPlaceOfBirthPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualPlaceOfBirthPage, 0, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, individualPlaceOfBirthRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-address/0"
 
       application.stop()
     }

@@ -48,16 +48,17 @@ class TaxpayerWhyReportArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TaxpayerWhyReportArrangementPage) match {
+      val preparedForm = request.userAnswers.get(TaxpayerWhyReportArrangementPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> TaxpayerWhyReportArrangement.radios(preparedForm)
       )
@@ -65,10 +66,10 @@ class TaxpayerWhyReportArrangementController @Inject()(
       renderer.render("reporter/taxpayer/taxpayerWhyReportArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[TaxpayerWhyReportArrangement]): Call =
-    navigator.routeMap(TaxpayerWhyReportArrangementPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxpayerWhyReportArrangement]): Call =
+    navigator.routeMap(TaxpayerWhyReportArrangementPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -76,6 +77,7 @@ class TaxpayerWhyReportArrangementController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> TaxpayerWhyReportArrangement.radios(formWithErrors)
           )
@@ -84,10 +86,10 @@ class TaxpayerWhyReportArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerWhyReportArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerWhyReportArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

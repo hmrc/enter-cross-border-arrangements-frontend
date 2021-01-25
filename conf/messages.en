@@ -1090,3 +1090,8 @@ disclosureConfirmation.p8 = You will need the disclosure ID if you need to make 
 # Temporary page for displaying generated XML
 generatedXML.title = Generated XML
 generatedXML.heading = Generated XML
+
+unsubmitted.title = You have unsubmitted disclosures
+unsubmitted.heading = You have {0} unsubmitted disclosure{1}
+unsubmitted.advice = We save unsubmitted disclosures for 28 days from the last date you saved changes.
+unsubmitted.link = Create a new disclosure

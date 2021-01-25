@@ -55,7 +55,7 @@ class DisclosureIdentifyArrangementController @Inject()(
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries, crossBorderArrangementsConnector)
 
-      val preparedForm = request.userAnswers.get(DisclosureIdentifyArrangementPage) match {
+      val preparedForm = request.userAnswers.getBase(DisclosureIdentifyArrangementPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -69,7 +69,7 @@ class DisclosureIdentifyArrangementController @Inject()(
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(value)(0)
+    navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(None)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -89,7 +89,7 @@ class DisclosureIdentifyArrangementController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DisclosureIdentifyArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureIdentifyArrangementPage, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value)))

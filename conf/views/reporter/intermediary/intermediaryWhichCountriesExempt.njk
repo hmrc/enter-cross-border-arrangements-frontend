@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.reporter.intermediary.IntermediaryWhichCountriesExemptController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

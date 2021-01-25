@@ -31,7 +31,7 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
   override def toString: String = "reporterOrganisationOrIndividual"
 
-  override def cleanup(value: Option[ReporterOrganisationOrIndividual], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[ReporterOrganisationOrIndividual], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
 
     value match {
       case Some(Organisation) =>
@@ -46,7 +46,7 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
           ReporterIndividualPostcodePage,
           ReporterIndividualSelectAddressPage,
           ReporterIsIndividualAddressUKPage
-        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page)) }
+        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
 
       case Some(Individual) =>
         List(
@@ -58,9 +58,9 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
           ReporterOrganisationPostcodePage,
           ReporterOrganisationSelectAddressPage,
           ReporterSelectedAddressLookupPage
-        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page)) }
+        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
 
-      case _ => super.cleanup(value, userAnswers)
+      case _ => super.cleanup(value, userAnswers, id)
     }
   }
 }

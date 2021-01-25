@@ -38,19 +38,19 @@ object Taxpayer {
 
   private def generateId = UUID.randomUUID.toString
 
-  def buildTaxpayerDetails(ua: UserAnswers): Taxpayer = {
-    ua.get(TaxpayerSelectTypePage) match {
+  def buildTaxpayerDetails(ua: UserAnswers, id: Int): Taxpayer = {
+    ua.get(TaxpayerSelectTypePage, id) match {
       case Some(SelectType.Organisation) =>
         new Taxpayer(
         taxpayerId = generateId,
-          organisation = Some(Organisation.buildOrganisationDetails(ua)),
-          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage)
+          organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
+          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
       )
       case Some(SelectType.Individual) =>
         new Taxpayer(
           taxpayerId = generateId,
-          individual = Some(Individual.buildIndividualDetails(ua)),
-          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage)
+          individual = Some(Individual.buildIndividualDetails(ua, id)),
+          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
         )
       case _ => throw new Exception("Unable to retrieve Taxpayer select type")
     }

@@ -16,10 +16,11 @@
 
 package pages.hallmarks
 
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
 import models.hallmarks.{HallmarkA, HallmarkB, HallmarkCategories}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class HallmarkCategoriesPageSpec extends PageBehaviours {
 
@@ -35,12 +36,13 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(HallmarkBPage, HallmarkB.values.toSet)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(HallmarkBPage, 0, HallmarkB.values.toSet)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+            .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
             .success.value
 
-          result.get(HallmarkBPage) must not be defined
+          result.get(HallmarkBPage, 0) must not be defined
       }
     }
 
@@ -48,12 +50,13 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(HallmarkAPage, HallmarkA.values.toSet)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(HallmarkAPage, 0, HallmarkA.values.toSet)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+            .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
             .success.value
 
-          result.get(HallmarkAPage) must not be defined
+          result.get(HallmarkAPage, 0) must not be defined
       }
     }
 
@@ -61,15 +64,16 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(HallmarkAPage, HallmarkA.values.toSet)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(HallmarkAPage, 0, HallmarkA.values.toSet)
             .success.value
-            .set(MainBenefitTestPage, true)
+            .set(MainBenefitTestPage, 0, true)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+            .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
             .success.value
 
-          result.get(HallmarkAPage) must not be defined
-          result.get(MainBenefitTestPage) must not be defined
+          result.get(HallmarkAPage, 0) must not be defined
+          result.get(MainBenefitTestPage, 0) must not be defined
       }
     }
 
@@ -77,15 +81,16 @@ class HallmarkCategoriesPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(HallmarkBPage, HallmarkB.values.toSet)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(HallmarkBPage, 0, HallmarkB.values.toSet)
             .success.value
-            .set(MainBenefitTestPage, true)
+            .set(MainBenefitTestPage, 0, true)
             .success.value
-            .set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+            .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
             .success.value
 
-          result.get(HallmarkBPage) must not be defined
-          result.get(MainBenefitTestPage) must not be defined
+          result.get(HallmarkBPage, 0) must not be defined
+          result.get(MainBenefitTestPage, 0) must not be defined
       }
     }
   }

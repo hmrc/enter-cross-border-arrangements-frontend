@@ -48,16 +48,17 @@ class IntermediaryRoleController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IntermediaryRolePage) match {
+      val preparedForm = request.userAnswers.get(IntermediaryRolePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> IntermediaryRole.radios(preparedForm)
       )
@@ -65,10 +66,10 @@ class IntermediaryRoleController @Inject()(
       renderer.render("reporter/intermediary/intermediaryRole.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[IntermediaryRole]): Call =
-    navigator.routeMap(IntermediaryRolePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[IntermediaryRole]): Call =
+    navigator.routeMap(IntermediaryRolePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -76,6 +77,7 @@ class IntermediaryRoleController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> IntermediaryRole.radios(formWithErrors)
           )
@@ -86,10 +88,10 @@ class IntermediaryRoleController @Inject()(
 
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryRolePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryRolePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
 
         }
       )

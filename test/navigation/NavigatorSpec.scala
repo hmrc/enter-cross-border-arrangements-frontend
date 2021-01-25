@@ -17,7 +17,6 @@
 package navigation
 
 import java.time.LocalDate
-
 import base.SpecBase
 import controllers.routes
 import generators.Generators
@@ -40,6 +39,7 @@ import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -61,7 +61,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
-            navigator.nextPage(UnknownPage, NormalMode, answers)
+            navigator.nextPage(UnknownPage, 0, NormalMode, answers)
               .mustBe(routes.IndexController.onPageLoad())
         }
       }
@@ -74,13 +74,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
                 .success
                 .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(NormalMode))
+              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -92,13 +94,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
                 .success
                 .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(NormalMode))
+              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -110,13 +114,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
                 .success
                 .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkDController.onPageLoad(NormalMode))
+              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkDController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -128,14 +134,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
                 .success.value
-                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(NormalMode))
+              .nextPage(HallmarkAPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -150,14 +158,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               HallmarkCategories.enumerable.withName("B").get)
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, hallmarkCategories)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, hallmarkCategories)
                 .success.value
-                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkAPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(NormalMode))
+              .nextPage(HallmarkAPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -169,14 +179,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
                 .success.value
-                .set(HallmarkBPage, HallmarkB.values.toSet)
+                .set(HallmarkBPage, 0, HallmarkB.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkBPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(NormalMode))
+              .nextPage(HallmarkBPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -187,13 +199,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(MainBenefitTestPage, true)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(MainBenefitTestPage, 0, true)
                 .success
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .nextPage(MainBenefitTestPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 
@@ -204,13 +218,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(MainBenefitTestPage, false)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(MainBenefitTestPage, 0, false)
                 .success
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad())
+              .nextPage(MainBenefitTestPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad(0))
         }
       }
 
@@ -221,14 +237,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkDPage, HallmarkD.values.toSet.filter(_ == D2))
+                .set(HallmarkDPage, 0, HallmarkD.values.toSet.filter(_ == D2))
                 .success.value
 
             navigator
-              .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .nextPage(HallmarkDPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 
@@ -240,14 +258,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkDPage, HallmarkD.values.toSet)
+                .set(HallmarkDPage, 0, HallmarkD.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkDPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(NormalMode))
+              .nextPage(HallmarkDPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(0, NormalMode))
         }
       }
 
@@ -258,14 +278,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkD1Page, values.toSet.filter(_ != D1other))
+                .set(HallmarkD1Page, 0, values.toSet.filter(_ != D1other))
                 .success.value
 
             navigator
-              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .nextPage(HallmarkD1Page, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 
@@ -277,14 +299,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("D").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
                 .success.value
-                .set(HallmarkD1Page, values.toSet.filter(_ == D1other))
+                .set(HallmarkD1Page, 0, values.toSet.filter(_ == D1other))
                 .success.value
 
             navigator
-              .nextPage(HallmarkD1Page, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(NormalMode))
+              .nextPage(HallmarkD1Page, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -295,18 +319,19 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("E").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("E").toSet)
                 .success.value
-                .set(HallmarkEPage, HallmarkE.values.toSet)
+                .set(HallmarkEPage, 0, HallmarkE.values.toSet)
                 .success.value
 
 
             navigator
-              .nextPage(HallmarkEPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .nextPage(HallmarkEPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
-
 
       "must go from 'You have not added any taxpayers' page to 'Is this an organisation or an individual?' " +
         "if 'No, is selected'" in {
@@ -315,11 +340,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(UpdateTaxpayerPage, No)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(UpdateTaxpayerPage, 0, No)
                 .success.value
 
             navigator
-              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
+              .nextPage(UpdateTaxpayerPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.routes.IndexController.onPageLoad())
         }
       }
@@ -331,11 +358,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(UpdateTaxpayerPage, Later)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(UpdateTaxpayerPage, 0, Later)
                 .success.value
 
             navigator
-              .nextPage(UpdateTaxpayerPage, NormalMode, updatedAnswers)
+              .nextPage(UpdateTaxpayerPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.routes.IndexController.onPageLoad())
         }
       }
@@ -347,12 +376,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(TaxpayerSelectTypePage, Organisation)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(TaxpayerSelectTypePage, 0, Organisation)
                 .success.value
 
             navigator
-              .nextPage(TaxpayerSelectTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+              .nextPage(TaxpayerSelectTypePage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -363,12 +394,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(TaxpayerSelectTypePage, Individual)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(TaxpayerSelectTypePage, 0, Individual)
                 .success.value
 
             navigator
-              .nextPage(TaxpayerSelectTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
+              .nextPage(TaxpayerSelectTypePage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -378,12 +411,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddNow)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(YouHaveNotAddedAnyIntermediariesPage, 0, YouHaveNotAddedAnyIntermediaries.YesAddNow)
                 .success.value
 
             navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(NormalMode))
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -393,11 +428,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.No)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(YouHaveNotAddedAnyIntermediariesPage, 0, YouHaveNotAddedAnyIntermediaries.No)
                 .success.value
 
             navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.routes.IndexController.onPageLoad())
         }
       }
@@ -408,11 +445,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(YouHaveNotAddedAnyIntermediariesPage, YouHaveNotAddedAnyIntermediaries.YesAddLater)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(YouHaveNotAddedAnyIntermediariesPage, 0, YouHaveNotAddedAnyIntermediaries.YesAddLater)
                 .success.value
 
             navigator
-              .nextPage(YouHaveNotAddedAnyIntermediariesPage, NormalMode, updatedAnswers)
+              .nextPage(YouHaveNotAddedAnyIntermediariesPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.routes.IndexController.onPageLoad())
         }
       }
@@ -423,12 +462,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IntermediariesTypePage, SelectType.Organisation)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IntermediariesTypePage, 0, SelectType.Organisation)
                 .success.value
 
             navigator
-              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+              .nextPage(IntermediariesTypePage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -438,12 +479,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IntermediariesTypePage, SelectType.Individual)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IntermediariesTypePage, 0, SelectType.Individual)
                 .success.value
 
             navigator
-              .nextPage(IntermediariesTypePage, NormalMode, updatedAnswers)
-              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
+              .nextPage(IntermediariesTypePage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -453,12 +496,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatTypeofIntermediaryPage, Promoter)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatTypeofIntermediaryPage, 0, Promoter)
                 .success.value
 
             navigator
-              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(NormalMode))
+              .nextPage(WhatTypeofIntermediaryPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -468,12 +513,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatTypeofIntermediaryPage, Serviceprovider)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatTypeofIntermediaryPage, 0, Serviceprovider)
                 .success.value
 
             navigator
-              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+              .nextPage(WhatTypeofIntermediaryPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -483,12 +530,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatTypeofIntermediaryPage, IDoNotKnow)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatTypeofIntermediaryPage, 0, IDoNotKnow)
                 .success.value
 
             navigator
-              .nextPage(WhatTypeofIntermediaryPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+              .nextPage(WhatTypeofIntermediaryPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -498,12 +547,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.Yes)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IsExemptionKnownPage, 0, IsExemptionKnown.Yes)
                 .success.value
 
             navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(NormalMode))
+              .nextPage(IsExemptionKnownPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -513,12 +564,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.No)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IsExemptionKnownPage, 0, IsExemptionKnown.No)
                 .success.value
 
             navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+              .nextPage(IsExemptionKnownPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -528,12 +581,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsExemptionKnownPage, IsExemptionKnown.Unknown)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IsExemptionKnownPage, 0, IsExemptionKnown.Unknown)
                 .success.value
 
             navigator
-              .nextPage(IsExemptionKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+              .nextPage(IsExemptionKnownPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -545,12 +600,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsExemptionCountryKnownPage, true)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IsExemptionCountryKnownPage, 0, true)
                 .success.value
 
             navigator
-              .nextPage(IsExemptionCountryKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(NormalMode))
+              .nextPage(IsExemptionCountryKnownPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -560,12 +617,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(IsExemptionCountryKnownPage, false)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IsExemptionCountryKnownPage, 0, false)
                 .success.value
 
             navigator
-              .nextPage(IsExemptionCountryKnownPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+              .nextPage(IsExemptionCountryKnownPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -576,13 +635,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               val updatedAnswers =
                 answers
-                  .set(ExemptCountriesPage, ExemptCountries.enumerable.withName("uk").toSet)
+                  .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                  .set(ExemptCountriesPage, 0, ExemptCountries.enumerable.withName("uk").toSet)
                   .success
                   .value
 
               navigator
-                .nextPage(ExemptCountriesPage, NormalMode, updatedAnswers)
-                .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad())
+                .nextPage(ExemptCountriesPage, 0, NormalMode, updatedAnswers)
+                .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
           }
         }
 
@@ -592,12 +652,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatIsThisArrangementCalledPage, "an arrangement")
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatIsThisArrangementCalledPage, 0, "an arrangement")
                 .success.value
 
             navigator
-              .nextPage(WhatIsThisArrangementCalledPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(NormalMode))
+              .nextPage(WhatIsThisArrangementCalledPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -607,8 +669,8 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             navigator
-              .nextPage(WhatIsTheImplementationDatePage, NormalMode, answers)
-              .mustBe(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(NormalMode))
+              .nextPage(WhatIsTheImplementationDatePage, 0, NormalMode, answers)
+              .mustBe(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -618,12 +680,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(DoYouKnowTheReasonToReportArrangementNowPage, true)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
                 .success.value
 
             navigator
-              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(NormalMode))
+              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -633,12 +697,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(DoYouKnowTheReasonToReportArrangementNowPage, false)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
                 .success.value
 
             navigator
-              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
+              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -648,12 +714,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhyAreYouReportingThisArrangementNowPage,Dac6701)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
                 .success.value
 
             navigator
-              .nextPage(WhyAreYouReportingThisArrangementNowPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(NormalMode))
+              .nextPage(WhyAreYouReportingThisArrangementNowPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -663,12 +731,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhichExpectedInvolvedCountriesArrangementPage,WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
                 .success.value
 
             navigator
-              .nextPage(WhichExpectedInvolvedCountriesArrangementPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(NormalMode))
+              .nextPage(WhichExpectedInvolvedCountriesArrangementPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -678,12 +748,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatIsTheExpectedValueOfThisArrangementPage,WhatIsTheExpectedValueOfThisArrangement("ALL", 0))
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("ALL", 0))
                 .success.value
 
             navigator
-              .nextPage(WhatIsTheExpectedValueOfThisArrangementPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(NormalMode))
+              .nextPage(WhatIsTheExpectedValueOfThisArrangementPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -693,12 +765,14 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhichNationalProvisionsIsThisArrangementBasedOnPage,"provisions")
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "provisions")
                 .success.value
 
             navigator
-              .nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(NormalMode))
+              .nextPage(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(0, NormalMode))
         }
       }
 
@@ -710,14 +784,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now)
                 .success.value
-                .set(OrganisationNamePage, "validAnswer")
+                .set(OrganisationNamePage, 0, "validAnswer")
                 .success.value
 
             navigator
-              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -727,17 +803,19 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
 
             val updatedAnswers =
-              answers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, LocalDate.now)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now)
                 .success.value
-                .remove(OrganisationNamePage)
+                .remove(OrganisationNamePage, 0)
                 .success
                 .value
-                .set(IndividualNamePage, Name("dummy","user"))
+                .set(IndividualNamePage, 0, Name("dummy","user"))
                 .success.value
 
             navigator
-              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad())
+              .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, NormalMode, updatedAnswers)
+              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
         }
       }
 
@@ -746,11 +824,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(HallmarksCheckYourAnswersPage, NormalMode, answers)
-              .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+              .nextPage(HallmarksCheckYourAnswersPage, 0, NormalMode, answers)
+              .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
         }
       }
     }
   }
 }
-

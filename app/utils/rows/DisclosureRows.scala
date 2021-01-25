@@ -24,7 +24,7 @@ import uk.gov.hmrc.viewmodels._
 
 trait DisclosureRows extends RowBuilder {
 
-  def disclosureNamePage: Option[Row] = userAnswers.get(DisclosureNamePage) map { answer =>
+  def disclosureNamePage: Option[Row] = userAnswers.getBase(DisclosureNamePage) map { answer =>
     toRow(
       msgKey  = "disclosureName",
       content = formatMaxChars(answer),
@@ -32,7 +32,7 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  private def disclosureMarketablePage: Option[Row] = userAnswers.get(DisclosureMarketablePage) map { answer =>
+  private def disclosureMarketablePage: Option[Row] = userAnswers.getBase(DisclosureMarketablePage) map { answer =>
     toRow(
       msgKey  = "disclosureMarketable",
       content = yesOrNo(answer),
@@ -40,7 +40,7 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  def disclosureTypePage: Option[Row] = userAnswers.get(DisclosureTypePage) map { answer =>
+  def disclosureTypePage: Option[Row] = userAnswers.getBase(DisclosureTypePage) map { answer =>
     toRow(
       msgKey  = "disclosureType",
       content = msg"disclosureType.$answer",
@@ -48,7 +48,7 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.get(DisclosureIdentifyArrangementPage) map { answer =>
+  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.getBase(DisclosureIdentifyArrangementPage) map { answer =>
     val arrangementID = answer.toUpperCase
     toRow(
       msgKey  = "disclosureIdentifyArrangement",
@@ -58,7 +58,7 @@ trait DisclosureRows extends RowBuilder {
   }
 
   def buildDisclosureSummaryDetails: Seq[Row] =
-    userAnswers.get(DisclosureTypePage) match {
+    userAnswers.getBase(DisclosureTypePage) match {
       case Some(Dac6new) =>
         disclosureMarketablePage.toSeq
       case Some(Dac6add) =>

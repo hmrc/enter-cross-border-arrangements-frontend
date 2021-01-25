@@ -21,7 +21,7 @@ import base.SpecBase
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
 import models.SelectType.Organisation
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -29,6 +29,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.OrganisationNamePage
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -49,9 +50,11 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(NormalMode).url
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, NormalMode).url
 
-  override val emptyUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "validAnswer").success.value
+  override val emptyUserAnswers = UserAnswers(userAnswersId)
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+    .set(OrganisationNamePage, 0, "validAnswer").success.value
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, whatIsTaxpayersStartDateForImplementingArrangementRoute)
@@ -71,10 +74,11 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(userAnswersId)
-        .set(OrganisationNamePage, "validAnswer")
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(OrganisationNamePage, 0, "validAnswer")
         .success
         .value
-        .set(TaxpayerSelectTypePage, Organisation)
+        .set(TaxpayerSelectTypePage, 0, Organisation)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -107,13 +111,14 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, validAnswer)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, validAnswer)
         .success
         .value
-        .set(OrganisationNamePage, "validAnswer")
+        .set(OrganisationNamePage, 0, "validAnswer")
         .success
         .value
-        .set(TaxpayerSelectTypePage, Organisation)
+        .set(TaxpayerSelectTypePage, 0, Organisation)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

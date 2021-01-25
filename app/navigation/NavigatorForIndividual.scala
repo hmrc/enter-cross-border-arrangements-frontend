@@ -28,108 +28,108 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForIndividual @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case IndividualNamePage =>
-      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualDateOfBirthKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualDateOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualDateOfBirthKnownPage =>
-      checkRoute => value => _ => value match {
-        case Some(true) => routes.IndividualDateOfBirthController.onPageLoad(checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => value => _ => value match {
+        case Some(true) => routes.IndividualDateOfBirthController.onPageLoad(id, checkRoute.mode)
+        case _          => jumpOrCheckYourAnswers(id, routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IndividualDateOfBirthPage =>
-      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualPlaceOfBirthKnownPage =>
-      checkRoute => value => _ => value match {
-        case Some(true) => routes.IndividualPlaceOfBirthController.onPageLoad(checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.IsIndividualAddressKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => value => _ => value match {
+        case Some(true) => routes.IndividualPlaceOfBirthController.onPageLoad(id, checkRoute.mode)
+        case _          => jumpOrCheckYourAnswers(id, routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IndividualPlaceOfBirthPage =>
-      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.IsIndividualAddressKnownController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.IsIndividualAddressKnownController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case IsIndividualAddressKnownPage =>
-      checkRoute => value => _ => value match {
-        case Some(true) => routes.IsIndividualAddressUkController.onPageLoad(checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForIndividualController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => value => _ => value match {
+        case Some(true) => routes.IsIndividualAddressUkController.onPageLoad(id, checkRoute.mode)
+        case _          => jumpOrCheckYourAnswers(id, routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
       }
 
     case IsIndividualAddressUkPage =>
-      checkRoute => value => _ => value match {
-        case Some(true)  => routes.IndividualPostcodeController.onPageLoad(checkRoute.mode)
-        case _           => routes.IndividualAddressController.onPageLoad(checkRoute.mode)
+      checkRoute => id => value => _ => value match {
+        case Some(true)  => routes.IndividualPostcodeController.onPageLoad(id, checkRoute.mode)
+        case _           => routes.IndividualAddressController.onPageLoad(id, checkRoute.mode)
       }
 
     case IndividualUkPostcodePage =>
-      checkRoute => _ => _ => routes.IndividualSelectAddressController.onPageLoad(checkRoute.mode)
+      checkRoute => id => _ => _ => routes.IndividualSelectAddressController.onPageLoad(id, checkRoute.mode)
 
     case IndividualAddressPage | IndividualSelectAddressPage =>
-      checkRoute => _ => _ => jumpOrCheckYourAnswers(routes.EmailAddressQuestionForIndividualController.onPageLoad(checkRoute.mode), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.EmailAddressQuestionForIndividualController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case EmailAddressQuestionForIndividualPage =>
-      checkRoute => value => _ => value match {
-        case Some(true) => routes.EmailAddressForIndividualController.onPageLoad(checkRoute.mode)
-        case _          => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, 0), checkRoute)
+      checkRoute => id => value => _ => value match {
+        case Some(true) => routes.EmailAddressForIndividualController.onPageLoad(id, checkRoute.mode)
+        case _          => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
       }
 
     case EmailAddressForIndividualPage =>
-      checkRoute => _ => index => jumpOrCheckYourAnswers(routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, 0), checkRoute)
+      checkRoute => id => _ => index => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
 
     case WhichCountryTaxForIndividualPage =>
-      checkRoute => value => index => value match { case Some(country: Country) =>
+      checkRoute => id => value => index => value match { case Some(country: Country) =>
         country.code match {
-          case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(checkRoute.mode, index)
-          case _    => routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(checkRoute.mode, index)
+          case "GB" => routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, checkRoute.mode, index)
+          case _    => routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(id, checkRoute.mode, index)
         }
       }
 
     case DoYouKnowAnyTINForUKIndividualPage =>
-      checkRoute => value => index => value match {
-        case Some(true)  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(checkRoute.mode, index)
-        case _           => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
+      checkRoute => id => value => index => value match {
+        case Some(true)  => routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, checkRoute.mode, index)
+        case _           => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, checkRoute.mode, index + 1)
       }
 
     case DoYouKnowTINForNonUKIndividualPage =>
-      checkRoute => value => index => value match {
-        case Some(true) => routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(checkRoute.mode, index)
-        case _          => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
+      checkRoute => id => value => index => value match {
+        case Some(true) => routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(id, checkRoute.mode, index)
+        case _          => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, checkRoute.mode, index + 1)
       }
 
     case WhatAreTheTaxNumbersForUKIndividualPage | WhatAreTheTaxNumbersForNonUKIndividualPage =>
-      checkRoute => _ => index => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(checkRoute.mode, index + 1)
+      checkRoute => id => _ => index => routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, checkRoute.mode, index + 1)
 
     case IsIndividualResidentForTaxOtherCountriesPage =>
-      checkRoute => value => index => value match {
-        case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(checkRoute.mode, index)
-        case _          => continueToParentJourney(checkRoute)
+      checkRoute => id => value => index => value match {
+        case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, index)
+        case _          => continueToParentJourney(id, checkRoute)
       }
 
     case _ =>
-      checkRoute => _ => _ => checkRoute.mode match {
+      checkRoute => id => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
-        case CheckMode  => routes.IndividualCheckYourAnswersController.onPageLoad()
+        case CheckMode  => routes.IndividualCheckYourAnswersController.onPageLoad(id)
       }
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.IndividualCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
+    _ => _ => id => _ => _ => routes.IndividualCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def continueToParentJourney(checkRoute: CheckRoute): Call = checkRoute match {
-    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(NormalMode)
-    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode)
-    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(NormalMode)
-    case _                                        => jumpOrCheckYourAnswers(routes.IndividualCheckYourAnswersController.onPageLoad(), checkRoute)
+  private[navigation] def continueToParentJourney(id: Int, checkRoute: CheckRoute): Call = checkRoute match {
+    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
+    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
+    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
+    case _                                        => jumpOrCheckYourAnswers(id, routes.IndividualCheckYourAnswersController.onPageLoad(id), checkRoute)
   }
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad()
-      case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad()
-      case IntermediariesRouting(CheckMode)          => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()
-      case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad()
+      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+      case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
+      case IntermediariesRouting(CheckMode)          => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
+      case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad(id)
       case _                                        => jumpTo
     }
   }

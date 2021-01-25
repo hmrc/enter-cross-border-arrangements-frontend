@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.PostcodeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IndividualUkPostcodePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
   private val formProvider = new PostcodeFormProvider()
   private val form = formProvider()
 
-  lazy private val postcodeRoute = controllers.individual.routes.IndividualPostcodeController.onPageLoad(NormalMode).url
+  lazy private val postcodeRoute = controllers.individual.routes.IndividualPostcodeController.onPageLoad(0, NormalMode).url
 
   "Postcode Controller" - {
 
@@ -76,7 +77,9 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualUkPostcodePage, "AA1 1AA").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IndividualUkPostcodePage, 0, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -122,7 +125,7 @@ class IndividualPostcodeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/select-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/select-address/0"
 
       application.stop()
     }

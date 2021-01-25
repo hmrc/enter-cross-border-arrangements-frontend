@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhatAreTheTaxNumbersForUKOrganisationPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -49,7 +50,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
   val index = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKOrganisation Controller" - {
 
@@ -58,7 +59,9 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(OrganisationNamePage, 0, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,10 +93,11 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhatAreTheTaxNumbersForUKOrganisationPage, taxReferenceNumbers)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatAreTheTaxNumbersForUKOrganisationPage, 0, taxReferenceNumbers)
         .success
         .value
-        .set(OrganisationLoopPage, IndexedSeq(
+        .set(OrganisationLoopPage, 0, IndexedSeq(
           LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
         )
         .success
@@ -150,7 +154,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/tax-resident-countries-1"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/tax-resident-countries-1/0"
 
       application.stop()
     }

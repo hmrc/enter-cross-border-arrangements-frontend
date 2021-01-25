@@ -50,22 +50,22 @@ class ReporterOrganisationSelectAddressController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  private def manualAddressURL(mode: Mode): String = routes.ReporterOrganisationAddressController.onPageLoad(mode).url
+  private def manualAddressURL(id: Int, mode: Mode): String = routes.ReporterOrganisationAddressController.onPageLoad(id, mode).url
 
-  def actionUrl(mode: Mode) = routes.ReporterOrganisationSelectAddressController.onSubmit(mode).url
+  private def actionUrl(id: Int, mode: Mode): String = routes.ReporterOrganisationSelectAddressController.onSubmit(id, mode).url
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = getPostCodeFromRequest(request)
+      val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-        case Nil => Future.successful(Redirect(manualAddressURL(mode)))
+        case Nil => Future.successful(Redirect(manualAddressURL(id, mode)))
         case addresses =>
 
-          val preparedForm = request.userAnswers.get(ReporterOrganisationSelectAddressPage) match {
+          val preparedForm = request.userAnswers.get(ReporterOrganisationSelectAddressPage, id) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -79,30 +79,30 @@ class ReporterOrganisationSelectAddressController @Inject()(
               "radios" -> radios,
               "pageTitle" -> "reporterOrganisationAddress.title",
               "pageHeading" -> "reporterOrganisationAddress.heading",
-              "name" -> getReporterDetailsOrganisationName(request.userAnswers),
-              "manualAddressURL" -> manualAddressURL(mode),
-              "actionUrl" -> actionUrl(mode)
+              "name" -> getReporterDetailsOrganisationName(request.userAnswers, id),
+              "manualAddressURL" -> manualAddressURL(id, mode),
+              "actionUrl" -> actionUrl(id, mode)
 
         )
 
             renderer.render("reporter/reporterSelectAddress.njk", json).map(Ok(_))
       } recover {
-        case _: Exception => Redirect(manualAddressURL(mode))
+        case _: Exception => Redirect(manualAddressURL(id, mode))
       }
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
     if (isAlt) {
-      navigator.routeAltMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeAltMap(ReporterOrganisationSelectAddressPage)(checkRoute)(id)(value)(0)
     }
     else {
-      navigator.routeMap(ReporterOrganisationSelectAddressPage)(checkRoute)(value)(0)
+      navigator.routeMap(ReporterOrganisationSelectAddressPage)(checkRoute)(id)(value)(0)
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val postCode = getPostCodeFromRequest(request)
+      val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         addresses =>
@@ -117,9 +117,9 @@ class ReporterOrganisationSelectAddressController @Inject()(
                 "radios" -> radios,
                 "pageTitle" -> "reporterOrganisationAddress.title",
                 "pageHeading" -> "reporterOrganisationAddress.heading",
-                "name" -> getReporterDetailsOrganisationName(request.userAnswers),
-                "manualAddressURL" -> manualAddressURL(mode),
-                "actionUrl" -> actionUrl(mode)
+                "name" -> getReporterDetailsOrganisationName(request.userAnswers, id),
+                "manualAddressURL" -> manualAddressURL(id, mode),
+                "actionUrl" -> actionUrl(id, mode)
               )
 
               renderer.render("reporter/reporterSelectAddress.njk", json).map(BadRequest(_))
@@ -127,21 +127,21 @@ class ReporterOrganisationSelectAddressController @Inject()(
             value => {
               val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
-              val redirectUsers = hasValueChanged(value, ReporterOrganisationSelectAddressPage, mode, request.userAnswers)
+              val redirectUsers = hasValueChanged(value, id, ReporterOrganisationSelectAddressPage, mode, request.userAnswers)
 
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationSelectAddressPage, value))
-                updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, addressToStore))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationSelectAddressPage, id, value))
+                updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, id, addressToStore))
                 _ <- sessionRepository.set(updatedAnswersWithAddress)
-                checkRoute = toCheckRoute(mode, updatedAnswersWithAddress)
-              } yield Redirect(redirect(checkRoute, Some(value), redirectUsers))
+                checkRoute = toCheckRoute(mode, updatedAnswersWithAddress, id)
+              } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
             }
           )
       }
   }
 
-  private def getPostCodeFromRequest[A](request: DataRequest[A]): String =
-    request.userAnswers.get(ReporterOrganisationPostcodePage) match {
+  private def getPostCodeFromRequest[A](request: DataRequest[A], id: Int): String =
+    request.userAnswers.get(ReporterOrganisationPostcodePage, id) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
       case None => ""
     }

@@ -17,11 +17,13 @@
 package pages.enterprises
 
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UserAnswers}
+import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.disclosure.DisclosureDetailsPage
 import pages.individual._
 import pages.organisation._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
 
@@ -40,75 +42,76 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
       forAll(arbitrary[Country], arbitrary[Address], arbitrary[IndexedSeq[LoopDetails]], arbitrary[TaxReferenceNumbers]) {
         (country, address, loopDetails, taxRefNumbers) =>
           val result = UserAnswers("id")
-            .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Taxpayer"))
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer"))
             .success.value
-            .set(AssociatedEnterpriseTypePage, SelectType.Individual)
+            .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
             .success.value
-            .set(IndividualNamePage, Name("First", "Last"))
+            .set(IndividualNamePage, 0, Name("First", "Last"))
             .success.value
-            .set(IndividualDateOfBirthPage, LocalDate.now())
+            .set(IndividualDateOfBirthPage, 0, LocalDate.now())
             .success.value
-            .set(IsIndividualPlaceOfBirthKnownPage, true)
+            .set(IsIndividualPlaceOfBirthKnownPage, 0, true)
             .success.value
-            .set(IsIndividualDateOfBirthKnownPage, true)
+            .set(IsIndividualDateOfBirthKnownPage, 0, true)
             .success.value
-            .set(IndividualPlaceOfBirthPage, "Place of birth")
+            .set(IndividualPlaceOfBirthPage, 0, "Place of birth")
             .success.value
-            .set(IsIndividualAddressKnownPage, true)
+            .set(IsIndividualAddressKnownPage, 0, true)
             .success.value
-            .set(IsIndividualAddressUkPage, true)
+            .set(IsIndividualAddressUkPage, 0, true)
             .success.value
-            .set(IndividualUkPostcodePage, "ZZ1 1ZZ")
+            .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
             .success.value
-            .set(IndividualSelectAddressPage, "Some address")
+            .set(IndividualSelectAddressPage, 0, "Some address")
             .success.value
-            .set(IndividualAddressPage, address)
+            .set(IndividualAddressPage, 0, address)
             .success.value
-            .set(EmailAddressQuestionForIndividualPage, true)
+            .set(EmailAddressQuestionForIndividualPage, 0, true)
             .success.value
-            .set(EmailAddressForIndividualPage, "email@email.com")
+            .set(EmailAddressForIndividualPage, 0, "email@email.com")
             .success.value
-            .set(WhichCountryTaxForIndividualPage, country)
+            .set(WhichCountryTaxForIndividualPage, 0, country)
             .success.value
-            .set(DoYouKnowAnyTINForUKIndividualPage, true)
+            .set(DoYouKnowAnyTINForUKIndividualPage, 0, true)
             .success.value
-            .set(WhatAreTheTaxNumbersForUKIndividualPage, taxRefNumbers)
+            .set(WhatAreTheTaxNumbersForUKIndividualPage, 0, taxRefNumbers)
             .success.value
-            .set(IsIndividualResidentForTaxOtherCountriesPage, true)
+            .set(IsIndividualResidentForTaxOtherCountriesPage, 0, true)
             .success.value
-            .set(DoYouKnowTINForNonUKIndividualPage, true)
+            .set(DoYouKnowTINForNonUKIndividualPage, 0, true)
             .success.value
-            .set(WhatAreTheTaxNumbersForNonUKIndividualPage, taxRefNumbers)
+            .set(WhatAreTheTaxNumbersForNonUKIndividualPage, 0, taxRefNumbers)
             .success.value
-            .set(IndividualLoopPage, loopDetails)
+            .set(IndividualLoopPage, 0, loopDetails)
             .success.value
-            .set(IsAssociatedEnterpriseAffectedPage, true)
+            .set(IsAssociatedEnterpriseAffectedPage, 0, true)
             .success.value
-            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
             .success.value
 
-          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) mustBe None
-          result.get(AssociatedEnterpriseTypePage) mustBe None
-          result.get(IndividualNamePage) mustBe None
-          result.get(IndividualDateOfBirthPage) mustBe None
-          result.get(IsIndividualPlaceOfBirthKnownPage) mustBe None
-          result.get(IsIndividualDateOfBirthKnownPage) mustBe None
-          result.get(IndividualPlaceOfBirthPage) mustBe None
-          result.get(IsIndividualAddressKnownPage) mustBe None
-          result.get(IsIndividualAddressUkPage) mustBe None
-          result.get(IndividualUkPostcodePage) mustBe None
-          result.get(IndividualSelectAddressPage) mustBe None
-          result.get(IndividualAddressPage) mustBe None
-          result.get(EmailAddressQuestionForIndividualPage) mustBe None
-          result.get(EmailAddressForIndividualPage) mustBe None
-          result.get(WhichCountryTaxForIndividualPage) mustBe None
-          result.get(DoYouKnowAnyTINForUKIndividualPage) mustBe None
-          result.get(WhatAreTheTaxNumbersForUKIndividualPage) mustBe None
-          result.get(IsIndividualResidentForTaxOtherCountriesPage) mustBe None
-          result.get(DoYouKnowTINForNonUKIndividualPage) mustBe None
-          result.get(WhatAreTheTaxNumbersForNonUKIndividualPage) mustBe None
-          result.get(IndividualLoopPage) mustBe None
-          result.get(IsAssociatedEnterpriseAffectedPage) mustBe None
+          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe None
+          result.get(AssociatedEnterpriseTypePage, 0) mustBe None
+          result.get(IndividualNamePage, 0) mustBe None
+          result.get(IndividualDateOfBirthPage, 0) mustBe None
+          result.get(IsIndividualPlaceOfBirthKnownPage, 0) mustBe None
+          result.get(IsIndividualDateOfBirthKnownPage, 0) mustBe None
+          result.get(IndividualPlaceOfBirthPage, 0) mustBe None
+          result.get(IsIndividualAddressKnownPage, 0) mustBe None
+          result.get(IsIndividualAddressUkPage, 0) mustBe None
+          result.get(IndividualUkPostcodePage, 0) mustBe None
+          result.get(IndividualSelectAddressPage, 0) mustBe None
+          result.get(IndividualAddressPage, 0) mustBe None
+          result.get(EmailAddressQuestionForIndividualPage, 0) mustBe None
+          result.get(EmailAddressForIndividualPage, 0) mustBe None
+          result.get(WhichCountryTaxForIndividualPage, 0) mustBe None
+          result.get(DoYouKnowAnyTINForUKIndividualPage, 0) mustBe None
+          result.get(WhatAreTheTaxNumbersForUKIndividualPage, 0) mustBe None
+          result.get(IsIndividualResidentForTaxOtherCountriesPage, 0) mustBe None
+          result.get(DoYouKnowTINForNonUKIndividualPage, 0) mustBe None
+          result.get(WhatAreTheTaxNumbersForNonUKIndividualPage, 0) mustBe None
+          result.get(IndividualLoopPage, 0) mustBe None
+          result.get(IsAssociatedEnterpriseAffectedPage, 0) mustBe None
       }
     }
 
@@ -117,63 +120,64 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
       forAll(arbitrary[Country], arbitrary[Address], arbitrary[IndexedSeq[LoopDetails]], arbitrary[TaxReferenceNumbers]) {
         (country, address, loopDetails, taxRefNumbers) =>
           val result = UserAnswers("id")
-            .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, List("Taxpayer"))
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer"))
             .success.value
-            .set(AssociatedEnterpriseTypePage, SelectType.Organisation)
+            .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
             .success.value
-            .set(OrganisationNamePage, "Organisation name")
+            .set(OrganisationNamePage, 0, "Organisation name")
             .success.value
-            .set(IsOrganisationAddressKnownPage, true)
+            .set(IsOrganisationAddressKnownPage, 0, true)
             .success.value
-            .set(IsOrganisationAddressUkPage, true)
+            .set(IsOrganisationAddressUkPage, 0, true)
             .success.value
-            .set(SelectAddressPage, "Some address")
+            .set(SelectAddressPage, 0, "Some address")
             .success.value
-            .set(PostcodePage, "ZZ1 1ZZ")
+            .set(PostcodePage, 0, "ZZ1 1ZZ")
             .success.value
-            .set(OrganisationAddressPage, address)
+            .set(OrganisationAddressPage, 0, address)
             .success.value
-            .set(EmailAddressQuestionForOrganisationPage, true)
+            .set(EmailAddressQuestionForOrganisationPage, 0, true)
             .success.value
-            .set(EmailAddressForOrganisationPage, "email@email.com")
+            .set(EmailAddressForOrganisationPage, 0, "email@email.com")
             .success.value
-            .set(WhichCountryTaxForOrganisationPage, country)
+            .set(WhichCountryTaxForOrganisationPage, 0, country)
             .success.value
-            .set(DoYouKnowAnyTINForUKOrganisationPage, true)
+            .set(DoYouKnowAnyTINForUKOrganisationPage, 0, true)
             .success.value
-            .set(WhatAreTheTaxNumbersForUKOrganisationPage, taxRefNumbers)
+            .set(WhatAreTheTaxNumbersForUKOrganisationPage, 0, taxRefNumbers)
             .success.value
-            .set(IsOrganisationResidentForTaxOtherCountriesPage, true)
+            .set(IsOrganisationResidentForTaxOtherCountriesPage, 0, true)
             .success.value
-            .set(DoYouKnowTINForNonUKOrganisationPage, true)
+            .set(DoYouKnowTINForNonUKOrganisationPage, 0, true)
             .success.value
-            .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, taxRefNumbers)
+            .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0, taxRefNumbers)
             .success.value
-            .set(OrganisationLoopPage, loopDetails)
+            .set(OrganisationLoopPage, 0, loopDetails)
             .success.value
-            .set(IsAssociatedEnterpriseAffectedPage, false)
+            .set(IsAssociatedEnterpriseAffectedPage, 0, false)
             .success.value
-            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
             .success.value
 
-          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage) mustBe None
-          result.get(AssociatedEnterpriseTypePage) mustBe None
-          result.get(OrganisationNamePage) mustBe None
-          result.get(IsOrganisationAddressKnownPage) mustBe None
-          result.get(IsOrganisationAddressUkPage) mustBe None
-          result.get(SelectAddressPage) mustBe None
-          result.get(PostcodePage) mustBe None
-          result.get(OrganisationAddressPage) mustBe None
-          result.get(EmailAddressQuestionForOrganisationPage) mustBe None
-          result.get(EmailAddressForOrganisationPage) mustBe None
-          result.get(WhichCountryTaxForOrganisationPage) mustBe None
-          result.get(DoYouKnowAnyTINForUKOrganisationPage) mustBe None
-          result.get(WhatAreTheTaxNumbersForUKOrganisationPage) mustBe None
-          result.get(IsOrganisationResidentForTaxOtherCountriesPage) mustBe None
-          result.get(DoYouKnowTINForNonUKOrganisationPage) mustBe None
-          result.get(WhatAreTheTaxNumbersForNonUKOrganisationPage) mustBe None
-          result.get(OrganisationLoopPage) mustBe None
-          result.get(IsAssociatedEnterpriseAffectedPage) mustBe None
+          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe None
+          result.get(AssociatedEnterpriseTypePage, 0) mustBe None
+          result.get(OrganisationNamePage, 0) mustBe None
+          result.get(IsOrganisationAddressKnownPage, 0) mustBe None
+          result.get(IsOrganisationAddressUkPage, 0) mustBe None
+          result.get(SelectAddressPage, 0) mustBe None
+          result.get(PostcodePage, 0) mustBe None
+          result.get(OrganisationAddressPage, 0) mustBe None
+          result.get(EmailAddressQuestionForOrganisationPage, 0) mustBe None
+          result.get(EmailAddressForOrganisationPage, 0) mustBe None
+          result.get(WhichCountryTaxForOrganisationPage, 0) mustBe None
+          result.get(DoYouKnowAnyTINForUKOrganisationPage, 0) mustBe None
+          result.get(WhatAreTheTaxNumbersForUKOrganisationPage, 0) mustBe None
+          result.get(IsOrganisationResidentForTaxOtherCountriesPage, 0) mustBe None
+          result.get(DoYouKnowTINForNonUKOrganisationPage, 0) mustBe None
+          result.get(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0) mustBe None
+          result.get(OrganisationLoopPage, 0) mustBe None
+          result.get(IsAssociatedEnterpriseAffectedPage, 0) mustBe None
       }
     }
   }

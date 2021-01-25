@@ -22,7 +22,8 @@ import play.api.mvc.Call
 
 class FakeIndividualNavigator(val desiredRoute: Call) extends NavigatorForIndividual {
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ => _ => _ => _ => desiredRoute
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
+    _ => _ => _ => _ => _ => desiredRoute
 
 }
 

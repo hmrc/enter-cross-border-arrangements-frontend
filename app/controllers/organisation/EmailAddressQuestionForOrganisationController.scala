@@ -48,17 +48,18 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailAddressQuestionForOrganisationPage) match {
+      val preparedForm = request.userAnswers.get(EmailAddressQuestionForOrganisationPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "organisationName" -> getOrganisationName(request.userAnswers),
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
@@ -66,10 +67,10 @@ class EmailAddressQuestionForOrganisationController @Inject()(
       renderer.render("organisation/emailAddressQuestionForOrganisation.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(EmailAddressQuestionForOrganisationPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(EmailAddressQuestionForOrganisationPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -77,7 +78,8 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "organisationName" -> getOrganisationName(request.userAnswers),
+            "organisationName" -> getOrganisationName(request.userAnswers, id),
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
@@ -92,10 +94,10 @@ class EmailAddressQuestionForOrganisationController @Inject()(
           }
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

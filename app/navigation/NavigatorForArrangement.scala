@@ -28,25 +28,25 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForArrangement @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case ArrangementCheckYourAnswersPage =>
-      _ => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad()
+      _ => id => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad(id)
 
     case _ =>
-      checkRoute => _ => _ => checkRoute.mode match {
+      checkRoute => id => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => controllers.routes.IndexController.onPageLoad()
       }
 
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.ArrangementCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
+    _ => _ => id => _ => _ => routes.ArrangementCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.ArrangementCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)               => routes.ArrangementCheckYourAnswersController.onPageLoad(id)
       case _                                       => jumpTo
     }
   }

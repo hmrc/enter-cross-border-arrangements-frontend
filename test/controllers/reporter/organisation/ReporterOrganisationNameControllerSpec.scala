@@ -19,12 +19,13 @@ package controllers.reporter.organisation
 import base.SpecBase
 import forms.reporter.organisation.ReporterOrganisationNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
   val formProvider = new ReporterOrganisationNameFormProvider()
   val form = formProvider()
 
-  lazy val reporterOrganisationNameRoute = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(NormalMode).url
+  lazy val reporterOrganisationNameRoute = controllers.reporter.organisation.routes.ReporterOrganisationNameController.onPageLoad(0, NormalMode).url
 
   "ReporterOrganisationName Controller" - {
 
@@ -76,7 +77,9 @@ class ReporterOrganisationNameControllerSpec extends SpecBase with MockitoSugar 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterOrganisationNamePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationNamePage, 0, "answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterOrganisationNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

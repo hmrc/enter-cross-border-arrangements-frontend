@@ -19,12 +19,13 @@ package controllers.enterprises
 import base.SpecBase
 import forms.enterprises.AssociatedEnterpriseTypeFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.AssociatedEnterpriseTypePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -41,7 +42,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
   private val formProvider = new AssociatedEnterpriseTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(NormalMode).url
+  lazy private val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(0, NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -78,7 +79,9 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(AssociatedEnterpriseTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -125,7 +128,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name/0"
 
       application.stop()
     }
@@ -160,10 +163,11 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
     }
 
     "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
-      val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
+      val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(0, CheckMode).url
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers = UserAnswers(userAnswersId)
-        .set(AssociatedEnterpriseTypePage, SelectType.values.head)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
         .success
         .value
 
@@ -184,7 +188,7 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with MockitoSugar 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/check-answers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/check-answers/0"
 
       application.stop()
     }

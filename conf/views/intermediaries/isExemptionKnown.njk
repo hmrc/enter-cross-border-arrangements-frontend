@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.intermediaries.IsExemptionKnownController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.intermediaries.IsExemptionKnownController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

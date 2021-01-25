@@ -28,7 +28,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(id, mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-       <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(mode).url }}" method="post">
+       <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(id, mode).url }}" method="post">
         <fieldset class="govuk-fieldset">
 
         {{ csrf() | safe }}

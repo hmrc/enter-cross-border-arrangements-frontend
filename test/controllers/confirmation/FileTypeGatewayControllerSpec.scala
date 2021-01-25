@@ -17,10 +17,11 @@
 package controllers.confirmation
 
 import base.SpecBase
-import models.UserAnswers
-import models.disclosure.DisclosureType
+import models.{UnsubmittedDisclosure, UserAnswers}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.DisclosureTypePage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureTypePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -30,36 +31,49 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to NEW disclosure received when disclosure type is NEW" in {
 
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true
+      )
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureTypePage, DisclosureType.Dac6new)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting().url)
+      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/disclosure-received"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/disclosure-received/0"
 
       application.stop()
     }
 
     "redirect to ADDED disclosure received when disclosure type is ADDED" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6add,
+        initialDisclosureMA = true
+      )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DisclosureTypePage, DisclosureType.Dac6add)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting().url)
+      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/addition-received"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/addition-received/0"
 
       application.stop()
     }

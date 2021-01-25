@@ -23,11 +23,15 @@ import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnt
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
 import models.{Country, NormalMode, UserAnswers}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.{AssociatedEnterpriseLoopPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +44,7 @@ import scala.concurrent.Future
 
 class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(NormalMode).url
+  lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 
   private val formProvider = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()
   private val form = formProvider()
@@ -92,9 +96,11 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, YouHaveNotAddedAnyAssociatedEnterprises.values.head)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success.value
-        .set(AssociatedEnterpriseLoopPage, enterpriseLoop)
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.values.head)
+        .success.value
+        .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -146,7 +152,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/taxpayers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/taxpayers/0"
 
       application.stop()
     }

@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -43,7 +44,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val doYouKnowTINForNonUKIndividualRoute = controllers.individual.routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowTINForNonUKIndividualRoute = controllers.individual.routes.DoYouKnowTINForNonUKIndividualController.onPageLoad(0, NormalMode, index).url
 
 
   "DoYouKnowTINForNonUKIndividual Controller" - {
@@ -81,9 +82,10 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowTINForNonUKIndividualPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DoYouKnowTINForNonUKIndividualPage, 0, true)
         .success.value
-        .set(IndividualLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -135,7 +137,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/non-uk-tax-numbers-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/non-uk-tax-numbers-0/0"
 
       application.stop()
     }
@@ -161,7 +163,7 @@ class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1/0"
 
       application.stop()
     }

@@ -18,10 +18,11 @@ package controllers.reporter.taxpayer
 
 import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
-import models.disclosure.DisclosureType
-import models.{NormalMode, UserAnswers}
+import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, route, status, writeableOf_AnyContentAsEmpty, _}
@@ -51,32 +52,41 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
       "either from a new arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6new,
+          initialDisclosureMA = true
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, DisclosureType.Dac6new)
-          .success.value
-          .set(DisclosureMarketablePage, true)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date/0"
 
         application.stop()
       }
 
       "or from an added arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6add,
+          arrangementID = Some(id),
+          initialDisclosureMA = true
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, DisclosureType.Dac6add)
-          .success.value
-          .set(DisclosureIdentifyArrangementPage, id)
-          .success.value
-          .set(DisclosureMarketablePage, true)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -85,13 +95,13 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           )
           .build()
 
-        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date/0"
 
         application.stop()
       }
@@ -102,32 +112,40 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
       "either from a new arrangement " in {
 
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6new,
+          initialDisclosureMA = false
+        )
+
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, DisclosureType.Dac6new)
-          .success.value
-          .set(DisclosureMarketablePage, false)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers/0"
 
         application.stop()
       }
 
       "or from an added arrangement " in {
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6add,
+          arrangementID = Some(id),
+          initialDisclosureMA = false
+        )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, DisclosureType.Dac6add)
-          .success.value
-          .set(DisclosureIdentifyArrangementPage, id)
-          .success.value
-          .set(DisclosureMarketablePage, false)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -136,13 +154,13 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           )
           .build()
 
-        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers/0"
 
         application.stop()}
 

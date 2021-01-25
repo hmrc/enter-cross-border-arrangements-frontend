@@ -47,61 +47,61 @@ class ReporterCheckYourAnswersController  @Inject()(
    renderer: Renderer
  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, helper)
-      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter
-      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, helper)
+      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper)
+      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id)
+      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper)
 
       renderer.render(
         "reporter/reporterCheckYourAnswers.njk",
         Json.obj("reporterDetails" -> reporterDetails,
           "residentCountryDetails" -> residentCountryDetails,
-          "roleDetails" -> roleDetails
-
+          "roleDetails" -> roleDetails,
+          "id" -> id
         )
       ).map(Ok(_))
   }
 
-  private def getOrganisationOrIndividualSummary(ua: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-    ua.get(ReporterOrganisationOrIndividualPage) match {
+  private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Organisation) =>
-        Seq(helper.reporterOrganisationOrIndividual ++
-        helper.reporterOrganisationName ++
-        helper.buildOrganisationReporterAddressGroup ++
-        helper.buildReporterOrganisationEmailGroup).flatten
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+        helper.reporterOrganisationName(id) ++
+        helper.buildOrganisationReporterAddressGroup(id) ++
+        helper.buildReporterOrganisationEmailGroup(id)).flatten
 
       case _ =>
-        Seq(helper.reporterOrganisationOrIndividual ++
-        helper.reporterIndividualName ++
-        helper.reporterIndividualDateOfBirth ++
-        helper.reporterIndividualPlaceOfBirth ++
-        helper.buildIndividualReporterAddressGroup ++
-        helper.buildReporterIndividualEmailGroup).flatten
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+        helper.reporterIndividualName(id) ++
+        helper.reporterIndividualDateOfBirth(id) ++
+        helper.reporterIndividualPlaceOfBirth(id) ++
+        helper.buildIndividualReporterAddressGroup(id) ++
+        helper.buildReporterIndividualEmailGroup(id)).flatten
     }
   }
 
-  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-    ua.get(RoleInArrangementPage) match {
+  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(RoleInArrangementPage, id) match {
       case Some(Intermediary) =>
-        Seq(helper.roleInArrangementPage ++
-          helper.intermediaryWhyReportInUKPage ++
-          helper.intermediaryRolePage ++
-          helper.buildExemptCountriesSummary).flatten
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.intermediaryWhyReportInUKPage(id) ++
+          helper.intermediaryRolePage(id) ++
+          helper.buildExemptCountriesSummary(id)).flatten
 
       case _ =>
-        Seq(helper.roleInArrangementPage ++
-          helper.buildTaxpayerReporterReasonGroup ++
-          helper.taxpayerImplementationDate).flatten
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.buildTaxpayerReporterReasonGroup(id) ++
+          helper.taxpayerImplementationDate(id)).flatten
 
     }
   }
 
-    def onContinue: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
       implicit request =>
-            Future.successful(Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(0)))
+            Future.successful(Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0)))
     }
 }

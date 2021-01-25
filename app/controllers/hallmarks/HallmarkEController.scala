@@ -47,16 +47,17 @@ class HallmarkEController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkEPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkEPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkE.checkboxes(preparedForm)
       )
@@ -64,7 +65,7 @@ class HallmarkEController @Inject()(
       renderer.render("hallmarks/hallmarkE.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -72,6 +73,7 @@ class HallmarkEController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> HallmarkE.checkboxes(formWithErrors)
           )
@@ -80,9 +82,9 @@ class HallmarkEController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkEPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkEPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkEPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkEPage, id, mode, updatedAnswers))
       )
   }
 }

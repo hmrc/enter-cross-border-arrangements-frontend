@@ -46,23 +46,24 @@ class HallmarkD1OtherController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkD1OtherPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkD1OtherPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
       renderer.render("hallmarks/hallmarkD1Other.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -70,6 +71,7 @@ class HallmarkD1OtherController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 
@@ -77,9 +79,9 @@ class HallmarkD1OtherController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1OtherPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1OtherPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkD1OtherPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkD1OtherPage, id, mode, updatedAnswers))
       )
   }
 }

@@ -42,11 +42,11 @@ object Intermediary {
 
   private def generateId = UUID.randomUUID.toString
 
-  def getIntermediaryAnswers(ua: UserAnswers): (WhatTypeofIntermediary, IsExemptionKnown, Option[Boolean], Option[Set[ExemptCountries]]) = {
-    (ua.get(WhatTypeofIntermediaryPage),
-      ua.get(IsExemptionKnownPage),
-      ua.get(IsExemptionCountryKnownPage),
-      ua.get(ExemptCountriesPage)) match {
+  def getIntermediaryAnswers(ua: UserAnswers, id: Int): (WhatTypeofIntermediary, IsExemptionKnown, Option[Boolean], Option[Set[ExemptCountries]]) = {
+    (ua.get(WhatTypeofIntermediaryPage, id),
+      ua.get(IsExemptionKnownPage, id),
+      ua.get(IsExemptionCountryKnownPage, id),
+      ua.get(ExemptCountriesPage, id)) match {
       case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
         (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
       case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None)
@@ -58,11 +58,11 @@ object Intermediary {
     }
   }
 
-  private def buildIndividualIntermediary(ua: UserAnswers): Intermediary = {
-    val intermediaryAnswers = getIntermediaryAnswers(ua)
+  private def buildIndividualIntermediary(ua: UserAnswers, id: Int): Intermediary = {
+    val intermediaryAnswers = getIntermediaryAnswers(ua, id)
     new Intermediary(
                 intermediaryId = generateId,
-                individual = Some(Individual.buildIndividualDetails(ua)),
+                individual = Some(Individual.buildIndividualDetails(ua, id)),
                 None,
                 intermediaryAnswers._1,
                 intermediaryAnswers._2,
@@ -71,12 +71,12 @@ object Intermediary {
               )
   }
 
-  private def buildOrganisationIntermediary(ua: UserAnswers): Intermediary = {
-    val intermediaryAnswers = getIntermediaryAnswers(ua)
+  private def buildOrganisationIntermediary(ua: UserAnswers, id: Int): Intermediary = {
+    val intermediaryAnswers = getIntermediaryAnswers(ua, id)
     new Intermediary(
       intermediaryId = generateId,
       None,
-      organisation = Some(Organisation.buildOrganisationDetails(ua)),
+      organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
       intermediaryAnswers._1,
       intermediaryAnswers._2,
       intermediaryAnswers._3,
@@ -85,10 +85,10 @@ object Intermediary {
   }
 
 
-  def buildIntermediaryDetails(ua: UserAnswers): Intermediary = {
-    ua.get(IntermediariesTypePage) match {
-      case Some(SelectType.Organisation) =>buildOrganisationIntermediary(ua)
-      case Some(SelectType.Individual) => buildIndividualIntermediary(ua)
+  def buildIntermediaryDetails(ua: UserAnswers, id: Int): Intermediary = {
+    ua.get(IntermediariesTypePage, id) match {
+      case Some(SelectType.Organisation) => buildOrganisationIntermediary(ua, id)
+      case Some(SelectType.Individual)   => buildIndividualIntermediary(ua, id)
       case _ => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }

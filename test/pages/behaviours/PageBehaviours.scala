@@ -17,12 +17,13 @@
 package pages.behaviours
 
 import generators.Generators
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UnsubmittedIndex, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
 import pages.QuestionPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json._
 
 trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with OptionValues with TryValues {
@@ -41,13 +42,15 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
             val gen: Gen[(P, UserAnswers)] = for {
               page        <- genP
               userAnswers <- arbitrary[UserAnswers]
-              json        =  userAnswers.data.removeObject(page.path).asOpt.getOrElse(userAnswers.data)
+              json        =  userAnswers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .data.removeObject(page.path).asOpt.getOrElse(userAnswers.data)
             } yield (page, userAnswers.copy(data = json))
 
             forAll(gen) {
               case (page, userAnswers) =>
 
-                userAnswers.get(page) must be(empty)
+                userAnswers.get(page, 0) must be(empty)
             }
           }
         }
@@ -63,13 +66,15 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
               page        <- genP
               savedValue  <- arbitrary[A]
               userAnswers <- arbitrary[UserAnswers]
-              json        =  userAnswers.data.setObject(page.path, Json.toJson(savedValue)).asOpt.value
-            } yield (page, savedValue, userAnswers.copy(data = json))
+              } yield (page, savedValue, userAnswers)
 
             forAll(gen) {
               case (page, savedValue, userAnswers) =>
+                val updatedAnswers = userAnswers
+                  .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                  .set(page, 0, savedValue).success.value
 
-                userAnswers.get(page).value mustEqual savedValue
+                updatedAnswers.get(page, 0).value mustEqual savedValue
             }
           }
         }
@@ -91,8 +96,10 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
         forAll(gen) {
           case (page, newValue, userAnswers) =>
 
-            val updatedAnswers = userAnswers.set(page, newValue).success.value
-            updatedAnswers.get(page).value mustEqual newValue
+            val updatedAnswers = userAnswers
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+              .set(page, 0, newValue).success.value
+            updatedAnswers.get(page, 0).value mustEqual newValue
         }
       }
     }
@@ -107,13 +114,18 @@ trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           page        <- genP
           savedValue  <- arbitrary[A]
           userAnswers <- arbitrary[UserAnswers]
-        } yield (page, userAnswers.set(page, savedValue).success.value)
+        } yield (
+          page,
+          userAnswers
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(page, 0, savedValue).success.value
+        )
 
         forAll(gen) {
           case (page, userAnswers) =>
 
-            val updatedAnswers = userAnswers.remove(page).success.value
-            updatedAnswers.get(page) must be(empty)
+            val updatedAnswers = userAnswers.remove(page, 0).success.value
+            updatedAnswers.get(page, 0) must be(empty)
         }
       }
     }

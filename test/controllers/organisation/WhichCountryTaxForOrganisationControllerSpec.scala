@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhichCountryTaxForOrganisationPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -48,7 +49,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val whichCountryTaxForOrganisationRoute: String = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val whichCountryTaxForOrganisationRoute: String = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "WhichCountryTaxForOrganisation Controller" - {
 
@@ -59,7 +60,9 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
-      val updatedUserAnswers = UserAnswers(userAnswersId).set(OrganisationNamePage, "Paper Org").success.value
+      val updatedUserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(OrganisationNamePage, 0, "Paper Org").success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers))
         .overrides(
           bind[CountryListFactory].toInstance(mockCountryFactory)
@@ -93,9 +96,10 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(WhichCountryTaxForOrganisationPage, selectedCountry)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhichCountryTaxForOrganisationPage, 0, selectedCountry)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -145,7 +149,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/resident-country-tin-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/resident-country-tin-0/0"
 
       application.stop()
     }

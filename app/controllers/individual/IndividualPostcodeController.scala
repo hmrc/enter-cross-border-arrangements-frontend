@@ -50,24 +50,24 @@ class IndividualPostcodeController @Inject()(
 
   implicit val alternativeText: String = "the individual's"
 
-  private def manualAddressURL(mode: Mode): String = routes.IndividualAddressController.onPageLoad(mode).url //Todo update to correct value
+  private def manualAddressURL(mode: Mode, id: Int): String = routes.IndividualAddressController.onPageLoad(id, mode).url //Todo update to correct value
 
-  private def actionUrl(mode: Mode) = routes.IndividualPostcodeController.onSubmit(mode).url
+  private def actionUrl(mode: Mode, id: Int) = routes.IndividualPostcodeController.onSubmit(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val preparedForm = request.userAnswers.get(IndividualUkPostcodePage) match {
+      val preparedForm = request.userAnswers.get(IndividualUkPostcodePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "displayName" -> getIndividualName(request.userAnswers),
-        "manualAddressURL" -> manualAddressURL(mode),
-        "actionUrl" -> actionUrl(mode),
+        "displayName" -> getIndividualName(request.userAnswers, id),
+        "manualAddressURL" -> manualAddressURL(mode, id),
+        "actionUrl" -> actionUrl(mode, id),
         "individual" -> true,
         "mode" -> mode
       )
@@ -75,19 +75,19 @@ class IndividualPostcodeController @Inject()(
       renderer.render("postcode.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-    navigator.routeMap(IndividualUkPostcodePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(IndividualUkPostcodePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
-            "displayName" -> getIndividualName(request.userAnswers),
-            "manualAddressURL" -> manualAddressURL(mode),
-            "actionUrl" -> actionUrl(mode),
+            "displayName" -> getIndividualName(request.userAnswers, id),
+            "manualAddressURL" -> manualAddressURL(mode, id),
+            "actionUrl" -> actionUrl(mode, id),
             "individual" -> true,
             "mode" -> mode
           )
@@ -96,10 +96,10 @@ class IndividualPostcodeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUkPostcodePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUkPostcodePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

@@ -28,6 +28,11 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions ++= Seq("-feature"),
+    javaOptions ++= Seq(
+      "-Xms1024M", "-Xmx2048M",
+      "-Xss2M",
+      "-XX:MaxMetaspaceSize=2048M"
+    ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     evictionWarningOptions in update :=
@@ -50,4 +55,3 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
     "-Dconfig.resource=test.application.conf"
   )
 )
-

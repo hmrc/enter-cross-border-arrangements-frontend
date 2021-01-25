@@ -28,6 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
 import pages.hallmarks._
 import pages.intermediaries._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
@@ -50,13 +51,15 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
                   .success
                   .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(CheckMode))
+              .nextPage(HallmarkCategoriesPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(0, CheckMode))
         }
       }
 
@@ -68,13 +71,15 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
                 .success
                 .value
 
             navigator
-              .nextPage(HallmarkCategoriesPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(CheckMode))
+              .nextPage(HallmarkCategoriesPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, CheckMode))
         }
       }
 
@@ -86,15 +91,17 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("A").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
                 .success.value
-                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
                 .success.value
 
 
             navigator
-              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode))
+              .nextPage(HallmarkAPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, CheckMode))
         }
       }
 
@@ -109,14 +116,16 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                                          HallmarkCategories.enumerable.withName("B").get)
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, hallmarkCategories)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, hallmarkCategories)
                 .success.value
-                .set(HallmarkAPage, HallmarkA.values.toSet)
+                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkAPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(CheckMode))
+              .nextPage(HallmarkAPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, CheckMode))
         }
       }
 
@@ -128,14 +137,16 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(HallmarkCategoriesPage, HallmarkCategories.enumerable.withName("B").toSet)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
                 .success.value
-                .set(HallmarkBPage, HallmarkB.values.toSet)
+                .set(HallmarkBPage, 0, HallmarkB.values.toSet)
                 .success.value
 
             navigator
-              .nextPage(HallmarkBPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(CheckMode))
+              .nextPage(HallmarkBPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, CheckMode))
         }
       }
 
@@ -146,13 +157,15 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(MainBenefitTestPage, true)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(MainBenefitTestPage, 0, true)
                 .success
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad())
+              .nextPage(MainBenefitTestPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 
@@ -163,13 +176,15 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
 
             val updatedAnswers =
-              answers.set(MainBenefitTestPage, false)
+              answers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(MainBenefitTestPage, 0, false)
                 .success
                 .value
 
             navigator
-              .nextPage(MainBenefitTestPage, CheckMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad())
+              .nextPage(MainBenefitTestPage, 0, CheckMode, updatedAnswers)
+              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad(0))
         }
       }
 
@@ -181,7 +196,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             val navigator = new Navigator
             navigator
-              .nextPage(page, CheckMode, f(answers))
+              .nextPage(page, 0, CheckMode, f(answers))
               .mustBe(route)
         }
 
@@ -190,22 +205,23 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from What is the arrangement called? page to Check your answers page" in {
 
         assertRedirect(WhatIsThisArrangementCalledPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from What is the implementation date? page to Check your answers page" in {
 
         assertRedirect(WhatIsTheImplementationDatePage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
         "Why are you reporting this arrangement now? page when the answer is 'Yes'" in {
 
         assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage,
-          controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(CheckMode)) {
+          controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(0, CheckMode)) {
           _
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, true)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
             .success
             .value
 
@@ -216,9 +232,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "Check your answers page when the answer is No" in {
 
         assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) {
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, false)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
             .success
             .value
 
@@ -229,31 +246,31 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from the 'Why are reporting this arrangement now?' page to Check your answers page" in {
 
         assertRedirect(WhyAreYouReportingThisArrangementNowPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'Which of these countries are expected to be involved in this arrangement?' page to Check your answers page" in {
 
         assertRedirect(WhichExpectedInvolvedCountriesArrangementPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'What is the expected value of this arrangement?' page to Check your answers page" in {
 
         assertRedirect(WhatIsTheExpectedValueOfThisArrangementPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'Which national provisions is this arrangement based on?' page to Check your answers page" in {
 
         assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from Details page to Check your answers page" in {
 
         assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad()) _
+          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       // INTERMEDIARIES CHECKMODE
@@ -261,9 +278,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "must go from 'Organisation or Individual' page to " +
           "'What is the name of the organisation?' page in the intermediaries journey when organisation" in {
           assertRedirect(IntermediariesTypePage,
-            controllers.organisation.routes.OrganisationNameController.onPageLoad(CheckMode)) {
+            controllers.organisation.routes.OrganisationNameController.onPageLoad(0, CheckMode)) {
             _
-              .set(IntermediariesTypePage, SelectType.Organisation)
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+              .set(IntermediariesTypePage, 0, SelectType.Organisation)
               .success
               .value
           }
@@ -272,9 +290,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "must go from 'Organisation or Individual' page to " +
           "'What is the name of the individual?' page in the intermediaries journey when individual" in {
           assertRedirect(IntermediariesTypePage,
-            controllers.individual.routes.IndividualNameController.onPageLoad(CheckMode)) {
+            controllers.individual.routes.IndividualNameController.onPageLoad(0, CheckMode)) {
             _
-              .set(IntermediariesTypePage, SelectType.Individual)
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+              .set(IntermediariesTypePage, 0, SelectType.Individual)
               .success
               .value
           }
@@ -284,9 +303,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "'Is *organisation* exempt from reporting in an EU member state, or the UK?' page in the intermediaries journey" +
         "when Promoter" in {
         assertRedirect(WhatTypeofIntermediaryPage,
-          controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(CheckMode)) {
+          controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(0, CheckMode)) {
           _
-            .set(WhatTypeofIntermediaryPage, Promoter)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(WhatTypeofIntermediaryPage, 0, Promoter)
             .success
             .value
         }
@@ -295,9 +315,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'What type of intermediary is *name*?' page to " +
         "'Check your answers' page in the intermediaries journey when unknown" in {
         assertRedirect(WhatTypeofIntermediaryPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(WhatTypeofIntermediaryPage, IDoNotKnow)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(WhatTypeofIntermediaryPage, 0, IDoNotKnow)
             .success
             .value
         }
@@ -306,9 +327,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'What type of intermediary is *name*?' page to " +
         "'Check your answers' page in the intermediaries journey when I do not know" in {
         assertRedirect(WhatTypeofIntermediaryPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(WhatTypeofIntermediaryPage, Serviceprovider)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(WhatTypeofIntermediaryPage, 0, Serviceprovider)
             .success
             .value
         }
@@ -319,9 +341,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "Do you know which countries *name* exempt from reporting in?' page in the intermediaries journey" +
         "when Yes" in {
         assertRedirect(IsExemptionKnownPage,
-          controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(CheckMode)) {
+          controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(0, CheckMode)) {
           _
-            .set(IsExemptionKnownPage, Yes)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IsExemptionKnownPage, 0, Yes)
             .success
             .value
         }
@@ -330,9 +353,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
         "Check your answers?' page in the intermediaries journey when No" in {
         assertRedirect(IsExemptionKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(IsExemptionKnownPage, No)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IsExemptionKnownPage, 0, No)
             .success
             .value
         }
@@ -341,9 +365,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
         "Check your answers?' page in the intermediaries journey when Unknown" in {
         assertRedirect(IsExemptionKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(IsExemptionKnownPage, IsExemptionKnown.Unknown)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IsExemptionKnownPage, 0, IsExemptionKnown.Unknown)
             .success
             .value
         }
@@ -353,9 +378,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "Which countries is *name* exempt from reporting in?' page in the intermediaries journey" +
         "when Yes" in {
         assertRedirect(IsExemptionCountryKnownPage,
-          controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(CheckMode)) {
+          controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(0, CheckMode)) {
           _
-            .set(IsExemptionCountryKnownPage, true)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IsExemptionCountryKnownPage, 0, true)
             .success
             .value
         }
@@ -365,9 +391,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "Check your answers' page in the intermediaries journey" +
         "when No" in {
         assertRedirect(IsExemptionCountryKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(IsExemptionCountryKnownPage, false)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(IsExemptionCountryKnownPage, 0, false)
             .success
             .value
         }
@@ -376,9 +403,10 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Which countries is *name* exempt from reporting in?' page to " +
         "'Check your answers' page in the intermediaries journey" in {
         assertRedirect(ExemptCountriesPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad()) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
           _
-            .set(ExemptCountriesPage, ExemptCountries.enumerable.withName("uk").toSet)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .set(ExemptCountriesPage, 0, ExemptCountries.enumerable.withName("uk").toSet)
             .success
             .value
         }

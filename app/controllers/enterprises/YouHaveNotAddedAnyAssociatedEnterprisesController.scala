@@ -48,40 +48,41 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+      def namesOfAssociatedEnterprises(id: Int): IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
         case Some(list) =>
           list.map(_.nameAsString)
         case None => IndexedSeq.empty
       }
 
-      val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) match {
+      val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm),
-        "associatedEnterpriseList" -> namesOfAssociatedEnterprises
+        "associatedEnterpriseList" -> namesOfAssociatedEnterprises(id)
       )
 
       renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAssociatedEnterprises]): Call =
-    navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAssociatedEnterprises]): Call =
+    navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+          val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
             case Some(list) =>
               list.map(_.nameAsString)
             case None => IndexedSeq.empty
@@ -89,6 +90,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
             "associatedEnterpriseList" -> namesOfAssociatedEnterprises
@@ -97,12 +99,11 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
           renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
         },
         value => {
-
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

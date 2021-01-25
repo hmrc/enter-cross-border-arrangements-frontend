@@ -19,13 +19,14 @@ package controllers.reporter.individual
 import base.SpecBase
 import forms.reporter.individual.ReporterIndividualPostcodeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.individual.ReporterIndividualPostcodePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +45,7 @@ class ReporterIndividualPostcodeControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new ReporterIndividualPostcodeFormProvider()
   val form = formProvider()
 
-  lazy val postcodeRoute = routes.ReporterIndividualPostcodeController.onPageLoad(NormalMode).url
+  lazy val postcodeRoute = routes.ReporterIndividualPostcodeController.onPageLoad(0, NormalMode).url
 
   "Postcode Controller" - {
 
@@ -80,7 +81,9 @@ class ReporterIndividualPostcodeControllerSpec extends SpecBase with MockitoSuga
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterIndividualPostcodePage, "AA1 1AA").success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterIndividualPostcodePage, 0, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -126,7 +129,7 @@ class ReporterIndividualPostcodeControllerSpec extends SpecBase with MockitoSuga
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/select-address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/select-address/0"
 
       application.stop()
     }

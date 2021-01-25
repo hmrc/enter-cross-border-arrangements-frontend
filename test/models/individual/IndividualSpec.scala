@@ -17,15 +17,15 @@
 package models.individual
 
 import java.time.LocalDate
-
 import generators.ModelGenerators
 import models.taxpayer.TaxResidency
-import models.{Address, LoopDetails, Name, UserAnswers}
+import models.{Address, LoopDetails, Name, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.individual._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class IndividualSpec extends FreeSpec
   with MustMatchers
@@ -41,11 +41,13 @@ class IndividualSpec extends FreeSpec
           (name, loop) =>
 
             val userAnswers =
-              UserAnswers("id").set(IndividualNamePage, name)
+              UserAnswers("id")
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IndividualNamePage, 0, name)
                 .success.value
-                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .set(IndividualDateOfBirthPage, 0, LocalDate.now())
                 .success.value
-                .set(IndividualLoopPage, loop)
+                .set(IndividualLoopPage, 0, loop)
                 .success.value
 
             val expected = Individual(
@@ -57,7 +59,7 @@ class IndividualSpec extends FreeSpec
               taxResidencies = TaxResidency.buildTaxResidency(loop)
             )
 
-            val individual = Individual.buildIndividualDetails(userAnswers)
+            val individual = Individual.buildIndividualDetails(userAnswers, 0)
 
             individual mustBe expected
         }
@@ -68,17 +70,19 @@ class IndividualSpec extends FreeSpec
           (name, birthPlace, address, email, loop) =>
 
             val userAnswers =
-              UserAnswers("id").set(IndividualNamePage, name)
+              UserAnswers("id")
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IndividualNamePage, 0, name)
                 .success.value
-                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .set(IndividualDateOfBirthPage, 0, LocalDate.now())
                 .success.value
-                .set(IndividualPlaceOfBirthPage, birthPlace)
+                .set(IndividualPlaceOfBirthPage, 0, birthPlace)
                 .success.value
-                .set(IndividualAddressPage, address)
+                .set(IndividualAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForIndividualPage, email)
+                .set(EmailAddressForIndividualPage, 0, email)
                 .success.value
-                .set(IndividualLoopPage, loop)
+                .set(IndividualLoopPage, 0, loop)
                 .success.value
 
             val expected = Individual(
@@ -90,7 +94,7 @@ class IndividualSpec extends FreeSpec
               taxResidencies = TaxResidency.buildTaxResidency(loop)
             )
 
-            val individual = Individual.buildIndividualDetails(userAnswers)
+            val individual = Individual.buildIndividualDetails(userAnswers, 0)
 
             individual mustBe expected
         }
@@ -102,16 +106,17 @@ class IndividualSpec extends FreeSpec
 
             val userAnswers =
               UserAnswers("id")
-                .set(IndividualNamePage, name)
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IndividualNamePage, 0, name)
                 .success.value
-                .set(IndividualAddressPage, address)
+                .set(IndividualAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForIndividualPage, email)
+                .set(EmailAddressForIndividualPage, 0, email)
                 .success.value
-                .set(IndividualLoopPage, loop)
+                .set(IndividualLoopPage, 0, loop)
                 .success.value
 
-            val expected = Individual.buildIndividualDetails(userAnswers)
+            val expected = Individual.buildIndividualDetails(userAnswers, 0)
 
             expected.birthDate mustEqual LocalDate.of(1900,1,1)
         }
@@ -123,17 +128,18 @@ class IndividualSpec extends FreeSpec
 
             val userAnswers =
               UserAnswers("id")
-                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IndividualDateOfBirthPage, 0, LocalDate.now())
                 .success.value
-                .set(IndividualAddressPage, address)
+                .set(IndividualAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForIndividualPage, email)
+                .set(EmailAddressForIndividualPage, 0, email)
                 .success.value
-                .set(IndividualLoopPage, loop)
+                .set(IndividualLoopPage, 0, loop)
                 .success.value
 
             val ex = intercept[Exception] {
-              Individual.buildIndividualDetails(userAnswers)
+              Individual.buildIndividualDetails(userAnswers, 0)
             }
 
             ex.getMessage mustEqual "Individual Taxpayer must contain a name"
@@ -146,17 +152,18 @@ class IndividualSpec extends FreeSpec
 
             val userAnswers =
               UserAnswers("id")
-                .set(IndividualNamePage, name)
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .set(IndividualNamePage, 0, name)
                 .success.value
-                .set(IndividualDateOfBirthPage, LocalDate.now())
+                .set(IndividualDateOfBirthPage, 0, LocalDate.now())
                 .success.value
-                .set(IndividualAddressPage, address)
+                .set(IndividualAddressPage, 0, address)
                 .success.value
-                .set(EmailAddressForIndividualPage, email)
+                .set(EmailAddressForIndividualPage, 0, email)
                 .success.value
 
             val ex = intercept[Exception] {
-              Individual.buildIndividualDetails(userAnswers)
+              Individual.buildIndividualDetails(userAnswers, 0)
             }
 
             ex.getMessage mustEqual "Individual Taxpayer must contain at minimum one tax residency"

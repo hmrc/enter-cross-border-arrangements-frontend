@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.DoYouKnowTINForNonUKOrganisationFormProvider
 import matchers.JsonMatchers
-import models.{Country, LoopDetails, NormalMode, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -44,7 +45,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0
 
-  lazy val doYouKnowTINForNonUKOrganisationRoute = controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(NormalMode, index).url
+  lazy val doYouKnowTINForNonUKOrganisationRoute = controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "DoYouKnowTINForNonUKOrganisation Controller" - {
 
@@ -85,9 +86,10 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(DoYouKnowTINForNonUKOrganisationPage, true)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DoYouKnowTINForNonUKOrganisationPage, 0, true)
         .success.value
-        .set(OrganisationLoopPage, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -139,7 +141,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Mocki
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/non-uk-tax-numbers-0"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/non-uk-tax-numbers-0/0"
 
       application.stop()
     }

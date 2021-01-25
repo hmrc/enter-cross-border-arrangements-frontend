@@ -23,30 +23,30 @@ import uk.gov.hmrc.viewmodels._
 
 trait EnterpriseRows extends RowBuilder {
 
-  def youHaveNotAddedAnyAssociatedEnterprises: Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage) map { answer =>
+  def youHaveNotAddedAnyAssociatedEnterprises(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) map { answer =>
 
     toRow(
       msgKey  = "youHaveNotAddedAnyAssociatedEnterprises",
       content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
-      href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(CheckMode).url
+      href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
     )
   }
 
-  def associatedEnterpriseType: Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage) map {
+  def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {
     answer =>
       toRow(
         msgKey = "associatedEnterpriseType",
         content = msg"selectType.$answer",
-        href = controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(CheckMode).url
+        href = controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(id, CheckMode).url
       )
   }
 
-  def isAssociatedEnterpriseAffected: Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage) map {
+  def isAssociatedEnterpriseAffected(id: Int): Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage, id) map {
     answer =>
       toRow(
         msgKey = "isAssociatedEnterpriseAffected",
         content = yesOrNo(answer),
-        href = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(CheckMode).url
+        href = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, CheckMode).url
       )
   }
 

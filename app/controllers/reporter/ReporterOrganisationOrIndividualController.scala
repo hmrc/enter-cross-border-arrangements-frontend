@@ -47,16 +47,18 @@ class ReporterOrganisationOrIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReporterOrganisationOrIndividualPage) match {
+      val preparedForm = request.userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios"  -> ReporterOrganisationOrIndividual.radios(preparedForm)
       )
@@ -64,10 +66,10 @@ class ReporterOrganisationOrIndividualController @Inject()(
       renderer.render("reporter/reporterOrganisationOrIndividual.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[ReporterOrganisationOrIndividual]): Call =
-    navigator.routeMap(ReporterOrganisationOrIndividualPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[ReporterOrganisationOrIndividual]): Call =
+    navigator.routeMap(ReporterOrganisationOrIndividualPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,6 +77,7 @@ class ReporterOrganisationOrIndividualController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> ReporterOrganisationOrIndividual.radios(formWithErrors)
           )
@@ -84,11 +87,11 @@ class ReporterOrganisationOrIndividualController @Inject()(
         value => {
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationOrIndividualPage, value))
-            redirectMode   =  if (request.userAnswers.hasNewValue(ReporterOrganisationOrIndividualPage, value)) NormalMode else mode
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationOrIndividualPage, id, value))
+            redirectMode   =  if (request.userAnswers.hasNewValue(ReporterOrganisationOrIndividualPage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

@@ -26,21 +26,21 @@ trait TaxpayerRows extends RowBuilder {
 
   import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
 
-  def taxpayerSelectType: Option[Row] = userAnswers.get(TaxpayerSelectTypePage) map {
+  def taxpayerSelectType(id: Int): Option[Row] = userAnswers.get(TaxpayerSelectTypePage, id) map {
     answer =>
       toRow(
         msgKey = "selectType",
         content = msg"selectType.$answer",
-        href = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(CheckMode).url
+        href = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(id, CheckMode).url
       )
   }
 
-  def whatIsTaxpayersStartDateForImplementingArrangement: Option[Row] = userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage) map {
+  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int): Option[Row] = userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
     answer =>
       toRow(
         msgKey  = "whatIsTaxpayersStartDateForImplementingArrangement",
         content = Literal(answer.format(dateFormatter)),
-        href    = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(CheckMode).url
+        href    = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
       )
   }
 }

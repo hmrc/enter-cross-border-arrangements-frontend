@@ -49,16 +49,17 @@ class HallmarkCController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HallmarkCPage) match {
+      val preparedForm = request.userAnswers.get(HallmarkCPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"       -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkC.checkboxes(preparedForm)
       )
@@ -66,7 +67,7 @@ class HallmarkCController @Inject()(
       renderer.render("hallmarks/hallmarkC.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -74,6 +75,7 @@ class HallmarkCController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "checkboxes" -> HallmarkC.checkboxes(formWithErrors)
           )
@@ -82,16 +84,16 @@ class HallmarkCController @Inject()(
         },
         value =>
           for {
-            userAnswers <- Future.fromTry(removeC1Parts(request.userAnswers, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCPage, value))
+            userAnswers <- Future.fromTry(removeC1Parts(request.userAnswers, id, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkCPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkCPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HallmarkCPage, id, mode, updatedAnswers))
       )
   }
 
-  private def removeC1Parts(userAnswers: UserAnswers, values: Set[HallmarkC]) =
-    userAnswers.get(HallmarkC1Page) match {
-      case Some(_) if !values.contains(C1) => userAnswers.remove(HallmarkC1Page)
+  private def removeC1Parts(userAnswers: UserAnswers, id:Int, values: Set[HallmarkC]) =
+    userAnswers.get(HallmarkC1Page, id) match {
+      case Some(_) if !values.contains(C1) => userAnswers.remove(HallmarkC1Page, id)
       case _ => Success(userAnswers)
     }
 }

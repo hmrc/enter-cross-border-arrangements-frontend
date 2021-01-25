@@ -20,12 +20,13 @@ import base.SpecBase
 import forms.reporter.taxpayer.TaxpayerWhyReportInUKFormProvider
 import matchers.JsonMatchers
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -38,7 +39,7 @@ import scala.concurrent.Future
 
 class TaxpayerWhyReportInUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  lazy val taxpayerWhyReportInUKRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(NormalMode).url
+  lazy val taxpayerWhyReportInUKRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(0, NormalMode).url
 
   val formProvider = new TaxpayerWhyReportInUKFormProvider()
   val form = formProvider()
@@ -78,7 +79,9 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with MockitoSugar wit
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerWhyReportInUKPage, TaxpayerWhyReportInUK.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, taxpayerWhyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

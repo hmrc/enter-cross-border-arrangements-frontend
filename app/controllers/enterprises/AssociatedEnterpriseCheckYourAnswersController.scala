@@ -45,37 +45,38 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage) match {
+      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
         case Some(SelectType.Organisation) => true
         case _ => false
       }
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
-          Seq(helper.associatedEnterpriseType, helper.organisationName).flatten ++
-          helper.buildOrganisationAddressGroup ++
-          helper.buildOrganisationEmailAddressGroup,
-          helper.buildTaxResidencySummaryForOrganisation
+          Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
+          helper.buildOrganisationAddressGroup(id) ++
+          helper.buildOrganisationEmailAddressGroup(id),
+          helper.buildTaxResidencySummaryForOrganisation(id)
         )
       } else {
         (
-          Seq(helper.associatedEnterpriseType, helper.individualName).flatten ++
-            helper.buildIndividualDateOfBirthGroup ++
-            helper.buildIndividualPlaceOfBirthGroup ++
-            helper.buildIndividualAddressGroup ++
-            helper.buildIndividualEmailAddressGroup,
-          helper.buildTaxResidencySummaryForIndividuals
+          Seq(helper.associatedEnterpriseType(id), helper.individualName(id)).flatten ++
+            helper.buildIndividualDateOfBirthGroup(id) ++
+            helper.buildIndividualPlaceOfBirthGroup(id) ++
+            helper.buildIndividualAddressGroup(id) ++
+            helper.buildIndividualEmailAddressGroup(id),
+          helper.buildTaxResidencySummaryForIndividuals(id)
         )
       }
 
-      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected).flatten
+      val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
 
       val json = Json.obj(
+        "id" -> id,
         "mode" -> mode,
         "summaryRows" -> summaryRows,
         "countrySummary" -> countrySummary,
@@ -85,26 +86,26 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       renderer.render("enterprises/associatedEnterpriseCheckYourAnswers.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call =
-    navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(None)(0)
+  def redirect(id: Int, checkRoute: CheckRoute): Call =
+    navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage) match {
+      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers)
+          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers))
+          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id))
       }
 
       for {
-        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, enterpriseLoopList))
+        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, enterpriseLoopList))
         _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {
-        Redirect(redirect(checkRoute))
+        Redirect(redirect(id, checkRoute))
       }
   }
 }

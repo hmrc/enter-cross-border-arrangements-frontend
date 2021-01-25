@@ -19,13 +19,14 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.IsOrganisationAddressUkFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.IsOrganisationAddressUkPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -41,7 +42,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new IsOrganisationAddressUkFormProvider()
   val form = formProvider()
 
-  lazy val isOrganisationAddressUkRoute = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(NormalMode).url
+  lazy val isOrganisationAddressUkRoute = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, NormalMode).url
 
   "IsOrganisationAddressUk Controller" - {
 
@@ -78,7 +79,9 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsOrganisationAddressUkPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsOrganisationAddressUkPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isOrganisationAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -125,7 +128,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/postcode"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/postcode/0"
 
       application.stop()
     }
@@ -151,7 +154,7 @@ class IsOrganisationAddressUkControllerSpec extends SpecBase with MockitoSugar w
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/address"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/address/0"
 
       application.stop()
     }

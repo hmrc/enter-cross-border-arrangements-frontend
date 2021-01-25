@@ -47,28 +47,29 @@ class IsIndividualAddressKnownController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsIndividualAddressKnownPage) match {
+      val preparedForm = request.userAnswers.get(IsIndividualAddressKnownPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers)
+        "name" -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/isIndividualAddressKnown.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(IsIndividualAddressKnownPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(IsIndividualAddressKnownPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -76,9 +77,10 @@ class IsIndividualAddressKnownController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "name" -> getIndividualName(request.userAnswers)
+            "name" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/isIndividualAddressKnown.njk", json).map(BadRequest(_))
@@ -86,15 +88,15 @@ class IsIndividualAddressKnownController @Inject()(
         value =>
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressKnownPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressKnownPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers): String = {
-    userAnswers.get(IndividualNamePage) match {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
       case None => "their"
     }

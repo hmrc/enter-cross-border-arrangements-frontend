@@ -19,12 +19,13 @@ package controllers.individual
 import base.SpecBase
 import forms.individual.IsIndividualPlaceOfBirthKnownFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual.IsIndividualPlaceOfBirthKnownPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
   val formProvider = new IsIndividualPlaceOfBirthKnownFormProvider()
   val form = formProvider()
 
-  lazy val isIndividualPlaceOfBirthKnownRoute = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(NormalMode).url
+  lazy val isIndividualPlaceOfBirthKnownRoute = controllers.individual.routes.IsIndividualPlaceOfBirthKnownController.onPageLoad(0, NormalMode).url
 
   "IsIndividualPlaceOfBirthKnown Controller" - {
 
@@ -77,7 +78,9 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsIndividualPlaceOfBirthKnownPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IsIndividualPlaceOfBirthKnownPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, isIndividualPlaceOfBirthKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -124,7 +127,7 @@ class IsIndividualPlaceOfBirthKnownControllerSpec extends SpecBase with MockitoS
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/birthplace"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/birthplace/0"
 
       application.stop()
     }

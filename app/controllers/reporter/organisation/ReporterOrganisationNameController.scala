@@ -47,26 +47,27 @@ class ReporterOrganisationNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm =  request.userAnswers.get(ReporterOrganisationNamePage) match {
+      val preparedForm =  request.userAnswers.get(ReporterOrganisationNamePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
+        "id" -> id,
         "mode" -> mode
       )
 
       renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
-      navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+      navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -74,6 +75,7 @@ class ReporterOrganisationNameController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
+            "id" -> id,
             "mode" -> mode
           )
 
@@ -81,10 +83,10 @@ class ReporterOrganisationNameController @Inject()(
         },
         value => {
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
      )
   }

@@ -51,12 +51,12 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
   val numberOfMonthsToAdd = 6
   val form = formProvider()
 
-  private def actionUrl(mode: Mode): String = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(mode).url
+  private def actionUrl(id: Int, mode: Mode): String = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, mode).url
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage) match {
+      val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -69,17 +69,17 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "name" -> getDisplayName(request.userAnswers),
+        "name" -> getDisplayName(request.userAnswers, id),
         "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
         "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
-        "actionUrl" -> actionUrl(mode)
+        "actionUrl" -> actionUrl(id, mode)
       )
 
       renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -92,26 +92,26 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
             "mode" -> mode,
             "date" -> viewModel,
             "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "name" -> getDisplayName(request.userAnswers),
+            "name" -> getDisplayName(request.userAnswers, id),
             "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
             "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
-            "actionUrl" -> actionUrl(mode)
+            "actionUrl" -> actionUrl(id, mode)
           )
 
           renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, mode, updatedAnswers))
       )
   }
 
-  private def getDisplayName(userAnswers: UserAnswers): Option[String] = {
-   userAnswers.get(TaxpayerSelectTypePage) map {
-     case Organisation => JourneyHelpers.getOrganisationName(userAnswers)
-     case Individual => JourneyHelpers.getIndividualName(userAnswers)
+  private def getDisplayName(userAnswers: UserAnswers, id: Int): Option[String] = {
+   userAnswers.get(TaxpayerSelectTypePage, id) map {
+     case Organisation => JourneyHelpers.getOrganisationName(userAnswers, id)
+     case Individual => JourneyHelpers.getIndividualName(userAnswers, id)
    }
   }
 }
