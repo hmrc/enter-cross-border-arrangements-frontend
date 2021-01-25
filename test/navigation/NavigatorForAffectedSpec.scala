@@ -38,38 +38,38 @@ class NavigatorForAffectedSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
     s"must go from $A1 $A2 when answer is yes" in {
           navigator
-            .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(Some(YouHaveNotAddedAnyAffected.YesAddNow))(0)
-            .mustBe(controllers.affected.routes.AffectedTypeController.onPageLoad(NormalMode))
+            .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAffected.YesAddNow))(0)
+            .mustBe(controllers.affected.routes.AffectedTypeController.onPageLoad(0, NormalMode))
       }
 
     s"must go from $A1 $TL when answer is 'No'" in {
       navigator
-        .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(Some(YouHaveNotAddedAnyAffected.No))(0)
-        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+        .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAffected.No))(0)
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
     }
 
     s"must go from $A1 $TL when answer is 'YesAddLater'" in {
       navigator
-        .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(Some(YouHaveNotAddedAnyAffected.YesAddLater))(0)
-        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad())
+        .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAffected.YesAddLater))(0)
+        .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
     }
 
     s"must go from $A2 to 'What is the name of the organisation?' if answer is Organisation" in {
       navigator
-        .routeMap(AffectedTypePage)(AffectedRouting(NormalMode))(Some(SelectType.Organisation))(0)
-        .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(NormalMode))
+        .routeMap(AffectedTypePage)(AffectedRouting(NormalMode))(0)(Some(SelectType.Organisation))(0)
+        .mustBe(controllers.organisation.routes.OrganisationNameController.onPageLoad(0, NormalMode))
     }
 
     s"must go from $A2 to 'What is their name?' if answer is Individual" in {
       navigator
-        .routeMap(AffectedTypePage)(AffectedRouting(NormalMode))(Some(SelectType.Individual))(0)
-        .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(NormalMode))
+        .routeMap(AffectedTypePage)(AffectedRouting(NormalMode))(0)(Some(SelectType.Individual))(0)
+        .mustBe(controllers.individual.routes.IndividualNameController.onPageLoad(0, NormalMode))
     }
 
     s"must go from $A7 to $A1" in {
       navigator
-        .routeMap(AffectedCheckYourAnswersPage)(AffectedRouting(NormalMode))(None)(0)
-        .mustBe(controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad())
+        .routeMap(AffectedCheckYourAnswersPage)(AffectedRouting(NormalMode))(0)(None)(0)
+        .mustBe(controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(0))
     }
   }
 }

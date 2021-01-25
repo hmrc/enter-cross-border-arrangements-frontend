@@ -110,7 +110,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
           IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers, id))
       }
       for {
-        userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage))
+        userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
         userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)

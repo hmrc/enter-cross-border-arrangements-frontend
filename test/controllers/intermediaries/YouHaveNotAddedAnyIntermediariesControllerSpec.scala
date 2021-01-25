@@ -94,7 +94,7 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Mocki
 
       val intermediariesLoop =
         IndexedSeq(Intermediary("id", None, Some(organisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryLoopPage, intermediariesLoop).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryLoopPage, 0, intermediariesLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)

@@ -89,7 +89,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
           IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers, id))
       }
       for {
-        userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage))
+        userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage, id))
         userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, taxpayerLoopList))
         _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {

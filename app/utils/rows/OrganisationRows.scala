@@ -19,7 +19,7 @@ package utils.rows
 import models.{Address, AddressLookup, CheckMode, Country, LoopDetails, TaxReferenceNumbers}
 import pages._
 import pages.organisation._
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
 import uk.gov.hmrc.viewmodels._
 
 trait OrganisationRows extends RowBuilder {
@@ -180,36 +180,5 @@ trait OrganisationRows extends RowBuilder {
         href    = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
       )
   }
-
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
-    answer =>
-      Row(
-        key     = Key(msg"selectAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"selectAddress.$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selectAddress.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
-  def postcode: Option[Row] = userAnswers.get(PostcodePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"postcode.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"postcode.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
 
 }

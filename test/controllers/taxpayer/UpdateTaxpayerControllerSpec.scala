@@ -90,7 +90,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       )
 
       val taxpayerLoop = IndexedSeq(Taxpayer("id", Some(individual), None, None))
-      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerLoopPage, taxpayerLoop).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, updateTaxpayerRoute)

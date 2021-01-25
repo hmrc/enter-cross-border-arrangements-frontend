@@ -47,16 +47,17 @@ class AffectedTypeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AffectedTypePage) match {
+      val preparedForm = request.userAnswers.get(AffectedTypePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
+        "id" -> id,
         "mode"   -> mode,
         "radios" -> SelectType.radios(preparedForm)
       )
@@ -64,10 +65,10 @@ class AffectedTypeController @Inject()(
       renderer.render("affected/affectedType.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[SelectType]): Call =
-    navigator.routeMap(AffectedTypePage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[SelectType]): Call =
+    navigator.routeMap(AffectedTypePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -75,6 +76,7 @@ class AffectedTypeController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
+            "id" -> id,
             "mode"   -> mode,
             "radios" -> SelectType.radios(formWithErrors)
           )
@@ -83,11 +85,11 @@ class AffectedTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AffectedTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AffectedTypePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-            redirectMode   =  if (request.userAnswers.hasNewValue(AffectedTypePage, value)) NormalMode else mode
+            redirectMode   =  if (request.userAnswers.hasNewValue(AffectedTypePage, id, value)) NormalMode else mode
             checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
 }

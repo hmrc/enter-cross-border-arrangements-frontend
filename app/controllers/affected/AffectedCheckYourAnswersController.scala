@@ -44,31 +44,31 @@ class AffectedCheckYourAnswersController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val (affectedSummary, countrySummary) =
 
-        request.userAnswers.get(AffectedTypePage) match {
+        request.userAnswers.get(AffectedTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (
-              helper.affectedType.toSeq ++
-              helper.organisationName.toSeq ++
-              helper.buildOrganisationAddressGroup ++
-              helper.buildOrganisationEmailAddressGroup,
-              helper.buildTaxResidencySummaryForOrganisation
+              helper.affectedType(id).toSeq ++
+              helper.organisationName(id).toSeq ++
+              helper.buildOrganisationAddressGroup(id) ++
+              helper.buildOrganisationEmailAddressGroup(id),
+              helper.buildTaxResidencySummaryForOrganisation(id)
             )
           case Some(SelectType.Individual) =>
             (
-              Seq(helper.affectedType ++
-                helper.individualName).flatten ++
-                helper.buildIndividualDateOfBirthGroup ++
-                helper.buildIndividualPlaceOfBirthGroup ++
-                helper.buildIndividualAddressGroup ++
-                helper.buildIndividualEmailAddressGroup,
-              helper.buildTaxResidencySummaryForIndividuals
+              Seq(helper.affectedType(id) ++
+                helper.individualName(id)).flatten ++
+                helper.buildIndividualDateOfBirthGroup(id) ++
+                helper.buildIndividualPlaceOfBirthGroup(id) ++
+                helper.buildIndividualAddressGroup(id) ++
+                helper.buildIndividualEmailAddressGroup(id),
+              helper.buildTaxResidencySummaryForIndividuals(id)
             )
 
           case _ => throw new RuntimeException("Unable to retrieve select type for other parties affected")
@@ -77,29 +77,30 @@ class AffectedCheckYourAnswersController @Inject()(
       renderer.render(
         "affected/affectedCheckYourAnswers.njk",
         Json.obj(
+          "id" -> id,
           "affectedSummary" -> affectedSummary,
           "countrySummary" -> countrySummary
         )).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute): Call =
-    navigator.routeMap(AffectedCheckYourAnswersPage)(checkRoute)(None)(0)
+  def redirect(id: Int, checkRoute: CheckRoute): Call =
+    navigator.routeMap(AffectedCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val affectedLoopList = request.userAnswers.get(AffectedLoopPage) match {
+      val affectedLoopList = request.userAnswers.get(AffectedLoopPage, id) match {
         case Some(list) => // append to existing list
-          list :+ Affected.buildDetails(request.userAnswers)
+          list :+ Affected.buildDetails(request.userAnswers, id)
         case None => // start new list
-          IndexedSeq[Affected](Affected.buildDetails(request.userAnswers))
+          IndexedSeq[Affected](Affected.buildDetails(request.userAnswers, id))
       }
       for {
-        userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage))
-        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, affectedLoopList))
+        userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, affectedLoopList))
         _                               <- sessionRepository.set(userAnswersWithAffectedLoop)
         checkRoute                      =  toCheckRoute(mode, userAnswersWithAffectedLoop)
-      } yield Redirect(redirect(checkRoute))
+      } yield Redirect(redirect(id, checkRoute))
   }
 
 }

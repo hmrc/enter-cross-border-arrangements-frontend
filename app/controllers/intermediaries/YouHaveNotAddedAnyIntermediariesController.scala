@@ -19,7 +19,6 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
-import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.{Mode, UserAnswers}
@@ -58,7 +57,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.flatMap(_.get(IntermediaryLoopPage, id)) match {
+      val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
         case Some(list) =>
           for {
             intermediary <- list
@@ -90,7 +89,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage) match {
+          val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
             case Some(list) =>
               for {
                 intermediary <- list

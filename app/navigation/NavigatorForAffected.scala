@@ -16,8 +16,8 @@
 
 package navigation
 
-import controllers.affected._
-import controllers.mixins.{AffectedRouting, CheckRoute}
+import controllers.affected.routes
+import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.affected.YouHaveNotAddedAnyAffected.YesAddNow
 import models.{CheckMode, NormalMode, SelectType}
 import pages.Page
@@ -29,39 +29,39 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForAffected @Inject()() extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Option[Any] => Int => Call = {
+  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case YouHaveNotAddedAnyAffectedPage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
-          case Some(YesAddNow) => routes.AffectedTypeController.onPageLoad(checkRoute.mode)
-          case _               => controllers.routes.DisclosureDetailsController.onPageLoad()
+          case Some(YesAddNow) => routes.AffectedTypeController.onPageLoad(id, checkRoute.mode)
+          case _               => controllers.routes.DisclosureDetailsController.onPageLoad(id)
         }
 
     case AffectedTypePage =>
-      checkRoute => value => _ =>
+      checkRoute => id => value => _ =>
         value match {
           case Some(SelectType.Organisation) =>
-            jumpOrCheckYourAnswers(controllers.organisation.routes.OrganisationNameController.onPageLoad(checkRoute.mode), checkRoute)
+            jumpOrCheckYourAnswers(id, controllers.organisation.routes.OrganisationNameController.onPageLoad(id, checkRoute.mode), checkRoute)
           case Some(SelectType.Individual)   =>
-            jumpOrCheckYourAnswers(controllers.individual.routes.IndividualNameController.onPageLoad(checkRoute.mode), checkRoute)
+            jumpOrCheckYourAnswers(id, controllers.individual.routes.IndividualNameController.onPageLoad(id, checkRoute.mode), checkRoute)
         }
 
-    case AffectedCheckYourAnswersPage => _=> _ => _ => routes.YouHaveNotAddedAnyAffectedController.onPageLoad()
+    case AffectedCheckYourAnswersPage => _=> id => _ => _ => routes.YouHaveNotAddedAnyAffectedController.onPageLoad(id)
 
     case _ =>
-      checkRoute => _ => _ => checkRoute.mode match {
+      checkRoute => _ => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => controllers.routes.IndexController.onPageLoad()
       }
   }
 
-  override val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => routes.AffectedCheckYourAnswersController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
+    _ => _ => id => _ => _ => routes.AffectedCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, checkRoute: CheckRoute): Call = {
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AffectedRouting(CheckMode)        => routes.AffectedCheckYourAnswersController.onPageLoad()
+      case DefaultRouting(CheckMode)         => routes.AffectedCheckYourAnswersController.onPageLoad(id)
       case _                                 => jumpTo
     }
   }

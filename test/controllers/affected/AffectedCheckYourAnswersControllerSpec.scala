@@ -18,7 +18,7 @@ package controllers.affected
 
 import base.SpecBase
 import models.affected.YouHaveNotAddedAnyAffected
-import models.{Country, LoopDetails, Name, SelectType, UserAnswers}
+import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -27,6 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.mvc.Call
@@ -41,7 +42,7 @@ import scala.concurrent.Future
 class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/others-affected/update")
+  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/others-affected/update/0")
 
   val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
   val loopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
@@ -53,7 +54,7 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad().url)
+    val request = FakeRequest(GET, controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(0).url)
 
     val result = route(application, request).value
 
@@ -84,17 +85,19 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
     "onPageLoad" - {
       "must return rows for an affected person who is an organisation" in {
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(AffectedTypePage, SelectType.Organisation)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
           .success.value
-          .set(OrganisationNamePage, "Name")
+          .set(AffectedTypePage, 0, SelectType.Organisation)
           .success.value
-          .set(IsOrganisationAddressKnownPage, false)
+          .set(OrganisationNamePage, 0, "Name")
           .success.value
-          .set(EmailAddressQuestionForOrganisationPage, true)
+          .set(IsOrganisationAddressKnownPage, 0, false)
           .success.value
-          .set(EmailAddressForOrganisationPage, "email@email.com")
+          .set(EmailAddressQuestionForOrganisationPage, 0, true)
           .success.value
-          .set(OrganisationLoopPage, loopDetails)
+          .set(EmailAddressForOrganisationPage, 0, "email@email.com")
+          .success.value
+          .set(OrganisationLoopPage, 0, loopDetails)
           .success.value
 
         verifyList(userAnswers) { rows =>
@@ -111,21 +114,23 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         val dob = LocalDate.of(2020, 1, 1)
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(AffectedTypePage, SelectType.Individual)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
           .success.value
-          .set(IndividualNamePage, Name("First", "Last"))
+          .set(AffectedTypePage, 0, SelectType.Individual)
           .success.value
-          .set(IsIndividualDateOfBirthKnownPage, true)
+          .set(IndividualNamePage, 0, Name("First", "Last"))
           .success.value
-          .set(IndividualDateOfBirthPage, dob)
+          .set(IsIndividualDateOfBirthKnownPage, 0, true)
           .success.value
-          .set(IsIndividualPlaceOfBirthKnownPage, false)
+          .set(IndividualDateOfBirthPage, 0, dob)
           .success.value
-          .set(EmailAddressQuestionForIndividualPage, true)
+          .set(IsIndividualPlaceOfBirthKnownPage, 0, false)
           .success.value
-          .set(EmailAddressForIndividualPage, "email@email.com")
+          .set(EmailAddressQuestionForIndividualPage, 0, true)
           .success.value
-          .set(IndividualLoopPage, loopDetails)
+          .set(EmailAddressForIndividualPage, 0, "email@email.com")
+          .success.value
+          .set(IndividualLoopPage, 0, loopDetails)
           .success.value
 
         verifyList(userAnswers) { rows =>
@@ -142,16 +147,18 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
 
     "onSubmit" - {
       "must redirect to the affected persons update page when valid data is submitted for an organisation" in {
-        val checkYourAnswersRoute: String = controllers.affected.routes.AffectedCheckYourAnswersController.onSubmit().url
+        val checkYourAnswersRoute: String = controllers.affected.routes.AffectedCheckYourAnswersController.onSubmit(0).url
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(YouHaveNotAddedAnyAffectedPage, YouHaveNotAddedAnyAffected.YesAddNow)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
           .success.value
-          .set(AffectedTypePage, SelectType.Organisation)
+          .set(YouHaveNotAddedAnyAffectedPage, 0, YouHaveNotAddedAnyAffected.YesAddNow)
           .success.value
-          .set(OrganisationNamePage, "Organisation name")
+          .set(AffectedTypePage, 0, SelectType.Organisation)
           .success.value
-          .set(OrganisationLoopPage, loopDetails)
+          .set(OrganisationNamePage, 0, "Organisation name")
+          .success.value
+          .set(OrganisationLoopPage, 0, loopDetails)
           .success.value
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -175,16 +182,18 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       }
 
       "must redirect to the affected persons update page when valid data is submitted for an individual" in {
-        val checkYourAnswersRoute: String = controllers.affected.routes.AffectedCheckYourAnswersController.onSubmit().url
+        val checkYourAnswersRoute: String = controllers.affected.routes.AffectedCheckYourAnswersController.onSubmit(0).url
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(YouHaveNotAddedAnyAffectedPage, YouHaveNotAddedAnyAffected.YesAddNow)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
           .success.value
-          .set(AffectedTypePage, SelectType.Individual)
+          .set(YouHaveNotAddedAnyAffectedPage, 0, YouHaveNotAddedAnyAffected.YesAddNow)
           .success.value
-          .set(IndividualNamePage, Name("Name", "Name"))
+          .set(AffectedTypePage, 0, SelectType.Individual)
           .success.value
-          .set(IndividualLoopPage, loopDetails)
+          .set(IndividualNamePage, 0, Name("Name", "Name"))
+          .success.value
+          .set(IndividualLoopPage, 0, loopDetails)
           .success.value
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)

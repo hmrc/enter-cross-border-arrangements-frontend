@@ -47,15 +47,15 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(YouHaveNotAddedAnyAffectedPage)) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(YouHaveNotAddedAnyAffectedPage, id)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
+      val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage, id)) match {
         case Some(list) =>
           for {
             affected <- list
@@ -68,7 +68,8 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       }
 
       val json = Json.obj(
-        "form"       -> preparedForm,
+        "form" -> preparedForm,
+        "id" -> id,
         "mode"       -> mode,
         "affectedList" -> namesOfAffected,
         "radios" -> YouHaveNotAddedAnyAffected.radios(preparedForm)
@@ -77,16 +78,16 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAffected]): Call =
-    navigator.routeMap(YouHaveNotAddedAnyAffectedPage)(checkRoute)(value)(0)
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAffected]): Call =
+    navigator.routeMap(YouHaveNotAddedAnyAffectedPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage)) match {
+          val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage, id)) match {
             case Some(list) =>
               for {
                 affected <- list
@@ -100,6 +101,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
 
           val json = Json.obj(
             "form"       -> formWithErrors,
+            "id" -> id,
             "mode"       -> mode,
             "affectedList" -> namesOfAffected,
             "radios" -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
@@ -113,10 +115,10 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
           val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAffectedPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAffectedPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }

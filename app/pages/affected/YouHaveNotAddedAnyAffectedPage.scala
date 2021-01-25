@@ -29,10 +29,10 @@ case object YouHaveNotAddedAnyAffectedPage extends QuestionPage[YouHaveNotAddedA
 
   override def toString: String = "youHaveNotAddedAnyAffected"
 
-  override def cleanup(value: Option[YouHaveNotAddedAnyAffected], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[YouHaveNotAddedAnyAffected], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
 
-        userAnswers.remove(AffectedTypePage)
+        userAnswers.remove(AffectedTypePage, id)
 
   }
 }

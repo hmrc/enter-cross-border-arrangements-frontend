@@ -31,7 +31,8 @@ import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
-  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows with IntermediariesRows with DisclosureRows with ReporterRows {
+  extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows
+    with IntermediariesRows with DisclosureRows with ReporterRows with AffectedRows {
 
   def selectType(id: Int): Option[Row] = userAnswers.get(TaxpayerSelectTypePage, id) map {
     answer =>

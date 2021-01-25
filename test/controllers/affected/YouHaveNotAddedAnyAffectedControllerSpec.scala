@@ -22,12 +22,13 @@ import matchers.JsonMatchers
 import models.affected.{Affected, YouHaveNotAddedAnyAffected}
 import models.individual.Individual
 import models.taxpayer.TaxResidency
-import models.{Country, Name, NormalMode, UserAnswers}
+import models.{Country, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.affected.{AffectedLoopPage, YouHaveNotAddedAnyAffectedPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +45,7 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val youHaveNotAddedAnyAffectedRoute = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad().url
+  lazy val youHaveNotAddedAnyAffectedRoute = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(0).url
 
   val formProvider = new YouHaveNotAddedAnyAffectedFormProvider()
   val form = formProvider()
@@ -91,7 +92,7 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
       )
 
       val affectedLoop = IndexedSeq(Affected("id", Some(individual)))
-      val userAnswers = UserAnswers(userAnswersId).set(AffectedLoopPage, affectedLoop).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(AffectedLoopPage, 0, affectedLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
@@ -123,7 +124,9 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(YouHaveNotAddedAnyAffectedPage, YouHaveNotAddedAnyAffected.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(YouHaveNotAddedAnyAffectedPage, 0, YouHaveNotAddedAnyAffected.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -170,7 +173,7 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/others-affected/type"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/others-affected/type/0"
 
       application.stop()
     }

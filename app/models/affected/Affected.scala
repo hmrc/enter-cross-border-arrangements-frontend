@@ -37,25 +37,25 @@ object Affected {
 
   private def generateId = UUID.randomUUID.toString
 
-  private def buildIndividualAffected(ua: UserAnswers): Affected =
+  private def buildIndividualAffected(ua: UserAnswers, id: Int): Affected =
     new Affected(
       affectedId = generateId,
-      individual = Some(Individual.buildIndividualDetails(ua)),
+      individual = Some(Individual.buildIndividualDetails(ua, id)),
       None
     )
 
-  private def buildOrganisationAffected(ua: UserAnswers): Affected =
+  private def buildOrganisationAffected(ua: UserAnswers, id: Int): Affected =
     new Affected(
       affectedId = generateId,
       None,
-      organisation = Some(Organisation.buildOrganisationDetails(ua))
+      organisation = Some(Organisation.buildOrganisationDetails(ua, id))
     )
 
 
-  def buildDetails(ua: UserAnswers): Affected = {
-    ua.get(AffectedTypePage) match {
-      case Some(SelectType.Organisation) => buildOrganisationAffected(ua)
-      case Some(SelectType.Individual)   => buildIndividualAffected(ua)
+  def buildDetails(ua: UserAnswers, id: Int): Affected = {
+    ua.get(AffectedTypePage, id) match {
+      case Some(SelectType.Organisation) => buildOrganisationAffected(ua, id)
+      case Some(SelectType.Individual)   => buildIndividualAffected(ua, id)
       case _                             => throw new Exception("Unable to retrieve other parties affected select type")
     }
   }

@@ -19,12 +19,13 @@ package controllers.affected
 import base.SpecBase
 import forms.affected.AffectedTypeFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, SelectType, UserAnswers}
+import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.affected.AffectedTypePage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -41,7 +42,7 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
   private val formProvider = new AffectedTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val affectedTypeRoute: String = routes.AffectedTypeController.onPageLoad(NormalMode).url
+  lazy private val affectedTypeRoute: String = routes.AffectedTypeController.onPageLoad(0, NormalMode).url
 
   "AffectedType Controller" - {
 
@@ -78,7 +79,10 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(AffectedTypePage, SelectType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AffectedTypePage, 0, SelectType.values.head).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, affectedTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -125,7 +129,7 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name/0"
 
       application.stop()
     }
@@ -160,12 +164,13 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
     }
 
     "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
-      val associatedEnterpriseTypeRoute: String = routes.AffectedTypeController.onPageLoad(CheckMode).url
+      val associatedEnterpriseTypeRoute: String = routes.AffectedTypeController.onPageLoad(0, CheckMode).url
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers = UserAnswers(userAnswersId)
-        .set(AffectedTypePage, SelectType.values.head)
-        .success
-        .value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(AffectedTypePage, 0, SelectType.values.head)
+        .success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -184,7 +189,7 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/others-affected/check-answers"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/others-affected/check-answers/0"
 
       application.stop()
     }

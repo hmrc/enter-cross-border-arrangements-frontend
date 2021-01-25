@@ -20,7 +20,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-          <form action="{{ routes.controllers.affected.AffectedCheckYourAnswersController.onSubmit(mode).url }}" method="post">
+          <form action="{{ routes.controllers.affected.AffectedCheckYourAnswersController.onSubmit(id, mode).url }}" method="post">
 
 
               {{ csrf() | safe }}

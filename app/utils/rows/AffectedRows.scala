@@ -23,12 +23,12 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 trait AffectedRows extends RowBuilder {
 
-  def affectedType: Option[Row] = userAnswers.get(AffectedTypePage) map { answer =>
+  def affectedType(id: Int): Option[Row] = userAnswers.get(AffectedTypePage, id) map { answer =>
 
     toRow(
       msgKey  = "affectedType",
       content = msg"affectedType.$answer",
-      href    = controllers.affected.routes.AffectedTypeController.onPageLoad(CheckMode).url
+      href    = controllers.affected.routes.AffectedTypeController.onPageLoad(id, CheckMode).url
     )
   }
 
