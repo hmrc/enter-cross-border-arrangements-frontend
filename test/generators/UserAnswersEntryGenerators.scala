@@ -20,6 +20,7 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
+import models.disclosure.ReplaceOrDeleteADisclosure
 import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}

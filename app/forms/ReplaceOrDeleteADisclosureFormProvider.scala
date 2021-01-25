@@ -27,7 +27,7 @@ import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.DurationInt
 
 class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings {
@@ -41,45 +41,20 @@ class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings {
 
   //TODO Rename validatedArrangementIDText
 
-   def apply(countryList: Seq[Country],
-             crossBorderArrangementsConnector: CrossBorderArrangementsConnector)
-            (implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Form[ReplaceOrDeleteADisclosure] =
+   def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
      Form(
        mapping(
          "arrangementID" -> validatedArrangementIDText(
            "replaceOrDeleteADisclosure.error.arrangementID.required",
            "replaceOrDeleteADisclosure.error.arrangementID.invalid",
            countryList,
-           arrangementIDRegex)
-           .verifying("replaceOrDeleteADisclosure.error.arrangementID.notFound",
-             id => {
-               //TODO Validate non-UK format is correct and GB id exists
-               if (id.toUpperCase.matches(startOfUKIDRegex)) {
-                 val verifyID = crossBorderArrangementsConnector.verifyArrangementId(id.toUpperCase)
+           arrangementIDRegex),
 
-                 Await.result(verifyID, 5 seconds)
-               } else {
-                 true
-               }
-             }
-           ),
          "disclosureID" -> validatedArrangementIDText(
            "replaceOrDeleteADisclosure.error.disclosureID.required",
            "replaceOrDeleteADisclosure.error.disclosureID.invalid",
            countryList,
            disclosureIDRegex)
-           .verifying("replaceOrDeleteADisclosure.error.disclosureID.notFound",
-             id => {
-               //TODO Validate ID exists and was submitted by user
-               if (id.toUpperCase.matches(startOfUKIDRegex)) {
-                 val verifyID = crossBorderArrangementsConnector.verifyDisclosureId(id.toUpperCase, request.enrolmentID)
-
-                 Await.result(verifyID, 5 seconds)
-               } else {
-                 true
-               }
-             }
-           )
        )(ReplaceOrDeleteADisclosure.apply)(ReplaceOrDeleteADisclosure.unapply)
      )
  }

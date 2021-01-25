@@ -1,9 +1,27 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.disclosure
 
 import base.SpecBase
+import connectors.CrossBorderArrangementsConnector
 import forms.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.disclosure.ReplaceOrDeleteADisclosure
+import models.{Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -26,7 +44,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ReplaceOrDeleteADisclosureFormProvider()
-  val form = formProvider()
+  val countries = List(Country("valid","GB","United Kingdom"))
+  val form = formProvider(countries)
 
   lazy val replaceOrDeleteADisclosureRoute = routes.ReplaceOrDeleteADisclosureController.onPageLoad(NormalMode).url
 
@@ -34,8 +53,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
     userAnswersId,
     Json.obj(
       ReplaceOrDeleteADisclosurePage.toString -> Json.obj(
-        "arrangementID" -> "value 1",
-        "disclosureID" -> "value 2"
+        "arrangementID" -> "GBA20210101ABC123",
+        "disclosureID" -> "GBD20210101ABC123"
       )
     )
   )
@@ -63,7 +82,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "replaceOrDeleteADisclosure.njk"
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -87,8 +106,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       val filledForm = form.bind(
         Map(
-          "arrangementID" -> "value 1",
-          "disclosureID" -> "value 2"
+          "arrangementID" -> "GBA20210101ABC123",
+          "disclosureID" -> "GBD20210101ABC123"
         )
       )
 
@@ -97,7 +116,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "replaceOrDeleteADisclosure.njk"
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -107,26 +126,31 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       val mockSessionRepository = mock[SessionRepository]
 
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureId(any(),any())(any())).thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
           )
           .build()
 
 
       val request =
         FakeRequest(POST, replaceOrDeleteADisclosureRoute)
-          .withFormUrlEncodedBody(("arrangementID", "value 1"), ("disclosureID", "value 2"))
+          .withFormUrlEncodedBody(("arrangementID", "GBA20210101ABC123"), ("disclosureID", "GBD20210101ABC123"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }
@@ -153,7 +177,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
         "mode"   -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "replaceOrDeleteADisclosure.njk"
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()
@@ -168,7 +192,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
@@ -185,7 +209,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

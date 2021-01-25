@@ -24,6 +24,7 @@ import models.disclosure.ReplaceOrDeleteADisclosure
 import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
 import pages.disclosure.ReplaceOrDeleteADisclosurePage
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -54,7 +55,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries, crossBorderArrangementsConnector)
+      val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(ReplaceOrDeleteADisclosurePage) match {
         case None => form
@@ -75,27 +76,42 @@ class ReplaceOrDeleteADisclosureController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries, crossBorderArrangementsConnector)
+      val form = formProvider(countries)
+      val formReturned: Form[ReplaceOrDeleteADisclosure] =  form.bindFromRequest()
 
-      form.bindFromRequest().fold(
+      formReturned.fold(
         formWithErrors => {
-
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "arrangementIDLabel" -> arrangementIDLabel
           )
-
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReplaceOrDeleteADisclosurePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+        value => {
+          crossBorderArrangementsConnector.verifyDisclosureId(value.disclosureID, request.enrolmentID) flatMap {
+            test =>
+              if (!test) {
+                val formError = FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound"))
+
+                val formWithErrors = formReturned.withError(error = formError)
+
+                val json = Json.obj(
+                  "form" -> formWithErrors,
+                  "mode" -> mode,
+                  "arrangementIDLabel" -> arrangementIDLabel
+                )
+                renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
+              } else {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ReplaceOrDeleteADisclosurePage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                  checkRoute = toCheckRoute(mode, updatedAnswers)
+                } yield Redirect(redirect(checkRoute, Some(value)))
+              }
+          }
+        }
       )
   }
 
