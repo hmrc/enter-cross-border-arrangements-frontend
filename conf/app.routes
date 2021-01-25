@@ -18,12 +18,6 @@ GET        /keep-alive                                  controllers.KeepAliveCon
 
 
 
-# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
-GET        /manual/unsubmitted-disclosures                         controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
-
-GET        /manual/your-disclosure-details/:id                     controllers.DisclosureDetailsController.onPageLoad(id: Int)
-POST       /manual/your-disclosure-details/:id                     controllers.TaskListController.onSubmit(id: Int)
-
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad(id: Int)
@@ -498,11 +492,15 @@ POST       /reporter/taxpayers/change-implementation-date/:id           controll
 # CONFIRMATION PAGES
 # DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
 
-GET        /manual/your-disclosure-details                          controllers.DisclosureDetailsController.onPageLoad()
-GET        /manual/there-is-a-problem                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad()
+GET        /manual/there-is-a-problem/:id                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad(id: Int)
 GET        /manual/confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
 GET        /manual/disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
 GET        /manual/addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /manual/unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
+
+GET        /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
+POST       /manual/your-disclosure-details/:id                          controllers.TaskListController.onSubmit(id: Int)
+
 
 ## REPORTER DETAILS - ORGANISATION
 

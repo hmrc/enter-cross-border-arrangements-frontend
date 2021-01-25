@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSugar {
 
   val errors = Seq("Error 1", "Error 2")
-  lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad().url
+  lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
 
   "DisclosureValidationErrors Controller" - {
 
@@ -78,7 +78,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(ValidationErrorsPage, errors)
+        .set(ValidationErrorsPage, 0, errors)
         .success.value
 
       val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()

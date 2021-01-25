@@ -51,9 +51,9 @@ class TaskListController @Inject()(
             //did it fail? oh my god - hand back to the user to fix
             errors => {
               for {
-                updatedAnswers <- Future.fromTry(UserAnswers(request.internalId).set(ValidationErrorsPage, errors))
+                updatedAnswers <- Future.fromTry(UserAnswers(request.internalId).set(ValidationErrorsPage, id, errors))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad().url)
+              } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
             },
 
             //did it succeed - hand off to the backend to do it's generating thing
@@ -64,7 +64,7 @@ class TaskListController @Inject()(
                 ids <- crossBorderArrangementsConnector.submitXML(submission)
                 userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
                 _                  <- sessionRepository.set(userAnswersWithIDs)
-              } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting().url)
+              } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
             }
           )
       }
