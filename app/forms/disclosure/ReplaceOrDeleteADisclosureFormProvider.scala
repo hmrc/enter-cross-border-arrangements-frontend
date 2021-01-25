@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package forms.disclosure
 
-import connectors.CrossBorderArrangementsConnector
 import forms.mappings.Mappings
-import models.requests.DataRequest
 import models.Country
 import models.disclosure.ReplaceOrDeleteADisclosure
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.AnyContent
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.DurationInt
 
 class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings {
 

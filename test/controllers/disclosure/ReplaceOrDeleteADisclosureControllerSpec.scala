@@ -18,7 +18,7 @@ package controllers.disclosure
 
 import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
-import forms.ReplaceOrDeleteADisclosureFormProvider
+import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.ReplaceOrDeleteADisclosure
 import models.{Country, NormalMode, UserAnswers}

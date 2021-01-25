@@ -19,7 +19,7 @@ package controllers.disclosure
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import forms.ReplaceOrDeleteADisclosureFormProvider
+import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import models.disclosure.ReplaceOrDeleteADisclosure
 import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
