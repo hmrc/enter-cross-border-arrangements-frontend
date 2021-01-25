@@ -1,6 +1,6 @@
-package pages
+package pages.disclosure
 
-import models.ReplaceOrDeleteADisclosure
+import models.disclosure.ReplaceOrDeleteADisclosure
 import pages.behaviours.PageBehaviours
 
 class ReplaceOrDeleteADisclosurePageSpec extends PageBehaviours {

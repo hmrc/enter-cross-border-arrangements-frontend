@@ -19,7 +19,8 @@ package forms
 import connectors.CrossBorderArrangementsConnector
 import forms.mappings.Mappings
 import models.requests.DataRequest
-import models.{Country, ReplaceOrDeleteADisclosure}
+import models.Country
+import models.disclosure.ReplaceOrDeleteADisclosure
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.AnyContent

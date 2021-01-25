@@ -22,12 +22,12 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
+import pages.disclosure.ReplaceOrDeleteADisclosurePage
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
-import pages.ReplaceOrDeleteADisclosurePage
 import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
@@ -43,7 +43,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = controllers.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+            href               = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"replaceOrDeleteADisclosure.checkYourAnswersLabel"))
           )
         )

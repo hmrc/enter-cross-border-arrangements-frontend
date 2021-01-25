@@ -1,15 +1,15 @@
-package controllers
+package controllers.disclosure
 
 import base.SpecBase
 import forms.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, ReplaceOrDeleteADisclosure, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ReplaceOrDeleteADisclosurePage
+import pages.disclosure.ReplaceOrDeleteADisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

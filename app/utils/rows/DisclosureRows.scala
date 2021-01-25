@@ -18,7 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import models.disclosure.DisclosureType._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
@@ -57,12 +57,29 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
+  private def replaceOrDeleteADisclosureRows: Seq[Row] = userAnswers.get(ReplaceOrDeleteADisclosurePage).fold(Seq[Row]()){ answer =>
+    Seq(
+      toRow(
+        msgKey  = "replaceOrDeleteADisclosure.arrangementID",
+        content = lit"${answer.arrangementID}",
+        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url
+      ),
+      toRow(
+        msgKey  = "replaceOrDeleteADisclosure.disclosureID",
+        content = lit"${answer.disclosureID}",
+        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url
+      )
+    )
+  }
+
   def buildDisclosureSummaryDetails: Seq[Row] =
     userAnswers.getBase(DisclosureTypePage) match {
       case Some(Dac6new) =>
         disclosureMarketablePage.toSeq
       case Some(Dac6add) =>
         disclosureIdentifyArrangement.toSeq
+      case Some(Dac6rep) =>
+        replaceOrDeleteADisclosureRows
 
     }
 }

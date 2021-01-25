@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ReplaceOrDeleteADisclosureController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 

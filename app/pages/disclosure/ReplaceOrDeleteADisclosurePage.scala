@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+package pages.disclosure
 
-import models.ReplaceOrDeleteADisclosure
+import models.disclosure.ReplaceOrDeleteADisclosure
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object ReplaceOrDeleteADisclosurePage extends QuestionPage[ReplaceOrDeleteADisclosure] {

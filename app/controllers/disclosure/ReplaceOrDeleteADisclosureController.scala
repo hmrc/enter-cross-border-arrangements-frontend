@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.disclosure
 
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.ReplaceOrDeleteADisclosureFormProvider
-
-import javax.inject.Inject
+import models.disclosure.ReplaceOrDeleteADisclosure
 import models.{Country, Mode}
-import navigation.Navigator
-import pages.ReplaceOrDeleteADisclosurePage
+import navigation.NavigatorForDisclosure
+import pages.disclosure.ReplaceOrDeleteADisclosurePage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReplaceOrDeleteADisclosureController @Inject()(
@@ -40,14 +41,14 @@ class ReplaceOrDeleteADisclosureController @Inject()(
     sessionRepository: SessionRepository,
     countryListFactory: CountryListFactory,
     crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
-    navigator: Navigator,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: ReplaceOrDeleteADisclosureFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -66,8 +67,11 @@ class ReplaceOrDeleteADisclosureController @Inject()(
         "arrangementIDLabel" -> arrangementIDLabel
       )
 
-      renderer.render("replaceOrDeleteADisclosure.njk", json).map(Ok(_))
+      renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(Ok(_))
   }
+
+  def redirect(checkRoute: CheckRoute, value: Option[ReplaceOrDeleteADisclosure]): Call =
+    navigator.routeMap(ReplaceOrDeleteADisclosurePage)(checkRoute)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -84,13 +88,14 @@ class ReplaceOrDeleteADisclosureController @Inject()(
             "arrangementIDLabel" -> arrangementIDLabel
           )
 
-          renderer.render("replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
+          renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReplaceOrDeleteADisclosurePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ReplaceOrDeleteADisclosurePage, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(mode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 

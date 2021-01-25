@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.disclosure
 
 import play.api.libs.json._
 

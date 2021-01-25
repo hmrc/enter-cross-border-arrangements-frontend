@@ -19,7 +19,7 @@ package generators
 import models._
 import models.affected.YouHaveNotAddedAnyAffected
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
