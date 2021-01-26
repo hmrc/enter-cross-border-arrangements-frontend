@@ -18,13 +18,15 @@ package controllers.hallmarks
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
+import models.hallmarks.JourneyStatus
 import navigation.Navigator
-import pages.hallmarks.HallmarksCheckYourAnswersPage
+import pages.hallmarks.{HallmarkStatusPage, HallmarksCheckYourAnswersPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -33,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersHallmarksController @Inject()(
     override val messagesApi: MessagesApi,
+    sessionRepository: SessionRepository,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -60,7 +63,10 @@ class CheckYourAnswersHallmarksController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      Future.successful(Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers)))
-
+      for {
+        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(HallmarkStatusPage, id, JourneyStatus.Completed))
+        _ <- sessionRepository.set(userAnswers)
+      } yield
+        Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers))
   }
 }

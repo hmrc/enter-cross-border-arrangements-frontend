@@ -79,5 +79,4 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       }
       .getOrElse(throw new IllegalStateException("Unable to build disclose details"))
   }
-
 }

@@ -19,9 +19,10 @@ package controllers.arrangement
 import controllers.actions._
 import forms.arrangement.WhatIsThisArrangementCalledFormProvider
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
+import models.hallmarks.JourneyStatus
 import navigation.Navigator
-import pages.arrangement.WhatIsThisArrangementCalledPage
+import pages.arrangement.{ArrangementStatusPage, WhatIsThisArrangementCalledPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,10 +47,10 @@ class WhatIsThisArrangementCalledController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(WhatIsThisArrangementCalledPage, id)) match {
+      val preparedForm = request.userAnswers.get(WhatIsThisArrangementCalledPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +64,7 @@ class WhatIsThisArrangementCalledController @Inject()(
       renderer.render("arrangement/whatIsThisArrangementCalled.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -79,12 +80,11 @@ class WhatIsThisArrangementCalledController @Inject()(
         },
         value => {
 
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(WhatIsThisArrangementCalledPage, id, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsThisArrangementCalledPage, id, value))
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(ArrangementStatusPage, id, JourneyStatus.InProgress))
+            _ <- sessionRepository.set(updatedAnswersWithStatus)
+
           } yield Redirect(navigator.nextPage(WhatIsThisArrangementCalledPage, id, mode, updatedAnswers))
         }
       )

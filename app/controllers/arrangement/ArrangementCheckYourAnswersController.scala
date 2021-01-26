@@ -17,29 +17,32 @@
 package controllers.arrangement
 
 import controllers.actions._
-import controllers.mixins.{RoutingSupport, DefaultRouting}
-import models.NormalMode
+import controllers.mixins.{DefaultRouting, RoutingSupport}
+import javax.inject.Inject
+import models.hallmarks.JourneyStatus
+import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForArrangement
-import pages.arrangement.ArrangementCheckYourAnswersPage
+import pages.arrangement.{ArrangementCheckYourAnswersPage, ArrangementStatusPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementCheckYourAnswersController @Inject()(
-                                                       override val messagesApi: MessagesApi,
-                                                       identify: IdentifierAction,
-                                                       getData: DataRetrievalAction,
-                                                       requireData: DataRequiredAction,
-                                                       navigator: NavigatorForArrangement,
-                                                       val controllerComponents: MessagesControllerComponents,
-                                                       renderer: Renderer
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  navigator: NavigatorForArrangement,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -62,9 +65,11 @@ class ArrangementCheckYourAnswersController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      Future.successful(Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0)))
+      for {
+        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ArrangementStatusPage, id, JourneyStatus.Completed))
+        _ <- sessionRepository.set(userAnswers)
+      } yield
+        Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
 
   }
-
 }

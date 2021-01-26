@@ -16,8 +16,6 @@ GET        /sign-out                                    controllers.SignOutContr
 
 GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
 
-
-
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad(id: Int)
@@ -500,7 +498,6 @@ GET        /manual/unsubmitted-disclosures                              controll
 
 GET        /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
 POST       /manual/your-disclosure-details/:id                          controllers.TaskListController.onSubmit(id: Int)
-
 
 ## REPORTER DETAILS - ORGANISATION
 

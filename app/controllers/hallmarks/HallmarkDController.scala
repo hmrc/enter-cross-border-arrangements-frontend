@@ -18,13 +18,12 @@ package controllers.hallmarks
 
 import controllers.actions._
 import forms.hallmarks.HallmarkDFormProvider
-
 import javax.inject.Inject
-import models.hallmarks.HallmarkD
 import models.hallmarks.HallmarkD.D1
+import models.hallmarks.{HallmarkD, JourneyStatus}
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.hallmarks.{HallmarkD1Page, HallmarkDPage}
+import pages.hallmarks.{HallmarkD1Page, HallmarkDPage, HallmarkStatusPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,10 +49,10 @@ class HallmarkDController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData ).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(HallmarkDPage, id)) match {
+      val preparedForm = request.userAnswers.get(HallmarkDPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,7 +67,7 @@ class HallmarkDController @Inject()(
       renderer.render("hallmarks/hallmarkD.njk",json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -84,14 +83,14 @@ class HallmarkDController @Inject()(
           renderer.render("hallmarks/hallmarkD.njk", json).map(BadRequest(_))
         },
         value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            userAnswers <- Future.fromTry(removeD1Parts(userAnswers, id, value))
-            updatedAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkDPage, id, mode, updatedAnswers))
+            userAnswers: UserAnswers <- Future.fromTry(removeD1Parts(request.userAnswers, id, value))
+            updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(HallmarkStatusPage, id, JourneyStatus.InProgress))
+            _ <- sessionRepository.set(updatedAnswersWithStatus)
+          } yield
+            Redirect(navigator.nextPage(HallmarkDPage, id, mode, updatedAnswers))
         }
       )
   }

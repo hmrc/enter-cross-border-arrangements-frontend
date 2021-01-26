@@ -20,12 +20,10 @@ import com.google.inject.Inject
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import models.NormalMode
-import models.disclosure.DisclosureType.Dac6add
-import controllers.mixins.DefaultRouting
 import helpers.IDHelper
+import models.disclosure.DisclosureType.Dac6add
+import models.hallmarks.JourneyStatus
 import models.{NormalMode, UnsubmittedDisclosure}
-import models.disclosure.{DisclosureDetails, DisclosureType}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -84,7 +82,8 @@ class DisclosureCheckYourAnswersController @Inject()(
 
       def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
         case Some(Dac6add) =>
-          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(Future.successful(false))(
+          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(
+            throw new Exception("Unable to retrieve isMarketableArrangement from disclosure backend"))(
             arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
         case _ =>
           request.userAnswers.getBase(DisclosureMarketablePage).fold(
@@ -99,7 +98,9 @@ class DisclosureCheckYourAnswersController @Inject()(
         disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
         updatedAnswers <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
-        _  <- sessionRepository.set(newAnswers)
+        updateNewAnswersWithStatus <- Future.fromTry(newAnswers.set(DisclosureStatusPage, index, JourneyStatus.Completed))
+        _  <- sessionRepository.set(updateNewAnswersWithStatus)
       } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
+
