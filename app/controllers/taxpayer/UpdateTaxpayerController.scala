@@ -131,12 +131,12 @@ class UpdateTaxpayerController @Inject()(
     (getDisclosureType, getMarketableFlag, ua.get(RoleInArrangementPage, id)) match {
 
         case (Some(Dac6new), true, _) => JourneyStatus.Completed //new & marketable
-
+          
         case (Some(Dac6new), false, Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
 
         case (Some(Dac6add), _, Some(Taxpayer)) => JourneyStatus.Completed // add & Reporter is taxpayer
 
-        case (_, false, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
+        case (_, _, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
 
         case _ => JourneyStatus.NotStarted
     }
