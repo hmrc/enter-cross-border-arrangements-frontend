@@ -54,12 +54,22 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       }
     }
 
-    "taskListHtmlProvider" - {
+    "taskListItemLinkedProvider" - {
 
       "must return html for a standard row with blue status on taskList page" in {
 
         taskListItemLinkedProvider(mockUrl, "Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='link'> $mockLinkContent</a>" +
+          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
+      }
+    }
+
+    "taskListItemNotLinkedProvider" - {
+
+      "must return html for a row with no journey link but a blue status on taskList page" in {
+
+        taskListItemNotLinkedProvider("Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
       }
     }
