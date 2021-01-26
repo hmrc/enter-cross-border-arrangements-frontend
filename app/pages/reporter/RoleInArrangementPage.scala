@@ -22,6 +22,7 @@ import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import pages.QuestionPage
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer._
+import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -39,6 +40,7 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
         userAnswers.remove(TaxpayerWhyReportInUKPage, id)
           .flatMap(_.remove(TaxpayerWhyReportArrangementPage, id))
           .flatMap(_.remove(ReporterTaxpayersStartDateForImplementingArrangementPage, id))
+          .flatMap(_.remove(RelevantTaxpayerStatusPage, id))
 
       case Some(Taxpayer) =>
         userAnswers.remove(IntermediaryWhyReportInUKPage, id)

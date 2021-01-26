@@ -16,8 +16,6 @@ GET        /sign-out                                    controllers.SignOutContr
 
 GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
 
-
-
 # DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
 GET        /manual/unsubmitted-disclosures                         controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 

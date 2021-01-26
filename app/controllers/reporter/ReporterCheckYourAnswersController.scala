@@ -18,21 +18,22 @@ package controllers.reporter
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.mixins.DefaultRouting
 import handlers.ErrorHandler
 import models.ReporterOrganisationOrIndividual.Organisation
-import models.UserAnswers
+import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.Intermediary
+import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage, ReporterCheckYourAnswersPage}
+import pages.reporter.{ReporterCheckYourAnswersPage, ReporterOrganisationOrIndividualPage, ReporterStatusPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
-import controllers.mixins.DefaultRouting
-import models.NormalMode
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +44,7 @@ class ReporterCheckYourAnswersController  @Inject()(
    requireData: DataRequiredAction,
    errorHandler: ErrorHandler,
    navigator: NavigatorForReporter,
+   sessionRepository: SessionRepository,
    val controllerComponents: MessagesControllerComponents,
    renderer: Renderer
  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -102,6 +104,10 @@ class ReporterCheckYourAnswersController  @Inject()(
 
     def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
       implicit request =>
-            Future.successful(Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0)))
+
+        for {
+          userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ReporterStatusPage, id, JourneyStatus.Completed))
+          _ <- sessionRepository.set(userAnswers)
+        } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
     }
 }

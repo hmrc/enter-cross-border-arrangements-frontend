@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package pages.arrangement
 
-sealed trait CompletionState
+import models.hallmarks.JourneyStatus
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case object CannotStart extends CompletionState
-case object NotStarted extends CompletionState
-case object InProgress extends CompletionState
-case object Complete extends CompletionState
+case object ArrangementStatusPage extends QuestionPage[JourneyStatus] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "arrangementStatus"
+}

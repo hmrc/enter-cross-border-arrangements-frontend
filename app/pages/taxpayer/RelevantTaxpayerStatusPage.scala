@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package pages.hallmarks
+package pages.taxpayer
 
-import models.hallmarks.HallmarkD
+import models.hallmarks.JourneyStatus
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object HallmarkDPage extends QuestionPage[Set[HallmarkD]] {
+case object RelevantTaxpayerStatusPage extends QuestionPage[JourneyStatus] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "hallmarkD"
-
+  override def toString: String = "relevantTaxpayerStatus"
 }

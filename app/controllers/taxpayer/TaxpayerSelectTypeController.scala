@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import models.{Mode, NormalMode, SelectType}
 import navigation.Navigator
-import pages.taxpayer.TaxpayerSelectTypePage
+import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,8 +28,9 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
 import javax.inject.Inject
+import models.hallmarks.JourneyStatus
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxpayerSelectTypeController @Inject()(
@@ -82,8 +83,9 @@ class TaxpayerSelectTypeController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, id, value))
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, JourneyStatus.InProgress))
             redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, id, value)) NormalMode else mode
-            _              <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswersWithStatus)
           } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, id, redirectMode, updatedAnswers))
       )
   }
