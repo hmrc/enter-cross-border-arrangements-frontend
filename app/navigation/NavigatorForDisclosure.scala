@@ -42,7 +42,7 @@ class NavigatorForDisclosure @Inject()() {
       }
 
     case ReplaceOrDeleteADisclosurePage =>
-      _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
+      _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()

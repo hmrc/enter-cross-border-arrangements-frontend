@@ -57,7 +57,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(ReplaceOrDeleteADisclosurePage) match {
+      val preparedForm = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -72,7 +72,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[ReplaceOrDeleteADisclosure]): Call =
-    navigator.routeMap(ReplaceOrDeleteADisclosurePage)(checkRoute)(value)(0)
+    navigator.routeMap(ReplaceOrDeleteADisclosurePage)(checkRoute)(None)(value)(0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -105,7 +105,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
                 renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
               } else {
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ReplaceOrDeleteADisclosurePage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
                   _              <- sessionRepository.set(updatedAnswers)
                   checkRoute = toCheckRoute(mode, updatedAnswers)
                 } yield Redirect(redirect(checkRoute, Some(value)))

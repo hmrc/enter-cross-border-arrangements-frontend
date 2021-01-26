@@ -57,7 +57,7 @@ trait DisclosureRows extends RowBuilder {
     )
   }
 
-  private def replaceOrDeleteADisclosureRows: Seq[Row] = userAnswers.get(ReplaceOrDeleteADisclosurePage).fold(Seq[Row]()){ answer =>
+  private def replaceOrDeleteADisclosureRows: Seq[Row] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(Seq[Row]()){ answer =>
     Seq(
       toRow(
         msgKey  = "replaceOrDeleteADisclosure.arrangementID",

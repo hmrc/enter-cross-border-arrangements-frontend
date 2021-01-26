@@ -35,7 +35,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows
     with IntermediariesRows with DisclosureRows with ReporterRows with AffectedRows {
 
-  def replaceOrDeleteADisclosure: Option[Row] = userAnswers.get(ReplaceOrDeleteADisclosurePage) map {
+  def replaceOrDeleteADisclosure: Option[Row] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage) map {
     answer =>
       Row(
         key     = Key(msg"replaceOrDeleteADisclosure.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
