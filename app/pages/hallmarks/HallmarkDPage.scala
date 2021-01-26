@@ -16,12 +16,9 @@
 
 package pages.hallmarks
 
-import models.UserAnswers
 import models.hallmarks.HallmarkD
 import pages.QuestionPage
 import play.api.libs.json.JsPath
-
-import scala.util.Try
 
 case object HallmarkDPage extends QuestionPage[Set[HallmarkD]] {
 
@@ -29,5 +26,4 @@ case object HallmarkDPage extends QuestionPage[Set[HallmarkD]] {
 
   override def toString: String = "hallmarkD"
 
-  override def cleanup(value: Option[Set[HallmarkD]], userAnswers: UserAnswers): Try[UserAnswers] = super.cleanup(value, userAnswers)
 }

@@ -19,16 +19,18 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.TaskListHelper._
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureMarketablePage, DisclosureStatusPage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureStatusPage, DisclosureTypePage}
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.RelevantTaxpayerStatusPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import uk.gov.hmrc.viewmodels.Html
 
 class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -36,6 +38,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
   val mockUrl = "home.gov.uk"
   val mockAltURL = "notHome.gov.uk"
   val mockLinkContent = "some link"
+  val index = 0
+  val mockDisclosure = DisclosureDetails("name", DisclosureType.Dac6new, Some("123"), Some("321"), initialDisclosureMA = true, Some("messageRefID"))
+  val mockUnsubmittedDisclosure = UnsubmittedDisclosure("12", "name")
 
   "TaskListHelper" - {
 
@@ -53,7 +58,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return html for a standard row with blue status on taskList page" in {
 
-        taskListHtmlProvider(mockUrl, "Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
+        taskListItemLinkedProvider(mockUrl, "Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
       }
@@ -64,11 +69,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return html for a row with COMPLETED status" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, Completed)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria") mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-completed'>Completed</strong> </li>")
       }
@@ -76,11 +84,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return html for a row with IN PROGRESS status" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, InProgress)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, InProgress)
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria") mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-inProgress'>In Progress</strong> </li>")
       }
@@ -89,11 +100,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return html for a row with NOT STARTED status" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, NotStarted)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, NotStarted)
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria") mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong> </li>")
       }
@@ -104,32 +118,38 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return TRUE when all Journeys are COMPLETED status" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, Completed)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureStatusPage, Completed)
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
           .success
           .value
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index) mustBe true
 
       }
 
       "must return FALSE when all Journeys are NOT COMPLETE status" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, InProgress)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureStatusPage, Completed)
+          .set(ReporterStatusPage, index, InProgress)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
           .success
           .value
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index) mustBe false
 
       }
     }
@@ -139,21 +159,27 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return Alternative URL (cya url) when relevant Journey status is COMPLETE" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, Completed)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
           .success
           .value
 
-        startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL) mustBe mockAltURL
+        startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL, index) mustBe mockAltURL
       }
 
       "must return standard URL (journey start url) when relevant Journey status is NOT COMPLETE" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(ReporterStatusPage, InProgress)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, InProgress)
           .success
           .value
 
-        startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL) mustBe mockUrl
+        startJourneyOrCya(userAnswers, ReporterStatusPage, mockUrl, mockAltURL, index) mustBe mockUrl
       }
     }
 
@@ -163,96 +189,102 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         "has NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6add)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureMarketablePage, true)
+          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
           .success
           .value
-          .set(ReporterStatusPage, Completed)
+          .set(ReporterStatusPage, index, Completed)
           .success
           .value
-          .set(RelevantTaxpayerStatusPage, Completed)
+          .set(RelevantTaxpayerStatusPage, index, Completed)
           .success
           .value
-          .set(IntermediariesStatusPage, Completed)
+          .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
-          .set(DisclosureStatusPage, Completed)
+          .set(DisclosureStatusPage, index, Completed)
           .success
           .value
-          .set(HallmarkStatusPage, NotStarted)
+          .set(HallmarkStatusPage, index, NotStarted)
           .success
           .value
-          .set(ArrangementStatusPage, NotStarted)
+          .set(ArrangementStatusPage, index, NotStarted)
           .success
           .value
 
-        userCanSubmit(userAnswers) mustBe true
+        userCanSubmit(userAnswers, index) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
         "all relevant journeys" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6new)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureMarketablePage, true)
+          .set(DisclosureTypePage, index, Dac6new)
           .success
           .value
-          .set(ReporterStatusPage, Completed)
+          .set(DisclosureMarketablePage, index, true)
           .success
           .value
-          .set(RelevantTaxpayerStatusPage, Completed)
+          .set(ReporterStatusPage, index, Completed)
           .success
           .value
-          .set(IntermediariesStatusPage, Completed)
+          .set(RelevantTaxpayerStatusPage, index, Completed)
           .success
           .value
-          .set(DisclosureStatusPage, Completed)
+          .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
-          .set(HallmarkStatusPage, Completed)
+          .set(DisclosureStatusPage, index, Completed)
           .success
           .value
-          .set(ArrangementStatusPage, Completed)
+          .set(HallmarkStatusPage, index, Completed)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, Completed)
           .success
           .value
 
-        userCanSubmit(userAnswers) mustBe true
+        userCanSubmit(userAnswers, index) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
         "NOT COMPLETED all relevant journeys" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6new)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureMarketablePage, false)
+          .set(DisclosureTypePage, index, Dac6new)
           .success
           .value
-          .set(ReporterStatusPage, Completed)
+          .set(DisclosureMarketablePage, index,false)
           .success
           .value
-          .set(RelevantTaxpayerStatusPage, Completed)
+          .set(ReporterStatusPage, index, Completed)
           .success
           .value
-          .set(IntermediariesStatusPage, Completed)
+          .set(RelevantTaxpayerStatusPage, index, Completed)
           .success
           .value
-          .set(DisclosureStatusPage, Completed)
+          .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
-          .set(HallmarkStatusPage, NotStarted)
+          .set(DisclosureStatusPage, index, Completed)
           .success
           .value
-          .set(ArrangementStatusPage, NotStarted)
+          .set(HallmarkStatusPage, index, NotStarted)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, NotStarted)
           .success
           .value
 
-        userCanSubmit(userAnswers) mustBe false
+        userCanSubmit(userAnswers, index) mustBe false
       }
     }
 
@@ -262,29 +294,28 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         "and initialMA flag is true" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6add)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureMarketablePage, true)
+          .set(DisclosureDetailsPage, index, mockDisclosure.copy( disclosureType = Dac6add, initialDisclosureMA = true))
           .success
           .value
 
-        displaySectionOptional(userAnswers) mustBe "disclosureDetails.optional"
+        displaySectionOptional(userAnswers, index) mustBe "(optional)"
       }
 
       "must return an empty string when user is disclosing an other arrangement combo" in {
 
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DisclosureTypePage, Dac6new)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
           .success
           .value
-          .set(DisclosureMarketablePage, false)
+          .set(DisclosureDetailsPage, index, mockDisclosure.copy(initialDisclosureMA = false))
           .success
           .value
 
-        displaySectionOptional(userAnswers) mustBe ""
+        displaySectionOptional(userAnswers, index) mustBe ""
       }
     }
-
   }
 }

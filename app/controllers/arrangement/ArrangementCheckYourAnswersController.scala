@@ -66,7 +66,7 @@ class ArrangementCheckYourAnswersController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       for {
-        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ArrangementStatusPage, JourneyStatus.Completed))
+        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ArrangementStatusPage, id, JourneyStatus.Completed))
         _ <- sessionRepository.set(userAnswers)
       } yield
         Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))

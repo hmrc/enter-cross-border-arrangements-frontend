@@ -106,7 +106,7 @@ class ReporterCheckYourAnswersController  @Inject()(
       implicit request =>
 
         for {
-          userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ReporterStatusPage, JourneyStatus.Completed))
+          userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ReporterStatusPage, id, JourneyStatus.Completed))
           _ <- sessionRepository.set(userAnswers)
         } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
     }

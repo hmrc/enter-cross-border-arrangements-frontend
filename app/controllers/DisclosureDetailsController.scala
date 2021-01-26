@@ -25,14 +25,12 @@ import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import pages.QuestionPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureStatusPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -62,86 +60,95 @@ class DisclosureDetailsController @Inject()(
 
       val json = Json.obj(
         "arrangementID" -> arrangementMessage,
-        "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage),
-        "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage),
-        "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage),
-        "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage),
-        "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage),
-        "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get),
-        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get)
+        "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
+        "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
+        "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
+        "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
+        "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
+        "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id),
+        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
   }
 
 
   private def disclosureTypeItem(ua: UserAnswers,
-                                 page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, frontendAppConfig.disclosureStartUrl, frontendAppConfig.disclosureCYAUrl)
+    ua.get(DisclosureStatusPage, index) match {
+      case Some(Completed) =>
+        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details")
 
-    retrieveRowWithStatus(ua,
-      page,
-      dynamicLink,
-      linkContent = "disclosureDetails.disclosureTypeLink",
-      id = "disclosure",
-      ariaLabel = "disclosure-details"
-    )
+      case _ =>
+        retrieveRowWithStatus(ua,
+          page,
+          "",
+          linkContent = "disclosureDetails.disclosureTypeLink",
+          id = "disclosure",
+          ariaLabel = "disclosure-details",
+          index
+        )
+    }
   }
 
   private def hallmarksItem(ua: UserAnswers,
-                            page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                            page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, frontendAppConfig.hallmarksUrl, frontendAppConfig.hallmarksCYAUrl)
+    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.hallmarksUrl}/$index", s"${frontendAppConfig.hallmarksCYAUrl}/$index", index)
 
     retrieveRowWithStatus(ua: UserAnswers,
       page,
       dynamicLink,
       linkContent = "disclosureDetails.hallmarksLink",
       id = "hallmarks",
-      ariaLabel = "arrangementDetails"
+      ariaLabel = "arrangementDetails",
+      index
     )
   }
 
   private def arrangementsItem(ua: UserAnswers,
-                               page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                               page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, frontendAppConfig.arrangementsUrl, frontendAppConfig.arrangementsCYAUrl)
+    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
 
     retrieveRowWithStatus(ua: UserAnswers,
       page,
       dynamicLink,
       linkContent = "disclosureDetails.arrangementDetailsLink",
       id = "arrangementDetails",
-      ariaLabel = "arrangementDetails"
+      ariaLabel = "arrangementDetails",
+      index
     )
   }
 
   private def reporterDetailsItem(ua: UserAnswers,
-                                  page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                                  page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, frontendAppConfig.reportersUrl, frontendAppConfig.reportersCYAUrl)
+    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.reportersUrl}/$index", s"${frontendAppConfig.reportersCYAUrl}/$index", index)
 
     retrieveRowWithStatus(ua: UserAnswers,
       page,
       dynamicLink,
       linkContent = "disclosureDetails.reporterDetailsLink",
       id = "reporter",
-      ariaLabel = "reporterDetails"
+      ariaLabel = "reporterDetails",
+      index
     )
   }
 
   private def relevantTaxpayersItem(ua: UserAnswers,
-                                    page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                                    page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    ua.get(ReporterStatusPage) match {
+    ua.get(ReporterStatusPage, index) match {
       case Some(Completed) =>
         retrieveRowWithStatus(ua: UserAnswers,
           page,
-          frontendAppConfig.taxpayersUrl,
+          s"${frontendAppConfig.taxpayersUrl}/$index",
           linkContent = "disclosureDetails.relevantTaxpayersLink",
           id = "taxpayers",
-          ariaLabel = "connected-parties"
+          ariaLabel = "connected-parties",
+          index
         )
 
       case _ => taskListItemRestricted(
@@ -150,16 +157,17 @@ class DisclosureDetailsController @Inject()(
   }
 
   private def intermediariesItem(ua: UserAnswers,
-                                 page: QuestionPage[JourneyStatus])(implicit messages: Messages) = {
+                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    ua.get(ReporterStatusPage) match {
+    ua.get(ReporterStatusPage, index) match {
       case Some(Completed) =>
         retrieveRowWithStatus(ua: UserAnswers,
           page,
-          frontendAppConfig.intermediariesUrl,
+          s"${frontendAppConfig.intermediariesUrl}/$index",
           linkContent = "disclosureDetails.intermediariesLink",
           id = "intermediaries",
-          ariaLabel = "connected-parties"
+          ariaLabel = "connected-parties",
+          index
         )
 
       case _ => taskListItemRestricted(

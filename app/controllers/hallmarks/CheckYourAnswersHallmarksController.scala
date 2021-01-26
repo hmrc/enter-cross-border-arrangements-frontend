@@ -64,7 +64,7 @@ class CheckYourAnswersHallmarksController @Inject()(
     implicit request =>
 
       for {
-        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(HallmarkStatusPage, JourneyStatus.Completed))
+        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(HallmarkStatusPage, id, JourneyStatus.Completed))
         _ <- sessionRepository.set(userAnswers)
       } yield
         Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers))

@@ -20,13 +20,14 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import javax.inject.Inject
+import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.taxpayer.UpdateTaxpayer
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForTaxpayer
-import pages.disclosure.{DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.DisclosureDetailsPage
 import pages.reporter.RoleInArrangementPage
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,20 +41,20 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateTaxpayerController @Inject()(
-                                          override val messagesApi: MessagesApi,
-                                          sessionRepository: SessionRepository,
-                                          navigator: NavigatorForTaxpayer,
-                                          identify: IdentifierAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: UpdateTaxpayerFormProvider,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          renderer: Renderer
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForTaxpayer,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: UpdateTaxpayerFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(id: int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.get(TaxpayerLoopPage, id) match {
@@ -105,35 +106,37 @@ class UpdateTaxpayerController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpdateTaxpayerPage, id, value))
 //            cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) // TODO test when userAnswers are properly supplied
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, setStatus(value, updatedAnswers)))
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, setStatus(value, updatedAnswers, id)))
             _              <- sessionRepository.set(updatedAnswersWithStatus)
             checkRoute     =  toCheckRoute(mode, updatedAnswersWithStatus, id)
-           } yield Redirect(redirect(checkRoute, Some(value)))
+           } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }
 
-  private def setStatus(selectedAnswer: UpdateTaxpayer, ua: UserAnswers): JourneyStatus = {
+  private def setStatus(selectedAnswer: UpdateTaxpayer, ua: UserAnswers, id: Int): JourneyStatus = {
     selectedAnswer match {
       case UpdateTaxpayer.Later => JourneyStatus.InProgress
-      case UpdateTaxpayer.No => checkStatusConditions(ua)
+      case UpdateTaxpayer.No => checkStatusConditions(ua, id)
       case _ => JourneyStatus.NotStarted
     }
   }
 
-  private def checkStatusConditions(ua: UserAnswers): JourneyStatus = {
+  private def checkStatusConditions(ua: UserAnswers, id: Int): JourneyStatus = {
 
-    val oneRelevantTaxpayerAdded: Boolean = ua.get(TaxpayerLoopPage).exists(list => list.size >= 1)
+    val oneRelevantTaxpayerAdded: Boolean = ua.get(TaxpayerLoopPage, id).exists(list => list.nonEmpty)
+    val getMarketableFlag: Boolean = ua.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA)
+    val getDisclosureType: Option[DisclosureType] = ua.get(DisclosureDetailsPage, id).map(_.disclosureType)
 
-      (ua.get(DisclosureTypePage), ua.get(DisclosureMarketablePage), ua.get(RoleInArrangementPage)) match {
+    (getDisclosureType, getMarketableFlag, ua.get(RoleInArrangementPage, id)) match {
 
-        case (Some(Dac6new), Some(true), _) => JourneyStatus.Completed //new & marketable
+        case (Some(Dac6new), true, _) => JourneyStatus.Completed //new & marketable
 
-        case (Some(Dac6new), Some(false), Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
+        case (Some(Dac6new), false, Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
 
         case (Some(Dac6add), _, Some(Taxpayer)) => JourneyStatus.Completed // add & Reporter is taxpayer
 
-        case (_, Some(false), Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
+        case (_, false, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
 
         case _ => JourneyStatus.NotStarted
     }

@@ -82,7 +82,8 @@ class DisclosureCheckYourAnswersController @Inject()(
 
       def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
         case Some(Dac6add) =>
-          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(Future.successful(false))(
+          request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(
+            throw new Exception("Unable to retrieve isMarketableArrangement from disclosure backend"))(
             arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
         case _ =>
           request.userAnswers.getBase(DisclosureMarketablePage).fold(
@@ -102,3 +103,4 @@ class DisclosureCheckYourAnswersController @Inject()(
       } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
+
