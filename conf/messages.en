@@ -730,12 +730,31 @@ youHaveNotAddedAnyIntermediaries.no = No
 youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Intermediaries
 youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an intermediary now, later or not at all
 
+youHaveNotAddedAnyAffected.title = Other affected parties
+youHaveNotAddedAnyAffected.subHeading = Does this arrangement affect any parties?
+youHaveNotAddedAnyAffected.emptyList = You have not added any other parties affected by this arrangement
+youHaveNotAddedAnyAffected.singular = party affected by this arrangement
+youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
+youHaveNotAddedAnyAffected.hint = Other affected party is an individual or organisation involved in the arrangement.
+youHaveNotAddedAnyAffected.yesAddNow = Yes, add now
+youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
+youHaveNotAddedAnyAffected.no = No
+youHaveNotAddedAnyAffected.checkYourAnswersLabel = Other affected parties
+youHaveNotAddedAnyAffected.error.required = Select an option to add other affected party now, later or not at all
+
 intermediariesType.title = Is this an organisation or an individual?
 intermediariesType.heading = Is this an organisation or an individual?
 intermediariesType.checkYourAnswersLabel = Organisation or individual
 intermediariesType.error.required = Select the type of intermediary
 intermediariesType.organisation = Organisation
 intermediariesType.individual = Individual
+
+affectedType.title = Is this an organisation or an individual?
+affectedType.heading = Is this an organisation or an individual?
+affectedType.checkYourAnswersLabel = Organisation or individual
+affectedType.error.required = Select the type of other party affected
+affectedType.organisation = Organisation
+affectedType.individual = Individual
 
 whatTypeofIntermediary.title = What type of intermediary is this?
 whatTypeofIntermediary.heading = What type of intermediary is {0}?

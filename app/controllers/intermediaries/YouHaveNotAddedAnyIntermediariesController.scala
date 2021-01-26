@@ -19,7 +19,6 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
-import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.{Mode, UserAnswers}
@@ -33,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyIntermediariesController @Inject()(
@@ -62,6 +62,8 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
           for {
             intermediary <- list
           } yield {
+            //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
+            //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
             intermediary.nameAsString
           }
         case None => IndexedSeq.empty
@@ -87,10 +89,23 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfIntermediaries: IndexedSeq[String] = request.userAnswers.get(IntermediaryLoopPage, id) match {
+            case Some(list) =>
+              for {
+                intermediary <- list
+              } yield {
+                //TODO Uncomment for change and remove links and change to "intermediaryList" -> Json.toJson(namesOfIntermediaries)
+                //ItemList(name = intermediary.nameAsString, changeUrl = "#", removeUrl = "#")
+                intermediary.nameAsString
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
+            "intermediaryList" -> namesOfIntermediaries,
             "radios" -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
           )
 

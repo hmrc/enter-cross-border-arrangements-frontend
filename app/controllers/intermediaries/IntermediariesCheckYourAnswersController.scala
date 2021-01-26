@@ -18,12 +18,10 @@ package controllers.intermediaries
 
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
-
-import javax.inject.Inject
-import models.{Mode, NormalMode, SelectType}
 import models.intermediaries.Intermediary
-import navigation.{Navigator, NavigatorForIntermediaries}
-import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, IsExemptionCountryKnownPage}
+import models.{Mode, NormalMode, SelectType}
+import navigation.NavigatorForIntermediaries
+import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -33,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediariesCheckYourAnswersController @Inject()(
@@ -111,7 +110,8 @@ class IntermediariesCheckYourAnswersController @Inject()(
           IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers, id))
       }
       for {
-        userAnswersWithIntermediaryLoop <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
+        userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {

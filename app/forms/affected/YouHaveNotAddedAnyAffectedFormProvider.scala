@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package forms.affected
 
-import models.Mode
+import forms.mappings.Mappings
+import models.affected.YouHaveNotAddedAnyAffected
+import play.api.data.Form
 
-sealed trait CheckRoute {
+import javax.inject.Inject
 
-  val mode: Mode
+class YouHaveNotAddedAnyAffectedFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[YouHaveNotAddedAnyAffected] =
+    Form(
+      "value" -> enumerable[YouHaveNotAddedAnyAffected]("youHaveNotAddedAnyAffected.error.required")
+    )
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute

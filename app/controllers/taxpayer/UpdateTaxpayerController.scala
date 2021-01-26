@@ -62,6 +62,8 @@ class UpdateTaxpayerController @Inject()(
           for {
             taxpayer <- list
           } yield {
+            //TODO Uncomment for change and remove links and change to "taxpayerList" -> Json.toJson(namesOfTaxpayers)
+            //ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
             taxpayer.nameAsString
           }
         case None => IndexedSeq.empty
@@ -92,9 +94,22 @@ class UpdateTaxpayerController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfTaxpayers: IndexedSeq[String] = request.userAnswers.get(TaxpayerLoopPage, id) match {
+            case Some(list) =>
+              for {
+                taxpayer <- list
+              } yield {
+                //TODO Uncomment for change and remove links and change to "taxpayerList" -> Json.toJson(namesOfTaxpayers)
+                //ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+                taxpayer.nameAsString
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "id" -> id,
+            "taxpayerList" -> namesOfTaxpayers,
             "mode"   -> mode,
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )
@@ -131,7 +146,7 @@ class UpdateTaxpayerController @Inject()(
     (getDisclosureType, getMarketableFlag, ua.get(RoleInArrangementPage, id)) match {
 
         case (Some(Dac6new), true, _) => JourneyStatus.Completed //new & marketable
-          
+
         case (Some(Dac6new), false, Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
 
         case (Some(Dac6add), _, Some(Taxpayer)) => JourneyStatus.Completed // add & Reporter is taxpayer

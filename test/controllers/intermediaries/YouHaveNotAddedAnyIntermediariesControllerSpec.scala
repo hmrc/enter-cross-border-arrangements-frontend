@@ -19,14 +19,16 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import matchers.JsonMatchers
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.intermediaries.{Intermediary, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
+import models.organisation.Organisation
+import models.taxpayer.TaxResidency
+import models.{Country, IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
+import pages.intermediaries.{IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -68,6 +70,49 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
+        "intermediaryList" -> Json.arr(),
+        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(form)
+      )
+
+      templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    //TODO Include test for change and remove links if needed
+    "must return OK and the correct view with the list of all intermediaries for a GET" ignore {
+
+      when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+
+      val organisation = Organisation(
+        organisationName = "Organisation Ltd.",
+        address = None,
+        emailAddress = None,
+        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
+      )
+
+      val intermediariesLoop =
+        IndexedSeq(Intermediary("id", None, Some(organisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
+      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryLoopPage, 0, intermediariesLoop).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedList = Json.arr(Json.obj("name" -> "Organisation Ltd.", "changeUrl" -> "#", "removeUrl" -> "#"))
+
+      val expectedJson = Json.obj(
+        "form"       -> form,
+        "mode"       -> NormalMode,
+        "intermediaryList" -> expectedList,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(form)
       )
 

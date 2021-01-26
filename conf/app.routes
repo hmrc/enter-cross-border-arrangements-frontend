@@ -581,3 +581,17 @@ GET        /reporter/individual/select-address/:id               controllers.rep
 POST       /reporter/individual/select-address/:id               controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(id: Int, mode: Mode = CheckMode)
+
+
+# OTHER PARTIES AFFECTED
+
+GET        /others-affected/update/:id                           controllers.affected.YouHaveNotAddedAnyAffectedController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /others-affected/update/:id                           controllers.affected.YouHaveNotAddedAnyAffectedController.onSubmit(id: Int, mode: Mode = NormalMode)
+
+GET        /others-affected/type/:id                             controllers.affected.AffectedTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /others-affected/type/:id                             controllers.affected.AffectedTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /others-affected/change-type/:id                      controllers.affected.AffectedTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
+POST       /others-affected/change-type/:id                      controllers.affected.AffectedTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
+
+GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
+POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)

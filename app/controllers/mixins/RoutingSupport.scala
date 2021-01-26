@@ -17,6 +17,7 @@
 package controllers.mixins
 
 import models.{Mode, UserAnswers}
+import pages.affected.AffectedTypePage
 import pages.enterprises.AssociatedEnterpriseTypePage
 import pages.intermediaries.IntermediariesTypePage
 import pages.taxpayer.TaxpayerSelectTypePage
@@ -29,10 +30,12 @@ trait RoutingSupport {
   def toCheckRoute(mode: Mode, userAnswers: UserAnswers, id: Int): CheckRoute =
     (userAnswers.get(AssociatedEnterpriseTypePage, id)
       , userAnswers.get(TaxpayerSelectTypePage, id)
-      , userAnswers.get(IntermediariesTypePage, id)) match {
-      case (Some(_), _, _) => AssociatedEnterprisesRouting(mode)
-      case (_, Some(_), _) => TaxpayersRouting(mode)
-      case (_, _, Some(_)) => IntermediariesRouting(mode)
+      , userAnswers.get(IntermediariesTypePage, id)
+      , userAnswers.get(AffectedTypePage, id)) match {
+      case (Some(_), _, _, _) => AssociatedEnterprisesRouting(mode)
+      case (_, Some(_), _, _) => TaxpayersRouting(mode)
+      case (_, _, Some(_), _) => IntermediariesRouting(mode)
+      case (_, _, _, Some(_)) => AffectedRouting(mode)
       case _ => DefaultRouting(mode)
     }
 

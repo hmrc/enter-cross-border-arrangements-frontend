@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.mixins
+package models
 
-import models.Mode
+import play.api.libs.json.{Json, OFormat}
 
-sealed trait CheckRoute {
+case class ItemList(name: String,
+                    changeUrl: String,
+                    removeUrl: String)
 
-  val mode: Mode
+object ItemList {
+  implicit val format: OFormat[ItemList] = Json.format[ItemList]
 }
-
-case class DefaultRouting(mode: Mode) extends CheckRoute
-case class AssociatedEnterprisesRouting(mode: Mode) extends CheckRoute
-case class TaxpayersRouting(mode: Mode) extends CheckRoute
-case class IntermediariesRouting(mode: Mode) extends CheckRoute
-case class ArrangementRouting(mode: Mode) extends CheckRoute
-case class AffectedRouting(mode: Mode) extends CheckRoute
