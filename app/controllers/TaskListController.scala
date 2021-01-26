@@ -51,7 +51,7 @@ class TaskListController @Inject()(
             //did it fail? oh my god - hand back to the user to fix
             errors => {
               for {
-                updatedAnswers <- Future.fromTry(UserAnswers(request.internalId).set(ValidationErrorsPage, id, errors))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
             },

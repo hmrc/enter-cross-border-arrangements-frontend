@@ -20,11 +20,12 @@ import base.SpecBase
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.Submissions
 import models.requests.DataRequest
-import models.{GeneratedIDs, UserAnswers}
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -45,6 +46,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
   }
 
   private val userAnswers = UserAnswers(userAnswersId)
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
   "TaskListController" - {
     "must redirect to confirmation page when user submits a completed application" in {
@@ -63,7 +65,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any(), any()))
+      when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Right("GBABC-123")))
@@ -92,7 +94,7 @@ class TaskListControllerSpec extends SpecBase with MockitoSugar with NunjucksSup
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
 
-      when(mockXMLGenerationService.createXmlSubmission(any(), any()))
+      when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
         .thenReturn(Submissions.validSubmission)
       when(mockValidationConnector.sendForValidation(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))

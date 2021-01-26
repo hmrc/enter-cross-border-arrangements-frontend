@@ -18,12 +18,13 @@ package controllers.confirmation
 
 import base.SpecBase
 import matchers.JsonMatchers.containJson
-import models.UserAnswers
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ValidationErrorsPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.Application
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -78,6 +79,8 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
         .set(ValidationErrorsPage, 0, errors)
         .success.value
 
