@@ -90,7 +90,9 @@ class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
 
-      val userAnswers = UserAnswers(userAnswersId).set(DisclosureTypePage, DisclosureType.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureTypePage, DisclosureType.values.head).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
             .overrides(bind[HistoryConnector].toInstance(mockConnector))
             .build()
