@@ -19,7 +19,7 @@ package pages.intermediaries
 import models.intermediaries.WhatTypeofIntermediary
 import pages.behaviours.PageBehaviours
 
-class WhatTypeofIntermediarySpec extends PageBehaviours {
+class WhatTypeofIntermediaryPageSpec extends PageBehaviours {
 
   "WhatTypeofIntermediaryPage" - {
 

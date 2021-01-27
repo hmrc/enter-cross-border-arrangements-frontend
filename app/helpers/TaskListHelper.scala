@@ -88,7 +88,7 @@ object TaskListHelper  {
   }
 
   def userCanSubmit(ua: UserAnswers, id: Int): Boolean = {
-    val mandatoryCompletion = Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
+    val mandatoryCompletion = Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, DisclosureStatusPage)
     val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
