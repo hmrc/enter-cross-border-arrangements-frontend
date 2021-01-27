@@ -25,8 +25,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
-
 import javax.inject.Inject
+import pages.{GeneratedIDPage, MessageRefIDPage}
+
 import scala.concurrent.ExecutionContext
 
 class NewDisclosureConfirmationController @Inject()(
@@ -42,13 +43,29 @@ class NewDisclosureConfirmationController @Inject()(
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val disclosureID =  request.userAnswers.get(GeneratedIDPage, id) match {
+        case Some(id) => id.disclosureID
+        case None => throw new RuntimeException("DisclosureID cannot be found")
+      }
+
+      val arrangementID =  request.userAnswers.get(GeneratedIDPage, id) match {
+        case Some(id) => id.arrangementID.get
+        case None => throw new RuntimeException("ArrangementID cannot be found")
+      }
+
+      val messageRefID =  request.userAnswers.get(MessageRefIDPage, id) match {
+        case Some(id) => id
+        case None => throw new RuntimeException("messageRefID cannot be found")
+      }
+
+
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,
-        "panelText" -> confirmationPanelText("GBA20210101ABB381"),
-        "disclosureID" -> "GBD20210101AAA456",
+        "panelText" -> confirmationPanelText(arrangementID),
+        "disclosureID" -> disclosureID,
         "email" -> "example@example.com",
         "secondEmail" -> "",
-        "messageRefID" -> "GBXDAC0001234567AAA00101",
+        "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
       )

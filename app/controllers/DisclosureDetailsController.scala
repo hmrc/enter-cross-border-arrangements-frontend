@@ -20,13 +20,12 @@ import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
 import helpers.TaskListHelper._
-
 import javax.inject.Inject
 import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import org.slf4j.LoggerFactory
-import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
+import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.hallmarks.HallmarkStatusPage
@@ -114,7 +113,8 @@ class DisclosureDetailsController @Inject()(
                 for {
                   ids <- crossBorderArrangementsConnector.submitXML(submission)
                   userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
-                  _                  <- sessionRepository.set(userAnswersWithIDs)
+                  updatedUserAnswersWithIDs <- Future.fromTry(userAnswersWithIDs.set(MessageRefIDPage, id, messageRefId))
+                  _                  <- sessionRepository.set(updatedUserAnswersWithIDs)
                 } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
               }
             )
