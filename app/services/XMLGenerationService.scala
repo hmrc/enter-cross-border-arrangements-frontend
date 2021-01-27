@@ -17,6 +17,7 @@
 package services
 
 import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import javax.inject.Inject
 import models.UserAnswers
 import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
@@ -24,7 +25,6 @@ import org.joda.time.DateTime
 import pages.disclosure.DisclosureDetailsPage
 import play.api.mvc.AnyContent
 
-import javax.inject.Inject
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
@@ -52,9 +52,14 @@ class XMLGenerationService @Inject()() {
   }
 
   private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers, id: Int): Elem = {
-    userAnswers.get(DisclosureDetailsPage, id).map(_.initialDisclosureMA) match {
-      case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
-      case None => throw new Exception("Missing InitialDisclosureMA answer")
+    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
+      case Some(Dac6add) =>
+        <InitialDisclosureMA>false</InitialDisclosureMA>
+      case _ =>
+        userAnswers.get(DisclosureDetailsPage, id).map(_.initialDisclosureMA)  match {
+          case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
+          case _ => throw new Exception("Missing InitialDisclosureMA flag")
+      }
     }
   }
 
@@ -85,5 +90,4 @@ class XMLGenerationService @Inject()() {
       </DAC6Disclosures>
     </DAC6_Arrangement>
   }
-
 }
