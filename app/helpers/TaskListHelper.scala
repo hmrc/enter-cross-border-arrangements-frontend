@@ -22,6 +22,7 @@ import models.disclosure.DisclosureType.Dac6add
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import pages.QuestionPage
+import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.hallmarks.HallmarkStatusPage
@@ -87,8 +88,14 @@ object TaskListHelper  {
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int): Boolean = {
-    val mandatoryCompletion = Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, DisclosureStatusPage)
+  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean): Boolean = {
+
+    //TODO: Remove toggle & add AffectedStatusPage to mandatoryCompletion when xml functionality for other affected ready
+    val mandatoryCompletion = if (affectedToggle){Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)}
+    else {
+      Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
+    }
+
     val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =

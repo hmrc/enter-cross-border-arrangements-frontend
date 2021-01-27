@@ -84,7 +84,7 @@ class DisclosureDetailsController @Inject()(
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id),
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle),
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
@@ -143,7 +143,7 @@ class DisclosureDetailsController @Inject()(
           "",
           linkContent = "disclosureDetails.disclosureTypeLink",
           id = "disclosure",
-          ariaLabel = "disclosure-details",
+          ariaLabel = "arrangementDetails",
           index
         )
     }
@@ -221,7 +221,7 @@ class DisclosureDetailsController @Inject()(
       s"${frontendAppConfig.othersAffectedUrl}/$index",
       linkContent = "disclosureDetails.othersAffectedLink",
       id = "othersAffected",
-      ariaLabel = "othersAffected",
+      ariaLabel = "connected-parties",
       index
     )
   }
@@ -235,7 +235,7 @@ class DisclosureDetailsController @Inject()(
           page,
           s"${frontendAppConfig.intermediariesUrl}/$index",
           linkContent = "disclosureDetails.intermediariesLink",
-          id = "intermediaries",
+          id = "connected-parties",
           ariaLabel = "connected-parties",
           index
         )

@@ -24,6 +24,7 @@ import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureStatusPage, DisclosureTypePage}
 import pages.hallmarks.HallmarkStatusPage
@@ -214,6 +215,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
           .set(DisclosureStatusPage, index, Completed)
           .success
           .value
@@ -224,7 +228,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index) mustBe true
+        userCanSubmit(userAnswers, index, true) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -249,6 +253,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
           .set(DisclosureStatusPage, index, Completed)
           .success
           .value
@@ -259,7 +266,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index) mustBe true
+        userCanSubmit(userAnswers, index, true) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -284,6 +291,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
           .set(DisclosureStatusPage, index, Completed)
           .success
           .value
@@ -294,7 +304,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index) mustBe false
+        userCanSubmit(userAnswers, index, true) mustBe false
       }
     }
 

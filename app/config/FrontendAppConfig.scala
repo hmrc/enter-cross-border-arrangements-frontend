@@ -67,6 +67,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val timeoutSeconds: String = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
+  lazy val affectedToggle: Boolean = configuration.get[Boolean]("toggles.affectedToggle")
+
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
