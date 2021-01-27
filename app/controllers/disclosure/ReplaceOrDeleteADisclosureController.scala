@@ -20,7 +20,7 @@ import connectors.CrossBorderArrangementsConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
-import models.disclosure.ReplaceOrDeleteADisclosure
+import models.disclosure.{IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
 import pages.disclosure.ReplaceOrDeleteADisclosurePage
@@ -90,15 +90,11 @@ class ReplaceOrDeleteADisclosureController @Inject()(
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
         value => {
-          crossBorderArrangementsConnector.verifyDisclosureId(value.disclosureID, request.enrolmentID) flatMap {
-            test =>
-              if (!test) {
-                val formError = FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound"))
-
-                val formWithErrors = formReturned.withError(error = formError)
-
+          crossBorderArrangementsConnector.verifyDisclosureId(value.arrangementID, value.disclosureID, request.enrolmentID) flatMap {
+            verificationStatus =>
+              if (!verificationStatus.isValid) {
                 val json = Json.obj(
-                  "form" -> formWithErrors,
+                  "form" -> buildFormError(verificationStatus.message, formReturned),
                   "mode" -> mode,
                   "arrangementIDLabel" -> arrangementIDLabel
                 )
@@ -118,5 +114,24 @@ class ReplaceOrDeleteADisclosureController @Inject()(
   private def arrangementIDLabel()(implicit messages: Messages): Html = {
     Html(s"${{ messages("replaceOrDeleteADisclosure.arrangementID") }}" +
       s"<br><p class='govuk-body'>${{ messages("replaceOrDeleteADisclosure.arrangementID.p") }}</p>")
+  }
+
+  private def buildFormError(message: String, formReturned: Form[ReplaceOrDeleteADisclosure]): Form[ReplaceOrDeleteADisclosure] = {
+    message match {
+      case IDVerificationStatus.ArrangementIDNotFound =>
+        formReturned
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
+      case IDVerificationStatus.DisclosureIDNotFound =>
+        formReturned
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+      case IDVerificationStatus.IDsDoNotMatch =>
+        formReturned
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.invalid")))
+      case IDVerificationStatus.IDsNotFound =>
+        formReturned
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+    }
   }
 }

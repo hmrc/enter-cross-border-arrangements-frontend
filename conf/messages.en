@@ -1162,4 +1162,5 @@ replaceOrDeleteADisclosure.error.arrangementID.required = Provide an arrangement
 replaceOrDeleteADisclosure.error.disclosureID.required = Provide a disclosure ID
 replaceOrDeleteADisclosure.error.arrangementID.invalid = Provide a valid arrangement ID
 replaceOrDeleteADisclosure.error.disclosureID.invalid = Provide a disclosure ID for one of your previous disclosures
+replaceOrDeleteADisclosure.error.arrangementID.notFound = Disclosure not found. Check the arrangement ID and disclosure ID are correct
 replaceOrDeleteADisclosure.error.disclosureID.notFound = Disclosure not found. Check the arrangement ID and disclosure ID are correct

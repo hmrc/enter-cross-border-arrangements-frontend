@@ -35,7 +35,7 @@ class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
             crossBorderArrangementsConnector: CrossBorderArrangementsConnector
            )(implicit hc: HeaderCarrier): Form[String] =
     Form(
-      "arrangementID" -> validatedArrangementIDText(
+      "arrangementID" -> validatedDisclosureIDsText(
         "disclosureIdentifyArrangement.error.required",
         "disclosureIdentifyArrangement.error.invalid",
         countryList,

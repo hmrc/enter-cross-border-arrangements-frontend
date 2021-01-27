@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
-import models.disclosure.ReplaceOrDeleteADisclosure
+import models.disclosure.{IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -130,7 +130,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockCrossBorderArrangementsConnector.verifyDisclosureId(any(),any())(any())).thenReturn(Future.successful(true))
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureId(any(),any(), any())(any()))
+        .thenReturn(Future.successful(IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))

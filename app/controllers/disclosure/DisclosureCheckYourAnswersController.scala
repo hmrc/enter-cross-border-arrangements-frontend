@@ -21,7 +21,7 @@ import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.IDHelper
-import models.disclosure.DisclosureType.Dac6add
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.{NormalMode, UnsubmittedDisclosure}
 import navigation.NavigatorForDisclosure
@@ -85,6 +85,9 @@ class DisclosureCheckYourAnswersController @Inject()(
           request.userAnswers.getBase(DisclosureIdentifyArrangementPage).fold(
             throw new Exception("Unable to retrieve isMarketableArrangement from disclosure backend"))(
             arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
+        case Some(Dac6rep) =>
+          request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(Future.successful(false))(
+            ids => crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID))
         case _ =>
           request.userAnswers.getBase(DisclosureMarketablePage).fold(
             throw new Exception("Unable to retrieve user answer marketable arrangement"))(bool =>
@@ -103,4 +106,3 @@ class DisclosureCheckYourAnswersController @Inject()(
       } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }
-

@@ -30,21 +30,15 @@ class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings {
   lazy val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
   lazy val disclosureIDRegex = "[A-Z]{2}[D]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
 
-  //GBA20210122IRN44A
-  //GBD20210122DM9RTA
-
-  //TODO Rename validatedArrangementIDText
-
    def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
      Form(
        mapping(
-         "arrangementID" -> validatedArrangementIDText(
+         "arrangementID" -> validatedDisclosureIDsText(
            "replaceOrDeleteADisclosure.error.arrangementID.required",
            "replaceOrDeleteADisclosure.error.arrangementID.invalid",
            countryList,
            arrangementIDRegex),
-
-         "disclosureID" -> validatedArrangementIDText(
+         "disclosureID" -> validatedDisclosureIDsText(
            "replaceOrDeleteADisclosure.error.disclosureID.required",
            "replaceOrDeleteADisclosure.error.disclosureID.invalid",
            countryList,

@@ -243,7 +243,7 @@ trait Formatters {
     }
   }
 
-  protected def validatedArrangementID(requiredKey: String,
+  protected def validatedDisclosureIDs(requiredKey: String,
                                        invalidKey: String,
                                        countryList: Seq[Country],
                                        regex: String): Formatter[String] = new Formatter[String] {
