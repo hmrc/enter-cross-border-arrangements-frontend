@@ -28,7 +28,6 @@ private[mappings] class LocalDateFormatter(
                                             allRequiredKey: String,
                                             twoRequiredKey: String,
                                             requiredKey: String,
-                                            nonNumericKey: String,
                                             args: Seq[String] = Seq.empty
                                           ) extends Formatter[LocalDate] with Formatters {
 
@@ -47,7 +46,7 @@ private[mappings] class LocalDateFormatter(
     val int = intFormatter(
       requiredKey = invalidKey,
       wholeNumberKey = invalidKey,
-      nonNumericKey = nonNumericKey,
+      nonNumericKey = invalidKey,
       args
     )
 

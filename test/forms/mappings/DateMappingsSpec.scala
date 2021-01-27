@@ -32,9 +32,7 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
       requiredKey    = "error.required",
       allRequiredKey = "error.required.all",
       twoRequiredKey = "error.required.two",
-      invalidKey     = "error.invalid",
-      nonNumericKey  = "error.nonNumeric",
-
+      invalidKey     = "error.invalid"
     )
   )
 
@@ -113,25 +111,6 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     }
   }
 
-  "must fail to bind a date with a non-numeric day" in {
-
-    forAll(validData -> "valid date", nonNumericField -> "non-numeric field") {
-      (date, field) =>
-
-        val data = Map(
-          "value.day" -> field,
-          "value.month" -> date.getMonthValue.toString,
-          "value.year" -> date.getYear.toString
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain(
-          FormError("value", "error.nonNumeric", List.empty)
-        )
-    }
-  }
-
   "must fail to bind a date with a missing month" in {
 
     forAll(validData -> "valid date", missingField -> "missing field") {
@@ -172,25 +151,6 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
     }
   }
 
-  "must fail to bind a date with an non-numeric month" in {
-
-    forAll(validData -> "valid data", nonNumericField -> "non-numeric field") {
-      (date, field) =>
-
-        val data = Map(
-          "value.day" -> date.getDayOfMonth.toString,
-          "value.month" -> field,
-          "value.year" -> date.getYear.toString
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain(
-          FormError("value", "error.nonNumeric", List.empty)
-        )
-    }
-  }
-
   "must fail to bind a date with a missing year" in {
 
     forAll(validData -> "valid date", missingField -> "missing field") {
@@ -209,25 +169,6 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         val result = form.bind(data)
 
         result.errors must contain only FormError("value", "error.required", List("year"))
-    }
-  }
-
-  "must fail to bind a date with an nonNumeric year" in {
-
-    forAll(validData -> "valid data", nonNumericField -> "non-numeric field") {
-      (date, field) =>
-
-        val data = Map(
-          "value.day" -> date.getDayOfMonth.toString,
-          "value.month" -> date.getMonthValue.toString,
-          "value.year" -> field
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain(
-          FormError("value", "error.nonNumeric", List.empty)
-        )
     }
   }
 
@@ -320,74 +261,6 @@ class DateMappingsSpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         val result = form.bind(data)
 
         result.errors must contain only FormError("value", "error.invalid", List.empty)
-    }
-  }
-
-  "must fail to bind an nonNumeric day and month" in {
-
-    forAll(validData -> "valid date", nonNumericField -> "nonNumeric day", nonNumericField -> "nonNumeric month") {
-      (date, day, month) =>
-
-        val data = Map(
-          "value.day" -> day,
-          "value.month" -> month,
-          "value.year" -> date.getYear.toString
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
-    }
-  }
-
-  "must fail to bind an nonNumeric day and year" in {
-
-    forAll(validData -> "valid date", nonNumericField -> "nonNumeric day", nonNumericField -> "nonNumeric year") {
-      (date, day, year) =>
-
-        val data = Map(
-          "value.day" -> day,
-          "value.month" -> date.getMonthValue.toString,
-          "value.year" -> year
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
-    }
-  }
-
-  "must fail to bind an nonNumeric month and year" in {
-
-    forAll(validData -> "valid date", nonNumericField -> "nonNumeric month", nonNumericField -> "nonNumeric year") {
-      (date, month, year) =>
-
-        val data = Map(
-          "value.day" -> date.getDayOfMonth.toString,
-          "value.month" -> month,
-          "value.year" -> year
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
-    }
-  }
-
-  "must fail to bind an nonNumeric day, month and year" in {
-
-    forAll(invalidField -> "valid day", nonNumericField -> "nonNumeric month", nonNumericField -> "nonNumeric year") {
-      (day, month, year) =>
-
-        val data = Map(
-          "value.day" -> month,
-          "value.month" -> month,
-          "value.year" -> year
-        )
-
-        val result = form.bind(data)
-
-        result.errors must contain only FormError("value", "error.nonNumeric", List.empty)
     }
   }
 
