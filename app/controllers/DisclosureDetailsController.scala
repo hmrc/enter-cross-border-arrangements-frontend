@@ -143,7 +143,7 @@ class DisclosureDetailsController @Inject()(
           "",
           linkContent = "disclosureDetails.disclosureTypeLink",
           id = "disclosure",
-          ariaLabel = "arrangementDetails",
+          ariaLabel = "disclosure-details",
           index
         )
     }
@@ -235,7 +235,7 @@ class DisclosureDetailsController @Inject()(
           page,
           s"${frontendAppConfig.intermediariesUrl}/$index",
           linkContent = "disclosureDetails.intermediariesLink",
-          id = "connected-parties",
+          id = "intermediaries",
           ariaLabel = "connected-parties",
           index
         )
