@@ -16,6 +16,7 @@
 
 package controllers.disclosure
 
+import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.DisclosureTypeFormProvider
@@ -30,7 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
+import handlers.ErrorHandler
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,6 +43,8 @@ class DisclosureTypeController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DisclosureTypeFormProvider,
+    connector: HistoryConnector,
+    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -56,13 +59,16 @@ class DisclosureTypeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val json = Json.obj(
+    { for {
+      hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+      radios = if (hasHistory) DisclosureType.radiosComplete(preparedForm) else DisclosureType.radios(preparedForm)
+       json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios"  -> DisclosureType.radios(preparedForm)
+        "radios"  -> radios
       )
-
-      renderer.render("disclosure/disclosureType.njk", json).map(Ok(_))
+      renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+    } yield Ok(renderedForm)}.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
@@ -74,13 +80,18 @@ class DisclosureTypeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> DisclosureType.radios(formWithErrors)
-          )
+        {for {
+            hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+            radios = if (hasHistory) DisclosureType.radiosComplete(formWithErrors) else DisclosureType.radios(formWithErrors)
+            json = Json.obj(
+              "form"   -> formWithErrors,
+              "mode"   -> mode,
+              "radios"  -> radios
+            )
+            renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+          } yield BadRequest(renderedForm)
 
-          renderer.render("disclosure/disclosureType.njk", json).map(BadRequest(_))
+        }.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
         },
         value =>
           for {
