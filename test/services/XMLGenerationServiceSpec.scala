@@ -215,6 +215,24 @@ class XMLGenerationServiceSpec extends SpecBase {
       prettyPrinter.format(result) mustBe expected
     }
 
+    "buildInitialDisclosureMA must build the disclosure MA section as false if arrangement is an additional" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "My Second",
+        disclosureType = DisclosureType.Dac6add
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers, 0)
+
+      val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
+
+      prettyPrinter.format(result) mustBe expected
+    }
+
     "buildInitialDisclosureMA must throw an exception if disclosure MA is missing" in {
       assertThrows[Exception] {
         xmlGenerationService.buildInitialDisclosureMA(UserAnswers(userAnswersId), 0)
