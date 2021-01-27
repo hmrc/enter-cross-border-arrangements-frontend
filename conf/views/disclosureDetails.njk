@@ -89,7 +89,7 @@
 
 
         {% if userCanSubmit %}
-          <form action="{{ routes.controllers.TaskListController.onSubmit(id).url }}" method="post">
+          <form action="{{ routes.controllers.DisclosureDetailsController.onSubmit(id).url }}" method="post">
             {{ csrf() | safe }}
             <h2 class="govuk-heading-m">
                 {{ messages("disclosureDetails.sendDisclosure") }}

@@ -17,13 +17,16 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
 import helpers.TaskListHelper._
+
 import javax.inject.Inject
 import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
-import pages.QuestionPage
+import org.slf4j.LoggerFactory
+import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.hallmarks.HallmarkStatusPage
@@ -34,19 +37,29 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
+import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureDetailsController @Inject()(
     override val messagesApi: MessagesApi,
+    xmlGenerationService: XMLGenerationService,
+    transformationService: TransformationService,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
+    validationConnector: ValidationConnector,
+    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+    renderer: Renderer,
+    sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  private val logger = LoggerFactory.getLogger(getClass)
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -72,6 +85,44 @@ class DisclosureDetailsController @Inject()(
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
   }
+
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      //generate xml from user answers
+      xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
+        error => {
+          // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
+          logger.error("""Xml generation failed before validation: """.stripMargin, error)
+          Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(id).url))
+        },
+        xml => {
+          //send it off to be validated and business rules
+          validationConnector.sendForValidation(xml).flatMap {
+            _.fold(
+              //did it fail? oh my god - hand back to the user to fix
+              errors => {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
+              },
+
+              //did it succeed - hand off to the backend to do it's generating thing
+              messageRefId => {
+                val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
+                val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
+                for {
+                  ids <- crossBorderArrangementsConnector.submitXML(submission)
+                  userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
+                  _                  <- sessionRepository.set(userAnswersWithIDs)
+                } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
+              }
+            )
+          }
+        }
+      )
+  }
+
 
 
   private def disclosureTypeItem(ua: UserAnswers,

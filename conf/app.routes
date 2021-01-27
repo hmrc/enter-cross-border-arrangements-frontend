@@ -499,7 +499,7 @@ GET        /manual/addition-received/:id                                controll
 GET        /manual/unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 GET        /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
-POST       /manual/your-disclosure-details/:id                          controllers.TaskListController.onSubmit(id: Int)
+POST       /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
 
 
 ## REPORTER DETAILS - ORGANISATION
