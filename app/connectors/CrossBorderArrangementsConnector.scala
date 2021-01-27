@@ -55,9 +55,11 @@ class CrossBorderArrangementsConnector @Inject()(
     }
   }
 
-  def verifyDisclosureId(arrangementId: String, disclosureId: String, enrolmentId: String)
-                        (implicit hc: HeaderCarrier): Future[IDVerificationStatus] = {
-    val verificationUrl = s"$baseUrl/verify-disclosure-id/$arrangementId-$disclosureId-$enrolmentId"
+  def verifyDisclosureIDs(arrangementId: String,
+                          disclosureId: String,
+                          enrolmentId: String)(implicit hc: HeaderCarrier): Future[IDVerificationStatus] = {
+
+    val verificationUrl = s"$baseUrl/verify-ids/$arrangementId-$disclosureId-$enrolmentId"
 
     val arrangementIDNotFound = "Arrangement ID not found"
     val disclosureIDNotFound = "Disclosure ID doesn't match enrolment ID"

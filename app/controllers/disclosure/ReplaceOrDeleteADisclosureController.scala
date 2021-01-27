@@ -90,7 +90,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
         value => {
-          crossBorderArrangementsConnector.verifyDisclosureId(value.arrangementID, value.disclosureID, request.enrolmentID) flatMap {
+          crossBorderArrangementsConnector.verifyDisclosureIDs(value.arrangementID, value.disclosureID, request.enrolmentID) flatMap {
             verificationStatus =>
               if (!verificationStatus.isValid) {
                 val json = Json.obj(
@@ -128,7 +128,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
         formReturned
           .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
           .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.invalid")))
-      case IDVerificationStatus.IDsNotFound =>
+      case _ =>
         formReturned
           .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
           .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))

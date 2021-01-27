@@ -21,15 +21,15 @@ import forms.mappings.Mappings
 import models.Country
 import play.api.data.Form
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.RegexConstants
 
 import javax.inject.Inject
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
-class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings {
+class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
 
   lazy val startOfUKIDRegex = "^[GB]{2}.*"
-  lazy val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
 
   def apply(countryList: Seq[Country],
             crossBorderArrangementsConnector: CrossBorderArrangementsConnector

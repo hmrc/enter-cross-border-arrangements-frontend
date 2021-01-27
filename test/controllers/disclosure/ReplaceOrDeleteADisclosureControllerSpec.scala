@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
-import models.disclosure.{IDVerificationStatus, ReplaceOrDeleteADisclosure}
+import models.disclosure.IDVerificationStatus
 import models.{Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -28,6 +28,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.ReplaceOrDeleteADisclosurePage
+import play.api.data.FormError
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -49,12 +50,14 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
   lazy val replaceOrDeleteADisclosureRoute = routes.ReplaceOrDeleteADisclosureController.onPageLoad(NormalMode).url
 
+  val arrangementID = "GBA20210101ABC123"
+  val disclosureID = "GBD20210101ABC123"
   val userAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
       ReplaceOrDeleteADisclosurePage.toString -> Json.obj(
-        "arrangementID" -> "GBA20210101ABC123",
-        "disclosureID" -> "GBD20210101ABC123"
+        "arrangementID" -> arrangementID,
+        "disclosureID" -> disclosureID
       )
     )
   )
@@ -106,8 +109,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       val filledForm = form.bind(
         Map(
-          "arrangementID" -> "GBA20210101ABC123",
-          "disclosureID" -> "GBD20210101ABC123"
+          "arrangementID" -> arrangementID,
+          "disclosureID" -> disclosureID
         )
       )
 
@@ -130,7 +133,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockCrossBorderArrangementsConnector.verifyDisclosureId(any(),any(), any())(any()))
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)))
 
       val application =
@@ -145,13 +148,187 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       val request =
         FakeRequest(POST, replaceOrDeleteADisclosureRoute)
-          .withFormUrlEncodedBody(("arrangementID", "GBA20210101ABC123"), ("disclosureID", "GBD20210101ABC123"))
+          .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must display id validation errors if arrangement ID is not found" in {
+
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
+        .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.ArrangementIDNotFound)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+          )
+          .build()
+
+      val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
+        .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
+
+      val boundForm =
+        form.bind(Map("arrangementID" -> arrangementID, "disclosureID" -> disclosureID))
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"   -> boundForm,
+        "mode"   -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must display id validation errors if disclosure ID is not found for an enrolment ID" in {
+
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
+        .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.DisclosureIDNotFound)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+          )
+          .build()
+
+      val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
+        .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
+
+      val boundForm =
+        form.bind(Map("arrangementID" -> arrangementID, "disclosureID" -> disclosureID))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"   -> boundForm,
+        "mode"   -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must display id validation errors if ids aren't from the same submission" in {
+
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
+        .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.IDsDoNotMatch)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+          )
+          .build()
+
+      val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
+        .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
+
+      val boundForm =
+        form.bind(Map("arrangementID" -> arrangementID, "disclosureID" -> disclosureID))
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.invalid")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"   -> boundForm,
+        "mode"   -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must display id validation errors if ids do not exist" in {
+
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
+        .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+          )
+          .build()
+
+      val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
+        .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
+
+      val boundForm =
+        form.bind(Map("arrangementID" -> arrangementID, "disclosureID" -> disclosureID))
+          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"   -> boundForm,
+        "mode"   -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

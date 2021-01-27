@@ -21,14 +21,13 @@ import models.Country
 import models.disclosure.ReplaceOrDeleteADisclosure
 import play.api.data.Form
 import play.api.data.Forms._
+import utils.RegexConstants
 
 import javax.inject.Inject
 
-class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings {
+class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings with RegexConstants {
 
   lazy val startOfUKIDRegex = "^[GB]{2}.*"
-  lazy val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
-  lazy val disclosureIDRegex = "[A-Z]{2}[D]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
 
    def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
      Form(

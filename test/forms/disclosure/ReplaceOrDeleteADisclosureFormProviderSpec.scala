@@ -35,12 +35,11 @@ class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  
 
     val fieldName = "arrangementID"
     val requiredKey = "replaceOrDeleteADisclosure.error.arrangementID.required"
-    val maxLength = 20
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validArrangementID
     )
 
     behave like mandatoryField(
@@ -54,12 +53,11 @@ class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  
 
     val fieldName = "disclosureID"
     val requiredKey = "replaceOrDeleteADisclosure.error.disclosureID.required"
-    val maxLength = 20
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validDisclosureID
     )
 
     behave like mandatoryField(
