@@ -52,6 +52,7 @@ class DisclosureValidationErrorsController @Inject()(
       }
 
       val json = Json.obj(
+        "id" -> id,
         "errorRows" -> toTableRows(keyList)
       )
 

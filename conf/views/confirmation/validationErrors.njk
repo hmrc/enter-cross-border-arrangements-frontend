@@ -32,7 +32,7 @@
             <a href="#" id="printLink" class="govuk-link">{{ messages("confirmation.validationError.info.p1") }}</a>
           </li>
           <li class="govuk-body">{{ messages("confirmation.validationError.info.p2") }}
-            <a href="{{ routes.controllers.DisclosureDetailsController.onPageLoad().url }}" class="govuk-link">
+            <a href="{{ routes.controllers.DisclosureDetailsController.onPageLoad(id).url }}" class="govuk-link">
               {{ messages("confirmation.validationError.info.p3") }}
             </a>
             {{ messages("confirmation.validationError.info.p4") }}
