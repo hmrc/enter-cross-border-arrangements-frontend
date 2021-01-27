@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
 import play.api.mvc.AnyContentAsEmpty
@@ -72,11 +72,10 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       "must go from 'What type of disclosure would you like to make?' page" +
         "to 'Which disclosure do you want to replace?' page" +
-        "when 'A REPLACEMENT OF AN EXISTING DISCLOSURE' option is selected" ignore {
+        "when 'A REPLACEMENT OF AN EXISTING DISCLOSURE' option is selected" in {
 
-          //TODO - Redirect to replace disclosure when page is built
           navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6rep))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
+            .mustBe(controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(NormalMode))
       }
 
       "must go from 'What type of disclosure would you like to make?' page" +
@@ -93,8 +92,17 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "when an arrangement ID is entered" in {
 
           navigator.routeMap(DisclosureIdentifyArrangementPage)(DefaultRouting(NormalMode))(None)(Some("FRA20210101ABC123"))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
+            .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
       }
+
+    "must go from 'Which disclosure do you want to replace?' page" +
+      "to Disclosure 'Check your answers' page" +
+      "when valid arrangement and disclosure IDs are entered" in {
+
+      navigator.routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(
+        Some(ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123")))(0)
+        .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
+    }
 
     "must go from 'Disclosure check your answers' page" +
       "to 'Task list' page" in {

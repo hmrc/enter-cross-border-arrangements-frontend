@@ -19,12 +19,12 @@ package controllers.disclosure
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -98,10 +98,22 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
   }
 
-  private def assertArrangementID(arrangementID: String)(row: Row): Unit = {
+  private def assertTypeDac6rep()(row: Row): Unit = {
+    row.key.text mustBe Some(Literal("Type of disclosure"))
+    row.value.text mustBe Some(Literal("A replacement of an existing disclosure"))
+    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
+  }
+
+  private def assertArrangementID(arrangementID: String, href: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Arrangement ID"))
     row.value.text mustBe Some(Literal(arrangementID))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-identify")(row.actions.head)
+    assertAction(href)(row.actions.head)
+  }
+
+  private def assertDisclosureID(disclosureID: String)(row: Row): Unit = {
+    row.key.text mustBe Some(Literal("Disclosure ID"))
+    row.value.text mustBe Some(Literal(disclosureID))
+    assertAction("/enter-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
   }
 
   private def assertMarketableArrangement(yesOrNo: Boolean)(row: Row): Unit = {
@@ -147,8 +159,31 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       verifyList(userAnswers) { list =>
         assertDisclosureName("My arrangement")(list.head)
         assertTypeDac6add()(list(1))
-        assertArrangementID("GBA20210101ABC123")(list(2))
+        assertArrangementID("GBA20210101ABC123",
+          "/enter-cross-border-arrangements/disclosure/change-identify")(list(2))
         list.size mustBe 3
+      }
+    }
+
+    "must return correct rows for a replacement arrangement" in {
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
+        .success.value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6rep)
+        .success
+        .value
+        .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
+        .success
+        .value
+      verifyList(userAnswers) { list =>
+        assertDisclosureName("My arrangement")(list.head)
+        assertTypeDac6rep()(list(1))
+        assertArrangementID("GBA20210101ABC123",
+          "/enter-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
+        assertDisclosureID("GBD20210101ABC123")(list(3))
+        list.size mustBe 4
       }
     }
 

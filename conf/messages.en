@@ -736,7 +736,6 @@ youHaveNotAddedAnyAffected.subHeading = Does this arrangement affect any parties
 youHaveNotAddedAnyAffected.emptyList = You have not added any other parties affected by this arrangement
 youHaveNotAddedAnyAffected.singular = party affected by this arrangement
 youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
-youHaveNotAddedAnyAffected.hint = Other affected party is an individual or organisation involved in the arrangement.
 youHaveNotAddedAnyAffected.yesAddNow = Yes, add now
 youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
 youHaveNotAddedAnyAffected.no = No

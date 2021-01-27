@@ -86,7 +86,8 @@ class DisclosureCheckYourAnswersController @Inject()(
             throw new Exception("Unable to retrieve isMarketableArrangement from disclosure backend"))(
             arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId))
         case Some(Dac6rep) =>
-          request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(Future.successful(false))(
+          request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(
+            throw new Exception("Unable to retrieve ReplaceOrDeleteADisclosure IDs"))(
             ids => crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID))
         case _ =>
           request.userAnswers.getBase(DisclosureMarketablePage).fold(
