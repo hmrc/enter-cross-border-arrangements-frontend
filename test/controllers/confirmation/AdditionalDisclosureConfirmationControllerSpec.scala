@@ -17,10 +17,13 @@
 package controllers.confirmation
 
 import base.SpecBase
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.unsubmitted.UnsubmittedDisclosurePage
+import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,7 +39,15 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some("")))
+        .success.value
+        .set(MessageRefIDPage, 0, "")
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -50,5 +61,65 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Mocki
 
       application.stop()
     }
+
+    "throw an error then display technical error page if no MessageRefID is present" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some("")))
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(application, request).value
+
+      an[Exception] mustBe thrownBy {
+        status(result) mustEqual OK
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+        templateCaptor.getValue mustEqual "internalServerError.njk"
+      }
+
+      application.stop()
+    }
+
+    "throw an error then display technical error page if no disclosureID is present" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(None, None))
+        .success.value
+        .set(MessageRefIDPage, 0, "")
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(application, request).value
+
+      an[Exception] mustBe thrownBy {
+        status(result) mustEqual OK
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+        templateCaptor.getValue mustEqual "internalServerError.njk"
+      }
+
+      application.stop()
+    }
+
+
   }
 }

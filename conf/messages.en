@@ -610,6 +610,7 @@ giveDetailsOfThisArrangement.hint2 = If this will take more than 15 minutes to w
 giveDetailsOfThisArrangement.checkYourAnswersLabel = Description
 giveDetailsOfThisArrangement.error.required = Provide arrangement details
 
+arrangementCheckYourAnswers.title = Check your answers
 arrangementCheckYourAnswers.heading = Check your answers
 
 updateTaxpayer.title = Your taxpayers
@@ -622,8 +623,6 @@ updateTaxpayer.error.required = Select to add a taxpayer now, later or not at al
 updateTaxpayer.singular = taxpayer
 updateTaxpayer.plural = taxpayers
 updateTaxpayer.emptyList = You have not added any taxpayers
-
-arrangementCheckYourAnswers.heading = Check your answers
 
 youHaveNotAddedAnyAssociatedEnterprises.title = Your associated enterprises
 youHaveNotAddedAnyAssociatedEnterprises.heading = Do any of the taxpayers for this arrangement have any associated enterprises?
