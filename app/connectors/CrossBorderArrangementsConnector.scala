@@ -65,7 +65,7 @@ class CrossBorderArrangementsConnector @Inject()(
         case _ => throw new Exception("Cannot retrieve marketable arrangement details")
       }
     } recover {
-      case _: Exception => throw new Exception("Cannot retrieve marketable arrangement details") // TODO see https://jira.tools.tax.service.gov.uk/browse/DAC6-531
+      case _: Exception => throw new Exception("Cannot retrieve marketable arrangement details")
     }
   }
 

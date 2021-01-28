@@ -21,7 +21,7 @@ import connectors.CrossBorderArrangementsConnector
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -105,7 +105,7 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
         application.stop()
       }
 
-  }
+    }
 
     "must redirect to 'Check your Answers' page when the arrangement is not marketable " - {
 
@@ -160,7 +160,8 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
 
         redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
 
-        application.stop()}
+        application.stop()
+      }
 
     }
   }
