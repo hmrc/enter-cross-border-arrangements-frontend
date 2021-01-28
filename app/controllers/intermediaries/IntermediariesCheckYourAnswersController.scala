@@ -19,7 +19,7 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.intermediaries.Intermediary
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,15 +35,15 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediariesCheckYourAnswersController @Inject()(
-                                                          override val messagesApi: MessagesApi,
-                                                          identify: IdentifierAction,
-                                                          getData: DataRetrievalAction,
-                                                          requireData: DataRequiredAction,
-                                                          sessionRepository: SessionRepository,
-                                                          navigator: NavigatorForIntermediaries,
-                                                          val controllerComponents: MessagesControllerComponents,
-                                                          renderer: Renderer
-                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIntermediaries,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -103,15 +103,9 @@ class IntermediariesCheckYourAnswersController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val intermediaryLoopList = request.userAnswers.get(IntermediaryLoopPage, id) match {
-        case Some(list) => // append to existing list
-          list :+ Intermediary.buildIntermediaryDetails(request.userAnswers, id)
-        case None => // start new list
-          IndexedSeq[Intermediary](Intermediary.buildIntermediaryDetails(request.userAnswers, id))
-      }
       for {
         userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
-        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, intermediaryLoopList))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, updatedLoopList(request.userAnswers, id)))
         _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {
@@ -119,5 +113,14 @@ class IntermediariesCheckYourAnswersController @Inject()(
       }
   }
 
+  private[intermediaries] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Intermediary] = {
+    val intermediary: Intermediary = Intermediary.buildIntermediaryDetails(userAnswers, id)
+    userAnswers.get(IntermediaryLoopPage, id) match {
+      case Some(list) => // append to existing list
+        list.filterNot(_.nameAsString == intermediary.nameAsString) :+ intermediary
+      case None => // start new list
+        IndexedSeq[Intermediary](intermediary)
+    }
+  }
 }
 

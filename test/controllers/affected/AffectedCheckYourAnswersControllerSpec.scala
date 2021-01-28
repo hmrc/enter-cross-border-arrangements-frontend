@@ -17,14 +17,16 @@
 package controllers.affected
 
 import base.SpecBase
-import models.affected.YouHaveNotAddedAnyAffected
-import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
+import models.affected.{Affected, YouHaveNotAddedAnyAffected}
+import models.organisation.Organisation
+import models.taxpayer.TaxResidency
+import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
+import pages.affected.{AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -216,5 +218,45 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         application.stop()
       }
     }
+
+    "must ensure the correct updated loop list" - {
+
+      val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
+      val email = "email@email.com"
+      val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+
+      def buildUserAnswers(list: IndexedSeq[Affected]): UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AffectedTypePage, 0, SelectType.Organisation).success.value
+        .set(OrganisationNamePage, 0, "Affected Ltd").success.value
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
+        .set(AffectedLoopPage, 0, list).success.value
+
+      val controller: AffectedCheckYourAnswersController = injector.instanceOf[AffectedCheckYourAnswersController]
+
+      def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
+
+      def buildAffected(id: String, name: String) =
+        Affected(id, None, Some(organisation(name)))
+
+      "if ids are not duplicated" in {
+
+        val list1: IndexedSeq[Affected] = IndexedSeq(
+          buildAffected("ID1", "First Ltd"), buildAffected("ID2", "Second Ltd")
+        )
+
+        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString) :+ "Affected Ltd"
+      }
+
+      "if ids are duplicated" in {
+
+        val list1: IndexedSeq[Affected] = IndexedSeq(
+          buildAffected("ID1", "Affected Ltd"), buildAffected("ID2", "Second Ltd")
+        )
+
+        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString)
+      }
+    }
+
   }
 }

@@ -28,8 +28,8 @@ case class Intermediary(intermediaryId: String,
                         organisation: Option[Organisation] = None,
                         whatTypeofIntermediary: WhatTypeofIntermediary,
                         isExemptionKnown: IsExemptionKnown,
-                        isExemptionCountryKnown: Option[Boolean],
-                        exemptCountries: Option[Set[ExemptCountries]]){
+                        isExemptionCountryKnown: Option[Boolean] = None,
+                        exemptCountries: Option[Set[ExemptCountries]] = None){
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString

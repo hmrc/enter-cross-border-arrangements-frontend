@@ -16,7 +16,6 @@
 
 package controllers.taxpayer
 
-import java.time.LocalDate
 import base.SpecBase
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
@@ -28,7 +27,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.taxpayer.{TaxpayerLoopPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
@@ -38,6 +37,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
@@ -290,6 +290,38 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
+    }
+
+    "must ensure the correct updated loop list" - {
+
+      def buildUserAnswers(list: IndexedSeq[Taxpayer]): UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation).success.value
+        .set(OrganisationNamePage, 0, "Taxpayers Ltd").success.value
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
+        .set(TaxpayerLoopPage, 0, list).success.value
+
+      def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
+
+      val controller: TaxpayersCheckYourAnswersController = injector.instanceOf[TaxpayersCheckYourAnswersController]
+
+      "if ids are not duplicated" in {
+
+        val list: IndexedSeq[Taxpayer] = IndexedSeq(
+          Taxpayer("ID1", None, Some(organisation("First Ltd"))), Taxpayer("ID2", None, Some(organisation("Second Ltd") ))
+        )
+
+        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString) :+ "Taxpayers Ltd"
+      }
+
+      "if ids are duplicated" in {
+
+        val list: IndexedSeq[Taxpayer] = IndexedSeq(
+          Taxpayer("ID1", None, Some(organisation("Taxpayers Ltd"))), Taxpayer("ID2", None, Some(organisation("Other") ))
+        )
+
+        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString)
+      }
     }
   }
 

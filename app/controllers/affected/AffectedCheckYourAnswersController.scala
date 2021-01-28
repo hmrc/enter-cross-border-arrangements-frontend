@@ -19,7 +19,7 @@ package controllers.affected
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.affected.Affected
-import models.{Mode, SelectType}
+import models.{Mode, SelectType, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -89,18 +89,22 @@ class AffectedCheckYourAnswersController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val affectedLoopList = request.userAnswers.get(AffectedLoopPage, id) match {
-        case Some(list) => // append to existing list
-          list :+ Affected.buildDetails(request.userAnswers, id)
-        case None => // start new list
-          IndexedSeq[Affected](Affected.buildDetails(request.userAnswers, id))
-      }
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
-        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, affectedLoopList))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(userAnswers, id)))
         _                               <- sessionRepository.set(userAnswersWithAffectedLoop)
         checkRoute                      =  toCheckRoute(mode, userAnswersWithAffectedLoop)
       } yield Redirect(redirect(id, checkRoute))
+  }
+
+  private[affected] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Affected] = {
+    val affected: Affected = Affected.buildDetails(userAnswers, id)
+    userAnswers.get(AffectedLoopPage, id) match {
+      case Some(list) => // append to existing list
+        list.filterNot(_.nameAsString == affected.nameAsString) :+ affected
+      case None => // start new list
+        IndexedSeq[Affected](affected)
+    }
   }
 
 }
