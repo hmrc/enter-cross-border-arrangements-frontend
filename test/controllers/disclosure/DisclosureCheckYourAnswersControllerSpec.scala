@@ -37,9 +37,9 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
-  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
 
   override def beforeEach: Unit = {
     reset(
@@ -160,7 +160,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertDisclosureName("My arrangement")(list.head)
         assertTypeDac6add()(list(1))
         assertArrangementID("GBA20210101ABC123",
-          "/enter-cross-border-arrangements/disclosure/change-identify")(list(2))
+          "/enter-cross-border-arrangements/disclosure/change-identify-arrangement")(list(2))
         list.size mustBe 3
       }
     }
@@ -187,7 +187,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       }
     }
 
-    "must be able to build disclosure details from user answers and redirect to task list" ignore {
+    "must be able to build disclosure details from user answers and redirect to task list" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .setBase(DisclosureNamePage, "My arrangement")
@@ -201,13 +201,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val request = FakeRequest(GET, disclosureCheckYourAnswersContinueRoute)
+      val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details/1"
 
       application.stop()
     }

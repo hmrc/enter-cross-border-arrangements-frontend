@@ -21,7 +21,6 @@ import models.GeneratedIDs
 import models.disclosure.IDVerificationStatus
 import play.api.http.HeaderNames
 import play.mvc.Http.Status.{NO_CONTENT, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException}
 
 import javax.inject.Inject
@@ -68,7 +67,7 @@ class CrossBorderArrangementsConnector @Inject()(
     httpClient.GET[HttpResponse](verificationUrl).map { response =>
       response.status match {
         case NO_CONTENT => IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)
-        case _ => IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)
+        case _ => IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)
       }
     } recover {
       case e: NotFoundException =>

@@ -392,10 +392,10 @@ POST       /disclosure/marketable                           controllers.disclosu
 GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
 POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/identify                        controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-identify                 controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/identify-arrangement            controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/identify-arrangement            controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-identify-arrangement     controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-identify-arrangement     controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
 
 GET        /manual/disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = NormalMode)
 POST       /manual/disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = NormalMode)

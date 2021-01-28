@@ -27,7 +27,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.DisclosureIdentifyArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -49,7 +49,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
   val validArrangementID = "GBA20210101ABC123"
 
   val formProvider = new DisclosureIdentifyArrangementFormProvider()
-  val form: Form[String] = formProvider(countriesSeq, mockCrossBorderArrangementsConnector)
+  val form: Form[String] = formProvider(countriesSeq)
 
   lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode).url
 
@@ -158,7 +158,10 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockitoS
           .build()
 
       val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", validArrangementID))
-      val boundForm = form.bind(Map("arrangementID" -> validArrangementID))
+      val boundForm =
+        form.bind(Map("arrangementID" -> validArrangementID))
+          .withError(FormError("arrangementID", List("disclosureIdentifyArrangement.error.notFound")))
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 

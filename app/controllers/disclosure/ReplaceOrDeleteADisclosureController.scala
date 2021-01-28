@@ -90,22 +90,23 @@ class ReplaceOrDeleteADisclosureController @Inject()(
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
         value => {
-          crossBorderArrangementsConnector.verifyDisclosureIDs(value.arrangementID, value.disclosureID, request.enrolmentID) flatMap {
-            verificationStatus =>
-              if (!verificationStatus.isValid) {
-                val json = Json.obj(
-                  "form" -> buildFormError(verificationStatus.message, formReturned),
-                  "mode" -> mode,
-                  "arrangementIDLabel" -> arrangementIDLabel
-                )
-                renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
-              } else {
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                  checkRoute = toCheckRoute(mode, updatedAnswers)
-                } yield Redirect(redirect(checkRoute, Some(value)))
-              }
+          crossBorderArrangementsConnector.verifyDisclosureIDs(value.arrangementID.toUpperCase, value.disclosureID.toUpperCase, request.enrolmentID)
+            .flatMap {
+              verificationStatus =>
+                if (!verificationStatus.isValid) {
+                  val json = Json.obj(
+                    "form" -> buildFormError(verificationStatus.message, formReturned),
+                    "mode" -> mode,
+                    "arrangementIDLabel" -> arrangementIDLabel
+                  )
+                  renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
+                } else {
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                    checkRoute = toCheckRoute(mode, updatedAnswers)
+                  } yield Redirect(redirect(checkRoute, Some(value)))
+                }
           }
         }
       )

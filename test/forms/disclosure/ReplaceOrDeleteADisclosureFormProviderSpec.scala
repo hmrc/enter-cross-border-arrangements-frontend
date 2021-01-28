@@ -35,11 +35,19 @@ class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  
 
     val fieldName = "arrangementID"
     val requiredKey = "replaceOrDeleteADisclosure.error.arrangementID.required"
+    val invalidKey = "replaceOrDeleteADisclosure.error.arrangementID.invalid"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
       validArrangementID
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      invalidString = "ZZA20210101ABC123",
+      error = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
@@ -53,11 +61,19 @@ class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  
 
     val fieldName = "disclosureID"
     val requiredKey = "replaceOrDeleteADisclosure.error.disclosureID.required"
+    val invalidKey = "replaceOrDeleteADisclosure.error.disclosureID.invalid"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
       validDisclosureID
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      invalidString = "ZZD20210101ABC123",
+      error = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

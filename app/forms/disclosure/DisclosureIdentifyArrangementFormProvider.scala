@@ -16,40 +16,23 @@
 
 package forms.disclosure
 
-import connectors.CrossBorderArrangementsConnector
 import forms.mappings.Mappings
 import models.Country
 import play.api.data.Form
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.RegexConstants
 
 import javax.inject.Inject
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
 
 class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
 
   lazy val startOfUKIDRegex = "^[GB]{2}.*"
 
-  def apply(countryList: Seq[Country],
-            crossBorderArrangementsConnector: CrossBorderArrangementsConnector
-           )(implicit hc: HeaderCarrier): Form[String] =
+  def apply(countryList: Seq[Country]): Form[String] =
     Form(
       "arrangementID" -> validatedDisclosureIDsText(
         "disclosureIdentifyArrangement.error.required",
         "disclosureIdentifyArrangement.error.invalid",
         countryList,
         arrangementIDRegex)
-        .verifying("disclosureIdentifyArrangement.error.notFound",
-          id => {
-            if (id.toUpperCase.matches(startOfUKIDRegex)) {
-              val verifyID = crossBorderArrangementsConnector.verifyArrangementId(id.toUpperCase)
-
-              Await.result(verifyID, 5 seconds)
-            } else {
-              true
-            }
-          }
-        )
     )
 }

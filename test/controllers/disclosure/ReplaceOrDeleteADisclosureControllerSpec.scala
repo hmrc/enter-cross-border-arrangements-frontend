@@ -202,7 +202,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
       application.stop()
     }
 
-    "must display id validation errors if disclosure ID is not found for an enrolment ID" in {
+    "must return a Bad Request and display id validation errors if disclosure ID is not found for an enrolment ID" in {
 
       val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 

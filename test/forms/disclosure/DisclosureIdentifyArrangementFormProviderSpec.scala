@@ -16,7 +16,6 @@
 
 package forms.disclosure
 
-import connectors.CrossBorderArrangementsConnector
 import forms.behaviours.StringFieldBehaviours
 import models.Country
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,12 +29,11 @@ class DisclosureIdentifyArrangementFormProviderSpec extends StringFieldBehaviour
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
   val requiredKey = "disclosureIdentifyArrangement.error.required"
   val invalidKey = "disclosureIdentifyArrangement.error.invalid"
 
-  val form = new DisclosureIdentifyArrangementFormProvider()(countriesSeq, mockCrossBorderArrangementsConnector)
+  val form = new DisclosureIdentifyArrangementFormProvider()(countriesSeq)
 
   ".arrangementID" - {
 
