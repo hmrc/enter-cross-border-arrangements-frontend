@@ -42,13 +42,17 @@ class GeneratedXMLController @Inject()(
 
       //TODO Delete later if no longer needed
 
-      val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-      val xml = prettyPrinter.format(xmlGenerationService.createXmlSubmission(request.userAnswers, id))
+      xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold(
+        error =>  throw new RuntimeException(error),
+        xml => {
 
-      val json = Json.obj(
-        "xml" -> xml
+          val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+          val json = Json.obj(
+            "xml" -> prettyPrinter.format(xml)
+          )
+
+          renderer.render("generatedXML.njk", json).map(Ok(_))
+        }
       )
-
-      renderer.render("generatedXML.njk", json).map(Ok(_))
   }
 }

@@ -21,3 +21,10 @@ if(backLink){
         }
   });
 }
+
+if (document.getElementById('printLink')){
+    document.getElementById('printLink').addEventListener('click', function(e){
+        e.preventDefault();
+        window.print();
+    });
+}

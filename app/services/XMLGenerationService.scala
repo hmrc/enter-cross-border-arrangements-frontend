@@ -17,7 +17,6 @@
 package services
 
 import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
-import javax.inject.Inject
 import models.UserAnswers
 import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
@@ -25,6 +24,8 @@ import org.joda.time.DateTime
 import pages.disclosure.DisclosureDetailsPage
 import play.api.mvc.AnyContent
 
+import javax.inject.Inject
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
@@ -75,19 +76,21 @@ class XMLGenerationService @Inject()() {
   }
 
   def createXmlSubmission(userAnswers: UserAnswers, id: Int)
-                         (implicit request: DataRequest[AnyContent]): Elem = {
+                         (implicit request: DataRequest[AnyContent]): Try[Elem] = {
 
-    <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
-      {buildHeader(userAnswers, id)}
-      {buildArrangementID(userAnswers, id)}
-      <DAC6Disclosures>
-        {buildDisclosureImportInstruction(userAnswers, id)}
-        {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        {buildInitialDisclosureMA(userAnswers, id)}
-        {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        {IntermediariesXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-      </DAC6Disclosures>
-    </DAC6_Arrangement>
+    Try {
+      <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+        {buildHeader(userAnswers, id)}
+        {buildArrangementID(userAnswers, id)}
+        <DAC6Disclosures>
+          {buildDisclosureImportInstruction(userAnswers, id)}
+          {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
+          {buildInitialDisclosureMA(userAnswers, id)}
+          {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
+          {IntermediariesXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
+          {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
+        </DAC6Disclosures>
+      </DAC6_Arrangement>
+    }
   }
 }

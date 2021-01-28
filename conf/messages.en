@@ -30,6 +30,8 @@ global.error.InternalServerError500.heading = Sorry, there is a problem with thi
 global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
 global.error.InternalServerError500.message = Try again later.
 
+global.error.validation.section.taxpayerorreporter = Relevant taxpayers or reporter’s details
+
 footer.links.support_links = Cysylltiadau cymorth
 footer.links.help = Help using GOV.UK
 footer.links.cookies = Cookies
@@ -916,6 +918,37 @@ taxpayerWhyReportArrangement.DAC61105 = The intermediaries are based outside of 
 taxpayerWhyReportArrangement.doNotKnow = I do not know
 taxpayerWhyReportArrangement.checkYourAnswersLabel = Why are you reporting as a taxpayer?
 taxpayerWhyReportArrangement.error.required = Select your reason for reporting
+
+# CONFIRMATION PAGES
+
+confirmation.link.text = Disclose a cross-border arrangement
+confirmation.survey.link = What did you think of this service?
+confirmation.survey.text = (opens in a new tab)
+
+disclosureConfirmation.title = Disclosure received
+disclosureConfirmation.arrangement.title = Arrangement received
+disclosureConfirmation.panel.new = Your arrangement ID
+disclosureConfirmation.panel.add = Your disclosure ID
+disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
+disclosureConfirmation.secondEmail = and {0}
+disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+disclosureConfirmation.p4 = Your message reference ID is {0}.
+disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p7 = What happens next
+disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
+
+confirmation.validationError.title = There is a problem with your disclosure
+confirmation.validationError.heading = Your form does not meet the requirements for submission.
+confirmation.validationError.info = What you can do next
+confirmation.validationError.info.p1 = Print or save this page
+confirmation.validationError.info.p2 = Return to
+confirmation.validationError.info.p3 = your disclosure details
+confirmation.validationError.info.p4 = to correct the errors listed below before trying to send again
+confirmation.validationError.table.caption = Errors
+confirmation.validationError.table.head1 = Section
+confirmation.validationError.table.head2 = Error
 
 ## REPORTER DETAILS - ORGANISATION
 
