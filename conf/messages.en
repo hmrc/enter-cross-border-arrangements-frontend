@@ -356,7 +356,7 @@ individualDateOfBirth.error.required.two = Date of birth must include {0} and {1
 individualDateOfBirth.error.required = Date of birth must include {0}
 individualDateOfBirth.error.invalid = Enter a valid date of birth
 individualDateOfBirth.error.futureDate = Date of birth must be before {0}
-individualDateOfBirth.error.pastDate = Date of birth must be after 1903
+individualDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1903
 individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
 
 isIndividualPlaceOfBirthKnown.title = Do you know where they were born?
@@ -531,7 +531,7 @@ whatIsTheImplementationDate.error.required.two = The implementation date must in
 whatIsTheImplementationDate.error.required = The implementation date must include {0}
 whatIsTheImplementationDate.error.invalid = Provide a date
 whatIsTheImplementationDate.error.pastDate = Provide a valid date after 25 06 2018
-whatIsTheImplementationDate.error.nonNumericKey = Provide a date
+whatIsTheImplementationDate.error.futureDate = Provide a valid date
 
 doYouKnowTheReasonToReportArrangementNow.title = Do you know the reason this arrangement must be reported now?
 oYouKnowTheReasonToReportArrangementNow.heading = Do you know the reason this arrangement must be reported now?
@@ -718,7 +718,7 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.required.two = The impl
 whatIsTaxpayersStartDateForImplementingArrangement.error.required = The implementation date must include {0}
 whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a valid date
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
-whatIsTaxpayersStartDateForImplementingArrangement.error.nonNumericKey = Provide a valid date
+whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a valid date
 
 youHaveNotAddedAnyIntermediaries.title = Your intermediaries
 youHaveNotAddedAnyIntermediaries.subHeading = Does this arrangement involve any intermediaries?
@@ -988,8 +988,8 @@ reporterIndividualDateOfBirth.error.required.two = Date of birth must include {0
 reporterIndividualDateOfBirth.error.required = Date of birth must include {0}
 reporterIndividualDateOfBirth.error.nonNumeric = Provide a date
 reporterIndividualDateOfBirth.error.invalid = Provide a valid date of birth
-reporterIndividualDateOfBirth.error.futureDate = Provide a valid date of birth
-reporterIndividualDateOfBirth.error.pastDate = Provide a date after 1 January 1900
+reporterIndividualDateOfBirth.error.futureDate = Provide a date of birth before {0}
+reporterIndividualDateOfBirth.error.pastDate = Provide a date of birth on or after 1 January 1903
 
 reporterIndividualPlaceOfBirth.title = What is your place of birth?
 reporterIndividualPlaceOfBirth.heading = What is your place of birth?

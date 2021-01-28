@@ -16,7 +16,7 @@
 
 package forms.taxpayer
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 import forms.behaviours.DateBehaviours
 import play.api.data.FormError
@@ -27,13 +27,34 @@ class WhatIsTaxpayersStartDateForImplementingArrangementFormProviderSpec extends
 
   ".value" - {
 
+    val fieldName = "value"
+    val futureDate = LocalDate.of(3000,1, 1)
+    val minDate = LocalDate.of(2018, 6, 26)
+
     val validData = datesBetween(
-      min = LocalDate.of(2018, 6, 26),
-      max = LocalDate.now(ZoneOffset.UTC)
+      min = minDate,
+      max = futureDate
     )
 
     behave like dateField(form, "value", validData)
 
     behave like mandatoryDateField(form, "value", "whatIsTaxpayersStartDateForImplementingArrangement.error.required.all")
+
+    behave like dateFieldWithMax(
+      form = form,
+      key = fieldName,
+      max = futureDate,
+      formError = FormError(
+        fieldName, "whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate")
+    )
+
+    behave like dateFieldWithMin(
+      form = form,
+      key = fieldName,
+      min = minDate,
+      formError = FormError(
+        fieldName, "whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate"
+      )
+    )
   }
 }

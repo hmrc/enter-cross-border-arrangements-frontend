@@ -30,8 +30,8 @@ class WhatIsTheImplementationDateFormProvider @Inject() extends Mappings {
         invalidKey     = "whatIsTheImplementationDate.error.invalid",
         allRequiredKey = "whatIsTheImplementationDate.error.required.all",
         twoRequiredKey = "whatIsTheImplementationDate.error.required.two",
-        requiredKey    = "whatIsTheImplementationDate.error.required",
-        nonNumericKey =  "whatIsTheImplementationDate.error.nonNumericKey"
-      ).verifying(minDate(LocalDate.of(2018,6,25),"whatIsTheImplementationDate.error.pastDate"))
+        requiredKey    = "whatIsTheImplementationDate.error.required"
+      ).verifying(maxDate(LocalDate.ofYearDay(3000, 1), "whatIsTheImplementationDate.error.futureDate"))
+        .verifying(minDate(LocalDate.of(2018,6,25),"whatIsTheImplementationDate.error.pastDate"))
     )
 }

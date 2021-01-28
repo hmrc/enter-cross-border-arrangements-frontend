@@ -16,12 +16,12 @@
 
 package forms.reporter.individual
 
-import forms.mappings.Mappings
-import helpers.DateHelper.{formatDateToString, today, yesterday}
-import play.api.data.Form
-
 import java.time.LocalDate
+
+import forms.mappings.Mappings
+import helpers.DateHelper.{formatDateToString, today}
 import javax.inject.Inject
+import play.api.data.Form
 
 class ReporterIndividualDateOfBirthFormProvider @Inject() extends Mappings {
 
@@ -31,9 +31,8 @@ class ReporterIndividualDateOfBirthFormProvider @Inject() extends Mappings {
         invalidKey     = "reporterIndividualDateOfBirth.error.invalid",
         allRequiredKey = "reporterIndividualDateOfBirth.error.required.all",
         twoRequiredKey = "reporterIndividualDateOfBirth.error.required.two",
-        requiredKey    = "reporterIndividualDateOfBirth.error.required",
-        nonNumericKey  = "reporterIndividualDateOfBirth.error.nonNumeric"
-      ).verifying(maxDate(yesterday, "reporterIndividualDateOfBirth.error.futureDate", formatDateToString(today)))
-        .verifying(minDate(LocalDate.of(1900,1,1),"reporterIndividualDateOfBirth.error.pastDate"))
+        requiredKey    = "reporterIndividualDateOfBirth.error.required"
+      ).verifying(maxDate(today, "reporterIndividualDateOfBirth.error.futureDate", formatDateToString(today)))
+        .verifying(minDate(LocalDate.of(1903,1,1),"reporterIndividualDateOfBirth.error.pastDate"))
     )
 }

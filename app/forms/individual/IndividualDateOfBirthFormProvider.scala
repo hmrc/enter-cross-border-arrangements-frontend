@@ -31,9 +31,8 @@ class IndividualDateOfBirthFormProvider @Inject() extends Mappings {
         invalidKey     = "individualDateOfBirth.error.invalid",
         allRequiredKey = "individualDateOfBirth.error.required.all",
         twoRequiredKey = "individualDateOfBirth.error.required.two",
-        requiredKey    = "individualDateOfBirth.error.required",
-        nonNumericKey    = "individualDateOfBirth.error.nonNumericKey"
-      ).verifying(maxDate(yesterday, "individualDateOfBirth.error.futureDate", formatDateToString(today)))
+        requiredKey    = "individualDateOfBirth.error.required"
+      ).verifying(maxDate(today, "individualDateOfBirth.error.futureDate", formatDateToString(today)))
         .verifying(minDate(LocalDate.of(1903,1,1),"individualDateOfBirth.error.pastDate"))
     )
 
