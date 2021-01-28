@@ -43,12 +43,7 @@ class DisclosureValidationErrorsController @Inject()(
 
       val keyList = request.userAnswers.get(ValidationErrorsPage, id) match {
         case Some(keys) => keys
-        case _ => Seq( // TODO remove test keys and throw exception
-          "businessrules.initialDisclosure.needRelevantTaxPayer"
-          , "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates"
-          , "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue"
-          , "any.other.key"
-        )
+        case _          => throw new IllegalStateException("Invalid key.")
       }
 
       val json = Json.obj(
