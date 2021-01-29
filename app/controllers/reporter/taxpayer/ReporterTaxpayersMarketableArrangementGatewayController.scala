@@ -61,7 +61,7 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
 
         Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
       } recoverWith {
-        case ex: Exception => errorHandler.onServerError(request, ex) //ToDo add testing
+        case ex: Exception => errorHandler.onServerError(request, ex)
       }
   }
 }
