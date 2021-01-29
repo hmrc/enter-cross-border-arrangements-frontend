@@ -22,7 +22,7 @@ import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForAffected
-import pages.affected.{AffectedLoopPage, YouHaveNotAddedAnyAffectedPage}
+import pages.affected.{AffectedLoopPage, AffectedStatusPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -30,8 +30,10 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
 import javax.inject.Inject
+import models.hallmarks.JourneyStatus
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyAffectedController @Inject()(
@@ -42,20 +44,21 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
     getData: DataRetrievalAction,
     formProvider: YouHaveNotAddedAnyAffectedFormProvider,
     val controllerComponents: MessagesControllerComponents,
+    requireData: DataRequiredAction,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(YouHaveNotAddedAnyAffectedPage, id)) match {
+      val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage, id)) match {
+      val namesOfAffected: IndexedSeq[String] = request.userAnswers.get(AffectedLoopPage, id) match {
         case Some(list) =>
           for {
             affected <- list
@@ -81,13 +84,13 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAffected]): Call =
     navigator.routeMap(YouHaveNotAddedAnyAffectedPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfAffected: IndexedSeq[String] = request.userAnswers.flatMap(_.get(AffectedLoopPage, id)) match {
+          val namesOfAffected: IndexedSeq[String] = request.userAnswers.get(AffectedLoopPage, id) match {
             case Some(list) =>
               for {
                 affected <- list
@@ -110,16 +113,21 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
           renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(BadRequest(_))
         },
         value => {
-
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
-
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(YouHaveNotAddedAnyAffectedPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAffectedPage, id, value))
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AffectedStatusPage, id, setStatus(value, updatedAnswers)))
+            _              <- sessionRepository.set(updatedAnswersWithStatus)
             checkRoute     =  toCheckRoute(mode, updatedAnswers)
           } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
+  }
+
+  private def setStatus(selectedAnswer: YouHaveNotAddedAnyAffected, ua: UserAnswers): JourneyStatus = {
+    selectedAnswer match {
+      case YouHaveNotAddedAnyAffected.YesAddLater => JourneyStatus.InProgress
+      case YouHaveNotAddedAnyAffected.No => JourneyStatus.Completed
+      case _ => JourneyStatus.NotStarted
+    }
   }
 }

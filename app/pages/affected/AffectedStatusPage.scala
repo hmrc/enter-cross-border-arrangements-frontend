@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package pages.intermediaries
+package pages.affected
 
-import models.IsExemptionKnown
-import pages.behaviours.PageBehaviours
+import models.hallmarks.JourneyStatus
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class IsExemptionKnownPageSpec extends PageBehaviours {
+case object AffectedStatusPage extends QuestionPage[JourneyStatus] {
 
-  "IsExemptionKnownPage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[IsExemptionKnown](IsExemptionKnownPage)
-
-    beSettable[IsExemptionKnown](IsExemptionKnownPage)
-
-    beRemovable[IsExemptionKnown](IsExemptionKnownPage)
-  }
+  override def toString: String = "affectedStatus"
 }
+

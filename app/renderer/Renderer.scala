@@ -44,6 +44,7 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, renderer: NunjucksRendere
     "reportAProblemPartialUrl"       -> appConfig.reportAProblemPartialUrl,
     "reportAProblemNonJSUrl"         -> appConfig.reportAProblemNonJSUrl,
     "timeout"                        -> appConfig.timeoutSeconds,
-    "countdown"                      -> appConfig.countdownSeconds
+    "countdown"                      -> appConfig.countdownSeconds,
+    "affectedToggle"                 -> appConfig.affectedToggle
   )
 }

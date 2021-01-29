@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package pages.intermediaries
+package pages.affected
 
-import models.IsExemptionKnown
+import models.affected.YouHaveNotAddedAnyAffected
 import pages.behaviours.PageBehaviours
 
-class IsExemptionKnownPageSpec extends PageBehaviours {
+class YouHaveNotAddedAnyAffectedPageSpec extends PageBehaviours{
 
-  "IsExemptionKnownPage" - {
+  "YouHaveNotAddedAnyAffectedPage" - {
 
-    beRetrievable[IsExemptionKnown](IsExemptionKnownPage)
+    beRetrievable[YouHaveNotAddedAnyAffected](YouHaveNotAddedAnyAffectedPage)
 
-    beSettable[IsExemptionKnown](IsExemptionKnownPage)
+    beSettable[YouHaveNotAddedAnyAffected](YouHaveNotAddedAnyAffectedPage)
 
-    beRemovable[IsExemptionKnown](IsExemptionKnownPage)
+    beRemovable[YouHaveNotAddedAnyAffected](YouHaveNotAddedAnyAffectedPage)
   }
 }

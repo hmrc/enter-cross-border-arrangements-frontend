@@ -82,7 +82,13 @@
 
                 {{ intermediariesTaskListItem | safe }}
 
+
+                {% if config.affectedToggle %}
+                    {{ othersAffectedTaskListItem | safe }}
+                {% endif %}
+
               </ul>
+
 
             </li>
           </ol>

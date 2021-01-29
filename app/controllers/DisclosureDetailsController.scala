@@ -20,12 +20,16 @@ import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
 import helpers.TaskListHelper._
+
 import javax.inject.Inject
 import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import org.slf4j.LoggerFactory
 import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
+import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
+import pages.QuestionPage
+import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.hallmarks.HallmarkStatusPage
@@ -78,8 +82,9 @@ class DisclosureDetailsController @Inject()(
         "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
         "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
+        "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id),
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle),
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
@@ -206,6 +211,19 @@ class DisclosureDetailsController @Inject()(
       case _ => taskListItemRestricted(
         "disclosureDetails.relevantTaxpayersLink", "connected-parties")
     }
+  }
+
+  private def othersAffectedItem(ua: UserAnswers,
+                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+
+    retrieveRowWithStatus(ua: UserAnswers,
+      page,
+      s"${frontendAppConfig.othersAffectedUrl}/$index",
+      linkContent = "disclosureDetails.othersAffectedLink",
+      id = "othersAffected",
+      ariaLabel = "connected-parties",
+      index
+    )
   }
 
   private def intermediariesItem(ua: UserAnswers,

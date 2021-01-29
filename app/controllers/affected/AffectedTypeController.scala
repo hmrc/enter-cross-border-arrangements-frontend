@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.AffectedTypeFormProvider
 import models.{Mode, NormalMode, SelectType}
 import navigation.NavigatorForAffected
-import pages.affected.AffectedTypePage
+import pages.affected.{AffectedStatusPage, AffectedTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -29,8 +29,9 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
 import javax.inject.Inject
+import models.hallmarks.JourneyStatus
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class AffectedTypeController @Inject()(
@@ -86,7 +87,8 @@ class AffectedTypeController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AffectedTypePage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AffectedStatusPage, id, JourneyStatus.InProgress))
+            _              <- sessionRepository.set(updatedAnswersWithStatus)
             redirectMode   =  if (request.userAnswers.hasNewValue(AffectedTypePage, id, value)) NormalMode else mode
             checkRoute     =  toCheckRoute(redirectMode, updatedAnswers)
           } yield Redirect(redirect(id, checkRoute, Some(value)))
