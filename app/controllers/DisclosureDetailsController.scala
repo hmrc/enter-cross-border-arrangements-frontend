@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory
 import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
@@ -77,6 +78,7 @@ class DisclosureDetailsController @Inject()(
         "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
         "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
         "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
+        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
         "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id),
@@ -205,6 +207,25 @@ class DisclosureDetailsController @Inject()(
 
       case _ => taskListItemRestricted(
         "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+    }
+  }
+
+  private def associatedEnterpriseItem(ua: UserAnswers,
+                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+
+    ua.get(RelevantTaxpayerStatusPage, index) match {
+      case Some(Completed) =>
+        retrieveRowWithStatus(ua: UserAnswers,
+          page,
+          s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+          linkContent = "disclosureDetails.associatedEnterpriseLink",
+          id = "associatedEnterprise",
+          ariaLabel = "connected-parties",
+          index
+        )
+
+      case _ => taskListItemRestricted(
+        "disclosureDetails.associatedEnterpriseLink", "connected-parties")
     }
   }
 

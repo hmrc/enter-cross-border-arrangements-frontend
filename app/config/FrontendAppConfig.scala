@@ -50,6 +50,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
   lazy val taxpayersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.taxpayers")}"
   lazy val intermediariesUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
+  lazy val associatedEnterpriseUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
 
   lazy val hallmarksUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarks")}"
   lazy val hallmarksCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarksCYA")}"
