@@ -24,7 +24,7 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{CheckMode, NormalMode, SelectType}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -52,6 +52,12 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(DefaultRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow))(0)
           .mustBe(routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode))
+      }
+
+      s"must go from $E4 to $E7 when a taxpayer(s) is selected" in {
+
+        navigator.routeMap(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)(DefaultRouting(NormalMode))(0)(Some(Seq("taxpayer")))(0)
+          .mustBe(routes.AssociatedEnterpriseTypeController.onPageLoad(0, NormalMode))
       }
 
       s"must go from $E2 to the same page when answer is 'Yes, add later'" in {
@@ -103,6 +109,12 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(routingInCheckMode)(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow))(0)
           .mustBe(routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, CheckMode))
+      }
+
+      s"must go from $E4 to $E7 when a taxpayer(s) is selected" in {
+
+        navigator.routeMap(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)(routingInCheckMode)(0)(Some(Seq("taxpayer")))(0)
+          .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
       }
 
       s"must go from $E2 to the same page when answer is 'Yes, add later'" in {

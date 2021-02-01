@@ -40,7 +40,7 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
       }
 
     case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage =>
-      checkRoute => id => _ => _ => routes.AssociatedEnterpriseTypeController.onPageLoad(id, checkRoute.mode) // TODO redirect
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.AssociatedEnterpriseTypeController.onPageLoad(id, checkRoute.mode), checkRoute)
 
     case AssociatedEnterpriseTypePage =>
       checkRoute => id => value => _ => value match {
