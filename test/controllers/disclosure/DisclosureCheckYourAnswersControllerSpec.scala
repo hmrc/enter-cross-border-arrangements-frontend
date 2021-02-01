@@ -17,15 +17,17 @@
 package controllers.disclosure
 
 import base.SpecBase
+import connectors.CrossBorderArrangementsConnector
 import controllers.RowJsonReads
-import models.{UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
+import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,6 +42,8 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
+
+  val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
   override def beforeEach: Unit = {
     reset(
@@ -188,6 +192,10 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     }
 
     "must be able to build disclosure details from user answers and redirect to task list" in {
+
+      when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any()))
+        .thenReturn(Future.successful(false))
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .setBase(DisclosureNamePage, "My arrangement")
@@ -199,7 +207,9 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+      ).build()
 
       val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
 
