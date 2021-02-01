@@ -18,12 +18,16 @@ package controllers.taxpayer
 
 import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
+import handlers.ErrorHandler
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage}
+import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.mvc.Results.InternalServerError
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, route, status, writeableOf_AnyContentAsEmpty, _}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -105,7 +109,7 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
         application.stop()
       }
 
-  }
+    }
 
     "must redirect to 'Check your Answers' page when the arrangement is not marketable " - {
 
@@ -163,5 +167,42 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
         application.stop()}
 
     }
-  }
+
+    "must return server error when connector call returns an error" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        disclosureType = DisclosureType.Dac6add,
+        arrangementID = Some(id),
+        initialDisclosureMA = false
+      )
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+
+      when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.failed(new Exception("Error")))
+
+      val mockErrorHandler = mock[ErrorHandler]
+
+      when(mockErrorHandler.onServerError(any(),any())).thenReturn(Future.successful(result = InternalServerError))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+          bind[ErrorHandler].toInstance(mockErrorHandler)
+        )
+        .build()
+
+      val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      application.stop()}
+    }
+
 }
