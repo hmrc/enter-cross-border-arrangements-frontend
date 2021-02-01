@@ -67,13 +67,13 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/taxpayers/implementation-date/0"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date/0"
 
         application.stop()
       }
@@ -98,13 +98,13 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
           )
           .build()
 
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/taxpayers/implementation-date/0"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/implementation-date/0"
 
         application.stop()
       }
@@ -126,13 +126,13 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
           .success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers/0"
 
         application.stop()
       }
@@ -156,15 +156,45 @@ class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with 
           )
           .build()
 
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers/0"
 
         application.stop()}
+
+      "or from a replaced arrangement " in {
+        val disclosureDetails = DisclosureDetails(
+          disclosureName = "",
+          disclosureType = DisclosureType.Dac6rep,
+          arrangementID = Some(id),
+          disclosureID = Some(id)
+        )
+
+        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(DisclosureDetailsPage, 0, disclosureDetails)
+          .success.value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[CrossBorderArrangementsConnector].toInstance(connectorStub(false))
+          )
+          .build()
+
+        val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/taxpayers/check-answers/0"
+
+        application.stop()
+      }
 
     }
 

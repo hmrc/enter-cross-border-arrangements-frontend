@@ -34,6 +34,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       DisclosureNamePage,
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
+      ReplaceOrDeleteADisclosurePage,
       DisclosureMarketablePage
     ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
@@ -74,16 +75,13 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
                 details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
               }
             }
-
           case disclosureType@DisclosureType.Dac6rep =>
-            getReplaceOrDeleteDisclosure.flatMap { ids =>
-              getDisclosureMarketable.map { initialDisclosureMA =>
-                details.copy(
-                  disclosureType = disclosureType,
-                  arrangementID = Some(ids.arrangementID),
-                  disclosureID = Some(ids.disclosureID),
-                  initialDisclosureMA = initialDisclosureMA)
-              }
+            getReplaceOrDeleteDisclosure.map { ids =>
+              details.copy(
+                disclosureType = disclosureType,
+                arrangementID = Some(ids.arrangementID),
+                disclosureID = Some(ids.disclosureID),
+                initialDisclosureMA = false)
             }
 
           case disclosureType@(DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6del cases
