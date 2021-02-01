@@ -78,6 +78,15 @@
 
               <ul class="app-task-list__items">
 
+              {% if config.associatedEnterpriseToggle %}
+
+              <div class="test-class">
+
+                {{ associatedEnterpriseTaskListItem | safe }}
+              <div>
+
+              {% endif %}
+
                 {{ relevantTaxpayerTaskListItem | safe }}
 
                 {{ intermediariesTaskListItem | safe }}

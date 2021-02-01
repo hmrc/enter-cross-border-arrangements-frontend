@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
 import helpers.TaskListHelper._
-
 import javax.inject.Inject
 import models.UserAnswers
 import models.hallmarks.JourneyStatus
@@ -32,6 +31,7 @@ import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
@@ -81,6 +81,7 @@ class DisclosureDetailsController @Inject()(
         "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
         "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
         "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
+        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
@@ -210,6 +211,25 @@ class DisclosureDetailsController @Inject()(
 
       case _ => taskListItemRestricted(
         "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+    }
+  }
+
+  private def associatedEnterpriseItem(ua: UserAnswers,
+                                       page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+
+    ua.get(RelevantTaxpayerStatusPage, index) match {
+      case Some(Completed) =>
+        retrieveRowWithStatus(ua: UserAnswers,
+          page,
+          s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+          linkContent = "disclosureDetails.associatedEnterpriseLink",
+          id = "associatedEnterprise",
+          ariaLabel = "connected-parties",
+          index
+        )
+
+      case _ => taskListItemRestricted(
+        "disclosureDetails.associatedEnterpriseLink", "connected-parties")
     }
   }
 
