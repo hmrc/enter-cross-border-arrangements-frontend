@@ -85,7 +85,7 @@ class DisclosureDetailsController @Inject()(
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle),
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle),
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))

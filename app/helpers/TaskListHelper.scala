@@ -25,6 +25,7 @@ import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
@@ -88,12 +89,19 @@ object TaskListHelper  {
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean): Boolean = {
 
-    //TODO: Remove toggle & add AffectedStatusPage to mandatoryCompletion when xml functionality for other affected ready
-    val mandatoryCompletion = if (affectedToggle){Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)}
-    else {
-      Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
+    //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
+
+    val mandatoryCompletion = (affectedToggle, associatedEnterpriseToggle) match {
+      case (true, true) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage, AssociatedEnterpriseStatusPage)
+      case (true, false) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)
+      case (false, true) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AssociatedEnterpriseStatusPage)
+      case _ =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
     }
 
     val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
@@ -108,3 +116,4 @@ object TaskListHelper  {
     haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id)
   }
 }
+
