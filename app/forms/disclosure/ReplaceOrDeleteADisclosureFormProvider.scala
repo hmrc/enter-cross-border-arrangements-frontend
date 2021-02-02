@@ -27,8 +27,6 @@ import javax.inject.Inject
 
 class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings with RegexConstants {
 
-  lazy val startOfUKIDRegex = "^[GB]{2}.*"
-
    def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
      Form(
        mapping(
