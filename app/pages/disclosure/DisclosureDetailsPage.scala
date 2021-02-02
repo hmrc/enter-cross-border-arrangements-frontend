@@ -17,7 +17,7 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.disclosure.{DisclosureDetails, DisclosureType, ReplaceOrDeleteADisclosure}
 import pages.{ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
@@ -34,6 +34,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       DisclosureNamePage,
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
+      ReplaceOrDeleteADisclosurePage,
       DisclosureMarketablePage
     ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
@@ -56,6 +57,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
     def getDisclosureMarketable = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
     def getDisclosureIdentifyArrangement = userAnswers.getBase(DisclosureIdentifyArrangementPage)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
+    def getReplaceOrDeleteDisclosure: Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
 
     getDisclosureDetails
       .flatMap { details =>
@@ -73,7 +75,16 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
                 details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
               }
             }
-          case disclosureType@(DisclosureType.Dac6rep | DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6rep | DisclosureType.Dac6del cases
+          case disclosureType@DisclosureType.Dac6rep =>
+            getReplaceOrDeleteDisclosure.map { ids =>
+              details.copy(
+                disclosureType = disclosureType,
+                arrangementID = Some(ids.arrangementID),
+                disclosureID = Some(ids.disclosureID),
+                initialDisclosureMA = false)
+            }
+
+          case disclosureType@(DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6del cases
             throw new UnsupportedOperationException(s"Not yet implemented: $disclosureType")
         }
       }

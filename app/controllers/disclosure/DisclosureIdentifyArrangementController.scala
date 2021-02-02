@@ -23,6 +23,7 @@ import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import models.{Country, Mode}
 import navigation.NavigatorForDisclosure
 import pages.disclosure.DisclosureIdentifyArrangementPage
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -53,7 +54,7 @@ class DisclosureIdentifyArrangementController @Inject()(
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries, crossBorderArrangementsConnector)
+      val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.getBase(DisclosureIdentifyArrangementPage) match {
         case None => form
@@ -75,9 +76,10 @@ class DisclosureIdentifyArrangementController @Inject()(
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries, crossBorderArrangementsConnector)
+      val form = formProvider(countries)
+      val formReturned = form.bindFromRequest()
 
-      form.bindFromRequest().fold(
+      formReturned.fold(
         formWithErrors => {
 
           val json = Json.obj(
@@ -87,12 +89,27 @@ class DisclosureIdentifyArrangementController @Inject()(
 
           renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(BadRequest(_))
         },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureIdentifyArrangementPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+        value => {
+          crossBorderArrangementsConnector.verifyArrangementId(value.toUpperCase).flatMap {
+            verificationStatus =>
+              if (verificationStatus) {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureIdentifyArrangementPage, value))
+                  _ <- sessionRepository.set(updatedAnswers)
+                  checkRoute = toCheckRoute(mode, updatedAnswers)
+                } yield Redirect(redirect(checkRoute, Some(value)))
+              } else {
+                val formError = formReturned.withError(FormError("arrangementID", List("disclosureIdentifyArrangement.error.notFound")))
+
+                val json = Json.obj(
+                  "form" -> formError,
+                  "mode" -> mode
+                )
+
+                renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(BadRequest(_))
+              }
+          }
+        }
       )
   }
 }

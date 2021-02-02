@@ -21,7 +21,7 @@ import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import pages.Page
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -38,8 +38,11 @@ class NavigatorForDisclosure @Inject()() {
       checkRoute => _ => value => _ => value match {
         case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
         case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
-        case _             => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode) //TODO - redirect to which disclosure do you want to replace/delete page when built
+        case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
       }
+
+    case ReplaceOrDeleteADisclosurePage =>
+      _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()

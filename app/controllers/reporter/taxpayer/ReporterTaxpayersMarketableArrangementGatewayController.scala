@@ -49,7 +49,7 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
         case Some(DisclosureType.Dac6new) =>
 
           Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA))
-        case Some(DisclosureType.Dac6add) =>
+        case Some(DisclosureType.Dac6add | DisclosureType.Dac6rep) =>
 
           request.userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID) match {
             case Some(arrangementId) =>

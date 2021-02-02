@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package forms.disclosure
+package pages.disclosure
 
-import forms.mappings.Mappings
-import models.Country
-import play.api.data.Form
-import utils.RegexConstants
+import models.disclosure.ReplaceOrDeleteADisclosure
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object ReplaceOrDeleteADisclosurePage extends QuestionPage[ReplaceOrDeleteADisclosure] {
 
-class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
+  override def path: JsPath = JsPath \ toString
 
-  lazy val startOfUKIDRegex = "^[GB]{2}.*"
-
-  def apply(countryList: Seq[Country]): Form[String] =
-    Form(
-      "arrangementID" -> validatedDisclosureIDsText(
-        "disclosureIdentifyArrangement.error.required",
-        "disclosureIdentifyArrangement.error.invalid",
-        countryList,
-        arrangementIDRegex)
-    )
+  override def toString: String = "replaceOrDeleteADisclosure"
 }

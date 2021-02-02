@@ -18,7 +18,10 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import controllers.Assets.BAD_REQUEST
 import generators.Generators
+import models.disclosure.IDVerificationStatus
 import org.scalacheck.Gen.alphaStr
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -44,12 +47,10 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return true if arrangement id is valid and was created by HMRC" in {
         forAll(validArrangementID) {
           id =>
-            server.stubFor(
-              get(urlEqualTo(s"/disclose-cross-border-arrangements/verify-arrangement-id/$id"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(NO_CONTENT)
-                )
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-arrangement-id/$id",
+              NO_CONTENT
             )
 
             whenReady(connector.verifyArrangementId(id)){
@@ -62,12 +63,10 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if arrangement id wasn't created by HMRC" in {
         forAll(alphaStr) {
           invalidID =>
-            server.stubFor(
-              get(urlEqualTo(s"/disclose-cross-border-arrangements/verify-arrangement-id/$invalidID"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(NOT_FOUND)
-                )
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-arrangement-id/$invalidID",
+              NOT_FOUND
             )
 
             whenReady(connector.verifyArrangementId(invalidID)){
@@ -77,5 +76,103 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
         }
       }
     }
+
+    "calling verifyDisclosureIDs" - {
+      val enrolmentID = "XADAC0001234567"
+
+      "should return true if arrangement and disclosure ids exist and are from the same submission" in {
+        forAll(validArrangementID, validDisclosureID) {
+          (arrangementID, disclosureID) =>
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
+              NO_CONTENT
+            )
+
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+              result =>
+                result mustBe IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)
+            }
+        }
+      }
+
+      "should return false if arrangement id is not found" in {
+        forAll(validArrangementID, validDisclosureID) {
+          (arrangementID, disclosureID) =>
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
+              NOT_FOUND,
+              "Arrangement ID not found"
+            )
+
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+              result =>
+                result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.ArrangementIDNotFound)
+            }
+        }
+      }
+
+      "should return false if disclosure id is not found for an enrolment id" in {
+        forAll(validArrangementID, validDisclosureID) {
+          (arrangementID, disclosureID) =>
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
+              NOT_FOUND,
+              "Disclosure ID doesn't match enrolment ID"
+            )
+
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+              result =>
+                result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.DisclosureIDNotFound)
+            }
+        }
+      }
+
+      "should return false if arrangement and disclosure ids are not from the same submission" in {
+        forAll(validArrangementID, validDisclosureID) {
+          (arrangementID, disclosureID) =>
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
+              NOT_FOUND,
+              "Arrangement ID and Disclosure ID are not from the same submission"
+            )
+
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+              result =>
+                result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.IDsDoNotMatch)
+            }
+        }
+      }
+
+      "should return false if arrangement and disclosure ids are not found" in {
+        forAll(validArrangementID, validDisclosureID) {
+          (arrangementID, disclosureID) =>
+
+            stubResponse(
+              s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
+              BAD_REQUEST,
+              "IDs not found"
+            )
+
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+              result =>
+                result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)
+            }
+        }
+      }
+    }
   }
+
+  private def stubResponse(expectedUrl: String, expectedStatus: Int, expectedBody: String = ""): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
+        )
+    )
 }

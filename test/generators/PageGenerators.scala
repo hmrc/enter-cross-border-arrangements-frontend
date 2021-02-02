@@ -19,7 +19,7 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -32,7 +32,6 @@ import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, Report
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
 import pages.intermediaries.{ExemptCountriesPage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
-
 import pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage
 import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
@@ -41,6 +40,9 @@ import pages.reporter.organisation.ReporterOrganisationPostcodePage
 
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryReplaceOrDeleteADisclosurePage: Arbitrary[ReplaceOrDeleteADisclosurePage.type] =
+    Arbitrary(ReplaceOrDeleteADisclosurePage)
 
   implicit lazy val arbitraryReporterOtherTaxResidentQuestionPage: Arbitrary[ReporterOtherTaxResidentQuestionPage.type] =
     Arbitrary(ReporterOtherTaxResidentQuestionPage)

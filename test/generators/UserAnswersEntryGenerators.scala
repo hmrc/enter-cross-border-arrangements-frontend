@@ -20,6 +20,7 @@ import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpecte
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
+import models.disclosure.ReplaceOrDeleteADisclosure
 import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
@@ -31,12 +32,12 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
-import pages.individual.{IsIndividualDateOfBirthKnownPage}
+import pages.individual.IsIndividualDateOfBirthKnownPage
 import pages.individual.{IsIndividualDateOfBirthKnownPage, _}
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage}
 import pages.organisation._
@@ -50,6 +51,14 @@ import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryReplaceOrDeleteADisclosureUserAnswersEntry: Arbitrary[(ReplaceOrDeleteADisclosurePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ReplaceOrDeleteADisclosurePage.type]
+        value <- arbitrary[ReplaceOrDeleteADisclosure].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReporterOtherTaxResidentQuestionUserAnswersEntry: Arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] =
     Arbitrary {

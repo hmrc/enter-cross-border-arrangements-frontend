@@ -18,9 +18,10 @@ package connectors
 
 import config.FrontendAppConfig
 import models.GeneratedIDs
+import models.disclosure.IDVerificationStatus
 import play.api.http.HeaderNames
 import play.mvc.Http.Status.{NO_CONTENT, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, NotFoundException}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,13 +42,44 @@ class CrossBorderArrangementsConnector @Inject()(
   }
 
   def verifyArrangementId(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.GET[HttpResponse](verificationUrl(arrangementId)).map { response =>
+    val verificationUrl = s"$baseUrl/verify-arrangement-id/$arrangementId"
+
+    httpClient.GET[HttpResponse](verificationUrl).map { response =>
       response.status match {
-        case NO_CONTENT => true
+        case 204 => true
         case _ => false
       }
     } recover {
       case _: Exception => false
+    }
+  }
+
+  def verifyDisclosureIDs(arrangementId: String,
+                          disclosureId: String,
+                          enrolmentId: String)(implicit hc: HeaderCarrier): Future[IDVerificationStatus] = {
+
+    val verificationUrl = s"$baseUrl/verify-ids/$arrangementId-$disclosureId-$enrolmentId"
+
+    val arrangementIDNotFound = "Arrangement ID not found"
+    val disclosureIDNotFound = "Disclosure ID doesn't match enrolment ID"
+    val idsDoNotMatch = "Arrangement ID and Disclosure ID are not from the same submission"
+
+    httpClient.GET[HttpResponse](verificationUrl).map { response =>
+      response.status match {
+        case NO_CONTENT => IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)
+        case _ => IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)
+      }
+    } recover {
+      case e: NotFoundException =>
+        e.message match {
+          case message if message.contains(arrangementIDNotFound) =>
+            IDVerificationStatus(isValid = false, IDVerificationStatus.ArrangementIDNotFound)
+          case message if message.contains(disclosureIDNotFound) =>
+            IDVerificationStatus(isValid = false, IDVerificationStatus.DisclosureIDNotFound)
+          case message if message.contains(idsDoNotMatch) =>
+            IDVerificationStatus(isValid = false, IDVerificationStatus.IDsDoNotMatch)
+        }
+      case _: Exception => IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)
     }
   }
 

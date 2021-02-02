@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package forms.disclosure
+package pages.disclosure
 
-import forms.mappings.Mappings
-import models.Country
-import play.api.data.Form
-import utils.RegexConstants
+import models.disclosure.ReplaceOrDeleteADisclosure
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Inject
+class ReplaceOrDeleteADisclosurePageSpec extends PageBehaviours {
 
-class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
+  "ReplaceOrDeleteADisclosurePage" - {
 
-  lazy val startOfUKIDRegex = "^[GB]{2}.*"
+    beRetrievable[ReplaceOrDeleteADisclosure](ReplaceOrDeleteADisclosurePage)
 
-  def apply(countryList: Seq[Country]): Form[String] =
-    Form(
-      "arrangementID" -> validatedDisclosureIDsText(
-        "disclosureIdentifyArrangement.error.required",
-        "disclosureIdentifyArrangement.error.invalid",
-        countryList,
-        arrangementIDRegex)
-    )
+    beSettable[ReplaceOrDeleteADisclosure](ReplaceOrDeleteADisclosurePage)
+
+    beRemovable[ReplaceOrDeleteADisclosure](ReplaceOrDeleteADisclosurePage)
+  }
 }

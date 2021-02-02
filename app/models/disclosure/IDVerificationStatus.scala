@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package forms.disclosure
+package models.disclosure
 
-import forms.mappings.Mappings
-import models.Country
-import play.api.data.Form
-import utils.RegexConstants
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+case class IDVerificationStatus(isValid: Boolean, message: String)
 
-class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
+object IDVerificationStatus {
+  val ArrangementIDNotFound = "ArrangementIDNotFound"
+  val DisclosureIDNotFound = "DisclosureIDNotFound"
+  val IDsDoNotMatch = "IDsDoNotMatch"
+  val IDsNotFound = "IDsNotFound"
+  val IDsFound = "IDsFound"
 
-  lazy val startOfUKIDRegex = "^[GB]{2}.*"
-
-  def apply(countryList: Seq[Country]): Form[String] =
-    Form(
-      "arrangementID" -> validatedDisclosureIDsText(
-        "disclosureIdentifyArrangement.error.required",
-        "disclosureIdentifyArrangement.error.invalid",
-        countryList,
-        arrangementIDRegex)
-    )
+  implicit val format: OFormat[IDVerificationStatus] = Json.format[IDVerificationStatus]
 }

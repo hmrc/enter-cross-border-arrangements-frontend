@@ -19,9 +19,10 @@ package controllers.taxpayer
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.UpdateTaxpayerFormProvider
+
 import javax.inject.Inject
 import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.{Dac6add, Dac6new}
+import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.taxpayer.UpdateTaxpayer
@@ -149,7 +150,7 @@ class UpdateTaxpayerController @Inject()(
 
         case (Some(Dac6new), false, Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
 
-        case (Some(Dac6add), _, Some(Taxpayer)) => JourneyStatus.Completed // add & Reporter is taxpayer
+        case (Some(Dac6add | Dac6rep), _, Some(Taxpayer)) => JourneyStatus.Completed // add | replace & Reporter is taxpayer
 
         case (_, _, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
 

@@ -144,6 +144,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validArrangementID: Gen[String] = RegexpGen.from(arrangementIDRegex)
 
+  def validDisclosureID: Gen[String] = RegexpGen.from(disclosureIDRegex)
+
   def validPostCodes: Gen[String] = {
     val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')
     for {

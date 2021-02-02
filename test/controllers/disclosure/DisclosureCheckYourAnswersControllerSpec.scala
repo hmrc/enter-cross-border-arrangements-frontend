@@ -17,15 +17,17 @@
 package controllers.disclosure
 
 import base.SpecBase
+import connectors.CrossBorderArrangementsConnector
 import controllers.RowJsonReads
+import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.disclosure.DisclosureType
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage}
+import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
+import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,9 +39,11 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
+  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
-  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad.url
+  lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
+
+  val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
   override def beforeEach: Unit = {
     reset(
@@ -98,10 +102,22 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
   }
 
-  private def assertArrangementID(arrangementID: String)(row: Row): Unit = {
+  private def assertTypeDac6rep()(row: Row): Unit = {
+    row.key.text mustBe Some(Literal("Type of disclosure"))
+    row.value.text mustBe Some(Literal("A replacement of an existing disclosure"))
+    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
+  }
+
+  private def assertArrangementID(arrangementID: String, href: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Arrangement ID"))
     row.value.text mustBe Some(Literal(arrangementID))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-identify")(row.actions.head)
+    assertAction(href)(row.actions.head)
+  }
+
+  private def assertDisclosureID(disclosureID: String)(row: Row): Unit = {
+    row.key.text mustBe Some(Literal("Disclosure ID"))
+    row.value.text mustBe Some(Literal(disclosureID))
+    assertAction("/enter-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
   }
 
   private def assertMarketableArrangement(yesOrNo: Boolean)(row: Row): Unit = {
@@ -147,12 +163,39 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
       verifyList(userAnswers) { list =>
         assertDisclosureName("My arrangement")(list.head)
         assertTypeDac6add()(list(1))
-        assertArrangementID("GBA20210101ABC123")(list(2))
+        assertArrangementID("GBA20210101ABC123",
+          "/enter-cross-border-arrangements/disclosure/change-identify-arrangement")(list(2))
         list.size mustBe 3
       }
     }
 
-    "must be able to build disclosure details from user answers and redirect to task list" ignore {
+    "must return correct rows for a replacement arrangement" in {
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
+        .success.value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6rep)
+        .success
+        .value
+        .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
+        .success
+        .value
+      verifyList(userAnswers) { list =>
+        assertDisclosureName("My arrangement")(list.head)
+        assertTypeDac6rep()(list(1))
+        assertArrangementID("GBA20210101ABC123",
+          "/enter-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
+        assertDisclosureID("GBD20210101ABC123")(list(3))
+        list.size mustBe 4
+      }
+    }
+
+    "must be able to build disclosure details from user answers and redirect to task list" in {
+
+      when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any()))
+        .thenReturn(Future.successful(false))
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .setBase(DisclosureNamePage, "My arrangement")
@@ -164,15 +207,17 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+      ).build()
 
-      val request = FakeRequest(GET, disclosureCheckYourAnswersContinueRoute)
+      val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details"
+      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details/1"
 
       application.stop()
     }

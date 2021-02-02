@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package forms.disclosure
+package models.disclosure
 
-import forms.mappings.Mappings
-import models.Country
-import play.api.data.Form
-import utils.RegexConstants
+import play.api.libs.json._
 
-import javax.inject.Inject
+case class ReplaceOrDeleteADisclosure (arrangementID: String, disclosureID: String)
 
-class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with RegexConstants {
-
-  lazy val startOfUKIDRegex = "^[GB]{2}.*"
-
-  def apply(countryList: Seq[Country]): Form[String] =
-    Form(
-      "arrangementID" -> validatedDisclosureIDsText(
-        "disclosureIdentifyArrangement.error.required",
-        "disclosureIdentifyArrangement.error.invalid",
-        countryList,
-        arrangementIDRegex)
-    )
+object ReplaceOrDeleteADisclosure {
+  implicit val format = Json.format[ReplaceOrDeleteADisclosure]
 }

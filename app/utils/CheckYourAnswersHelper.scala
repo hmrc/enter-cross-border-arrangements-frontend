@@ -22,6 +22,7 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
+import pages.disclosure.ReplaceOrDeleteADisclosurePage
 import pages.hallmarks._
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.taxpayer.TaxpayerSelectTypePage

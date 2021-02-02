@@ -1,0 +1,81 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("replaceOrDeleteADisclosure.title"), form.errors) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if form.errors.length > 0 %}
+          {{ govukErrorSummary({
+            "titleText": messages("error.summary.title"),
+            "errorList": form.errors
+          }) }}
+        {% endif %}
+
+        <form action="{{ routes.controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode).url }}" method="post">
+
+          {{ csrf() | safe }}
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("replaceOrDeleteADisclosure.heading") }}
+        </h1>
+
+          {{ govukInput({
+            hint: {
+              text: messages('replaceOrDeleteADisclosure.arrangementID.hint')
+            },
+            classes: "govuk-!-width-two-thirds",
+            label: {
+              html: arrangementIDLabel,
+              classes: "govuk-label--s"
+            },
+            id: "arrangementID",
+            name: "arrangementID",
+            value: form.arrangementID.value,
+            errorMessage: form.arrangementID.error
+          }) }}
+
+          {{ govukInput({
+            hint: {
+              text: messages('replaceOrDeleteADisclosure.disclosureID.hint')
+            },
+            classes: "govuk-!-width-two-thirds",
+            label: {
+              text: messages('replaceOrDeleteADisclosure.disclosureID'),
+              classes: "govuk-label--s"
+            },
+            id: "disclosureID",
+            name: "disclosureID",
+            value: form.disclosureID.value,
+            errorMessage: form.disclosureID.error
+          }) }}
+
+          {{ govukButton({
+            text: messages("site.saveAndContinue"),
+            attributes: {
+              id:"submit"
+            }
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

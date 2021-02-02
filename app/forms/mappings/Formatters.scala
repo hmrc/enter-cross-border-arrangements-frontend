@@ -243,18 +243,18 @@ trait Formatters {
     }
   }
 
-  protected def validatedArrangementID(requiredKey: String,
+  protected def validatedDisclosureIDs(requiredKey: String,
                                        invalidKey: String,
-                                       countryList: Seq[Country]): Formatter[String] = new Formatter[String] {
+                                       countryList: Seq[Country],
+                                       regex: String): Formatter[String] = new Formatter[String] {
     private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
-    private val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
     private val splitID: Regex = "(^[A-Za-z]{2})([A-Za-z0-9]+)".r
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       dataFormatter
         .bind(key, data)
         .right.flatMap {
-        case id if !id.toUpperCase.matches(arrangementIDRegex) => Left(Seq(FormError(key, invalidKey)))
+        case id if !id.toUpperCase.matches(regex) => Left(Seq(FormError(key, invalidKey)))
         case id =>
           val splitID(countryCode, _) = id.toUpperCase
 
