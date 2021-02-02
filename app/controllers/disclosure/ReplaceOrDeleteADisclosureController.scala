@@ -144,6 +144,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
 
   private def replaceOrDelete(userAnswers: UserAnswers): Boolean = userAnswers.getBase(DisclosureTypePage) match {
       case Some(Dac6rep) => true
-      case _ => false
+      case Some(Dac6del) => false
+      case _ => throw new RuntimeException("Disclosure type should only be replace or delete")
     }
 }
