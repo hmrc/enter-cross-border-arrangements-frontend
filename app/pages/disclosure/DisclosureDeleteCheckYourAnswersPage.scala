@@ -21,4 +21,5 @@ import pages.Page
 case object DisclosureDeleteCheckYourAnswersPage extends Page {
 
   override def toString: String = "disclosureDeleteCheckYourAnswers"
+
 }

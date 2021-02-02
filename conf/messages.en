@@ -803,6 +803,9 @@ yourDisclosureHasBeenDeleted.link2.time = (takes 30 seconds)
 
 disclosureDelete.title = Are you sure you want to delete this disclosure?
 disclosureDelete.heading = Are you sure you want to delete this disclosure?
+disclosureDelete.delete-disclosure = Delete this disclosure
+disclosureDelete.warning = This will permanently delete the information you have provided in this disclosure.
+
 ## COUNTRY LIST CHECKBOX LABELS
 
 countriesListCheckboxes.GB = United Kingdom

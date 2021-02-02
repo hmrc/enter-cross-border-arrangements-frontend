@@ -4,7 +4,7 @@
 {% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
 {% from "macros/title.njk"                         import title %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
-
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block pageTitle %}
   {{ title(messages("disclosureDelete.title")) }}
@@ -30,11 +30,16 @@
           rows: disclosureSummary
         }) }}
 
+        {{ govukWarningText({
+        text: messages("disclosureDelete.warning"),
+        iconFallbackText: "Warning"
+        }) }}
+
         <form action="{{ routes.controllers.disclosure.DisclosureDeleteCheckYourAnswersController.onContinue().url }}" method="post">
           {{ csrf() | safe }}
           <div class="govuk-!-margin-top-9">
             {{ govukButton({
-                text: messages("site.continue"),
+                text: messages("disclosureDelete.delete-disclosure"),
                 preventDoubleClick: true,
                 attributes: {
                   id:"submit"
