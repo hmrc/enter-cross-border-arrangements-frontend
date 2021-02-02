@@ -91,7 +91,7 @@ class AffectedCheckYourAnswersController @Inject()(
 
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
-        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(userAnswers, id)))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(request.userAnswers, id)))
         _                               <- sessionRepository.set(userAnswersWithAffectedLoop)
         checkRoute                      =  toCheckRoute(mode, userAnswersWithAffectedLoop)
       } yield Redirect(redirect(id, checkRoute))
