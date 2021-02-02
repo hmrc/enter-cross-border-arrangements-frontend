@@ -31,47 +31,6 @@ case object YouHaveNotAddedAnyAssociatedEnterprisesPage extends QuestionPage[You
 
   override def toString: String = "youHaveNotAddedAnyAssociatedEnterprises"
 
-  override def cleanup(value: Option[YouHaveNotAddedAnyAssociatedEnterprises], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    value match {
-      case Some(_) =>
-        userAnswers.remove(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id)
-          .flatMap(_.remove(AssociatedEnterpriseTypePage, id))
-          .flatMap(_.remove(IndividualNamePage, id))
-          .flatMap(_.remove(IsIndividualDateOfBirthKnownPage, id))
-          .flatMap(_.remove(IndividualDateOfBirthPage, id))
-          .flatMap(_.remove(IsIndividualPlaceOfBirthKnownPage, id))
-          .flatMap(_.remove(IndividualPlaceOfBirthPage, id))
-          .flatMap(_.remove(IsIndividualAddressKnownPage, id))
-          .flatMap(_.remove(IsIndividualAddressUkPage, id))
-          .flatMap(_.remove(IndividualUkPostcodePage, id))
-          .flatMap(_.remove(IndividualSelectAddressPage, id))
-          .flatMap(_.remove(IndividualAddressPage, id))
-          .flatMap(_.remove(EmailAddressQuestionForIndividualPage, id))
-          .flatMap(_.remove(EmailAddressForIndividualPage, id))
-          .flatMap(_.remove(WhichCountryTaxForIndividualPage, id))
-          .flatMap(_.remove(DoYouKnowAnyTINForUKIndividualPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForUKIndividualPage, id))
-          .flatMap(_.remove(IsIndividualResidentForTaxOtherCountriesPage, id))
-          .flatMap(_.remove(DoYouKnowTINForNonUKIndividualPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKIndividualPage, id))
-          .flatMap(_.remove(IndividualLoopPage, id))
-          .flatMap(_.remove(OrganisationNamePage, id))
-          .flatMap(_.remove(IsOrganisationAddressKnownPage, id))
-          .flatMap(_.remove(IsOrganisationAddressUkPage, id))
-          .flatMap(_.remove(SelectAddressPage, id))
-          .flatMap(_.remove(PostcodePage, id))
-          .flatMap(_.remove(OrganisationAddressPage, id))
-          .flatMap(_.remove(EmailAddressQuestionForOrganisationPage, id))
-          .flatMap(_.remove(EmailAddressForOrganisationPage, id))
-          .flatMap(_.remove(WhichCountryTaxForOrganisationPage, id))
-          .flatMap(_.remove(DoYouKnowAnyTINForUKOrganisationPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForUKOrganisationPage, id))
-          .flatMap(_.remove(IsOrganisationResidentForTaxOtherCountriesPage, id))
-          .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
-          .flatMap(_.remove(OrganisationLoopPage, id))
-          .flatMap(_.remove(IsAssociatedEnterpriseAffectedPage, id))
-      case None => super.cleanup(value, userAnswers, id)
-    }
-  }
+  override def cleanup(value: Option[YouHaveNotAddedAnyAssociatedEnterprises], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.remove(AssociatedEnterpriseTypePage, id)
 }

@@ -17,6 +17,7 @@
 package controllers.intermediaries
 
 import controllers.actions._
+import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.intermediaries.Intermediary
 import models.{Mode, NormalMode, SelectType, UserAnswers}
@@ -83,7 +84,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
               helper.exemptCountries(id).toSeq
             )
 
-          case _ => throw new RuntimeException("Unable to retrieve select type for Intermediary")
+          case _ => throw new UnsupportedRouteException(id)
       }
 
       renderer.render(
@@ -106,8 +107,8 @@ class IntermediariesCheckYourAnswersController @Inject()(
       for {
         userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
         userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, updatedLoopList(request.userAnswers, id)))
-        _ <- sessionRepository.set(userAnswersWithIntermediaryLoop)
-        checkRoute     =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
+        _                               <- sessionRepository.set(userAnswersWithIntermediaryLoop)
+        checkRoute                      =  toCheckRoute(mode, userAnswersWithIntermediaryLoop, id)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
@@ -116,9 +117,9 @@ class IntermediariesCheckYourAnswersController @Inject()(
   private[intermediaries] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Intermediary] = {
     val intermediary: Intermediary = Intermediary.buildIntermediaryDetails(userAnswers, id)
     userAnswers.get(IntermediaryLoopPage, id) match {
-      case Some(list) => // append to existing list
+      case Some(list) => // append to existing list without duplication
         list.filterNot(_.nameAsString == intermediary.nameAsString) :+ intermediary
-      case None => // start new list
+      case None =>       // start new list
         IndexedSeq[Intermediary](intermediary)
     }
   }

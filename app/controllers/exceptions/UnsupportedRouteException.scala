@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-package pages.taxpayer
+package controllers.exceptions
 
-import models.{SelectType, UserAnswers}
-import pages.individual._
-import pages.organisation._
-import play.api.libs.json.JsPath
-import pages._
-
-import scala.util.Try
-
-case object TaxpayerSelectTypePage extends QuestionPage[SelectType] with CleanUpSelectTypePage {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "selectType"
-}
+class UnsupportedRouteException(val id: Int) extends RuntimeException

@@ -18,6 +18,7 @@ package controllers.taxpayer
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.exceptions.UnsupportedRouteException
 import models.taxpayer.Taxpayer
 import models.{Mode, NormalMode, SelectType, UserAnswers}
 import navigation.Navigator
@@ -63,7 +64,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
             helper.buildIndividualEmailAddressGroup(id),
             helper.buildTaxResidencySummaryForIndividuals(id))
 
-        case _ => throw new RuntimeException("Unable to retrieve select type for Taxpayer")
+        case _ => throw new UnsupportedRouteException(id)
       }
 
       val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement(id).toSeq
@@ -94,9 +95,9 @@ class TaxpayersCheckYourAnswersController @Inject()(
   private[taxpayer] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
     val taxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
     userAnswers.get(TaxpayerLoopPage, id) match {
-      case Some(list) => // append to existing list
+      case Some(list) => // append to existing list without duplication
         list.filterNot(_.nameAsString == taxpayer.nameAsString) :+ taxpayer
-      case None => // start new list
+      case None =>       // start new list
         IndexedSeq[Taxpayer](taxpayer)
     }
   }

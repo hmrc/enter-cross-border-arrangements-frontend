@@ -17,6 +17,7 @@
 package controllers.enterprises
 
 import controllers.actions._
+import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.enterprises.AssociatedEnterprise
 import models.{Mode, SelectType, UserAnswers}
@@ -49,10 +50,29 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
-        case Some(SelectType.Organisation) => true
-        case _ => false
-      }
+      val (summaryRows, countrySummary) = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
+
+        case Some(SelectType.Organisation) =>
+          (
+            Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
+            helper.buildOrganisationAddressGroup(id) ++
+            helper.buildOrganisationEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForOrganisation(id)
+          )
+
+        case Some(SelectType.Individual) =>
+          (
+            Seq(helper.associatedEnterpriseType(id), helper.individualName(id)).flatten ++
+              helper.buildIndividualDateOfBirthGroup(id) ++
+              helper.buildIndividualPlaceOfBirthGroup(id) ++
+              helper.buildIndividualAddressGroup(id) ++
+              helper.buildIndividualEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForIndividuals(id)
+          )
+
+        case _ => throw new UnsupportedRouteException(id)
+
+          //
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
@@ -96,10 +116,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
+        userAnswers                   <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
         userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updatedLoopList(request.userAnswers, id)))
-        _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
-        checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
+        _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
+        checkRoute                    =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
@@ -108,9 +128,9 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
   private[enterprises] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
     val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise.buildAssociatedEnterprise(userAnswers, id)
     userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-      case Some(list) => // append to existing list
+      case Some(list) => // append to existing list without duplication
         list.filterNot(_.nameAsString == associatedEnterprise.nameAsString) :+ associatedEnterprise
-      case None => // start new list
+      case None =>      // start new list
         IndexedSeq[AssociatedEnterprise](associatedEnterprise)
     }
   }
