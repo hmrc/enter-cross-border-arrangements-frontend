@@ -27,6 +27,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, DisclosureStatusPage, DisclosureTypePage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
@@ -228,7 +229,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true) mustBe true
+        userCanSubmit(userAnswers, index, true, false) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -250,6 +251,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(RelevantTaxpayerStatusPage, index, Completed)
           .success
           .value
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
+          .success
+          .value
           .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
@@ -266,7 +270,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true) mustBe true
+        userCanSubmit(userAnswers, index, true, true) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -291,6 +295,9 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(IntermediariesStatusPage, index, Completed)
           .success
           .value
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
+          .success
+          .value
           .set(AffectedStatusPage, index, Completed)
           .success
           .value
@@ -304,7 +311,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true) mustBe false
+        userCanSubmit(userAnswers, index, true, true) mustBe false
       }
     }
 

@@ -78,11 +78,11 @@
 
               <ul class="app-task-list__items">
 
+                {{ relevantTaxpayerTaskListItem | safe }}
+
                 {% if config.associatedEnterpriseToggle %}
                     {{ associatedEnterpriseTaskListItem | safe }}
                 {% endif %}
-
-                {{ relevantTaxpayerTaskListItem | safe }}
 
                 {{ intermediariesTaskListItem | safe }}
 
@@ -111,7 +111,8 @@
                 attributes: {
                 "id": "submit"
                 }
-              }) }}
+              })
+            }}
           </form>
           {% else %}
 

@@ -25,9 +25,6 @@ import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import org.slf4j.LoggerFactory
-import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
-import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
-import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
@@ -36,6 +33,7 @@ import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.RelevantTaxpayerStatusPage
+import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
