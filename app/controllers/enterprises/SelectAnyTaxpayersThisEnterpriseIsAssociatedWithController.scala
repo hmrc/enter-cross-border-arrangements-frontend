@@ -19,7 +19,7 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
-import models.{Mode, UserAnswers}
+import models.{Enumerable, Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.taxpayer.TaxpayerLoopPage
@@ -99,7 +99,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
       case Some(taxpayersList) =>
         val field = form("value")
         val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
-          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.nameAsString}")
         }
         Checkboxes.set(field, items)
 

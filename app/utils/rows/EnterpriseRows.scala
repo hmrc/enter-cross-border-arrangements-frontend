@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
@@ -30,6 +30,23 @@ trait EnterpriseRows extends RowBuilder {
       content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
       href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
     )
+  }
+
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Option[Row] = userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) map {
+    answer =>
+      val taxpayers = if (answer.size > 1) {
+        s"""<ul class="govuk-list govuk-list--bullet">
+           |${answer.map(taxpayer => s"<li>$taxpayer</li>").mkString("\n")}
+           |</ul>""".stripMargin
+      } else {
+        s"${answer.head}"
+      }
+
+      toRow(
+        msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
+        content = Html(s"$taxpayers"),
+        href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
+      )
   }
 
   def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {

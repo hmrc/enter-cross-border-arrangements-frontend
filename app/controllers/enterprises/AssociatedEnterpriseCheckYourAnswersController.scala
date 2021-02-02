@@ -57,18 +57,22 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val (summaryRows, countrySummary) = if (isOrganisation) {
         (
-          Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
+          Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+            helper.associatedEnterpriseType(id),
+            helper.organisationName(id)).flatten ++
           helper.buildOrganisationAddressGroup(id) ++
           helper.buildOrganisationEmailAddressGroup(id),
           helper.buildTaxResidencySummaryForOrganisation(id)
         )
       } else {
         (
-          Seq(helper.associatedEnterpriseType(id), helper.individualName(id)).flatten ++
-            helper.buildIndividualDateOfBirthGroup(id) ++
-            helper.buildIndividualPlaceOfBirthGroup(id) ++
-            helper.buildIndividualAddressGroup(id) ++
-            helper.buildIndividualEmailAddressGroup(id),
+          Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+            helper.associatedEnterpriseType(id),
+            helper.individualName(id)).flatten ++
+          helper.buildIndividualDateOfBirthGroup(id) ++
+          helper.buildIndividualPlaceOfBirthGroup(id) ++
+          helper.buildIndividualAddressGroup(id) ++
+          helper.buildIndividualEmailAddressGroup(id),
           helper.buildTaxResidencySummaryForIndividuals(id)
         )
       }

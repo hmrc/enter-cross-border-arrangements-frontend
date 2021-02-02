@@ -672,14 +672,6 @@ associatedEnterpriseType.heading = Is this an organisation or an individual?
 associatedEnterpriseType.checkYourAnswersLabel = Organisation or individual
 associatedEnterpriseType.error.required = Select the type of associated enterprise
 
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.title = Select any taxpayers this enterprise is associated with
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading = Select any taxpayers this enterprise is associated with
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.1 = If the taxpayer associated with this enterprise is not listed below,
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.2 = add the relevant taxpayer
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
-selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
-
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} is exempt from reporting in?
 isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known
