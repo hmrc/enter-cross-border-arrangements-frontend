@@ -22,7 +22,8 @@ import scala.xml.{Elem, NodeSeq}
 
 object OrganisationXMLSection {
 
-  private[xml] def buildIDForOrganisation(organisation: Organisation): Elem = {
+  private[xml] def buildIDForOrganisation(organisation: Organisation,
+                                          isAssociatedEnterprise: Boolean = false): Elem = {
     val mandatoryOrganisationName = <OrganisationName>{organisation.organisationName}</OrganisationName>
 
     val email = organisation.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
@@ -41,6 +42,10 @@ object OrganisationXMLSection {
       </Organisation>
     }
 
-    <ID>{organisationNodes}</ID>
+    if (isAssociatedEnterprise) {
+      <AssociatedEnterpriseID>{organisationNodes}</AssociatedEnterpriseID>
+    } else {
+      <ID>{organisationNodes}</ID>
+    }
   }
 }
