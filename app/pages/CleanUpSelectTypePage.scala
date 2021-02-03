@@ -19,7 +19,6 @@ package pages
 import models.{SelectType, UserAnswers}
 import pages.individual._
 import pages.organisation._
-import queries.Settable
 
 import scala.util.{Success, Try}
 
@@ -28,7 +27,7 @@ trait CleanUpSelectTypePage extends QuestionPage[SelectType] {
   override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
     (value match {
-      case Some(SelectType.Individual) =>
+      case Some(_) =>
         userAnswers.remove(IndividualNamePage, id)
           .flatMap(_.remove(IsIndividualDateOfBirthKnownPage, id))
           .flatMap(_.remove(IndividualDateOfBirthPage, id))
@@ -48,8 +47,7 @@ trait CleanUpSelectTypePage extends QuestionPage[SelectType] {
           .flatMap(_.remove(DoYouKnowTINForNonUKIndividualPage, id))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKIndividualPage, id))
           .flatMap(_.remove(IndividualLoopPage, id))
-      case Some(SelectType.Organisation) =>
-        userAnswers.remove(OrganisationNamePage, id)
+          .flatMap(_.remove(OrganisationNamePage, id)
           .flatMap(_.remove(IsOrganisationAddressKnownPage, id))
           .flatMap(_.remove(IsOrganisationAddressUkPage, id))
           .flatMap(_.remove(SelectAddressPage, id))
@@ -64,6 +62,7 @@ trait CleanUpSelectTypePage extends QuestionPage[SelectType] {
           .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage, id))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
           .flatMap(_.remove(OrganisationLoopPage, id))
+          )
       case _ => super.cleanup(value, userAnswers, id)
     }).flatMap{ cleanup(_, id) }
   }
