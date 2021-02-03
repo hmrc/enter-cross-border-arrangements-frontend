@@ -13,7 +13,7 @@ site.doNotKnow = I do not know
 site.continue = Continue
 site.saveAndContinue = Save and continue
 site.getHelpWithThisPage = Get help with this page (opens in a new tab)
-site.service_name = Enter cross-border arrangements for DAC6
+site.service_name = Disclose cross-border arrangements for DAC6
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.selectAllThatApply = Select all that apply.
@@ -52,10 +52,6 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 taxpayerscheckYourAnswers.heading = Check your answers for relevant taxpayer details
-
-index.title = Enter cross-border arrangements for DAC6
-index.heading = Enter cross-border arrangements for DAC6
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
