@@ -16,37 +16,49 @@
 
 package helpers.xml
 import models.UserAnswers
+import models.enterprises.AssociatedEnterprise
 import pages.enterprises.AssociatedEnterpriseLoopPage
 
-import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
-object AssociatedEnterprisesSection extends XMLBuilder {
+object AssociatedEnterprisesSection {
 
-  private[xml] def buildAssociatedEnterprises(userAnswers: UserAnswers, id: Int): NodeSeq = {
+  private[xml] def buildAssociatedEnterprise(associatedEnterprise: AssociatedEnterprise): NodeSeq = {
+    val optionalAffectedPerson = <AffectedPerson>{associatedEnterprise.isAffectedBy}</AffectedPerson>
+
+    if (associatedEnterprise.individual.isDefined) {
+      <AssociatedEnterprise>
+        {IndividualXMLSection.buildIDForIndividual(associatedEnterprise.individual.get, isAssociatedEnterprise = true)}
+        {optionalAffectedPerson}
+      </AssociatedEnterprise>
+    } else {
+      <AssociatedEnterprise>
+        {OrganisationXMLSection.buildIDForOrganisation(associatedEnterprise.organisation.get, isAssociatedEnterprise = true)}
+        {optionalAffectedPerson}
+      </AssociatedEnterprise>
+    }
+  }
+
+  def buildAssociatedEnterprises(userAnswers: UserAnswers, id: Int, taxpayerName: String): NodeSeq = {
     userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
       case Some(associatedEnterprises) =>
-        associatedEnterprises.map {
-          associatedEnterprise =>
-            if(associatedEnterprise.individual.isDefined) {
-              <AssociatedEnterprise>
-                {IndividualXMLSection.buildIDForIndividual(associatedEnterprise.individual.get, isAssociatedEnterprise = true)}
-              </AssociatedEnterprise>
-            } else {
-              <AssociatedEnterprise>
-                {OrganisationXMLSection.buildIDForOrganisation(associatedEnterprise.organisation.get, isAssociatedEnterprise = true)}
-              </AssociatedEnterprise>
-            }
+        val associatedEnterprisesList =
+          associatedEnterprises.flatMap {
+            associatedEnterprise =>
+              if (associatedEnterprise.associatedTaxpayers.contains(taxpayerName)) {
+                buildAssociatedEnterprise(associatedEnterprise)
+              } else {
+                NodeSeq.Empty
+              }
+          }
+
+        if (associatedEnterprisesList.nonEmpty) {
+          <AssociatedEnterprises>{associatedEnterprisesList}</AssociatedEnterprises>
+        } else {
+          NodeSeq.Empty
         }
       case None => NodeSeq.Empty
     }
   }
 
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
-    Try {
-      <AssociatedEnterprises>
-        {buildAssociatedEnterprises(userAnswers, id)}
-      </AssociatedEnterprises>
-    }.toEither
-  }
 }

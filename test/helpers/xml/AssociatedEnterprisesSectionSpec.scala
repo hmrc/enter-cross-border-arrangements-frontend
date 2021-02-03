@@ -39,7 +39,7 @@ class AssociatedEnterprisesSectionSpec extends SpecBase {
       Some("value 3"),
       "value 4",
       Some("XX9 9XX"),
-      Country("valid","FR","France")
+      Country("", "GB", "United Kingdom")
     )
 
   val taxResidencies = IndexedSeq(
@@ -62,80 +62,116 @@ class AssociatedEnterprisesSectionSpec extends SpecBase {
   "AssociatedEnterprisesSection" - {
 
     "buildAssociatedEnterprises" - {
-      "must build the ASSOCIATED ENTERPRISES section if they exist and they're an individual" in {
+      "must build the ASSOCIATED ENTERPRISES section if they exist and there's only one" in {
         val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(individual), None, List("Associated Enterprise"), isAffectedBy = false))
+          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
           .success.value
 
-        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0)
+        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, individual.nameAsString)
 
         val expected =
-          """<AssociatedEnterprise>
-            |    <AssociatedEnterpriseID>
-            |        <Individual>
-            |            <IndividualName>
-            |                <FirstName>FirstName</FirstName>
-            |                <LastName>Surname</LastName>
-            |            </IndividualName>
-            |            <BirthDate>1990-01-01</BirthDate>
-            |            <BirthPlace>SomePlace</BirthPlace>
-            |            <TIN issuedBy="GB">UTR1234</TIN>
-            |            <Address>
-            |                <Street>value 1</Street>
-            |                <BuildingIdentifier>value 2</BuildingIdentifier>
-            |                <DistrictName>value 3</DistrictName>
-            |                <PostCode>XX9 9XX</PostCode>
-            |                <City>value 4</City>
-            |                <Country>FR</Country>
-            |            </Address>
-            |            <EmailAddress>email@email.com</EmailAddress>
-            |            <ResCountryCode>GB</ResCountryCode>
-            |        </Individual>
-            |    </AssociatedEnterpriseID>
-            |</AssociatedEnterprise>""".stripMargin
-
-        println(s"\n\nPrint: ${prettyPrinter.formatNodes(result)}\n\n")
+          """<AssociatedEnterprises>
+            |    <AssociatedEnterprise>
+            |        <AssociatedEnterpriseID>
+            |            <Individual>
+            |                <IndividualName>
+            |                    <FirstName>FirstName</FirstName>
+            |                    <LastName>Surname</LastName>
+            |                </IndividualName>
+            |                <BirthDate>1990-01-01</BirthDate>
+            |                <BirthPlace>SomePlace</BirthPlace>
+            |                <TIN issuedBy="GB">UTR1234</TIN>
+            |                <Address>
+            |                    <Street>value 1</Street>
+            |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                    <DistrictName>value 3</DistrictName>
+            |                    <PostCode>XX9 9XX</PostCode>
+            |                    <City>value 4</City>
+            |                    <Country>GB</Country>
+            |                </Address>
+            |                <EmailAddress>email@email.com</EmailAddress>
+            |                <ResCountryCode>GB</ResCountryCode>
+            |            </Individual>
+            |        </AssociatedEnterpriseID>
+            |        <AffectedPerson>false</AffectedPerson>
+            |    </AssociatedEnterprise>
+            |</AssociatedEnterprises>""".stripMargin
 
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
-      "must build the ASSOCIATED ENTERPRISES section if they exist and they're an organisation" in {
+      "must build the ASSOCIATED ENTERPRISES section if they exist and there are more than one" in {
         val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", None, Some(organisation), List("Associated Enterprise"), isAffectedBy = false))
+          AssociatedEnterprise("id", None, Some(organisation), List(organisation.organisationName), isAffectedBy = true),
+          AssociatedEnterprise("id2", Some(individual), None, List(organisation.organisationName), isAffectedBy = true))
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
           .success.value
 
-        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0)
+        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, organisation.organisationName)
 
         val expected =
-          """<AssociatedEnterprise>
-            |    <AssociatedEnterpriseID>
-            |        <Organisation>
-            |            <OrganisationName>Organisation Ltd.</OrganisationName>
-            |            <Address>
-            |                <Street>value 1</Street>
-            |                <BuildingIdentifier>value 2</BuildingIdentifier>
-            |                <DistrictName>value 3</DistrictName>
-            |                <PostCode>XX9 9XX</PostCode>
-            |                <City>value 4</City>
-            |                <Country>FR</Country>
-            |            </Address>
-            |            <EmailAddress>email@email.com</EmailAddress>
-            |            <ResCountryCode>GB</ResCountryCode>
-            |        </Organisation>
-            |    </AssociatedEnterpriseID>
-            |</AssociatedEnterprise>""".stripMargin
-
-        println(s"\n\nPrint: ${prettyPrinter.formatNodes(result)}\n\n")
+          """<AssociatedEnterprises>
+            |    <AssociatedEnterprise>
+            |        <AssociatedEnterpriseID>
+            |            <Organisation>
+            |                <OrganisationName>Organisation Ltd.</OrganisationName>
+            |                <Address>
+            |                    <Street>value 1</Street>
+            |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                    <DistrictName>value 3</DistrictName>
+            |                    <PostCode>XX9 9XX</PostCode>
+            |                    <City>value 4</City>
+            |                    <Country>GB</Country>
+            |                </Address>
+            |                <EmailAddress>email@email.com</EmailAddress>
+            |                <ResCountryCode>GB</ResCountryCode>
+            |            </Organisation>
+            |        </AssociatedEnterpriseID>
+            |        <AffectedPerson>true</AffectedPerson>
+            |    </AssociatedEnterprise>
+            |    <AssociatedEnterprise>
+            |        <AssociatedEnterpriseID>
+            |            <Individual>
+            |                <IndividualName>
+            |                    <FirstName>FirstName</FirstName>
+            |                    <LastName>Surname</LastName>
+            |                </IndividualName>
+            |                <BirthDate>1990-01-01</BirthDate>
+            |                <BirthPlace>SomePlace</BirthPlace>
+            |                <TIN issuedBy="GB">UTR1234</TIN>
+            |                <Address>
+            |                    <Street>value 1</Street>
+            |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                    <DistrictName>value 3</DistrictName>
+            |                    <PostCode>XX9 9XX</PostCode>
+            |                    <City>value 4</City>
+            |                    <Country>GB</Country>
+            |                </Address>
+            |                <EmailAddress>email@email.com</EmailAddress>
+            |                <ResCountryCode>GB</ResCountryCode>
+            |            </Individual>
+            |        </AssociatedEnterpriseID>
+            |        <AffectedPerson>true</AffectedPerson>
+            |    </AssociatedEnterprise>
+            |</AssociatedEnterprises>""".stripMargin
 
         prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must not build the ASSOCIATED ENTERPRISES section if the taxpayer doesn't have an associated enterprise" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+
+        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, individual.nameAsString)
+
+        prettyPrinter.formatNodes(result) mustBe ""
       }
     }
   }

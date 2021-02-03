@@ -69,11 +69,13 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
               <RelevantTaxpayer>
                 {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}
                 {date}
+                {AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, id, taxpayer.individual.get.nameAsString)}
               </RelevantTaxpayer>
             } else {
               <RelevantTaxpayer>
                 {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}
                 {date}
+                {AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, id, taxpayer.organisation.get.organisationName)}
               </RelevantTaxpayer>
             }
         }

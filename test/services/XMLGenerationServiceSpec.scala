@@ -20,7 +20,9 @@ import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.enterprises.AssociatedEnterprise
 import models.hallmarks.{HallmarkD, HallmarkD1}
+import models.individual.Individual
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
@@ -31,6 +33,7 @@ import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOr
 import org.joda.time.DateTime
 import pages.arrangement._
 import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
+import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
@@ -71,6 +74,10 @@ class XMLGenerationServiceSpec extends SpecBase {
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
+  val individualName: Name = Name("FirstName", "Surname")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
+  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)
+
   val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
 
   def today: LocalDate = LocalDate.now
@@ -89,6 +96,9 @@ class XMLGenerationServiceSpec extends SpecBase {
 
   val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
     Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
+
+  val enterpriseLoop = IndexedSeq(
+    AssociatedEnterprise("id", Some(individual), None, List(organisation.organisationName), isAffectedBy = false))
 
 
   "XMLGenerationService" - {
@@ -313,6 +323,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
           HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
         .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
+        .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
@@ -357,6 +368,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
           HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
         .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
+        .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
