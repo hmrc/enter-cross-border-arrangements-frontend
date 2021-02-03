@@ -19,8 +19,6 @@ package pages.taxpayer
 import models.UserAnswers
 import models.taxpayer.UpdateTaxpayer
 import pages.QuestionPage
-import pages.individual._
-import pages.organisation._
 import play.api.libs.json.JsPath
 
 import scala.util.Try

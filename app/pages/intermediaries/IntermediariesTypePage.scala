@@ -30,55 +30,9 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] with CleanUp
 
   override def toString: String = "intermediariesType"
 
-  // TODO refactor
-  override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    //Clear answers from unique pages in each journey
-    value match {
-      case Some(SelectType.Individual) =>
-        userAnswers.remove(IndividualNamePage, id)
-          .flatMap(_.remove(IsIndividualDateOfBirthKnownPage, id))
-          .flatMap(_.remove(IndividualDateOfBirthPage, id))
-          .flatMap(_.remove(IsIndividualPlaceOfBirthKnownPage, id))
-          .flatMap(_.remove(IndividualPlaceOfBirthPage, id))
-          .flatMap(_.remove(IsIndividualAddressKnownPage, id))
-          .flatMap(_.remove(IsIndividualAddressUkPage, id))
-          .flatMap(_.remove(IndividualUkPostcodePage, id))
-          .flatMap(_.remove(IndividualSelectAddressPage, id))
-          .flatMap(_.remove(IndividualAddressPage, id))
-          .flatMap(_.remove(EmailAddressQuestionForIndividualPage, id))
-          .flatMap(_.remove(EmailAddressForIndividualPage, id))
-          .flatMap(_.remove(WhichCountryTaxForIndividualPage, id))
-          .flatMap(_.remove(DoYouKnowAnyTINForUKIndividualPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForUKIndividualPage, id))
-          .flatMap(_.remove(IsIndividualResidentForTaxOtherCountriesPage, id))
-          .flatMap(_.remove(DoYouKnowTINForNonUKIndividualPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKIndividualPage, id))
-          .flatMap(_.remove(IndividualLoopPage, id))
-          .flatMap(_.remove(ExemptCountriesPage, id))
-          .flatMap(_.remove(IsExemptionCountryKnownPage, id))
-          .flatMap(_.remove(IsExemptionKnownPage, id))
-          .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
-      case Some(SelectType.Organisation) =>
-        userAnswers.remove(OrganisationNamePage, id)
-          .flatMap(_.remove(IsOrganisationAddressKnownPage, id))
-          .flatMap(_.remove(IsOrganisationAddressUkPage, id))
-          .flatMap(_.remove(SelectAddressPage, id))
-          .flatMap(_.remove(PostcodePage, id))
-          .flatMap(_.remove(OrganisationAddressPage, id))
-          .flatMap(_.remove(EmailAddressQuestionForOrganisationPage, id))
-          .flatMap(_.remove(EmailAddressForOrganisationPage, id))
-          .flatMap(_.remove(WhichCountryTaxForOrganisationPage, id))
-          .flatMap(_.remove(DoYouKnowAnyTINForUKOrganisationPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForUKOrganisationPage, id))
-          .flatMap(_.remove(IsOrganisationResidentForTaxOtherCountriesPage, id))
-          .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage, id))
-          .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
-          .flatMap(_.remove(OrganisationLoopPage, id))
-          .flatMap(_.remove(ExemptCountriesPage, id))
-          .flatMap(_.remove(IsExemptionCountryKnownPage, id))
-          .flatMap(_.remove(IsExemptionKnownPage, id))
-          .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
-      case None => super.cleanup(value, userAnswers, id)
-    }
-  }
+  override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.remove(ExemptCountriesPage, id)
+    .flatMap(_.remove(IsExemptionCountryKnownPage, id))
+    .flatMap(_.remove(IsExemptionKnownPage, id))
+    .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
 }

@@ -1,18 +1,34 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pages
 
 import models.{SelectType, UserAnswers}
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, EmailAddressForIndividualPage, EmailAddressQuestionForIndividualPage, IndividualAddressPage, IndividualDateOfBirthPage, IndividualLoopPage, IndividualNamePage, IndividualPlaceOfBirthPage, IndividualSelectAddressPage, IndividualUkPostcodePage, IsIndividualAddressKnownPage, IsIndividualAddressUkPage, IsIndividualDateOfBirthKnownPage, IsIndividualPlaceOfBirthKnownPage, IsIndividualResidentForTaxOtherCountriesPage, WhatAreTheTaxNumbersForNonUKIndividualPage, WhatAreTheTaxNumbersForUKIndividualPage, WhichCountryTaxForIndividualPage}
-import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, DoYouKnowTINForNonUKOrganisationPage, EmailAddressForOrganisationPage, EmailAddressQuestionForOrganisationPage, IsOrganisationAddressKnownPage, IsOrganisationAddressUkPage, IsOrganisationResidentForTaxOtherCountriesPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage, PostcodePage, SelectAddressPage, WhatAreTheTaxNumbersForNonUKOrganisationPage, WhatAreTheTaxNumbersForUKOrganisationPage, WhichCountryTaxForOrganisationPage}
+import pages.individual._
+import pages.organisation._
 import queries.Settable
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 trait CleanUpSelectTypePage {
   self: Settable[SelectType] =>
 
   override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
-    value match {
+    (value match {
       case Some(SelectType.Organisation) =>
         userAnswers.remove(IndividualNamePage, id)
           .flatMap(_.remove(IsIndividualDateOfBirthKnownPage, id))
@@ -50,6 +66,8 @@ trait CleanUpSelectTypePage {
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
           .flatMap(_.remove(OrganisationLoopPage, id))
       case _ => throw new IllegalStateException
-    }
+    }).flatMap(cleanup(_, id))
   }
+
+  def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = Success(userAnswers)
 }

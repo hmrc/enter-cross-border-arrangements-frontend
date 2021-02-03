@@ -29,4 +29,7 @@ case object AssociatedEnterpriseTypePage extends QuestionPage[SelectType] with C
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "associatedEnterpriseType"
+
+  override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.remove(IsAssociatedEnterpriseAffectedPage, id)
 }
