@@ -19,10 +19,10 @@ package helpers
 import base.SpecBase
 import generators.Generators
 import helpers.TaskListHelper._
-import models.{UnsubmittedDisclosure, UserAnswers}
-import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
@@ -229,7 +229,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true, false) mustBe true
+        userCanSubmit(userAnswers, index, true, false, true) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -270,7 +270,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true, true) mustBe true
+        userCanSubmit(userAnswers, index, true, true, true) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -311,7 +311,47 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, true, true) mustBe false
+        userCanSubmit(userAnswers, index, true, true, true) mustBe false
+      }
+
+      "must be false if user has Registered a taxpayer but no associated enterprise" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(DisclosureTypePage, index, Dac6new)
+          .success
+          .value
+          .set(DisclosureMarketablePage, index, true)
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(RelevantTaxpayerStatusPage, index, Completed)
+          .success
+          .value
+          .set(AssociatedEnterpriseStatusPage, index, InProgress)
+          .success
+          .value
+          .set(IntermediariesStatusPage, index, Completed)
+          .success
+          .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
+          .success
+          .value
+          .set(HallmarkStatusPage, index, Completed)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, Completed)
+          .success
+          .value
+
+        userCanSubmit(userAnswers, index, true, true, true) mustBe false
       }
     }
 

@@ -108,17 +108,18 @@ object TaskListHelper  {
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean, addedTaxpayers: Boolean): Boolean = {
 
     //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
+    // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
 
-    val mandatoryCompletion = (affectedToggle, associatedEnterpriseToggle) match {
-      case (true, true) =>
+    val mandatoryCompletion = (affectedToggle, associatedEnterpriseToggle, addedTaxpayers) match {
+      case (true, true, true) =>
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage, AssociatedEnterpriseStatusPage)
-      case (true, false) =>
-        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)
-      case (false, true) =>
+      case (false, true, true) =>
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AssociatedEnterpriseStatusPage)
+      case (true, false, _) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)
       case _ =>
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
     }
