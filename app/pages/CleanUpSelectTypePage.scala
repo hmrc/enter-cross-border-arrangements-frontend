@@ -23,8 +23,7 @@ import queries.Settable
 
 import scala.util.{Success, Try}
 
-trait CleanUpSelectTypePage {
-  self: Settable[SelectType] =>
+trait CleanUpSelectTypePage extends QuestionPage[SelectType] {
 
   override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
@@ -65,7 +64,7 @@ trait CleanUpSelectTypePage {
           .flatMap(_.remove(DoYouKnowTINForNonUKOrganisationPage, id))
           .flatMap(_.remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id))
           .flatMap(_.remove(OrganisationLoopPage, id))
-      case _ => throw new IllegalStateException
+      case _ => super.cleanup(value, userAnswers, id)
     }).flatMap(cleanup(_, id))
   }
 
