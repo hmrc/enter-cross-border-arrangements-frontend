@@ -32,7 +32,7 @@ import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
-import pages.taxpayer.RelevantTaxpayerStatusPage
+import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -195,28 +195,46 @@ class DisclosureDetailsController @Inject()(
 
   private def relevantTaxpayersItem(ua: UserAnswers,
                                     page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+    if (frontendAppConfig.associatedEnterpriseToggle) {
+      ua.get(ReporterStatusPage, index) match {
+        case Some(Completed) =>
+          retrieveRowWithStatusBottomless(ua: UserAnswers,
+            page,
+            s"${frontendAppConfig.taxpayersUrl}/$index",
+            linkContent = "disclosureDetails.relevantTaxpayersLink",
+            id = "taxpayers",
+            ariaLabel = "connected-parties",
+            index
+          )
 
-    ua.get(ReporterStatusPage, index) match {
-      case Some(Completed) =>
-        retrieveRowWithStatus(ua: UserAnswers,
-          page,
-          s"${frontendAppConfig.taxpayersUrl}/$index",
-          linkContent = "disclosureDetails.relevantTaxpayersLink",
-          id = "taxpayers",
-          ariaLabel = "connected-parties",
-          index
-        )
+        case _ => taskListItemRestricted(
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+      }
 
-      case _ => taskListItemRestricted(
-        "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+    } else {
+      ua.get(ReporterStatusPage, index) match {
+        case Some(Completed) =>
+          retrieveRowWithStatus(ua: UserAnswers,
+            page,
+            s"${frontendAppConfig.taxpayersUrl}/$index",
+            linkContent = "disclosureDetails.relevantTaxpayersLink",
+            id = "taxpayers",
+            ariaLabel = "connected-parties",
+            index
+          )
+
+        case _ => taskListItemRestricted(
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+      }
+
     }
   }
 
   private def associatedEnterpriseItem(ua: UserAnswers,
                                        page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    ua.get(RelevantTaxpayerStatusPage, index) match {
-      case Some(Completed) =>
+    (ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
+      case (Some(_), Some(Completed)) =>
         retrieveRowWithStatus(ua: UserAnswers,
           page,
           s"${frontendAppConfig.associatedEnterpriseUrl}/$index",

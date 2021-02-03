@@ -60,16 +60,16 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
           .mustBe(routes.AssociatedEnterpriseTypeController.onPageLoad(0, NormalMode))
       }
 
-      s"must go from $E2 to the same page when answer is 'Yes, add later'" in {
+      s"must go from $E2 to the disclosure details page when answer is 'Yes, add later'" in {
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(DefaultRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater))(0)
-          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode))
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
-      s"must go from $E2 page to the same page when answer is 'No'" in {
+      s"must go from $E2 page to the disclosure details page when answer is 'No'" in {
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(DefaultRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.No))(0)
-          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode))
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
       s"must go from $E7 to $O1 when answer is Organisation" in {
@@ -117,16 +117,16 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
           .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
       }
 
-      s"must go from $E2 to the same page when answer is 'Yes, add later'" in {
+      s"must go from $E2 to the disclosure details page when answer is 'Yes, add later'" in {
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(routingInCheckMode)(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater))(0)
-          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, CheckMode))
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
-      s"must go from $E2 page the same page when answer is 'No'" in {
+      s"must go from $E2 page the disclosure details page when answer is 'No'" in {
 
         navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(routingInCheckMode)(0)(Some(YouHaveNotAddedAnyAssociatedEnterprises.No))(0)
-          .mustBe(routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, CheckMode))
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
       "assuming the value has not changed (otherwise the controller would have forced the NormalMode" - {

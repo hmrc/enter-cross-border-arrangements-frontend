@@ -45,6 +45,16 @@ object TaskListHelper  {
       s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
   }
 
+  def taskListItemRestrictedBottomless(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__bottomless-item '><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
+  }
+
+  def taskListItemLinkedProviderBottomless(url: String, status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__bottomless-item '><a class='app-task-list__task-name' href='$url' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
+  }
+
   def taskListItemNotLinkedProvider(status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
     Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
       s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
@@ -56,6 +66,15 @@ object TaskListHelper  {
       case Some(Completed) => taskListItemLinkedProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel)
       case Some(InProgress) => taskListItemLinkedProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel)
       case _ => taskListItemLinkedProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel)
+    }
+  }
+
+  def retrieveRowWithStatusBottomless(ua: UserAnswers, page: QuestionPage[JourneyStatus],
+                            url: String, linkContent: String, id: String, ariaLabel: String, index: Int)(implicit messages: Messages): Html = {
+    ua.get(page, index) match {
+      case Some(Completed) => taskListItemLinkedProviderBottomless(url, Completed.toString, linkContent, s"$id-completed", ariaLabel)
+      case Some(InProgress) => taskListItemLinkedProviderBottomless(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel)
+      case _ => taskListItemLinkedProviderBottomless(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel)
     }
   }
 
