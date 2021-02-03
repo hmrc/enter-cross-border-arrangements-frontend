@@ -45,8 +45,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer"))
             .success.value
-            .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
-            .success.value
             .set(IndividualNamePage, 0, Name("First", "Last"))
             .success.value
             .set(IndividualDateOfBirthPage, 0, LocalDate.now())
@@ -89,9 +87,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
             .success.value
             .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
             .success.value
+            .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
+            .success.value
 
-          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe None
-          result.get(AssociatedEnterpriseTypePage, 0) mustBe None
           result.get(IndividualNamePage, 0) mustBe None
           result.get(IndividualDateOfBirthPage, 0) mustBe None
           result.get(IsIndividualPlaceOfBirthKnownPage, 0) mustBe None
@@ -122,8 +120,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
           val result = UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer"))
-            .success.value
-            .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
             .success.value
             .set(OrganisationNamePage, 0, "Organisation name")
             .success.value
@@ -159,9 +155,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesPageSpec extends PageBehaviours {
             .success.value
             .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
             .success.value
+            .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
+            .success.value
 
-          result.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe None
-          result.get(AssociatedEnterpriseTypePage, 0) mustBe None
           result.get(OrganisationNamePage, 0) mustBe None
           result.get(IsOrganisationAddressKnownPage, 0) mustBe None
           result.get(IsOrganisationAddressUkPage, 0) mustBe None

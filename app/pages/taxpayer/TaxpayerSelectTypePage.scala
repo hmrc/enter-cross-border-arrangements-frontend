@@ -29,7 +29,4 @@ case object TaxpayerSelectTypePage extends QuestionPage[SelectType] with CleanUp
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "selectType"
-
-  override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
 }

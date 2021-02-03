@@ -115,10 +115,10 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, validAnswer)
         .success
         .value
-        .set(OrganisationNamePage, 0, "validAnswer")
+        .set(TaxpayerSelectTypePage, 0, Organisation)
         .success
         .value
-        .set(TaxpayerSelectTypePage, 0, Organisation)
+        .set(OrganisationNamePage, 0, "validAnswer")
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
