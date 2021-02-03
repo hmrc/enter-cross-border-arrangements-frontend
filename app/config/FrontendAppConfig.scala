@@ -40,10 +40,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
-  lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
+
+  lazy val loginContinueUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.loginContinue")}"
   val signOutUrl: String             = configuration.get[String]("urls.logout")
   lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
-  lazy val discloseArrangeLink: String = configuration.get[String]("urls.homepage")
+  lazy val discloseArrangeLink: String = s"${configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl}${configuration.get[String]("urls.homepage")}"
 
   lazy val crossBorderArrangementsUrl: String = servicesConfig.baseUrl("cross-border-arrangements")
   lazy val discloseCrossBorderArrangementsFrontendUrl: String = configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl
