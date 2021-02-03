@@ -94,7 +94,6 @@ class XMLGenerationServiceSpec extends SpecBase {
   "XMLGenerationService" - {
 
     "buildHeader must build the XML header" in {
-      val mandatoryTimestamp: String = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
 
       val disclosureDetails = DisclosureDetails(
         disclosureName = "DisclosureName",
@@ -114,7 +113,7 @@ class XMLGenerationServiceSpec extends SpecBase {
       val expected =
       s"""<Header>
         |    <MessageRefId>GBXADAC0001122345DisclosureName</MessageRefId>
-        |    <Timestamp>$mandatoryTimestamp</Timestamp>
+        |    <Timestamp>${DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")}</Timestamp>
         |</Header>""".stripMargin
 
       prettyPrinter.format(result) mustBe expected
