@@ -16,13 +16,17 @@
 
 package pages.affected
 
+import models.UserAnswers
 import models.affected.Affected
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object AffectedLoopPage extends QuestionPage[IndexedSeq[Affected]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "affectedLoop"
+
 }

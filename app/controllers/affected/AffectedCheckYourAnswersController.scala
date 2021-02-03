@@ -17,9 +17,10 @@
 package controllers.affected
 
 import controllers.actions._
+import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.affected.Affected
-import models.{Mode, SelectType}
+import models.{Mode, SelectType, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -71,7 +72,7 @@ class AffectedCheckYourAnswersController @Inject()(
               helper.buildTaxResidencySummaryForIndividuals(id)
             )
 
-          case _ => throw new RuntimeException("Unable to retrieve select type for other parties affected")
+          case _ => throw new UnsupportedRouteException(id)
       }
 
       renderer.render(
@@ -89,18 +90,24 @@ class AffectedCheckYourAnswersController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val affectedLoopList = request.userAnswers.get(AffectedLoopPage, id) match {
-        case Some(list) => // append to existing list
-          list :+ Affected.buildDetails(request.userAnswers, id)
-        case None => // start new list
-          IndexedSeq[Affected](Affected.buildDetails(request.userAnswers, id))
-      }
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
-        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, affectedLoopList))
-        _                               <- sessionRepository.set(userAnswersWithAffectedLoop)
-        checkRoute                      =  toCheckRoute(mode, userAnswersWithAffectedLoop)
-      } yield Redirect(redirect(id, checkRoute))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        _                           <- sessionRepository.set(userAnswersWithAffectedLoop)
+        checkRoute                  =  toCheckRoute(mode, userAnswersWithAffectedLoop)
+      } yield {
+        Redirect(redirect(id, checkRoute))
+      }
+  }
+
+  private[affected] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Affected] = {
+    val affected: Affected = Affected.buildDetails(userAnswers, id)
+    userAnswers.get(AffectedLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.nameAsString == affected.nameAsString) :+ affected
+      case None =>      // start new list
+        IndexedSeq[Affected](affected)
+    }
   }
 
 }

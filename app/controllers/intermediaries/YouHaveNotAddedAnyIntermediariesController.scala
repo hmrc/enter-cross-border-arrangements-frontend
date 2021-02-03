@@ -36,15 +36,15 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyIntermediariesController @Inject()(
-                                                            override val messagesApi: MessagesApi,
-                                                            sessionRepository: SessionRepository,
-                                                            navigator: NavigatorForIntermediaries,
-                                                            identify: IdentifierAction,
-                                                            getData: DataRetrievalAction,
-                                                            requireData: DataRequiredAction,
-                                                            formProvider: YouHaveNotAddedAnyIntermediariesFormProvider,
-                                                            val controllerComponents: MessagesControllerComponents,
-                                                            renderer: Renderer
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIntermediaries,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: YouHaveNotAddedAnyIntermediariesFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()

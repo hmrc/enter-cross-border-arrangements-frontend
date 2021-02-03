@@ -16,6 +16,8 @@
 
 package handlers
 
+import controllers.exceptions.UnsupportedRouteException
+import controllers.routes
 import org.slf4j.LoggerFactory
 import play.api.PlayException
 import play.api.http.HeaderNames.CACHE_CONTROL
@@ -63,6 +65,8 @@ class ErrorHandler @Inject()(
 
     logError(request, exception)
     exception match {
+      case e: UnsupportedRouteException =>
+        Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(e.id)))
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>

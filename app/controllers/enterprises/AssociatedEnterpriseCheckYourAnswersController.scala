@@ -17,11 +17,10 @@
 package controllers.enterprises
 
 import controllers.actions._
+import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.enterprises.AssociatedEnterprise
-
-import javax.inject.Inject
-import models.{Mode, SelectType}
+import models.{Mode, SelectType, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AssociatedEnterpriseCheckYourAnswersController @Inject()(
@@ -50,31 +50,31 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val isOrganisation = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
-        case Some(SelectType.Organisation) => true
-        case _ => false
-      }
+      val (summaryRows, countrySummary) = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
 
-      val (summaryRows, countrySummary) = if (isOrganisation) {
-        (
-          Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
-            helper.associatedEnterpriseType(id),
-            helper.organisationName(id)).flatten ++
-          helper.buildOrganisationAddressGroup(id) ++
-          helper.buildOrganisationEmailAddressGroup(id),
-          helper.buildTaxResidencySummaryForOrganisation(id)
-        )
-      } else {
-        (
-          Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
-            helper.associatedEnterpriseType(id),
-            helper.individualName(id)).flatten ++
-          helper.buildIndividualDateOfBirthGroup(id) ++
-          helper.buildIndividualPlaceOfBirthGroup(id) ++
-          helper.buildIndividualAddressGroup(id) ++
-          helper.buildIndividualEmailAddressGroup(id),
-          helper.buildTaxResidencySummaryForIndividuals(id)
-        )
+        case Some(SelectType.Organisation) =>
+          (
+            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+              helper.associatedEnterpriseType(id),
+              helper.organisationName(id)).flatten ++
+              helper.buildOrganisationAddressGroup(id) ++
+              helper.buildOrganisationEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForOrganisation(id)
+          )
+
+        case Some(SelectType.Individual) =>
+          (
+            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+              helper.associatedEnterpriseType(id),
+              helper.individualName(id)).flatten ++
+              helper.buildIndividualDateOfBirthGroup(id) ++
+              helper.buildIndividualPlaceOfBirthGroup(id) ++
+              helper.buildIndividualAddressGroup(id) ++
+              helper.buildIndividualEmailAddressGroup(id),
+            helper.buildTaxResidencySummaryForIndividuals(id)
+          )
+
+        case _ => throw new UnsupportedRouteException(id)
       }
 
       val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
@@ -96,20 +96,24 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val enterpriseLoopList = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-        case Some(list) => // append to existing list
-          list :+ AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id)
-        case None => // start new list
-          IndexedSeq[AssociatedEnterprise](AssociatedEnterprise.buildAssociatedEnterprise(request.userAnswers, id))
-      }
-
       for {
-        userAnswers <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, enterpriseLoopList))
-        _ <- sessionRepository.set(userAnswersWithEnterpriseLoop)
-        checkRoute     =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
+        userAnswers                   <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
+        checkRoute                    =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
   }
+
+  private[enterprises] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
+    val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise.buildAssociatedEnterprise(userAnswers, id)
+    userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.nameAsString == associatedEnterprise.nameAsString) :+ associatedEnterprise
+      case None =>      // start new list
+        IndexedSeq[AssociatedEnterprise](associatedEnterprise)
+    }
+  }
+
 }

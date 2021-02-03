@@ -18,8 +18,9 @@ package controllers.taxpayer
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.exceptions.UnsupportedRouteException
 import models.taxpayer.Taxpayer
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -63,7 +64,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
             helper.buildIndividualEmailAddressGroup(id),
             helper.buildTaxResidencySummaryForIndividuals(id))
 
-        case _ => throw new RuntimeException("Unable to retrieve select type for Taxpayer")
+        case _ => throw new UnsupportedRouteException(id)
       }
 
       val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement(id).toSeq
@@ -82,18 +83,22 @@ class TaxpayersCheckYourAnswersController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val taxpayerLoopList = request.userAnswers.get(TaxpayerLoopPage, id) match {
-        case Some(list) => // append to existing list
-          list :+ Taxpayer.buildTaxpayerDetails(request.userAnswers, id)
-        case None => // start new list
-          IndexedSeq[Taxpayer](Taxpayer.buildTaxpayerDetails(request.userAnswers, id))
-      }
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage, id))
-        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, taxpayerLoopList))
-        _ <- sessionRepository.set(userAnswersWithTaxpayerLoop)
+        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        _                           <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, mode, userAnswersWithTaxpayerLoop))
       }
+  }
+
+  private[taxpayer] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
+    val taxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
+    userAnswers.get(TaxpayerLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.nameAsString == taxpayer.nameAsString) :+ taxpayer
+      case None =>       // start new list
+        IndexedSeq[Taxpayer](taxpayer)
+    }
   }
 }
