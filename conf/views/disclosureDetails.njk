@@ -80,8 +80,11 @@
 
                 {{ relevantTaxpayerTaskListItem | safe }}
 
-                {{ intermediariesTaskListItem | safe }}
+                {% if config.associatedEnterpriseToggle %}
+                    {{ associatedEnterpriseTaskListItem | safe }}
+                {% endif %}
 
+                {{ intermediariesTaskListItem | safe }}
 
                 {% if config.affectedToggle %}
                     {{ othersAffectedTaskListItem | safe }}
@@ -108,7 +111,8 @@
                 attributes: {
                 "id": "submit"
                 }
-              }) }}
+              })
+            }}
           </form>
           {% else %}
 

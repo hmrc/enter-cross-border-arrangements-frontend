@@ -52,6 +52,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val taxpayersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.taxpayers")}"
   lazy val intermediariesUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
   lazy val othersAffectedUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.othersAffected")}"
+  lazy val associatedEnterpriseUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.associatedEnterprise")}"
 
   lazy val hallmarksUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarks")}"
   lazy val hallmarksCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarksCYA")}"
@@ -69,6 +70,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 
   lazy val affectedToggle: Boolean = configuration.get[Boolean]("toggles.affectedToggle")
+  lazy val associatedEnterpriseToggle: Boolean = configuration.get[Boolean]("toggles.associatedEnterpriseToggle")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

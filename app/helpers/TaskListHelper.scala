@@ -25,6 +25,7 @@ import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
@@ -44,6 +45,16 @@ object TaskListHelper  {
       s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
   }
 
+  def taskListItemRestrictedBottomless(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__bottomless-item '><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
+  }
+
+  def taskListItemLinkedProviderBottomless(url: String, status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__bottomless-item '><a class='app-task-list__task-name' href='$url' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
+  }
+
   def taskListItemNotLinkedProvider(status: String, linkContent: String, id: String, ariaLabel: String)(implicit messages: Messages): Html = {
     Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
       s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
@@ -55,6 +66,15 @@ object TaskListHelper  {
       case Some(Completed) => taskListItemLinkedProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel)
       case Some(InProgress) => taskListItemLinkedProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel)
       case _ => taskListItemLinkedProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel)
+    }
+  }
+
+  def retrieveRowWithStatusBottomless(ua: UserAnswers, page: QuestionPage[JourneyStatus],
+                            url: String, linkContent: String, id: String, ariaLabel: String, index: Int)(implicit messages: Messages): Html = {
+    ua.get(page, index) match {
+      case Some(Completed) => taskListItemLinkedProviderBottomless(url, Completed.toString, linkContent, s"$id-completed", ariaLabel)
+      case Some(InProgress) => taskListItemLinkedProviderBottomless(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel)
+      case _ => taskListItemLinkedProviderBottomless(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel)
     }
   }
 
@@ -88,12 +108,20 @@ object TaskListHelper  {
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean, addedTaxpayers: Boolean): Boolean = {
 
-    //TODO: Remove toggle & add AffectedStatusPage to mandatoryCompletion when xml functionality for other affected ready
-    val mandatoryCompletion = if (affectedToggle){Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)}
-    else {
-      Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
+    //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
+    // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
+
+    val mandatoryCompletion = (affectedToggle, associatedEnterpriseToggle, addedTaxpayers) match {
+      case (true, true, true) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage, AssociatedEnterpriseStatusPage)
+      case (false, true, true) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AssociatedEnterpriseStatusPage)
+      case (true, false, _) =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)
+      case _ =>
+        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
     }
 
     val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
@@ -108,3 +136,4 @@ object TaskListHelper  {
     haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id)
   }
 }
+

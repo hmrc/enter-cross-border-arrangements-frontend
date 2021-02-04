@@ -36,7 +36,7 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
         case Some(YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)  =>
           routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, checkRoute.mode)
         case _ =>
-          routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, checkRoute.mode)
+          controllers.routes.DisclosureDetailsController.onPageLoad(id)
       }
 
     case SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage =>

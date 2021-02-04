@@ -20,22 +20,20 @@ import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
 import helpers.TaskListHelper._
-
 import javax.inject.Inject
 import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import org.slf4j.LoggerFactory
-import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
-import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
-import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
-import pages.taxpayer.RelevantTaxpayerStatusPage
+import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
+import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -73,6 +71,12 @@ class DisclosureDetailsController @Inject()(
           .getOrElse("")
       }
 
+      val addedTaxpayer = request.userAnswers.flatMap(_.get(TaxpayerLoopPage, id)) match {
+        case Some(taxpayer) if taxpayer.nonEmpty =>
+          true
+        case _ =>
+          false
+      }
 
       val json = Json.obj(
         "id"      -> id,
@@ -81,10 +85,11 @@ class DisclosureDetailsController @Inject()(
         "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
         "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
         "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
+        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle),
+        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer),
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
@@ -196,20 +201,57 @@ class DisclosureDetailsController @Inject()(
 
   private def relevantTaxpayersItem(ua: UserAnswers,
                                     page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+    if (frontendAppConfig.associatedEnterpriseToggle) {
+      ua.get(ReporterStatusPage, index) match {
+        case Some(Completed) =>
+          retrieveRowWithStatusBottomless(ua: UserAnswers,
+            page,
+            s"${frontendAppConfig.taxpayersUrl}/$index",
+            linkContent = "disclosureDetails.relevantTaxpayersLink",
+            id = "taxpayers",
+            ariaLabel = "connected-parties",
+            index
+          )
 
-    ua.get(ReporterStatusPage, index) match {
-      case Some(Completed) =>
+        case _ => taskListItemRestricted(
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+      }
+
+    } else {
+      ua.get(ReporterStatusPage, index) match {
+        case Some(Completed) =>
+          retrieveRowWithStatus(ua: UserAnswers,
+            page,
+            s"${frontendAppConfig.taxpayersUrl}/$index",
+            linkContent = "disclosureDetails.relevantTaxpayersLink",
+            id = "taxpayers",
+            ariaLabel = "connected-parties",
+            index
+          )
+
+        case _ => taskListItemRestricted(
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+      }
+
+    }
+  }
+
+  private def associatedEnterpriseItem(ua: UserAnswers,
+                                       page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+
+    (ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
+      case (Some(_), Some(Completed)) =>
         retrieveRowWithStatus(ua: UserAnswers,
           page,
-          s"${frontendAppConfig.taxpayersUrl}/$index",
-          linkContent = "disclosureDetails.relevantTaxpayersLink",
-          id = "taxpayers",
+          s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+          linkContent = "disclosureDetails.associatedEnterpriseLink",
+          id = "associatedEnterprise",
           ariaLabel = "connected-parties",
           index
         )
 
       case _ => taskListItemRestricted(
-        "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+        "disclosureDetails.associatedEnterpriseLink", "connected-parties")
     }
   }
 
