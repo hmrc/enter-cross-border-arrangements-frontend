@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.ReplaceOrDeleteADisclosurePage
+import pages.disclosure.{DeletedDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
@@ -43,7 +43,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
   val userAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
-      ReplaceOrDeleteADisclosurePage.toString -> Json.obj(
+      DeletedDisclosurePage.toString -> Json.obj(
         "arrangementID" -> arrangementID,
         "disclosureID" -> disclosureID
       )

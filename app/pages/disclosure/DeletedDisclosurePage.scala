@@ -16,22 +16,13 @@
 
 package pages.disclosure
 
-import models.UserAnswers
+import models.disclosure.ReplaceOrDeleteADisclosure
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object DisclosureDeleteCheckYourAnswersPage extends QuestionPage[Boolean] {
-
-  override def toString: String = "disclosureDeleteCheckYourAnswers"
+case object DeletedDisclosurePage extends QuestionPage[ReplaceOrDeleteADisclosure] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def cleanupBase(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(true) =>
-         userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
-      case _ => super.cleanupBase(value, userAnswers)
-    }
+  override def toString: String = "deletedDisclosure"
 }

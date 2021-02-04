@@ -16,19 +16,19 @@
 
 package controllers.disclosure
 
+import config.FrontendAppConfig
 import controllers.actions._
-
-import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import handlers.ErrorHandler
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
+import pages.disclosure.DeletedDisclosurePage
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import play.api.libs.json.Json
-import handlers.ErrorHandler
+
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import config.FrontendAppConfig
-import pages.disclosure.ReplaceOrDeleteADisclosurePage
 
 class YourDisclosureHasBeenDeletedController @Inject()(
     override val messagesApi: MessagesApi,
@@ -47,7 +47,7 @@ class YourDisclosureHasBeenDeletedController @Inject()(
 
         //How to get the messageRefid does this come from the deletion process?
 
-      (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage), request.contacts) match {
+      (request.userAnswers.getBase(DeletedDisclosurePage), request.contacts) match {
         case (Some(disclosureDetails), Some(contacts)) =>
 
               contacts.contactEmail match {
