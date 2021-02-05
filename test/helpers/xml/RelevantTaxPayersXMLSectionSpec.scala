@@ -652,7 +652,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>2021-01-03</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -674,7 +674,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>2020-12-03</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -748,7 +748,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>2021-01-03</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -826,7 +826,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>2020-12-03</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
