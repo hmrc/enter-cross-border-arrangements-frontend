@@ -19,20 +19,19 @@ package controllers.disclosure
 import base.SpecBase
 import connectors.SubscriptionConnector
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
+import matchers.JsonMatchers.containJson
 import models.UserAnswers
 import models.subscription.DisplaySubscriptionForDACResponse
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DeletedDisclosurePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.DeletedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
-import matchers.JsonMatchers.containJson
 
 import scala.concurrent.Future
 
@@ -82,8 +81,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
       val expectedJson = Json.obj(
         "arrangementID" -> "GBA20210101ABC123",
         "disclosureID" -> "GBD20210101ABC123",
-        "messageRefid" -> "messageID",
-        "email" -> "test@test.com"
+        "messageRefid" -> "messageID"
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
@@ -104,26 +102,6 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)).build()
-
-      val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      application.stop()
-    }
-
-    "return Internal server error if email is not retrievable" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
-        .thenReturn(Future.successful(None))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)).build()
 
       val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)

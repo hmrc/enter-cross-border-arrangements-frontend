@@ -32,6 +32,8 @@ case object DisclosureDeleteCheckYourAnswersPage extends QuestionPage[Boolean] {
     value match {
       case Some(true) =>
          userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
+           .flatMap(us => us.removeBase(DisclosureNamePage))
+           .flatMap(us => us.removeBase(DisclosureTypePage))
       case _ => super.cleanupBase(value, userAnswers)
     }
 }

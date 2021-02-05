@@ -16,7 +16,7 @@
 
 package pages.disclosure
 
-import models.disclosure.ReplaceOrDeleteADisclosure
+import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
@@ -37,6 +37,8 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
         answers =>
           val result = answers
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(DisclosureNamePage, "Disclosure").success.value
+            .setBase(DisclosureTypePage, DisclosureType.Dac6del).success.value
             .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123","GBD20210101ABC123"))
             .success
             .value
@@ -45,6 +47,8 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
             .value
 
           result.getBase(ReplaceOrDeleteADisclosurePage) mustBe None
+          result.getBase(DisclosureTypePage) mustBe None
+          result.getBase(DisclosureNamePage) mustBe None
       }
     }
   }

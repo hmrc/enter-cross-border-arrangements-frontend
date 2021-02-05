@@ -36,39 +36,34 @@ class YourDisclosureHasBeenDeletedController @Inject()(
     appConfig: FrontendAppConfig,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     errorHandler: ErrorHandler,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
         //How to get the messageRefid does this come from the deletion process?
 
-      (request.userAnswers.getBase(DeletedDisclosurePage), request.contacts) match {
-        case (Some(disclosureDetails), Some(contacts)) =>
+      request.userAnswers.getBase(DeletedDisclosurePage) match {
+        case Some(disclosureDetails) =>
 
-              contacts.contactEmail match {
-                case Some(contactEmail) =>
                     val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
-                    val email = contactEmail
 
                     val json = Json.obj (
                     "disclosureID" -> disclosureDetails.disclosureID,
                     "arrangementID" -> disclosureDetails.arrangementID,
                     "messageRefid" -> messagerefid,
-                    "email" -> email,
                     "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
                     "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl)
                     )
 
 
                     renderer.render ("disclosure/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
-                case None =>  errorHandler.onServerError(request, new RuntimeException("Cannot retrieve email"))
-              }
+
         case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
-      }
+
   }
+}
 }
