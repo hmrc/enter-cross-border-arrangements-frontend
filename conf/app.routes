@@ -374,23 +374,30 @@ POST      /intermediaries/check-answers/:id                     controllers.inte
 
 # DISCLOSURE
 
-GET        /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad()
-POST       /disclosure/check-your-answers                   controllers.disclosure.DisclosureCheckYourAnswersController.onContinue()
+GET        /manual/unsubmitted-disclosures          controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
+
+GET        /manual/remove-disclosure                controllers.RemoveDisclosureController.onPageLoad(id: Int, mode: Mode = NormalMode)
+POST       /manual/remove-disclosure                controllers.RemoveDisclosureController.onSubmit(id: Int, mode: Mode = NormalMode)
+
+
+
+GET        /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad()
+POST       /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onContinue()
 
 GET        /disclosure/name                         controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/name                         controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = NormalMode)
 GET        /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /disclosure/change-name                  controllers.disclosure.DisclosureNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/type                             controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/type                             controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-type                      controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/type                          controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/type                          controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-type                   controllers.disclosure.DisclosureTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-type                   controllers.disclosure.DisclosureTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
-POST       /disclosure/marketable                           controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
-GET        /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
-POST       /disclosure/change-marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/marketable                    controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/marketable                    controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-marketable             controllers.disclosure.DisclosureMarketableController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-marketable             controllers.disclosure.DisclosureMarketableController.onSubmit(mode: Mode = CheckMode)
 
 GET        /disclosure/identify-arrangement            controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = NormalMode)
 POST       /disclosure/identify-arrangement            controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = NormalMode)
@@ -506,7 +513,6 @@ GET        /manual/there-is-a-problem/:id                               controll
 GET        /manual/confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
 GET        /manual/disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
 GET        /manual/addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /manual/unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 GET        /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
 POST       /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
