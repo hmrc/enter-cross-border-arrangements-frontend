@@ -47,6 +47,8 @@ class ReplacementDisclosureConfirmationController @Inject()(
         case None => throw new RuntimeException("messageRefID cannot be found")
       }
 
+      //TODO Need to add contact email address(es). This will be done by DAC6-457
+
       val json = Json.obj(
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
