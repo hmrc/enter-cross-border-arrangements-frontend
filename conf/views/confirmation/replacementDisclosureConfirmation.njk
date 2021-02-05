@@ -1,0 +1,36 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/panel/macro.njk"         import govukPanel %}
+
+{% block pageTitle %}
+  {{ title(messages("replacementDisclosureConfirmation.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {{ govukPanel({
+          titleText: messages("replacementDisclosureConfirmation.title"),
+          html: panelText
+        }) }}
+
+        <div class="govuk-body">
+          <p>{{ messages("replacementDisclosureConfirmation.p1") }}</p>
+          <p>{{ messages("replacementDisclosureConfirmation.p2", messageRefID) }}</p>
+
+          <h2 class="govuk-heading-m">{{ messages("replacementDisclosureConfirmation.h2") }}</h2>
+          <p>{{ messages("replacementDisclosureConfirmation.p3") }}</p>
+
+          <p>{{ homePageLink | safe }}</p>
+          <p>{{ betaFeedbackSurvey | safe }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
