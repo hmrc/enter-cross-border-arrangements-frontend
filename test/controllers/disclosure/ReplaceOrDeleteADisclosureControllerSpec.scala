@@ -20,14 +20,15 @@ import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
-import models.disclosure.IDVerificationStatus
-import models.{Country, NormalMode, UserAnswers}
+import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
+import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.ReplaceOrDeleteADisclosurePage
+import pages.disclosure.{DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -52,15 +53,12 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
-  val userAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      ReplaceOrDeleteADisclosurePage.toString -> Json.obj(
-        "arrangementID" -> arrangementID,
-        "disclosureID" -> disclosureID
-      )
-    )
-  )
+
+  override val emptyUserAnswers =  UserAnswers(userAnswersId)
+     .setBase(DisclosureTypePage, DisclosureType.Dac6rep).success.value
+
+  val userAnswers = emptyUserAnswers
+    .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure(arrangementID, disclosureID)).success.value
 
   "ReplaceOrDeleteADisclosure Controller" - {
 
@@ -389,6 +387,24 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
+      application.stop()
+    }
+
+    "must return RuntimeException if disclosure type is missing or not replace or delete" in {
+
+      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId))).build()
+
+      val request =
+        FakeRequest(POST, replaceOrDeleteADisclosureRoute)
+          .withFormUrlEncodedBody(("arrangementID", "value 1"), ("disclosureID", "value 2"))
+
+      intercept[RuntimeException] {
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+      }
       application.stop()
     }
   }

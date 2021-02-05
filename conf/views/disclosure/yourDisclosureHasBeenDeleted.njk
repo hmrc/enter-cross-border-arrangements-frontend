@@ -1,0 +1,33 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+
+{% block pageTitle %}
+  {{ title(messages("yourDisclosureHasBeenDeleted.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+      {{ govukPanel({
+        titleText: messages("yourDisclosureHasBeenDeleted.heading")
+      }) }}
+
+      <p class="govuk-body"> {{ messages("yourDisclosureHasBeenDeleted.p1", disclosureID, arrangementID)}}</p>
+
+      <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</p>
+
+      <p class="govuk-body">{{ homePageLink | safe }}</p>
+      <p class="govuk-body">{{ betaFeedbackSurvey | safe }}</p>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

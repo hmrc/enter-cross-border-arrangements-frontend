@@ -58,7 +58,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         "when an option is selected" in {
 
         navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(NormalMode))(None)(Some(true))(0)
-          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad)
+          .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -109,6 +109,21 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(0))(None)(0)
         .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
+    }
+
+    "must go from 'Are you sure you want to delete this disclosure?' page" +
+    "to 'Your disclosure has been deleted' page" in {
+      navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0)
+      .mustBe(controllers.disclosure.routes.YourDisclosureHasBeenDeletedController.onPageLoad())
+    }
+
+    "must go from 'Which disclosure do you want to delete?' page" +
+      "to Delete Disclosure 'Check your answers' page" +
+      "when valid arrangement and disclosure IDs are entered" in {
+
+      navigator.routeMap(DeleteDisclosurePage)(DefaultRouting(NormalMode))(None)(
+        Some(ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123")))(0)
+        .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad())
     }
   }
 }

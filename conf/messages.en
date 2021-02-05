@@ -791,6 +791,21 @@ disclosureIdentifyArrangement.error.notFound = Arrangement ID not found. Check a
 disclosureIdentifyArrangement.error.invalid = Provide a valid arrangement ID
 
 
+yourDisclosureHasBeenDeleted.title = Your disclosure has been deleted
+yourDisclosureHasBeenDeleted.heading = Your disclosure has been deleted
+yourDisclosureHasBeenDeleted.p1 = Your disclosure {0} for arrangement {1} has been deleted.
+yourDisclosureHasBeenDeleted.p2 = For your records, the message reference ID for this action is: {0}.
+yourDisclosureHasBeenDeleted.p3 = We have sent this in a confirmation email to {0}.
+yourDisclosureHasBeenDeleted.link1 = Disclose a cross-border arrangement
+yourDisclosureHasBeenDeleted.link2 = What did you think of this service?
+yourDisclosureHasBeenDeleted.link2.time = (takes 30 seconds)
+
+
+disclosureDelete.title = Are you sure you want to delete this disclosure?
+disclosureDelete.heading = Are you sure you want to delete this disclosure?
+disclosureDelete.delete-disclosure = Delete this disclosure
+disclosureDelete.warning = This will permanently delete the information you have provided in this disclosure.
+
 ## COUNTRY LIST CHECKBOX LABELS
 
 countriesListCheckboxes.GB = United Kingdom
@@ -1136,8 +1151,10 @@ unsubmitted.advice = We save unsubmitted disclosures for 28 days from the last d
 unsubmitted.link = Create a new disclosure
 
 
-replaceOrDeleteADisclosure.title = Which disclosure do you want to replace?
-replaceOrDeleteADisclosure.heading = Which disclosure do you want to replace?
+replaceOrDeleteADisclosure.title.replace = Which disclosure do you want to replace?
+replaceOrDeleteADisclosure.title.delete = Which disclosure do you want to delete?
+replaceOrDeleteADisclosure.heading.replace = Which disclosure do you want to replace?
+replaceOrDeleteADisclosure.heading.delete = Which disclosure do you want to delete?
 replaceOrDeleteADisclosure.arrangementID = Arrangement ID
 replaceOrDeleteADisclosure.arrangementID.p = Also called an arrangement reference number.
 replaceOrDeleteADisclosure.arrangementID.hint = For example, GBA20210101ABC123

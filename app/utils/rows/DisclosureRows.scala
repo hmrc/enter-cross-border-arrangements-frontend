@@ -80,6 +80,8 @@ trait DisclosureRows extends RowBuilder {
         disclosureIdentifyArrangement.toSeq
       case Some(Dac6rep) =>
         replaceOrDeleteADisclosureRows
+      case Some(Dac6del) =>
+        replaceOrDeleteADisclosureRows
 
     }
 }

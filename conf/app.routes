@@ -402,6 +402,11 @@ POST       /manual/disclosure/identify                 controllers.disclosure.Re
 GET        /manual/disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = CheckMode)
 POST       /manual/disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = CheckMode)
 
+GET        /disclosure/delete                       controllers.disclosure.DisclosureDeleteCheckYourAnswersController.onPageLoad
+POST        /disclosure/delete                       controllers.disclosure.DisclosureDeleteCheckYourAnswersController.onContinue
+
+GET        /disclosure/disclosure-has-been-deleted                       controllers.disclosure.YourDisclosureHasBeenDeletedController.onPageLoad()
+
 # REPORTER DETAILS
 
 GET        /reporter/check-answers/:id                              controllers.reporter.ReporterCheckYourAnswersController.onPageLoad(id: Int)
