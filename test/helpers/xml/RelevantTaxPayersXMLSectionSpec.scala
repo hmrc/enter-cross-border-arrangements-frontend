@@ -17,11 +17,14 @@
 package helpers.xml
 
 import base.SpecBase
+import models.enterprises.AssociatedEnterprise
+import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, AddressLookup, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UserAnswers}
-import models.{Address, AddressLookup, Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, AddressLookup, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import pages.enterprises.AssociatedEnterpriseLoopPage
+import pages.reporter.individual._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
@@ -29,10 +32,6 @@ import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
-
-import models.individual.Individual
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
-
 import scala.xml.PrettyPrinter
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
@@ -610,6 +609,224 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |            </Individual>
              |        </ID>
              |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |    </RelevantTaxpayer>
+             |</RelevantTaxPayers>""".stripMargin
+
+        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
+      }
+
+      "must build a complete RelevantTaxPayers XML with additional taxpayers as organisations and " +
+        "their associated enterprise - one organisation" in {
+
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", None, Some(organisation), List("Other Taxpayers Ltd"), isAffectedBy = false))
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
+          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
+          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+
+        val expected =
+          s"""<RelevantTaxPayers>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Organisation>
+             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Organisation>
+             |        </ID>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
+             |    </RelevantTaxpayer>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Organisation>
+             |                <OrganisationName>Other Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Organisation>
+             |        </ID>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
+             |        <AssociatedEnterprises>
+             |            <AssociatedEnterprise>
+             |                <AssociatedEnterpriseID>
+             |                    <Organisation>
+             |                        <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                        <TIN issuedBy="GB">UTR1234</TIN>
+             |                        <TIN issuedBy="FR">CS700100A</TIN>
+             |                        <TIN issuedBy="FR">UTR5678</TIN>
+             |                        <Address>
+             |                            <Street>value 1</Street>
+             |                            <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                            <DistrictName>value 3</DistrictName>
+             |                            <PostCode>XX9 9XX</PostCode>
+             |                            <City>value 4</City>
+             |                            <Country>FR</Country>
+             |                        </Address>
+             |                        <EmailAddress>email@email.com</EmailAddress>
+             |                        <ResCountryCode>GB</ResCountryCode>
+             |                        <ResCountryCode>FR</ResCountryCode>
+             |                    </Organisation>
+             |                </AssociatedEnterpriseID>
+             |                <AffectedPerson>false</AffectedPerson>
+             |            </AssociatedEnterprise>
+             |        </AssociatedEnterprises>
+             |    </RelevantTaxpayer>
+             |</RelevantTaxPayers>""".stripMargin
+
+        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
+      }
+
+      "must build a complete RelevantTaxPayers XML with additional taxpayers as Individuals and " +
+        "their associated enterprises - one individual and one organisation" in {
+
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = true),
+          AssociatedEnterprise("id2", None, Some(organisation), List(individual.nameAsString), isAffectedBy = true))
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
+          .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
+          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+
+        val expected =
+          s"""<RelevantTaxPayers>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Individual>
+             |        </ID>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
+             |        <AssociatedEnterprises>
+             |            <AssociatedEnterprise>
+             |                <AssociatedEnterpriseID>
+             |                    <Individual>
+             |                        <IndividualName>
+             |                            <FirstName>FirstName</FirstName>
+             |                            <LastName>Surname</LastName>
+             |                        </IndividualName>
+             |                        <BirthDate>1990-01-01</BirthDate>
+             |                        <BirthPlace>SomePlace</BirthPlace>
+             |                        <TIN issuedBy="GB">UTR1234</TIN>
+             |                        <TIN issuedBy="FR">CS700100A</TIN>
+             |                        <TIN issuedBy="FR">UTR5678</TIN>
+             |                        <Address>
+             |                            <Street>value 1</Street>
+             |                            <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                            <DistrictName>value 3</DistrictName>
+             |                            <PostCode>XX9 9XX</PostCode>
+             |                            <City>value 4</City>
+             |                            <Country>FR</Country>
+             |                        </Address>
+             |                        <EmailAddress>email@email.com</EmailAddress>
+             |                        <ResCountryCode>GB</ResCountryCode>
+             |                        <ResCountryCode>FR</ResCountryCode>
+             |                    </Individual>
+             |                </AssociatedEnterpriseID>
+             |                <AffectedPerson>true</AffectedPerson>
+             |            </AssociatedEnterprise>
+             |            <AssociatedEnterprise>
+             |                <AssociatedEnterpriseID>
+             |                    <Organisation>
+             |                        <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                        <TIN issuedBy="GB">UTR1234</TIN>
+             |                        <TIN issuedBy="FR">CS700100A</TIN>
+             |                        <TIN issuedBy="FR">UTR5678</TIN>
+             |                        <Address>
+             |                            <Street>value 1</Street>
+             |                            <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                            <DistrictName>value 3</DistrictName>
+             |                            <PostCode>XX9 9XX</PostCode>
+             |                            <City>value 4</City>
+             |                            <Country>FR</Country>
+             |                        </Address>
+             |                        <EmailAddress>email@email.com</EmailAddress>
+             |                        <ResCountryCode>GB</ResCountryCode>
+             |                        <ResCountryCode>FR</ResCountryCode>
+             |                    </Organisation>
+             |                </AssociatedEnterpriseID>
+             |                <AffectedPerson>true</AffectedPerson>
+             |            </AssociatedEnterprise>
+             |        </AssociatedEnterprises>
+             |    </RelevantTaxpayer>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>Another</FirstName>
+             |                    <LastName>Individual</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Individual>
+             |        </ID>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 

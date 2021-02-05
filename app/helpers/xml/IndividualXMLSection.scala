@@ -22,7 +22,8 @@ import scala.xml.{Elem, NodeSeq}
 
 object IndividualXMLSection {
 
-  private[xml] def buildIDForIndividual(individual: Individual): Elem = {
+  private[xml] def buildIDForIndividual(individual: Individual,
+                                        isAssociatedEnterprise: Boolean = false): Elem = {
     val mandatoryIndividualName =
       <IndividualName><FirstName>{individual.individualName.firstName}</FirstName><LastName>{individual.individualName.secondName}</LastName></IndividualName>
 
@@ -46,6 +47,10 @@ object IndividualXMLSection {
       </Individual>
     }
 
-    <ID>{individualNodes}</ID>
+    if (isAssociatedEnterprise) {
+      <AssociatedEnterpriseID>{individualNodes}</AssociatedEnterpriseID>
+    } else {
+      <ID>{individualNodes}</ID>
+    }
   }
 }
