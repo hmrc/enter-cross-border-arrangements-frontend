@@ -129,7 +129,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
     "must go from 'Task list' page" +
       "to 'You have {0} unsubmited disclosures' page" in {
 
-      navigator.routeMap(DisclosureCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0)
+      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0)
         .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
     }
   }
