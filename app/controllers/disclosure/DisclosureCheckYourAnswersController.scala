@@ -104,6 +104,6 @@ class DisclosureCheckYourAnswersController @Inject()(
         newAnswers <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
         updateNewAnswersWithStatus <- Future.fromTry(newAnswers.set(DisclosureStatusPage, index, JourneyStatus.Completed))
         _  <- sessionRepository.set(updateNewAnswersWithStatus)
-      } yield Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
+      } yield Redirect(navigator.routeMap(DisclosureCheckYourAnswersPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
 }

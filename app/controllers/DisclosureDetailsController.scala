@@ -19,11 +19,12 @@ package controllers
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import controllers.actions._
+import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
-import javax.inject.Inject
-import models.UserAnswers
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
+import models.{NormalMode, UserAnswers}
+import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
@@ -43,6 +44,7 @@ import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureDetailsController @Inject()(
@@ -56,6 +58,7 @@ class DisclosureDetailsController @Inject()(
     crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
+    navigator: NavigatorForDisclosure,
     renderer: Renderer,
     sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -90,7 +93,8 @@ class DisclosureDetailsController @Inject()(
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
         "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer),
-        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id)
+        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
+        "backLink" -> backLink
       )
       renderer.render("disclosureDetails.njk", json).map(Ok(_))
   }
@@ -133,7 +137,8 @@ class DisclosureDetailsController @Inject()(
       )
   }
 
-
+  private def backLink: String =
+    navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0).url
 
   private def disclosureTypeItem(ua: UserAnswers,
                                  page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {

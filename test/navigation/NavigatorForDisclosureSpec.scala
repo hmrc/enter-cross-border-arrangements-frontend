@@ -107,7 +107,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
     "must go from 'Disclosure check your answers' page" +
       "to 'Task list' page" in {
 
-      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(Some(0))(None)(0)
+      navigator.routeMap(DisclosureCheckYourAnswersPage)(DefaultRouting(NormalMode))(Some(0))(None)(0)
         .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
     }
 
@@ -124,6 +124,13 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
       navigator.routeMap(DeleteDisclosurePage)(DefaultRouting(NormalMode))(None)(
         Some(ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123")))(0)
         .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad())
+    }
+
+    "must go from 'Task list' page" +
+      "to 'You have {0} unsubmited disclosures' page" in {
+
+      navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0)
+        .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
     }
   }
 }
