@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.Json
 
-case class UnsubmittedDisclosure(id:String, name: String)
+case class UnsubmittedDisclosure(id:String, name: String, submitted: Boolean = false, deleted: Boolean = false)
 
 object UnsubmittedDisclosure {
   implicit val format = Json.format[UnsubmittedDisclosure]
