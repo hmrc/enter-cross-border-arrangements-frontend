@@ -17,17 +17,22 @@
 package pages.unsubmitted
 
 import models.{UnsubmittedDisclosure, UserAnswers}
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object UnsubmittedDisclosurePage extends QuestionPage[Seq[UnsubmittedDisclosure]] {
+class UnsubmittedDisclosurePageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "UnsubmittedDisclosurePage" - {
 
-  override def toString: String = "unsubmittedDisclosures"
+    "must return a valid unsubmitted disclosure from Index" in {
 
-  def fromIndex(index: Int)(implicit userAnswers: UserAnswers): UnsubmittedDisclosure = {
-    userAnswers.getBase(UnsubmittedDisclosurePage)
-      .get.zipWithIndex.find(_._2 == index).get._1
+      val unsubmittedDisclosures = Seq(
+        UnsubmittedDisclosure("0", "name_0"),
+        UnsubmittedDisclosure("1", "name_1", true, true)
+      )
+      implicit val userAnswers = UserAnswers("internalId")
+        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+
+      UnsubmittedDisclosurePage.fromIndex(1) mustBe (UnsubmittedDisclosure("1", "name_1", true, true))
+    }
   }
 }
