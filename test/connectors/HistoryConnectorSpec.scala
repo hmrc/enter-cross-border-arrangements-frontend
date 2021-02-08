@@ -19,13 +19,12 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import generators.Generators
-import org.scalacheck.Gen.alphaStr
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
-import utils.WireMockHelper
 import play.api.libs.json.{JsArray, Json}
+import utils.WireMockHelper
 
 class HistoryConnectorSpec extends SpecBase
   with ScalaCheckPropertyChecks

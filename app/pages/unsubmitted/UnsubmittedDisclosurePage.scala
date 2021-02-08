@@ -16,7 +16,7 @@
 
 package pages.unsubmitted
 
-import models.{TaxReferenceNumbers, UnsubmittedDisclosure}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -25,4 +25,9 @@ case object UnsubmittedDisclosurePage extends QuestionPage[Seq[UnsubmittedDisclo
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "unsubmittedDisclosures"
+
+  def fromIndex(index: Int)(implicit userAnswers: UserAnswers): UnsubmittedDisclosure = {
+    userAnswers.getBase(UnsubmittedDisclosurePage)
+      .get.zipWithIndex.find(_._2 == index).get._1
+  }
 }
