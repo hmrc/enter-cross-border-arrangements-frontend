@@ -16,12 +16,16 @@
 
 package pages.disclosure
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object RemoveDisclosurePage extends QuestionPage[Boolean] {
+class RemoveDisclosurePageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "RemoveDisclosurePage" - {
 
-  override def toString: String = "removeDisclosure"
+    beRetrievable[Boolean](RemoveDisclosurePage)
+
+    beSettable[Boolean](RemoveDisclosurePage)
+
+    beRemovable[Boolean](RemoveDisclosurePage)
+  }
 }

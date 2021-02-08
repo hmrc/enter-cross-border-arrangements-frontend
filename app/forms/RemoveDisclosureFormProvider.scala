@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages.disclosure
+package forms
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object RemoveDisclosurePage extends QuestionPage[Boolean] {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  override def path: JsPath = JsPath \ toString
+class RemoveDisclosureFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "removeDisclosure"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("removeDisclosure.error.required")
+    )
 }

@@ -1169,7 +1169,7 @@ replaceOrDeleteADisclosure.error.disclosureID.invalid = Provide a disclosure ID 
 replaceOrDeleteADisclosure.error.arrangementID.notFound = Disclosure not found. Check the arrangement ID and disclosure ID are correct
 replaceOrDeleteADisclosure.error.disclosureID.notFound = Disclosure not found. Check the arrangement ID and disclosure ID are correct
 
-removeDisclosure.title = removeDisclosure
-removeDisclosure.heading = removeDisclosure
-removeDisclosure.checkYourAnswersLabel = removeDisclosure
-removeDisclosure.error.required = Select yes if removeDisclosure
+removeDisclosure.title = Are you sure you want to remove disclosure?
+removeDisclosure.heading = Are you sure you want to remove disclosure {0}?
+removeDisclosure.error.required = Select yes if you want to remove disclosure
+removeDisclosure.error.warning = This will permanently delete all the details you have provided relating to this disclosure.

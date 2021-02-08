@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 
-package pages.disclosure
+package forms
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case object RemoveDisclosurePage extends QuestionPage[Boolean] {
+class RemoveDisclosureFormProviderSpec extends BooleanFieldBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  val requiredKey = "removeDisclosure.error.required"
+  val invalidKey = "error.boolean"
 
-  override def toString: String = "removeDisclosure"
+  val form = new RemoveDisclosureFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }
