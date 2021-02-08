@@ -19,9 +19,9 @@ package controllers.hallmarks
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{NormalMode, UserAnswers}
-import models.hallmarks.JourneyStatus
+import models.hallmarks.{HallmarkDetails, JourneyStatus}
 import navigation.Navigator
-import pages.hallmarks.{HallmarkStatusPage, HallmarksCheckYourAnswersPage}
+import pages.hallmarks.{HallmarkDetailsPage, HallmarkStatusPage, HallmarksCheckYourAnswersPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -64,7 +64,9 @@ class CheckYourAnswersHallmarksController @Inject()(
     implicit request =>
 
       for {
-        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(HallmarkStatusPage, id, JourneyStatus.Completed))
+        hallmarksModel <- Future.fromTry(request.userAnswers.set(HallmarkDetailsPage, id,
+          HallmarkDetails.buildHallmarkDetails(request.userAnswers, id)))
+        userAnswers: UserAnswers <- Future.fromTry(hallmarksModel.set(HallmarkStatusPage, id, JourneyStatus.Completed))
         _ <- sessionRepository.set(userAnswers)
       } yield
         Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers))
