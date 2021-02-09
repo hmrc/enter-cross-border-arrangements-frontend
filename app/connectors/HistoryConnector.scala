@@ -18,19 +18,23 @@ package connectors
 
 import config.FrontendAppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+
 import javax.inject.Inject
 import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import models.SubmissionHistory
+import models.{SubmissionDetails, SubmissionHistory}
 
 class HistoryConnector @Inject()(configuration: FrontendAppConfig,
                                                  httpClient: HttpClient)(implicit ec: ExecutionContext) {
-    
+
     val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
 
     def getSubmissionsUrl(enrolmentid: String) = s"$baseUrl/history/submissions/$enrolmentid"
-    
+
+    def getSubmissionsByDisclosureIDUrl(disclosureID: String) = s"$baseUrl/history/disclosures/$disclosureID"
+
     def getSubmissionDetails(enrolmentid: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
             httpClient.GET[SubmissionHistory](getSubmissionsUrl(enrolmentid)).map { subs =>
                   subs.details match {
@@ -38,8 +42,12 @@ class HistoryConnector @Inject()(configuration: FrontendAppConfig,
                     case _ => true
                   }
             } recover {
-                 case _ => throw new Exception("History unavailble")
+                 case _ => throw new Exception("History unavailable")
     }
-  
   }
+
+  def getSubmissionDetailForDisclosure(disclosureID: String)(implicit hc: HeaderCarrier): Future[SubmissionDetails] =
+    httpClient.GET[SubmissionDetails](getSubmissionsByDisclosureIDUrl(disclosureID)) recover {
+      case _ => throw new Exception("History unavailable")
+    }
 }
