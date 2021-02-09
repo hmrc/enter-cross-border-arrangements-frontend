@@ -18,15 +18,14 @@ package generators
 
 import models._
 import models.affected.YouHaveNotAddedAnyAffected
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
+import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -127,12 +126,12 @@ trait ModelGenerators {
       Gen.oneOf(YouHaveNotAddedAnyAssociatedEnterprises.values.toSeq)
     }
 
-  implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[WhatIsTheExpectedValueOfThisArrangement] =
+  implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[ExpectedArrangementValue] =
     Arbitrary {
       for {
         currency <- arbitrary[String]
         amount <- arbitrary[Int]
-      } yield WhatIsTheExpectedValueOfThisArrangement(currency, amount)
+      } yield ExpectedArrangementValue(currency, amount)
     }
 
 implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[WhichExpectedInvolvedCountriesArrangement] =

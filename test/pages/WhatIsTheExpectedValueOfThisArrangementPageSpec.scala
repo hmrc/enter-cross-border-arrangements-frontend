@@ -16,17 +16,17 @@
 
 package pages
 
-import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
+import models.arrangement.ExpectedArrangementValue
 import pages.behaviours.PageBehaviours
 
 class WhatIsTheExpectedValueOfThisArrangementPageSpec extends PageBehaviours {
 
   "WhatIsTheExpectedValueOfThisArrangementPage" - {
 
-    beRetrievable[WhatIsTheExpectedValueOfThisArrangement](WhatIsTheExpectedValueOfThisArrangementPage)
+    beRetrievable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
 
-    beSettable[WhatIsTheExpectedValueOfThisArrangement](WhatIsTheExpectedValueOfThisArrangementPage)
+    beSettable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
 
-    beRemovable[WhatIsTheExpectedValueOfThisArrangement](WhatIsTheExpectedValueOfThisArrangementPage)
+    beRemovable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
   }
 }

@@ -52,8 +52,6 @@ class CheckYourAnswersHallmarksController @Inject()(
       val hallmarks = helper.buildHallmarksRow(request.userAnswers, id)
       val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest(id), helper.hallmarkD1Other(id)).flatten
 
-      //ToDo hallmarkD1Other is hidden if present and if D1 Other is not selected. When the payload is created include it only if D1 Other is selected
-
       renderer.render(
         "hallmarks/check-your-answers-hallmarks.njk",
         Json.obj("list" -> answers)

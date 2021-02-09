@@ -18,7 +18,7 @@ package helpers.xml
 
 import base.SpecBase
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.hallmarks.{HallmarkD, HallmarkD1}
 import pages.arrangement._
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
@@ -145,7 +145,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     "buildAmountType must build the national provision section" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
 
       val result = DisclosureInformationXMLSection.buildAmountType(userAnswers, 0)
 
@@ -263,7 +263,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
         .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
         .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
         .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
         .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++

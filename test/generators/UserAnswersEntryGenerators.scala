@@ -16,7 +16,7 @@
 
 package generators
 
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.DisclosureType
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
@@ -433,7 +433,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[WhatIsTheExpectedValueOfThisArrangementPage.type]
-        value <- arbitrary[WhatIsTheExpectedValueOfThisArrangement].map(Json.toJson(_))
+        value <- arbitrary[ExpectedArrangementValue].map(Json.toJson(_))
       } yield (page, value)
     }
 

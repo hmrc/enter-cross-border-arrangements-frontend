@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.enterprises.AssociatedEnterprise
 import models.hallmarks.{HallmarkD, HallmarkD1}
@@ -317,7 +317,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
         .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
         .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
         .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
         .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
@@ -362,7 +362,7 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
         .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
         .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, WhatIsTheExpectedValueOfThisArrangement("GBP", 1000)).success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
         .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
         .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++

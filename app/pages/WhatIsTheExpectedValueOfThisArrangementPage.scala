@@ -16,10 +16,10 @@
 
 package pages
 
-import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
+import models.arrangement.ExpectedArrangementValue
 import play.api.libs.json.JsPath
 
-case object WhatIsTheExpectedValueOfThisArrangementPage extends QuestionPage[WhatIsTheExpectedValueOfThisArrangement] {
+case object WhatIsTheExpectedValueOfThisArrangementPage extends QuestionPage[ExpectedArrangementValue] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.arrangement.{WhatIsTheExpectedValueOfThisArrangement, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -218,7 +218,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
     "must return the expected value " in {
 
-      val expectedValue: WhatIsTheExpectedValueOfThisArrangement = WhatIsTheExpectedValueOfThisArrangement(
+      val expectedValue: ExpectedArrangementValue = ExpectedArrangementValue(
         currency = "CURRENCY"
         , amount = Int.MaxValue
       )
