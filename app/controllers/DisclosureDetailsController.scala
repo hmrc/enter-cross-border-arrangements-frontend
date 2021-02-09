@@ -34,6 +34,7 @@ import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -46,6 +47,7 @@ import viewmodels.Radios.MessageInterpolators
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 class DisclosureDetailsController @Inject()(
     override val messagesApi: MessagesApi,
@@ -92,7 +94,8 @@ class DisclosureDetailsController @Inject()(
         "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
         "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer),
+        "userCanSubmit" ->
+          userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer),
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
         "backLink" -> backLink
       )
@@ -125,16 +128,25 @@ class DisclosureDetailsController @Inject()(
                 val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
                 val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
                 for {
-                  ids <- crossBorderArrangementsConnector.submitXML(submission)
-                  userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
-                  updatedUserAnswersWithIDs <- Future.fromTry(userAnswersWithIDs.set(MessageRefIDPage, id, messageRefId))
-                  _                  <- sessionRepository.set(updatedUserAnswersWithIDs)
+                  ids                         <- crossBorderArrangementsConnector.submitXML(submission)
+                  userAnswersWithIDs          <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
+                  updatedUserAnswersWithIDs   <- Future.fromTry(userAnswersWithIDs.set(MessageRefIDPage, id, messageRefId))
+                  updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedUserAnswersWithIDs, id))
+                  _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
                 } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
               }
             )
           }
         }
       )
+  }
+
+  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
+      val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
+      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.filterNot(_.id == id.toString) :+ unsubmittedDisclosure.copy(submitted = true)
+        userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures)
+    }).getOrElse(Failure(new IllegalArgumentException("Unable to update unsubmitted disclosure.")))
   }
 
   private def backLink: String =
