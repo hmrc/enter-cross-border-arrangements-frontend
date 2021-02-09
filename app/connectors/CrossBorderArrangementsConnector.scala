@@ -100,5 +100,4 @@ class CrossBorderArrangementsConnector @Inject()(
       case _: Exception => throw new Exception("Cannot retrieve marketable arrangement details")
     }
   }
-
 }

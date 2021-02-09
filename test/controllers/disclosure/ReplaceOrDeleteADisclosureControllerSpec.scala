@@ -17,11 +17,11 @@
 package controllers.disclosure
 
 import base.SpecBase
-import connectors.CrossBorderArrangementsConnector
+import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
-import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{Country, NormalMode, SubmissionDetails, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -39,6 +39,7 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
@@ -56,6 +57,8 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
 
   override val emptyUserAnswers =  UserAnswers(userAnswersId)
      .setBase(DisclosureTypePage, DisclosureType.Dac6rep).success.value
+
+  val submissionDetails = SubmissionDetails("id",LocalDateTime.now(),"test.xml",Some(arrangementID),Some(disclosureID),"",true,"xxx")
 
   val userAnswers = emptyUserAnswers
     .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure(arrangementID, disclosureID)).success.value
@@ -128,18 +131,22 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSuga
       val mockSessionRepository = mock[SessionRepository]
 
       val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+      val mockHistoryConnector = mock[HistoryConnector]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)))
 
+      when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any())).thenReturn(Future.successful(submissionDetails))
+
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+            bind[HistoryConnector].toInstance(mockHistoryConnector)
           )
           .build()
 
