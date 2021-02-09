@@ -48,7 +48,8 @@ class UnsubmittedDisclosureController  @Inject()(
             "url" -> disclosureNameUrl,
             "unsubmittedDisclosures" -> unsubmittedDisclosures.zipWithIndex.map(d => Json.obj(
               "name" -> d._1.name,
-              "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(d._2).url
+              "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(d._2).url,
+              "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(d._2).url
             )),
             "plural" -> (if(unsubmittedDisclosures.length > 1) "s" else "")
           )

@@ -31,15 +31,6 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForDisclosure @Inject()() {
 
   val routeMap:  Page => CheckRoute => Option[Int] => Option[Any] => Int => Call = {
-
-    case RemoveDisclosurePage =>
-      _ => _ => value => _ => value match {
-        case Some(true) => ???
-        case Some(false)  =>  controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
-        case _             => ???
-      }
-
-
     case DisclosureNamePage =>
       checkRoute => _ => _ => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(checkRoute.mode)
 
@@ -48,6 +39,14 @@ class NavigatorForDisclosure @Inject()() {
         case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
         case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
         case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
+      }
+
+      //remove an unsubmitted disclosure
+    case RemoveDisclosurePage =>
+      _ => _ => value => _ => value match {
+        case Some(true) => ???
+        case Some(false)  =>  controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+        case _             => ???
       }
 
     case ReplaceOrDeleteADisclosurePage =>

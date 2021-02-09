@@ -17,14 +17,16 @@
 package controllers.disclosure
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.RemoveDisclosureFormProvider
 import javax.inject.Inject
-import models.Mode
-import navigation.Navigator
-import pages.disclosure.{DisclosureNamePage, RemoveDisclosurePage}
+import models.NormalMode
+import models.disclosure.DisclosureDetails
+import navigation.NavigatorForDisclosure
+import pages.disclosure.{DisclosureDetailsPage, DisclosureNamePage, RemoveDisclosurePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,18 +37,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemoveDisclosureController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
+    navigator: NavigatorForDisclosure,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: RemoveDisclosureFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(RemoveDisclosurePage, id) match {
@@ -54,29 +56,32 @@ class RemoveDisclosureController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val disclosureName = request.userAnswers.getBase(DisclosureNamePage)
+      val disclosureDetails : DisclosureDetails =
+        request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
         "id" -> id,
+        "form"   -> preparedForm,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "disclosureName" -> disclosureName
+        "disclosureName" -> disclosureDetails.disclosureName
       )
+
 
       renderer.render("removeDisclosure.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
+    navigator.routeMap(DisclosureNamePage)(checkRoute)(None)(value)(0)
+
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
             "id" -> id,
+            "form"   -> formWithErrors,
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 
@@ -86,7 +91,8 @@ class RemoveDisclosureController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RemoveDisclosurePage, id, mode, updatedAnswers))
+            checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
+          } yield Redirect(redirect(checkRoute, Some(value)))
       )
   }
 }

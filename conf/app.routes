@@ -376,8 +376,8 @@ POST      /intermediaries/check-answers/:id                     controllers.inte
 
 GET        /manual/unsubmitted-disclosures          controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
-GET        /manual/remove-disclosure                controllers.disclosure.RemoveDisclosureController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /manual/remove-disclosure                controllers.disclosure.RemoveDisclosureController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /manual/remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onPageLoad(id: Int)
+POST       /manual/remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onSubmit(id: Int)
 
 GET        /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad()
 POST       /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onContinue()
