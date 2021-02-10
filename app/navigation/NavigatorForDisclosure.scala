@@ -44,9 +44,15 @@ class NavigatorForDisclosure @Inject()() {
       //remove an unsubmitted disclosure
     case RemoveDisclosurePage =>
       _ => _ => value => _ => value match {
-        case Some(true) => ???
-        case Some(false)  =>  controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
-        case _             => ???
+
+//          // yes - no unsubmitted - back to disclose
+//        case Some(true) => controllers.routes.IndexController.onPageLoad()
+
+          // yes - more unsubmitted - back to unsubmitted
+        case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+
+          //false -  back to unsubmitted
+        case _             => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
       }
 
     case ReplaceOrDeleteADisclosurePage =>

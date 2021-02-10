@@ -28,7 +28,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.disclosure.RemoveDisclosureController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.disclosure.RemoveDisclosureController.onSubmit(id).url }}" method="post">
 
             {{ csrf() | safe }}
 

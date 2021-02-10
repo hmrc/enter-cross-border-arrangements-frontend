@@ -20,10 +20,11 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.RemoveDisclosureFormProvider
 import javax.inject.Inject
-import models.NormalMode
 import models.disclosure.DisclosureDetails
+import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.{DisclosureDetailsPage, DisclosureNamePage, RemoveDisclosurePage}
+import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -33,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 class RemoveDisclosureController @Inject()(
     override val messagesApi: MessagesApi,
@@ -60,18 +62,17 @@ class RemoveDisclosureController @Inject()(
         request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
 
       val json = Json.obj(
-        "id" -> id,
         "form"   -> preparedForm,
+        "id" -> id,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "disclosureName" -> disclosureDetails.disclosureName
       )
 
-
       renderer.render("removeDisclosure.njk", json).map(Ok(_))
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[Boolean]): Call =
-    navigator.routeMap(DisclosureNamePage)(checkRoute)(None)(value)(0)
+  def redirect(checkRoute: CheckRoute, value: Option[Boolean], id: Int): Call =
+    navigator.routeMap(RemoveDisclosurePage)(checkRoute)(Some(id))(value)(0)
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -80,19 +81,27 @@ class RemoveDisclosureController @Inject()(
         formWithErrors => {
 
           val json = Json.obj(
-            "id" -> id,
             "form"   -> formWithErrors,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "id" -> id,
           )
-
           renderer.render("removeDisclosure.njk", json).map(BadRequest(_))
         },
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswers, id))
+            _              <- sessionRepository.set(updatedUserAnswersWithFlags)
             checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
+          } yield Redirect(redirect(checkRoute, Some(value), id))
       )
+  }
+
+  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
+      val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
+      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 }
+      userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(deleted = true))
+    }).getOrElse(Failure(new IllegalArgumentException("Unable to update deleted disclosure.")))
   }
 }
