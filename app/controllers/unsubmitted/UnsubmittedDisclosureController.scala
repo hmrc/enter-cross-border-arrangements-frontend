@@ -36,8 +36,8 @@ class UnsubmittedDisclosureController  @Inject()(
                                                   renderer: Renderer
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def removeFromList (zipped: UnsubmittedDisclosure) : Boolean = {
-    zipped.deleted || zipped.submitted
+  def removeFromList (zipped: (UnsubmittedDisclosure, Int)) : Boolean = {
+    zipped._1.deleted || zipped._1.submitted
   }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
@@ -45,25 +45,23 @@ class UnsubmittedDisclosureController  @Inject()(
 
       val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
 
-      request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)).zipWithIndex.filterNot {case (a, _) => removeFromList(a)}.map{
+      val unsubmittedDisclosuresWithIndex: Option[Seq[(UnsubmittedDisclosure, Int)]] = for {
+        userAnswers                     <- request.userAnswers
+        unsubmittedDisclosures          <- userAnswers.getBase(UnsubmittedDisclosurePage)
+      } yield unsubmittedDisclosures.zipWithIndex.filterNot(removeFromList)
 
-        case (unsubmittedDisclosure, id) =>
-        val json = Json.obj(
-        "url" -> disclosureNameUrl,
-        "unsubmittedDisclosures" -> x.map(d => Json.obj(
-        "name" -> d._1.name,
-        "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(d._2).url,
-        "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(d._2).url
-        )),
-        "plural" -> (if(unsubmittedDisclosures.length > 1) "s" else "")
-        )
+      unsubmittedDisclosuresWithIndex match {
 
-      }
-
-
-
-
-
+        case Some(list) if list.nonEmpty =>
+          val json = Json.obj(
+          "url" -> disclosureNameUrl,
+          "unsubmittedDisclosures" -> list.map{ case(unsubmittedDisclosure, id) => Json.obj(
+          "name" -> unsubmittedDisclosure.name,
+          "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(id).url,
+          "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(id).url
+          )},
+          "plural" -> (if(list.length > 1) "s" else "")
+          )
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
