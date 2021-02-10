@@ -19,13 +19,15 @@ package controllers.disclosure
 import base.SpecBase
 import forms.RemoveDisclosureFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.RemoveDisclosurePage
+import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -44,7 +46,13 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
   val formProvider = new RemoveDisclosureFormProvider()
   val form = formProvider()
 
-  lazy val removeDisclosureRoute = routes.RemoveDisclosureController.onPageLoad(NormalMode).url
+  val disclosureDetails = DisclosureDetails(
+    disclosureName = "",
+    disclosureType = DisclosureType.Dac6new,
+    initialDisclosureMA = false
+  )
+
+  lazy val removeDisclosureRoute = routes.RemoveDisclosureController.onPageLoad(0).url
 
   "RemoveDisclosure Controller" - {
 
@@ -53,7 +61,14 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(RemoveDisclosurePage, true).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, removeDisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -66,7 +81,6 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val expectedJson = Json.obj(
         "form"   -> form,
-        "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -81,7 +95,12 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(RemoveDisclosurePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(RemoveDisclosurePage, 0, true).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, removeDisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -96,9 +115,7 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
       val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "form" -> filledForm
       )
 
       templateCaptor.getValue mustEqual "removeDisclosure.njk"
@@ -106,6 +123,7 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
 
       application.stop()
     }
+
 
     "must redirect to the next page when valid data is submitted" in {
 
@@ -116,7 +134,6 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -129,8 +146,6 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
-
       application.stop()
     }
 
@@ -139,7 +154,12 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(POST, removeDisclosureRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -153,44 +173,11 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
       templateCaptor.getValue mustEqual "removeDisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, removeDisclosureRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, removeDisclosureRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

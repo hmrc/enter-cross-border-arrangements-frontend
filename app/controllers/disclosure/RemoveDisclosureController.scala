@@ -16,6 +16,7 @@
 
 package controllers.disclosure
 
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.RemoveDisclosureFormProvider
@@ -44,6 +45,7 @@ class RemoveDisclosureController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: RemoveDisclosureFormProvider,
+    appConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -80,20 +82,28 @@ class RemoveDisclosureController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val disclosureDetails : DisclosureDetails =
+            request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "id" -> id,
+            "disclosureName" -> disclosureDetails.disclosureName,
           )
           renderer.render("removeDisclosure.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => if (value) {
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
             updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswers, id))
             _              <- sessionRepository.set(updatedUserAnswersWithFlags)
             checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value), id))
+        } else {
+          Future.successful(Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()))
+        }
       )
   }
 

@@ -16,6 +16,7 @@
 
 package controllers.unsubmitted
 
+import config.FrontendAppConfig
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.{NormalMode, UnsubmittedDisclosure}
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -33,7 +34,8 @@ class UnsubmittedDisclosureController  @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  renderer: Renderer
+                                                  renderer: Renderer,
+                                                 appConfig: FrontendAppConfig,
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def removeFromList (zipped: (UnsubmittedDisclosure, Int)) : Boolean = {
@@ -44,6 +46,7 @@ class UnsubmittedDisclosureController  @Inject()(
     implicit request =>
 
       val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
+
 
       val unsubmittedDisclosuresWithIndex: Option[Seq[(UnsubmittedDisclosure, Int)]] = for {
         userAnswers                     <- request.userAnswers
@@ -65,7 +68,7 @@ class UnsubmittedDisclosureController  @Inject()(
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
-        case _ =>  Future.successful(Redirect(disclosureNameUrl))
+        case _ =>  Future.successful(Redirect(appConfig.discloseArrangeLink))
       }
   }
 

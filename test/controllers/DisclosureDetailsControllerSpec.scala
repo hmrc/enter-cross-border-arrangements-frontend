@@ -83,7 +83,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "disclosureDetails.njk"
+      templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
 
       application.stop()
     }

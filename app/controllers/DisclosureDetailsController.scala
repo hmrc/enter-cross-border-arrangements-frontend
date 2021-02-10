@@ -99,7 +99,7 @@ class DisclosureDetailsController @Inject()(
         "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
         "backLink" -> backLink
       )
-      renderer.render("disclosureDetails.njk", json).map(Ok(_))
+      renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {

@@ -48,7 +48,6 @@ class ErrorHandler @Inject()(
 
     statusCode match {
       case BAD_REQUEST =>
-        println("**********************" + request)
         renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND   =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
