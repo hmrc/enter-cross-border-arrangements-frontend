@@ -23,7 +23,7 @@ import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
