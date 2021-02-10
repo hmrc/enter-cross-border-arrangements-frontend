@@ -109,11 +109,20 @@ class DisclosureDetailsController @Inject()(
         error => {
           // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
           logger.error("""Xml generation failed before validation: """.stripMargin, error)
-          Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(id).url))
+          throw error
         },
         xml => {
           //send it off to be validated and business rules
-          validationConnector.sendForValidation(xml).flatMap {
+          validationConnector.sendForValidation(xml)
+            .map { errors => // TODO remove test fixture after DAC6-599
+              request.enrolmentID match {
+                case "TEST-DAC6-599-2" => Left(Seq("")) // empty key list
+                case "TEST-DAC6-599-3" => Left(Seq("unknown")) // unknown key list
+                case "TEST-DAC6-599-4" => Left(Seq("businessrules.initialDisclosure.needRelevantTaxPayer","unknown")) // mixed key list
+                case _  => errors
+              }
+            }
+            .flatMap {
             _.fold(
               //did it fail? oh my god - hand back to the user to fix
               errors => {
