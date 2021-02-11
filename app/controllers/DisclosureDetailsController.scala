@@ -144,8 +144,8 @@ class DisclosureDetailsController @Inject()(
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
-      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.filterNot(_.id == id.toString) :+ unsubmittedDisclosure.copy(submitted = true)
-        userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures)
+      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 }
+      userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(submitted = true))
     }).getOrElse(Failure(new IllegalArgumentException("Unable to update unsubmitted disclosure.")))
   }
 
