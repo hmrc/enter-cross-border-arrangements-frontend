@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import controllers.Assets.{BAD_REQUEST, OK}
+import controllers.Assets.BAD_REQUEST
 import generators.Generators
 import models.disclosure.IDVerificationStatus
 import org.scalacheck.Gen.alphaStr
