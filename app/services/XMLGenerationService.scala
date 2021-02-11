@@ -16,12 +16,12 @@
 
 package services
 
-import helpers.xml.{AffectedXMLSection, DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import helpers.xml._
 import models.UserAnswers
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.requests.DataRequest
 import org.joda.time.DateTime
-import pages.disclosure.{DisclosureDetailsPage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.DisclosureDetailsPage
 import play.api.mvc.AnyContent
 
 import javax.inject.Inject
@@ -46,10 +46,7 @@ class XMLGenerationService @Inject()() {
   }
 
   private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers, id: Int): Elem = {
-    userAnswers.get(DisclosureDetailsPage, id).map {
-      det =>
-        det.disclosureType
-    } match {
+    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
       case Some(value) =>
         <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
       case None => throw new Exception("Missing disclosure type answer")
