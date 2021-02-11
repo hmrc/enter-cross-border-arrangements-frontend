@@ -22,10 +22,11 @@ import controllers.mixins.DefaultRouting
 import handlers.ErrorHandler
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.hallmarks.JourneyStatus
+import models.reporter.ReporterDetails
 import models.reporter.RoleInArrangement.Intermediary
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.{ReporterCheckYourAnswersPage, ReporterOrganisationOrIndividualPage, ReporterStatusPage, RoleInArrangementPage}
+import pages.reporter._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -104,9 +105,11 @@ class ReporterCheckYourAnswersController  @Inject()(
 
     def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
       implicit request =>
-
+        
         for {
-          userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ReporterStatusPage, id, JourneyStatus.Completed))
+          reporterModel <- Future.fromTry(request.userAnswers.set(ReporterDetailsPage, id,
+            ReporterDetails.buildReporterDetails(request.userAnswers, id)))
+          userAnswers: UserAnswers <- Future.fromTry(reporterModel.set(ReporterStatusPage, id, JourneyStatus.Completed))
           _ <- sessionRepository.set(userAnswers)
         } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
     }
