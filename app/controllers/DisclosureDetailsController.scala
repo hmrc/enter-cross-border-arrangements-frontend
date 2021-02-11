@@ -110,7 +110,6 @@ class DisclosureDetailsController @Inject()(
         },
         xml => {
           //send it off to be validated and business rules
-
           validationConnector.sendForValidation(xml).flatMap {
             _.fold(
               //did it fail? oh my god - hand back to the user to fix
@@ -125,9 +124,6 @@ class DisclosureDetailsController @Inject()(
               messageRefId => {
                 val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
                 val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
-
-
-
                 for {
                   ids <- crossBorderArrangementsConnector.submitXML(submission)
                   userAnswersWithIDs <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
