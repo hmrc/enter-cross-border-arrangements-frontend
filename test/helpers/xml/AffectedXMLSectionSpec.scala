@@ -33,7 +33,6 @@ class AffectedXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-
   val address: Address =
     Address(
       Some("value 1"),
@@ -96,7 +95,7 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(affectedLoop).buildAffectedPersons.map { result =>
            prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
 
@@ -132,7 +131,7 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(affectedLoop).buildAffectedPersons.map { result =>
         prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }
@@ -190,7 +189,7 @@ class AffectedXMLSectionSpec extends SpecBase {
           </AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(affectedLoop).buildAffectedPersons.map { result =>
         prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }

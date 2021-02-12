@@ -16,21 +16,28 @@
 
 package services
 
+import scala.util.{Failure, Success, Try}
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, Node, NodeSeq}
 
 class TransformationService {
 
-  def rewriteMessageRefID(xml:Elem, messageRefID: String): NodeSeq =
+  def build(xml: Elem, messageRefId: String, enrolmentID: String): Try[NodeSeq] =
+    (for {
+      uniqueXmlSubmission       <- rewriteMessageRefID(xml, messageRefId)
+      submission                <- constructSubmission("manual-submission.xml", enrolmentID, uniqueXmlSubmission)
+    } yield Success(submission)).getOrElse(Failure(new IllegalStateException("Unable to build submission")))
+
+  def rewriteMessageRefID(xml:Elem, messageRefID: String): Option[NodeSeq] =
     new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(prefix, "MessageRefId", attribs, scope, _*) =>
           <MessageRefId>{ messageRefID }</MessageRefId>
         case other => other
       }
-    }).transform(xml).head
+    }).transform(xml).headOption
 
-  def constructSubmission(fileName: String, enrolmentID: String, document: NodeSeq): NodeSeq = {
+  def constructSubmission(fileName: String, enrolmentID: String, document: NodeSeq): Option[NodeSeq] = {
     val submission =
       <submission>
         <fileName>{fileName}</fileName>
@@ -44,7 +51,7 @@ class TransformationService {
           elem.copy(child = document)
         case other => other
       }
-    }).transform(submission).head
+    }).transform(submission).headOption
   }
 
 }

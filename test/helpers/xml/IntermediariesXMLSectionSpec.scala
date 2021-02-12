@@ -38,6 +38,8 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
+  val reporterSection: ReporterXMLSection = mock[ReporterXMLSection]
+
   val address: Address =
     Address(
       Some("value 1"),
@@ -95,21 +97,21 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional intermediary capacity for PROMOTER" in {
 
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediaryCountriesKnown)
+        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediaryCountriesKnown)
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must build optional intermediary capacity for SERVICE PROVIDER" in {
 
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediaryServiceProvider)
+        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediaryServiceProvider)
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must NOT build optional intermediary capacity for 'I DO NOT KNOW'" in {
 
-        val result = IntermediariesXMLSection.getIntermediaryCapacity(intermediary)
+        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediary)
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -119,7 +121,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional NATIONAL EXEMPTION when KNOWN EXEMPTION and countries are KNOWN" in {
 
-        val result = IntermediariesXMLSection.buildNationalExemption(intermediaryCountriesKnown)
+        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediaryCountriesKnown)
 
         val expected =
           """<NationalExemption>
@@ -134,7 +136,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional NATIONAL EXEMPTION when KNOWN EXEMPTION but countries NOT KNOWN" in {
 
-        val result = IntermediariesXMLSection.buildNationalExemption(intermediaryCountriesUnknown)
+        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediaryCountriesUnknown)
 
         val expected =
           """<NationalExemption>
@@ -147,120 +149,14 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
     "must NOT build optional NATIONAL EXEMPTION when EXEMPTION are NOT KNOWN" in {
 
-      val result = IntermediariesXMLSection.buildNationalExemption(intermediary)
-
+      val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediary)
       val expected = ""
 
       prettyPrinter.formatNodes(result) mustBe expected
     }
   }
 
-    "buildReporterAsIntermediary" - {
-
-    "must build intermediary section from REPORTER DETAILS for an ORGANISATION as an INTERMEDIARY " +
-      "who is a PROMOTER with KNOWN country EXEMPTION in FRANCE" in {
-
-      val reporterDetails = ReporterDetails(
-        None,
-        Some(organisation),
-        Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-          Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-          Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
-
-      val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers, 0)
-
-      val expected =
-        """<Intermediary>
-          |    <ID>
-          |        <Organisation>
-          |            <OrganisationName>Reporter Name</OrganisationName>
-          |            <TIN issuedBy="GB">UTR000</TIN>
-          |            <TIN issuedBy="FR">FR000</TIN>
-          |            <Address>
-          |                <Street>value 1</Street>
-          |                <BuildingIdentifier>value 2</BuildingIdentifier>
-          |                <DistrictName>value 3</DistrictName>
-          |                <PostCode>XX9 9XX</PostCode>
-          |                <City>value 4</City>
-          |                <Country>FR</Country>
-          |            </Address>
-          |            <EmailAddress>email@email.com</EmailAddress>
-          |            <ResCountryCode>GB</ResCountryCode>
-          |            <ResCountryCode>FR</ResCountryCode>
-          |        </Organisation>
-          |    </ID>
-          |    <Capacity>DAC61101</Capacity>
-          |    <NationalExemption>
-          |        <Exemption>true</Exemption>
-          |        <CountryExemptions>
-          |            <CountryExemption>FR</CountryExemption>
-          |        </CountryExemptions>
-          |    </NationalExemption>
-          |</Intermediary>""".stripMargin
-
-      prettyPrinter.formatNodes(result) mustBe expected
-    }
-
-    "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
-      "who is a SERVICE PROVIDER with KNOWN country EXEMPTION in FRANCE" in {
-
-      val reporterDetails = ReporterDetails(
-        Some(individual),
-        None,
-        Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-          Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-          Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
-      val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers, 0)
-
-      val expected =
-        s"""<Intermediary>
-           |    <ID>
-           |        <Individual>
-           |            <IndividualName>
-           |                <FirstName>Reporter</FirstName>
-           |                <LastName>Name</LastName>
-           |            </IndividualName>
-           |            <BirthDate>1990-01-01</BirthDate>
-           |            <BirthPlace>SomePlace</BirthPlace>
-           |            <TIN issuedBy="GB">UTR000</TIN>
-           |            <TIN issuedBy="FR">FR000</TIN>
-           |            <Address>
-           |                <Street>value 1</Street>
-           |                <BuildingIdentifier>value 2</BuildingIdentifier>
-           |                <DistrictName>value 3</DistrictName>
-           |                <PostCode>XX9 9XX</PostCode>
-           |                <City>value 4</City>
-           |                <Country>FR</Country>
-           |            </Address>
-           |            <EmailAddress>email@email.com</EmailAddress>
-           |            <ResCountryCode>GB</ResCountryCode>
-           |            <ResCountryCode>FR</ResCountryCode>
-           |        </Individual>
-           |    </ID>
-           |    <Capacity>DAC61102</Capacity>
-           |    <NationalExemption>
-           |        <Exemption>true</Exemption>
-           |        <CountryExemptions>
-           |            <CountryExemption>FR</CountryExemption>
-           |        </CountryExemptions>
-           |    </NationalExemption>
-           |</Intermediary>""".stripMargin
-
-       prettyPrinter.formatNodes(result) mustBe expected
-      }
-    }
-
-    "toXML" - {
+    "buildIntermediaries" - {
 
       "must build intermediary section from REPORTER DETAILS JOURNEY & INTERMEDIARIES JOURNEY" in {
 
@@ -327,7 +223,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    </Intermediary>
             |</Intermediaries>""".stripMargin
 
-        IntermediariesXMLSection.toXml(userAnswers, 0).map { result =>
+        IntermediariesXMLSection(intermediaryLoop, Option(reporterSection)).buildIntermediaries.map { result =>
 
           prettyPrinter.formatNodes(result) mustBe expected
         }

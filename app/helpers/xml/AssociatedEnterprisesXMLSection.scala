@@ -15,13 +15,11 @@
  */
 
 package helpers.xml
-import models.UserAnswers
 import models.enterprises.AssociatedEnterprise
-import pages.enterprises.AssociatedEnterpriseLoopPage
 
 import scala.xml.NodeSeq
 
-object AssociatedEnterprisesSection {
+case class AssociatedEnterprisesXMLSection(associatedEnterprises: IndexedSeq[AssociatedEnterprise]) {
 
   private[xml] def buildAssociatedEnterprise(associatedEnterprise: AssociatedEnterprise): NodeSeq = {
     val optionalAffectedPerson = <AffectedPerson>{associatedEnterprise.isAffectedBy}</AffectedPerson>
@@ -39,9 +37,7 @@ object AssociatedEnterprisesSection {
     }
   }
 
-  def buildAssociatedEnterprises(userAnswers: UserAnswers, id: Int, taxpayerName: String): NodeSeq = {
-    userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-      case Some(associatedEnterprises) =>
+  def buildAssociatedEnterprises(taxpayerName: String): NodeSeq = {
         val associatedEnterprisesList =
           associatedEnterprises.flatMap {
             associatedEnterprise =>
@@ -57,8 +53,6 @@ object AssociatedEnterprisesSection {
         } else {
           NodeSeq.Empty
         }
-      case None => NodeSeq.Empty
-    }
   }
 
 }

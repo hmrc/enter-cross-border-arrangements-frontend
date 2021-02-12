@@ -25,11 +25,11 @@ import models.disclosure.DisclosureType.{Dac6del, Dac6rep}
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.{DeleteDisclosurePage, DisclosureTypePage, InitialDisclosureMAPage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureTypePage, InitialDisclosureMAPage, ReplaceOrDeleteADisclosurePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -83,17 +83,14 @@ class ReplaceOrDeleteADisclosureController @Inject()(
       }
   }
 
-  def redirect(checkRoute: CheckRoute, value: Option[ReplaceOrDeleteADisclosure], disclosureType: Option[DisclosureType]): Call = disclosureType match {
-    case None|Some(Dac6rep) => navigator.routeMap (ReplaceOrDeleteADisclosurePage) (checkRoute) (None) (value) (0)
-    case Some(Dac6del) => navigator.routeMap (DeleteDisclosurePage) (checkRoute) (None) (value) (0)
-  }
+  def redirect(checkRoute: CheckRoute, disclosureType: Option[DisclosureType]): Call =
+    navigator.routeMap (ReplaceOrDeleteADisclosurePage) (checkRoute) (None) (disclosureType) (0)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
       val formReturned: Form[ReplaceOrDeleteADisclosure] =  form.bindFromRequest()
-      val disclosureType: Option[DisclosureType] = request.userAnswers.getBase(DisclosureTypePage)
 
       formReturned.fold(
         formWithErrors => {
@@ -123,7 +120,8 @@ class ReplaceOrDeleteADisclosureController @Inject()(
                     updatedAnswers1 <- Future.fromTry(updatedAnswers.setBase(InitialDisclosureMAPage, disclosureDetail.initialDisclosureMA))
                     _              <- sessionRepository.set(updatedAnswers1)
                     checkRoute = toCheckRoute(mode, updatedAnswers1)
-                  } yield Redirect(redirect(checkRoute, Some(value), disclosureType))
+                    disclosureType =  request.userAnswers.getBase(DisclosureTypePage)
+                  } yield Redirect(redirect(checkRoute, disclosureType))
                 }
           }
         }

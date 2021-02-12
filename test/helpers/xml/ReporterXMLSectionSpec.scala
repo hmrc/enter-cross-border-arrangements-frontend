@@ -16,52 +16,24 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
-import models.individual.Individual
-import models.organisation.Organisation
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
+import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
-import models.taxpayer.TaxResidency
-import models.{Address, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{IsExemptionKnown, UnsubmittedDisclosure, UserAnswers}
 import pages.reporter.ReporterDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
-class DisclosingXMLSectionSpec extends SpecBase {
+class ReporterXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
-
-  val loopDetails = IndexedSeq(
-    LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
-      Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
-    LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
-
-  val email = "email@email.com"
-
-  val taxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR000", None, None))),
-    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("FR000", None, None)))
-  )
-
-  val individualName: Name = Name("Reporter", "Name")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)
-
-  val organisation: Organisation = Organisation("Reporter name", Some(address), Some(email), taxResidencies)
+  val today: LocalDate = LocalDate.now
 
   "DisclosingXMLSection" - {
 
@@ -71,10 +43,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some("DAC61101"), None, None, None)))
 
-        val result = DisclosingXMLSection.buildReporterCapacity(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -83,11 +55,11 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some("DAC61102"), None, None, None)))
 
 
-        val result = DisclosingXMLSection.buildReporterCapacity(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -96,11 +68,11 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some(IntermediaryRole.Unknown.toString), None, None, None)))
 
 
-        val result = DisclosingXMLSection.buildReporterCapacity(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -112,10 +84,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, Some("RTNEXb"), Some("DAC61104"), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         val expected =
           """<Liability>
@@ -132,10 +104,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString, Some("INEXa"), Some("DAC61101"), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         val expected =
           """<Liability>
@@ -150,8 +122,8 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
       "must not build the optional liability section if data is missing" in {
 
-        val reporterDetails = ReporterDetails(None, Some(organisation))
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val reporterDetails = ReporterDetails(None, Some(validOrganisation))
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -160,10 +132,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString, Some(IntermediaryWhyReportInUK.DoNotKnow.toString), Some("DAC61101"), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -172,10 +144,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, Some(TaxpayerWhyReportInUK.DoNotKnow.toString), Some("DAC61101"), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -185,11 +157,11 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString), None, None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         val expected =
           """<Liability>
@@ -205,12 +177,12 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Unknown.toString), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         val expected =
           """<Liability>
@@ -227,12 +199,12 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString),
             Some(TaxpayerWhyReportArrangement.DoNotKnow.toString), None, None, None)))
 
-        val result = DisclosingXMLSection.buildLiability(reporterDetails)
+        val result = ReporterXMLSection(reporterDetails).buildLiability
 
         val expected =
           """<Liability>
@@ -245,29 +217,25 @@ class DisclosingXMLSectionSpec extends SpecBase {
       }
     }
 
-
-    "toXml" - {
+    "buildDisclosureDetails" - {
 
       "must build the full disclosing section for an organisation" in {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some("RTNEXb"),
             None, None, None, None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Disclosing>
             |    <ID>
             |        <Organisation>
-            |            <OrganisationName>Reporter name</OrganisationName>
-            |            <TIN issuedBy="GB">UTR000</TIN>
-            |            <TIN issuedBy="FR">FR000</TIN>
+            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
             |            <Address>
             |                <Street>value 1</Street>
             |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -288,7 +256,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-        DisclosingXMLSection.toXml(userAnswers, 0).map { result =>
+        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -299,7 +267,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.DoNotKnow.toString),
             None, None, None, None)))
@@ -312,9 +280,10 @@ class DisclosingXMLSectionSpec extends SpecBase {
           """<Disclosing>
             |    <ID>
             |        <Organisation>
-            |            <OrganisationName>Reporter name</OrganisationName>
-            |            <TIN issuedBy="GB">UTR000</TIN>
-            |            <TIN issuedBy="FR">FR000</TIN>
+            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
             |            <Address>
             |                <Street>value 1</Street>
             |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -330,7 +299,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |    </ID>
             |</Disclosing>""".stripMargin
 
-        DisclosingXMLSection.toXml(userAnswers, 0).map { result =>
+        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -341,22 +310,19 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
             Some(IntermediaryWhyReportInUK.DoNotKnow.toString),
             None, None, None, None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Disclosing>
             |    <ID>
             |        <Organisation>
-            |            <OrganisationName>Reporter name</OrganisationName>
-            |            <TIN issuedBy="GB">UTR000</TIN>
-            |            <TIN issuedBy="FR">FR000</TIN>
+            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
             |            <Address>
             |                <Street>value 1</Street>
             |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -372,7 +338,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |    </ID>
             |</Disclosing>""".stripMargin
 
-        DisclosingXMLSection.toXml(userAnswers, 0).map { result =>
+        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -381,28 +347,25 @@ class DisclosingXMLSectionSpec extends SpecBase {
       "must build the full disclosing section for an individual" in {
 
         val reporterDetails = ReporterDetails(
-          Some(individual),
+          Some(validIndividual),
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString),
             None, None, None, None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Disclosing>
             |    <ID>
             |        <Individual>
             |            <IndividualName>
-            |                <FirstName>Reporter</FirstName>
-            |                <LastName>Name</LastName>
+            |                <FirstName>FirstName</FirstName>
+            |                <LastName>Surname</LastName>
             |            </IndividualName>
             |            <BirthDate>1990-01-01</BirthDate>
             |            <BirthPlace>SomePlace</BirthPlace>
-            |            <TIN issuedBy="GB">UTR000</TIN>
-            |            <TIN issuedBy="FR">FR000</TIN>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
             |            <Address>
             |                <Street>value 1</Street>
             |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -423,7 +386,7 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-          DisclosingXMLSection.toXml(userAnswers, 0).map { result =>
+        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -434,22 +397,19 @@ class DisclosingXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Promoter.toString), None, None, None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Disclosing>
             |    <ID>
             |        <Organisation>
-            |            <OrganisationName>Reporter name</OrganisationName>
-            |            <TIN issuedBy="GB">UTR000</TIN>
-            |            <TIN issuedBy="FR">FR000</TIN>
+            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
             |            <Address>
             |                <Street>value 1</Street>
             |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -471,11 +431,242 @@ class DisclosingXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-        DisclosingXMLSection.toXml(userAnswers, 0).map { result =>
+        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
       }
     }
+
+    "buildReporterAsTaxpayer" - {
+
+      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects ORGANISATION option " +
+        "on 'reporter/organisation-or-individual page" in {
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(validOrganisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
+        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+
+        val expected =
+          s"""<RelevantTaxpayer>
+             |    <ID>
+             |        <Organisation>
+             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
+             |            <Address>
+             |                <Street>value 1</Street>
+             |                <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                <DistrictName>value 3</DistrictName>
+             |                <PostCode>XX9 9XX</PostCode>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
+             |            </Address>
+             |            <EmailAddress>email@email.com</EmailAddress>
+             |            <ResCountryCode>GB</ResCountryCode>
+             |            <ResCountryCode>FR</ResCountryCode>
+             |        </Organisation>
+             |    </ID>
+             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
+             |</RelevantTaxpayer>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
+        "when arrangement is NOT MARKETABLE" in {
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(validOrganisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, None)))
+
+        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+
+        val expected =
+          s"""<RelevantTaxpayer>
+             |    <ID>
+             |        <Organisation>
+             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
+             |            <Address>
+             |                <Street>value 1</Street>
+             |                <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                <DistrictName>value 3</DistrictName>
+             |                <PostCode>XX9 9XX</PostCode>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
+             |            </Address>
+             |            <EmailAddress>email@email.com</EmailAddress>
+             |            <ResCountryCode>GB</ResCountryCode>
+             |            <ResCountryCode>FR</ResCountryCode>
+             |        </Organisation>
+             |    </ID>
+             |</RelevantTaxpayer>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
+        "on 'reporter/organisation-or-individual page" in {
+
+        val reporterDetails = ReporterDetails(
+          Some(validIndividual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
+        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+
+        val expected =
+          s"""<RelevantTaxpayer>
+             |    <ID>
+             |        <Individual>
+             |            <IndividualName>
+             |                <FirstName>FirstName</FirstName>
+             |                <LastName>Surname</LastName>
+             |            </IndividualName>
+             |            <BirthDate>1990-01-01</BirthDate>
+             |            <BirthPlace>SomePlace</BirthPlace>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
+             |            <Address>
+             |                <Street>value 1</Street>
+             |                <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                <DistrictName>value 3</DistrictName>
+             |                <PostCode>XX9 9XX</PostCode>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
+             |            </Address>
+             |            <EmailAddress>email@email.com</EmailAddress>
+             |            <ResCountryCode>GB</ResCountryCode>
+             |            <ResCountryCode>FR</ResCountryCode>
+             |        </Individual>
+             |    </ID>
+             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
+             |</RelevantTaxpayer>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+    }
+
+    "buildReporterAsIntermediary" - {
+
+      val intermediary: Intermediary = Intermediary("123", None, Some(validOrganisation),
+        WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)
+
+      "must build intermediary section from REPORTER DETAILS for an ORGANISATION as an INTERMEDIARY " +
+        "who is a PROMOTER with KNOWN country EXEMPTION in FRANCE" in {
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(validOrganisation),
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+            Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
+
+        val result = ReporterXMLSection(reporterDetails).buildReporterAsIntermediary//(intermediary)
+
+        val expected =
+          """<Intermediary>
+            |    <ID>
+            |        <Organisation>
+            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+            |            <TIN issuedBy="GB">UTR1234</TIN>
+            |            <TIN issuedBy="FR">CS700100A</TIN>
+            |            <TIN issuedBy="FR">UTR5678</TIN>
+            |            <Address>
+            |                <Street>value 1</Street>
+            |                <BuildingIdentifier>value 2</BuildingIdentifier>
+            |                <DistrictName>value 3</DistrictName>
+            |                <PostCode>XX9 9XX</PostCode>
+            |                <City>value 4</City>
+            |                <Country>FR</Country>
+            |            </Address>
+            |            <EmailAddress>email@email.com</EmailAddress>
+            |            <ResCountryCode>GB</ResCountryCode>
+            |            <ResCountryCode>FR</ResCountryCode>
+            |        </Organisation>
+            |    </ID>
+            |    <Capacity>DAC61101</Capacity>
+            |    <NationalExemption>
+            |        <Exemption>true</Exemption>
+            |        <CountryExemptions>
+            |            <CountryExemption>FR</CountryExemption>
+            |        </CountryExemptions>
+            |    </NationalExemption>
+            |</Intermediary>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+
+      "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
+        "who is a SERVICE PROVIDER with KNOWN country EXEMPTION in FRANCE" in {
+
+        val reporterDetails = ReporterDetails(
+          Some(validIndividual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+            Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
+
+        val result = ReporterXMLSection(reporterDetails).buildReporterAsIntermediary//(intermediary)
+
+        val expected =
+          s"""<Intermediary>
+             |    <ID>
+             |        <Individual>
+             |            <IndividualName>
+             |                <FirstName>FirstName</FirstName>
+             |                <LastName>Surname</LastName>
+             |            </IndividualName>
+             |            <BirthDate>1990-01-01</BirthDate>
+             |            <BirthPlace>SomePlace</BirthPlace>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
+             |            <Address>
+             |                <Street>value 1</Street>
+             |                <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                <DistrictName>value 3</DistrictName>
+             |                <PostCode>XX9 9XX</PostCode>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
+             |            </Address>
+             |            <EmailAddress>email@email.com</EmailAddress>
+             |            <ResCountryCode>GB</ResCountryCode>
+             |            <ResCountryCode>FR</ResCountryCode>
+             |        </Individual>
+             |    </ID>
+             |    <Capacity>DAC61102</Capacity>
+             |    <NationalExemption>
+             |        <Exemption>true</Exemption>
+             |        <CountryExemptions>
+             |            <CountryExemption>FR</CountryExemption>
+             |        </CountryExemptions>
+             |    </NationalExemption>
+             |</Intermediary>""".stripMargin
+
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
+    }
+
+
+
+
   }
 }

@@ -101,12 +101,12 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
             .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
       }
 
-    "must go from 'Which disclosure do you want to replace?' page" +
-      "to Disclosure 'Check your answers' page" +
-      "when valid arrangement and disclosure IDs are entered" in {
+    "must go from 'Which disclosure do you want to replace?' page " +
+      "to Disclosure 'Check your answers' page " +
+      "when disclosure type is " in {
 
       navigator.routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(
-        Some(ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123")))(0)
+        Some(DisclosureType.Dac6rep))(0)
         .mustBe(controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad())
     }
 
@@ -117,22 +117,22 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
         .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
     }
 
-    "must go from 'Are you sure you want to delete this disclosure?' page" +
+    "must go from 'Are you sure you want to delete this disclosure?' page " +
     "to 'Your disclosure has been deleted' page" in {
       navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0)
       .mustBe(controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad())
     }
 
-    "must go from 'Which disclosure do you want to delete?' page" +
-      "to Delete Disclosure 'Check your answers' page" +
-      "when valid arrangement and disclosure IDs are entered" in {
+    "must go from 'Which disclosure do you want to delete?' page " +
+      "to Delete Disclosure 'Check your answers' page " +
+      "when disclosureType is Dac6del" in {
 
-      navigator.routeMap(DeleteDisclosurePage)(DefaultRouting(NormalMode))(None)(
-        Some(ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123")))(0)
+      navigator.routeMap(ReplaceOrDeleteADisclosurePage)(DefaultRouting(NormalMode))(None)(
+        Some(DisclosureType.Dac6del))(0)
         .mustBe(controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad())
     }
 
-    "must go from 'Task list' page" +
+    "must go from 'Task list' page " +
       "to 'You have {0} unsubmited disclosures' page" in {
 
       navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0)

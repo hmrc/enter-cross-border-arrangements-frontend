@@ -17,11 +17,15 @@
 package controllers
 
 import base.SpecBase
+import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
+import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
 import helpers.Submissions
 import matchers.JsonMatchers
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequest
+import models.{GeneratedIDs, Submission, UnsubmittedDisclosure, UserAnswers}
 import models.{GeneratedIDs, SubmissionDetails, SubmissionHistory, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -30,7 +34,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -50,9 +54,6 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
   private val mockXMLGenerationService = mock[XMLGenerationService]
   private val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
   private val mockHistoryConnector = mock[HistoryConnector]
-
-  private val userAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
   override def beforeEach: Unit = {
     reset(mockRenderer, mockCrossBorderArrangementsConnector)
@@ -144,6 +145,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
     "must redirect to confirmation page when user submits a completed application" in {
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val application = applicationBuilder(userAnswers = Some(userAnswersForOrganisation))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -153,16 +155,16 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
           bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
         .build()
 
+      val submission = Submission(userAnswersForOrganisation, 0, "XADAC0001122345")
+
       val postRequest = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
       implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswersForOrganisation)
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
-        .thenReturn(Success(Submissions.validSubmission))
-      when(mockValidationConnector.sendForValidation(any())(any(), any()))
-        .thenReturn(Future.successful(Right("GBABC-123")))
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any(), any()))
+        .thenReturn(Future.successful(Right(submission)))
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
 
@@ -172,7 +174,6 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
       status(result) mustEqual SEE_OTHER
       redirectLocation(result) mustEqual Some(controllers.confirmation.routes.FileTypeGatewayController.onRouting(0).url)
 
-      verify(mockCrossBorderArrangementsConnector, times(1)).submitXML(any())(any())
     }
 
     "must update the submitted flag" in {
@@ -182,7 +183,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
         UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1")
       )
       val expected = List(
-        UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1", true)
+        UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1", submitted = true)
       )
       for {
         userAnswers    <- UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, list)
@@ -193,22 +194,18 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to validation errors page when validation fails" in {
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application = applicationBuilder(userAnswers = Some(userAnswersModelsForOrganisation))
         .overrides(
           bind[XMLGenerationService].toInstance(mockXMLGenerationService),
           bind[ValidationConnector].toInstance(mockValidationConnector),
           bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
         .build()
 
-      implicit val postRequest = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
+      implicit val postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
       implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswersModelsForOrganisation)
 
-      when(mockXMLGenerationService.createXmlSubmission(any(), any())(any()))
-        .thenReturn(Success(Submissions.validSubmission))
-      when(mockValidationConnector.sendForValidation(any())(any(), any()))
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
 
       val result = route(application, postRequest).value

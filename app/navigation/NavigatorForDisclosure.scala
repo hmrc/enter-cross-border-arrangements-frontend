@@ -19,10 +19,9 @@ package navigation
 import controllers.disclosure._
 import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
-import models.disclosure.DisclosureType.{Dac6add, Dac6new}
+import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
 import pages.Page
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
-import pages.disclosure._
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage, _}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -47,15 +46,15 @@ class NavigatorForDisclosure @Inject()() {
       _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
 
     case ReplaceOrDeleteADisclosurePage =>
-      _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
-
-    case DeleteDisclosurePage =>
-      _ => _ => _ => _ => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
+      _ => _ => disclosureType => _ => disclosureType match {
+        case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad()
+        case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
+      }
 
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
-    case DisclosureIdentifyArrangementPage =>
+    case DisclosureIdentifyArrangementPage =>//
       _ => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
 
     case DisclosureDetailsPage =>

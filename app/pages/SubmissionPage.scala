@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package services
+package pages
 
-import base.SpecBase
-import helpers.Submissions
+import models.Submission
+import play.api.libs.json.JsPath
 
-class TransformationServiceSpec extends SpecBase {
+object SubmissionPage extends QuestionPage[Submission] {
 
-  "TransformationService" - {
-    "must take a valid file and replace the messageRefID" in {
-      val service = app.injector.instanceOf[TransformationService]
-      val transformedFile = service.rewriteMessageRefID(
-        Submissions.validSubmission,
-        "GB0000000YYY"
-      )
-      transformedFile mustBe Some(Submissions.updatedSubmission)
-    }
-  }
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "submission"
 }

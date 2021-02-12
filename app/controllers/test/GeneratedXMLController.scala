@@ -17,6 +17,15 @@
 package controllers.test
 
 import controllers.actions._
+import models.Submission
+import pages.affected.AffectedLoopPage
+import pages.arrangement.ArrangementDetailsPage
+import pages.disclosure.DisclosureDetailsPage
+import pages.enterprises.AssociatedEnterpriseLoopPage
+import pages.hallmarks.HallmarkDetailsPage
+import pages.intermediaries.IntermediaryLoopPage
+import pages.reporter.ReporterDetailsPage
+import pages.taxpayer.TaxpayerLoopPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,8 +51,20 @@ class GeneratedXMLController @Inject()(
     implicit request =>
 
       //TODO Delete later if no longer needed
+      val submission = (for {
+        disclosureDetails     <- request.userAnswers.get(DisclosureDetailsPage, id)
+        reporterDetails       =  request.userAnswers.get(ReporterDetailsPage, id)
+        associatedEnterprises =  request.userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
+        taxpayers             =  request.userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
+        intermediaries        =  request.userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
+        affectedPersons       =  request.userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
+        hallmarkDetails       =  request.userAnswers.get(HallmarkDetailsPage, id)
+        arrangementDetails    =  request.userAnswers.get(ArrangementDetailsPage, id)
+      } yield
+        Submission(request.enrolmentID, disclosureDetails, reporterDetails, associatedEnterprises, taxpayers, intermediaries, affectedPersons, hallmarkDetails, arrangementDetails))
+        .getOrElse(throw new IllegalStateException("Unable to create submission from model"))
 
-      xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold(
+      xmlGenerationService.createXmlSubmission(submission).fold(
         error =>  throw new RuntimeException(error),
         xml => {
 

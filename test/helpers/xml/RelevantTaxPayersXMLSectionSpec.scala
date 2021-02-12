@@ -17,7 +17,6 @@
 package helpers.xml
 
 import java.time.LocalDate
-
 import base.SpecBase
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
@@ -25,6 +24,7 @@ import models.organisation.Organisation
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import org.mockito.Mock
 import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.reporter._
 import pages.taxpayer.TaxpayerLoopPage
@@ -35,6 +35,9 @@ import scala.xml.PrettyPrinter
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
+
+  val reporterSection: ReporterXMLSection = mock[ReporterXMLSection]
+  val associatedEnterpriseSection: AssociatedEnterprisesXMLSection = mock[AssociatedEnterprisesXMLSection]
 
   val address: Address =
     Address(
@@ -77,150 +80,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
 
   "RelevantTaxPayersXMLSection" - {
-
-    "buildReporterAsTaxpayer" - {
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects ORGANISATION option " +
-        "on 'reporter/organisation-or-individual page" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Organisation>
-             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Organisation>
-             |    </ID>
-             |    <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
-        "when arrangement is NOT MARKETABLE" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Organisation>
-             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Organisation>
-             |    </ID>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
-        "on 'reporter/organisation-or-individual page" in {
-
-        val reporterDetails = ReporterDetails(
-          Some(individual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Individual>
-             |            <IndividualName>
-             |                <FirstName>FirstName</FirstName>
-             |                <LastName>Surname</LastName>
-             |            </IndividualName>
-             |            <BirthDate>1990-01-01</BirthDate>
-             |            <BirthPlace>SomePlace</BirthPlace>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Individual>
-             |    </ID>
-             |    <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "buildTaxPayerIsAReporter must not build a taxpayer section if they're not a reporter" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-
-        val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
-
-        prettyPrinter.formatNodes(result) mustBe ""
-      }
-    }
 
     "toXml" - {
 
@@ -313,7 +172,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
 
@@ -404,7 +263,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -510,7 +369,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |</RelevantTaxPayers>""".stripMargin
 
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -610,7 +469,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -700,7 +559,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -828,7 +687,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection.toXml(userAnswers, 0).map { result =>
+        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
