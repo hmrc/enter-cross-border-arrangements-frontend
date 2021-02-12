@@ -325,7 +325,7 @@ selectAddress.heading = What is {0}’s main address?
 selectAddress.individual.heading = What is {0}’s address?
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter the address manually
-selectAddress.checkYourAnswersLabel = What is {0}’s main address??
+selectAddress.checkYourAnswersLabel = What is {0}’s main address?
 selectAddress.error.required = Select address
 
 individualName.title = What is their name?
@@ -711,7 +711,7 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a 
 
 youHaveNotAddedAnyIntermediaries.title = Your intermediaries
 youHaveNotAddedAnyIntermediaries.subHeading.1 = Does this arrangement involve any intermediaries?
-youHaveNotAddedAnyIntermediaries.subHeading.2 = Do you need to add another intermediary??
+youHaveNotAddedAnyIntermediaries.subHeading.2 = Do you need to add another intermediary?
 youHaveNotAddedAnyIntermediaries.emptyList = You have not added any intermediaries
 youHaveNotAddedAnyIntermediaries.singular = intermediary
 youHaveNotAddedAnyIntermediaries.plural = intermediaries
@@ -724,7 +724,7 @@ youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an int
 
 youHaveNotAddedAnyAffected.title = Other affected parties
 youHaveNotAddedAnyAffected.subHeading.1 = Does this arrangement affect any parties?
-youHaveNotAddedAnyAffected.subHeading.2 = Do you need to add another??
+youHaveNotAddedAnyAffected.subHeading.2 = Do you need to add another?
 youHaveNotAddedAnyAffected.emptyList = You have not added any other parties affected by this arrangement
 youHaveNotAddedAnyAffected.singular = party affected by this arrangement
 youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
