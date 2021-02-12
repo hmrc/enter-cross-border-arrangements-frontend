@@ -21,6 +21,7 @@ import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
 import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import pages.Page
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import pages.disclosure._
 import play.api.mvc.Call
 
@@ -41,6 +42,10 @@ class NavigatorForDisclosure @Inject()() {
         case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
       }
 
+      //remove an unsubmitted disclosure
+    case RemoveDisclosurePage  =>
+      _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+
     case ReplaceOrDeleteADisclosurePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
@@ -59,7 +64,7 @@ class NavigatorForDisclosure @Inject()() {
     case DisclosureCheckYourAnswersPage =>
       _ => id => _ => _ => id match {
         case Some(n) => controllers.routes.DisclosureDetailsController.onPageLoad(n)
-        case None    => controllers.routes.IndexController.onPageLoad()
+        case None => controllers.routes.IndexController.onPageLoad()
       }
 
     case  DisclosureDeleteCheckYourAnswersPage  =>

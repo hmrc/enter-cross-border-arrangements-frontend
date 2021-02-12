@@ -16,16 +16,17 @@
 
 package controllers.unsubmitted
 
+import config.FrontendAppConfig
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.NormalMode
+import models.{NormalMode, UnsubmittedDisclosure}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class UnsubmittedDisclosureController  @Inject()(
@@ -33,29 +34,41 @@ class UnsubmittedDisclosureController  @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  renderer: Renderer
+                                                  renderer: Renderer,
+                                                 appConfig: FrontendAppConfig,
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  def removeFromList (zipped: (UnsubmittedDisclosure, Int)) : Boolean = {
+    zipped._1.deleted || zipped._1.submitted
+  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
       val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
 
-      request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
-        case Some(unsubmittedDisclosures) if unsubmittedDisclosures.nonEmpty =>
 
+      val unsubmittedDisclosuresWithIndex: Option[Seq[(UnsubmittedDisclosure, Int)]] = for {
+        userAnswers                     <- request.userAnswers
+        unsubmittedDisclosures          <- userAnswers.getBase(UnsubmittedDisclosurePage)
+      } yield unsubmittedDisclosures.zipWithIndex.filterNot(removeFromList)
+
+      unsubmittedDisclosuresWithIndex match {
+
+        case Some(list) if list.nonEmpty =>
           val json = Json.obj(
-            "url" -> disclosureNameUrl,
-            "unsubmittedDisclosures" -> unsubmittedDisclosures.zipWithIndex.map(d => Json.obj(
-              "name" -> d._1.name,
-              "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(d._2).url
-            )),
-            "plural" -> (if(unsubmittedDisclosures.length > 1) "s" else "")
+          "url" -> disclosureNameUrl,
+          "unsubmittedDisclosures" -> list.map{ case(unsubmittedDisclosure, id) => Json.obj(
+          "name" -> unsubmittedDisclosure.name,
+          "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(id).url,
+          "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(id).url
+          )},
+          "plural" -> (if(list.length > 1) "s" else "")
           )
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
-        case _ =>  Future.successful(Redirect(disclosureNameUrl))
+        case _ =>  Future.successful(Redirect(appConfig.discloseArrangeLink))
       }
   }
 

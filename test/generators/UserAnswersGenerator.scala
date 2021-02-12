@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -40,6 +40,7 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(RemoveDisclosurePage.type, JsValue)] ::
     arbitrary[(ReplaceOrDeleteADisclosurePage.type, JsValue)] ::
     arbitrary[(ReporterOtherTaxResidentQuestionPage.type, JsValue)] ::
     arbitrary[(ReporterNonUKTaxNumbersPage.type, JsValue)] ::

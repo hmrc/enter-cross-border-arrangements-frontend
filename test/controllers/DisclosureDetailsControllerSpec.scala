@@ -26,6 +26,7 @@ import models.requests.DataRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -82,7 +83,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "disclosureDetails.njk"
+      templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
 
       application.stop()
     }
@@ -117,6 +118,22 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
       redirectLocation(result) mustEqual Some(controllers.confirmation.routes.FileTypeGatewayController.onRouting(0).url)
 
       verify(mockCrossBorderArrangementsConnector, times(1)).submitXML(any())(any())
+    }
+
+    "must update the submitted flag" in {
+
+      val controller = injector.instanceOf[DisclosureDetailsController]
+      val list = List(
+        UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1")
+      )
+      val expected = List(
+        UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1", true)
+      )
+      for {
+        userAnswers    <- UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, list)
+        updatedAnswers <- controller.updateFlags(userAnswers, 1)
+        updatedList    <- updatedAnswers.getBase(UnsubmittedDisclosurePage)
+      } updatedList       must contain theSameElementsAs expected
     }
 
     "must redirect to validation errors page when validation fails" in {

@@ -32,7 +32,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import pages.enterprises.{IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -51,6 +51,14 @@ import play.api.libs.json.{JsValue, Json}
 
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryRemoveDisclosureUserAnswersEntry: Arbitrary[(RemoveDisclosurePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[RemoveDisclosurePage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryReplaceOrDeleteADisclosureUserAnswersEntry: Arbitrary[(ReplaceOrDeleteADisclosurePage.type, JsValue)] =
     Arbitrary {

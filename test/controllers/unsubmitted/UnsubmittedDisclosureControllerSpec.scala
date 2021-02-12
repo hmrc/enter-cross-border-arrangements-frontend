@@ -17,15 +17,14 @@
 package controllers.unsubmitted
 
 import base.SpecBase
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.api.test.Helpers.{GET, route, status}
+import play.api.test.Helpers.{GET, route, status, _}
 import play.twirl.api.Html
 
 import scala.concurrent.Future
@@ -54,13 +53,12 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
 
     }
 
-    "must redirect first time users to the no unsubmitted disclosures page" in {
+    "must redirect first time users to the disclosures homepage" in {
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
 
     "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
@@ -71,7 +69,6 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
     }
   }
 }
