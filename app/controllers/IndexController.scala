@@ -17,9 +17,8 @@
 package controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.NormalMode
+import models.{NormalMode, UnsubmittedDisclosure}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -36,10 +35,16 @@ class IndexController @Inject()(
 
    def onPageLoad: Action[AnyContent] = (identify andThen getData) { implicit request =>
      request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
-       case Some(unsubmittedDisclosures) if unsubmittedDisclosures.nonEmpty =>
+       case Some(unsubmittedDisclosures) if filteredDisclosures(unsubmittedDisclosures).nonEmpty =>
          Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
        case _ =>
          Redirect(controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url)
      }
+  }
+
+  private def filteredDisclosures(disclosures : Seq[UnsubmittedDisclosure]): Seq[UnsubmittedDisclosure] ={
+
+    disclosures.filter(disclosure => !disclosure.deleted && !disclosure.submitted)
+
   }
 }
