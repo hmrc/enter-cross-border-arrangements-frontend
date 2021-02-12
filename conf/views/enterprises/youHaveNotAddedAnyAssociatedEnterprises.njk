@@ -41,7 +41,7 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('youHaveNotAddedAnyAssociatedEnterprises.heading'),
+                text: messages('youHaveNotAddedAnyAssociatedEnterprises.heading.1')  if associatedEnterpriseList | length == 0 else messages('youHaveNotAddedAnyAssociatedEnterprises.heading.2'),
                 isPageHeading: false,
                 classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
               }
