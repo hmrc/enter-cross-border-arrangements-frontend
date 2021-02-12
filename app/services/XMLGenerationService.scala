@@ -16,7 +16,7 @@
 
 package services
 
-import helpers.xml.{DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import helpers.xml.{AffectedXMLSection, DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
 import models.UserAnswers
 import models.disclosure.DisclosureType.Dac6add
 import models.requests.DataRequest
@@ -88,6 +88,7 @@ class XMLGenerationService @Inject()() {
           {buildInitialDisclosureMA(userAnswers, id)}
           {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
           {IntermediariesXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
+          {AffectedXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
           {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
         </DAC6Disclosures>
       </DAC6_Arrangement>
