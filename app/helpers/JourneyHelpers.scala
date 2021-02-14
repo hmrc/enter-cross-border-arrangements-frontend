@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.{CheckMode, Country, Currency, Mode, UserAnswers}
+import models.{CheckMode, Country, Currency, LoopDetails, Mode, UserAnswers}
 import pages.QuestionPage
 import pages.individual.{IndividualLoopPage, IndividualNamePage}
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
@@ -124,6 +124,12 @@ object JourneyHelpers {
       case Some(ans) if (ans != value) && (mode == CheckMode) => true
       case _ => false
     }
+  }
+
+  def checkLoopDetailsContainsCountry(ua: UserAnswers, id: Int, questionPage: QuestionPage[IndexedSeq[LoopDetails]]): Boolean = {
+    ua.get(questionPage, id).fold(throw new Exception("Mandatory userAnswer missing - LoopDetails must contain at least one country"))(
+      loopDetails => loopDetails.map(_.whichCountry.isDefined).head
+    )
   }
 
   @deprecated

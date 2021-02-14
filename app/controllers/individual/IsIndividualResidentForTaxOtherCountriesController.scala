@@ -19,7 +19,8 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
-import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
+import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName, checkLoopDetailsContainsCountry}
+import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IsIndividualResidentForTaxOtherCountriesPage}
@@ -31,7 +32,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IsIndividualResidentForTaxOtherCountriesController @Inject()(
@@ -50,6 +50,8 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      checkLoopDetailsContainsCountry(request.userAnswers, id, IndividualLoopPage)
 
       val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form

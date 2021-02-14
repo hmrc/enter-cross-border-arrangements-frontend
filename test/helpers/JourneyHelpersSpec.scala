@@ -166,6 +166,41 @@ class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       }
     }
 
+    "calling checkLoopDetailsForInitialCountry" - {
+      "must return true if loopDetails contains an initial country" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("valid", "GB", "United Kingdom")), None, None, None, None)))
+          .success.value
+
+        val result = checkLoopDetailsContainsCountry(userAnswers, 0, OrganisationLoopPage)
+
+        result mustBe true
+      }
+
+      "must return false if loopDetails does notcontains an initial country" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, None, None, None, None, None)))
+          .success.value
+
+        val result = checkLoopDetailsContainsCountry(userAnswers, 0, OrganisationLoopPage)
+
+        result mustBe false
+      }
+
+      "must throw an exception if loopDetails contains None" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+
+        val ex = intercept[Exception] {
+          checkLoopDetailsContainsCountry(userAnswers, 0, OrganisationLoopPage)
+        }
+
+        ex.getMessage mustBe "Mandatory userAnswer missing - LoopDetails must contain at least one country"
+      }
+    }
+
     "linkToHomePageText" - {
 
       "must return the correct go to home page content" in {

@@ -56,6 +56,8 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val updatedUserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(IndividualNamePage, 0, Name("firstName","lastName")).success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .success.value
       val application = applicationBuilder(userAnswers = Some(updatedUserAnswers)).build()
       val request = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

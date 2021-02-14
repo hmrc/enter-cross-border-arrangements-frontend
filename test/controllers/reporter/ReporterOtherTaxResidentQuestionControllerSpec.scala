@@ -56,7 +56,12 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Mocki
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -91,7 +96,6 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Mocki
         .success.value
         .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
         .success.value
-
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
