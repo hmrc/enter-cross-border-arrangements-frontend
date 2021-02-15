@@ -17,14 +17,12 @@
 package helpers.xml
 
 import models.IsExemptionKnown.{No, Unknown, Yes}
-import models.individual.Individual
+import models.UserAnswers
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
-import models.organisation.Organisation
 import models.reporter.RoleInArrangement
-import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.intermediaries.IntermediaryLoopPage
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import pages.reporter.ReporterDetailsPage
 
 import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
@@ -32,30 +30,28 @@ import scala.xml.{Elem, Node, NodeSeq}
 object IntermediariesXMLSection extends XMLBuilder {
 
   private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage, id) match {
-      case Some(RoleInArrangement.Intermediary) =>
 
-        userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
-
-          case Some(ReporterOrganisationOrIndividual.Organisation) =>
-            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers, id)
-
-            <Intermediary>
-              {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers, id)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers, id)}
-            </Intermediary>
-
-          case _ =>
-            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers, id)
-
-            <Intermediary>
-              {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
-              {DisclosingXMLSection.buildReporterCapacity(userAnswers, id)}
-              {DisclosingXMLSection.buildReporterExemptions(userAnswers, id)}
-            </Intermediary>
-        }
-      case _ => NodeSeq.Empty
+    userAnswers.get(ReporterDetailsPage, id) match {
+      case Some(reporterDetails) =>
+        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
+              case RoleInArrangement.Intermediary.toString =>
+                if (reporterDetails.organisation.isDefined) {
+                  <Intermediary>
+                    {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+                    {DisclosingXMLSection.buildReporterCapacity(reporterDetails)}
+                    {DisclosingXMLSection.buildReporterExemptions(reporterDetails)}
+                  </Intermediary>
+                } else {
+                  <Intermediary>
+                    {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+                    {DisclosingXMLSection.buildReporterCapacity(reporterDetails)}
+                    {DisclosingXMLSection.buildReporterExemptions(reporterDetails)}
+                  </Intermediary>
+                }
+              case _ => NodeSeq.Empty
+            }
+        )
+      case _ => throw new Exception("Unable to construct XML for Reporter Details as Intermediary")
     }
   }
 

@@ -18,15 +18,17 @@ package models.reporter
 
 import java.time.LocalDate
 
-import models.{UserAnswers, YesNoDoNotKnowRadios}
+import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.{UserAnswers, YesNoDoNotKnowRadios}
 import pages.reporter.RoleInArrangementPage
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class ReporterLiability(nexus: Option[String] = None,
+case class ReporterLiability(role: String,
+                             nexus: Option[String] = None,
                              capacity: Option[String] = None,
                              nationalExemption: Option[Boolean] = None,
                              exemptCountries: Option[List[String]] = None,
@@ -86,6 +88,7 @@ object ReporterLiability {
     ua.get(RoleInArrangementPage, id) match {
       case Some(RoleInArrangement.Taxpayer) =>
         new ReporterLiability(
+          role = Taxpayer.toString,
           nexus = getTaxpayerNexus(ua, id),
           capacity = getTaxpayerCapacity(ua, id),
           implementingDate = ua.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id)
@@ -93,6 +96,7 @@ object ReporterLiability {
 
       case Some(RoleInArrangement.Intermediary) =>
         new ReporterLiability(
+          role = Intermediary.toString,
           nexus = getIntermediaryNexus(ua, id),
           capacity = getIntermediaryCapacity(ua, id),
           nationalExemption = getNationalExemption(ua, id),

@@ -78,6 +78,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 taxResidencies = TaxResidency.buildTaxResidency(loop)
               )),
               liability = Some(ReporterLiability(
+                role = RoleInArrangement.Taxpayer.toString,
                 nexus = Some("RTNEXa"),
                 capacity = Some("DAC61106"),
                 implementingDate = Some(LocalDate.now())
@@ -130,6 +131,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 taxResidencies = TaxResidency.buildTaxResidency(loop)
               )),
               liability = Some(ReporterLiability(
+                role = RoleInArrangement.Intermediary.toString,
                 nexus = Some("INEXa"),
                 capacity = Some("DAC61101"),
                 nationalExemption = Some(true),
@@ -186,6 +188,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 taxResidencies = TaxResidency.buildTaxResidency(loop)
               )),
               liability = Some(ReporterLiability(
+                role = RoleInArrangement.Taxpayer.toString,
                 nexus = Some("RTNEXa"),
                 capacity = Some("DAC61106"),
                 implementingDate = Some(LocalDate.now())
@@ -244,6 +247,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 taxResidencies = TaxResidency.buildTaxResidency(loop)
               )),
               liability = Some(ReporterLiability(
+                role = RoleInArrangement.Intermediary.toString,
                 nexus = Some("INEXa"),
                 capacity = Some("DAC61101"),
                 nationalExemption = Some(true),
