@@ -79,8 +79,6 @@ class XMLGenerationService @Inject()() {
                          (implicit request: DataRequest[AnyContent]): Try[Elem] = {
 
     Try {
-      if (request.enrolmentID == "TEST-DAC6-599-1") throw new RuntimeException("TEST-DAC6-599 xml submission failure") // TODO remove after DAC6-599 is tested
-
       <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
         {buildHeader(userAnswers, id)}
         {buildArrangementID(userAnswers, id)}
