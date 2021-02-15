@@ -16,12 +16,8 @@
 
 package helpers.xml
 
-import models.individual.Individual
-import models.organisation.Organisation
-import models.reporter.RoleInArrangement
-import models.{ReporterOrganisationOrIndividual, UserAnswers}
-import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import models.UserAnswers
+import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 
 import scala.util.Try
@@ -30,30 +26,24 @@ import scala.xml.{Elem, NodeSeq}
 object RelevantTaxPayersXMLSection extends XMLBuilder {
 
   private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage, id) match {
-      case Some(RoleInArrangement.Taxpayer) =>
 
-        val implementingDate = userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id).fold(NodeSeq.Empty)(
+    userAnswers.get(ReporterDetailsPage, id) match {
+      case Some(reporterDetails) =>
+
+        val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.implementingDate.fold(NodeSeq.Empty)(
           date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
-        )
+        ))
 
-        userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
-
-          case Some(ReporterOrganisationOrIndividual.Organisation) =>
-            val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers, id)
-
-            <RelevantTaxpayer>
-              {OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter)}
-              {implementingDate}
-            </RelevantTaxpayer>
-
-          case _ =>
-            val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers, id)
-
-            <RelevantTaxpayer>
-              {IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter)}
-              {implementingDate}
-            </RelevantTaxpayer>
+        if (reporterDetails.organisation.isDefined) {
+          <RelevantTaxpayer>
+            {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+            {implementingDate}
+          </RelevantTaxpayer>
+        } else {
+          <RelevantTaxpayer>
+            {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+            {implementingDate}
+          </RelevantTaxpayer>
         }
       case _ => NodeSeq.Empty
     }

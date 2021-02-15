@@ -16,16 +16,16 @@
 
 package helpers.xml
 
-import base.SpecBase
-import models.{UnsubmittedDisclosure, UserAnswers}
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.hallmarks.{HallmarkD, HallmarkD1}
-import pages.arrangement._
-import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-
 import java.time.LocalDate
+
+import base.SpecBase
+import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.hallmarks.{HallmarkD, HallmarkDetails}
+import models.{UnsubmittedDisclosure, UserAnswers}
+import pages.GiveDetailsOfThisArrangementPage
+import pages.arrangement._
+import pages.hallmarks.{HallmarkDPage, HallmarkDetailsPage}
+import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 
@@ -35,13 +35,23 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
   val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
     Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
 
+  val mockArrangementDetails: ArrangementDetails =
+    ArrangementDetails(
+      "name",
+      today,
+      Some("DAC6703"),
+      List("GB", "FR"),
+      ExpectedArrangementValue("GBP", 1000),
+      "nationalProvisions",
+      "arrangementDetails"
+    )
 
   "DisclosureInformationXMLSection" - {
 
     "buildImplementingDate must build the implementing date Elem" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsTheImplementationDatePage, 0, today).success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildImplementingDate(userAnswers, 0)
 
@@ -61,10 +71,14 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildReason must build the optional reason section if reason is known" in {
+
+      val arrangementDetails = mockArrangementDetails.copy(
+        reportingReason = Some(WhyAreYouReportingThisArrangementNow.Dac6703.toString)
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
-        .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
+        .set(ArrangementDetailsPage, 0, arrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildReason(userAnswers, 0)
 
@@ -74,9 +88,14 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildReason must not build the optional reason section" in {
+
+      val arrangementDetails = mockArrangementDetails.copy(
+        reportingReason = None
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false).success.value
+        .set(ArrangementDetailsPage, 0, arrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildReason(userAnswers, 0)
 
@@ -84,17 +103,17 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
-        .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildDisclosureInformationSummary(userAnswers, 0)
 
       val expected =
       """<Summary>
-        |    <Disclosure_Name>Arrangement name</Disclosure_Name>
-        |    <Disclosure_Description>Some description</Disclosure_Description>
+        |    <Disclosure_Name>name</Disclosure_Name>
+        |    <Disclosure_Description>arrangementDetails</Disclosure_Description>
         |</Summary>""".stripMargin
 
       prettyPrinter.format(result) mustBe expected
@@ -123,11 +142,11 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     "buildNationalProvision must build the national provision section" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildNationalProvision(userAnswers, 0)
 
-      val expected = "<NationalProvision>National provisions description</NationalProvision>"
+      val expected = "<NationalProvision>nationalProvisions</NationalProvision>"
 
       prettyPrinter.formatNodes(result) mustBe expected
     }
@@ -145,7 +164,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     "buildAmountType must build the national provision section" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildAmountType(userAnswers, 0)
 
@@ -167,7 +186,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     "buildConcernedMS must build the full ConcernedMS section" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildConcernedMS(userAnswers, 0)
 
@@ -191,12 +210,15 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildHallmarks must build the full hallmarks section" in {
+
+      val hallmarkDetails = HallmarkDetails(
+        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
+        hallmarkContent = Some("Hallmark D1 other description")
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
-          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
-        .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
+        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
 
@@ -214,11 +236,15 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildHallmarks must build the hallmarks section without the optional D1 other description" in {
+
+      val hallmarkDetails = HallmarkDetails(
+        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
+        None
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
-          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
+        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
 
       val result = DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
 
@@ -255,30 +281,26 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "toXml must build the full DisclosureInformation Elem" in {
+
+      val hallmarkDetails = HallmarkDetails(
+        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
+        hallmarkContent = Some("Hallmark D1 other description")
+      )
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsTheImplementationDatePage, 0, today).success.value
-        .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
-        .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
-        .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
-        .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
-        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National provisions description").success.value
-        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 1000)).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries).success.value
-        .set(HallmarkDPage, 0, HallmarkD.values.toSet).success.value
-        .set(HallmarkD1Page, 0, (HallmarkD1.enumerable.withName("DAC6D1a") ++
-          HallmarkD1.enumerable.withName("DAC6D1Other")).toSet).success.value
-        .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
+        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
       val expected =
         s"""<DisclosureInformation>
           |    <ImplementingDate>$today</ImplementingDate>
           |    <Reason>DAC6703</Reason>
           |    <Summary>
-          |        <Disclosure_Name>Arrangement name</Disclosure_Name>
-          |        <Disclosure_Description>Some description</Disclosure_Description>
+          |        <Disclosure_Name>name</Disclosure_Name>
+          |        <Disclosure_Description>arrangementDetails</Disclosure_Description>
           |    </Summary>
-          |    <NationalProvision>National provisions description</NationalProvision>
+          |    <NationalProvision>nationalProvisions</NationalProvision>
           |    <Amount currCode="GBP">1000</Amount>
           |    <ConcernedMSs>
           |        <ConcernedMS>GB</ConcernedMS>

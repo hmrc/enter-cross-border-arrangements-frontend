@@ -16,22 +16,20 @@
 
 package helpers.xml
 
+import java.time.LocalDate
+
 import base.SpecBase
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
 import models.organisation.Organisation
-import models.reporter.RoleInArrangement
+import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, AddressLookup, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.reporter.individual._
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter._
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
@@ -84,17 +82,17 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects ORGANISATION option " +
         "on 'reporter/organisation-or-individual page" in {
-        val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            None, None, None, None, Some(today))))
+
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-          .set(ReporterSelectedAddressLookupPage, 0, addressLookupAddress).success.value
-          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
@@ -102,18 +100,19 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           s"""<RelevantTaxpayer>
              |    <ID>
              |        <Organisation>
-             |            <OrganisationName>Reporter name</OrganisationName>
-             |            <TIN issuedBy="GB">1234567890</TIN>
-             |            <TIN issuedBy="GB">0987654321</TIN>
+             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
              |            <Address>
              |                <Street>value 1</Street>
              |                <BuildingIdentifier>value 2</BuildingIdentifier>
              |                <DistrictName>value 3</DistrictName>
              |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 5</City>
-             |                <Country>GB</Country>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
              |            </Address>
-             |            <EmailAddress>email@email.co.uk</EmailAddress>
+             |            <EmailAddress>email@email.com</EmailAddress>
              |            <ResCountryCode>GB</ResCountryCode>
              |            <ResCountryCode>FR</ResCountryCode>
              |        </Organisation>
@@ -126,16 +125,16 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
         "when arrangement is NOT MARKETABLE" in {
-        val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            None, None, None, None, None)))
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-          .set(ReporterSelectedAddressLookupPage, 0, addressLookupAddress).success.value
-          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
@@ -143,18 +142,19 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           s"""<RelevantTaxpayer>
              |    <ID>
              |        <Organisation>
-             |            <OrganisationName>Reporter name</OrganisationName>
-             |            <TIN issuedBy="GB">1234567890</TIN>
-             |            <TIN issuedBy="GB">0987654321</TIN>
+             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
              |            <Address>
              |                <Street>value 1</Street>
              |                <BuildingIdentifier>value 2</BuildingIdentifier>
              |                <DistrictName>value 3</DistrictName>
              |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 5</City>
-             |                <Country>GB</Country>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
              |            </Address>
-             |            <EmailAddress>email@email.co.uk</EmailAddress>
+             |            <EmailAddress>email@email.com</EmailAddress>
              |            <ResCountryCode>GB</ResCountryCode>
              |            <ResCountryCode>FR</ResCountryCode>
              |        </Organisation>
@@ -166,19 +166,16 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
         "on 'reporter/organisation-or-individual page" in {
-        val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
+
+        val reporterDetails = ReporterDetails(
+          Some(individual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            None, None, None, None, Some(today))))
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterIndividualNamePage, 0, individualName).success.value
-          .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.of(1990, 1, 1)).success.value
-          .set(ReporterIndividualPlaceOfBirthPage, 0, "SomePlace").success.value
-          .set(ReporterSelectedAddressLookupPage, 0, addressLookupAddress).success.value
-          .set(ReporterIndividualEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val result = RelevantTaxPayersXMLSection.buildReporterAsTaxpayer(userAnswers, 0)
 
@@ -192,17 +189,18 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |            </IndividualName>
              |            <BirthDate>1990-01-01</BirthDate>
              |            <BirthPlace>SomePlace</BirthPlace>
-             |            <TIN issuedBy="GB">1234567890</TIN>
-             |            <TIN issuedBy="GB">0987654321</TIN>
+             |            <TIN issuedBy="GB">UTR1234</TIN>
+             |            <TIN issuedBy="FR">CS700100A</TIN>
+             |            <TIN issuedBy="FR">UTR5678</TIN>
              |            <Address>
              |                <Street>value 1</Street>
              |                <BuildingIdentifier>value 2</BuildingIdentifier>
              |                <DistrictName>value 3</DistrictName>
              |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 5</City>
-             |                <Country>GB</Country>
+             |                <City>value 4</City>
+             |                <Country>FR</Country>
              |            </Address>
-             |            <EmailAddress>email@email.co.uk</EmailAddress>
+             |            <EmailAddress>email@email.com</EmailAddress>
              |            <ResCountryCode>GB</ResCountryCode>
              |            <ResCountryCode>FR</ResCountryCode>
              |        </Individual>
@@ -229,18 +227,16 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with additional taxpayers as organisations" in {
 
+        val reporterDetails = ReporterDetails(
+          Some(individual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterIndividualNamePage, 0, individualName).success.value
-          .set(ReporterIndividualDateOfBirthPage, 0, individualDOB).success.value
-          .set(ReporterIndividualPlaceOfBirthPage, 0, "SomePlace").success.value
-          .set(ReporterIndividualAddressPage, 0, address).success.value
-          .set(ReporterIndividualEmailAddressPage, 0, "email@email.com").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
           .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -253,8 +249,9 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                </IndividualName>
              |                <BirthDate>1990-01-01</BirthDate>
              |                <BirthPlace>SomePlace</BirthPlace>
-             |                <TIN issuedBy="GB">1234567890</TIN>
-             |                <TIN issuedBy="GB">0987654321</TIN>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
              |                <Address>
              |                    <Street>value 1</Street>
              |                    <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -326,25 +323,26 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
         " with additional taxpayers as organisations" in {
 
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-          .set(ReporterOrganisationAddressPage, 0, address).success.value
-          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
           .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
-             |                <OrganisationName>Reporter name</OrganisationName>
-             |                <TIN issuedBy="GB">1234567890</TIN>
-             |                <TIN issuedBy="GB">0987654321</TIN>
+             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
              |                <Address>
              |                    <Street>value 1</Street>
              |                    <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -353,7 +351,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                    <City>value 4</City>
              |                    <Country>FR</Country>
              |                </Address>
-             |                <EmailAddress>email@email.co.uk</EmailAddress>
+             |                <EmailAddress>email@email.com</EmailAddress>
              |                <ResCountryCode>GB</ResCountryCode>
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
@@ -415,18 +413,16 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with additional taxpayers as Individuals" in {
 
+        val reporterDetails = ReporterDetails(
+          Some(individual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterIndividualNamePage, 0, Name("Reporter", "Name")).success.value
-          .set(ReporterIndividualDateOfBirthPage, 0, individualDOB).success.value
-          .set(ReporterIndividualPlaceOfBirthPage, 0, "SomePlace").success.value
-          .set(ReporterIndividualAddressPage, 0, address).success.value
-          .set(ReporterIndividualEmailAddressPage, 0, "email@email.com").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
           .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -434,13 +430,14 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |        <ID>
              |            <Individual>
              |                <IndividualName>
-             |                    <FirstName>Reporter</FirstName>
-             |                    <LastName>Name</LastName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
              |                </IndividualName>
              |                <BirthDate>1990-01-01</BirthDate>
              |                <BirthPlace>SomePlace</BirthPlace>
-             |                <TIN issuedBy="GB">1234567890</TIN>
-             |                <TIN issuedBy="GB">0987654321</TIN>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
              |                <Address>
              |                    <Street>value 1</Street>
              |                    <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -522,25 +519,26 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation " +
         "with additional taxpayers as Individuals" in {
 
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
-          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, today).success.value
-          .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-          .set(ReporterOrganisationAddressPage, 0, address).success.value
-          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
           .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
-             |                <OrganisationName>Reporter name</OrganisationName>
-             |                <TIN issuedBy="GB">1234567890</TIN>
-             |                <TIN issuedBy="GB">0987654321</TIN>
+             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
              |                <Address>
              |                    <Street>value 1</Street>
              |                    <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -549,7 +547,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                    <City>value 4</City>
              |                    <Country>FR</Country>
              |                </Address>
-             |                <EmailAddress>email@email.co.uk</EmailAddress>
+             |                <EmailAddress>email@email.com</EmailAddress>
              |                <ResCountryCode>GB</ResCountryCode>
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
