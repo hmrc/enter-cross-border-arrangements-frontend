@@ -22,7 +22,6 @@ import base.SpecBase
 import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.hallmarks.{HallmarkD, HallmarkDetails}
 import models.{UnsubmittedDisclosure, UserAnswers}
-import pages.GiveDetailsOfThisArrangementPage
 import pages.arrangement._
 import pages.hallmarks.{HallmarkDPage, HallmarkDetailsPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -48,39 +47,13 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
   "DisclosureInformationXMLSection" - {
 
-    "buildImplementingDate must build the implementing date Elem" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildImplementingDate(userAnswers, 0)
-
-      val expected = s"<ImplementingDate>$today</ImplementingDate>"
-
-      prettyPrinter.format(result) mustBe expected
-    }
-
-    "buildImplementingDate must throw an exception if date is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildImplementingDate(
-          UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
-          0
-        )
-      }
-    }
-
     "buildReason must build the optional reason section if reason is known" in {
 
       val arrangementDetails = mockArrangementDetails.copy(
         reportingReason = Some(WhyAreYouReportingThisArrangementNow.Dac6703.toString)
       )
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, arrangementDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildReason(userAnswers, 0)
+      val result = DisclosureInformationXMLSection.buildReason(arrangementDetails)
 
       val expected = "<Reason>DAC6703</Reason>"
 
@@ -93,22 +66,14 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         reportingReason = None
       )
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, arrangementDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildReason(userAnswers, 0)
+      val result = DisclosureInformationXMLSection.buildReason(arrangementDetails)
 
       prettyPrinter.formatNodes(result) mustBe ""
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildDisclosureInformationSummary(userAnswers, 0)
+      val result = DisclosureInformationXMLSection.buildDisclosureInformationSummary(mockArrangementDetails)
 
       val expected =
       """<Summary>
@@ -119,76 +84,18 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       prettyPrinter.format(result) mustBe expected
     }
 
-    "buildDisclosureInformationSummary must throw an exception if arrangement name is missing" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
-
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildDisclosureInformationSummary(userAnswers, 0)
-      }
-    }
-
-    "buildDisclosureInformationSummary must throw an exception if disclosure description is missing" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
-
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildDisclosureInformationSummary(userAnswers, 0)
-      }
-    }
-
     "buildNationalProvision must build the national provision section" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
-      val result = DisclosureInformationXMLSection.buildNationalProvision(userAnswers, 0)
+      val result = DisclosureInformationXMLSection.buildNationalProvision(mockArrangementDetails)
 
       val expected = "<NationalProvision>nationalProvisions</NationalProvision>"
 
       prettyPrinter.formatNodes(result) mustBe expected
     }
 
-    "buildNationalProvision must throw an exception if national provision is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildNationalProvision(
-          UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
-          0
-        )
-      }
-    }
-
-    "buildAmountType must build the national provision section" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildAmountType(userAnswers, 0)
-
-      val expected = """<Amount currCode="GBP">1000</Amount>""".stripMargin
-
-      prettyPrinter.format(result) mustBe expected
-    }
-
-    "buildAmountType must throw an exception if national provision is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildAmountType(
-          UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
-          0
-        )
-      }
-    }
-
     "buildConcernedMS must build the full ConcernedMS section" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
-      val result = DisclosureInformationXMLSection.buildConcernedMS(userAnswers, 0)
+      val result = DisclosureInformationXMLSection.buildConcernedMS(mockArrangementDetails)
 
       val expected =
         """<ConcernedMSs>
@@ -199,9 +106,28 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       prettyPrinter.format(result) mustBe expected
     }
 
-    "buildConcernedMS must throw an exception if countries are missing" in {
+    "buildArrangementDetails must build the sections from the ArrangementDetails model" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
+
+      val result = DisclosureInformationXMLSection.buildArrangementDetails(userAnswers, 0)
+
+      val expected =
+        s"""<ImplementingDate>$today</ImplementingDate><Reason>DAC6703</Reason><Summary>
+          |    <Disclosure_Name>name</Disclosure_Name>
+          |    <Disclosure_Description>arrangementDetails</Disclosure_Description>
+          |</Summary><NationalProvision>nationalProvisions</NationalProvision><Amount currCode="GBP">1000</Amount><ConcernedMSs>
+          |    <ConcernedMS>GB</ConcernedMS>
+          |    <ConcernedMS>FR</ConcernedMS>
+          |</ConcernedMSs>""".stripMargin
+
+      prettyPrinter.formatNodes(result) mustBe expected
+    }
+
+    "buildArrangementDetails must throw an exception if ArrangementDetails is missing" in {
       assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildConcernedMS(
+        DisclosureInformationXMLSection.buildArrangementDetails(
           UserAnswers(userAnswersId)
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
           0

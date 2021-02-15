@@ -17,6 +17,7 @@
 package helpers.xml
 
 import models.UserAnswers
+import models.arrangement.ArrangementDetails
 import pages.arrangement._
 import pages.hallmarks.HallmarkDetailsPage
 
@@ -25,69 +26,45 @@ import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers, id: Int): Elem = {
+  private[xml] def buildReason(arrangementDetails: ArrangementDetails): NodeSeq = {
+    arrangementDetails.reportingReason.fold(NodeSeq.Empty)(
+      reason =>  <Reason>{reason.toUpperCase}</Reason>
+    )
+  }
 
-    userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) => <ImplementingDate>{arrangementDetails.implementationDate}</ImplementingDate>
-      case None => throw new Exception("Missing disclosure information implementing date")
+  private[xml] def buildDisclosureInformationSummary(arrangementDetails: ArrangementDetails): Elem = {
+    <Summary>
+      <Disclosure_Name>{arrangementDetails.arrangementName}</Disclosure_Name>
+      {arrangementDetails.arrangementDetails.grouped(4000).toList.map(string =>
+      <Disclosure_Description>{string}</Disclosure_Description>)}
+    </Summary>
+  }
+
+  private[xml] def buildNationalProvision(arrangementDetails: ArrangementDetails): NodeSeq = {
+    arrangementDetails.nationalProvisionDetails.grouped(4000).toList.map { string =>
+      <NationalProvision>{string}</NationalProvision>
     }
   }
 
-  private[xml] def buildReason(userAnswers: UserAnswers, id: Int): NodeSeq = {
-
-    userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) =>
-        arrangementDetails.reportingReason.fold(NodeSeq.Empty)(
-          reason =>  <Reason>{reason.toUpperCase}</Reason>
-        )
-      case _ => throw new Exception("Unable to construct XML from arrangement details reporting reason")
-    }
+  private[xml] def buildConcernedMS(arrangementDetails: ArrangementDetails): Elem = {
+    <ConcernedMSs>
+      {arrangementDetails.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}
+    </ConcernedMSs>
   }
 
-  private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers, id: Int): Elem = {
-
+  private[xml] def buildArrangementDetails(userAnswers: UserAnswers, id: Int): NodeSeq = {
     userAnswers.get(ArrangementDetailsPage, id) match {
       case Some(arrangementDetails) =>
-        <Summary>
-          <Disclosure_Name>{arrangementDetails.arrangementName}</Disclosure_Name>
-          {arrangementDetails.arrangementDetails.grouped(4000).toList.map(string =>
-          <Disclosure_Description>{string}</Disclosure_Description>)}
-        </Summary>
-
-      case _ => throw new Exception("Unable to construct XML from arrangement details description")
+        val nodeBuffer = new xml.NodeBuffer
+        nodeBuffer ++
+          <ImplementingDate>{arrangementDetails.implementationDate}</ImplementingDate> ++
+          buildReason(arrangementDetails) ++
+          buildDisclosureInformationSummary(arrangementDetails) ++
+          buildNationalProvision(arrangementDetails) ++
+          <Amount currCode={arrangementDetails.expectedValue.currency}>{arrangementDetails.expectedValue.amount}</Amount> ++
+          buildConcernedMS(arrangementDetails)
+      case None => throw new Exception("Unable to construct XML from arrangement details")
     }
-  }
-
-  private[xml] def buildNationalProvision(userAnswers: UserAnswers, id: Int): NodeSeq = {
-
-    userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) =>
-        arrangementDetails.nationalProvisionDetails.grouped(4000).toList.map(string =>
-        <NationalProvision>{string}</NationalProvision>)
-
-      case _ => throw new Exception("Unable to construct XML from arrangement details national provisions")
-    }
-  }
-
-  private[xml] def buildAmountType(userAnswers: UserAnswers, id: Int): Elem = {
-
-    userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) =>
-        <Amount currCode={arrangementDetails.expectedValue.currency}>{arrangementDetails.expectedValue.amount}</Amount>
-      case _ => throw new Exception("Unable to construct XML from arrangement details expected value")
-    }
-  }
-
-  private[xml] def buildConcernedMS(userAnswers: UserAnswers, id: Int): Elem = {
-
-    val mandatoryConcernedMS = userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) =>
-        arrangementDetails.countriesInvolved.map {
-          country => <ConcernedMS>{country}</ConcernedMS>
-        }
-      case _ => throw new Exception("Unable to construct ConcernedMs XML from arrangement details concerned countries")
-    }
-    <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
   private[xml] def buildHallmarks(userAnswers: UserAnswers, id: Int): Elem = {
@@ -113,12 +90,7 @@ object DisclosureInformationXMLSection extends XMLBuilder {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>
-        {buildImplementingDate(userAnswers, id)}
-        {buildReason(userAnswers, id)}
-        {buildDisclosureInformationSummary(userAnswers, id)}
-        {buildNationalProvision(userAnswers, id)}
-        {buildAmountType(userAnswers, id)}
-        {buildConcernedMS(userAnswers, id)}
+        {buildArrangementDetails(userAnswers, id)}
         <MainBenefitTest1>false</MainBenefitTest1>
         {buildHallmarks(userAnswers, id)}
       </DisclosureInformation>
