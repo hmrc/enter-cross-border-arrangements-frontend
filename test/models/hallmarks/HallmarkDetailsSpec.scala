@@ -44,11 +44,11 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
             .success.value
-            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D2").toSet)
+            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D2").toSet)
             .success.value
 
         val expected = HallmarkDetails(
-          hallmarkType = List("D2"),
+          hallmarkType = List("DAC6D2"),
           hallmarkContent = None
         )
 
@@ -64,7 +64,7 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
             .success.value
-            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet)
+            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
             .success.value
             .set(HallmarkD1Page, 0, hallmarkD1parts)
             .success.value
@@ -85,7 +85,7 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
             .success.value
-            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet)
+            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
             .success.value
             .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
             .success.value
@@ -116,7 +116,7 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
             .success.value
 
         val expected = HallmarkDetails(
-          hallmarkType = List("DAC6D1Other", "DAC6D1a", "DAC6D1b", "DAC6D1c", "DAC6D1d", "DAC6D1e", "DAC6D1f", "D2"),
+          hallmarkType = List("DAC6D1Other", "DAC6D1a", "DAC6D1b", "DAC6D1c", "DAC6D1d", "DAC6D1e", "DAC6D1f", "DAC6D2"),
           hallmarkContent = Some("test")
         )
 
@@ -131,7 +131,7 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
             .success.value
-            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet)
+            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
             .success.value
             .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
             .success.value
@@ -149,7 +149,7 @@ class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
             .success.value
-            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet)
+            .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
             .success.value
 
         val ex = intercept[Exception] {

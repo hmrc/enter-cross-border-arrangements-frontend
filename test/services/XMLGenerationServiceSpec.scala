@@ -132,7 +132,7 @@ class XMLGenerationServiceSpec extends SpecBase {
     "buildHeader must throw an exception if disclosure name is missing" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet).success.value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet).success.value
 
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)

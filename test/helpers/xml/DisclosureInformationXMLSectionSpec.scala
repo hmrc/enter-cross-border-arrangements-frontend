@@ -273,7 +273,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     "buildHallmarks must throw an exception if HallmarkD1 is missing and it was selected" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("D1").toSet).success.value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet).success.value
 
       assertThrows[Exception] {
         DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
