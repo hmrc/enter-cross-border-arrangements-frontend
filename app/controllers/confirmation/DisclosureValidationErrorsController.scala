@@ -17,6 +17,7 @@
 package controllers.confirmation
 
 import controllers.actions._
+import org.slf4j.LoggerFactory
 import pages.ValidationErrorsPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
@@ -38,18 +39,13 @@ class DisclosureValidationErrorsController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val keyList = request.userAnswers.get(ValidationErrorsPage, id) match {
-        case Some(keys) => keys
-        case _ => Seq( // TODO remove test keys and throw exception
-          "businessrules.initialDisclosure.needRelevantTaxPayer"
-          , "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates"
-          , "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue"
-          , "any.other.key"
-        )
-      }
+      val keyList: Seq[String] = request.userAnswers.get(ValidationErrorsPage, id).filter(_.nonEmpty)
+        .getOrElse(throw new IllegalStateException("Unable to retrieve validation errors."))
 
       val json = Json.obj(
         "id" -> id,
@@ -62,8 +58,8 @@ class DisclosureValidationErrorsController @Inject()(
   def toTableRows(keys: Seq[String], mapKey: String => Option[String] = keyMapper)(implicit messages: Messages) : Seq[Seq[JsValue]] = {
 
     for {
-      (key, index)   <- keys.zipWithIndex
-      error <- mapKey(key)
+      (key, index) <- keys.zipWithIndex
+      error        <- mapKey(key)
     } yield {
       Seq(
         Json.toJson(Cell(
@@ -81,7 +77,7 @@ class DisclosureValidationErrorsController @Inject()(
   }
 
   val keyMapper: String => Option[String] =
-    Option(_).collect {
+    Option(_).map {
       case "businessrules.initialDisclosure.needRelevantTaxPayer" =>
         """As this arrangement is not marketable, it must have at least one relevant taxpayer.
           |If you are a relevant taxpayer, confirm this in your reporter’s details.
@@ -89,6 +85,9 @@ class DisclosureValidationErrorsController @Inject()(
       case "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates"
            | "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" =>
         """As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""
+      case key =>
+        logger.error(s"Unmapped error key: $key.")
+        throw new IllegalStateException(s"Unmapped error key: $key.")
     }
 
 }

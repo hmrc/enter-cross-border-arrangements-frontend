@@ -109,7 +109,7 @@ class DisclosureDetailsController @Inject()(
         error => {
           // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
           logger.error("""Xml generation failed before validation: """.stripMargin, error)
-          Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(id).url))
+          throw error
         },
         xml => {
           //send it off to be validated and business rules

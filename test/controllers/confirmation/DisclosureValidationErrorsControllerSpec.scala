@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSugar {
 
-  val errors = Seq("Error 1", "Error 2")
+  val errors = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
   lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
 
   "DisclosureValidationErrors Controller" - {
@@ -53,7 +53,6 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
           Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates.""")
         , "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" ->
           Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""  )
-        , "any.other.key" -> None
       )
 
       keysToErrors.keys.foreach { key =>
@@ -68,9 +67,9 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
       val rows: Seq[String] = controller.toTableRows(errors, Option(_)).flatten.map(_.toString)
 
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_0"}}""")
-      rows must contain("""{"html":"Error 1","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}""")
+      rows must contain("""{"html":"businessrules.initialDisclosure.needRelevantTaxPayer","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}""")
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_1"}}""")
-      rows must contain("""{"html":"Error 2","classes":"govuk-table__cell","attributes":{"id":"errorMessage_1"}}""")
+      rows must contain("""{"html":"businessrules.initialDisclosureMA.missingRelevantTaxPayerDates","classes":"govuk-table__cell","attributes":{"id":"errorMessage_1"}}""")
     }
 
     "must return OK and the correct view for a GET" in {
@@ -101,6 +100,56 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
 
       templateCaptor.getValue mustEqual "confirmation/validationErrors.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must throw exception when keys are empty for a GET" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(ValidationErrorsPage, 0, Seq())
+        .success.value
+
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, disclosureValidationErrorsRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      an[Exception] mustBe thrownBy {
+        status(result) mustEqual OK
+      }
+
+      application.stop()
+    }
+
+    "must throw exception when key is unknown or invalid for a GET" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(ValidationErrorsPage, 0, Seq("unknown"))
+        .success.value
+
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, disclosureValidationErrorsRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      an[Exception] mustBe thrownBy {
+        status(result) mustEqual OK
+      }
 
       application.stop()
     }
