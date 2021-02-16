@@ -325,7 +325,7 @@ selectAddress.heading = What is {0}’s main address?
 selectAddress.individual.heading = What is {0}’s address?
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter the address manually
-selectAddress.checkYourAnswersLabel = What is {0}’s main address??
+selectAddress.checkYourAnswersLabel = What is {0}’s main address?
 selectAddress.error.required = Select address
 
 individualName.title = What is their name?
@@ -612,6 +612,7 @@ arrangementCheckYourAnswers.heading = Check your answers
 updateTaxpayer.title = Your taxpayers
 updateTaxpayer.heading = You have not added any taxpayers
 updateTaxpayer.h2 = Do you want to add a taxpayer?
+updateTaxpayer.h3 = Do you want to add another taxpayer?
 updateTaxpayer.now = Yes, add now
 updateTaxpayer.later = Yes, add later
 updateTaxpayer.no = No
@@ -621,7 +622,8 @@ updateTaxpayer.plural = taxpayers
 updateTaxpayer.emptyList = You have not added any taxpayers
 
 youHaveNotAddedAnyAssociatedEnterprises.title = Your associated enterprises
-youHaveNotAddedAnyAssociatedEnterprises.heading = Do any of the taxpayers for this arrangement have any associated enterprises?
+youHaveNotAddedAnyAssociatedEnterprises.heading.1 = Do any of the taxpayers for this arrangement have any associated enterprises?
+youHaveNotAddedAnyAssociatedEnterprises.heading.2 = Do you need to add another associated enterprise?
 youHaveNotAddedAnyAssociatedEnterprises.singular = associated enterprise
 youHaveNotAddedAnyAssociatedEnterprises.plural = associated enterprises
 youHaveNotAddedAnyAssociatedEnterprises.emptyList = You have not added any associated enterprises
@@ -708,7 +710,8 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a va
 whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a valid date
 
 youHaveNotAddedAnyIntermediaries.title = Your intermediaries
-youHaveNotAddedAnyIntermediaries.subHeading = Does this arrangement involve any intermediaries?
+youHaveNotAddedAnyIntermediaries.subHeading.1 = Does this arrangement involve any intermediaries?
+youHaveNotAddedAnyIntermediaries.subHeading.2 = Do you need to add another intermediary?
 youHaveNotAddedAnyIntermediaries.emptyList = You have not added any intermediaries
 youHaveNotAddedAnyIntermediaries.singular = intermediary
 youHaveNotAddedAnyIntermediaries.plural = intermediaries
@@ -720,7 +723,8 @@ youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Intermediaries
 youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an intermediary now, later or not at all
 
 youHaveNotAddedAnyAffected.title = Other affected parties
-youHaveNotAddedAnyAffected.subHeading = Does this arrangement affect any parties?
+youHaveNotAddedAnyAffected.subHeading.1 = Does this arrangement affect any other parties?
+youHaveNotAddedAnyAffected.subHeading.2 = Do you need to add another?
 youHaveNotAddedAnyAffected.emptyList = You have not added any other parties affected by this arrangement
 youHaveNotAddedAnyAffected.singular = party affected by this arrangement
 youHaveNotAddedAnyAffected.plural = parties affected by this arrangement

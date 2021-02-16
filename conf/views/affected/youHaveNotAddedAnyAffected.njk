@@ -41,7 +41,7 @@
               name: 'value',
               fieldset: {
                   legend: {
-                  text: messages('youHaveNotAddedAnyAffected.subHeading'),
+                  text: messages('youHaveNotAddedAnyAffected.subHeading.1')  if affectedList | length == 0 else messages('youHaveNotAddedAnyAffected.subHeading.2') ,
                   isPageHeading: false,
                   classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
               }
