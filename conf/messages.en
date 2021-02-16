@@ -723,7 +723,7 @@ youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Intermediaries
 youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an intermediary now, later or not at all
 
 youHaveNotAddedAnyAffected.title = Other affected parties
-youHaveNotAddedAnyAffected.subHeading.1 = Does this arrangement affect any parties?
+youHaveNotAddedAnyAffected.subHeading.1 = Does this arrangement affect any other parties?
 youHaveNotAddedAnyAffected.subHeading.2 = Do you need to add another?
 youHaveNotAddedAnyAffected.emptyList = You have not added any other parties affected by this arrangement
 youHaveNotAddedAnyAffected.singular = party affected by this arrangement
