@@ -17,6 +17,7 @@
 package helpers.xml
 
 import models.UserAnswers
+import models.reporter.RoleInArrangement
 import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 
@@ -29,27 +30,31 @@ object RelevantTaxPayersXMLSection extends XMLBuilder {
 
     userAnswers.get(ReporterDetailsPage, id) match {
       case Some(reporterDetails) =>
-
         val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.implementingDate.fold(NodeSeq.Empty)(
           date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
         ))
 
-        if (reporterDetails.organisation.isDefined) {
-          <RelevantTaxpayer>
-            {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
-            {implementingDate}
-          </RelevantTaxpayer>
-        } else {
-          <RelevantTaxpayer>
-            {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
-            {implementingDate}
-          </RelevantTaxpayer>
-        }
+        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
+          case RoleInArrangement.Taxpayer.toString =>
+            if (reporterDetails.organisation.isDefined) {
+              <RelevantTaxpayer>
+                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+                {implementingDate}
+              </RelevantTaxpayer>
+            } else {
+              <RelevantTaxpayer>
+                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+                {implementingDate}
+              </RelevantTaxpayer>
+            }
+          case _ => NodeSeq.Empty
+        })
+
       case _ => NodeSeq.Empty
     }
   }
 
-  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers, id: Int) = {
+  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers, id: Int): NodeSeq = {
     userAnswers.get(TaxpayerLoopPage, id) match {
       case Some(taxpayers) =>
         taxpayers.map {

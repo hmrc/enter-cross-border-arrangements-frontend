@@ -74,11 +74,18 @@ object DisclosingXMLSection extends XMLBuilder {
       case Some(liability) =>
         liability.nationalExemption match {
           case Some(true) =>
+            val countryExemptions =
+              if (liability.exemptCountries.isDefined && liability.exemptCountries.get.nonEmpty) {
+                <CountryExemptions>
+                  {liability.exemptCountries.get.map(country => <CountryExemption>{country}</CountryExemption>)}
+                </CountryExemptions>
+            } else {
+              NodeSeq.Empty
+            }
+
             <NationalExemption>
               <Exemption>true</Exemption>
-              <CountryExemptions>
-                {liability.exemptCountries.fold(NodeSeq.Empty)(countries => countries.map(country => <CountryExemption>{country}</CountryExemption>))}
-              </CountryExemptions>
+              {countryExemptions}
             </NationalExemption>
 
           case Some(false) =>

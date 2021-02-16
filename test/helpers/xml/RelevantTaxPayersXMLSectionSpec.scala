@@ -86,7 +86,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val reporterDetails = ReporterDetails(
           None,
           Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
 
 
@@ -129,7 +129,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val reporterDetails = ReporterDetails(
           None,
           Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, None)))
 
         val userAnswers = UserAnswers(userAnswersId)
@@ -170,7 +170,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val reporterDetails = ReporterDetails(
           Some(individual),
           None,
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
 
         val userAnswers = UserAnswers(userAnswersId)
