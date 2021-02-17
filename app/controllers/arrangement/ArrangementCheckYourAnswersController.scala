@@ -19,10 +19,11 @@ package controllers.arrangement
 import controllers.actions._
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import javax.inject.Inject
+import models.arrangement.ArrangementDetails
 import models.hallmarks.JourneyStatus
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForArrangement
-import pages.arrangement.{ArrangementCheckYourAnswersPage, ArrangementStatusPage}
+import pages.arrangement.{ArrangementCheckYourAnswersPage, ArrangementDetailsPage, ArrangementStatusPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,11 +66,13 @@ class ArrangementCheckYourAnswersController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       for {
-        userAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(ArrangementStatusPage, id, JourneyStatus.Completed))
+        arrangementModel <- Future.fromTry(request.userAnswers.set(ArrangementDetailsPage, id,
+          ArrangementDetails.buildArrangementDetails(request.userAnswers, id)))
+        userAnswers: UserAnswers <- Future.fromTry(arrangementModel.set(ArrangementStatusPage, id, JourneyStatus.Completed))
         _ <- sessionRepository.set(userAnswers)
       } yield
         Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
-
   }
 }

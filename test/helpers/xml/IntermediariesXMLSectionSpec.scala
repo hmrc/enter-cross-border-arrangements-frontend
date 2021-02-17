@@ -17,21 +17,19 @@
 package helpers.xml
 
 import java.time.LocalDate
+
 import base.SpecBase
 import models.IsExemptionKnown.Yes
+import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.{Promoter, Serviceprovider}
 import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
-import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
-import pages.disclosure.DisclosureDetailsPage
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.intermediaries.IntermediaryLoopPage
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
-import pages.reporter.intermediary._
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter.ReporterDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import scala.xml.PrettyPrinter
@@ -51,8 +49,8 @@ class IntermediariesXMLSectionSpec extends SpecBase {
     )
 
   val taxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
-    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
+    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR000", None, None))),
+    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("FR000", None, None)))
   )
 
   val loopDetails = IndexedSeq(
@@ -60,9 +58,13 @@ class IntermediariesXMLSectionSpec extends SpecBase {
       Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
     LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
 
-  val organisation: Organisation = Organisation("Intermediaries Ltd", Some(address), Some("email@email.com"), taxResidencies)
+  val organisation: Organisation = Organisation("Reporter Name", Some(address), Some("email@email.com"), taxResidencies)
 
   val exemptCountry: Set[ExemptCountries] = ExemptCountries.enumerable.withName("FR").toSet
+
+  val individualName: Name = Name("Reporter", "Name")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
+  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some("email@email.com"), taxResidencies)
 
   val intermediary: Intermediary = Intermediary("123", None, Some(organisation),
     WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)
@@ -158,19 +160,17 @@ class IntermediariesXMLSectionSpec extends SpecBase {
     "must build intermediary section from REPORTER DETAILS for an ORGANISATION as an INTERMEDIARY " +
       "who is a PROMOTER with KNOWN country EXEMPTION in FRANCE" in {
 
+      val reporterDetails = ReporterDetails(
+        None,
+        Some(organisation),
+        Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+          Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+          Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-        .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-        .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter).success.value
-        .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.TaxResidentUK).success.value
-        .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
-        .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes).success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet).success.value
-        .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-        .set(ReporterOrganisationAddressPage, 0, address).success.value
-        .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-        .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+        .set(ReporterDetailsPage, 0, reporterDetails).success.value
+
 
       val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers, 0)
 
@@ -178,9 +178,9 @@ class IntermediariesXMLSectionSpec extends SpecBase {
         """<Intermediary>
           |    <ID>
           |        <Organisation>
-          |            <OrganisationName>Reporter name</OrganisationName>
-          |            <TIN issuedBy="GB">1234567890</TIN>
-          |            <TIN issuedBy="GB">0987654321</TIN>
+          |            <OrganisationName>Reporter Name</OrganisationName>
+          |            <TIN issuedBy="GB">UTR000</TIN>
+          |            <TIN issuedBy="FR">FR000</TIN>
           |            <Address>
           |                <Street>value 1</Street>
           |                <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -189,7 +189,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
           |                <City>value 4</City>
           |                <Country>FR</Country>
           |            </Address>
-          |            <EmailAddress>email@email.co.uk</EmailAddress>
+          |            <EmailAddress>email@email.com</EmailAddress>
           |            <ResCountryCode>GB</ResCountryCode>
           |            <ResCountryCode>FR</ResCountryCode>
           |        </Organisation>
@@ -208,23 +208,17 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
     "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
       "who is a SERVICE PROVIDER with KNOWN country EXEMPTION in FRANCE" in {
-      val addressLookupAddress = AddressLookup(Some("value 1"), Some("value 2"), Some("value 3"), None, "value 5", None, "XX9 9XX")
+
+      val reporterDetails = ReporterDetails(
+        Some(individual),
+        None,
+        Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+          Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+          Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual).success.value
-        .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-        .set(IntermediaryRolePage, 0, IntermediaryRole.ServiceProvider).success.value
-        .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.TaxResidentUK).success.value
-        .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
-        .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes).success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet).success.value
-        .set(ReporterIndividualNamePage, 0, Name("FirstName", "Surname")).success.value
-        .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.of(1990, 1, 1)).success.value
-        .set(ReporterIndividualPlaceOfBirthPage, 0, "SomePlace").success.value
-        .set(ReporterSelectedAddressLookupPage, 0, addressLookupAddress).success.value
-        .set(ReporterIndividualEmailAddressPage, 0, "email@email.co.uk").success.value
-        .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
+        .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
       val result = IntermediariesXMLSection.buildReporterAsIntermediary(userAnswers, 0)
 
@@ -233,22 +227,22 @@ class IntermediariesXMLSectionSpec extends SpecBase {
            |    <ID>
            |        <Individual>
            |            <IndividualName>
-           |                <FirstName>FirstName</FirstName>
-           |                <LastName>Surname</LastName>
+           |                <FirstName>Reporter</FirstName>
+           |                <LastName>Name</LastName>
            |            </IndividualName>
            |            <BirthDate>1990-01-01</BirthDate>
            |            <BirthPlace>SomePlace</BirthPlace>
-           |            <TIN issuedBy="GB">1234567890</TIN>
-           |            <TIN issuedBy="GB">0987654321</TIN>
+           |            <TIN issuedBy="GB">UTR000</TIN>
+           |            <TIN issuedBy="FR">FR000</TIN>
            |            <Address>
            |                <Street>value 1</Street>
            |                <BuildingIdentifier>value 2</BuildingIdentifier>
            |                <DistrictName>value 3</DistrictName>
            |                <PostCode>XX9 9XX</PostCode>
-           |                <City>value 5</City>
-           |                <Country>GB</Country>
+           |                <City>value 4</City>
+           |                <Country>FR</Country>
            |            </Address>
-           |            <EmailAddress>email@email.co.uk</EmailAddress>
+           |            <EmailAddress>email@email.com</EmailAddress>
            |            <ResCountryCode>GB</ResCountryCode>
            |            <ResCountryCode>FR</ResCountryCode>
            |        </Individual>
@@ -270,29 +264,26 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build intermediary section from REPORTER DETAILS JOURNEY & INTERMEDIARIES JOURNEY" in {
 
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
+            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+            Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
+
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-          .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter).success.value
-          .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.TaxResidentUK).success.value
-          .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
-          .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes).success.value
-          .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet).success.value
-          .set(ReporterOrganisationNamePage, 0, "Reporter name").success.value
-          .set(ReporterOrganisationAddressPage, 0, address).success.value
-          .set(ReporterOrganisationEmailAddressPage, 0, "email@email.co.uk").success.value
-          .set(ReporterTaxResidencyLoopPage, 0, loopDetails).success.value
           .set(IntermediaryLoopPage, 0, intermediaryLoop).success.value
+          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Intermediaries>
             |    <Intermediary>
             |        <ID>
             |            <Organisation>
-            |                <OrganisationName>Reporter name</OrganisationName>
-            |                <TIN issuedBy="GB">1234567890</TIN>
-            |                <TIN issuedBy="GB">0987654321</TIN>
+            |                <OrganisationName>Reporter Name</OrganisationName>
+            |                <TIN issuedBy="GB">UTR000</TIN>
+            |                <TIN issuedBy="FR">FR000</TIN>
             |                <Address>
             |                    <Street>value 1</Street>
             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
@@ -301,7 +292,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |                    <City>value 4</City>
             |                    <Country>FR</Country>
             |                </Address>
-            |                <EmailAddress>email@email.co.uk</EmailAddress>
+            |                <EmailAddress>email@email.com</EmailAddress>
             |                <ResCountryCode>GB</ResCountryCode>
             |                <ResCountryCode>FR</ResCountryCode>
             |            </Organisation>
@@ -317,10 +308,9 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    <Intermediary>
             |        <ID>
             |            <Organisation>
-            |                <OrganisationName>Intermediaries Ltd</OrganisationName>
-            |                <TIN issuedBy="GB">UTR1234</TIN>
-            |                <TIN issuedBy="FR">CS700100A</TIN>
-            |                <TIN issuedBy="FR">UTR5678</TIN>
+            |                <OrganisationName>Reporter Name</OrganisationName>
+            |                <TIN issuedBy="GB">UTR000</TIN>
+            |                <TIN issuedBy="FR">FR000</TIN>
             |                <Address>
             |                    <Street>value 1</Street>
             |                    <BuildingIdentifier>value 2</BuildingIdentifier>

@@ -55,6 +55,8 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      checkLoopDetailsContainsCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage)
+
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>

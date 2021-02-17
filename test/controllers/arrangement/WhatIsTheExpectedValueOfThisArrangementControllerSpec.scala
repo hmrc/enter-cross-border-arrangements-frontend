@@ -19,7 +19,7 @@ package controllers.arrangement
 import base.SpecBase
 import forms.arrangement.WhatIsTheExpectedValueOfThisArrangementFormProvider
 import matchers.JsonMatchers
-import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
+import models.arrangement.ExpectedArrangementValue
 import models.{Currency, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -90,7 +90,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(WhatIsTheExpectedValueOfThisArrangementPage,0,
-          WhatIsTheExpectedValueOfThisArrangement("ALL", 0))
+          ExpectedArrangementValue("ALL", 0))
         .success.value
 
 

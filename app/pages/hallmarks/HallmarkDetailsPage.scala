@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package models.arrangement
+package pages.hallmarks
 
-import play.api.libs.json._
+import models.hallmarks.HallmarkDetails
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class WhatIsTheExpectedValueOfThisArrangement (currency: String, amount: Int)
+case object HallmarkDetailsPage extends QuestionPage[HallmarkDetails] {
 
-object WhatIsTheExpectedValueOfThisArrangement {
-  implicit val format = Json.format[WhatIsTheExpectedValueOfThisArrangement]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "hallmarkDetails"
 }

@@ -17,143 +17,80 @@
 package helpers.xml
 
 import models.UserAnswers
-import models.hallmarks.HallmarkD.D1
-import models.hallmarks.HallmarkD1.D1other
+import models.arrangement.ArrangementDetails
 import pages.arrangement._
-import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+import pages.hallmarks.HallmarkDetailsPage
 
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosureInformationXMLSection extends XMLBuilder {
 
-  private[xml] def buildImplementingDate(userAnswers: UserAnswers, id: Int): Elem = {
-
-    userAnswers.get(WhatIsTheImplementationDatePage, id) match {
-      case Some(date) => <ImplementingDate>{date}</ImplementingDate>
-      case None => throw new Exception("Missing disclosure information implementing date")
-    }
+  private[xml] def buildReason(arrangementDetails: ArrangementDetails): NodeSeq = {
+    arrangementDetails.reportingReason.fold(NodeSeq.Empty)(
+      reason =>  <Reason>{reason.toUpperCase}</Reason>
+    )
   }
 
-  private[xml] def buildReason(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage, id) match {
-      case Some(true) =>
-        userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id)
-          .fold(NodeSeq.Empty)(reason => <Reason>{reason.toString.toUpperCase}</Reason>)
-      case _ => NodeSeq.Empty
-    }
-  }
-
-  private[xml] def buildDisclosureInformationSummary(userAnswers: UserAnswers, id: Int): Elem = {
-    val mandatoryDisclosureName: Elem = userAnswers.get(WhatIsThisArrangementCalledPage, id) match {
-      case Some(name) => <Disclosure_Name>{name}</Disclosure_Name>
-      case None => throw new Exception("Missing arrangement name when building DisclosureInformationSummary")
-    }
-
-    val mandatoryDisclosureDescription: NodeSeq = userAnswers.get(GiveDetailsOfThisArrangementPage, id) match {
-      case Some(description) =>
-        val splitString = description.grouped(4000).toList
-
-        splitString.map(string =>
-          <Disclosure_Description>{string}</Disclosure_Description>
-        )
-      case None => throw new Exception("Missing disclosure description when building DisclosureInformationSummary")
-    }
-
+  private[xml] def buildDisclosureInformationSummary(arrangementDetails: ArrangementDetails): Elem = {
     <Summary>
-      {mandatoryDisclosureName}
-      {mandatoryDisclosureDescription}
+      <Disclosure_Name>{arrangementDetails.arrangementName}</Disclosure_Name>
+      {arrangementDetails.arrangementDetails.grouped(4000).toList.map(string =>
+      <Disclosure_Description>{string}</Disclosure_Description>)}
     </Summary>
   }
 
-  private[xml] def buildNationalProvision(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) match {
-      case Some(nationalProvisions) =>
-        val splitString = nationalProvisions.grouped(4000).toList
-
-        splitString.map { string =>
-          <NationalProvision>{string}</NationalProvision>
-        }
-      case None => throw new Exception("Missing national provision in disclosure information")
+  private[xml] def buildNationalProvision(arrangementDetails: ArrangementDetails): NodeSeq = {
+    arrangementDetails.nationalProvisionDetails.grouped(4000).toList.map { string =>
+      <NationalProvision>{string}</NationalProvision>
     }
   }
 
-  private[xml] def buildAmountType(userAnswers: UserAnswers, id: Int): Elem = {
-    userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {
-      case Some(value) => <Amount currCode={value.currency}>{value.amount}</Amount>
-      case None => throw new Exception("Missing amount type in disclosure information")
-    }
+  private[xml] def buildConcernedMS(arrangementDetails: ArrangementDetails): Elem = {
+    <ConcernedMSs>
+      {arrangementDetails.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}
+    </ConcernedMSs>
   }
 
-  private[xml] def buildConcernedMS(userAnswers: UserAnswers, id: Int): Elem = {
-    val mandatoryConcernedMS: Set[Elem] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage, id) match {
-      case Some(countries) =>
-        countries.map {
-          country =>
-            <ConcernedMS>{country.toString}</ConcernedMS>
-        }
-      case None => throw new Exception("Missing countries when building ConcernedMS")
+  private[xml] def buildArrangementDetails(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(ArrangementDetailsPage, id) match {
+      case Some(arrangementDetails) =>
+        val nodeBuffer = new xml.NodeBuffer
+        nodeBuffer ++
+          <ImplementingDate>{arrangementDetails.implementationDate}</ImplementingDate> ++
+          buildReason(arrangementDetails) ++
+          buildDisclosureInformationSummary(arrangementDetails) ++
+          buildNationalProvision(arrangementDetails) ++
+          <Amount currCode={arrangementDetails.expectedValue.currency}>{arrangementDetails.expectedValue.amount}</Amount> ++
+          buildConcernedMS(arrangementDetails)
+      case None => throw new Exception("Unable to construct XML from arrangement details")
     }
-
-    <ConcernedMSs>{mandatoryConcernedMS}</ConcernedMSs>
   }
 
   private[xml] def buildHallmarks(userAnswers: UserAnswers, id: Int): Elem = {
 
-    val mandatoryHallmarks: Set[Elem] = {
-      userAnswers.get(HallmarkDPage, id) match {
-        case Some(hallmarkDSet) =>
-          hallmarkDSet.flatMap {
-            hallmark =>
-              if (hallmark == D1) {
-                userAnswers.get(HallmarkD1Page, id) match {
-                  case Some(hallmarkSet) =>
-                    hallmarkSet.map(hallmark =>
-                      <Hallmark>{hallmark.toString}</Hallmark>
-                    )
-                  case None => throw new Exception("Missing D1 hallmarks when building the section")
-                }
-              } else {
-                Set(<Hallmark>{"DAC6D2"}</Hallmark>)
-              }
-          }
-        case _ => throw new Exception("Missing hallmarks when building the section")
-      }
+    userAnswers.get(HallmarkDetailsPage, id) match {
+      case Some(hallmarkDetails) =>
+
+        val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>
+        content.grouped(4000).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
+
+        <Hallmarks>
+          <ListHallmarks>
+            {hallmarkDetails.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
+          </ListHallmarks>
+          {hallmarkContent}
+        </Hallmarks>
+
+      case _ => throw new Exception("Unable to construct hallmarks XML from hallmark details")
     }
-
-    val dac6D1OtherInfo: NodeSeq = userAnswers.get(HallmarkD1Page, id: Int) match {
-      case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
-        userAnswers.get(HallmarkD1OtherPage, id) match {
-          case Some(description) =>
-            val splitString = description.grouped(4000).toList
-
-            splitString.map(string =>
-              <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>
-            )
-          case None => NodeSeq.Empty
-        }
-      case _ => NodeSeq.Empty
-    }
-
-    <Hallmarks>
-      <ListHallmarks>
-        {mandatoryHallmarks}
-      </ListHallmarks>
-      {dac6D1OtherInfo}
-    </Hallmarks>
   }
 
   override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>
-        {buildImplementingDate(userAnswers, id)}
-        {buildReason(userAnswers, id)}
-        {buildDisclosureInformationSummary(userAnswers, id)}
-        {buildNationalProvision(userAnswers, id)}
-        {buildAmountType(userAnswers, id)}
-        {buildConcernedMS(userAnswers, id)}
+        {buildArrangementDetails(userAnswers, id)}
         <MainBenefitTest1>false</MainBenefitTest1>
         {buildHallmarks(userAnswers, id)}
       </DisclosureInformation>

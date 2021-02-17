@@ -19,13 +19,13 @@ package forms.arrangement
 import forms.mappings.Mappings
 import javax.inject.Inject
 import models.Currency
-import models.arrangement.WhatIsTheExpectedValueOfThisArrangement
+import models.arrangement.ExpectedArrangementValue
 import play.api.data.Form
 import play.api.data.Forms._
 
 class WhatIsTheExpectedValueOfThisArrangementFormProvider @Inject() extends Mappings {
 
-   def apply(currencyList: Seq[Currency]): Form[WhatIsTheExpectedValueOfThisArrangement] = Form(
+   def apply(currencyList: Seq[Currency]): Form[ExpectedArrangementValue] = Form(
      mapping(
       "currency" -> text("whatIsTheExpectedValueOfThisArrangement.error.currency.required")
         .verifying("whatIsTheExpectedValueOfThisArrangement.error.currency.required", value => currencyList.exists(_.code == value)),
@@ -33,6 +33,6 @@ class WhatIsTheExpectedValueOfThisArrangementFormProvider @Inject() extends Mapp
         "whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber",
         "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric")
         .verifying(inRange(0, Int.MaxValue, "whatIsTheExpectedValueOfThisArrangement.error.amount.outOfRange"))
-    )(WhatIsTheExpectedValueOfThisArrangement.apply)(WhatIsTheExpectedValueOfThisArrangement.unapply)
+    )(ExpectedArrangementValue.apply)(ExpectedArrangementValue.unapply)
    )
  }

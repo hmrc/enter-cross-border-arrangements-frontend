@@ -16,143 +16,120 @@
 
 package helpers.xml
 
-import models.YesNoDoNotKnowRadios.{DoNotKnow, No, Yes}
-import models.individual.Individual
-import models.organisation.Organisation
-import models.reporter.RoleInArrangement
-import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
-import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import models.{CountriesListEUCheckboxes, ReporterOrganisationOrIndividual, UserAnswers}
-import pages.reporter.intermediary._
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import models.UserAnswers
+import models.reporter.ReporterDetails
+import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
+import models.reporter.intermediary.IntermediaryRole
+import models.reporter.taxpayer.TaxpayerWhyReportArrangement
+import pages.reporter.ReporterDetailsPage
 
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 object DisclosingXMLSection extends XMLBuilder {
 
-  private[xml] def buildLiability(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(RoleInArrangementPage, id) match {
-      case Some(RoleInArrangement.Taxpayer) => buildTaxpayerLiability(userAnswers, id)
-      case _ => buildIntermediaryLiability(userAnswers, id)
+  private[xml] def buildLiability(reporterDetails: ReporterDetails): NodeSeq = {
+
+    reporterDetails.liability match {
+      case Some(liability) =>
+
+        val getCapacity = liability.capacity.fold(NodeSeq.Empty)(capacity =>
+        if (capacity.equals(IntermediaryRole.Unknown.toString) ||
+          capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow.toString)){
+          NodeSeq.Empty
+        } else {
+          <Capacity>{capacity}</Capacity>
+        })
+
+        (liability.role, liability.nexus) match {
+
+          case (_, Some(nexus)) if nexus.equals("doNotKnow") => NodeSeq.Empty
+
+          case (Taxpayer.toString, Some(nexus)) =>
+              <Liability>
+                <RelevantTaxpayerDiscloser>
+                  <RelevantTaxpayerNexus>{nexus}</RelevantTaxpayerNexus>
+                  {getCapacity}
+                </RelevantTaxpayerDiscloser>
+              </Liability>
+
+          case (Intermediary.toString, Some(nexus)) =>
+            <Liability>
+              <IntermediaryDiscloser>
+                <IntermediaryNexus>{nexus}</IntermediaryNexus>
+                {getCapacity}
+              </IntermediaryDiscloser>
+            </Liability>
+
+          case _ =>
+            NodeSeq.Empty
+        }
+      case _ => NodeSeq.Empty
     }
   }
 
-  private[xml] def buildTaxpayerLiability(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    lazy val nodeBuffer = new xml.NodeBuffer
+  private[xml] def buildReporterExemptions(reporterDetails: ReporterDetails): NodeSeq = {
 
-    userAnswers.get(TaxpayerWhyReportInUKPage, id).fold(NodeSeq.Empty) {
-      case TaxpayerWhyReportInUK.DoNotKnow =>
-        NodeSeq.Empty
+    reporterDetails.liability match {
+      case Some(liability) =>
+        liability.nationalExemption match {
+          case Some(true) =>
+            val countryExemptions =
+              if (liability.exemptCountries.isDefined && liability.exemptCountries.get.nonEmpty) {
+                <CountryExemptions>
+                  {liability.exemptCountries.get.map(country => <CountryExemption>{country}</CountryExemption>)}
+                </CountryExemptions>
+            } else {
+              NodeSeq.Empty
+            }
 
-      case taxpayerWhyReportInUK: TaxpayerWhyReportInUK =>
-        val taxpayerNexus = <RelevantTaxpayerNexus>{taxpayerWhyReportInUK.toString}</RelevantTaxpayerNexus>
+            <NationalExemption>
+              <Exemption>true</Exemption>
+              {countryExemptions}
+            </NationalExemption>
 
-        val capacity: NodeSeq = userAnswers.get(TaxpayerWhyReportArrangementPage, id)
-          .fold(NodeSeq.Empty) {
-            case TaxpayerWhyReportArrangement.DoNotKnow => NodeSeq.Empty
-            case reason: TaxpayerWhyReportArrangement =>
-              <Capacity>{reason.toString}</Capacity>
-          }
+          case Some(false) =>
+            <NationalExemption>
+              <Exemption>false</Exemption>
+            </NationalExemption>
 
-        <Liability>
-          <RelevantTaxpayerDiscloser>
-            {nodeBuffer ++
-            taxpayerNexus ++
-            capacity}
-          </RelevantTaxpayerDiscloser>
-        </Liability>
+          case _ => NodeSeq.Empty
+        }
+      case _ => throw new Exception("Unable to Construct XML for Reporter Exemptions")
     }
   }
 
-  private[xml] def buildReporterCapacity(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(IntermediaryRolePage, id: Int).fold(NodeSeq.Empty) {
-      case IntermediaryRole.Unknown => NodeSeq.Empty
-      case role: IntermediaryRole =>
-        <Capacity>{role.toString}</Capacity>
-    }
-  }
-
-  private[xml] def buildReporterExemptions(userAnswers: UserAnswers, id: Int): NodeSeq = {
-
-    val reporterCountryExemptions =
-      userAnswers.get(IntermediaryDoYouKnowExemptionsPage, id).fold(NodeSeq.Empty) {
-        case false => NodeSeq.Empty
-        case true =>
-          val countryList = userAnswers.get(IntermediaryWhichCountriesExemptPage, id).fold(NodeSeq.Empty)(setOfCountries =>
-          setOfCountries.toList.map((country: CountriesListEUCheckboxes) => <CountryExemption>{country}</CountryExemption>))
-
-            <CountryExemptions>
-              {countryList}
-            </CountryExemptions>
+  private[xml] def buildReporterCapacity(reporter: ReporterDetails): NodeSeq = {
+    reporter.liability.fold(NodeSeq.Empty)(
+      liability => liability.capacity match {
+        case Some(IntermediaryRole.Unknown.toString) => NodeSeq.Empty
+        case _ => <Capacity>{liability.capacity.get}</Capacity>
       }
-
-    userAnswers.get(IntermediaryExemptionInEUPage, id).fold(NodeSeq.Empty) {
-      case DoNotKnow => NodeSeq.Empty
-      case No =>
-        <NationalExemption>
-          <Exemption>false</Exemption>
-        </NationalExemption>
-      case Yes =>
-        <NationalExemption>
-          <Exemption>true</Exemption>
-          {reporterCountryExemptions}
-        </NationalExemption>
-    }
+    )
   }
 
-  private[xml] def buildIntermediaryLiability(userAnswers: UserAnswers, id: Int): NodeSeq = {
-
-    userAnswers.get(IntermediaryWhyReportInUKPage, id).fold(NodeSeq.Empty) {
-      case IntermediaryWhyReportInUK.DoNotKnow =>
-        NodeSeq.Empty
-
-      case intermediaryWhyReportInUK: IntermediaryWhyReportInUK =>
-
-        <Liability>
-          <IntermediaryDiscloser>
-            <IntermediaryNexus>{intermediaryWhyReportInUK.toString}</IntermediaryNexus>
-            {buildReporterCapacity(userAnswers, id)}
-          </IntermediaryDiscloser>
-        </Liability>
-    }
-  }
-
-  private[xml] def buildDiscloseDetailsForOrganisation(userAnswers: UserAnswers, id: Int): NodeSeq = {
+  private[xml] def buildDiscloseDetailsForReporter(userAnswers: UserAnswers, id: Int): NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
-    val organisationDetailsForReporter = Organisation.buildOrganisationDetailsForReporter(userAnswers, id)
-
-    nodeBuffer ++
-      OrganisationXMLSection.buildIDForOrganisation(organisationDetailsForReporter) ++
-      buildLiability(userAnswers, id)
-  }
-
-
-  private[xml] def buildDiscloseDetailsForIndividual(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    val nodeBuffer = new xml.NodeBuffer
-
-    val individualDetailsForReporter = Individual.buildIndividualDetailsForReporter(userAnswers, id)
-
-    nodeBuffer ++
-      IndividualXMLSection.buildIDForIndividual(individualDetailsForReporter) ++
-      buildLiability(userAnswers, id)
+    userAnswers.get(ReporterDetailsPage, id: Int).fold(throw new Exception("Unable to construct XML for ReporterDetails"))(
+      reporterDetails =>
+        if (reporterDetails.organisation.isDefined) {
+          nodeBuffer ++
+            OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get) ++
+            buildLiability(reporterDetails)
+        } else {
+          nodeBuffer ++
+            IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get) ++
+            buildLiability(reporterDetails)
+        }
+    )
   }
 
   override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
-
     Try {
-      userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
-        case Some(ReporterOrganisationOrIndividual.Organisation) =>
-          <Disclosing>
-            {buildDiscloseDetailsForOrganisation(userAnswers, id)}
-          </Disclosing>
-        case _ =>
-          <Disclosing>
-            {buildDiscloseDetailsForIndividual(userAnswers, id)}
-          </Disclosing>
-      }
-    }.toEither
-  }
+      <Disclosing>
+        {buildDiscloseDetailsForReporter(userAnswers, id)}
+      </Disclosing>
+    }
+  }.toEither
 }
