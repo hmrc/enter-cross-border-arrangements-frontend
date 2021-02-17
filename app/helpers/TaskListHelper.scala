@@ -78,9 +78,13 @@ object TaskListHelper  {
     }
   }
 
-  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]], ua: UserAnswers, id: Int): Boolean = {
+  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]],
+                                   ua: UserAnswers,
+                                   id: Int,
+                                   isReplacementJourney: Boolean): Boolean = {
     pageList.map(page => ua.get(page, id) match {
       case Some(Completed) => true
+      case None if isReplacementJourney && (page == HallmarkStatusPage || page == ArrangementStatusPage) => true
       case _ => false
     }).forall(bool => bool)
   }
@@ -108,7 +112,12 @@ object TaskListHelper  {
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean, addedTaxpayers: Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers,
+                    id: Int,
+                    affectedToggle: Boolean,
+                    associatedEnterpriseToggle: Boolean,
+                    addedTaxpayers: Boolean,
+                    isReplacementJourney: Boolean): Boolean = {
 
     //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
     // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
@@ -133,7 +142,7 @@ object TaskListHelper  {
         case _ =>
           mandatoryCompletion ++ optionalCompletion
       }
-    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id)
+    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, isReplacementJourney)
   }
 }
 

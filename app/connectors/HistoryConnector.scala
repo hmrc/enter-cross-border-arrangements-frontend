@@ -50,4 +50,14 @@ class HistoryConnector @Inject()(configuration: FrontendAppConfig,
     httpClient.GET[SubmissionDetails](getSubmissionsByDisclosureIDUrl(disclosureID)) recover {
       case _ => throw new Exception("History unavailable")
     }
+
+  def searchDisclosures(searchCriteria: String)(implicit hc: HeaderCarrier): Future[SubmissionHistory] = {
+    httpClient.GET[SubmissionHistory](s"$baseUrl/history/search-submissions/$searchCriteria").recover {
+      case _ => SubmissionHistory(Seq())
+    }
+  }
+
+  def retrieveFirstDisclosureForArrangementID(arrangementID: String)(implicit hc: HeaderCarrier): Future[SubmissionDetails] =
+    httpClient.GET[SubmissionDetails](s"$baseUrl/history/first-disclosure/$arrangementID")
+
 }
