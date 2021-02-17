@@ -16,9 +16,9 @@
 
 package services
 
-import helpers.xml.{AffectedXMLSection, DisclosingXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection}
+import helpers.xml._
 import models.UserAnswers
-import models.disclosure.DisclosureType.Dac6add
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.requests.DataRequest
 import org.joda.time.DateTime
 import pages.disclosure.DisclosureDetailsPage
@@ -47,7 +47,8 @@ class XMLGenerationService @Inject()() {
 
   private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers, id: Int): Elem = {
     userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(value) => <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
+      case Some(value) =>
+        <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
       case None => throw new Exception("Missing disclosure type answer")
     }
   }
@@ -64,25 +65,38 @@ class XMLGenerationService @Inject()() {
     }
   }
 
+  private[services] def buildDisclosureID(userAnswers: UserAnswers, id: Int): NodeSeq = {
+    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
+      case Some(Dac6rep) =>
+        userAnswers.get(DisclosureDetailsPage, id).flatMap(_.disclosureID).fold(NodeSeq.Empty){
+          disclosureID =>
+            <DisclosureID>{disclosureID}</DisclosureID>
+        }
+      case _ =>
+        NodeSeq.Empty
+    }
+  }
+
   private[services] def buildArrangementID(userAnswers: UserAnswers, id: Int): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
     userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(Dac6add) =>
+      case Some(Dac6add)|Some(Dac6rep) =>
         userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID).fold(NodeSeq.Empty){
           arrangementID =>
             <ArrangementID>{arrangementID}</ArrangementID>
         }
-      case _ => NodeSeq.Empty
+      case _ =>
+        NodeSeq.Empty
     }
   }
 
   def createXmlSubmission(userAnswers: UserAnswers, id: Int)
                          (implicit request: DataRequest[AnyContent]): Try[Elem] = {
-
     Try {
       <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
         {buildHeader(userAnswers, id)}
         {buildArrangementID(userAnswers, id)}
         <DAC6Disclosures>
+          {buildDisclosureID(userAnswers, id)}
           {buildDisclosureImportInstruction(userAnswers, id)}
           {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
           {buildInitialDisclosureMA(userAnswers, id)}

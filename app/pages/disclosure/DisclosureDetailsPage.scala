@@ -17,7 +17,8 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.{DisclosureDetails, DisclosureType, ReplaceOrDeleteADisclosure}
+import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
+import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
 import pages.{ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
@@ -35,7 +36,8 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       DisclosureTypePage,
       DisclosureIdentifyArrangementPage,
       ReplaceOrDeleteADisclosurePage,
-      DisclosureMarketablePage
+      DisclosureMarketablePage,
+      InitialDisclosureMAPage
     ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
   def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
@@ -58,6 +60,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
     def getDisclosureIdentifyArrangement = userAnswers.getBase(DisclosureIdentifyArrangementPage)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
     def getReplaceOrDeleteDisclosure: Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
+    def getInitialDisclosureMA: Boolean = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
 
     getDisclosureDetails
       .flatMap { details =>
@@ -65,27 +68,27 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       }
       .flatMap { details =>
         getDisclosureType.flatMap {
-          case disclosureType@DisclosureType.Dac6new =>
+          case Dac6new =>
             getDisclosureMarketable.map { initialDisclosureMA =>
-              details.copy(disclosureType = disclosureType, initialDisclosureMA = initialDisclosureMA)
+              details.copy(disclosureType = Dac6new, initialDisclosureMA = initialDisclosureMA)
             }
-          case disclosureType@DisclosureType.Dac6add =>
+          case Dac6add =>
             getDisclosureIdentifyArrangement.flatMap { arrangementID =>
               getDisclosureMarketable.map { initialDisclosureMA =>
-                details.copy(disclosureType = disclosureType, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+                details.copy(disclosureType = Dac6add, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
               }
             }
-          case disclosureType@DisclosureType.Dac6rep =>
+          case Dac6rep =>
             getReplaceOrDeleteDisclosure.map { ids =>
               details.copy(
-                disclosureType = disclosureType,
+                disclosureType = Dac6rep,
                 arrangementID = Some(ids.arrangementID),
                 disclosureID = Some(ids.disclosureID),
-                initialDisclosureMA = false)
+                initialDisclosureMA = getInitialDisclosureMA)
             }
 
-          case disclosureType@(DisclosureType.Dac6del) => // TODO implement DisclosureType.Dac6del cases
-            throw new UnsupportedOperationException(s"Not yet implemented: $disclosureType")
+          case  Dac6del => // TODO implement DisclosureType.Dac6del cases
+            throw new UnsupportedOperationException(s"Not yet implemented: ${Dac6del.toString}")
         }
       }
       .getOrElse(throw new IllegalStateException("Unable to build disclose details"))

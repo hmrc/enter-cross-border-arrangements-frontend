@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import connectors.CrossBorderArrangementsConnector
+import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
@@ -25,7 +25,7 @@ import models.disclosure.DisclosureType.{Dac6del, Dac6rep}
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, Mode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.{DeleteDisclosurePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DeleteDisclosurePage, DisclosureTypePage, InitialDisclosureMAPage, ReplaceOrDeleteADisclosurePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -50,6 +50,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
     errorHandler: ErrorHandler,
     requireData: DataRequiredAction,
     formProvider: ReplaceOrDeleteADisclosureFormProvider,
+    historyConnector: HistoryConnector,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -117,9 +118,11 @@ class ReplaceOrDeleteADisclosureController @Inject()(
                   renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
                 } else {
                   for {
+                    disclosureDetail <- historyConnector.getSubmissionDetailForDisclosure(value.disclosureID)
                     updatedAnswers <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
-                    _              <- sessionRepository.set(updatedAnswers)
-                    checkRoute = toCheckRoute(mode, updatedAnswers)
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.setBase(InitialDisclosureMAPage, disclosureDetail.initialDisclosureMA))
+                    _              <- sessionRepository.set(updatedAnswers1)
+                    checkRoute = toCheckRoute(mode, updatedAnswers1)
                   } yield Redirect(redirect(checkRoute, Some(value), disclosureType))
                 }
           }
