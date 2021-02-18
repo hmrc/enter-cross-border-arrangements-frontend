@@ -29,7 +29,7 @@ import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
@@ -43,6 +43,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{TransformationService, XMLGenerationService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -85,32 +86,7 @@ class DisclosureDetailsController @Inject()(
           false
       }
 
-      val disclosureDetails = request.userAnswers.flatMap(_.get(DisclosureDetailsPage, id)) match {
-        case Some(details) => details
-        case None => throw new Exception("Missing disclosure details")
-      }
-
-      val isReplacementJourney =
-        if (disclosureDetails.disclosureType == Dac6rep) {
-          historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
-            firstDisclosureDetails =>
-              historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).map {
-                submissionHistory =>
-                  if (submissionHistory.details.nonEmpty &&
-                    submissionHistory.details.head.importInstruction == "Add" &&
-                    firstDisclosureDetails.initialDisclosureMA) {
-                    //There should only be one item as disclosure ID is unique
-                    true
-                  } else {
-                    false
-                  }
-              }
-          }
-      } else {
-        Future.successful(false)
-      }
-
-      isReplacementJourney.flatMap { replacementJourney =>
+      isReplacingAMarketableAddDisclosure(request.userAnswers.get, id).flatMap { replaceAMarketableAddDisclosure =>
 
         val json = Json.obj(
           "id" -> id,
@@ -124,7 +100,8 @@ class DisclosureDetailsController @Inject()(
           "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
           "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
           "userCanSubmit" ->
-            userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer, replacementJourney),
+            userCanSubmit(request.userAnswers.get, id,
+              frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer, replaceAMarketableAddDisclosure),
           "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
           "backLink" -> backLink
         )
@@ -169,6 +146,39 @@ class DisclosureDetailsController @Inject()(
           }
         }
       )
+  }
+
+  private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
+                                                 (implicit hc: HeaderCarrier): Future[Boolean] = {
+
+    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
+      case Some(details) => details
+      case None => throw new Exception("Missing disclosure details")
+    }
+
+    if (disclosureDetails.disclosureType == Dac6rep) {
+      historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
+        firstDisclosureDetails =>
+          historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
+            submissionHistory =>
+              for {
+                userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
+                _           <- sessionRepository.set(userAnswers)
+              } yield {
+                if (submissionHistory.details.nonEmpty &&
+                  submissionHistory.details.head.importInstruction == "Add" &&
+                  firstDisclosureDetails.initialDisclosureMA) {
+                  //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
+                  true
+                } else {
+                  false
+                }
+              }
+          }
+      }
+    } else {
+      Future.successful(false)
+    }
   }
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {

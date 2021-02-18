@@ -49,7 +49,6 @@ class WhatIsTheExpectedValueOfThisArrangementFormProviderSpec extends StringFiel
     val requiredKey = "whatIsTheExpectedValueOfThisArrangement.error.amount.required"
     val wholeNumberKey=  "whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber"
     val nonNumericKey =  "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric"
-    val maxLength = 100
 
     behave like intField(
       form,

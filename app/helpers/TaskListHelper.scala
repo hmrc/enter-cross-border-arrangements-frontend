@@ -35,6 +35,8 @@ import uk.gov.hmrc.viewmodels.Html
 
 object TaskListHelper  {
 
+  val optionalCompletion: Seq[QuestionPage[JourneyStatus]] = Seq(HallmarkStatusPage, ArrangementStatusPage)
+
   def taskListItemRestricted(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
     Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
       s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
@@ -81,10 +83,10 @@ object TaskListHelper  {
   def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]],
                                    ua: UserAnswers,
                                    id: Int,
-                                   isReplacementJourney: Boolean): Boolean = {
+                                   replaceAMarketableAddDisclosure: Boolean): Boolean = {
     pageList.map(page => ua.get(page, id) match {
       case Some(Completed) => true
-      case None if isReplacementJourney && (page == HallmarkStatusPage || page == ArrangementStatusPage) => true
+      case _ if replaceAMarketableAddDisclosure && optionalCompletion.contains(page) => true
       case _ => false
     }).forall(bool => bool)
   }
@@ -117,7 +119,7 @@ object TaskListHelper  {
                     affectedToggle: Boolean,
                     associatedEnterpriseToggle: Boolean,
                     addedTaxpayers: Boolean,
-                    isReplacementJourney: Boolean): Boolean = {
+                    replaceAMarketableAddDisclosure: Boolean): Boolean = {
 
     //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
     // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
@@ -133,8 +135,6 @@ object TaskListHelper  {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
     }
 
-    val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
-
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
       getDisclosureTypeWithMAFlag(ua, id) match {
         case (Some(DisclosureType.Dac6add), true) =>
@@ -142,7 +142,8 @@ object TaskListHelper  {
         case _ =>
           mandatoryCompletion ++ optionalCompletion
       }
-    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, isReplacementJourney)
+
+    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, replaceAMarketableAddDisclosure)
   }
 }
 

@@ -21,7 +21,7 @@ import models.UserAnswers
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.requests.DataRequest
 import org.joda.time.DateTime
-import pages.disclosure.DisclosureDetailsPage
+import pages.disclosure.{DisclosureDetailsPage, FirstInitialDisclosureMAPage}
 import play.api.mvc.AnyContent
 
 import javax.inject.Inject
@@ -57,6 +57,12 @@ class XMLGenerationService @Inject()() {
     userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
       case Some(Dac6add) =>
         <InitialDisclosureMA>false</InitialDisclosureMA>
+      case Some(Dac6rep) =>
+        userAnswers.getBase(FirstInitialDisclosureMAPage) match {
+          case Some(firstInitialDisclosureMA) =>
+            <InitialDisclosureMA>{firstInitialDisclosureMA}</InitialDisclosureMA>
+          case None => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
+        }
       case _ =>
         userAnswers.get(DisclosureDetailsPage, id).map(_.initialDisclosureMA)  match {
           case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
