@@ -19,7 +19,7 @@ package generators
 import org.scalacheck.Arbitrary
 import pages._
 import pages.arrangement._
-import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureDeleteCheckYourAnswersPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.hallmarks._
 import pages.individual._
@@ -43,6 +43,9 @@ trait PageGenerators {
 
   implicit lazy val arbitraryRemoveDisclosurePage: Arbitrary[RemoveDisclosurePage.type] =
     Arbitrary(RemoveDisclosurePage)
+
+  implicit lazy val arbitraryDisclosureDeleteCheckYourAnswersPage: Arbitrary[DisclosureDeleteCheckYourAnswersPage.type] =
+    Arbitrary(DisclosureDeleteCheckYourAnswersPage)
 
   implicit lazy val arbitraryReplaceOrDeleteADisclosurePage: Arbitrary[ReplaceOrDeleteADisclosurePage.type] =
     Arbitrary(ReplaceOrDeleteADisclosurePage)

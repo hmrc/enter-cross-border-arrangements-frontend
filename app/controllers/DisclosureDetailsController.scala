@@ -28,7 +28,11 @@ import models.{NormalMode, Submission, UserAnswers}
 import navigation.NavigatorForDisclosure
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
+<<<<<<< HEAD
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
+=======
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+>>>>>>> DAC6-580 - Generate XML for deletions
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage

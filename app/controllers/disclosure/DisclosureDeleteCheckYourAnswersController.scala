@@ -74,12 +74,12 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
         _.fold (
-          errors => throw new IllegalStateException(s"Unable to delete submission: $submission")
+          _ => throw new IllegalStateException(s"Unable to delete submission: $submission")
           ,
-          updatedSubmission =>
+          updatedIds =>
             for {
-              updatedAnswers1 <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, true))
-              _ <- sessionRepository.set(updatedAnswers1)
+              updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, updatedIds))
+              _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
         )
       }

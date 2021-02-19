@@ -18,8 +18,8 @@ package services
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
-import models.Submission
 import models.requests.DataRequest
+import models.{GeneratedIDs, Submission}
 import org.slf4j.LoggerFactory
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
@@ -77,7 +77,7 @@ class XMLGenerationService @Inject()(
   }
 
   def createAndValidateXmlSubmission(submission: Submission)
-              (implicit ec: ExecutionContext, request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[Seq[String], Submission]] = {
+              (implicit ec: ExecutionContext, request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] = {
 
     createXmlSubmission(submission).fold (
       error => {
@@ -96,9 +96,7 @@ class XMLGenerationService @Inject()(
               for {
                 submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, request.enrolmentID))
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
-              } yield {
-                Right(submission.updateIds(Option(ids), Option(messageRefId)))
-              }
+              } yield Right(ids.withMessageRefId(messageRefId))
             }
           )
         }

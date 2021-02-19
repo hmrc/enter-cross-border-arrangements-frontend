@@ -156,6 +156,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
         .build()
 
       val submission = Submission(userAnswersForOrganisation, 0, "XADAC0001122345")
+      val generatedIDs = GeneratedIDs(Some("XADAC0001122345"), Some("XADAC0001122345"))
 
       val postRequest = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
       implicit val request: DataRequest[AnyContent] =
@@ -164,7 +165,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any(), any()))
-        .thenReturn(Future.successful(Right(submission)))
+        .thenReturn(Future.successful(Right(generatedIDs)))
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
 

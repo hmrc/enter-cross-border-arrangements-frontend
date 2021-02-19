@@ -34,8 +34,6 @@ import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.libs.json.{Json, OFormat}
 
-import scala.util.{Failure, Success, Try}
-
 case class Submission(enrollmentID: String
                       , disclosureDetails: DisclosureDetails
                       , reporterDetails: Option[ReporterDetails] = None
@@ -52,12 +50,6 @@ case class Submission(enrollmentID: String
 
   val getMessageRefId: Option[String] = disclosureDetails.messageRefId
 
-  def updateIds(ids: Option[GeneratedIDs], messageRefId: Option[String]): Submission = {
-    ids.map{ case GeneratedIDs(arrangementID, disclosureID) =>
-      copy(disclosureDetails =
-        disclosureDetails.copy(disclosureID = disclosureID, arrangementID = arrangementID, messageRefId = messageRefId))
-    }.getOrElse(this)
-  }
 }
 
 object Submission {
