@@ -93,17 +93,14 @@ class RemoveDisclosureController @Inject()(
           )
           renderer.render("removeDisclosure.njk", json).map(BadRequest(_))
         },
-        value => if (value) {
-
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
+            updatedAnswers1 <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
             updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswers, id))
             _              <- sessionRepository.set(updatedUserAnswersWithFlags)
             checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value), id))
-        } else {
-          Future.successful(Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()))
-        }
       )
   }
 

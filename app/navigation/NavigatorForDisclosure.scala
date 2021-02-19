@@ -41,9 +41,11 @@ class NavigatorForDisclosure @Inject()() {
         case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
       }
 
-      //remove an unsubmitted disclosure
     case RemoveDisclosurePage  =>
-      _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+      _ => _ => value => _ => value match {
+        case Some(true) => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad
+        case _          => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad
+      }
 
     case ReplaceOrDeleteADisclosurePage =>
       _ => _ => disclosureType => _ => disclosureType match {

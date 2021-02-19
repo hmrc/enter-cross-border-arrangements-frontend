@@ -30,15 +30,15 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
 
   override def toString: String = "disclosureDetails"
 
-  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, index: Int): Try[UserAnswers] =
-    List(
-      DisclosureNamePage,
-      DisclosureTypePage,
-      DisclosureIdentifyArrangementPage,
-      ReplaceOrDeleteADisclosurePage,
-      DisclosureMarketablePage,
-      InitialDisclosureMAPage
-    ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
+//  override def cleanup(value: Option[DisclosureDetails], userAnswers: UserAnswers, index: Int): Try[UserAnswers] =
+//    List(
+//      DisclosureNamePage,
+//      DisclosureTypePage,
+//      DisclosureIdentifyArrangementPage,
+//      ReplaceOrDeleteADisclosurePage,
+//      DisclosureMarketablePage,
+//      InitialDisclosureMAPage
+//    ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
   def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers.get(DisclosureDetailsPage, id)
