@@ -17,18 +17,17 @@
 package controllers
 
 import base.SpecBase
-import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
+import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
 import helpers.Submissions
 import matchers.JsonMatchers
-import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequest
+import models.{GeneratedIDs, SubmissionDetails, SubmissionHistory, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
+import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.mvc.AnyContent
@@ -38,6 +37,7 @@ import play.twirl.api.Html
 import services.XMLGenerationService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 import scala.util.Success
 
@@ -46,12 +46,13 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
   private val mockValidationConnector = mock[ValidationConnector]
   private val mockXMLGenerationService = mock[XMLGenerationService]
   private val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+  private val mockHistoryConnector = mock[HistoryConnector]
 
   private val userAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
   override def beforeEach: Unit = {
-    reset(mockCrossBorderArrangementsConnector)
+    reset(mockRenderer, mockCrossBorderArrangementsConnector)
   }
 
   "DisclosureDetails Controller" - {
@@ -82,6 +83,55 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
+
+      application.stop()
+    }
+
+    "return OK and the correct view for a GET if it's a replacement disclosure" in {
+
+      val firstDisclosureSubmissionDetails = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
+        Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
+
+      val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetails.copy(importInstruction = "Add", initialDisclosureMA = false)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
+
+      when(mockHistoryConnector.searchDisclosures(any())(any()))
+        .thenReturn(Future.successful(submissionHistory))
+
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        arrangementID = Some("arrangementID"),
+        disclosureID = Some("disclosureID"),
+        disclosureType = DisclosureType.Dac6rep
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[HistoryConnector].toInstance(mockHistoryConnector)
+        ).build()
+
+      val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(0).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
+      verify(mockHistoryConnector, times(1)).searchDisclosures(any())(any())
 
       templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
 

@@ -18,7 +18,7 @@ package helpers
 
 import models.UserAnswers
 import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.Dac6add
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import pages.QuestionPage
@@ -34,6 +34,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Html
 
 object TaskListHelper  {
+
+  val optionalCompletion: Seq[QuestionPage[JourneyStatus]] = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
   def taskListItemRestricted(linkContent: String, ariaLabel: String)(implicit messages: Messages): Html = {
     Html(s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
@@ -78,9 +80,13 @@ object TaskListHelper  {
     }
   }
 
-  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]], ua: UserAnswers, id: Int): Boolean = {
+  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]],
+                                   ua: UserAnswers,
+                                   id: Int,
+                                   replaceAMarketableAddDisclosure: Boolean): Boolean = {
     pageList.map(page => ua.get(page, id) match {
       case Some(Completed) => true
+      case _ if replaceAMarketableAddDisclosure && optionalCompletion.contains(page) => true
       case _ => false
     }).forall(bool => bool)
   }
@@ -99,16 +105,23 @@ object TaskListHelper  {
     (getDisclosureType, getMarketableFlag)
   }
 
-  def displaySectionOptional(ua: UserAnswers, id: Int)(implicit messages: Messages): String =  {
+  def displaySectionOptional(ua: UserAnswers, id: Int, replaceAMarketableAddDisclosure: Boolean)(implicit messages: Messages): String =  {
     getDisclosureTypeWithMAFlag(ua, id) match {
       case (Some(Dac6add), true) =>
+        messages("disclosureDetails.optional")
+      case (Some(Dac6rep), _) if replaceAMarketableAddDisclosure =>
         messages("disclosureDetails.optional")
       case _ =>
         ""
     }
   }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, affectedToggle:Boolean, associatedEnterpriseToggle:Boolean, addedTaxpayers: Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers,
+                    id: Int,
+                    affectedToggle: Boolean,
+                    associatedEnterpriseToggle: Boolean,
+                    addedTaxpayers: Boolean,
+                    replaceAMarketableAddDisclosure: Boolean): Boolean = {
 
     //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
     // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
@@ -124,8 +137,6 @@ object TaskListHelper  {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
     }
 
-    val optionalCompletion = Seq(HallmarkStatusPage, ArrangementStatusPage)
-
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
       getDisclosureTypeWithMAFlag(ua, id) match {
         case (Some(DisclosureType.Dac6add), true) =>
@@ -133,7 +144,8 @@ object TaskListHelper  {
         case _ =>
           mandatoryCompletion ++ optionalCompletion
       }
-    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id)
+
+    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, replaceAMarketableAddDisclosure)
   }
 }
 

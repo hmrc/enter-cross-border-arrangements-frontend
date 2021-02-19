@@ -17,18 +17,19 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
+import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
+import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
@@ -42,6 +43,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{TransformationService, XMLGenerationService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -58,6 +60,7 @@ class DisclosureDetailsController @Inject()(
     requireData: DataRequiredAction,
     validationConnector: ValidationConnector,
     crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
+    historyConnector: HistoryConnector,
     frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     navigator: NavigatorForDisclosure,
@@ -83,23 +86,27 @@ class DisclosureDetailsController @Inject()(
           false
       }
 
-      val json = Json.obj(
-        "id"      -> id,
-        "arrangementID" -> arrangementMessage,
-        "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
-        "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
-        "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
-        "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
-        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
-        "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
-        "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
-        "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-        "userCanSubmit" ->
-          userCanSubmit(request.userAnswers.get, id, frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer),
-        "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
-        "backLink" -> backLink
-      )
-      renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
+      isReplacingAMarketableAddDisclosure(request.userAnswers.get, id).flatMap { replaceAMarketableAddDisclosure =>
+
+        val json = Json.obj(
+          "id" -> id,
+          "arrangementID" -> arrangementMessage,
+          "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
+          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
+          "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
+          "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
+          "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
+          "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
+          "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
+          "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
+          "userCanSubmit" ->
+            userCanSubmit(request.userAnswers.get, id,
+              frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer, replaceAMarketableAddDisclosure),
+          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
+          "backLink" -> backLink
+        )
+        renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
+      }
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -139,6 +146,39 @@ class DisclosureDetailsController @Inject()(
           }
         }
       )
+  }
+
+  private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
+                                                 (implicit hc: HeaderCarrier): Future[Boolean] = {
+
+    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
+      case Some(details) => details
+      case None => throw new Exception("Missing disclosure details")
+    }
+
+    if (disclosureDetails.disclosureType == Dac6rep) {
+      historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
+        firstDisclosureDetails =>
+          historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
+            submissionHistory =>
+              for {
+                userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
+                _           <- sessionRepository.set(userAnswers)
+              } yield {
+                if (submissionHistory.details.nonEmpty &&
+                  submissionHistory.details.head.importInstruction == "Add" &&
+                  firstDisclosureDetails.initialDisclosureMA) {
+                  //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
+                  true
+                } else {
+                  false
+                }
+              }
+          }
+      }
+    } else {
+      Future.successful(false)
+    }
   }
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {

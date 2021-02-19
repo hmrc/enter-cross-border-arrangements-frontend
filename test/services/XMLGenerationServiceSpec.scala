@@ -32,7 +32,7 @@ import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.joda.time.DateTime
 import pages.arrangement._
-import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.reporter.individual._
@@ -240,6 +240,42 @@ class XMLGenerationServiceSpec extends SpecBase {
       val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
 
       prettyPrinter.format(result) mustBe expected
+    }
+
+    "buildInitialDisclosureMA must build the disclosure MA section as the same value as the first disclosure if arrangement is a replace" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "My replacement",
+        disclosureType = DisclosureType.Dac6rep
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+        .setBase(FirstInitialDisclosureMAPage, true)
+        .success.value
+
+      val result = xmlGenerationService.buildInitialDisclosureMA(userAnswers, 0)
+
+      val expected = "<InitialDisclosureMA>true</InitialDisclosureMA>"
+
+      prettyPrinter.format(result) mustBe expected
+    }
+
+    "buildInitialDisclosureMA must throw an exception if first disclosure MA is missing and arrangement is a replace" in {
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "My replacement",
+        disclosureType = DisclosureType.Dac6rep
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+
+      assertThrows[Exception] {
+        xmlGenerationService.buildInitialDisclosureMA(userAnswers, 0)
+      }
     }
 
     "buildInitialDisclosureMA must throw an exception if disclosure MA is missing" in {
