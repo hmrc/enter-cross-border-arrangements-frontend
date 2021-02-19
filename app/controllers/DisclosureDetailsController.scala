@@ -102,7 +102,7 @@ class DisclosureDetailsController @Inject()(
           "userCanSubmit" ->
             userCanSubmit(request.userAnswers.get, id,
               frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer, replaceAMarketableAddDisclosure),
-          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id),
+          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
           "backLink" -> backLink
         )
         renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))

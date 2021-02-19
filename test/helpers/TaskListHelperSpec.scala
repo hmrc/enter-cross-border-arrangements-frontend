@@ -415,7 +415,21 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        displaySectionOptional(userAnswers, index) mustBe "(optional)"
+        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe "(optional)"
+      }
+
+      "must return string '(optional)' when user is submitting a REPLACEMENT disclosure " +
+        "for a marketable ADDITIONAL disclosure" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
+          .success
+          .value
+
+        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = true) mustBe "(optional)"
       }
 
       "must return an empty string when user is disclosing an other arrangement combo" in {
@@ -428,7 +442,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        displaySectionOptional(userAnswers, index) mustBe ""
+        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe ""
       }
     }
   }

@@ -18,7 +18,7 @@ package helpers
 
 import models.UserAnswers
 import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.Dac6add
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
 import pages.QuestionPage
@@ -105,9 +105,11 @@ object TaskListHelper  {
     (getDisclosureType, getMarketableFlag)
   }
 
-  def displaySectionOptional(ua: UserAnswers, id: Int)(implicit messages: Messages): String =  {
+  def displaySectionOptional(ua: UserAnswers, id: Int, replaceAMarketableAddDisclosure: Boolean)(implicit messages: Messages): String =  {
     getDisclosureTypeWithMAFlag(ua, id) match {
       case (Some(Dac6add), true) =>
+        messages("disclosureDetails.optional")
+      case (Some(Dac6rep), _) if replaceAMarketableAddDisclosure =>
         messages("disclosureDetails.optional")
       case _ =>
         ""
