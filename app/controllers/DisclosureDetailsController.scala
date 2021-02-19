@@ -25,18 +25,20 @@ import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
 import models.{NormalMode, UserAnswers}
+import models.{GeneratedIDs, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, DisclosureTypePage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
+import pages.{Dac6MetaDataPage, GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,10 +46,14 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.http.HeaderCarrier
+import services.{EmailService, TransformationService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
-
 import javax.inject.Inject
+import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
+import models.requests.DataRequestWithContacts
+import uk.gov.hmrc.http.HttpResponse
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -55,9 +61,11 @@ class DisclosureDetailsController @Inject()(
     override val messagesApi: MessagesApi,
     xmlGenerationService: XMLGenerationService,
     transformationService: TransformationService,
+    emailService: EmailService,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     validationConnector: ValidationConnector,
     crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     historyConnector: HistoryConnector,
@@ -109,7 +117,39 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+
+  def sendMail(ids: GeneratedIDs, id : Int)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
+
+    if (frontendAppConfig.associatedEnterpriseToggle && request.userAnswers.get(GeneratedIDPage, id).isDefined) {
+      val generatedId = request.userAnswers.get(GeneratedIDPage, id).get
+
+      // ANEW WANTS
+
+      val generatedIDs =
+        (ids.arrangementID, ids.disclosureID) match {
+          case (Some(_), Some(_)) => ids  //DAC6NEW v
+          case (_, Some(disclosureID)) => GeneratedIDs(generatedId.arrangementID, Some(disclosureID)) //DAC6ADD
+          case _ => GeneratedIDs(generatedId.arrangementID, generatedId.disclosureID) //DAC6REP and DAC6DEL
+        }
+
+      val importInstruction =
+        request.userAnswers.get(DisclosureTypePage, id) match {
+          case Some(Dac6new) => "new"
+          case Some(Dac6add) => "add"
+          case Some(Dac6del) => "del"
+          case Some(Dac6rep) => "rep"
+
+        }
+
+      emailService.sendEmail(request.contacts, generatedIDs, importInstruction, request.userAnswers.get(MessageRefIDPage, id))
+    }
+    else {
+      logger.warn("Unable to send email")
+      Future.successful(None)
+    }
+  }
+
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
       //generate xml from user answers
       xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
@@ -139,6 +179,7 @@ class DisclosureDetailsController @Inject()(
                   userAnswersWithIDs          <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
                   updatedUserAnswersWithIDs   <- Future.fromTry(userAnswersWithIDs.set(MessageRefIDPage, id, messageRefId))
                   updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedUserAnswersWithIDs, id))
+                  _                           <- sendMail(ids)
                   _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
                 } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
               }
@@ -180,6 +221,7 @@ class DisclosureDetailsController @Inject()(
       Future.successful(false)
     }
   }
+
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>

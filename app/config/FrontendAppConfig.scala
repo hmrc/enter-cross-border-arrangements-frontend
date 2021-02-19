@@ -38,6 +38,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
+  lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
+
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
 
