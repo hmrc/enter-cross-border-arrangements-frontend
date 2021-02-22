@@ -17,13 +17,14 @@
 package services
 
 import connectors.EmailConnector
-import models.{ContactDetails, EmailRequest, GeneratedIDs}
+import models.{EmailRequest, GeneratedIDs}
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
 import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-
 import javax.inject.{Inject, Singleton}
+import models.subscription.ContactDetails
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

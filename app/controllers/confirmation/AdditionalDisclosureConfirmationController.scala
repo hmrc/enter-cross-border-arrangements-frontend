@@ -36,11 +36,12 @@ class AdditionalDisclosureConfirmationController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
       val disclosureID =  request.userAnswers.get(GeneratedIDPage, id) match {
@@ -53,11 +54,17 @@ class AdditionalDisclosureConfirmationController @Inject()(
         case None => throw new RuntimeException("messageRefID cannot be found")
       }
 
+      val emailMessage = request.contacts match {
+        case Some(contactDetails) if contactDetails.secondEmail.isDefined =>  contactDetails.contactEmail.get + " and " + contactDetails.secondEmail.get
+        case Some(contactDetails) => contactDetails.contactEmail.get
+        case _ => throw new RuntimeException("Contact details are missing")
+      }
+
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,
         "panelText" -> confirmationPanelText(disclosureID.get),
-        "email" -> "example@example.com",
-        "secondEmail" -> "",
+        "emailMessage" -> emailMessage,
+        "emailToggle" -> appConfig.sendEmailToggle,
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)

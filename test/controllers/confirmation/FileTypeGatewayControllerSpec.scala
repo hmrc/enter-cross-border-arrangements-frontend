@@ -18,8 +18,9 @@ package controllers.confirmation
 
 import base.SpecBase
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.GeneratedIDPage
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
@@ -38,8 +39,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
       )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -62,8 +66,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
       )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -87,8 +94,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
       )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My First")))
+        .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

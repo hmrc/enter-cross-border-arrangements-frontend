@@ -32,7 +32,6 @@
 
 package models
 
-
 import play.api.libs.json.{Json, OFormat}
 
 case class EmailRequest(to: List[String], templateId: String, parameters: Map[String, String])
@@ -41,23 +40,31 @@ object EmailRequest {
   implicit val format: OFormat[EmailRequest] = Json.format[EmailRequest]
 
   def sendConfirmation(email: String,
+                       importInstruction: String,
                        arrangementID: String,
                        disclosureID: String,
                        dateSubmitted: String,
-                       filename: String,
-                       submissionNumber: String,
-                       name: Option[String]): EmailRequest =
+                       messageRefID: String,
+                       name: Option[String]): EmailRequest = {
+
+
+    val templateID = importInstruction match {
+      case "dac6new" => "dac6_new_disclosure_confirmation"
+      case "dac6add" => "dac6_additional_disclosure_confirmation"
+      case "dac6rep" => "dac6_replace_disclosure_confirmation"
+      case "dac6del" => "dac6_delete_disclosure_confirmation"
+    }
+
     EmailRequest(
       List(email),
-      "dac6_disclosure_confirmation",
+      templateID,
       name.map(n => "name" -> n).toMap ++
         Map(
           "arrangementID" -> arrangementID,
           "disclosureID" -> disclosureID,
           "dateSubmitted" -> dateSubmitted,
-          "filename" -> filename,
-          "submissionNumber" -> submissionNumber
+          "messageRefID" -> messageRefID
         )
     )
-
+  }
 }

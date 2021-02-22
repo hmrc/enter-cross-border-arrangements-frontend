@@ -34,10 +34,11 @@ class GeneratedXMLController @Inject()(
     requireData: DataRequiredAction,
     xmlGenerationService: XMLGenerationService,
     val controllerComponents: MessagesControllerComponents,
+    contactRetrievalAction: ContactRetrievalAction,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
       //TODO Delete later if no longer needed

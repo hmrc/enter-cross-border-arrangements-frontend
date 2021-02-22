@@ -17,13 +17,19 @@
 package controllers.confirmation
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import config.FrontendAppConfig
+import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
-import models.NormalMode
+import models.requests.DataRequestWithContacts
+import models.{GeneratedIDs, NormalMode}
 import navigation.NavigatorForConfirmation
-import pages.disclosure.{DisclosureDetailsPage, DisclosureTypePage}
+import org.slf4j.LoggerFactory
+import pages.disclosure.DisclosureDetailsPage
+import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.EmailService
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,15 +39,46 @@ class FileTypeGatewayController @Inject()(
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  contactRetrievalAction: ContactRetrievalAction,
   navigator: NavigatorForConfirmation,
+  frontendAppConfig: FrontendAppConfig,
+  emailService: EmailService,
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  private val logger = LoggerFactory.getLogger(getClass)
+
+  def onRouting(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-      Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).map { disclosureType =>
+      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id)
+
+      if (frontendAppConfig.sendEmailToggle) {
+        sendMail(id, disclosureDetails.get.disclosureType.toString)
+      }
+
+      else {
+          logger.warn("Email not sent - toggle set to false")
+          Future.successful(None)
+        }
+
+      Future.successful(disclosureDetails.map(_.disclosureType)).map { disclosureType =>
         Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
       }
   }
+
+    def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
+
+      val disclosureID = request.userAnswers.get(GeneratedIDPage, id) match {
+        case Some(id) => id.disclosureID
+        case None => throw new RuntimeException("DisclosureID cannot be found")
+      }
+
+      val arrangementID = request.userAnswers.get(GeneratedIDPage, id) match {
+        case Some(id) => id.arrangementID
+        case None => throw new RuntimeException("ArrangementID cannot be found")
+      }
+
+      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).toString)
+    }
 }

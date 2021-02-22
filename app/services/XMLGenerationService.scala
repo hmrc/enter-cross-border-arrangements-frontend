@@ -17,21 +17,20 @@
 package services
 
 import helpers.xml._
+import javax.inject.Inject
 import models.UserAnswers
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
-import models.requests.DataRequest
+import models.requests.DataRequestWithContacts
 import org.joda.time.DateTime
 import pages.disclosure.{DisclosureDetailsPage, FirstInitialDisclosureMAPage}
-import play.api.mvc.AnyContent
 
-import javax.inject.Inject
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
 class XMLGenerationService @Inject()() {
 
   private[services] def buildHeader(userAnswers: UserAnswers, id: Int)
-                                   (implicit request: DataRequest[AnyContent]): Elem = {
+                                   (implicit request:  DataRequestWithContacts[_]): Elem = {
     val mandatoryMessageRefId = userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureName) match {
       case Some(disclosureName) => "GB" + request.enrolmentID + disclosureName
       case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
@@ -96,7 +95,7 @@ class XMLGenerationService @Inject()() {
   }
 
   def createXmlSubmission(userAnswers: UserAnswers, id: Int)
-                         (implicit request: DataRequest[AnyContent]): Try[Elem] = {
+                         (implicit request: DataRequestWithContacts[_]): Try[Elem] = {
     Try {
       <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
         {buildHeader(userAnswers, id)}

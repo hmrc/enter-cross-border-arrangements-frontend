@@ -38,8 +38,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
-
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
 
@@ -65,6 +63,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val disclosureStartUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosures")}"
   lazy val disclosureCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosuresCYA")}"
 
+  lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
+
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
@@ -73,6 +73,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val affectedToggle: Boolean = configuration.get[Boolean]("toggles.affectedToggle")
   lazy val associatedEnterpriseToggle: Boolean = configuration.get[Boolean]("toggles.associatedEnterpriseToggle")
+  lazy val sendEmailToggle: Boolean = configuration.get[Boolean]("toggles.sendEmailToggle")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

@@ -36,12 +36,13 @@ class YourDisclosureHasBeenDeletedController @Inject()(
     appConfig: FrontendAppConfig,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     errorHandler: ErrorHandler,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
         //How to get the messageRefid does this come from the deletion process?
@@ -49,21 +50,26 @@ class YourDisclosureHasBeenDeletedController @Inject()(
       request.userAnswers.getBase(DeletedDisclosurePage) match {
         case Some(disclosureDetails) =>
 
-                    val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
+          val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
 
-                    val json = Json.obj (
-                    "disclosureID" -> disclosureDetails.disclosureID,
-                    "arrangementID" -> disclosureDetails.arrangementID,
-                    "messageRefid" -> messagerefid,
-                    "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
-                    "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl)
-                    )
+          val emailMessage = request.contacts match {
+            case Some(contactDetails) if contactDetails.secondEmail.isDefined =>  contactDetails.contactEmail.get + " and " + contactDetails.secondEmail.get
+            case Some(contactDetails) => contactDetails.contactEmail.get
+            case _ => throw new RuntimeException("Contact details are missing")
+          }
 
+          val json = Json.obj (
+            "disclosureID" -> disclosureDetails.disclosureID,
+            "arrangementID" -> disclosureDetails.arrangementID,
+            "messageRefid" -> messagerefid,
+            "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
+            "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
+            "emailToggle" -> appConfig.sendEmailToggle,
+            "emailMessage" -> emailMessage
+          )
+          renderer.render ("disclosure/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
 
-                    renderer.render ("disclosure/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
-
-        case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
-
+       case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
+    }
   }
-}
 }

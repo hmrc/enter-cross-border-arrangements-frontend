@@ -18,10 +18,11 @@ package controllers.disclosure
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
 import models.UserAnswers
-import models.subscription.DisplaySubscriptionForDACResponse
+import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -63,12 +64,14 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
 
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
       val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)).build()
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
 
       val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
