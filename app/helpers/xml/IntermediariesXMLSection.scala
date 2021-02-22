@@ -17,13 +17,14 @@
 package helpers.xml
 
 import models.IsExemptionKnown.{No, Unknown, Yes}
+import models.Submission
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
 
 import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
-case class IntermediariesXMLSection(intermediaries: IndexedSeq[Intermediary], reporterSection: Option[ReporterXMLSection]) {
+case class IntermediariesXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
 
   private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
     if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
@@ -63,7 +64,7 @@ case class IntermediariesXMLSection(intermediaries: IndexedSeq[Intermediary], re
   }
 
   private[xml] def getIntermediaries: Seq[Node] =
-    intermediaries.map {
+    submission.intermediaries.map {
       intermediary =>
         if (intermediary.individual.isDefined) {
           <Intermediary>

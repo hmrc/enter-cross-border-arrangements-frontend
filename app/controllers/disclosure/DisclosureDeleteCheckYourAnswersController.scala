@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import handlers.ErrorHandler
+import models.disclosure.DisclosureType
 import models.{NormalMode, Submission}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
@@ -67,10 +68,17 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
   def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
-        case Some(ids) => Submission(ids.arrangementID, ids.disclosureID)
+        case Some(ids) =>
+          val disclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
+            .setDisclosureType(DisclosureType.Dac6del)
+            .setIds(ids.arrangementID, ids.disclosureID)
+          Submission(request.enrolmentID, disclosureDetails)
         case _ => throw new RuntimeException("Cannot retrieve Disclosure Information")
       }
+
+      println(submission)
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
         _.fold (

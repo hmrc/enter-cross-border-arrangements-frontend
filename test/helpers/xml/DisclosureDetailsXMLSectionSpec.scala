@@ -17,11 +17,9 @@
 package helpers.xml
 
 import base.SpecBase
+import models.Submission
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.{UnsubmittedDisclosure, UserAnswers}
 import org.joda.time.DateTime
-import pages.disclosure.DisclosureDetailsPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class DisclosureDetailsXMLSectionSpec extends SpecBase {
 
@@ -39,24 +37,19 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
           initialDisclosureMA = true
         )
 
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildHeader("XADAC0001122345")
+        val submission = Submission("id", disclosureDetails)
+
+        val result = DisclosureDetailsXMLSection(submission).buildHeader("XADAC0001122345")
+        val now = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
 
         val expected =
           s"""<Header>
              |    <MessageRefId>GBXADAC0001122345DisclosureName</MessageRefId>
-             |    <Timestamp>${DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")}</Timestamp>
+             |    <Timestamp>$now</Timestamp>
              |</Header>""".stripMargin
 
         prettyPrinter.format(result) mustBe expected
       }
-
-      // TODO fix
-//      "buildHeader must throw an exception if disclosure name is missing" in {
-//        assertThrows[Exception] {
-//          val result = DisclosureDetailsXMLSection(disclosureDetails).buildHeader("XADAC0001122345")
-//        }
-//      }
-
     }
 
     "buildDisclosureImportInstruction" - {
@@ -69,7 +62,9 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
           initialDisclosureMA = true
         )
 
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildDisclosureImportInstruction
+        val submission = Submission("id", disclosureDetails)
+
+        val result = DisclosureDetailsXMLSection(submission).buildDisclosureImportInstruction
 
         val expected = "<DisclosureImportInstruction>DAC6ADD</DisclosureImportInstruction>"
 
@@ -77,111 +72,181 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
       }
 
       "buildDisclosureImportInstruction must build the import instruction section if new arrangement" in {
+
         val disclosureDetails = DisclosureDetails(
           disclosureName = "",
           disclosureType = DisclosureType.Dac6new
         )
 
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildDisclosureImportInstruction
+        val submission = Submission("id", disclosureDetails)
+
+        val result = DisclosureDetailsXMLSection(submission).buildDisclosureImportInstruction
 
         val expected = "<DisclosureImportInstruction>DAC6NEW</DisclosureImportInstruction>"
 
         prettyPrinter.format(result) mustBe expected
       }
 
-      // TODO fix
-//      "buildDisclosureImportInstruction must throw an exception if import instruction is missing" in {
-//        assertThrows[Exception] {
-//          val result = DisclosureDetailsXMLSection(disclosureDetails).buildDisclosureImportInstruction
-//        }
+      "buildDisclosureImportInstruction" - {
+
+        "buildInitialDisclosureMA must build the disclosure MA section when arrangement is marketable" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6new,
+            initialDisclosureMA = true
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildInitialDisclosureMA
+
+          val expected = "<InitialDisclosureMA>true</InitialDisclosureMA>"
+
+          prettyPrinter.format(result) mustBe expected
+        }
+
+        "buildInitialDisclosureMA must build the disclosure MA section when arrangement is not marketable" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6new
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildInitialDisclosureMA
+
+          val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
+
+          prettyPrinter.format(result) mustBe expected
+        }
+
+        "buildInitialDisclosureMA must build the disclosure MA section as false if arrangement is an additional" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "My Second",
+            disclosureType = DisclosureType.Dac6add
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildInitialDisclosureMA
+
+          val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
+
+          prettyPrinter.format(result) mustBe expected
+        }
+
       }
+
+      "buildArrangementID" - {
+
+        "must build arrangement ID when user Selects DAC6ADD & enters a valid arrangementID" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6add,
+            arrangementID = Some("GBA20210120FOK5BT")
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildArrangementID
+
+          val expected = "<ArrangementID>GBA20210120FOK5BT</ArrangementID>"
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+        "must NOT build arrangement ID when user Selects DAC6NEW" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6new
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildArrangementID
+
+          val expected = ""
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+      }
+
+      "buildDisclosureID" - {
+
+        "must build disclosure ID when user Selects DAC6REP & enters a valid disclosureID" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6rep,
+            disclosureID = Some("GBA20210120FOK5BT")
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildDisclosureID
+
+          val expected = "<DisclosureID>GBA20210120FOK5BT</DisclosureID>"
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+        "must build disclosure ID when user Selects DAC6DEL & enters a valid disclosureID" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6rep,
+            disclosureID = Some("GBA20210120FOK5BT")
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildDisclosureID
+
+          val expected = "<DisclosureID>GBA20210120FOK5BT</DisclosureID>"
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+        "must NOT build disclosure ID when user Selects DAC6ADD" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6add
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildDisclosureID
+
+          val expected = ""
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+        "must NOT build disclosure ID when user Selects DAC6NEW" in {
+
+          val disclosureDetails = DisclosureDetails(
+            disclosureName = "",
+            disclosureType = DisclosureType.Dac6new
+          )
+
+          val submission = Submission("id", disclosureDetails)
+
+          val result = DisclosureDetailsXMLSection(submission).buildDisclosureID
+
+          val expected = ""
+
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
+
+      }
+
     }
-
-    "buildDisclosureImportInstruction" - {
-
-      "buildInitialDisclosureMA must build the disclosure MA section when arrangement is marketable" in {
-        val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
-          disclosureType = DisclosureType.Dac6new,
-          initialDisclosureMA = true
-        )
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
-
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildInitialDisclosureMA
-
-        val expected = "<InitialDisclosureMA>true</InitialDisclosureMA>"
-
-        prettyPrinter.format(result) mustBe expected
-      }
-
-      "buildInitialDisclosureMA must build the disclosure MA section when arrangement is not marketable" in {
-        val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
-          disclosureType = DisclosureType.Dac6new,
-          initialDisclosureMA = false
-        )
-
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildInitialDisclosureMA
-
-        val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
-
-        prettyPrinter.format(result) mustBe expected
-      }
-
-      "buildInitialDisclosureMA must build the disclosure MA section as false if arrangement is an additional" in {
-        val disclosureDetails = DisclosureDetails(
-          disclosureName = "My Second",
-          disclosureType = DisclosureType.Dac6add
-        )
-
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildInitialDisclosureMA
-
-        val expected = "<InitialDisclosureMA>false</InitialDisclosureMA>"
-
-        prettyPrinter.format(result) mustBe expected
-      }
-
-      // TODO fix
-//      "buildInitialDisclosureMA must throw an exception if disclosure MA is missing" in {
-//        assertThrows[Exception] {
-//          DisclosureDetailsXMLSection(disclosureDetails).buildInitialDisclosureMA
-//        }
-//      }
-    }
-
-    "buildArrangementID" - {
-
-      "must build arrangement ID when user Selects DAC6ADD & enters a valid arrangementID" in {
-        val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
-          disclosureType = DisclosureType.Dac6add,
-          arrangementID = Some("GBA20210120FOK5BT")
-        )
-
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildArrangementID
-
-        val expected = "<ArrangementID>GBA20210120FOK5BT</ArrangementID>"
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must NOT build arrangement ID when user Selects DAC6NEW" in {
-        val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
-          disclosureType = DisclosureType.Dac6new
-        )
-
-        val result = DisclosureDetailsXMLSection(disclosureDetails).buildArrangementID
-
-        val expected = ""
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-    }
-
   }
+}

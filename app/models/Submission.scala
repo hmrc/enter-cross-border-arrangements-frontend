@@ -18,7 +18,7 @@ package models
 
 import models.affected.Affected
 import models.arrangement.ArrangementDetails
-import models.disclosure.DisclosureDetails
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.enterprises.AssociatedEnterprise
 import models.hallmarks.HallmarkDetails
 import models.intermediaries.Intermediary
@@ -50,13 +50,14 @@ case class Submission(enrollmentID: String
 
   val getMessageRefId: Option[String] = disclosureDetails.messageRefId
 
+  val getDisclosureType: DisclosureType = disclosureDetails.disclosureType
+
+  def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
+
 }
 
 object Submission {
   implicit val format: OFormat[Submission] = Json.format[Submission]
-
-  def apply(arrangementID: String, disclosureID: String): Submission =
-    this("", DisclosureDetails("", arrangementID = Option(arrangementID), disclosureID = Option(disclosureID)))
 
   def apply(userAnswers: UserAnswers, id: Int, enrolmentID: String): Submission =
     (for {

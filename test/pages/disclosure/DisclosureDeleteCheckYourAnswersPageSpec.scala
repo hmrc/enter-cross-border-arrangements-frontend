@@ -30,8 +30,6 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
 
     beSettable[GeneratedIDs](DisclosureDeleteCheckYourAnswersPage)
 
-    beRemovable[GeneratedIDs](DisclosureDeleteCheckYourAnswersPage)
-
     "must remove replaceOrDelete Information" in {
       forAll(arbitrary[UserAnswers]) {
         answers =>

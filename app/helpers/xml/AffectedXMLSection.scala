@@ -16,15 +16,15 @@
 
 package helpers.xml
 
-import models.affected.Affected
+import models.Submission
 
 import scala.util.Try
 import scala.xml.{Elem, Node, NodeSeq}
 
-case class AffectedXMLSection(affectedPersons: IndexedSeq[Affected]) {
+case class AffectedXMLSection(submission: Submission) {
 
   private[xml] def getAffectedPersons: Seq[Node] =
-    Option(affectedPersons) match {
+    Option(submission.affectedPersons) match {
       case Some(affectedList) => affectedList.map {
         affectedPerson =>  if (affectedPerson.individual.isDefined) {
           <AffectedPerson>

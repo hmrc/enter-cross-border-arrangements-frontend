@@ -17,12 +17,12 @@
 package helpers.xml
 
 import base.SpecBase
-import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
+import helpers.data.ValidUserAnswersForSubmission.{validDisclosureDetails, validIndividual, validOrganisation}
 import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
-import models.{IsExemptionKnown, UnsubmittedDisclosure, UserAnswers}
+import models.{IsExemptionKnown, Submission, UnsubmittedDisclosure, UserAnswers}
 import pages.reporter.ReporterDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
@@ -46,7 +46,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some("DAC61101"), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildReporterCapacity
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -58,8 +60,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some("DAC61102"), None, None, None)))
 
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
+        val result = ReporterXMLSection(submission).buildReporterCapacity
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -71,8 +74,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability("Intermediary", None, Some(IntermediaryRole.Unknown.toString), None, None, None)))
 
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterCapacity
+        val result = ReporterXMLSection(submission).buildReporterCapacity
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -87,7 +91,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, Some("RTNEXb"), Some("DAC61104"), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         val expected =
           """<Liability>
@@ -107,7 +113,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString, Some("INEXa"), Some("DAC61101"), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         val expected =
           """<Liability>
@@ -123,7 +131,9 @@ class ReporterXMLSectionSpec extends SpecBase {
       "must not build the optional liability section if data is missing" in {
 
         val reporterDetails = ReporterDetails(None, Some(validOrganisation))
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -135,7 +145,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString, Some(IntermediaryWhyReportInUK.DoNotKnow.toString), Some("DAC61101"), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -147,7 +159,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, Some(TaxpayerWhyReportInUK.DoNotKnow.toString), Some("DAC61101"), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         prettyPrinter.formatNodes(result) mustBe ""
       }
@@ -161,7 +175,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString), None, None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         val expected =
           """<Liability>
@@ -182,7 +198,9 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Unknown.toString), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         val expected =
           """<Liability>
@@ -196,7 +214,6 @@ class ReporterXMLSectionSpec extends SpecBase {
 
       "must not include the optional capacity section if answer is 'doNotKnow' in taxpayer/why-reporting" in {
 
-
         val reporterDetails = ReporterDetails(
           None,
           Some(validOrganisation),
@@ -204,7 +221,9 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString),
             Some(TaxpayerWhyReportArrangement.DoNotKnow.toString), None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildLiability
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildLiability
 
         val expected =
           """<Liability>
@@ -227,6 +246,8 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some("RTNEXb"),
             None, None, None, None)))
+
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
         val expected =
           """<Disclosing>
@@ -256,7 +277,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
+        ReporterXMLSection(submission).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -272,9 +293,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(TaxpayerWhyReportInUK.DoNotKnow.toString),
             None, None, None, None)))
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
         val expected =
           """<Disclosing>
@@ -299,7 +318,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             |    </ID>
             |</Disclosing>""".stripMargin
 
-        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
+        ReporterXMLSection(submission).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -315,6 +334,8 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(IntermediaryWhyReportInUK.DoNotKnow.toString),
             None, None, None, None)))
 
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
         val expected =
           """<Disclosing>
             |    <ID>
@@ -338,7 +359,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             |    </ID>
             |</Disclosing>""".stripMargin
 
-        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
+        ReporterXMLSection(submission).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -352,6 +373,8 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             Some(TaxpayerWhyReportInUK.UkPermanentEstablishment.toString),
             None, None, None, None)))
+
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
         val expected =
           """<Disclosing>
@@ -386,7 +409,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
+        ReporterXMLSection(submission).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -401,6 +424,8 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Promoter.toString), None, None, None)))
+
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
         val expected =
           """<Disclosing>
@@ -431,7 +456,7 @@ class ReporterXMLSectionSpec extends SpecBase {
             |    </Liability>
             |</Disclosing>""".stripMargin
 
-        ReporterXMLSection(reporterDetails).buildDisclosureDetails.map { result =>
+        ReporterXMLSection(submission).buildDisclosureDetails.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -449,7 +474,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -487,7 +514,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -524,7 +553,9 @@ class ReporterXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterAsTaxpayer
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
 
         val expected =
           s"""<RelevantTaxpayer>
@@ -575,7 +606,9 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterAsIntermediary//(intermediary)
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+
+        val result = ReporterXMLSection(submission).buildReporterAsIntermediary//(intermediary)
 
         val expected =
           """<Intermediary>
@@ -620,11 +653,9 @@ class ReporterXMLSectionSpec extends SpecBase {
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
+        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(reporterDetails).buildReporterAsIntermediary//(intermediary)
+        val result = ReporterXMLSection(submission).buildReporterAsIntermediary//(intermediary)
 
         val expected =
           s"""<Intermediary>
@@ -664,9 +695,5 @@ class ReporterXMLSectionSpec extends SpecBase {
         prettyPrinter.formatNodes(result) mustBe expected
       }
     }
-
-
-
-
   }
 }

@@ -16,18 +16,18 @@
 
 package helpers.xml
 
+import models.Submission
 import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
-import models.disclosure.{DisclosureDetails, DisclosureType}
 import org.joda.time.DateTime
 
 import scala.xml.{Elem, NodeSeq}
 
-case class DisclosureDetailsXMLSection(disclosure: DisclosureDetails) {
+case class DisclosureDetailsXMLSection(submission: Submission) {
 
-  val isDelete = Option(disclosure.disclosureType).contains(DisclosureType.Dac6del)
+  val disclosure = Option(submission.disclosureDetails)
 
   def buildHeader(enrolmentID: String): Elem = {
-    val mandatoryMessageRefId = Option(disclosure.disclosureName) match {
+    val mandatoryMessageRefId = disclosure.map(_.disclosureName) match {
       case Some(disclosureName) => "GB" + enrolmentID + disclosureName
       case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
     }
@@ -41,35 +41,35 @@ case class DisclosureDetailsXMLSection(disclosure: DisclosureDetails) {
   }
 
   def buildDisclosureImportInstruction: Elem =
-    Option(disclosure.disclosureType) match {
+    disclosure.map(_.disclosureType) match {
       case Some(value) => <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
       case None => throw new Exception("Missing disclosure type answer")
     }
 
   def buildInitialDisclosureMA: Elem =
-    Option(disclosure.disclosureType) match {
+    disclosure.map(_.disclosureType) match {
       case Some(Dac6add) =>
         <InitialDisclosureMA>false</InitialDisclosureMA>
       case _ =>
-        Option(disclosure.initialDisclosureMA) match {
+        disclosure.map(_.initialDisclosureMA) match {
           case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
           case _ => throw new Exception("Missing InitialDisclosureMA flag")
         }
     }
 
   def buildArrangementID: NodeSeq =
-    Option(disclosure.disclosureType) match {
+    disclosure.map(_.disclosureType) match {
       case Some(Dac6new) => NodeSeq.Empty
       case _ =>
-        disclosure.arrangementID.fold(NodeSeq.Empty) { arrangementID =>
+        disclosure.flatMap(_.arrangementID).fold(NodeSeq.Empty) { arrangementID =>
           <ArrangementID>{arrangementID}</ArrangementID>
         }
     }
 
   def buildDisclosureID: NodeSeq =
-    Option(disclosure.disclosureType) match {
+    disclosure.map(_.disclosureType) match {
       case Some(Dac6rep) | Some(Dac6del) =>
-        disclosure.disclosureID.fold(NodeSeq.Empty) { disclosureID =>
+        disclosure.flatMap(_.disclosureID).fold(NodeSeq.Empty) { disclosureID =>
           <DisclosureID>{disclosureID}</DisclosureID>
         }
       case _ => NodeSeq.Empty

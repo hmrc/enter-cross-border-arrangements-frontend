@@ -18,6 +18,7 @@ package services
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
+import models.disclosure.DisclosureType
 import models.requests.DataRequest
 import models.{GeneratedIDs, Submission}
 import org.slf4j.LoggerFactory
@@ -40,17 +41,12 @@ class XMLGenerationService @Inject()(
   def createXmlSubmission(submission: Submission): Try[Elem] = {
 
     (for {
-      disclosureSection   <- Option(submission).map(s => DisclosureDetailsXMLSection(s.disclosureDetails))
-                               .toRight(new RuntimeException("Could not generate XML from disclosure details."))
-      reporterSection     =  submission.reporterDetails.map(ReporterXMLSection)
-      enterpriseSection   =  Option(submission.associatedEnterprises).map(AssociatedEnterprisesXMLSection)
-      taxpayerSection     =  RelevantTaxPayersXMLSection(submission.taxpayers, reporterSection, enterpriseSection)
-      intermediarySection =  IntermediariesXMLSection(submission.intermediaries, reporterSection)
-      affectedSection     =  AffectedXMLSection(submission.affectedPersons)
-      hallmarksSection    =  submission.hallmarkDetails.map(HallmarksXMLSection)
-      disclosureInformationSection =  submission.arrangementDetails.map(s => DisclosureInformationXMLSection(s, hallmarksSection))
-      enrolmentID         <- Option(submission).map(_.enrollmentID)
-                               .toRight(new RuntimeException("Could not get enrolment id from submission."))
+      disclosureSection            <- Option(submission).map(DisclosureDetailsXMLSection)
+                                        .toRight(new RuntimeException("Could not generate XML from disclosure details."))
+      reporterSection              =  ReporterXMLSection(submission)
+      disclosureInformationSection =  DisclosureInformationXMLSection(submission)
+      enrolmentID                  <- Option(submission).map(_.enrollmentID)
+                                        .toRight(new RuntimeException("Could not get enrolment id from submission."))
     } yield {
       Try {
         <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
@@ -59,21 +55,26 @@ class XMLGenerationService @Inject()(
           <DAC6Disclosures>
             {disclosureSection.buildDisclosureID}
             {disclosureSection.buildDisclosureImportInstruction}
-            {reporterSection.map(_.buildDisclosureDetails).getOrElse(NodeSeq.Empty)}
+            {reporterSection.buildDisclosureDetails}
             {disclosureSection.buildInitialDisclosureMA}
-            if (disclosureSection.isDelete) {
-              NodeSeq.Empty
-            } else {
-              {taxpayerSection.buildRelevantTaxpayers.getOrElse(NodeSeq.Empty)}
-              {intermediarySection.buildIntermediaries.getOrElse(NodeSeq.Empty)}
-              {affectedSection.buildAffectedPersons.getOrElse(NodeSeq.Empty)}
-              {disclosureInformationSection.map(_.buildDisclosureInformation).getOrElse(NodeSeq.Empty)}
-            }
+            {createPartiesSection(submission, Option(reporterSection))}
+            {disclosureInformationSection.buildDisclosureInformation}
           </DAC6Disclosures>
         </DAC6_Arrangement>
       }
     }).fold(Failure(_), identity)
 
+  }
+
+  def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq = {
+    if (submission.getDisclosureType == DisclosureType.Dac6del) {
+      NodeSeq.Empty
+    }
+    else {
+      RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers.getOrElse(NodeSeq.Empty) ++
+        IntermediariesXMLSection(submission, reporterSection).buildIntermediaries.getOrElse(NodeSeq.Empty) ++
+        AffectedXMLSection(submission).buildAffectedPersons.getOrElse(NodeSeq.Empty)
+    }
   }
 
   def createAndValidateXmlSubmission(submission: Submission)

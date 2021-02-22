@@ -16,20 +16,18 @@
 
 package helpers.xml
 
-import java.time.LocalDate
 import base.SpecBase
+import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import org.mockito.Mock
-import pages.enterprises.AssociatedEnterpriseLoopPage
+import models.{Address, Country, LoopDetails, Name, Submission, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.reporter._
-import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
@@ -78,6 +76,13 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
     Taxpayer("123", Some(individual), None, Some(todayMinusOneMonth)),
     Taxpayer("Another ID", Some(individual.copy(individualName = Name("Another", "Individual"))), None, Some(todayMinusTwoMonths)))
 
+  private val submission = Submission("id", validDisclosureDetails)
+
+  def toSubmission(reporterDetails: ReporterDetails, taxpayers: IndexedSeq[Taxpayer] = IndexedSeq.empty[Taxpayer]): Submission =
+    submission.copy(reporterDetails = Option(reporterDetails), taxpayers = taxpayers)
+
+  def toSubmission(taxpayers: IndexedSeq[Taxpayer]): Submission =
+    submission.copy(taxpayers = taxpayers)
 
   "RelevantTaxPayersXMLSection" - {
 
@@ -91,11 +96,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -172,7 +172,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
 
@@ -188,11 +188,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
-
         val expected =
           s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
@@ -263,7 +258,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -277,11 +272,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -369,7 +359,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |</RelevantTaxPayers>""".stripMargin
 
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -383,11 +373,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           Some(organisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
             None, None, None, None, Some(today))))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -469,7 +454,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -484,8 +469,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
-          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+//          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
+//          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+
+        val updatedSubmision = submission.copy(taxpayers = taxpayersAsOrganisation, associatedEnterprises = enterpriseLoop)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -559,7 +546,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(updatedSubmision, Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
@@ -575,8 +562,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-          .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
-          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+//          .set(TaxpayerLoopPage, 0, taxpayersAsIndividuals).success.value
+//          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+
+        val updatedSubmision = submission.copy(taxpayers = taxpayersAsIndividuals, associatedEnterprises = enterpriseLoop)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -687,7 +676,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(taxpayersAsOrganisation, Option(reporterSection), Option(associatedEnterpriseSection)).buildRelevantTaxpayers.map { result =>
+        RelevantTaxPayersXMLSection(updatedSubmision, Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }

@@ -20,11 +20,12 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.RemoveDisclosureFormProvider
+
 import javax.inject.Inject
-import models.disclosure.DisclosureDetails
+import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage}
+import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -79,11 +80,11 @@ class RemoveDisclosureController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val disclosureDetails : DisclosureDetails =
+        request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
+
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val disclosureDetails : DisclosureDetails =
-            request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
 
           val json = Json.obj(
             "form"   -> formWithErrors,
@@ -95,14 +96,20 @@ class RemoveDisclosureController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            updatedAnswers1 <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswers, id))
-            _              <- sessionRepository.set(updatedUserAnswersWithFlags)
-            checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
+            updatedAnswers              <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
+            updatedAnswersWithIds       <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, getIds(disclosureDetails)))
+            updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswersWithIds, id))
+            _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
+            checkRoute                  =  toCheckRoute(NormalMode, updatedAnswers)
           } yield Redirect(redirect(checkRoute, Some(value), id))
       )
   }
+
+  private[controllers] def getIds(disclosureDetails : DisclosureDetails): ReplaceOrDeleteADisclosure =
+    (disclosureDetails.arrangementID, disclosureDetails.disclosureID) match {
+      case (Some(arrangementID), Some(disclosureID)) => ReplaceOrDeleteADisclosure(arrangementID, disclosureID)
+      case _ => ReplaceOrDeleteADisclosure("arrangementID", "disclosureID")//throw new RuntimeException("Unable to retrieve disclosure details")
+    }
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>

@@ -17,35 +17,15 @@
 package helpers.xml
 
 import base.SpecBase
-import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.hallmarks.{HallmarkD, HallmarkDetails}
-import models.{UnsubmittedDisclosure, UserAnswers}
-import pages.arrangement._
-import pages.hallmarks.{HallmarkDPage, HallmarkDetailsPage}
-import pages.unsubmitted.UnsubmittedDisclosurePage
-
-import java.time.LocalDate
+import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
+import models.Submission
+import models.hallmarks.HallmarkDetails
 
 class HallmarksXMLSectionSpec extends SpecBase {
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
   val hallmarksSection: HallmarksXMLSection = mock[HallmarksXMLSection]
-
-  val today: LocalDate = LocalDate.now
-  val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
-    Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
-
-  val mockArrangementDetails: ArrangementDetails =
-    ArrangementDetails(
-      "name",
-      today,
-      Some("DAC6703"),
-      List("GB", "FR"),
-      ExpectedArrangementValue("GBP", 1000),
-      "nationalProvisions",
-      "arrangementDetails"
-    )
 
   "HallmarksXMLSection" - {
 
@@ -56,7 +36,9 @@ class HallmarksXMLSectionSpec extends SpecBase {
         hallmarkContent = Some("Hallmark D1 other description")
       )
 
-      val result = HallmarksXMLSection(hallmarkDetails).buildHallmarks
+      val submission = Submission("id", validDisclosureDetails).copy(hallmarkDetails = Some(hallmarkDetails))
+
+      val result = HallmarksXMLSection(submission).buildHallmarks
 
       val expected =
         """<Hallmarks>
@@ -78,7 +60,9 @@ class HallmarksXMLSectionSpec extends SpecBase {
         None
       )
 
-      val result = HallmarksXMLSection(hallmarkDetails).buildHallmarks
+      val submission = Submission("id", validDisclosureDetails).copy(hallmarkDetails = Some(hallmarkDetails))
+
+      val result = HallmarksXMLSection(submission).buildHallmarks
 
       val expected =
         """<Hallmarks>
@@ -92,23 +76,13 @@ class HallmarksXMLSectionSpec extends SpecBase {
       prettyPrinter.format(result) mustBe expected
     }
 
-    // TODO fix
-//    "buildHallmarks must throw an exception if HallmarkD is missing" in {
-//      assertThrows[Exception] {
-//        val result = HallmarksXMLSection(hallmarkDetails).buildHallmarks
-//      }
-//    }
+    "buildHallmarks must throw an exception if HallmarkD is missing" in {
 
-    // TODO fix
-//    "buildHallmarks must throw an exception if HallmarkD1 is missing and it was selected" in {
-//      val userAnswers = UserAnswers(userAnswersId)
-//        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-//        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet).success.value
-//
-//      assertThrows[Exception] {
-//        HallmarksXMLSection.buildHallmarks(userAnswers, 0)
-//      }
-//    }
+      val submission = Submission("id", validDisclosureDetails)
 
+      assertThrows[Exception] {
+        HallmarksXMLSection(submission).buildHallmarks
+      }
+    }
   }
 }

@@ -15,11 +15,14 @@
  */
 
 package helpers.xml
+import models.Submission
 import models.enterprises.AssociatedEnterprise
 
 import scala.xml.NodeSeq
 
-case class AssociatedEnterprisesXMLSection(associatedEnterprises: IndexedSeq[AssociatedEnterprise]) {
+case class AssociatedEnterprisesXMLSection(submission: Submission) {
+
+  val associatedEnterprises: IndexedSeq[AssociatedEnterprise] = submission.associatedEnterprises
 
   private[xml] def buildAssociatedEnterprise(associatedEnterprise: AssociatedEnterprise): NodeSeq = {
     val optionalAffectedPerson = <AffectedPerson>{associatedEnterprise.isAffectedBy}</AffectedPerson>

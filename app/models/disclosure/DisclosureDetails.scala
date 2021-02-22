@@ -25,7 +25,12 @@ case class DisclosureDetails(
   disclosureID: Option[String]  = None,
   initialDisclosureMA: Boolean  = false,
   messageRefId: Option[String]  = None
-)
+) {
+
+  def setDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
+
+  def setIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
+}
 
 object DisclosureDetails {
 

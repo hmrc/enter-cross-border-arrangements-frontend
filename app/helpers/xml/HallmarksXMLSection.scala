@@ -16,15 +16,17 @@
 
 package helpers.xml
 
-import models.hallmarks.HallmarkDetails
+import models.Submission
 
 import scala.xml.{Elem, NodeSeq}
 
-case class HallmarksXMLSection(hallmarkDetails: HallmarkDetails) {
+case class HallmarksXMLSection(submission: Submission) {
+
+  val hallmarkDetails = submission.hallmarkDetails
 
   private[xml] def buildHallmarks: Elem = {
 
-    Option(hallmarkDetails) match {
+    hallmarkDetails match {
       case Some(hallmarkDetails) =>
 
         val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>

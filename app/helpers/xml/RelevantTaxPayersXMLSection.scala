@@ -16,17 +16,17 @@
 
 package helpers.xml
 
-import models.taxpayer.Taxpayer
+import models.Submission
 
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
-case class RelevantTaxPayersXMLSection(taxpayers: IndexedSeq[Taxpayer]
-                                       , reporterSection: Option[ReporterXMLSection]
-                                       , associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection]) {
+case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
+
+  val associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection] = Option(AssociatedEnterprisesXMLSection(submission))
 
   private[xml] def getRelevantTaxpayerst: IndexedSeq[NodeSeq] =
-    taxpayers.map { taxpayer =>
+    submission.taxpayers.map { taxpayer =>
       val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
       if (taxpayer.individual.isDefined) {
         <RelevantTaxpayer>

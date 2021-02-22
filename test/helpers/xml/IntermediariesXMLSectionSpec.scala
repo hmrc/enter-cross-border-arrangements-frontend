@@ -16,9 +16,8 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
+import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
 import models.IsExemptionKnown.Yes
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.{Promoter, Serviceprovider}
@@ -27,11 +26,9 @@ import models.organisation.Organisation
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.TaxResidency
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import pages.intermediaries.IntermediaryLoopPage
-import pages.reporter.ReporterDetailsPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, Submission, TaxReferenceNumbers}
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class IntermediariesXMLSectionSpec extends SpecBase {
@@ -91,27 +88,31 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
   val intermediaryLoop = IndexedSeq(intermediary)
 
+  private val submission = Submission("id", validDisclosureDetails)
+
+  def toSubmission(intermediaries: IndexedSeq[Intermediary]= IndexedSeq.empty[Intermediary]): Submission = submission.copy(intermediaries = intermediaries)
+
   "IntermediariesXMLSection" - {
 
     "getIntermediaryCapacity" - {
 
       "must build optional intermediary capacity for PROMOTER" in {
 
-        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediaryCountriesKnown)
+        val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).getIntermediaryCapacity(intermediaryCountriesKnown)
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must build optional intermediary capacity for SERVICE PROVIDER" in {
 
-        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediaryServiceProvider)
+        val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).getIntermediaryCapacity(intermediaryServiceProvider)
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must NOT build optional intermediary capacity for 'I DO NOT KNOW'" in {
 
-        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).getIntermediaryCapacity(intermediary)
+        val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).getIntermediaryCapacity(intermediary)
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -121,7 +122,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional NATIONAL EXEMPTION when KNOWN EXEMPTION and countries are KNOWN" in {
 
-        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediaryCountriesKnown)
+        val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).buildNationalExemption(intermediaryCountriesKnown)
 
         val expected =
           """<NationalExemption>
@@ -136,7 +137,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional NATIONAL EXEMPTION when KNOWN EXEMPTION but countries NOT KNOWN" in {
 
-        val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediaryCountriesUnknown)
+        val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).buildNationalExemption(intermediaryCountriesUnknown)
 
         val expected =
           """<NationalExemption>
@@ -149,7 +150,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
     "must NOT build optional NATIONAL EXEMPTION when EXEMPTION are NOT KNOWN" in {
 
-      val result = IntermediariesXMLSection(IndexedSeq.empty[Intermediary], Option(reporterSection)).buildNationalExemption(intermediary)
+      val result = IntermediariesXMLSection(toSubmission(), Option(reporterSection)).buildNationalExemption(intermediary)
       val expected = ""
 
       prettyPrinter.formatNodes(result) mustBe expected
@@ -166,11 +167,6 @@ class IntermediariesXMLSectionSpec extends SpecBase {
           Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
             Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
             Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(IntermediaryLoopPage, 0, intermediaryLoop).success.value
-          .set(ReporterDetailsPage, 0, reporterDetails).success.value
 
         val expected =
           """<Intermediaries>
@@ -223,7 +219,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    </Intermediary>
             |</Intermediaries>""".stripMargin
 
-        IntermediariesXMLSection(intermediaryLoop, Option(reporterSection)).buildIntermediaries.map { result =>
+        IntermediariesXMLSection(toSubmission(intermediaryLoop), Option(reporterSection)).buildIntermediaries.map { result =>
 
           prettyPrinter.formatNodes(result) mustBe expected
         }
