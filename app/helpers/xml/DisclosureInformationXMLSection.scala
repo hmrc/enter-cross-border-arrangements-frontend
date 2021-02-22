@@ -19,7 +19,7 @@ package helpers.xml
 import models.Submission
 
 import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 case class DisclosureInformationXMLSection(submission: Submission) {
 
@@ -70,7 +70,7 @@ case class DisclosureInformationXMLSection(submission: Submission) {
       case None => throw new Exception("Unable to construct XML from arrangement details")
     }
 
-  def buildDisclosureInformation: Either[Throwable, Elem] =
+  def buildDisclosureInformation: NodeSeq =
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>
@@ -78,5 +78,5 @@ case class DisclosureInformationXMLSection(submission: Submission) {
         <MainBenefitTest1>false</MainBenefitTest1>
         {hallmarksSection.buildHallmarks}
       </DisclosureInformation>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
 }

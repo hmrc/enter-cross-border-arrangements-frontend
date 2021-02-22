@@ -45,6 +45,10 @@ class XMLGenerationService @Inject()(
                                         .toRight(new RuntimeException("Could not generate XML from disclosure details."))
       reporterSection              =  ReporterXMLSection(submission)
       disclosureInformationSection =  DisclosureInformationXMLSection(submission)
+      _ = println("\nDisclosureInformationSection\n")
+      _ = println("===================")
+      _ = println(disclosureInformationSection.buildDisclosureInformation)
+      _ = println("===================")
       enrolmentID                  <- Option(submission).map(_.enrollmentID)
                                         .toRight(new RuntimeException("Could not get enrolment id from submission."))
     } yield {
@@ -71,9 +75,9 @@ class XMLGenerationService @Inject()(
       NodeSeq.Empty
     }
     else {
-      RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers.getOrElse(NodeSeq.Empty) ++
-        IntermediariesXMLSection(submission, reporterSection).buildIntermediaries.getOrElse(NodeSeq.Empty) ++
-        AffectedXMLSection(submission).buildAffectedPersons.getOrElse(NodeSeq.Empty)
+      RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
+        IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
+        AffectedXMLSection(submission).buildAffectedPersons
     }
   }
 
@@ -87,6 +91,10 @@ class XMLGenerationService @Inject()(
         throw error
       },
       xml => {
+        println("\nXML\n")
+        println("\n===================\n")
+        println(xml)
+        println("\n===================\n")
         //send it off to be validated and business rules
         validationConnector.sendForValidation(xml).flatMap {
           _.fold(

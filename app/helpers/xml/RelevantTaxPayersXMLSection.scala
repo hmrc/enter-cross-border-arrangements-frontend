@@ -19,7 +19,7 @@ package helpers.xml
 import models.Submission
 
 import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
 
@@ -42,11 +42,11 @@ case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: 
   private[xml] def getAssociatedEnterprises(name: String) =
     associatedEnterpriseSection.map(_.buildAssociatedEnterprises(name)).getOrElse(NodeSeq.Empty)
 
-  def buildRelevantTaxpayers: Either[Throwable, Elem] =
+  def buildRelevantTaxpayers: NodeSeq =
     Try {
       <RelevantTaxPayers>
         {reporterSection.map(_.buildReporterAsTaxpayer).getOrElse(NodeSeq.Empty) ++ getRelevantTaxpayerst}
       </RelevantTaxPayers>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
 
 }

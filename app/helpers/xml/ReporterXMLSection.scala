@@ -29,13 +29,13 @@ case class ReporterXMLSection(submission: Submission) {
 
   val reporterDetails = submission.reporterDetails
 
-  def buildDisclosureDetails: Either[Throwable, Elem] = {
+  def buildDisclosureDetails: NodeSeq = {
     Try {
       <Disclosing>
         {buildDiscloseDetailsForReporter}
       </Disclosing>
     }
-  }.toEither
+  }.getOrElse(NodeSeq.Empty)
 
   private[xml] def buildLiability: NodeSeq = {
 

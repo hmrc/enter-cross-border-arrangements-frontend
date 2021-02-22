@@ -19,7 +19,7 @@ package helpers.xml
 import models.Submission
 
 import scala.util.Try
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Node, NodeSeq}
 
 case class AffectedXMLSection(submission: Submission) {
 
@@ -43,11 +43,11 @@ case class AffectedXMLSection(submission: Submission) {
       case _ => NodeSeq.Empty
     }
 
-  def buildAffectedPersons: Either[Throwable, Elem] =
+  def buildAffectedPersons: NodeSeq =
     Try {
       <AffectedPersons>
         {getAffectedPersons}
       </AffectedPersons>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
 }
 

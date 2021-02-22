@@ -22,7 +22,7 @@ import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
 
 import scala.util.Try
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Node, NodeSeq}
 
 case class IntermediariesXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
 
@@ -81,11 +81,11 @@ case class IntermediariesXMLSection(submission: Submission, reporterSection: Opt
         }
     }
 
-  def buildIntermediaries: Either[Throwable, Elem] = {
+  def buildIntermediaries: NodeSeq = {
     Try {
       <Intermediaries>
         {reporterSection.map(_.buildReporterAsIntermediary).getOrElse(NodeSeq.Empty) ++ getIntermediaries}
       </Intermediaries>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
   }
 }
