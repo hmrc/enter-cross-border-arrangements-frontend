@@ -127,7 +127,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with Nun
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-country-known/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/intermediaries/exemption-country-known/0"
       application.stop()
     }
 

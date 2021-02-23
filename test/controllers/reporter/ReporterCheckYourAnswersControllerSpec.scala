@@ -16,7 +16,6 @@
 
 package controllers.reporter
 
-import java.time.LocalDate
 import base.SpecBase
 import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.YesNoDoNotKnowRadios.Yes
@@ -41,6 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {

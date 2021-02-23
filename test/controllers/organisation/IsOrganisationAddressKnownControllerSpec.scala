@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.organisation.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -129,7 +128,7 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/main-address-in-uk/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/main-address-in-uk/0"
 
       application.stop()
     }

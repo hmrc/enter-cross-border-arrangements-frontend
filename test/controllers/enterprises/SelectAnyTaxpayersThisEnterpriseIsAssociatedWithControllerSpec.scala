@@ -155,7 +155,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/type/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/associated-enterprises/type/0"
 
       application.stop()
     }

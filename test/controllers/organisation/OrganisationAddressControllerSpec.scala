@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.{Address, CheckMode, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -153,7 +152,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/email-address/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/email-address/0"
 
       application.stop()
     }

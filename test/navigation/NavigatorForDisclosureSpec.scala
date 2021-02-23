@@ -17,13 +17,12 @@
 package navigation
 
 import base.SpecBase
-import controllers.mixins.{DefaultRouting, IntermediariesRouting}
+import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
-import pages.intermediaries.IsExemptionCountryKnownPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 

@@ -16,8 +16,6 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.hallmarks.{HallmarkD, HallmarkDetails}
@@ -25,6 +23,8 @@ import models.{UnsubmittedDisclosure, UserAnswers}
 import pages.arrangement._
 import pages.hallmarks.{HallmarkDPage, HallmarkDetailsPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
+
+import java.time.LocalDate
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 

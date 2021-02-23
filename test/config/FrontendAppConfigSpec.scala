@@ -17,16 +17,6 @@
 package config
 
 import base.SpecBase
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import play.api.Configuration
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import scala.concurrent.Future
 
 class FrontendAppConfigSpec extends SpecBase {
 
@@ -42,13 +32,13 @@ class FrontendAppConfigSpec extends SpecBase {
 
     "must return correct url for loginContinue" in {
 
-      config.loginContinueUrl mustBe "http://localhost:9762/enter-cross-border-arrangements"
+      config.loginContinueUrl mustBe "http://localhost:9762/disclose-cross-border-arrangements/manual"
 
     }
 
     "must return correct url for hallmarks" in {
 
-      config.hallmarksUrl mustBe "http://localhost:9762/enter-cross-border-arrangements/hallmarks/hallmark-category-d"
+      config.hallmarksUrl mustBe "http://localhost:9762/disclose-cross-border-arrangements/manual/hallmarks/hallmark-category-d"
 
     }
   }

@@ -44,7 +44,7 @@ import scala.concurrent.Future
 class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/others-affected/update/0")
+  val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/others-affected/update/0")
 
   val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
   val loopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))

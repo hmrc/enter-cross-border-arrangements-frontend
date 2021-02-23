@@ -19,15 +19,14 @@ package helpers.xml
 import base.SpecBase
 import models.affected.Affected
 import models.individual.Individual
-import models.{Address, Country, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
+import models.{Address, Country, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.affected.AffectedLoopPage
-import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
-import scala.xml.{Elem, NodeSeq, PrettyPrinter}
+import scala.xml.{Elem, PrettyPrinter}
 
 class AffectedXMLSectionSpec extends SpecBase {
 

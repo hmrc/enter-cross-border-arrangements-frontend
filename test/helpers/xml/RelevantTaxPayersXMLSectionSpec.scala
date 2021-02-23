@@ -16,8 +16,6 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
@@ -30,6 +28,7 @@ import pages.reporter._
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {

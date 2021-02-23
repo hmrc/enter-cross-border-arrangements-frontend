@@ -16,8 +16,6 @@
 
 package models.reporter
 
-import java.time.LocalDate
-
 import generators.ModelGenerators
 import models.individual.Individual
 import models.organisation.Organisation
@@ -35,6 +33,8 @@ import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrg
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
+
+import java.time.LocalDate
 
 class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
 

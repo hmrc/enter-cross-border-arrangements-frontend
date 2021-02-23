@@ -16,8 +16,6 @@
 
 package navigation
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.mixins.DefaultRouting
 import generators.Generators
@@ -27,13 +25,15 @@ import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.{YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.reporter._
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+
+import java.time.LocalDate
 
 class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

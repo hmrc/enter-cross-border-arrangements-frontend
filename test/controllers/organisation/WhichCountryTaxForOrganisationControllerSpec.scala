@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.NavigatorForOrganisation
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -149,7 +148,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/resident-country-tin-0/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/resident-country-tin-0/0"
 
       application.stop()
     }

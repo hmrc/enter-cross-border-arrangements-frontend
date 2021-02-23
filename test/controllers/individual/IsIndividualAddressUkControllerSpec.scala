@@ -129,7 +129,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/postcode/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/postcode/0"
 
       application.stop()
     }
@@ -155,7 +155,7 @@ class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/address/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/address/0"
 
       application.stop()
     }

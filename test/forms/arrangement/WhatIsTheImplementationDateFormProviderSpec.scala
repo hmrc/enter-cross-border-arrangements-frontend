@@ -16,9 +16,9 @@
 
 package forms.arrangement
 
-import java.time.{LocalDate, ZoneOffset}
-
 import forms.behaviours.DateBehaviours
+
+import java.time.{LocalDate, ZoneOffset}
 
 class WhatIsTheImplementationDateFormProviderSpec extends DateBehaviours {
 

@@ -16,8 +16,6 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.individual.Individual
 import models.organisation.Organisation
@@ -29,6 +27,7 @@ import models.{Address, Country, LoopDetails, Name, TaxReferenceNumbers, Unsubmi
 import pages.reporter.ReporterDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class DisclosingXMLSectionSpec extends SpecBase {

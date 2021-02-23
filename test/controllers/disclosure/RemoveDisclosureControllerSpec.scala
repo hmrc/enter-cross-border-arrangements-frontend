@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.RemoveDisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}

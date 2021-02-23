@@ -49,7 +49,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/disclosure-received/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure-received/0"
 
       application.stop()
     }
@@ -73,7 +73,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/addition-received/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/addition-received/0"
 
       application.stop()
     }
@@ -98,7 +98,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/replacement-received/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/replacement-received/0"
 
       application.stop()
     }

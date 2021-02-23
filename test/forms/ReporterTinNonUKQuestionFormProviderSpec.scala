@@ -18,9 +18,9 @@ package forms
 
 import forms.behaviours.BooleanFieldBehaviours
 import forms.reporter.ReporterTinNonUKQuestionFormProvider
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.{Form, FormError}
 import play.api.i18n.{Messages, MessagesApi}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 

@@ -16,8 +16,6 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.IsExemptionKnown.Yes
 import models.individual.Individual
@@ -32,6 +30,7 @@ import pages.intermediaries.IntermediaryLoopPage
 import pages.reporter.ReporterDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class IntermediariesXMLSectionSpec extends SpecBase {
