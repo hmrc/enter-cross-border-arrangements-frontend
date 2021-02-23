@@ -40,7 +40,7 @@ import scala.concurrent.Future
 
 class ReporterOrganisationOrIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/organisation/name/0")
+  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/organisation/name/0")
 
   lazy val reporterOrganisationOrIndividualRoute = routes.ReporterOrganisationOrIndividualController.onPageLoad(0, NormalMode).url
 

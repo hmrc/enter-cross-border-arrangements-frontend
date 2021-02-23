@@ -21,14 +21,13 @@ import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
-import models.{Country, NormalMode, SubmissionDetails, UnsubmittedDisclosure, UserAnswers}
+import models.{Country, NormalMode, SubmissionDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.disclosure.{DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
-import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}

@@ -32,13 +32,13 @@ class FrontendAppConfigSpec extends SpecBase {
 
     "must return correct url for loginContinue" in {
 
-      config.loginContinueUrl mustBe "http://localhost:9762/enter-cross-border-arrangements"
+      config.loginContinueUrl mustBe "http://localhost:9762/disclose-cross-border-arrangements/manual"
 
     }
 
     "must return correct url for hallmarks" in {
 
-      config.hallmarksUrl mustBe "http://localhost:9762/enter-cross-border-arrangements/hallmarks/hallmark-category-d"
+      config.hallmarksUrl mustBe "http://localhost:9762/disclose-cross-border-arrangements/manual/hallmarks/hallmark-category-d"
 
     }
   }

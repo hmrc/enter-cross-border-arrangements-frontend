@@ -136,7 +136,7 @@ class IndividualNameControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/do-you-know-date-of-birth/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/do-you-know-date-of-birth/0"
 
       application.stop()
     }

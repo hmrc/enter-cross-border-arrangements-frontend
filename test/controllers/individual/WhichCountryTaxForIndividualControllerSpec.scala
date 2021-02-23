@@ -140,7 +140,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/uk-tin-known-0/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/uk-tin-known-0/0"
 
       application.stop()
     }
@@ -165,7 +165,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/resident-country-tin-0/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/resident-country-tin-0/0"
 
       application.stop()
     }

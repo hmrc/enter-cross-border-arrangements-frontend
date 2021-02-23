@@ -129,7 +129,7 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/name/0"
 
       application.stop()
     }
@@ -189,7 +189,7 @@ class AffectedTypeControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/others-affected/check-answers/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/others-affected/check-answers/0"
 
       application.stop()
     }

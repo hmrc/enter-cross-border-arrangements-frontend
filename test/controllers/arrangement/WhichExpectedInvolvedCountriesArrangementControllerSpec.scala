@@ -17,9 +17,9 @@
 package controllers.arrangement
 
 import base.SpecBase
-import controllers.routes
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
 import matchers.JsonMatchers
+import models.arrangement.WhichExpectedInvolvedCountriesArrangement
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -27,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.arrangement.WhichExpectedInvolvedCountriesArrangementPage
+import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,8 +36,6 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
-import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import scala.concurrent.Future
 

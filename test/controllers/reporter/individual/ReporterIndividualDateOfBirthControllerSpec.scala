@@ -148,7 +148,7 @@ class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with MockitoS
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/birthplace/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/individual/birthplace/0"
 
       application.stop()
     }

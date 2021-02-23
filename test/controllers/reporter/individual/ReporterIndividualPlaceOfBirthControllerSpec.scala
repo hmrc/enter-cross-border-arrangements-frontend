@@ -129,7 +129,7 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Mockito
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/individual/live-in-uk/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/individual/live-in-uk/0"
 
       application.stop()
     }

@@ -40,7 +40,7 @@ import scala.concurrent.Future
 
 class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/tax-resident-countries-1/0")
+  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/tax-resident-countries-1/0")
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
   val form = formProvider()

@@ -21,7 +21,6 @@ import forms.intermediaries.WhatTypeofIntermediaryFormProvider
 import matchers.JsonMatchers
 import models.intermediaries.WhatTypeofIntermediary
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -129,7 +128,7 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockitoSugar wi
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/exemption-known/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/intermediaries/exemption-known/0"
       application.stop()
     }
 

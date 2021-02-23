@@ -150,7 +150,7 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/individual/tax-resident-countries-1/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/tax-resident-countries-1/0"
 
       application.stop()
     }

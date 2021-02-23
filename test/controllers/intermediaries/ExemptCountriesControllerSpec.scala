@@ -29,7 +29,6 @@ import pages.intermediaries.ExemptCountriesPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -127,7 +126,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/intermediaries/check-answers/0"
 
       application.stop()
     }

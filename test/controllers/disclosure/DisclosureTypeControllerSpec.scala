@@ -17,6 +17,7 @@
 package controllers.disclosure
 
 import base.SpecBase
+import connectors.HistoryConnector
 import forms.disclosure.DisclosureTypeFormProvider
 import matchers.JsonMatchers
 import models.disclosure.DisclosureType
@@ -36,7 +37,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
-import connectors.HistoryConnector
 
 
 class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
