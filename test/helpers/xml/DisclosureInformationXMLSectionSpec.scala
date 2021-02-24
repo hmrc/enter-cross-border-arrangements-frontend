@@ -17,11 +17,11 @@
 package helpers.xml
 
 import base.SpecBase
-import helpers.data.ValidUserAnswersForSubmission.{validArrangementDetails, validDisclosureDetails, validToday}
+import helpers.data.ValidUserAnswersForSubmission.{validArrangementDetails, validDisclosureDetails, validHallmarkDetails, validToday}
 import models.Submission
 import models.arrangement.WhyAreYouReportingThisArrangementNow
 
-import scala.xml.Elem
+import scala.xml.{Elem, NodeSeq}
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 
@@ -129,11 +129,13 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildDisclosureInformation must build the full DisclosureInformation Elem" in {
 
-      val submission = Submission("id", validDisclosureDetails)//.copy(arrangementDetails = Some(arrangementDetails))
+      val submission = Submission("id", validDisclosureDetails)
+        .copy(
+          arrangementDetails = Some(validArrangementDetails),
+          hallmarkDetails = Some(validHallmarkDetails)
+        )
 
-      val hallmarksSection = HallmarksXMLSection(submission)
-
-      val result: Either[Throwable, Elem] = DisclosureInformationXMLSection(submission).buildDisclosureInformation
+      val result: Either[Throwable, NodeSeq] = Right(DisclosureInformationXMLSection(submission).buildDisclosureInformation)
 
       val expected =
         s"""<DisclosureInformation>
@@ -162,7 +164,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
       result.map { result =>
 
-        prettyPrinter.format(result) mustBe expected
+        prettyPrinter.formatNodes(result) mustBe expected
       }
     }
 

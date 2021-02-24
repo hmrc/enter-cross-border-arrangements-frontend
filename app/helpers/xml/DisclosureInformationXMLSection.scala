@@ -70,7 +70,15 @@ case class DisclosureInformationXMLSection(submission: Submission) {
       case None => throw new Exception("Unable to construct XML from arrangement details")
     }
 
-  def buildDisclosureInformation: NodeSeq =
+  def buildDisclosureInformation: NodeSeq = {
+    val thing = Try {
+      <DisclosureInformation>
+        {buildArrangementDetails}
+        <MainBenefitTest1>false</MainBenefitTest1>
+        {hallmarksSection.buildHallmarks}
+      </DisclosureInformation>
+    }
+
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
     Try {
       <DisclosureInformation>
@@ -79,4 +87,5 @@ case class DisclosureInformationXMLSection(submission: Submission) {
         {hallmarksSection.buildHallmarks}
       </DisclosureInformation>
     }.getOrElse(NodeSeq.Empty)
+  }
 }

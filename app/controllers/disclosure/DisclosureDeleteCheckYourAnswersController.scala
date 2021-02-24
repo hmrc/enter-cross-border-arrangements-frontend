@@ -78,8 +78,6 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
         case _ => throw new RuntimeException("Cannot retrieve Disclosure Information")
       }
 
-      println(submission)
-
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
         _.fold (
           _ => throw new IllegalStateException(s"Unable to delete submission: $submission")
