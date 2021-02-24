@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.disclosure
+package controllers.confirmation
 
 import base.SpecBase
 import connectors.SubscriptionConnector
@@ -40,7 +40,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
-  val userAnswers = UserAnswers(
+  val userAnswers: UserAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
       DeletedDisclosurePage.toString -> Json.obj(
@@ -50,7 +50,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
     )
   )
 
-  val mockSubscriptionConnector = mock[SubscriptionConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   val jsonPayload: String = displaySubscriptionPayloadNoSecondary(
     JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
