@@ -20,14 +20,15 @@ import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
-import javax.inject.Inject
-import pages.disclosure.DeletedDisclosurePage
+import models.GeneratedIDs
+import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class YourDisclosureHasBeenDeletedController @Inject()(
@@ -45,12 +46,8 @@ class YourDisclosureHasBeenDeletedController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-        //How to get the messageRefid does this come from the deletion process?
-
-      request.userAnswers.getBase(DeletedDisclosurePage) match {
-        case Some(disclosureDetails) =>
-
-          val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
+      request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
+        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID))) =>
 
           val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
             case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
@@ -59,9 +56,9 @@ class YourDisclosureHasBeenDeletedController @Inject()(
           }
 
           val json = Json.obj (
-            "disclosureID" -> disclosureDetails.disclosureID,
-            "arrangementID" -> disclosureDetails.arrangementID,
-            "messageRefid" -> messagerefid,
+            "disclosureID" -> disclosureID,
+            "arrangementID" -> arrangementID,
+            "messageRefid" -> messageRefID,
             "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
             "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
             "emailToggle" -> appConfig.sendEmailToggle,

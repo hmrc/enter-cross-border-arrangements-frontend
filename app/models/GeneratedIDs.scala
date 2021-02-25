@@ -18,9 +18,9 @@ package models
 
 import play.api.libs.json.{Reads, Writes, __}
 
-case class GeneratedIDs(arrangementID: Option[String], disclosureID: Option[String], messageRefId: Option[String] = None) {
+case class GeneratedIDs(arrangementID: Option[String], disclosureID: Option[String], messageRefID: Option[String] = None) {
 
-  def withMessageRefId(messageRefId: String): GeneratedIDs = copy(messageRefId = Option(messageRefId))
+  def withMessageRefId(messageRefId: String): GeneratedIDs = copy(messageRefID = Option(messageRefId))
 }
 
 object GeneratedIDs {

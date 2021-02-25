@@ -16,12 +16,12 @@
 
 package forms.individual
 
-import java.time.{LocalDate, ZoneOffset}
-
 import forms.behaviours.DateBehaviours
 import helpers.DateHelper
 import helpers.DateHelper.today
 import play.api.data.FormError
+
+import java.time.{LocalDate, ZoneOffset}
 
 class IndividualDateOfBirthFormProviderSpec extends DateBehaviours {
 

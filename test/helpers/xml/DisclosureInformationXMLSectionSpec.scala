@@ -21,7 +21,7 @@ import helpers.data.ValidUserAnswersForSubmission.{validArrangementDetails, vali
 import models.Submission
 import models.arrangement.WhyAreYouReportingThisArrangementNow
 
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 

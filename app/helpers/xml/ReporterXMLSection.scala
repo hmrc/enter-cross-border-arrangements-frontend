@@ -17,7 +17,7 @@
 package helpers.xml
 
 import models.Submission
-import models.reporter.RoleInArrangement
+import models.reporter.{ReporterDetails, RoleInArrangement}
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.IntermediaryRole
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement
@@ -27,7 +27,15 @@ import scala.xml.{Elem, NodeSeq}
 
 case class ReporterXMLSection(submission: Submission) {
 
-  val reporterDetails = submission.reporterDetails
+  val reporterDetails: Option[ReporterDetails] = submission.reporterDetails
+
+  val empty: Elem =
+    <ID>
+      <Organisation>
+        <OrganisationName>X</OrganisationName>
+        <ResCountryCode>GB</ResCountryCode>
+      </Organisation>
+    </ID>
 
   def buildDisclosureDetails: NodeSeq = {
     Try {
@@ -120,7 +128,7 @@ case class ReporterXMLSection(submission: Submission) {
   private[xml] def buildDiscloseDetailsForReporter: NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
-    reporterDetails.fold(throw new Exception("Unable to construct XML for ReporterDetails"))(
+    reporterDetails.fold[NodeSeq](empty)(
       reporterDetails =>
         if (reporterDetails.organisation.isDefined) {
           nodeBuffer ++
@@ -131,12 +139,7 @@ case class ReporterXMLSection(submission: Submission) {
             IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get) ++
             buildLiability
         } else {
-          <ID>
-            <Organisation>
-              <OrganisationName>X</OrganisationName>
-              <ResCountryCode>GB</ResCountryCode>
-            </Organisation>
-          </ID>
+          throw new Exception("Unable to construct XML for ReporterDetails")
         }
     )
   }

@@ -16,13 +16,12 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.individual.Individual
 import models.taxpayer.TaxResidency
 import models.{Address, Country, Name, TaxReferenceNumbers}
 
+import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class IndividualXMLSectionSpec extends SpecBase {

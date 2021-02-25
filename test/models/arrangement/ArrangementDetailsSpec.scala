@@ -16,8 +16,6 @@
 
 package models.arrangement
 
-import java.time.LocalDate
-
 import generators.ModelGenerators
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
@@ -26,6 +24,8 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+
+import java.time.LocalDate
 
 class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
 

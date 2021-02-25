@@ -21,13 +21,13 @@ import connectors.SubscriptionConnector
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
-import models.UserAnswers
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
+import models.{GeneratedIDs, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.disclosure.DeletedDisclosurePage
+import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
@@ -40,15 +40,10 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
-  val userAnswers: UserAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      DeletedDisclosurePage.toString -> Json.obj(
-        "arrangementID" -> arrangementID,
-        "disclosureID" -> disclosureID
-      )
-    )
-  )
+  val messageRefID = "GBXADAC0001122345Name"
+  val generatedIDs = GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID))
+  val userAnswers = UserAnswers(userAnswersId)
+    .setBase(DisclosureDeleteCheckYourAnswersPage, generatedIDs).success.value
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
@@ -82,9 +77,9 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
       status(result) mustEqual OK
 
       val expectedJson = Json.obj(
-        "arrangementID" -> "GBA20210101ABC123",
-        "disclosureID" -> "GBD20210101ABC123",
-        "messageRefid" -> "messageID"
+        "arrangementID" -> arrangementID,
+        "disclosureID"         -> disclosureID,
+        "messageRefid"         -> messageRefID
       )
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())

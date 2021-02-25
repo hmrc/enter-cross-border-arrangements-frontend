@@ -20,12 +20,9 @@ import base.SpecBase
 import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
 import models.affected.Affected
 import models.individual.Individual
-import models.{Address, Country, Name, Submission, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import pages.affected.AffectedLoopPage
-import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.{Address, Country, Name, Submission, TaxReferenceNumbers}
 
 import java.time.LocalDate
 import scala.xml.{Elem, PrettyPrinter}

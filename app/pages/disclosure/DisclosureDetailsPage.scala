@@ -78,17 +78,14 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
                 details.copy(disclosureType = Dac6add, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
               }
             }
-          case Dac6rep =>
+          case repOrDel =>
             getReplaceOrDeleteDisclosure.map { ids =>
               details.copy(
-                disclosureType = Dac6rep,
+                disclosureType = repOrDel,
                 arrangementID = Some(ids.arrangementID),
                 disclosureID = Some(ids.disclosureID),
                 initialDisclosureMA = getInitialDisclosureMA)
             }
-
-          case  Dac6del => // TODO implement DisclosureType.Dac6del cases
-            throw new UnsupportedOperationException(s"Not yet implemented: ${Dac6del.toString}")
         }
       }
       .getOrElse(throw new IllegalStateException("Unable to build disclose details"))

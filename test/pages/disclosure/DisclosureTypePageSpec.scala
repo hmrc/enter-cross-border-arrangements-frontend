@@ -16,8 +16,8 @@
 
 package pages.disclosure
 
+import models.disclosure.DisclosureType
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.unsubmitted.UnsubmittedDisclosurePage

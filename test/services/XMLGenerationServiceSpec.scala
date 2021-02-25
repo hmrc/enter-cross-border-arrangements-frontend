@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import base.SpecBase
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForIndividual, userAnswersForOrganisation}
-import helpers.xml.{GeneratedXMLExamples, ReporterXMLSection}
+import helpers.xml.GeneratedXMLExamples
 import models.Submission
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}

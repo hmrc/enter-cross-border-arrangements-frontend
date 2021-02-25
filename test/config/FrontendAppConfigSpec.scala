@@ -17,16 +17,6 @@
 package config
 
 import base.SpecBase
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import play.api.Configuration
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import scala.concurrent.Future
 
 class FrontendAppConfigSpec extends SpecBase {
 

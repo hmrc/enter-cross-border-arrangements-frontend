@@ -45,9 +45,7 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success.value
-        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), Some("")))
-        .success.value
-        .set(MessageRefIDPage, 0, "")
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), Some(""), Some("")))
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))

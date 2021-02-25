@@ -54,6 +54,12 @@ case class Submission(enrollmentID: String
 
   def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
 
+  def updateIds(ids: GeneratedIDs): GeneratedIDs = ids match {
+    case GeneratedIDs(None, None, _) =>
+      ids.copy(disclosureID = getDisclosureID, arrangementID = getArrangementID)
+    case _ => ids
+  }
+
 }
 
 object Submission {
@@ -74,4 +80,5 @@ object Submission {
         , taxpayers, intermediaries, affectedPersons, hallmarkDetails, arrangementDetails)
     })
       .getOrElse(throw new IllegalStateException("Unable to create submission from model"))
+
 }

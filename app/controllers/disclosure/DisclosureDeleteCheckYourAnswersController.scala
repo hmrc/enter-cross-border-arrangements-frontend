@@ -82,13 +82,14 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
         _.fold (
           _ => throw new IllegalStateException(s"Unable to delete submission: $submission")
           ,
-          updatedIds =>
+          ids =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, updatedIds))
+              updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, submission.updateIds(ids)))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
         )
       }
   }
+
 }
 

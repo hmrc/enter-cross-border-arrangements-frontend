@@ -16,8 +16,8 @@
 
 package pages.hallmarks
 
-import models.{UnsubmittedDisclosure, UserAnswers}
 import models.hallmarks.{HallmarkA, HallmarkB, HallmarkCategories}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.unsubmitted.UnsubmittedDisclosurePage

@@ -16,10 +16,10 @@
 
 package forms.taxpayer
 
-import java.time.LocalDate
-
 import forms.behaviours.DateBehaviours
 import play.api.data.FormError
+
+import java.time.LocalDate
 
 class WhatIsTaxpayersStartDateForImplementingArrangementFormProviderSpec extends DateBehaviours {
 

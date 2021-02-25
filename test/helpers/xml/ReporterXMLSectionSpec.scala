@@ -22,9 +22,7 @@ import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
-import models.{IsExemptionKnown, Submission, UnsubmittedDisclosure, UserAnswers}
-import pages.reporter.ReporterDetailsPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.{IsExemptionKnown, Submission}
 
 import java.time.LocalDate
 import scala.xml.PrettyPrinter

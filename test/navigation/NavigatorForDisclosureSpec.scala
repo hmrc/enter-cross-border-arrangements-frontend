@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
-import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
+import models.disclosure.DisclosureType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
 import play.api.mvc.AnyContentAsEmpty

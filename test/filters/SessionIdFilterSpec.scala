@@ -16,8 +16,6 @@
 
 package filters
 
-import java.util.UUID
-
 import akka.stream.Materializer
 import com.google.inject.Inject
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
@@ -30,6 +28,7 @@ import play.api.test.Helpers._
 import play.api.{Application, BuiltInComponents, BuiltInComponentsFromContext, NoHttpFiltersComponents}
 import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext
 
 object SessionIdFilterSpec {

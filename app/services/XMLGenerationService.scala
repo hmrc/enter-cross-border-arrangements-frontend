@@ -18,7 +18,7 @@ package services
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequest
 import models.{GeneratedIDs, Submission}
 import org.slf4j.LoggerFactory
