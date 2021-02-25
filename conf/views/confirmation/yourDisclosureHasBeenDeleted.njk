@@ -15,16 +15,20 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-      {{ govukPanel({
+        {{ govukPanel({
         titleText: messages("yourDisclosureHasBeenDeleted.heading")
-      }) }}
+        }) }}
 
-      <p class="govuk-body"> {{ messages("yourDisclosureHasBeenDeleted.p1", disclosureID, arrangementID)}}</p>
+        <p class="govuk-body"> {{ messages("yourDisclosureHasBeenDeleted.p1", disclosureID, arrangementID)}}</p>
 
-      <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</p>
+        <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</p>
 
-      <p class="govuk-body">{{ homePageLink | safe }}</p>
-      <p class="govuk-body">{{ betaFeedbackSurvey | safe }}</p>
+        {% if emailToggle %}
+            <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p3", emailMessage)}}</p>
+        {% endif %}
+
+        <p class="govuk-body">{{ homePageLink | safe }}</p>
+        <p class="govuk-body">{{ betaFeedbackSurvey | safe }}</p>
 
       </div>
     </div>

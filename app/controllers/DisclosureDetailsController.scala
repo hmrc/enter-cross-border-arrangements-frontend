@@ -21,6 +21,7 @@ import connectors.{CrossBorderArrangementsConnector, HistoryConnector, Validatio
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
+import javax.inject.Inject
 import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
@@ -47,7 +48,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -58,6 +58,7 @@ class DisclosureDetailsController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     validationConnector: ValidationConnector,
     crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     historyConnector: HistoryConnector,
@@ -109,8 +110,9 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
+
       //generate xml from user answers
       xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
         error => {
@@ -148,6 +150,7 @@ class DisclosureDetailsController @Inject()(
       )
   }
 
+
   private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
                                                  (implicit hc: HeaderCarrier): Future[Boolean] = {
 
@@ -180,6 +183,7 @@ class DisclosureDetailsController @Inject()(
       Future.successful(false)
     }
   }
+
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>

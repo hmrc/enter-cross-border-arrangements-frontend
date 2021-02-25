@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.disclosure
+package controllers.confirmation
 
 import config.FrontendAppConfig
 import controllers.actions._
 import handlers.ErrorHandler
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
+import javax.inject.Inject
 import pages.disclosure.DeletedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -27,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class YourDisclosureHasBeenDeletedController @Inject()(
@@ -36,12 +36,13 @@ class YourDisclosureHasBeenDeletedController @Inject()(
     appConfig: FrontendAppConfig,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     errorHandler: ErrorHandler,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
         //How to get the messageRefid does this come from the deletion process?
@@ -49,21 +50,26 @@ class YourDisclosureHasBeenDeletedController @Inject()(
       request.userAnswers.getBase(DeletedDisclosurePage) match {
         case Some(disclosureDetails) =>
 
-                    val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
+          val messagerefid = "messageID" //ToDo get messagerefid possibly from deletion call
 
-                    val json = Json.obj (
-                    "disclosureID" -> disclosureDetails.disclosureID,
-                    "arrangementID" -> disclosureDetails.arrangementID,
-                    "messageRefid" -> messagerefid,
-                    "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
-                    "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl)
-                    )
+          val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
+            case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
+            case Some((None, Some(primary))) => primary
+            case _ => throw new RuntimeException("Contact email details are missing")
+          }
 
+          val json = Json.obj (
+            "disclosureID" -> disclosureDetails.disclosureID,
+            "arrangementID" -> disclosureDetails.arrangementID,
+            "messageRefid" -> messagerefid,
+            "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
+            "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
+            "emailToggle" -> appConfig.sendEmailToggle,
+            "emailMessage" -> emailMessage
+          )
+          renderer.render ("confirmation/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
 
-                    renderer.render ("disclosure/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
-
-        case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
-
+       case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
+    }
   }
-}
 }

@@ -68,7 +68,7 @@ class NavigatorForDisclosure @Inject()() {
       }
 
     case  DisclosureDeleteCheckYourAnswersPage  =>
-    _ =>  _ => _ => _ => controllers.disclosure.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
+    _ =>  _ => _ => _ => controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =

@@ -36,21 +36,22 @@ class NewDisclosureConfirmationController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
       val disclosureID =  request.userAnswers.get(GeneratedIDPage, id) match {
         case Some(id) => id.disclosureID
-        case None => throw new RuntimeException("DisclosureID cannot be found")
+        case None => throw new RuntimeException("disclosureID cannot be found")
       }
 
       val arrangementID =  request.userAnswers.get(GeneratedIDPage, id) match {
         case Some(id) => id.arrangementID.get
-        case None => throw new RuntimeException("ArrangementID cannot be found")
+        case None => throw new RuntimeException("arrangementID cannot be found")
       }
 
       val messageRefID =  request.userAnswers.get(MessageRefIDPage, id) match {
@@ -58,16 +59,21 @@ class NewDisclosureConfirmationController @Inject()(
         case None => throw new RuntimeException("messageRefID cannot be found")
       }
 
+      val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
+        case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
+        case Some((None, Some(primary))) => primary
+        case _ => throw new RuntimeException("Contact email details are missing")
+      }
 
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,
         "panelText" -> confirmationPanelText(arrangementID),
         "disclosureID" -> disclosureID,
-        "email" -> "example@example.com",
-        "secondEmail" -> "",
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
-        "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
+        "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
+        "emailToggle" -> appConfig.sendEmailToggle,
+        "emailMessage" -> emailMessage
       )
 
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))

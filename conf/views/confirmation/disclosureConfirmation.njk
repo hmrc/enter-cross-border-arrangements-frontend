@@ -25,8 +25,11 @@
         }) }}
 
         <div class="govuk-body">
-          {# TODO implement e-mails #}
-          {# <p>{{ messages("disclosureConfirmation.firstEmail", email) }}{{ secondEmail }}.</p> #}
+
+          {% if emailToggle %}
+            <p>{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</p>
+          {% endif %}
+
           {% if disclosureID %}
             <p>{{ messages("disclosureConfirmation.p2") }}</p>
             <p>{{ messages("disclosureConfirmation.p3", disclosureID) }}</p>

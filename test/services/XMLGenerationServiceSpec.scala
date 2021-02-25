@@ -16,6 +16,8 @@
 
 package services
 
+import java.time.LocalDate
+
 import base.SpecBase
 import helpers.xml.GeneratedXMLExamples
 import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
@@ -27,7 +29,7 @@ import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermedi
 import models.organisation.Organisation
 import models.reporter.RoleInArrangement
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
-import models.requests.DataRequest
+import models.requests.DataRequestWithContacts
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.joda.time.DateTime
@@ -42,9 +44,6 @@ import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidenc
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-import play.api.mvc.AnyContent
-
-import java.time.LocalDate
 
 class XMLGenerationServiceSpec extends SpecBase {
 
@@ -115,8 +114,8 @@ class XMLGenerationServiceSpec extends SpecBase {
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
 
-      implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+      implicit val request: DataRequestWithContacts[_] =
+        DataRequestWithContacts(fakeRequest, "internalID", "XADAC0001122345", userAnswers, None)
 
       val result = xmlGenerationService.buildHeader(userAnswers, 0)
 
@@ -134,8 +133,8 @@ class XMLGenerationServiceSpec extends SpecBase {
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet).success.value
 
-      implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+      implicit val request: DataRequestWithContacts[_] =
+        DataRequestWithContacts(fakeRequest, "internalID", "XADAC0001122345", userAnswers, None)
 
       assertThrows[Exception] {
         xmlGenerationService.buildHeader(userAnswers, 0)
@@ -361,8 +360,8 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
         .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
 
-      implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+      implicit val request: DataRequestWithContacts[_] =
+        DataRequestWithContacts(fakeRequest, "internalID", "XADAC0001122345", userAnswers, None)
 
       xmlGenerationService.createXmlSubmission(userAnswers, 0) map { result =>
 
@@ -406,8 +405,8 @@ class XMLGenerationServiceSpec extends SpecBase {
         .set(HallmarkD1OtherPage, 0, "Hallmark D1 other description").success.value
         .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
 
-      implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswers)
+      implicit val request: DataRequestWithContacts[_] =
+        DataRequestWithContacts(fakeRequest, "internalID", "XADAC0001122345", userAnswers, None)
 
       xmlGenerationService.createXmlSubmission(userAnswers, 0) map { result =>
 

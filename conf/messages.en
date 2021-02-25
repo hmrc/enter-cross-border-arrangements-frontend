@@ -794,17 +794,6 @@ disclosureIdentifyArrangement.error.required = Provide an arrangement ID
 disclosureIdentifyArrangement.error.notFound = Arrangement ID not found. Check arrangement ID is correct
 disclosureIdentifyArrangement.error.invalid = Provide a valid arrangement ID
 
-
-yourDisclosureHasBeenDeleted.title = Your disclosure has been deleted
-yourDisclosureHasBeenDeleted.heading = Your disclosure has been deleted
-yourDisclosureHasBeenDeleted.p1 = Your disclosure {0} for arrangement {1} has been deleted.
-yourDisclosureHasBeenDeleted.p2 = For your records, the message reference ID for this action is: {0}.
-yourDisclosureHasBeenDeleted.p3 = We have sent this in a confirmation email to {0}.
-yourDisclosureHasBeenDeleted.link1 = Disclose a cross-border arrangement
-yourDisclosureHasBeenDeleted.link2 = What did you think of this service?
-yourDisclosureHasBeenDeleted.link2.time = (takes 30 seconds)
-
-
 disclosureDelete.title = Are you sure you want to delete this disclosure?
 disclosureDelete.heading = Are you sure you want to delete this disclosure?
 disclosureDelete.delete-disclosure = Delete this disclosure
@@ -930,20 +919,6 @@ confirmation.link.text = Disclose a cross-border arrangement
 confirmation.survey.link = What did you think of this service?
 confirmation.survey.text = (opens in a new tab)
 
-disclosureConfirmation.title = Disclosure received
-disclosureConfirmation.arrangement.title = Arrangement received
-disclosureConfirmation.panel.new = Your arrangement ID
-disclosureConfirmation.panel.add = Your disclosure ID
-disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}
-disclosureConfirmation.secondEmail = and {0}
-disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
-disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
-disclosureConfirmation.p4 = Your message reference ID is {0}.
-disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
-disclosureConfirmation.p7 = What happens next
-disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
-
 confirmation.validationError.title = There is a problem with your disclosure
 confirmation.validationError.heading = Your form does not meet the requirements for submission.
 confirmation.validationError.info = What you can do next
@@ -955,11 +930,33 @@ confirmation.validationError.table.caption = Errors
 confirmation.validationError.table.head1 = Section
 confirmation.validationError.table.head2 = Error
 
+disclosureConfirmation.title = Disclosure received
+disclosureConfirmation.arrangement.title = Arrangement received
+disclosureConfirmation.panel.new = Your arrangement ID
+disclosureConfirmation.panel.add = Your disclosure ID
+disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}.
+disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
+disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
+disclosureConfirmation.p4 = Your message reference ID is {0}.
+disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
+disclosureConfirmation.p7 = What happens next
+disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
+
 replacementDisclosureConfirmation.title = Replacement received
-replacementDisclosureConfirmation.p1 = We have sent a confirmation email to example@example.com.
+replacementDisclosureConfirmation.p1 = We have sent a confirmation email to {0}.
 replacementDisclosureConfirmation.p2 = Your message reference ID for this replacement is {0}. This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion. Keep it for your records.
 replacementDisclosureConfirmation.h2 = What happens next
 replacementDisclosureConfirmation.p3 = If we have any questions about the disclosure, we will contact you.
+
+yourDisclosureHasBeenDeleted.title = Your disclosure has been deleted
+yourDisclosureHasBeenDeleted.heading = Your disclosure has been deleted
+yourDisclosureHasBeenDeleted.p1 = Your disclosure {0} for arrangement {1} has been deleted.
+yourDisclosureHasBeenDeleted.p2 = For your records, the message reference ID for this action is: {0}.
+yourDisclosureHasBeenDeleted.p3 = We have sent this in a confirmation email to {0}.
+yourDisclosureHasBeenDeleted.link1 = Disclose a cross-border arrangement
+yourDisclosureHasBeenDeleted.link2 = What did you think of this service?
+yourDisclosureHasBeenDeleted.link2.time = (takes 30 seconds)
 
 ## REPORTER DETAILS - ORGANISATION
 

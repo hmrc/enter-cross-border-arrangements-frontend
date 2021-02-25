@@ -17,13 +17,12 @@
 package navigation
 
 import base.SpecBase
-import controllers.mixins.{DefaultRouting, IntermediariesRouting}
+import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
-import pages.intermediaries.IsExemptionCountryKnownPage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -39,8 +38,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       "must go from 'Are you sure you want to remove disclosure *disclosureName*' page " +
         "to 'You have X unsubmitted disclosure(s)' page when answer is No" in {
-        navigator
-          .routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0)
+        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0)
           .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
       }
 
@@ -122,7 +120,7 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
     "must go from 'Are you sure you want to delete this disclosure?' page" +
     "to 'Your disclosure has been deleted' page" in {
       navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0)
-      .mustBe(controllers.disclosure.routes.YourDisclosureHasBeenDeletedController.onPageLoad())
+      .mustBe(controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad())
     }
 
     "must go from 'Which disclosure do you want to delete?' page" +

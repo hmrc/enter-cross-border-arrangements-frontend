@@ -17,6 +17,8 @@
 package controllers.confirmation
 
 import base.SpecBase
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -24,6 +26,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -47,7 +50,11 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar
         .set(MessageRefIDPage, 0, "")
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
       val request = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
