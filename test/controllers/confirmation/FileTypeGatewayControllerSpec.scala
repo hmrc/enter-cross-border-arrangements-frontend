@@ -17,12 +17,15 @@
 package controllers.confirmation
 
 import base.SpecBase
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.GeneratedIDPage
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -46,7 +49,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(application, request).value
@@ -73,7 +80,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(application, request).value
@@ -101,7 +112,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(application, request).value
