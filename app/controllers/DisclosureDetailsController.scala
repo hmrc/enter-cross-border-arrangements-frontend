@@ -21,20 +21,16 @@ import connectors.{CrossBorderArrangementsConnector, HistoryConnector, Validatio
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
-import models.disclosure.DisclosureType.Dac6rep
 import javax.inject.Inject
+import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
-import models.{NormalMode, UserAnswers}
-import models.{GeneratedIDs, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, DisclosureTypePage}
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
@@ -49,8 +45,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.http.HeaderCarrier
-import services.{EmailService, TransformationService, XMLGenerationService}
-import services.{TransformationService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -118,6 +112,7 @@ class DisclosureDetailsController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
+
       //generate xml from user answers
       xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
         error => {
@@ -154,6 +149,7 @@ class DisclosureDetailsController @Inject()(
         }
       )
   }
+
 
   private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
                                                  (implicit hc: HeaderCarrier): Future[Boolean] = {

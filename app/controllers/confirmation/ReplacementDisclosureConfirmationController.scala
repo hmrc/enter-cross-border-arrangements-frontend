@@ -48,10 +48,10 @@ class ReplacementDisclosureConfirmationController @Inject()(
         case None => throw new RuntimeException("messageRefID cannot be found")
       }
 
-      val emailMessage = request.contacts match {
-        case Some(contactDetails) if contactDetails.secondEmail.isDefined =>  contactDetails.contactEmail.get + " and " + contactDetails.secondEmail.get
-        case Some(contactDetails) => contactDetails.contactEmail.get
-        case _ => throw new RuntimeException("Contact details are missing")
+      val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
+        case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
+        case Some((None, Some(primary))) => primary
+        case _ => throw new RuntimeException("Contact email details are missing")
       }
 
       val json = Json.obj(

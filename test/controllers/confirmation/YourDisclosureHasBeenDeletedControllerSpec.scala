@@ -89,7 +89,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSu
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "disclosure/yourDisclosureHasBeenDeleted.njk"
+      templateCaptor.getValue mustEqual "confirmation/yourDisclosureHasBeenDeleted.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
