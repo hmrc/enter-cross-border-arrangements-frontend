@@ -36,8 +36,11 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.XMLGenerationService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-
 import java.time.LocalDateTime
+
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import models.subscription.ContactDetails
+
 import scala.concurrent.Future
 import scala.util.Success
 
@@ -140,12 +143,14 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to confirmation page when user submits a completed application" in {
 
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[XMLGenerationService].toInstance(mockXMLGenerationService),
           bind[ValidationConnector].toInstance(mockValidationConnector),
-          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-        )
+          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
         .build()
 
       val postRequest = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
@@ -188,11 +193,13 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to validation errors page when validation fails" in {
 
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[XMLGenerationService].toInstance(mockXMLGenerationService),
-          bind[ValidationConnector].toInstance(mockValidationConnector)
-        )
+          bind[ValidationConnector].toInstance(mockValidationConnector),
+          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
         .build()
 
       implicit val postRequest = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
