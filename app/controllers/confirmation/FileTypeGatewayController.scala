@@ -20,11 +20,12 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
+import models.disclosure.DisclosureDetails
 import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode}
 import navigation.NavigatorForConfirmation
 import org.slf4j.LoggerFactory
-import pages.disclosure.DisclosureDetailsPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,12 +56,10 @@ class FileTypeGatewayController @Inject()(
 
       if (frontendAppConfig.sendEmailToggle) {
         sendMail(id, disclosureDetails.get.disclosureType.toString)
-      }
-
-      else {
+      } else {
           logger.warn("Email not sent - toggle set to false")
           Future.successful(None)
-        }
+      }
 
       Future.successful(disclosureDetails.map(_.disclosureType)).map { disclosureType =>
         Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
@@ -76,9 +75,9 @@ class FileTypeGatewayController @Inject()(
 
       val arrangementID = request.userAnswers.get(GeneratedIDPage, id) match {
         case Some(id) => id.arrangementID
-        case None => throw new RuntimeException("ArrangementID cannot be found")
+        case _ =>  request.userAnswers.get(DisclosureIdentifyArrangementPage, id)
       }
 
-      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).toString)
+      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).get)
     }
 }

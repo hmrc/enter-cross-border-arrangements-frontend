@@ -73,7 +73,7 @@ class DisclosureCheckYourAnswersController @Inject()(
       val openDisclosures: Seq[UnsubmittedDisclosure] = request.userAnswers.getBase(UnsubmittedDisclosurePage).getOrElse(Seq.empty)
 
       //generate an id for the disclosure submission
-      val submissionID = IDHelper.generateID(openDisclosures.map(_.id), suffixLength = 6)
+      val submissionID = IDHelper.generateID(openDisclosures.map(_.id))
 
       //generate model for disclosure name and id and shove at the end of the list
       val disclosureName = request.userAnswers.getBase(DisclosureNamePage)

@@ -35,6 +35,8 @@ class EmailService @Inject()(emailConnector: EmailConnector)(implicit executionC
                 importInstruction: String,
                 messageRefID: String)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] = {
 
+    println("***************************************** email sent: " + contacts + " " + ids  + " " + importInstruction  + " " + messageRefID)
+
     contacts match {
       case Some(contactDetails) =>
         val emailAddress = contactDetails.contactEmail
