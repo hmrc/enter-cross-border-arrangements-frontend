@@ -17,16 +17,14 @@
 package controllers
 
 import base.SpecBase
-import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
-import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
-import helpers.Submissions
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
 import matchers.JsonMatchers
-import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequest
-import models.{GeneratedIDs, Submission, UnsubmittedDisclosure, UserAnswers}
-import models.{GeneratedIDs, SubmissionDetails, SubmissionHistory, UnsubmittedDisclosure, UserAnswers}
+import models.subscription.ContactDetails
+import models.{GeneratedIDs, Submission, SubmissionDetails, SubmissionHistory, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -40,13 +38,9 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.XMLGenerationService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+
 import java.time.LocalDateTime
-
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
-import models.subscription.ContactDetails
-
 import scala.concurrent.Future
-import scala.util.Success
 
 class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
@@ -58,6 +52,8 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
   override def beforeEach: Unit = {
     reset(mockRenderer, mockCrossBorderArrangementsConnector)
   }
+
+  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
   "DisclosureDetails Controller" - {
 
@@ -144,10 +140,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to confirmation page when user submits a completed application" in {
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
       val application = applicationBuilder(userAnswers = Some(userAnswersForOrganisation))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           bind[XMLGenerationService].toInstance(mockXMLGenerationService),
           bind[ValidationConnector].toInstance(mockValidationConnector),
@@ -164,7 +157,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any(), any()))
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
         .thenReturn(Future.successful(Right(generatedIDs)))
       when(mockCrossBorderArrangementsConnector.submitXML(any())(any()))
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
@@ -206,7 +199,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with Nu
       implicit val request: DataRequest[AnyContent] =
         DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswersModelsForOrganisation)
 
-      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any(), any()))
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
 
       val result = route(application, postRequest).value
