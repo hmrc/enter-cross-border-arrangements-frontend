@@ -17,8 +17,7 @@
 package navigation
 
 import controllers.disclosure._
-import controllers.mixins.{CheckRoute, DefaultRouting}
-import models.CheckMode
+import controllers.mixins.CheckRoute
 import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
 import pages.Page
 import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage, _}
@@ -43,8 +42,8 @@ class NavigatorForDisclosure @Inject()() {
 
     case RemoveDisclosurePage  =>
       _ => _ => value => _ => value match {
-        case Some(true) => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad
-        case _          => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad
+        case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+        case _          => controllers.routes.IndexController.onPageLoad()
       }
 
     case ReplaceOrDeleteADisclosurePage =>
@@ -74,12 +73,5 @@ class NavigatorForDisclosure @Inject()() {
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =
     _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
-
-  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
-    checkRoute match {
-      case DefaultRouting(CheckMode)               => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
-      case _                                       => jumpTo
-    }
-  }
 
 }

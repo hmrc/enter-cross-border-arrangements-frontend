@@ -16,16 +16,13 @@
 
 package controllers.disclosure
 
-import config.FrontendAppConfig
 import controllers.actions._
-import controllers.mixins.{CheckRoute, RoutingSupport}
+import controllers.mixins.{CheckRoute, DefaultRouting}
 import forms.RemoveDisclosureFormProvider
-
-import javax.inject.Inject
-import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
+import models.disclosure.DisclosureDetails
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
-import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureDetailsPage, RemoveDisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -35,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -46,10 +44,9 @@ class RemoveDisclosureController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: RemoveDisclosureFormProvider,
-    appConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -97,25 +94,20 @@ class RemoveDisclosureController @Inject()(
         value =>
           for {
             updatedAnswers              <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            updatedAnswersWithIds       <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, getIds(disclosureDetails)))
-            updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswersWithIds, id))
+            updatedFlags                =  updateFlags(updatedAnswers, id)
+            updatedUserAnswersWithFlags <- Future.fromTry(updatedFlags._1)
             _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
-            checkRoute                  =  toCheckRoute(NormalMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value), id))
+          } yield Redirect(redirect(DefaultRouting(NormalMode), Some(updatedFlags._2), id))
       )
   }
 
-  private[controllers] def getIds(disclosureDetails : DisclosureDetails): ReplaceOrDeleteADisclosure =
-    (disclosureDetails.arrangementID, disclosureDetails.disclosureID) match {
-      case (Some(arrangementID), Some(disclosureID)) => ReplaceOrDeleteADisclosure(arrangementID, disclosureID)
-      case _ => ReplaceOrDeleteADisclosure("arrangementID", "disclosureID")//throw new RuntimeException("Unable to retrieve disclosure details")
-    }
-
-  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): (Try[UserAnswers], Boolean) = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
-      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 }
-      userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(deleted = true))
-    }).getOrElse(Failure(new IllegalArgumentException("Unable to update deleted disclosure.")))
+      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 } :+
+        unsubmittedDisclosure.copy(deleted = true)
+      val isVisible: Boolean = updatedUnsubmittedDisclosures.forall(_.isVisible)
+      (userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures), isVisible)
+    }).getOrElse((Failure(new IllegalArgumentException("Unable to update deleted disclosure.")), false))
   }
 }
