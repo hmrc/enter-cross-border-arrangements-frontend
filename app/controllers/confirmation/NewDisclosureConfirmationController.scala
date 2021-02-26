@@ -19,7 +19,6 @@ package controllers.confirmation
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
-import models.GeneratedIDs
 import pages.GeneratedIDPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -29,8 +28,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
 
 import javax.inject.Inject
-import pages.{GeneratedIDPage, MessageRefIDPage}
-
 import scala.concurrent.ExecutionContext
 
 class NewDisclosureConfirmationController @Inject()(
@@ -55,11 +52,7 @@ class NewDisclosureConfirmationController @Inject()(
           }
         }.getOrElse(throw new IllegalStateException("At least one of arrangementID, disclosureID or messageRefID cannot be found."))
 
-      val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
-        case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
-        case Some((None, Some(primary))) => primary
-        case _ => throw new RuntimeException("Contact email details are missing")
-      }
+      val emailMessage = request.contacts.flatMap(_.emailMessage).getOrElse(throw new RuntimeException("Contact email details are missing"))
 
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,

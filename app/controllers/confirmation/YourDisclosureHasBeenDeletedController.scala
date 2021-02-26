@@ -49,11 +49,8 @@ class YourDisclosureHasBeenDeletedController @Inject()(
       request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
         case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID))) =>
 
-          val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
-            case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
-            case Some((None, Some(primary))) => primary
-            case _ => throw new RuntimeException("Contact email details are missing")
-          }
+          val emailMessage = request.contacts.flatMap(_.emailMessage)
+            .getOrElse(throw new RuntimeException("Contact email details are missing"))
 
           val json = Json.obj (
             "disclosureID" -> disclosureID,

@@ -19,7 +19,7 @@ package pages.disclosure
 import models.UserAnswers
 import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
 import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
-import pages.{ModelPage, QuestionPage}
+import pages.{MessageRefIDPage, ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
 import scala.util.{Success, Try}
@@ -61,6 +61,7 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
     def getReplaceOrDeleteDisclosure: Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
     def getInitialDisclosureMA: Boolean = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
+    def getMessageRefId = userAnswers.getBase(MessageRefIDPage).orElse(None)
 
     getDisclosureDetails
       .flatMap { details =>
@@ -87,6 +88,9 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
                 initialDisclosureMA = getInitialDisclosureMA)
             }
         }
+      }
+      .map { details =>
+        details.copy(messageRefId = getMessageRefId)
       }
       .getOrElse(throw new IllegalStateException("Unable to build disclose details"))
   }
