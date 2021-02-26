@@ -34,7 +34,7 @@ import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.libs.json.{Json, OFormat}
 
-case class Submission(enrollmentID: String
+case class Submission(enrolmentID: String
                       , disclosureDetails: DisclosureDetails
                       , reporterDetails: Option[ReporterDetails] = None
                       , associatedEnterprises: IndexedSeq[AssociatedEnterprise] = IndexedSeq.empty

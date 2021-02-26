@@ -45,7 +45,7 @@ class XMLGenerationService @Inject()(
                                         .toRight(new RuntimeException("Could not generate XML from disclosure details."))
       reporterSection              =  ReporterXMLSection(submission)
       disclosureInformationSection =  DisclosureInformationXMLSection(submission)
-      enrolmentID                  <- Option(submission).map(_.enrollmentID)
+      enrolmentID                  <- Option(submission).map(_.enrolmentID)
                                         .toRight(new RuntimeException("Could not get enrolment id from submission."))
     } yield {
       Try {
@@ -78,7 +78,7 @@ class XMLGenerationService @Inject()(
   }
 
   def createAndValidateXmlSubmission(submission: Submission)
-              (implicit ec: ExecutionContext, request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] = {
+              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] = {
 
     createXmlSubmission(submission).fold (
       error => {
@@ -95,7 +95,7 @@ class XMLGenerationService @Inject()(
             //did it succeed - hand off to the backend to do it's generating thing
             messageRefId => {
               for {
-                submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, request.enrolmentID))
+                submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
               } yield Right(ids.withMessageRefId(messageRefId))
             }

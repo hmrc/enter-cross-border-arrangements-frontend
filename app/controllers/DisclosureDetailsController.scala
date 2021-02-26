@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
+import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
@@ -28,11 +28,7 @@ import models.{NormalMode, Submission, UserAnswers}
 import navigation.NavigatorForDisclosure
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-<<<<<<< HEAD
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
-=======
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
->>>>>>> DAC6-580 - Generate XML for deletions
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
@@ -61,8 +57,6 @@ class DisclosureDetailsController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
-    validationConnector: ValidationConnector,
-    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     historyConnector: HistoryConnector,
     frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,

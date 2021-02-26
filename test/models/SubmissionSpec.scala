@@ -51,7 +51,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -72,7 +72,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails.map { reporterDetails =>
           reporterDetails.individual must be(Some(validIndividual))
@@ -97,7 +97,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails.map { reporterDetails =>
           reporterDetails.individual must be(None)
@@ -120,7 +120,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(validEnterprises)
@@ -139,7 +139,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -158,7 +158,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -177,7 +177,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -196,7 +196,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -215,7 +215,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
           submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
           submissionHallmarkDetails, submissionArrangementDetails)
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails must be(None)
         submission.associatedEnterprises must be(IndexedSeq.empty)
@@ -234,7 +234,7 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
 
         val submission = Submission(userAnswersModelsForOrganisation, 0, "enrolmentId")
 
-        submission.enrollmentID must be("enrolmentId")
+        submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
         submission.reporterDetails.map { reporterDetails =>
           reporterDetails.individual must be(None)
