@@ -19,12 +19,12 @@ package controllers.confirmation
 import base.SpecBase
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.subscription.ContactDetails
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.MessageRefIDPage
+import pages.GeneratedIDPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -45,7 +45,7 @@ class ReplacementDisclosureConfirmationControllerSpec extends SpecBase with Mock
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My First")))
         .success.value
-        .set(MessageRefIDPage, 0, "MessageRefID")
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some(""),Some("")))
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))

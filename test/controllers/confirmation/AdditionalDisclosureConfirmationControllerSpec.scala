@@ -45,7 +45,7 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Mocki
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success.value
-        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some("")))
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some(""),Some("")))
         .success.value
         .set(MessageRefIDPage, 0, "")
         .success.value
