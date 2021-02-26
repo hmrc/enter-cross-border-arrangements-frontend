@@ -97,7 +97,7 @@ class XMLGenerationService @Inject()(
               for {
                 submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
-              } yield Right(ids.withMessageRefId(messageRefId))
+              } yield Right(ids.withMessageRefId(messageRefId).withXml(xml.toString))
             }
           )
         }

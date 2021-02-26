@@ -55,7 +55,7 @@ case class Submission(enrolmentID: String
   def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
 
   def updateIds(ids: GeneratedIDs): GeneratedIDs = ids match {
-    case GeneratedIDs(None, None, _) =>
+    case GeneratedIDs(None, None, _, _) =>
       ids.copy(disclosureID = getDisclosureID, arrangementID = getArrangementID)
     case _ => ids
   }

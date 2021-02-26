@@ -18,9 +18,11 @@ package models
 
 import play.api.libs.json.{Reads, Writes, __}
 
-case class GeneratedIDs(arrangementID: Option[String], disclosureID: Option[String], messageRefID: Option[String] = None) {
+case class GeneratedIDs(arrangementID: Option[String], disclosureID: Option[String], messageRefID: Option[String] = None, xml: Option[String] = None) {
 
   def withMessageRefId(messageRefId: String): GeneratedIDs = copy(messageRefID = Option(messageRefId))
+
+  def withXml(xml: String): GeneratedIDs = copy(xml = Option(xml))
 }
 
 object GeneratedIDs {
@@ -29,12 +31,14 @@ object GeneratedIDs {
   implicit val reads: Reads[GeneratedIDs] =
     ((__ \ "arrangementID").readNullable[String] and
       (__ \ "disclosureID").readNullable[String] and
-      (__ \ "messageRefId").readNullable[String]
+      (__ \ "messageRefId").readNullable[String] and
+      (__ \ "xml").readNullable[String]
       )(GeneratedIDs.apply _)
 
   implicit lazy val writes: Writes[GeneratedIDs] =
     ((__ \ "arrangementID").writeNullable[String] and
       (__ \ "disclosureID").writeNullable[String] and
-      (__ \ "messageRefId").writeNullable[String]
+      (__ \ "messageRefId").writeNullable[String] and
+      (__ \ "xml").writeNullable[String]
       )(unlift(GeneratedIDs.unapply))
 }

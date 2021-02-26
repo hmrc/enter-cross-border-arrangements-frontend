@@ -47,7 +47,7 @@ class YourDisclosureHasBeenDeletedController @Inject()(
     implicit request =>
 
       request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
-        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID))) =>
+        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), xml)) =>
 
           val emailMessage = request.contacts.flatMap(_.emailMessage)
             .getOrElse(throw new RuntimeException("Contact email details are missing"))
@@ -59,7 +59,8 @@ class YourDisclosureHasBeenDeletedController @Inject()(
             "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
             "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
             "emailToggle" -> appConfig.sendEmailToggle,
-            "emailMessage" -> emailMessage
+            "emailMessage" -> emailMessage,
+            "testXml" -> xml
           )
           renderer.render ("confirmation/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
 
