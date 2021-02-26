@@ -118,24 +118,15 @@ object TaskListHelper  {
 
   def userCanSubmit(ua: UserAnswers,
                     id: Int,
-                    affectedToggle: Boolean,
-                    associatedEnterpriseToggle: Boolean,
                     addedTaxpayers: Boolean,
                     replaceAMarketableAddDisclosure: Boolean): Boolean = {
 
-    //TODO: Remove toggles & add AffectedStatusPage and AssociatedEnterpriseStatusPage to mandatoryCompletion when xml functionality for other affected ready
-    // An Enterprise is needed if a Taxpayer is added, otherwise, Enterprise status is irrelevant
-
-    val mandatoryCompletion = (affectedToggle, associatedEnterpriseToggle, addedTaxpayers) match {
-      case (true, true, true) =>
+    val mandatoryCompletion =
+      if (addedTaxpayers) {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage, AssociatedEnterpriseStatusPage)
-      case (false, true, true) =>
-        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AssociatedEnterpriseStatusPage)
-      case (true, false, _) =>
+      } else {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)
-      case _ =>
-        Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage)
-    }
+      }
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
       getDisclosureTypeWithMAFlag(ua, id) match {

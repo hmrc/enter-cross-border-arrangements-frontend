@@ -100,9 +100,7 @@ class DisclosureDetailsController @Inject()(
           "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
           "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
           "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-          "userCanSubmit" ->
-            userCanSubmit(request.userAnswers.get, id,
-              frontendAppConfig.affectedToggle, frontendAppConfig.associatedEnterpriseToggle, addedTaxpayer, replaceAMarketableAddDisclosure),
+          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, addedTaxpayer, replaceAMarketableAddDisclosure),
           "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
           "backLink" -> backLink
         )
