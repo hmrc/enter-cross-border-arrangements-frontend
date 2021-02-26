@@ -20,15 +20,19 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import handlers.ErrorHandler
-import models.NormalMode
+import models.{GeneratedIDs, NormalMode}
 import models.disclosure.ReplaceOrDeleteADisclosure
+import models.requests.DataRequestWithContacts
 import navigation.NavigatorForDisclosure
+import pages.{GeneratedIDPage, MessageRefIDPage}
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+import services.EmailService
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -43,6 +47,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
     requireData: DataRequiredAction,
     sessionRepository: SessionRepository,
     errorHandler: ErrorHandler,
+    emailService: EmailService,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -61,11 +66,11 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
         Json.obj("disclosureSummary" -> disclosureSummary
         )
       ).map(Ok(_))
-    }
+  }
 
   def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-        //ToDo do deletion and then redirect to confirm deletion page
+      //ToDo do deletion and then redirect to confirm deletion page
 
       val disclosureIds: ReplaceOrDeleteADisclosure = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case Some(ids) => ids
@@ -77,10 +82,12 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
           updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DeletedDisclosurePage, disclosureIds))
           updatedAnswers1 <- Future.fromTry(updatedAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, true))
           _ <- sessionRepository.set(updatedAnswers1)
+          //          _ <- send
         } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
-      } recoverWith{
+      } recoverWith {
         case ex: Exception => errorHandler.onServerError(request, ex)
       }
   }
+
 }
 

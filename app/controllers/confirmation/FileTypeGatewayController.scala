@@ -68,16 +68,12 @@ class FileTypeGatewayController @Inject()(
 
     def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
 
-      val disclosureID = request.userAnswers.get(GeneratedIDPage, id) match {
-        case Some(id) => id.disclosureID
+      val disclosureID = request.userAnswers.get(DisclosureIdentifyArrangementPage, id) match {
+        case Some(id) => Some(id)
         case None => throw new RuntimeException("DisclosureID cannot be found")
       }
 
-      val arrangementID = request.userAnswers.get(GeneratedIDPage, id) match {
-        case Some(id) => id.arrangementID
-        case _ =>  request.userAnswers.get(DisclosureIdentifyArrangementPage, id)
-      }
 
-      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).get)
+      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, disclosureID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).get)
     }
 }
