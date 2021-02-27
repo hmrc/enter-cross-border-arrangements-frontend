@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 class RemoveDisclosureController @Inject()(
     override val messagesApi: MessagesApi,
@@ -92,12 +92,19 @@ class RemoveDisclosureController @Inject()(
           renderer.render("removeDisclosure.njk", json).map(BadRequest(_))
         },
         value =>
-          for {
-            updatedAnswers              <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            updatedFlags                =  updateFlags(updatedAnswers, id)
-            updatedUserAnswersWithFlags <- Future.fromTry(updatedFlags._1)
-            _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
-          } yield Redirect(redirect(DefaultRouting(NormalMode), Some(updatedFlags._2), id))
+          Future.fromTry{
+            if (!value) { Success(true) }
+            else {
+              for {
+                updatedAnswers <- request.userAnswers.set(RemoveDisclosurePage, id, value)
+                updatedFlags   = updateFlags(updatedAnswers, id)
+                updatedUserAnswersWithFlags <- updatedFlags._1
+              } yield {
+                sessionRepository.set(updatedUserAnswersWithFlags)
+                updatedFlags._2
+              }
+            }
+          }.map(displayList => Redirect(redirect(DefaultRouting(NormalMode), Some(displayList), id)))
       )
   }
 

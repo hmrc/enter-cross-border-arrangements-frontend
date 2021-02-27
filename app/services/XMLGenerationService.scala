@@ -18,11 +18,9 @@ package services
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
 import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
-import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.requests.DataRequest
+import models.disclosure.DisclosureType
 import models.{GeneratedIDs, Submission}
 import org.slf4j.LoggerFactory
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -97,7 +95,7 @@ class XMLGenerationService @Inject()(
               for {
                 submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
-              } yield Right(ids.withMessageRefId(messageRefId).withXml(xml.toString))
+              } yield Right(ids.withMessageRefId(messageRefId).withXml(submissionXML.toString))
             }
           )
         }

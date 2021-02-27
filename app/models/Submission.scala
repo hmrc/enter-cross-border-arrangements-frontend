@@ -26,7 +26,7 @@ import models.reporter.ReporterDetails
 import models.taxpayer.Taxpayer
 import pages.affected.AffectedLoopPage
 import pages.arrangement.ArrangementDetailsPage
-import pages.disclosure.DisclosureDetailsPage
+import pages.disclosure.{DisclosureDetailsPage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.hallmarks.HallmarkDetailsPage
 import pages.intermediaries.IntermediaryLoopPage
@@ -67,14 +67,15 @@ object Submission {
 
   def apply(userAnswers: UserAnswers, id: Int, enrolmentID: String): Submission =
     (for {
-      disclosureDetails     <- userAnswers.get(DisclosureDetailsPage, id)
-      reporterDetails       =  userAnswers.get(ReporterDetailsPage, id)
-      associatedEnterprises =  userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
-      taxpayers             =  userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
-      intermediaries        =  userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
-      affectedPersons       =  userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
-      hallmarkDetails       =  userAnswers.get(HallmarkDetailsPage, id)
-      arrangementDetails    =  userAnswers.get(ArrangementDetailsPage, id)
+      disclosureDetails        <- userAnswers.get(DisclosureDetailsPage, id)
+                                  .map(_.withInitialDisclosureMA(userAnswers.getBase(FirstInitialDisclosureMAPage)))
+      reporterDetails          =  userAnswers.get(ReporterDetailsPage, id)
+      associatedEnterprises    =  userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
+      taxpayers                =  userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
+      intermediaries           =  userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
+      affectedPersons          =  userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
+      hallmarkDetails          =  userAnswers.get(HallmarkDetailsPage, id)
+      arrangementDetails       =  userAnswers.get(ArrangementDetailsPage, id)
     } yield {
       this(enrolmentID, disclosureDetails, reporterDetails, associatedEnterprises
         , taxpayers, intermediaries, affectedPersons, hallmarkDetails, arrangementDetails)

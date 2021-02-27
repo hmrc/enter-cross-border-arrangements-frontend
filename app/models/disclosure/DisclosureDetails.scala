@@ -16,6 +16,7 @@
 
 package models.disclosure
 
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -27,9 +28,17 @@ case class DisclosureDetails(
   messageRefId: Option[String]  = None
 ) {
 
-  def setDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
+  def withDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
 
-  def setIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
+  def withIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
+
+  def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
+    copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
+      case (Dac6add, _)     => false
+      case (Dac6rep, None)  => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
+      case (Dac6rep, Some(value)) => value
+      case _                => initialDisclosureMA
+    })
 }
 
 object DisclosureDetails {

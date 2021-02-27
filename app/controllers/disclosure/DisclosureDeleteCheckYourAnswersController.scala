@@ -72,8 +72,8 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case Some(ids) =>
           val disclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
-            .setDisclosureType(DisclosureType.Dac6del)
-            .setIds(ids.arrangementID, ids.disclosureID)
+            .withDisclosureType(DisclosureType.Dac6del)
+            .withIds(ids.arrangementID, ids.disclosureID)
           Submission(request.enrolmentID, disclosureDetails)
         case _ => throw new RuntimeException("Cannot retrieve Disclosure Information")
       }

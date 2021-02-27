@@ -37,9 +37,15 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
     "in Normal Mode" - {
 
       "must go from 'Are you sure you want to remove disclosure *disclosureName*' page " +
-        "to 'You have X unsubmitted disclosure(s)' page when answer is No" in {
-        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0)
+        "to 'You have X unsubmitted disclosure(s)' page when the list have at least one item to display" in {
+        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(true))(0)
           .mustBe(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad())
+      }
+
+      "must go from 'Are you sure you want to remove disclosure *disclosureName*' page " +
+        "to the 'Index' page when the list have no items to display" in {
+        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0)
+          .mustBe(controllers.routes.IndexController.onPageLoad())
       }
 
       "must go from 'Provide a name for this disclosure' page " +

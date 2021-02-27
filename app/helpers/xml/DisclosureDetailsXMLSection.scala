@@ -47,14 +47,9 @@ case class DisclosureDetailsXMLSection(submission: Submission) {
     }
 
   def buildInitialDisclosureMA: Elem =
-    disclosure.map(_.disclosureType) match {
-      case Some(Dac6add) =>
-        <InitialDisclosureMA>false</InitialDisclosureMA>
-      case _ =>
-        disclosure.map(_.initialDisclosureMA) match {
-          case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
-          case _ => throw new Exception("Missing InitialDisclosureMA flag")
-        }
+    disclosure.map(_.initialDisclosureMA) match {
+      case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
+      case _ => throw new Exception("Missing InitialDisclosureMA flag")
     }
 
   def buildArrangementID: NodeSeq =
