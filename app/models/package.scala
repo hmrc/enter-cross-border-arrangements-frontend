@@ -142,4 +142,37 @@ package object models {
       }
     }
   }
+
+  // submission error model
+
+  sealed trait SubmissionError {
+
+    def errorKey: String
+    def defaultMessage: String
+  }
+
+  case object DisclosureNameEmptyError extends SubmissionError {
+
+    def errorKey: String = "submission.disclosure.name.missing"
+    def defaultMessage: String = "A disclosure must have a name"
+  }
+
+  case object DisclosureImportInstructionInvalidError extends SubmissionError {
+
+    def errorKey: String = "submission.disclosure.import.instruction.invalid"
+    def defaultMessage: String = "A submission must have a valid import instruction"
+  }
+
+  case object DisclosureInitialMarketableArrangementInvalidError extends SubmissionError {
+
+    def errorKey: String = "submission.disclosure.marketable.arrangement.invalid"
+    def defaultMessage: String = "A submission must have a marketable arrangement flag when not new"
+  }
+
+  case object DisclosureInfoArrangementDetailsMissingError extends SubmissionError {
+
+    def errorKey: String = "submission.disclosure.info.arrangement.missing"
+    def defaultMessage: String = "A submission must have a import instruction"
+  }
+
 }

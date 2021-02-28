@@ -24,8 +24,10 @@ import models.hallmarks.HallmarkDetails
 import models.intermediaries.Intermediary
 import models.reporter.ReporterDetails
 import models.taxpayer.Taxpayer
+import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.disclosure.FirstInitialDisclosureMAPage
 
 class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -247,7 +249,15 @@ class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyC
         submission.affectedPersons must be(validAffectedPersons)
         submission.hallmarkDetails must be(Some(validHallmarkDetails))
         submission.arrangementDetails must be(Some(validArrangementDetails))
+      }
 
+      "update initial disclosure MA when there is a first initial disclosure page" in {
+
+        val submissionWithFirstInitalDisclosure = userAnswersModelsForOrganisation
+          .setBase(FirstInitialDisclosureMAPage, true).success.value
+
+        val submission = Submission(submissionWithFirstInitalDisclosure, 0, "enrolmentId")
+        submission.disclosureDetails.initialDisclosureMA must be(true)
       }
     }
 

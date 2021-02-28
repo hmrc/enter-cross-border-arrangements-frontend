@@ -57,7 +57,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
       "buildDisclosureImportInstruction must build the import instruction section if additional arrangement" in {
 
         val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
+          disclosureName = "not empty",
           disclosureType = DisclosureType.Dac6add,
           initialDisclosureMA = true
         )
@@ -74,7 +74,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
       "buildDisclosureImportInstruction must build the import instruction section if new arrangement" in {
 
         val disclosureDetails = DisclosureDetails(
-          disclosureName = "",
+          disclosureName = "not empty",
           disclosureType = DisclosureType.Dac6new
         )
 
@@ -92,7 +92,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "buildInitialDisclosureMA must build the disclosure MA section when arrangement is marketable" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6new,
             initialDisclosureMA = true
           )
@@ -109,7 +109,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "buildInitialDisclosureMA must build the disclosure MA section when arrangement is not marketable" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6new
           )
 
@@ -145,7 +145,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must build arrangement ID when user Selects DAC6ADD & enters a valid arrangementID" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6add,
             arrangementID = Some("GBA20210120FOK5BT")
           )
@@ -162,7 +162,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must NOT build arrangement ID when user Selects DAC6NEW" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6new
           )
 
@@ -182,7 +182,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must build disclosure ID when user Selects DAC6REP & enters a valid disclosureID" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6rep,
             disclosureID = Some("GBA20210120FOK5BT")
           )
@@ -199,7 +199,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must build disclosure ID when user Selects DAC6DEL & enters a valid disclosureID" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6rep,
             disclosureID = Some("GBA20210120FOK5BT")
           )
@@ -216,7 +216,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must NOT build disclosure ID when user Selects DAC6ADD" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6add
           )
 
@@ -232,7 +232,7 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         "must NOT build disclosure ID when user Selects DAC6NEW" in {
 
           val disclosureDetails = DisclosureDetails(
-            disclosureName = "",
+            disclosureName = "not empty",
             disclosureType = DisclosureType.Dac6new
           )
 

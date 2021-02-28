@@ -17,6 +17,7 @@
 package models.disclosure
 
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, SubmissionError}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -25,7 +26,8 @@ case class DisclosureDetails(
   arrangementID: Option[String] = None,
   disclosureID: Option[String]  = None,
   initialDisclosureMA: Boolean  = false,
-  messageRefId: Option[String]  = None
+  messageRefId: Option[String]  = None,
+  firstInitialDisclosureMA: Option[Boolean] = None
 ) {
 
   def withDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
@@ -39,6 +41,13 @@ case class DisclosureDetails(
       case (Dac6rep, Some(value)) => value
       case _                => initialDisclosureMA
     })
+
+  def validate: Either[SubmissionError, DisclosureDetails] =
+    for {
+      validDisclosureName      <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
+      validImportInstruction   <- Either.cond(Option(disclosureType).isDefined, disclosureType, DisclosureImportInstructionInvalidError)
+      validInitialDisclosureMA <- Either.cond(Option(initialDisclosureMA).isDefined, initialDisclosureMA, DisclosureInitialMarketableArrangementInvalidError)
+    } yield copy(disclosureName = validDisclosureName, disclosureType = validImportInstruction, initialDisclosureMA = validInitialDisclosureMA)
 }
 
 object DisclosureDetails {
