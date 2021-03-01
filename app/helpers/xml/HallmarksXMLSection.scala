@@ -23,20 +23,19 @@ import scala.xml.{Elem, NodeSeq}
 
 case class HallmarksXMLSection(submission: Submission) {
 
-  val hallmarkDetails: HallmarkDetails = submission.hallmarkDetails
-    .orElse(throw new IllegalStateException(HallmarkDetailsNotDefinedError.defaultMessage))
-    .get.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity)
+  val hallmarkDetails: Option[HallmarkDetails] = submission.hallmarkDetails
+    .map(_.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity))
 
   val groupSize = 4000
 
-  private[xml] def buildHallmarks: Elem = {
+  private[xml] def buildHallmarks: NodeSeq = hallmarkDetails.fold(NodeSeq.Empty) { details =>
 
-    val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>
+    val hallmarkContent = details.hallmarkContent.fold(NodeSeq.Empty)(content =>
       content.grouped(groupSize).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
 
     <Hallmarks>
       <ListHallmarks>
-        {hallmarkDetails.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
+        {details.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
       </ListHallmarks>
       {hallmarkContent}
     </Hallmarks>

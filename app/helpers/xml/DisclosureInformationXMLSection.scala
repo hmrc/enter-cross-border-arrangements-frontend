@@ -16,7 +16,7 @@
 
 package helpers.xml
 
-import models.{ArrangementDetailsNotDefinedError, Submission}
+import models.Submission
 import models.arrangement.ArrangementDetails
 
 import scala.util.Try
@@ -24,44 +24,44 @@ import scala.xml.NodeSeq
 
 case class DisclosureInformationXMLSection(submission: Submission) {
 
-  val arrangementDetails: ArrangementDetails = submission.arrangementDetails
-    .orElse(throw new IllegalStateException(ArrangementDetailsNotDefinedError.defaultMessage))
-    .get.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity)
+  val arrangementDetails: Option[ArrangementDetails] = submission.arrangementDetails
+    .map(_.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity))
 
   val hallmarksSection: HallmarksXMLSection = HallmarksXMLSection(submission)
 
   val groupSize = 4000
 
-  private[xml] def buildReason: NodeSeq =
-    arrangementDetails.reportingReason.fold(NodeSeq.Empty)(reason =>
-      <Reason>{reason.toUpperCase}</Reason>
-    )
+  private[xml] def buildReason(details: ArrangementDetails): NodeSeq =
+    details.reportingReason.fold(NodeSeq.Empty) { reportingReason =>
+      <Reason>{reportingReason.toUpperCase}</Reason>
+    }
 
-  private[xml] def buildDisclosureInformationSummary: NodeSeq =
+  private[xml] def buildDisclosureInformationSummary(details: ArrangementDetails): NodeSeq =
     <Summary>
-      <Disclosure_Name>{arrangementDetails.arrangementName}</Disclosure_Name>{arrangementDetails.arrangementDetails.grouped(groupSize).toList.map(string =>
+      <Disclosure_Name>{details.arrangementName}</Disclosure_Name>{details.arrangementDetails.grouped(groupSize).toList.map(string =>
       <Disclosure_Description>{string}</Disclosure_Description>)}
     </Summary>
 
-  private[xml] def buildNationalProvision: NodeSeq =
-    arrangementDetails.nationalProvisionDetails.grouped(groupSize).toList.map { string =>
-      <NationalProvision>{string}</NationalProvision>
-    }
 
-  private[xml] def buildConcernedMS: NodeSeq =
-    <ConcernedMSs>
-      {arrangementDetails.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}
-    </ConcernedMSs>
+  private[xml] def buildNationalProvision(details: ArrangementDetails): NodeSeq =
+    details.nationalProvisionDetails.grouped(groupSize).toList.map { string =>
+      <NationalProvision>{string}</NationalProvision>
+  }
+
+  private[xml] def buildConcernedMS(details: ArrangementDetails): NodeSeq =
+    <ConcernedMSs>{details.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}</ConcernedMSs>
 
 
   private[xml] def buildArrangementDetails: NodeSeq =
-    new xml.NodeBuffer ++
-      <ImplementingDate>{arrangementDetails.implementationDate}</ImplementingDate> ++
-      buildReason ++
-      buildDisclosureInformationSummary ++
-      buildNationalProvision ++
-      <Amount currCode={arrangementDetails.expectedValue.currency}>{arrangementDetails.expectedValue.amount}</Amount> ++
-      buildConcernedMS
+    arrangementDetails.fold(NodeSeq.Empty) { details =>
+      new xml.NodeBuffer ++
+        <ImplementingDate>{details.implementationDate}</ImplementingDate> ++
+        buildReason(details) ++
+        buildDisclosureInformationSummary(details) ++
+        buildNationalProvision(details) ++
+        <Amount currCode={details.expectedValue.currency}>{details.expectedValue.amount}</Amount> ++
+        buildConcernedMS(details)
+    }
 
   def buildDisclosureInformation: NodeSeq = {
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D

@@ -101,7 +101,7 @@ class RemoveDisclosureController @Inject()(
                 updatedUserAnswersWithFlags <- updatedFlags._1
               } yield {
                 sessionRepository.set(updatedUserAnswersWithFlags)
-                updatedFlags._2
+                updatedFlags._2 // true if at least one unsubmitted disclosure is visible
               }
             }
           }.map(displayList => Redirect(redirect(DefaultRouting(NormalMode), Some(displayList), id)))
@@ -113,8 +113,8 @@ class RemoveDisclosureController @Inject()(
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
       val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 } :+
         unsubmittedDisclosure.copy(deleted = true)
-      val isVisible: Boolean = updatedUnsubmittedDisclosures.forall(_.isVisible)
-      (userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures), isVisible)
+      val isAllHidden: Boolean = updatedUnsubmittedDisclosures.forall(_.isHidden)
+      (userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures), !isAllHidden)
     }).getOrElse((Failure(new IllegalArgumentException("Unable to update deleted disclosure.")), false))
   }
 }

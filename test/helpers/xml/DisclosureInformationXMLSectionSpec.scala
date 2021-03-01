@@ -43,7 +43,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       val submission = Submission("id", validDisclosureDetails)
         .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
 
-      val result = DisclosureInformationXMLSection(submission).buildReason
+      val result = DisclosureInformationXMLSection(submission).buildReason(arrangementDetails)
 
       val expected = "<Reason>DAC6703</Reason>"
 
@@ -59,14 +59,14 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       val submission = Submission("id", validDisclosureDetails)
         .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
 
-      val result = DisclosureInformationXMLSection(submission).buildReason
+      val result = DisclosureInformationXMLSection(submission).buildReason(arrangementDetails)
 
       prettyPrinter.formatNodes(result) mustBe ""
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {
 
-      val result = DisclosureInformationXMLSection(submission).buildDisclosureInformationSummary
+      val result = DisclosureInformationXMLSection(submission).buildDisclosureInformationSummary(validArrangementDetails)
 
       val expected =
       """<Summary>
@@ -79,7 +79,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildNationalProvision must build the national provision section" in {
 
-      val result = DisclosureInformationXMLSection(submission).buildNationalProvision
+      val result = DisclosureInformationXMLSection(submission).buildNationalProvision(validArrangementDetails)
 
       val expected = "<NationalProvision>nationalProvisions</NationalProvision>"
 
@@ -88,7 +88,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildConcernedMS must build the full ConcernedMS section" in {
 
-      val result = DisclosureInformationXMLSection(submission).buildConcernedMS
+      val result = DisclosureInformationXMLSection(submission).buildConcernedMS(validArrangementDetails)
 
       val expected =
         """<ConcernedMSs>
@@ -113,15 +113,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           |</ConcernedMSs>""".stripMargin
 
       prettyPrinter.formatNodes(result) mustBe expected
-    }
-
-    "buildArrangementDetails must throw an exception if ArrangementDetails is missing" in {
-
-      val submission = Submission("id", validDisclosureDetails)
-
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection(submission).buildArrangementDetails
-      }
     }
 
     "buildDisclosureInformation must build the full DisclosureInformation Elem" in {

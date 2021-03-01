@@ -50,7 +50,7 @@ class HallmarksXMLSectionSpec extends SpecBase {
           |    <DAC6D1OtherInfo>Hallmark D1 other description</DAC6D1OtherInfo>
           |</Hallmarks>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      prettyPrinter.formatNodes(result) mustBe expected
     }
 
     "buildHallmarks must build the hallmarks section without the optional D1 other description" in {
@@ -73,16 +73,7 @@ class HallmarksXMLSectionSpec extends SpecBase {
           |    </ListHallmarks>
           |</Hallmarks>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
-    }
-
-    "buildHallmarks must throw an exception if HallmarkD is missing" in {
-
-      val submission = Submission("id", validDisclosureDetails)
-
-      assertThrows[Exception] {
-        HallmarksXMLSection(submission).buildHallmarks
-      }
+      prettyPrinter.formatNodes(result) mustBe expected
     }
   }
 }

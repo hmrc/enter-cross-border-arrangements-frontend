@@ -19,7 +19,7 @@ package models
 import play.api.libs.json.Json
 
 case class UnsubmittedDisclosure(id:String, name: String, submitted: Boolean = false, deleted: Boolean = false) {
-  val isVisible = !submitted && !deleted
+  val isHidden = submitted || deleted
 }
 
 object UnsubmittedDisclosure {
