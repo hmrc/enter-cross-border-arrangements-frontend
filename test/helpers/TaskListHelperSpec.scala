@@ -238,12 +238,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(AffectedStatusPage, index, Completed)
           .success
           .value
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
+          .success
+          .value
           .set(DisclosureStatusPage, index, Completed)
           .success
           .value
 
-        userCanSubmit(userAnswers, index, affectedToggle = true, associatedEnterpriseToggle = false,
-          addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
       }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
@@ -268,12 +270,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(AffectedStatusPage, index, Completed)
           .success
           .value
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
+          .success
+          .value
           .set(DisclosureStatusPage, index, Completed)
           .success
           .value
 
-        userCanSubmit(userAnswers, index, affectedToggle = true, associatedEnterpriseToggle = false,
-          addedTaxpayers = true, replaceAMarketableAddDisclosure = true) mustBe true
+        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = true) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -314,8 +318,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, affectedToggle = true, associatedEnterpriseToggle = true,
-          addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -356,8 +359,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, affectedToggle = true, associatedEnterpriseToggle = true,
-          addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
+        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
       }
 
       "must be false if user has Registered a taxpayer but no associated enterprise" in {
@@ -397,8 +399,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, affectedToggle = true, associatedEnterpriseToggle = true,
-          addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
+        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
       }
     }
 

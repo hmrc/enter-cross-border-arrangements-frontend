@@ -260,7 +260,6 @@ class DisclosureDetailsController @Inject()(
 
   private def relevantTaxpayersItem(ua: UserAnswers,
                                     page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
-    if (frontendAppConfig.associatedEnterpriseToggle) {
       ua.get(ReporterStatusPage, index) match {
         case Some(Completed) =>
           retrieveRowWithStatusBottomless(ua: UserAnswers,
@@ -276,24 +275,7 @@ class DisclosureDetailsController @Inject()(
           "disclosureDetails.relevantTaxpayersLink", "connected-parties")
       }
 
-    } else {
-      ua.get(ReporterStatusPage, index) match {
-        case Some(Completed) =>
-          retrieveRowWithStatus(ua: UserAnswers,
-            page,
-            s"${frontendAppConfig.taxpayersUrl}/$index",
-            linkContent = "disclosureDetails.relevantTaxpayersLink",
-            id = "taxpayers",
-            ariaLabel = "connected-parties",
-            index
-          )
-
-        case _ => taskListItemRestricted(
-          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
-      }
-
     }
-  }
 
   private def associatedEnterpriseItem(ua: UserAnswers,
                                        page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {

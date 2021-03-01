@@ -81,15 +81,11 @@
 
                 {{ relevantTaxpayerTaskListItem | safe }}
 
-                {% if config.associatedEnterpriseToggle %}
-                    {{ associatedEnterpriseTaskListItem | safe }}
-                {% endif %}
+                {{ associatedEnterpriseTaskListItem | safe }}
 
                 {{ intermediariesTaskListItem | safe }}
 
-                {% if config.affectedToggle %}
-                    {{ othersAffectedTaskListItem | safe }}
-                {% endif %}
+                {{ othersAffectedTaskListItem | safe }}
 
               </ul>
 
