@@ -16,14 +16,18 @@
 
 package models.hallmarks
 
-import models.UserAnswers
 import models.hallmarks.HallmarkD.{D1, D2}
+import models.{HallmarkDMissingError, SubmissionError, UserAnswers}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import play.api.libs.json.{Json, OFormat}
 
 case class HallmarkDetails(hallmarkType: List[String],
                            hallmarkContent: Option[String] = None
-                          )
+                          ) {
+
+  def validate: Either[SubmissionError, HallmarkDetails] =
+    Either.cond(hallmarkType.exists(_.startsWith("DAC6D")), this, HallmarkDMissingError)
+}
 
 object HallmarkDetails {
   implicit val format: OFormat[HallmarkDetails] = Json.format[HallmarkDetails]

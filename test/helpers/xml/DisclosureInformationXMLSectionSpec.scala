@@ -29,6 +29,9 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
   val hallmarksSection: HallmarksXMLSection = mock[HallmarksXMLSection]
 
+  val submission = Submission("id", validDisclosureDetails)
+    .copy(arrangementDetails = Some(validArrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
+
   "DisclosureInformationXMLSection" - {
 
     "buildReason must build the optional reason section if reason is known" in {
@@ -37,7 +40,8 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         reportingReason = Some(WhyAreYouReportingThisArrangementNow.Dac6703.toString)
       )
 
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(arrangementDetails))
+      val submission = Submission("id", validDisclosureDetails)
+        .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
 
       val result = DisclosureInformationXMLSection(submission).buildReason
 
@@ -52,7 +56,8 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         reportingReason = None
       )
 
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(arrangementDetails))
+      val submission = Submission("id", validDisclosureDetails)
+        .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
 
       val result = DisclosureInformationXMLSection(submission).buildReason
 
@@ -60,8 +65,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {
-
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(validArrangementDetails))
 
       val result = DisclosureInformationXMLSection(submission).buildDisclosureInformationSummary
 
@@ -76,8 +79,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildNationalProvision must build the national provision section" in {
 
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(validArrangementDetails))
-
       val result = DisclosureInformationXMLSection(submission).buildNationalProvision
 
       val expected = "<NationalProvision>nationalProvisions</NationalProvision>"
@@ -86,8 +87,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildConcernedMS must build the full ConcernedMS section" in {
-
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(validArrangementDetails))
 
       val result = DisclosureInformationXMLSection(submission).buildConcernedMS
 
@@ -101,8 +100,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildArrangementDetails must build the sections from the ArrangementDetails model" in {
-
-      val submission = Submission("id", validDisclosureDetails).copy(arrangementDetails = Some(validArrangementDetails))
 
       val result = DisclosureInformationXMLSection(submission).buildArrangementDetails
 
@@ -118,9 +115,9 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       prettyPrinter.formatNodes(result) mustBe expected
     }
 
-    // TODO fix
     "buildArrangementDetails must throw an exception if ArrangementDetails is missing" in {
-      val submission = Submission("id", validDisclosureDetails)//.copy(arrangementDetails = Some(arrangementDetails))
+
+      val submission = Submission("id", validDisclosureDetails)
 
       assertThrows[Exception] {
         DisclosureInformationXMLSection(submission).buildArrangementDetails
@@ -128,12 +125,6 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
     }
 
     "buildDisclosureInformation must build the full DisclosureInformation Elem" in {
-
-      val submission = Submission("id", validDisclosureDetails)
-        .copy(
-          arrangementDetails = Some(validArrangementDetails),
-          hallmarkDetails = Some(validHallmarkDetails)
-        )
 
       val result: Either[Throwable, NodeSeq] = Right(DisclosureInformationXMLSection(submission).buildDisclosureInformation)
 

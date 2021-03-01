@@ -17,18 +17,21 @@
 package navigation
 
 import base.SpecBase
+import config.FrontendAppConfig
 import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
 import models.disclosure.DisclosureType
+import org.scalatest.MustMatchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
-class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NavigatorForDisclosureSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new NavigatorForDisclosure
+  val navigator: NavigatorForDisclosure = injector.instanceOf[NavigatorForDisclosure]
+  val appConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val index: Int = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
@@ -43,9 +46,9 @@ class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       "must go from 'Are you sure you want to remove disclosure *disclosureName*' page " +
-        "to the 'Index' page when the list have no items to display" in {
-        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0)
-          .mustBe(controllers.routes.IndexController.onPageLoad())
+        "to the file upload service when the list have no items to display" in {
+        navigator.routeMap(RemoveDisclosurePage)(DefaultRouting(NormalMode))(None)(Some(false))(0).url
+          .mustBe(appConfig.discloseArrangeLink)
       }
 
       "must go from 'Provide a name for this disclosure' page " +

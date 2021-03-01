@@ -16,9 +16,10 @@
 
 package helpers.xml
 
+
 import models.Submission
 import models.disclosure.DisclosureDetails
-import models.disclosure.DisclosureType.{Dac6del, Dac6new, Dac6rep}
+import models.disclosure.DisclosureType._
 import org.joda.time.DateTime
 
 import scala.xml.{Elem, NodeSeq}

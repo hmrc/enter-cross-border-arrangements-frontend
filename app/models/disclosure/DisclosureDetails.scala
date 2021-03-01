@@ -44,10 +44,10 @@ case class DisclosureDetails(
 
   def validate: Either[SubmissionError, DisclosureDetails] =
     for {
-      validDisclosureName      <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
-      validImportInstruction   <- Either.cond(Option(disclosureType).isDefined, disclosureType, DisclosureImportInstructionInvalidError)
-      validInitialDisclosureMA <- Either.cond(Option(initialDisclosureMA).isDefined, initialDisclosureMA, DisclosureInitialMarketableArrangementInvalidError)
-    } yield copy(disclosureName = validDisclosureName, disclosureType = validImportInstruction, initialDisclosureMA = validInitialDisclosureMA)
+      _ <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
+      _ <- Either.cond(Option(disclosureType).isDefined, disclosureType, DisclosureImportInstructionInvalidError)
+      _ <- Either.cond(Option(initialDisclosureMA).isDefined, initialDisclosureMA, DisclosureInitialMarketableArrangementInvalidError)
+    } yield this
 }
 
 object DisclosureDetails {

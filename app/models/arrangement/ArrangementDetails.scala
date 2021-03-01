@@ -16,12 +16,12 @@
 
 package models.arrangement
 
-import java.time.LocalDate
-
-import models.UserAnswers
+import models.{ArrangementImplementingDateInvalidError, ArrangementNameEmptyError, SubmissionError, UserAnswers}
 import pages.GiveDetailsOfThisArrangementPage
-import pages.arrangement.{DoYouKnowTheReasonToReportArrangementNowPage, WhatIsTheImplementationDatePage, WhatIsThisArrangementCalledPage, WhichExpectedInvolvedCountriesArrangementPage, WhichNationalProvisionsIsThisArrangementBasedOnPage, WhyAreYouReportingThisArrangementNowPage}
+import pages.arrangement._
 import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
 
 case class ArrangementDetails(arrangementName: String,
                               implementationDate: LocalDate,
@@ -30,7 +30,14 @@ case class ArrangementDetails(arrangementName: String,
                               expectedValue: ExpectedArrangementValue,
                               nationalProvisionDetails: String,
                               arrangementDetails: String
-                             )
+                             ) {
+
+  def validate: Either[SubmissionError, ArrangementDetails] =
+    for {
+      _ <- Either.cond(Option(arrangementName).exists(_.nonEmpty), arrangementName, ArrangementNameEmptyError)
+      _ <- Either.cond(Option(implementationDate).isDefined, implementationDate, ArrangementImplementingDateInvalidError)
+    } yield this
+}
 
 object ArrangementDetails {
   implicit val format: OFormat[ArrangementDetails] = Json.format[ArrangementDetails]

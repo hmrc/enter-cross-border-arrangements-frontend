@@ -16,6 +16,7 @@
 
 package navigation
 
+import config.FrontendAppConfig
 import controllers.disclosure._
 import controllers.mixins.CheckRoute
 import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
@@ -26,7 +27,7 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForDisclosure @Inject()() {
+class NavigatorForDisclosure @Inject()(appConfig: FrontendAppConfig) {
 
   val routeMap:  Page => CheckRoute => Option[Int] => Option[Any] => Int => Call = {
 
@@ -43,7 +44,7 @@ class NavigatorForDisclosure @Inject()() {
     case RemoveDisclosurePage  =>
       _ => _ => value => _ => value match {
         case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
-        case _          => controllers.routes.IndexController.onPageLoad()
+        case _          => Call("GET", appConfig.discloseArrangeLink)
       }
 
     case ReplaceOrDeleteADisclosurePage =>

@@ -42,7 +42,6 @@ class XMLGenerationService @Inject()(
       disclosureSection            <- Option(submission).map(DisclosureDetailsXMLSection)
                                         .toRight(new RuntimeException("Could not generate XML from disclosure details."))
       reporterSection              =  ReporterXMLSection(submission)
-      disclosureInformationSection =  DisclosureInformationXMLSection(submission)
       enrolmentID                  <- Option(submission).map(_.enrolmentID)
                                         .toRight(new RuntimeException("Could not get enrolment id from submission."))
     } yield {
@@ -56,7 +55,6 @@ class XMLGenerationService @Inject()(
             {reporterSection.buildDisclosureDetails}
             {disclosureSection.buildInitialDisclosureMA}
             {createPartiesSection(submission, Option(reporterSection))}
-            {disclosureInformationSection.buildDisclosureInformation}
           </DAC6Disclosures>
         </DAC6_Arrangement>
       }
@@ -65,13 +63,15 @@ class XMLGenerationService @Inject()(
   }
 
   def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq = {
+
     if (submission.getDisclosureType == DisclosureType.Dac6del) {
       NodeSeq.Empty
     }
     else {
       RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
         IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
-        AffectedXMLSection(submission).buildAffectedPersons
+        AffectedXMLSection(submission).buildAffectedPersons ++
+        DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
   }
 

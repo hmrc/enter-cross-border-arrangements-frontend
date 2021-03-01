@@ -16,31 +16,30 @@
 
 package helpers.xml
 
-import models.Submission
+import models.{HallmarkDetailsNotDefinedError, Submission}
+import models.hallmarks.HallmarkDetails
 
 import scala.xml.{Elem, NodeSeq}
 
 case class HallmarksXMLSection(submission: Submission) {
 
-  val hallmarkDetails = submission.hallmarkDetails
+  val hallmarkDetails: HallmarkDetails = submission.hallmarkDetails
+    .orElse(throw new IllegalStateException(HallmarkDetailsNotDefinedError.defaultMessage))
+    .get.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity)
+
+  val groupSize = 4000
 
   private[xml] def buildHallmarks: Elem = {
 
-    hallmarkDetails match {
-      case Some(hallmarkDetails) =>
+    val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>
+      content.grouped(groupSize).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
 
-        val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>
-          content.grouped(4000).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
-
-        <Hallmarks>
-          <ListHallmarks>
-            {hallmarkDetails.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
-          </ListHallmarks>
-          {hallmarkContent}
-        </Hallmarks>
-
-      case _ => throw new Exception("Unable to construct hallmarks XML from hallmark details")
-    }
+    <Hallmarks>
+      <ListHallmarks>
+        {hallmarkDetails.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
+      </ListHallmarks>
+      {hallmarkContent}
+    </Hallmarks>
   }
 
 }
