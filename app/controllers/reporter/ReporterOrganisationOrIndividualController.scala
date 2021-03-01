@@ -89,7 +89,7 @@ class ReporterOrganisationOrIndividualController @Inject()(
         value => {
 
           for {
-            updatedAnswers <- UserAnswersHelper.updateUserAnswers[ReporterOrganisationOrIndividual](request.userAnswers, id,
+            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id,
               ReporterOrganisationOrIndividualPage, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(ReporterStatusPage, id, JourneyStatus.InProgress))
             redirectMode   =  if (request.userAnswers.hasNewValue(ReporterOrganisationOrIndividualPage, id, value)) NormalMode else mode
@@ -99,11 +99,4 @@ class ReporterOrganisationOrIndividualController @Inject()(
         }
       )
   }
-
-//  private def updateUserAnswers(userAnswers: UserAnswers, id: Int, value: ReporterOrganisationOrIndividual) =
-//    userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
-//      case Some(oldValue)  if oldValue == value => Future.successful(userAnswers)
-//      case _ =>  Future.fromTry(userAnswers.set(ReporterOrganisationOrIndividualPage, id, value))
-//    }
-
 }
