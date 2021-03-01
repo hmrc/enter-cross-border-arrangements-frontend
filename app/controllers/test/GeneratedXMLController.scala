@@ -18,14 +18,6 @@ package controllers.test
 
 import controllers.actions._
 import models.Submission
-import pages.affected.AffectedLoopPage
-import pages.arrangement.ArrangementDetailsPage
-import pages.disclosure.DisclosureDetailsPage
-import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.hallmarks.HallmarkDetailsPage
-import pages.intermediaries.IntermediaryLoopPage
-import pages.reporter.ReporterDetailsPage
-import pages.taxpayer.TaxpayerLoopPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,17 +45,11 @@ class GeneratedXMLController @Inject()(
       //TODO Delete later if no longer needed
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      xmlGenerationService.createXmlSubmission(submission).fold(
-        error =>  throw new RuntimeException(error),
-        xml => {
-
-          val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-          val json = Json.obj(
-            "xml" -> prettyPrinter.format(xml)
-          )
-
-          renderer.render("generatedXML.njk", json).map(Ok(_))
-        }
-      )
+      xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
+        _.fold (
+          errors => throw new RuntimeException(errors.mkString),
+          ids    => renderer.render("generatedXML.njk", Json.obj("xml" -> ids.xml.get)).map(Ok(_))
+        )
+      }
   }
 }
