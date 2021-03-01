@@ -18,7 +18,7 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.Navigator
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerSelectTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,6 +28,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 
@@ -82,7 +83,7 @@ class TaxpayerSelectTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerSelectTypePage, id, value))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, TaxpayerSelectTypePage, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, JourneyStatus.InProgress))
             redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswersWithStatus)
