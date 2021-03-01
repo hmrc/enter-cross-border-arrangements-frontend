@@ -46,8 +46,6 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, trackingConfig: TrackingC
     "reportAProblemNonJSUrl"         -> appConfig.reportAProblemNonJSUrl,
     "timeout"                        -> appConfig.timeoutSeconds,
     "countdown"                      -> appConfig.countdownSeconds,
-    "affectedToggle"                 -> appConfig.affectedToggle,
-    "associatedEnterpriseToggle"     -> appConfig.associatedEnterpriseToggle,
     "trackingConsentScriptUrl"       -> trackingConfig.trackingUrl().get,
     "gtmContainer"                   -> trackingConfig.gtmContainer.get
   )
