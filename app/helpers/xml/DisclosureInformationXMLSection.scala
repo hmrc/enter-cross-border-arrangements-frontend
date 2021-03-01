@@ -52,25 +52,24 @@ case class DisclosureInformationXMLSection(submission: Submission) {
     <ConcernedMSs>{details.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}</ConcernedMSs>
 
 
-  private[xml] def buildArrangementDetails: NodeSeq =
-    arrangementDetails.fold(NodeSeq.Empty) { details =>
-      new xml.NodeBuffer ++
-        <ImplementingDate>{details.implementationDate}</ImplementingDate> ++
-        buildReason(details) ++
-        buildDisclosureInformationSummary(details) ++
-        buildNationalProvision(details) ++
-        <Amount currCode={details.expectedValue.currency}>{details.expectedValue.amount}</Amount> ++
-        buildConcernedMS(details)
-    }
+  private[xml] def buildArrangementDetails(details: ArrangementDetails): NodeSeq =
+    new xml.NodeBuffer ++
+      <ImplementingDate>{details.implementationDate}</ImplementingDate> ++
+      buildReason(details) ++
+      buildDisclosureInformationSummary(details) ++
+      buildNationalProvision(details) ++
+      <Amount currCode={details.expectedValue.currency}>{details.expectedValue.amount}</Amount> ++
+      buildConcernedMS(details)
 
-  def buildDisclosureInformation: NodeSeq = {
+  def buildDisclosureInformation: NodeSeq =
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    Try {
-      <DisclosureInformation>
-        {buildArrangementDetails}
-        <MainBenefitTest1>false</MainBenefitTest1>
-        {hallmarksSection.buildHallmarks}
-      </DisclosureInformation>
-    }.getOrElse(NodeSeq.Empty)
-  }
+    arrangementDetails.fold(NodeSeq.Empty) { details =>
+      Try {
+        <DisclosureInformation>
+          {buildArrangementDetails(details)}
+          <MainBenefitTest1>false</MainBenefitTest1>
+          {hallmarksSection.buildHallmarks}
+        </DisclosureInformation>
+      }.getOrElse(NodeSeq.Empty)
+    }
 }

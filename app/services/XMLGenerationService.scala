@@ -64,14 +64,13 @@ class XMLGenerationService @Inject()(
 
   def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq = {
 
-    if (submission.getDisclosureType == DisclosureType.Dac6del) {
-      NodeSeq.Empty
-    }
-    else {
-      RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
-        IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
-        AffectedXMLSection(submission).buildAffectedPersons ++
-        DisclosureInformationXMLSection(submission).buildDisclosureInformation
+    submission.getDisclosureType match {
+      case DisclosureType.Dac6del => NodeSeq.Empty
+      case _ =>
+        RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
+          IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
+          AffectedXMLSection(submission).buildAffectedPersons ++
+          DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
   }
 

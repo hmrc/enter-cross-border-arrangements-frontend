@@ -51,18 +51,7 @@ class GeneratedXMLController @Inject()(
     implicit request =>
 
       //TODO Delete later if no longer needed
-      val submission = (for {
-        disclosureDetails     <- request.userAnswers.get(DisclosureDetailsPage, id)
-        reporterDetails       =  request.userAnswers.get(ReporterDetailsPage, id)
-        associatedEnterprises =  request.userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
-        taxpayers             =  request.userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
-        intermediaries        =  request.userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
-        affectedPersons       =  request.userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
-        hallmarkDetails       =  request.userAnswers.get(HallmarkDetailsPage, id)
-        arrangementDetails    =  request.userAnswers.get(ArrangementDetailsPage, id)
-      } yield
-        Submission(request.enrolmentID, disclosureDetails, reporterDetails, associatedEnterprises, taxpayers, intermediaries, affectedPersons, hallmarkDetails, arrangementDetails))
-        .getOrElse(throw new IllegalStateException("Unable to create submission from model"))
+      val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       xmlGenerationService.createXmlSubmission(submission).fold(
         error =>  throw new RuntimeException(error),

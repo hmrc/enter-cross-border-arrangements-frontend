@@ -22,6 +22,7 @@ import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
 import pages.{MessageRefIDPage, ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
+import scala.concurrent.Future
 import scala.util.{Success, Try}
 
 case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
