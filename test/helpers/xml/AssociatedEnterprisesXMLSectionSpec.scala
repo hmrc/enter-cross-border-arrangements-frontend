@@ -17,18 +17,17 @@
 package helpers.xml
 
 import base.SpecBase
+import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import models.{Address, Country, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.{Address, Country, Name, Submission, TaxReferenceNumbers}
 
 import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
-class AssociatedEnterprisesSectionSpec extends SpecBase {
+class AssociatedEnterprisesXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
@@ -66,12 +65,9 @@ class AssociatedEnterprisesSectionSpec extends SpecBase {
         val enterpriseLoop = IndexedSeq(
           AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
-          .success.value
+        val submission = Submission("id", validDisclosureDetails).copy(associatedEnterprises = enterpriseLoop)
 
-        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, individual.nameAsString)
+        val result = AssociatedEnterprisesXMLSection(submission).buildAssociatedEnterprises(individual.nameAsString)
 
         val expected =
           """<AssociatedEnterprises>
@@ -109,12 +105,9 @@ class AssociatedEnterprisesSectionSpec extends SpecBase {
           AssociatedEnterprise("id", None, Some(organisation), List(organisation.organisationName), isAffectedBy = true),
           AssociatedEnterprise("id2", Some(individual), None, List(organisation.organisationName), isAffectedBy = true))
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
-          .success.value
+        val submission = Submission("id", validDisclosureDetails).copy(associatedEnterprises = enterpriseLoop)
 
-        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, organisation.organisationName)
+        val result = AssociatedEnterprisesXMLSection(submission).buildAssociatedEnterprises(organisation.organisationName)
 
         val expected =
           """<AssociatedEnterprises>
@@ -166,10 +159,10 @@ class AssociatedEnterprisesSectionSpec extends SpecBase {
       }
 
       "must not build the ASSOCIATED ENTERPRISES section if the taxpayer doesn't have an associated enterprise" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
-        val result = AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, 0, individual.nameAsString)
+        val submission = Submission("id", validDisclosureDetails)
+
+        val result = AssociatedEnterprisesXMLSection(submission).buildAssociatedEnterprises(individual.nameAsString)
 
         prettyPrinter.formatNodes(result) mustBe ""
       }

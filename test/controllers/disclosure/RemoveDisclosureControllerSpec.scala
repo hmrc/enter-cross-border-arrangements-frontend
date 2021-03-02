@@ -127,12 +127,16 @@ class RemoveDisclosureControllerSpec extends SpecBase with MockitoSugar with Nun
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
+
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
           )

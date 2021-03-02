@@ -34,3 +34,8 @@ bin
 /*.ipr
 /.classpath
 *.iws
+.bloop/
+.metals/
+.vscode/
+project/.bloop/
+project/metals.sbt

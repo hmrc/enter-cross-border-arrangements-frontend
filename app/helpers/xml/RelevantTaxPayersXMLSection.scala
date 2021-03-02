@@ -16,73 +16,37 @@
 
 package helpers.xml
 
-import models.UserAnswers
-import models.reporter.RoleInArrangement
-import pages.reporter.ReporterDetailsPage
-import pages.taxpayer.TaxpayerLoopPage
+import models.Submission
 
 import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
-object RelevantTaxPayersXMLSection extends XMLBuilder {
+case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
 
-  private[xml] def buildReporterAsTaxpayer(userAnswers: UserAnswers, id: Int): NodeSeq = {
+  val associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection] = Option(AssociatedEnterprisesXMLSection(submission))
 
-    userAnswers.get(ReporterDetailsPage, id) match {
-      case Some(reporterDetails) =>
-        val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.implementingDate.fold(NodeSeq.Empty)(
-          date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
-        ))
-
-        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
-          case RoleInArrangement.Taxpayer.toString =>
-            if (reporterDetails.organisation.isDefined) {
-              <RelevantTaxpayer>
-                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
-                {implementingDate}
-              </RelevantTaxpayer>
-            } else {
-              <RelevantTaxpayer>
-                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
-                {implementingDate}
-              </RelevantTaxpayer>
-            }
-          case _ => NodeSeq.Empty
-        })
-
-      case _ => NodeSeq.Empty
-    }
-  }
-
-  private[xml] def getRelevantTaxpayers(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(TaxpayerLoopPage, id) match {
-      case Some(taxpayers) =>
-        taxpayers.map {
-          taxpayer =>
-            val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
-            if (taxpayer.individual.isDefined) {
-              <RelevantTaxpayer>
-                {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}
-                {date}
-                {AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, id, taxpayer.individual.get.nameAsString)}
-              </RelevantTaxpayer>
-            } else {
-              <RelevantTaxpayer>
-                {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}
-                {date}
-                {AssociatedEnterprisesSection.buildAssociatedEnterprises(userAnswers, id, taxpayer.organisation.get.organisationName)}
-              </RelevantTaxpayer>
-            }
+  private[xml] def getRelevantTaxpayerst: IndexedSeq[NodeSeq] =
+    submission.taxpayers.map { taxpayer =>
+      val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
+      if (taxpayer.individual.isDefined) {
+        <RelevantTaxpayer>
+          {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}{date}{getAssociatedEnterprises(taxpayer.individual.get.nameAsString)}
+        </RelevantTaxpayer>
+      } else {
+        <RelevantTaxpayer>
+          {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}{date}{getAssociatedEnterprises(taxpayer.organisation.get.organisationName)}
+        </RelevantTaxpayer>
         }
-      case _ => NodeSeq.Empty
     }
-  }
 
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
+  private[xml] def getAssociatedEnterprises(name: String) =
+    associatedEnterpriseSection.map(_.buildAssociatedEnterprises(name)).getOrElse(NodeSeq.Empty)
+
+  def buildRelevantTaxpayers: NodeSeq =
     Try {
       <RelevantTaxPayers>
-        {buildReporterAsTaxpayer(userAnswers, id) ++ getRelevantTaxpayers(userAnswers, id)}
+        {reporterSection.map(_.buildReporterAsTaxpayer).getOrElse(NodeSeq.Empty) ++ getRelevantTaxpayerst}
       </RelevantTaxPayers>
-    }.toEither
-  }
+    }.getOrElse(NodeSeq.Empty)
+
 }

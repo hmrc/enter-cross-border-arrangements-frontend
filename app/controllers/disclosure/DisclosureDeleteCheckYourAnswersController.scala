@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import handlers.ErrorHandler
-import models.NormalMode
-import models.disclosure.ReplaceOrDeleteADisclosure
+import models.disclosure.DisclosureType
+import models.{NormalMode, Submission}
 import navigation.NavigatorForDisclosure
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+import services.XMLGenerationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -41,6 +42,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    xmlGenerationService: XMLGenerationService,
     sessionRepository: SessionRepository,
     errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
@@ -65,22 +67,29 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
 
   def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-        //ToDo do deletion and then redirect to confirm deletion page
 
-      val disclosureIds: ReplaceOrDeleteADisclosure = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
-        case Some(ids) => ids
+
+      val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
+        case Some(ids) =>
+          val disclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
+            .withDisclosureType(DisclosureType.Dac6del)
+            .withIds(ids.arrangementID, ids.disclosureID)
+          Submission(request.enrolmentID, disclosureDetails)
         case _ => throw new RuntimeException("Cannot retrieve Disclosure Information")
       }
 
-      {
-        for {
-          updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DeletedDisclosurePage, disclosureIds))
-          updatedAnswers1 <- Future.fromTry(updatedAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, true))
-          _ <- sessionRepository.set(updatedAnswers1)
-        } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
-      } recoverWith{
-        case ex: Exception => errorHandler.onServerError(request, ex)
+      xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
+        _.fold (
+          _ => throw new IllegalStateException(s"Unable to delete submission: $submission")
+          ,
+          ids =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, submission.updateIds(ids)))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
+        )
       }
   }
+
 }
 

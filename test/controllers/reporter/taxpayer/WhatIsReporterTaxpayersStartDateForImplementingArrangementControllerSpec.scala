@@ -27,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.organisation.OrganisationNamePage
+import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
 import pages.taxpayer.TaxpayerSelectTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -37,10 +38,8 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+
 import java.time.{LocalDate, ZoneOffset}
-
-import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
-
 import scala.concurrent.Future
 
 class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {

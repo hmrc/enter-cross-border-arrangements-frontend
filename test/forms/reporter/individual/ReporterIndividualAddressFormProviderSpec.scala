@@ -17,7 +17,6 @@
 package forms.reporter.individual
 
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
 
 class ReporterIndividualAddressFormProviderSpec extends StringFieldBehaviours {
 

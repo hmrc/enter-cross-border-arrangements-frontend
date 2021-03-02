@@ -17,17 +17,15 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
+import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
-import javax.inject.Inject
 import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.Completed
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, Submission, UserAnswers}
 import navigation.NavigatorForDisclosure
-import org.slf4j.LoggerFactory
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
@@ -37,30 +35,28 @@ import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.ReporterStatusPage
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GeneratedIDPage, MessageRefIDPage, QuestionPage, ValidationErrorsPage}
+import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{TransformationService, XMLGenerationService}
+import services.XMLGenerationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 class DisclosureDetailsController @Inject()(
     override val messagesApi: MessagesApi,
     xmlGenerationService: XMLGenerationService,
-    transformationService: TransformationService,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
-    validationConnector: ValidationConnector,
-    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
     historyConnector: HistoryConnector,
     frontendAppConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
@@ -68,8 +64,6 @@ class DisclosureDetailsController @Inject()(
     renderer: Renderer,
     sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  private val logger = LoggerFactory.getLogger(getClass)
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -111,41 +105,24 @@ class DisclosureDetailsController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-      //generate xml from user answers
-      xmlGenerationService.createXmlSubmission(request.userAnswers, id).fold (
-        error => {
-          // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
-          logger.error("""Xml generation failed before validation: """.stripMargin, error)
-          throw error
-        },
-        xml => {
-          //send it off to be validated and business rules
-          validationConnector.sendForValidation(xml).flatMap {
-            _.fold(
-              //did it fail? oh my god - hand back to the user to fix
-              errors => {
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
-              },
+      val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-              //did it succeed - hand off to the backend to do it's generating thing
-              messageRefId => {
-                val uniqueXmlSubmission = transformationService.rewriteMessageRefID(xml, messageRefId)
-                val submission = transformationService.constructSubmission("manual-submission.xml", request.enrolmentID, uniqueXmlSubmission)
-                for {
-                  ids                         <- crossBorderArrangementsConnector.submitXML(submission)
-                  userAnswersWithIDs          <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, ids))
-                  updatedUserAnswersWithIDs   <- Future.fromTry(userAnswersWithIDs.set(MessageRefIDPage, id, messageRefId))
-                  updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedUserAnswersWithIDs, id))
-                  _                           <- sessionRepository.set(updatedUserAnswersWithFlags)
-                } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
-              }
-            )
-          }
-        }
-      )
+      xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
+        _.fold (
+          errors =>
+            for {
+              updatedAnswersWithError <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
+              _                       <- sessionRepository.set(updatedAnswersWithError)
+            } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
+          ,
+          updatedIds =>
+            for {
+              updatedUserAnswersWithSubmission <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, updatedIds))
+              updatedUserAnswersWithFlags      <- Future.fromTry(updateFlags(updatedUserAnswersWithSubmission, id))
+              _                                <- sessionRepository.set(updatedUserAnswersWithFlags)
+            } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
+        )
+      }
   }
 
 

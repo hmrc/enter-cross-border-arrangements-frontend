@@ -18,9 +18,9 @@ package pages.reporter
 
 import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
-import java.time.LocalDate
-
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
+
+import java.time.LocalDate
 
 class
 ReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {

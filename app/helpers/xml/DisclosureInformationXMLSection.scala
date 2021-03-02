@@ -16,84 +16,60 @@
 
 package helpers.xml
 
-import models.UserAnswers
+import models.Submission
 import models.arrangement.ArrangementDetails
-import pages.arrangement._
-import pages.hallmarks.HallmarkDetailsPage
 
 import scala.util.Try
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
-object DisclosureInformationXMLSection extends XMLBuilder {
+case class DisclosureInformationXMLSection(submission: Submission) {
 
-  private[xml] def buildReason(arrangementDetails: ArrangementDetails): NodeSeq = {
-    arrangementDetails.reportingReason.fold(NodeSeq.Empty)(
-      reason =>  <Reason>{reason.toUpperCase}</Reason>
-    )
-  }
+  val arrangementDetails: Option[ArrangementDetails] = submission.arrangementDetails
+    .map(_.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity))
 
-  private[xml] def buildDisclosureInformationSummary(arrangementDetails: ArrangementDetails): Elem = {
+  val hallmarksSection: HallmarksXMLSection = HallmarksXMLSection(submission)
+
+  val groupSize = 4000
+
+  private[xml] def buildReason(details: ArrangementDetails): NodeSeq =
+    details.reportingReason.fold(NodeSeq.Empty) { reportingReason =>
+      <Reason>{reportingReason.toUpperCase}</Reason>
+    }
+
+  private[xml] def buildDisclosureInformationSummary(details: ArrangementDetails): NodeSeq =
     <Summary>
-      <Disclosure_Name>{arrangementDetails.arrangementName}</Disclosure_Name>
-      {arrangementDetails.arrangementDetails.grouped(4000).toList.map(string =>
+      <Disclosure_Name>{details.arrangementName}</Disclosure_Name>{details.arrangementDetails.grouped(groupSize).toList.map(string =>
       <Disclosure_Description>{string}</Disclosure_Description>)}
     </Summary>
-  }
 
-  private[xml] def buildNationalProvision(arrangementDetails: ArrangementDetails): NodeSeq = {
-    arrangementDetails.nationalProvisionDetails.grouped(4000).toList.map { string =>
+
+  private[xml] def buildNationalProvision(details: ArrangementDetails): NodeSeq =
+    details.nationalProvisionDetails.grouped(groupSize).toList.map { string =>
       <NationalProvision>{string}</NationalProvision>
-    }
   }
 
-  private[xml] def buildConcernedMS(arrangementDetails: ArrangementDetails): Elem = {
-    <ConcernedMSs>
-      {arrangementDetails.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}
-    </ConcernedMSs>
-  }
+  private[xml] def buildConcernedMS(details: ArrangementDetails): NodeSeq =
+    <ConcernedMSs>{details.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}</ConcernedMSs>
 
-  private[xml] def buildArrangementDetails(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(ArrangementDetailsPage, id) match {
-      case Some(arrangementDetails) =>
-        val nodeBuffer = new xml.NodeBuffer
-        nodeBuffer ++
-          <ImplementingDate>{arrangementDetails.implementationDate}</ImplementingDate> ++
-          buildReason(arrangementDetails) ++
-          buildDisclosureInformationSummary(arrangementDetails) ++
-          buildNationalProvision(arrangementDetails) ++
-          <Amount currCode={arrangementDetails.expectedValue.currency}>{arrangementDetails.expectedValue.amount}</Amount> ++
-          buildConcernedMS(arrangementDetails)
-      case None => throw new Exception("Unable to construct XML from arrangement details")
-    }
-  }
 
-  private[xml] def buildHallmarks(userAnswers: UserAnswers, id: Int): Elem = {
+  private[xml] def buildArrangementDetails(details: ArrangementDetails): NodeSeq =
+    new xml.NodeBuffer ++
+      <ImplementingDate>{details.implementationDate}</ImplementingDate> ++
+      buildReason(details) ++
+      buildDisclosureInformationSummary(details) ++
+      buildNationalProvision(details) ++
+      <Amount currCode={details.expectedValue.currency}>{details.expectedValue.amount}</Amount> ++
+      buildConcernedMS(details)
 
-    userAnswers.get(HallmarkDetailsPage, id) match {
-      case Some(hallmarkDetails) =>
-
-        val hallmarkContent = hallmarkDetails.hallmarkContent.fold(NodeSeq.Empty)(content =>
-        content.grouped(4000).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
-
-        <Hallmarks>
-          <ListHallmarks>
-            {hallmarkDetails.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
-          </ListHallmarks>
-          {hallmarkContent}
-        </Hallmarks>
-
-      case _ => throw new Exception("Unable to construct hallmarks XML from hallmark details")
-    }
-  }
-
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
+  def buildDisclosureInformation: NodeSeq =
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    Try {
-      <DisclosureInformation>
-        {buildArrangementDetails(userAnswers, id)}
-        <MainBenefitTest1>false</MainBenefitTest1>
-        {buildHallmarks(userAnswers, id)}
-      </DisclosureInformation>
-    }.toEither
-  }
+    arrangementDetails.fold(NodeSeq.Empty) { details =>
+      Try {
+        <DisclosureInformation>
+          {buildArrangementDetails(details)}
+          <MainBenefitTest1>false</MainBenefitTest1>
+          {hallmarksSection.buildHallmarks}
+        </DisclosureInformation>
+      }.getOrElse(NodeSeq.Empty)
+    }
 }

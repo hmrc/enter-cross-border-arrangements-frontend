@@ -16,7 +16,6 @@
 
 package models.individual
 
-import java.time.LocalDate
 import generators.ModelGenerators
 import models.taxpayer.TaxResidency
 import models.{Address, LoopDetails, Name, UnsubmittedDisclosure, UserAnswers}
@@ -26,6 +25,8 @@ import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.individual._
 import pages.unsubmitted.UnsubmittedDisclosurePage
+
+import java.time.LocalDate
 
 class IndividualSpec extends FreeSpec
   with MustMatchers

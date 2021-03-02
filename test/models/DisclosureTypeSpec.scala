@@ -19,8 +19,8 @@ package models
 import models.disclosure.DisclosureType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
 class DisclosureTypeSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {

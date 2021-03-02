@@ -17,11 +17,11 @@
 package pages.behaviours
 
 import generators.Generators
-import models.{UnsubmittedDisclosure, UnsubmittedIndex, UserAnswers}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.QuestionPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json._

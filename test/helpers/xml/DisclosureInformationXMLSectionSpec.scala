@@ -16,44 +16,34 @@
 
 package helpers.xml
 
-import java.time.LocalDate
-
 import base.SpecBase
-import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.hallmarks.{HallmarkD, HallmarkDetails}
-import models.{UnsubmittedDisclosure, UserAnswers}
-import pages.arrangement._
-import pages.hallmarks.{HallmarkDPage, HallmarkDetailsPage}
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import helpers.data.ValidUserAnswersForSubmission.{validArrangementDetails, validDisclosureDetails, validHallmarkDetails, validToday}
+import models.Submission
+import models.arrangement.WhyAreYouReportingThisArrangementNow
+
+import scala.xml.NodeSeq
 
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-  val today: LocalDate = LocalDate.now
-  val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
-    Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
+  val hallmarksSection: HallmarksXMLSection = mock[HallmarksXMLSection]
 
-  val mockArrangementDetails: ArrangementDetails =
-    ArrangementDetails(
-      "name",
-      today,
-      Some("DAC6703"),
-      List("GB", "FR"),
-      ExpectedArrangementValue("GBP", 1000),
-      "nationalProvisions",
-      "arrangementDetails"
-    )
+  val submission = Submission("id", validDisclosureDetails)
+    .copy(arrangementDetails = Some(validArrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
 
   "DisclosureInformationXMLSection" - {
 
     "buildReason must build the optional reason section if reason is known" in {
 
-      val arrangementDetails = mockArrangementDetails.copy(
+      val arrangementDetails = validArrangementDetails.copy(
         reportingReason = Some(WhyAreYouReportingThisArrangementNow.Dac6703.toString)
       )
 
-      val result = DisclosureInformationXMLSection.buildReason(arrangementDetails)
+      val submission = Submission("id", validDisclosureDetails)
+        .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
+
+      val result = DisclosureInformationXMLSection(submission).buildReason(arrangementDetails)
 
       val expected = "<Reason>DAC6703</Reason>"
 
@@ -62,18 +52,21 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildReason must not build the optional reason section" in {
 
-      val arrangementDetails = mockArrangementDetails.copy(
+      val arrangementDetails = validArrangementDetails.copy(
         reportingReason = None
       )
 
-      val result = DisclosureInformationXMLSection.buildReason(arrangementDetails)
+      val submission = Submission("id", validDisclosureDetails)
+        .copy(arrangementDetails = Some(arrangementDetails), hallmarkDetails = Some(validHallmarkDetails))
+
+      val result = DisclosureInformationXMLSection(submission).buildReason(arrangementDetails)
 
       prettyPrinter.formatNodes(result) mustBe ""
     }
 
     "buildDisclosureInformationSummary must build the full summary section" in {
 
-      val result = DisclosureInformationXMLSection.buildDisclosureInformationSummary(mockArrangementDetails)
+      val result = DisclosureInformationXMLSection(submission).buildDisclosureInformationSummary(validArrangementDetails)
 
       val expected =
       """<Summary>
@@ -81,12 +74,12 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
         |    <Disclosure_Description>arrangementDetails</Disclosure_Description>
         |</Summary>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      prettyPrinter.formatNodes(result) mustBe expected
     }
 
     "buildNationalProvision must build the national provision section" in {
 
-      val result = DisclosureInformationXMLSection.buildNationalProvision(mockArrangementDetails)
+      val result = DisclosureInformationXMLSection(submission).buildNationalProvision(validArrangementDetails)
 
       val expected = "<NationalProvision>nationalProvisions</NationalProvision>"
 
@@ -95,7 +88,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildConcernedMS must build the full ConcernedMS section" in {
 
-      val result = DisclosureInformationXMLSection.buildConcernedMS(mockArrangementDetails)
+      val result = DisclosureInformationXMLSection(submission).buildConcernedMS(validArrangementDetails)
 
       val expected =
         """<ConcernedMSs>
@@ -103,18 +96,15 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           |    <ConcernedMS>FR</ConcernedMS>
           |</ConcernedMSs>""".stripMargin
 
-      prettyPrinter.format(result) mustBe expected
+      prettyPrinter.formatNodes(result) mustBe expected
     }
 
     "buildArrangementDetails must build the sections from the ArrangementDetails model" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
 
-      val result = DisclosureInformationXMLSection.buildArrangementDetails(userAnswers, 0)
+      val result = DisclosureInformationXMLSection(submission).buildArrangementDetails(validArrangementDetails)
 
       val expected =
-        s"""<ImplementingDate>$today</ImplementingDate><Reason>DAC6703</Reason><Summary>
+        s"""<ImplementingDate>$validToday</ImplementingDate><Reason>DAC6703</Reason><Summary>
           |    <Disclosure_Name>name</Disclosure_Name>
           |    <Disclosure_Description>arrangementDetails</Disclosure_Description>
           |</Summary><NationalProvision>nationalProvisions</NationalProvision><Amount currCode="GBP">1000</Amount><ConcernedMSs>
@@ -125,102 +115,13 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       prettyPrinter.formatNodes(result) mustBe expected
     }
 
-    "buildArrangementDetails must throw an exception if ArrangementDetails is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildArrangementDetails(
-          UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
-          0
-        )
-      }
-    }
+    "buildDisclosureInformation must build the full DisclosureInformation Elem" in {
 
-    "buildHallmarks must build the full hallmarks section" in {
-
-      val hallmarkDetails = HallmarkDetails(
-        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
-        hallmarkContent = Some("Hallmark D1 other description")
-      )
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
-
-      val expected =
-        """<Hallmarks>
-          |    <ListHallmarks>
-          |        <Hallmark>DAC6D1a</Hallmark>
-          |        <Hallmark>DAC6D1Other</Hallmark>
-          |        <Hallmark>DAC6D2</Hallmark>
-          |    </ListHallmarks>
-          |    <DAC6D1OtherInfo>Hallmark D1 other description</DAC6D1OtherInfo>
-          |</Hallmarks>""".stripMargin
-
-      prettyPrinter.format(result) mustBe expected
-    }
-
-    "buildHallmarks must build the hallmarks section without the optional D1 other description" in {
-
-      val hallmarkDetails = HallmarkDetails(
-        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
-        None
-      )
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
-
-      val result = DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
-
-      val expected =
-        """<Hallmarks>
-          |    <ListHallmarks>
-          |        <Hallmark>DAC6D1a</Hallmark>
-          |        <Hallmark>DAC6D1Other</Hallmark>
-          |        <Hallmark>DAC6D2</Hallmark>
-          |    </ListHallmarks>
-          |</Hallmarks>""".stripMargin
-
-      prettyPrinter.format(result) mustBe expected
-    }
-
-    "buildHallmarks must throw an exception if HallmarkD is missing" in {
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildHallmarks(
-          UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value,
-          0
-        )
-      }
-    }
-
-    "buildHallmarks must throw an exception if HallmarkD1 is missing and it was selected" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet).success.value
-
-      assertThrows[Exception] {
-        DisclosureInformationXMLSection.buildHallmarks(userAnswers, 0)
-      }
-    }
-
-    "toXml must build the full DisclosureInformation Elem" in {
-
-      val hallmarkDetails = HallmarkDetails(
-        hallmarkType = List("DAC6D1a", "DAC6D1Other", "DAC6D2"),
-        hallmarkContent = Some("Hallmark D1 other description")
-      )
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkDetailsPage, 0, hallmarkDetails).success.value
-        .set(ArrangementDetailsPage, 0, mockArrangementDetails).success.value
+      val result: Either[Throwable, NodeSeq] = Right(DisclosureInformationXMLSection(submission).buildDisclosureInformation)
 
       val expected =
         s"""<DisclosureInformation>
-          |    <ImplementingDate>$today</ImplementingDate>
+          |    <ImplementingDate>$validToday</ImplementingDate>
           |    <Reason>DAC6703</Reason>
           |    <Summary>
           |        <Disclosure_Name>name</Disclosure_Name>
@@ -243,9 +144,9 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           |    </Hallmarks>
           |</DisclosureInformation>""".stripMargin
 
-      DisclosureInformationXMLSection.toXml(userAnswers, 0).map { result =>
+      result.map { result =>
 
-        prettyPrinter.format(result) mustBe expected
+        prettyPrinter.formatNodes(result) mustBe expected
       }
     }
 

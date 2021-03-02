@@ -20,7 +20,6 @@ import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import pages.disclosure.DisclosureDetailsPage
 import pages.individual._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage

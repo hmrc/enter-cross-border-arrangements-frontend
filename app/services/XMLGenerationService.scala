@@ -16,101 +16,89 @@
 
 package services
 
-import helpers.xml._
-import javax.inject.Inject
-import models.UserAnswers
-import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
-import models.requests.DataRequestWithContacts
-import org.joda.time.DateTime
-import pages.disclosure.{DisclosureDetailsPage, FirstInitialDisclosureMAPage}
+import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
+import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
+import models.disclosure.DisclosureType
+import models.{GeneratedIDs, Submission}
+import org.slf4j.LoggerFactory
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.util.Try
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 import scala.xml.{Elem, NodeSeq}
 
-class XMLGenerationService @Inject()() {
+class XMLGenerationService @Inject()(
+  validationConnector: ValidationConnector,
+  transformationService: TransformationService,
+  crossBorderArrangementsConnector: CrossBorderArrangementsConnector
+) {
 
-  private[services] def buildHeader(userAnswers: UserAnswers, id: Int)
-                                   (implicit request:  DataRequestWithContacts[_]): Elem = {
-    val mandatoryMessageRefId = userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureName) match {
-      case Some(disclosureName) => "GB" + request.enrolmentID + disclosureName
-      case None => throw new Exception("Unable to build MessageRefID due to missing disclosure name")
-    }
+  private val logger = LoggerFactory.getLogger(getClass)
 
-    //XML DateTime format e.g. 2021-01-06T12:25:14
-    val mandatoryTimestamp = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
-    <Header>
-      <MessageRefId>{mandatoryMessageRefId}</MessageRefId>
-      <Timestamp>{mandatoryTimestamp}</Timestamp>
-    </Header>
-  }
+  def createXmlSubmission(submission: Submission): Try[Elem] = {
 
-  private[services] def buildDisclosureImportInstruction(userAnswers: UserAnswers, id: Int): Elem = {
-    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(value) =>
-        <DisclosureImportInstruction>{value.toString.toUpperCase}</DisclosureImportInstruction>
-      case None => throw new Exception("Missing disclosure type answer")
-    }
-  }
-
-  private[services] def buildInitialDisclosureMA(userAnswers: UserAnswers, id: Int): Elem = {
-    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(Dac6add) =>
-        <InitialDisclosureMA>false</InitialDisclosureMA>
-      case Some(Dac6rep) =>
-        userAnswers.getBase(FirstInitialDisclosureMAPage) match {
-          case Some(firstInitialDisclosureMA) =>
-            <InitialDisclosureMA>{firstInitialDisclosureMA}</InitialDisclosureMA>
-          case None => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
-        }
-      case _ =>
-        userAnswers.get(DisclosureDetailsPage, id).map(_.initialDisclosureMA)  match {
-          case Some(value) => <InitialDisclosureMA>{value}</InitialDisclosureMA>
-          case _ => throw new Exception("Missing InitialDisclosureMA flag")
+    (for {
+      disclosureSection            <- Option(submission).map(DisclosureDetailsXMLSection)
+                                        .toRight(new RuntimeException("Could not generate XML from disclosure details."))
+      reporterSection              =  ReporterXMLSection(submission)
+      enrolmentID                  <- Option(submission).map(_.enrolmentID)
+                                        .toRight(new RuntimeException("Could not get enrolment id from submission."))
+    } yield {
+      Try {
+        <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+          {disclosureSection.buildHeader(enrolmentID)}
+          {disclosureSection.buildArrangementID}
+          <DAC6Disclosures>
+            {disclosureSection.buildDisclosureID}
+            {disclosureSection.buildDisclosureImportInstruction}
+            {reporterSection.buildDisclosureDetails}
+            {disclosureSection.buildInitialDisclosureMA}
+            {createPartiesSection(submission, Option(reporterSection))}
+          </DAC6Disclosures>
+        </DAC6_Arrangement>
       }
-    }
+    }).fold(Failure(_), identity)
+
   }
 
-  private[services] def buildDisclosureID(userAnswers: UserAnswers, id: Int): NodeSeq = {
-    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(Dac6rep) =>
-        userAnswers.get(DisclosureDetailsPage, id).flatMap(_.disclosureID).fold(NodeSeq.Empty){
-          disclosureID =>
-            <DisclosureID>{disclosureID}</DisclosureID>
-        }
+  def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq = {
+
+    submission.getDisclosureType match {
+      case DisclosureType.Dac6del => NodeSeq.Empty
       case _ =>
-        NodeSeq.Empty
+        RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
+          IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
+          AffectedXMLSection(submission).buildAffectedPersons ++
+          DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
   }
 
-  private[services] def buildArrangementID(userAnswers: UserAnswers, id: Int): NodeSeq = { //TODO - update method as we add DAC6DEL & DAC6REPLACE
-    userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
-      case Some(Dac6add)|Some(Dac6rep) =>
-        userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID).fold(NodeSeq.Empty){
-          arrangementID =>
-            <ArrangementID>{arrangementID}</ArrangementID>
+  def createAndValidateXmlSubmission(submission: Submission)
+              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] = {
+
+    createXmlSubmission(submission).fold (
+      error => {
+        // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
+        logger.error("""Xml generation failed before validation: """.stripMargin, error)
+        throw error
+      },
+      xml => {
+        //send it off to be validated and business rules
+        validationConnector.sendForValidation(xml).flatMap {
+          _.fold(
+            //did it fail? oh my god - hand back to the user to fix
+            errors => Future.successful(Left(errors)),
+            //did it succeed - hand off to the backend to do it's generating thing
+            messageRefId => {
+              for {
+                submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
+                ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
+              } yield Right(ids.withMessageRefId(messageRefId).withXml(submissionXML.toString))
+            }
+          )
         }
-      case _ =>
-        NodeSeq.Empty
-    }
-  }
-
-  def createXmlSubmission(userAnswers: UserAnswers, id: Int)
-                         (implicit request: DataRequestWithContacts[_]): Try[Elem] = {
-    Try {
-      <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
-        {buildHeader(userAnswers, id)}
-        {buildArrangementID(userAnswers, id)}
-        <DAC6Disclosures>
-          {buildDisclosureID(userAnswers, id)}
-          {buildDisclosureImportInstruction(userAnswers, id)}
-          {DisclosingXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-          {buildInitialDisclosureMA(userAnswers, id)}
-          {RelevantTaxPayersXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-          {IntermediariesXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-          {AffectedXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-          {DisclosureInformationXMLSection.toXml(userAnswers, id).getOrElse(NodeSeq.Empty)}
-        </DAC6Disclosures>
-      </DAC6_Arrangement>
-    }
+      }
+    )
   }
 }

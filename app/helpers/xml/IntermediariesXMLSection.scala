@@ -17,43 +17,14 @@
 package helpers.xml
 
 import models.IsExemptionKnown.{No, Unknown, Yes}
-import models.UserAnswers
+import models.Submission
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
-import models.reporter.RoleInArrangement
-import pages.intermediaries.IntermediaryLoopPage
-import pages.reporter.ReporterDetailsPage
 
 import scala.util.Try
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Node, NodeSeq}
 
-object IntermediariesXMLSection extends XMLBuilder {
-
-  private[xml] def buildReporterAsIntermediary(userAnswers: UserAnswers, id: Int): NodeSeq = {
-
-    userAnswers.get(ReporterDetailsPage, id) match {
-      case Some(reporterDetails) =>
-        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
-              case RoleInArrangement.Intermediary.toString =>
-                if (reporterDetails.organisation.isDefined) {
-                  <Intermediary>
-                    {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
-                    {DisclosingXMLSection.buildReporterCapacity(reporterDetails)}
-                    {DisclosingXMLSection.buildReporterExemptions(reporterDetails)}
-                  </Intermediary>
-                } else {
-                  <Intermediary>
-                    {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
-                    {DisclosingXMLSection.buildReporterCapacity(reporterDetails)}
-                    {DisclosingXMLSection.buildReporterExemptions(reporterDetails)}
-                  </Intermediary>
-                }
-              case _ => NodeSeq.Empty
-            }
-        )
-      case _ => throw new Exception("Unable to construct XML for Reporter Details as Intermediary")
-    }
-  }
+case class IntermediariesXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
 
   private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
     if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
@@ -92,35 +63,29 @@ object IntermediariesXMLSection extends XMLBuilder {
     nationalExemption
   }
 
-  private[xml] def getIntermediaries(userAnswers: UserAnswers, id: Int): Seq[Node] = {
-
-    userAnswers.get(IntermediaryLoopPage, id) match {
-      case Some(intermediariesList) =>
-        intermediariesList.map {
-          intermediary =>
-            if (intermediary.individual.isDefined) {
-              <Intermediary>
-                {IndividualXMLSection.buildIDForIndividual(intermediary.individual.get) ++
-                getIntermediaryCapacity(intermediary) ++
-                buildNationalExemption(intermediary)}
-              </Intermediary>
-            } else {
-              <Intermediary>
-                {OrganisationXMLSection.buildIDForOrganisation(intermediary.organisation.get) ++
-                getIntermediaryCapacity(intermediary) ++
-                buildNationalExemption(intermediary)}
-              </Intermediary>
-            }
+  private[xml] def getIntermediaries: Seq[Node] =
+    submission.intermediaries.map {
+      intermediary =>
+        if (intermediary.individual.isDefined) {
+          <Intermediary>
+            {IndividualXMLSection.buildIDForIndividual(intermediary.individual.get) ++
+            getIntermediaryCapacity(intermediary) ++
+            buildNationalExemption(intermediary)}
+          </Intermediary>
+        } else {
+          <Intermediary>
+            {OrganisationXMLSection.buildIDForOrganisation(intermediary.organisation.get) ++
+            getIntermediaryCapacity(intermediary) ++
+            buildNationalExemption(intermediary)}
+          </Intermediary>
         }
-      case _ => NodeSeq.Empty
     }
-  }
 
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
+  def buildIntermediaries: NodeSeq = {
     Try {
       <Intermediaries>
-        {buildReporterAsIntermediary(userAnswers, id) ++ getIntermediaries(userAnswers, id)}
+        {reporterSection.map(_.buildReporterAsIntermediary).getOrElse(NodeSeq.Empty) ++ getIntermediaries}
       </Intermediaries>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
   }
 }

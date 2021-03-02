@@ -17,7 +17,7 @@
 package pages.disclosure
 
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -26,11 +26,9 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
 
   "DisclosureDeleteCheckYourAnswersPage" - {
 
-    beRetrievable[Boolean](DisclosureDeleteCheckYourAnswersPage)
+    beRetrievable[GeneratedIDs](DisclosureDeleteCheckYourAnswersPage)
 
-    beSettable[Boolean](DisclosureDeleteCheckYourAnswersPage)
-
-    beRemovable[Boolean](DisclosureDeleteCheckYourAnswersPage)
+    beSettable[GeneratedIDs](DisclosureDeleteCheckYourAnswersPage)
 
     "must remove replaceOrDelete Information" in {
       forAll(arbitrary[UserAnswers]) {
@@ -42,7 +40,7 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
             .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123","GBD20210101ABC123"))
             .success
             .value
-            .setBase(DisclosureDeleteCheckYourAnswersPage, true)
+            .setBase(DisclosureDeleteCheckYourAnswersPage, GeneratedIDs(Some("GBA20210101ABC123"), Some("GBD20210101ABC123")))
             .success
             .value
 

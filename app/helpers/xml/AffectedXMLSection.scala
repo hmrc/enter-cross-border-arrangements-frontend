@@ -16,16 +16,15 @@
 
 package helpers.xml
 
-import models.UserAnswers
-import pages.affected.AffectedLoopPage
+import models.Submission
 
 import scala.util.Try
-import scala.xml.{Elem, Node, NodeSeq}
+import scala.xml.{Node, NodeSeq}
 
-object AffectedXMLSection extends XMLBuilder {
+case class AffectedXMLSection(submission: Submission) {
 
-  private[xml] def getAffectedPersons(userAnswers: UserAnswers, id: Int): Seq[Node] =
-    userAnswers.get(AffectedLoopPage, id) match {
+  private[xml] def getAffectedPersons: Seq[Node] =
+    Option(submission.affectedPersons) match {
       case Some(affectedList) => affectedList.map {
         affectedPerson =>  if (affectedPerson.individual.isDefined) {
           <AffectedPerson>
@@ -44,11 +43,11 @@ object AffectedXMLSection extends XMLBuilder {
       case _ => NodeSeq.Empty
     }
 
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] =
+  def buildAffectedPersons: NodeSeq =
     Try {
       <AffectedPersons>
-        {getAffectedPersons(userAnswers, id)}
+        {getAffectedPersons}
       </AffectedPersons>
-    }.toEither
+    }.getOrElse(NodeSeq.Empty)
 }
 

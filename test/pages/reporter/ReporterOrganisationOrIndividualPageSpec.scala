@@ -16,13 +16,14 @@
 
 package pages.reporter
 
-import java.time.LocalDate
 import models.{Address, AddressLookup, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
-import pages.behaviours.PageBehaviours
 import org.scalacheck.Arbitrary.arbitrary
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage, ReporterIsIndividualAddressUKPage}
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationNamePage, ReporterOrganisationPostcodePage, ReporterOrganisationSelectAddressPage}
+import pages.behaviours.PageBehaviours
+import pages.reporter.individual._
+import pages.reporter.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
+
+import java.time.LocalDate
 
 class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
 

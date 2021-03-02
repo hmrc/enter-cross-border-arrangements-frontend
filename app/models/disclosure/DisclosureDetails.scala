@@ -16,6 +16,8 @@
 
 package models.disclosure
 
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, SubmissionError}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -24,8 +26,29 @@ case class DisclosureDetails(
   arrangementID: Option[String] = None,
   disclosureID: Option[String]  = None,
   initialDisclosureMA: Boolean  = false,
-  messageRefId: Option[String]  = None
-)
+  messageRefId: Option[String]  = None,
+  firstInitialDisclosureMA: Option[Boolean] = None
+) {
+
+  def withDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
+
+  def withIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
+
+  def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
+    copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
+      case (Dac6add, _)     => false
+      case (Dac6rep, None)  => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
+      case (Dac6rep, Some(value)) => value
+      case _                => initialDisclosureMA
+    })
+
+  def validate: Either[SubmissionError, DisclosureDetails] =
+    for {
+      _ <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
+      _ <- Either.cond(Option(disclosureType).isDefined, disclosureType, DisclosureImportInstructionInvalidError)
+      _ <- Either.cond(Option(initialDisclosureMA).isDefined, initialDisclosureMA, DisclosureInitialMarketableArrangementInvalidError)
+    } yield this
+}
 
 object DisclosureDetails {
 

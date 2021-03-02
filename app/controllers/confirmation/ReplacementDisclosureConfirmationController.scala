@@ -19,7 +19,7 @@ package controllers.confirmation
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
-import pages.MessageRefIDPage
+import pages.GeneratedIDPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -43,16 +43,11 @@ class ReplacementDisclosureConfirmationController @Inject()(
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-      val messageRefID =  request.userAnswers.get(MessageRefIDPage, id) match {
-        case Some(id) => id
-        case None => throw new RuntimeException("messageRefID cannot be found")
-      }
+      val messageRefID = request.userAnswers.get(GeneratedIDPage, id).map(_.messageRefID)
+        .getOrElse(throw new RuntimeException("messageRefID cannot be found"))
 
-      val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
-        case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
-        case Some((None, Some(primary))) => primary
-        case _ => throw new RuntimeException("Contact email details are missing")
-      }
+      val emailMessage = request.contacts.flatMap(_.emailMessage)
+        .getOrElse(throw new RuntimeException("Contact email details are missing"))
 
       val json = Json.obj(
         "messageRefID" -> messageRefID,

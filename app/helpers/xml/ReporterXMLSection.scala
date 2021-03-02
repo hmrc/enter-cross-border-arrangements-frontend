@@ -16,21 +16,38 @@
 
 package helpers.xml
 
-import models.UserAnswers
-import models.reporter.ReporterDetails
+import models.Submission
+import models.reporter.{ReporterDetails, RoleInArrangement}
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.IntermediaryRole
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement
-import pages.reporter.ReporterDetailsPage
 
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq}
 
-object DisclosingXMLSection extends XMLBuilder {
+case class ReporterXMLSection(submission: Submission) {
 
-  private[xml] def buildLiability(reporterDetails: ReporterDetails): NodeSeq = {
+  val reporterDetails: Option[ReporterDetails] = submission.reporterDetails
 
-    reporterDetails.liability match {
+  val empty: Elem =
+    <ID>
+      <Organisation>
+        <OrganisationName>X</OrganisationName>
+        <ResCountryCode>GB</ResCountryCode>
+      </Organisation>
+    </ID>
+
+  def buildDisclosureDetails: NodeSeq = {
+    Try {
+      <Disclosing>
+        {buildDiscloseDetailsForReporter}
+      </Disclosing>
+    }
+  }.getOrElse(NodeSeq.Empty)
+
+  private[xml] def buildLiability: NodeSeq = {
+
+    reporterDetails.flatMap(_.liability) match {
       case Some(liability) =>
 
         val getCapacity = liability.capacity.fold(NodeSeq.Empty)(capacity =>
@@ -68,9 +85,9 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
-  private[xml] def buildReporterExemptions(reporterDetails: ReporterDetails): NodeSeq = {
+  private[xml] def buildReporterExemptions: NodeSeq = {
 
-    reporterDetails.liability match {
+    reporterDetails.flatMap(_.liability) match {
       case Some(liability) =>
         liability.nationalExemption match {
           case Some(true) =>
@@ -99,8 +116,8 @@ object DisclosingXMLSection extends XMLBuilder {
     }
   }
 
-  private[xml] def buildReporterCapacity(reporter: ReporterDetails): NodeSeq = {
-    reporter.liability.fold(NodeSeq.Empty)(
+  private[xml] def buildReporterCapacity: NodeSeq = {
+    reporterDetails.flatMap(_.liability).fold(NodeSeq.Empty)(
       liability => liability.capacity match {
         case Some(IntermediaryRole.Unknown.toString) => NodeSeq.Empty
         case _ => <Capacity>{liability.capacity.get}</Capacity>
@@ -108,28 +125,77 @@ object DisclosingXMLSection extends XMLBuilder {
     )
   }
 
-  private[xml] def buildDiscloseDetailsForReporter(userAnswers: UserAnswers, id: Int): NodeSeq = {
+  private[xml] def buildDiscloseDetailsForReporter: NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer
 
-    userAnswers.get(ReporterDetailsPage, id: Int).fold(throw new Exception("Unable to construct XML for ReporterDetails"))(
+    reporterDetails.fold[NodeSeq](empty)(
       reporterDetails =>
         if (reporterDetails.organisation.isDefined) {
           nodeBuffer ++
             OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get) ++
-            buildLiability(reporterDetails)
-        } else {
+            buildLiability
+        } else if (reporterDetails.individual.isDefined) {
           nodeBuffer ++
             IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get) ++
-            buildLiability(reporterDetails)
+            buildLiability
+        } else {
+          throw new Exception("Unable to construct XML for ReporterDetails")
         }
     )
   }
 
-  override def toXml(userAnswers: UserAnswers, id: Int): Either[Throwable, Elem] = {
-    Try {
-      <Disclosing>
-        {buildDiscloseDetailsForReporter(userAnswers, id)}
-      </Disclosing>
+  def buildReporterAsTaxpayer: NodeSeq = {
+
+    reporterDetails match {
+      case Some(reporterDetails) =>
+
+        val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.implementingDate.fold(NodeSeq.Empty)(
+          date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
+        ))
+
+        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
+          case RoleInArrangement.Taxpayer.toString =>
+            if (reporterDetails.organisation.isDefined) {
+              <RelevantTaxpayer>
+                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+                {implementingDate}
+              </RelevantTaxpayer>
+            } else {
+              <RelevantTaxpayer>
+                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+                {implementingDate}
+              </RelevantTaxpayer>
+            }
+          case _ => NodeSeq.Empty
+        })
     }
-  }.toEither
+  }
+
+  private[xml] def buildReporterAsIntermediary: NodeSeq = {
+
+    reporterDetails match {
+      case Some(reporterDetails) =>
+        reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.role match {
+          case RoleInArrangement.Intermediary.toString =>
+            if (reporterDetails.organisation.isDefined) {
+              <Intermediary>
+                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+                {buildReporterCapacity}
+                {buildReporterExemptions}
+              </Intermediary>
+            } else {
+              <Intermediary>
+                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+                {buildReporterCapacity}
+                {buildReporterExemptions}
+              </Intermediary>
+            }
+          case _ => NodeSeq.Empty
+        })
+      case _ => throw new Exception("Unable to construct XML for Reporter Details as Intermediary")
+    }
+  }
+
+
+
 }

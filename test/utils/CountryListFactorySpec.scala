@@ -16,8 +16,6 @@
 
 package utils
 
-import java.io.ByteArrayInputStream
-
 import base.SpecBase
 import config.FrontendAppConfig
 import models.Country
@@ -25,6 +23,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.Environment
 import play.api.libs.json.{JsArray, Json}
+
+import java.io.ByteArrayInputStream
 
 class CountryListFactorySpec extends SpecBase {
 

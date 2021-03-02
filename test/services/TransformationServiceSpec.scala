@@ -28,7 +28,7 @@ class TransformationServiceSpec extends SpecBase {
         Submissions.validSubmission,
         "GB0000000YYY"
       )
-      transformedFile mustBe Submissions.updatedSubmission
+      transformedFile mustBe Some(Submissions.updatedSubmission)
     }
   }
 }

@@ -16,11 +16,9 @@
 
 package controllers.disclosure
 
-import config.FrontendAppConfig
 import controllers.actions._
-import controllers.mixins.{CheckRoute, RoutingSupport}
+import controllers.mixins.{CheckRoute, DefaultRouting}
 import forms.RemoveDisclosureFormProvider
-import javax.inject.Inject
 import models.disclosure.DisclosureDetails
 import models.{NormalMode, UserAnswers}
 import navigation.NavigatorForDisclosure
@@ -34,8 +32,9 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 class RemoveDisclosureController @Inject()(
     override val messagesApi: MessagesApi,
@@ -45,10 +44,9 @@ class RemoveDisclosureController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: RemoveDisclosureFormProvider,
-    appConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -79,11 +77,11 @@ class RemoveDisclosureController @Inject()(
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val disclosureDetails : DisclosureDetails =
+        request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
+
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val disclosureDetails : DisclosureDetails =
-            request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new RuntimeException("Disclosure details not available"))
 
           val json = Json.obj(
             "form"   -> formWithErrors,
@@ -93,25 +91,30 @@ class RemoveDisclosureController @Inject()(
           )
           renderer.render("removeDisclosure.njk", json).map(BadRequest(_))
         },
-        value => if (value) {
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveDisclosurePage, id, value))
-            updatedUserAnswersWithFlags <- Future.fromTry(updateFlags(updatedAnswers, id))
-            _              <- sessionRepository.set(updatedUserAnswersWithFlags)
-            checkRoute     =  toCheckRoute(NormalMode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value), id))
-        } else {
-          Future.successful(Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()))
-        }
+        value =>
+          Future.fromTry{
+            if (!value) { Success(true) }
+            else {
+              for {
+                updatedAnswers <- request.userAnswers.set(RemoveDisclosurePage, id, value)
+                updatedFlags   = updateFlags(updatedAnswers, id)
+                updatedUserAnswersWithFlags <- updatedFlags._1
+              } yield {
+                sessionRepository.set(updatedUserAnswersWithFlags)
+                updatedFlags._2 // true if at least one unsubmitted disclosure is visible
+              }
+            }
+          }.map(displayList => Redirect(redirect(DefaultRouting(NormalMode), Some(displayList), id)))
       )
   }
 
-  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): (Try[UserAnswers], Boolean) = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
-      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 }
-      userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(deleted = true))
-    }).getOrElse(Failure(new IllegalArgumentException("Unable to update deleted disclosure.")))
+      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 } :+
+        unsubmittedDisclosure.copy(deleted = true)
+      val isAllHidden: Boolean = updatedUnsubmittedDisclosures.forall(_.isHidden)
+      (userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures), !isAllHidden)
+    }).getOrElse((Failure(new IllegalArgumentException("Unable to update deleted disclosure.")), false))
   }
 }

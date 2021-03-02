@@ -19,15 +19,15 @@ package controllers.confirmation
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
+import pages.GeneratedIDPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
-import javax.inject.Inject
-import pages.{GeneratedIDPage, MessageRefIDPage}
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AdditionalDisclosureConfirmationController @Inject()(
@@ -44,25 +44,19 @@ class AdditionalDisclosureConfirmationController @Inject()(
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-      val disclosureID =  request.userAnswers.get(GeneratedIDPage, id) match {
-        case Some(id) => id.disclosureID
-        case None => throw new RuntimeException("DisclosureID cannot be found")
-      }
+      val (disclosureID, messageRefID) = request.userAnswers.get(GeneratedIDPage, id)
+        .map { generatedIDs =>
+          (generatedIDs.disclosureID, generatedIDs.messageRefID) match {
+            case (Some(disclosureID), Some(messageRefId)) => (disclosureID, messageRefId)
+            case _ => throw new IllegalStateException("At least one of disclosureID or messageRefID cannot be found.")
+          }
+        }.getOrElse(throw new IllegalStateException("At least one of arrangementID, disclosureID or messageRefID cannot be found."))
 
-      val messageRefID =  request.userAnswers.get(MessageRefIDPage, id) match {
-        case Some(id) => id
-        case None => throw new RuntimeException("messageRefID cannot be found")
-      }
-
-      val emailMessage = request.contacts.map(contacts => (contacts.secondEmail, contacts.contactEmail)) match {
-        case Some((Some(secondary), Some(primary))) => primary + " and " + secondary
-        case Some((None, Some(primary))) => primary
-        case _ => throw new RuntimeException("Contact email details are missing")
-      }
+      val emailMessage = request.contacts.flatMap(_.emailMessage).getOrElse(throw new RuntimeException("Contact email details are missing"))
 
       val json = Json.obj(
         "panelTitle" -> confirmationPanelTitle,
-        "panelText" -> confirmationPanelText(disclosureID.get),
+        "panelText" -> confirmationPanelText(disclosureID),
         "emailMessage" -> emailMessage,
         "emailToggle" -> appConfig.sendEmailToggle,
         "messageRefID" -> messageRefID,

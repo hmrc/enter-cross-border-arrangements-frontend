@@ -32,6 +32,14 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryGeneratedIDs: Arbitrary[GeneratedIDs] =
+    Arbitrary {
+      for {
+        arrangementID <- Gen.option(arbitrary[String])
+        disclosureID  <- Gen.option(arbitrary[String])
+      } yield GeneratedIDs(arrangementID, disclosureID)
+    }
+
   implicit lazy val arbitraryReplaceOrDeleteADisclosure: Arbitrary[ReplaceOrDeleteADisclosure] =
     Arbitrary {
       for {

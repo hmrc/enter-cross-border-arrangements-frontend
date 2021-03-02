@@ -17,22 +17,19 @@
 package helpers.xml
 
 import base.SpecBase
+import helpers.data.ValidUserAnswersForSubmission.validDisclosureDetails
 import models.affected.Affected
 import models.individual.Individual
-import models.{Address, Country, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import pages.affected.AffectedLoopPage
-import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.{Address, Country, Name, Submission, TaxReferenceNumbers}
 
 import java.time.LocalDate
-import scala.xml.{Elem, NodeSeq, PrettyPrinter}
+import scala.xml.{Elem, PrettyPrinter}
 
 class AffectedXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-
 
   val address: Address =
     Address(
@@ -60,14 +57,13 @@ class AffectedXMLSectionSpec extends SpecBase {
     taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
   )
 
-  "affectedPersons" - {
-    "must build AffectedPerson section for individual" in {
-      val affectedLoop = IndexedSeq(Affected("id",Some(individual),None))
+  private def toSubmission(affectedPersons: IndexedSeq[Affected]) = Submission("id", validDisclosureDetails).copy(affectedPersons = affectedPersons)
 
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AffectedLoopPage, 0, affectedLoop)
-        .success.value
+  "affectedPersons" - {
+
+    "must build AffectedPerson section for individual" in {
+      val affectedLoop = IndexedSeq(Affected("id", Some(individual), None))
+      val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected: Elem =
         <AffectedPersons>
@@ -96,7 +92,7 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
            prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
 
@@ -104,12 +100,8 @@ class AffectedXMLSectionSpec extends SpecBase {
 
     "must build AffectedPerson section for organisation" in {
 
-      val affectedLoop = IndexedSeq(Affected("id",None, Some(organisation)))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AffectedLoopPage, 0, affectedLoop)
-        .success.value
+      val affectedLoop = IndexedSeq(Affected("id", None, Some(organisation)))
+      val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected =
         <AffectedPersons>
@@ -132,19 +124,15 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
         prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }
 
     "must build AffectedPerson section for organisation and individual" in {
 
-      val affectedLoop = IndexedSeq(Affected("id",None, Some(organisation)), Affected("id",Some(individual),None))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AffectedLoopPage, 0, affectedLoop)
-        .success.value
+      val affectedLoop = IndexedSeq(Affected("id", None, Some(organisation)), Affected("id",Some(individual),None))
+      val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected =
         <AffectedPersons>
@@ -190,7 +178,7 @@ class AffectedXMLSectionSpec extends SpecBase {
           </AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection.toXml(userAnswers, 0).map { result =>
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
         prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }
