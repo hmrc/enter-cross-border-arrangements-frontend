@@ -145,8 +145,7 @@ class ReplaceOrDeleteADisclosureController @Inject()(
           .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
       case IDVerificationStatus.IDsDoNotMatch =>
         formReturned
-          .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.disclosureID.notFound")))
-          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.invalid")))
+          .withError(FormError("disclosureID", List("replaceOrDeleteADisclosure.error.disclosureID.mismatch")))
       case _ =>
         formReturned
           .withError(FormError("arrangementID", List("replaceOrDeleteADisclosure.error.arrangementID.notFound")))
