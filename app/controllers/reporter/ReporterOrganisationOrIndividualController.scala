@@ -19,9 +19,10 @@ package controllers.reporter
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.ReporterOrganisationOrIndividualFormProvider
+
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
-import models.{Mode, NormalMode, ReporterOrganisationOrIndividual}
+import models.{Mode, NormalMode, ReporterOrganisationOrIndividual, UserAnswers, UserAnswersHelper}
 import navigation.NavigatorForReporter
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterStatusPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -88,7 +89,8 @@ class ReporterOrganisationOrIndividualController @Inject()(
         value => {
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationOrIndividualPage, id, value))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id,
+              ReporterOrganisationOrIndividualPage, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(ReporterStatusPage, id, JourneyStatus.InProgress))
             redirectMode   =  if (request.userAnswers.hasNewValue(ReporterOrganisationOrIndividualPage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswersWithStatus)

@@ -19,7 +19,7 @@ package controllers.affected
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.AffectedTypeFormProvider
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedStatusPage, AffectedTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +29,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 
@@ -86,7 +87,7 @@ class AffectedTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AffectedTypePage, id, value))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, AffectedTypePage, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AffectedStatusPage, id, JourneyStatus.InProgress))
             _              <- sessionRepository.set(updatedAnswersWithStatus)
             redirectMode   =  if (request.userAnswers.hasNewValue(AffectedTypePage, id, value)) NormalMode else mode

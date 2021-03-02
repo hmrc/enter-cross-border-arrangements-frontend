@@ -19,7 +19,7 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.AssociatedEnterpriseTypeFormProvider
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseStatusPage, AssociatedEnterpriseTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +29,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
 import pages.taxpayer.RelevantTaxpayerStatusPage
@@ -87,7 +88,7 @@ class AssociatedEnterpriseTypeController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseTypePage, id, value))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, AssociatedEnterpriseTypePage, value)
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AssociatedEnterpriseStatusPage, id, JourneyStatus.InProgress))
             redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, id, value)) NormalMode else mode
             _              <- sessionRepository.set(updatedAnswersWithStatus)
