@@ -101,7 +101,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
 
     "buildArrangementDetails must build the sections from the ArrangementDetails model" in {
 
-      val result = DisclosureInformationXMLSection(submission).buildArrangementDetails
+      val result = DisclosureInformationXMLSection(submission).buildArrangementDetails(validArrangementDetails)
 
       val expected =
         s"""<ImplementingDate>$validToday</ImplementingDate><Reason>DAC6703</Reason><Summary>
