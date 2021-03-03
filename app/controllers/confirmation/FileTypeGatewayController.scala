@@ -24,7 +24,7 @@ import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode}
 import navigation.NavigatorForConfirmation
 import org.slf4j.LoggerFactory
-import pages.disclosure.DisclosureDetailsPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage}
 import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -69,16 +69,29 @@ class FileTypeGatewayController @Inject()(
 
     def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
 
-      val disclosureID = request.userAnswers.get(GeneratedIDPage, id) match {
-        case Some(id) => id.disclosureID
-        case None => throw new RuntimeException("DisclosureID cannot be found")
-      }
+      request.userAnswers.get(GeneratedIDPage, id)  match {
 
-      val arrangementID = request.userAnswers.get(GeneratedIDPage, id) match {
-        case Some(id) => id.arrangementID
-        case None => throw new RuntimeException("ArrangementID cannot be found")
-      }
 
-      emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), importInstruction, request.userAnswers.get(MessageRefIDPage, id).toString)
+         //new
+        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
+
+
+          println("new email *****" + request.contacts, GeneratedIDs(Some(disclosureID), Some(arrangementID)), importInstruction,messageRefID)
+          emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), Some(arrangementID)), importInstruction, messageRefID)
+
+         // add
+        case Some(GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _)) =>
+          val details = request.userAnswers.get(DisclosureDetailsPage, id)
+          println("rep or add email *****" + details.get.arrangementID + disclosureID + messageRefID + importInstruction)
+          emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), details.get.arrangementID), importInstruction, messageRefID)
+
+          //rep
+        case Some(GeneratedIDs(None, None, Some(messageRefID), _)) =>
+          val details = request.userAnswers.get(DisclosureDetailsPage, id)
+          emailService.sendEmail(request.contacts, GeneratedIDs(details.get.disclosureID, details.get.arrangementID), importInstruction, messageRefID)
+
+
+        case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
+      }
     }
 }

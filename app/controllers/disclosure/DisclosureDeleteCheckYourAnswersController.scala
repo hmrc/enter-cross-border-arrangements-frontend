@@ -17,19 +17,24 @@
 package controllers.disclosure
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import config.FrontendAppConfig
+import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import handlers.ErrorHandler
 import models.disclosure.DisclosureType
-import models.{NormalMode, Submission}
+import models.requests.DataRequestWithContacts
+import models.{GeneratedIDs, NormalMode, Submission}
 import navigation.NavigatorForDisclosure
+import org.slf4j.LoggerFactory
+import pages.{GeneratedIDPage, MessageRefIDPage}
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.XMLGenerationService
+import services.{EmailService, XMLGenerationService}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -42,14 +47,18 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    contactRetrievalAction: ContactRetrievalAction,
+    frontendAppConfig: FrontendAppConfig,
     xmlGenerationService: XMLGenerationService,
     sessionRepository: SessionRepository,
-    errorHandler: ErrorHandler,
+    emailService: EmailService,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  private val logger = LoggerFactory.getLogger(getClass)
+
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -63,9 +72,9 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
         Json.obj("disclosureSummary" -> disclosureSummary
         )
       ).map(Ok(_))
-    }
+  }
 
-  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
 
@@ -79,17 +88,32 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
       }
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
-        _.fold (
+        _.fold(
           _ => throw new IllegalStateException(s"Unable to delete submission: $submission")
           ,
           ids =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, submission.updateIds(ids)))
-              _              <- sessionRepository.set(updatedAnswers)
+              _ <- sessionRepository.set(updatedAnswers)
+              _ <- sendDeleteMail
             } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
         )
       }
   }
 
+  private def sendDeleteMail(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
+
+    if (frontendAppConfig.sendEmailToggle) {
+
+      request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
+        case Some(GeneratedIDs(arrangementID, disclosureID, Some(messageRefID), _)) =>
+          println("deleted email" + request.contacts, GeneratedIDs(disclosureID, arrangementID), "dac6del", messageRefID)
+          emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), "dac6del", messageRefID)
+      }
+    } else {
+      logger.warn("Email not sent - toggle set to false")
+      Future.successful(None)
+    }
+  }
 }
 

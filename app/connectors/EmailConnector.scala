@@ -26,7 +26,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EmailConnector @Inject()(val config: FrontendAppConfig, http: HttpClient)(implicit ex: ExecutionContext) {
 
-  def sendEmail(emailRequest: EmailRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def sendEmail(emailRequest: EmailRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+
     http.POST[EmailRequest, HttpResponse](s"${config.sendEmailUrl}/hmrc/email", emailRequest)
+  }
 
 }
