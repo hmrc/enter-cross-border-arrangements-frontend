@@ -27,6 +27,7 @@ trait JsonMatchers {
 
       val mismatches = json.keys.filter(key => (left \ key) != (json \ key))
 
+
       MatchResult(
         mismatches.isEmpty,
         s"""$left did not match for key(s) ${mismatches.mkString(", ")}""",

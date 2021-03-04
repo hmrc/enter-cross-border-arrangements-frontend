@@ -110,7 +110,8 @@ class ReplaceOrDeleteADisclosureController @Inject()(
                   val json = Json.obj(
                     "form" -> buildFormError(verificationStatus.message, formReturned),
                     "mode" -> mode,
-                    "arrangementIDLabel" -> arrangementIDLabel
+                    "arrangementIDLabel" -> arrangementIDLabel,
+                    "replaceOrDelete" -> replaceOrDelete(request.userAnswers)
                   )
                   renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
                 } else {
