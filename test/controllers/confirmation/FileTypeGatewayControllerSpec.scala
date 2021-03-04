@@ -46,7 +46,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
-        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
@@ -77,7 +77,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
-        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
@@ -109,7 +109,7 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
         .success.value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
-        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID")))
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))

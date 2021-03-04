@@ -20,13 +20,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import handlers.ErrorHandler
 import models.disclosure.DisclosureType
 import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode, Submission}
 import navigation.NavigatorForDisclosure
 import org.slf4j.LoggerFactory
-import pages.{GeneratedIDPage, MessageRefIDPage}
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -77,7 +75,6 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
   def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case Some(ids) =>
           val disclosureDetails = DisclosureDetailsPage.build(request.userAnswers)
@@ -95,22 +92,24 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureDeleteCheckYourAnswersPage, submission.updateIds(ids)))
               _ <- sessionRepository.set(updatedAnswers)
-              _ <- sendDeleteMail
+              _ <- sendDeleteMail(ids)
             } yield Redirect(navigator.routeMap(DisclosureDeleteCheckYourAnswersPage)(DefaultRouting(NormalMode))(None)(None)(0))
+
         )
       }
   }
 
-  private def sendDeleteMail(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
+  private def sendDeleteMail(ids: GeneratedIDs)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]]  = {
 
     if (frontendAppConfig.sendEmailToggle) {
 
-      request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
-        case Some(GeneratedIDs(arrangementID, disclosureID, Some(messageRefID), _)) =>
-          println("deleted email" + request.contacts, GeneratedIDs(disclosureID, arrangementID), "dac6del", messageRefID)
-          emailService.sendEmail(request.contacts, GeneratedIDs(disclosureID, arrangementID), "dac6del", messageRefID)
+      request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
+        case Some(detail) =>
+          emailService.sendEmail(request.contacts, GeneratedIDs(Some(detail.arrangementID), Some(detail.disclosureID)), "dac6del", ids.messageRefID.get)
+        case _ => throw new IllegalStateException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
       }
-    } else {
+    }
+    else {
       logger.warn("Email not sent - toggle set to false")
       Future.successful(None)
     }
