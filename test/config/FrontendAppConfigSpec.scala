@@ -26,7 +26,7 @@ class FrontendAppConfigSpec extends SpecBase {
 
     "must return correct url for disclosure homepage" in {
 
-      config.discloseArrangeLink mustBe "http://localhost:9758/disclose-cross-border-arrangements"
+      config.discloseArrangeLink mustBe "http://localhost:9758/disclose-cross-border-arrangements/upload"
 
     }
 
