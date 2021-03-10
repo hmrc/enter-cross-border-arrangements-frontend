@@ -28,9 +28,10 @@
         {% endif %}
 
        <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(id, mode).url }}" method="post">
-        <fieldset class="govuk-fieldset">
 
-        {{ csrf() | safe }}
+       {{ csrf() | safe }}
+
+        <fieldset class="govuk-fieldset">
 
         <legend>
             <h1 id="heading" class="govuk-heading-xl">
@@ -38,7 +39,7 @@
             </h1>
         </legend>
 
-        <p "id=roleInfo" class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
+        <p id="roleInfo" class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
 
         {{ govukRadios({
             name: 'value',

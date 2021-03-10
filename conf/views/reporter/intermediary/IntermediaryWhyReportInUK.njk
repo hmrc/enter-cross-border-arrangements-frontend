@@ -28,9 +28,10 @@
         {% endif %}
 
         <form action="{{ routes.controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(id, mode).url }}" method="post">
-          <fieldset class="govuk-fieldset">
 
-              {{ csrf() | safe }}
+          {{ csrf() | safe }}
+
+          <fieldset class="govuk-fieldset">
 
               <legend>
                   <h1 id="heading" class="govuk-heading-xl">
