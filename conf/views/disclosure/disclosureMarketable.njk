@@ -29,8 +29,10 @@
         {% endif %}
 
         <form action="{{ routes.controllers.disclosure.DisclosureMarketableController.onSubmit(mode).url }}" method="post">
-        <fieldset class="govuk-fieldset">
-         {{ csrf() | safe }}
+
+        {{ csrf() | safe }}
+
+        <fieldset class="govuk-fieldset" id="fieldset">
 
         <legend>
             <h1 class="govuk-heading-xl" id="heading">
@@ -40,7 +42,10 @@
 
         {{ govukWarningText({
           text: messages('disclosureMarketable.warning'),
-          iconFallbackText: "Warning"
+          iconFallbackText: "Warning",
+          attributes: {
+              "aria-describedby": "fieldset"
+              }
         }) }}
 
         {{ govukRadios({
