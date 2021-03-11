@@ -31,31 +31,27 @@
 
           {{ csrf() | safe }}
 
-          <fieldset class="govuk-fieldset">
+          {{ govukRadios({
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('whyReportInUK.heading'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+             },
+            hint: {
+              html: infoWithHint
+            },
+            items: radios,
+            errorMessage: form.value.error
+          }) }}
 
-              <legend>
-                  <h1 id="heading" class="govuk-heading-xl">
-                      {{ messages("whyReportInUK.heading") }}
-                  </h1>
-             </legend>
+            {{ govukButton({
+                text: messages("site.saveAndContinue"),
+                attributes: {"id": "submit"}
+            }) }}
 
-              <p "id=reportInfo" class="govuk-body">{{ messages('whyReportInUK.info') }} </p>
-
-              {{ govukRadios({
-                name: 'value',
-                hint: {
-                  text: messages('whyReportInUK.hint')
-                },
-                items: radios,
-                errorMessage: form.value.error
-              }) }}
-
-                {{ govukButton({
-                    text: messages("site.saveAndContinue"),
-                    attributes: {"id": "submit"}
-                }) }}
-
-            </fieldset>
         </form>
 
       </div>

@@ -24,13 +24,13 @@ import models.Mode
 import models.reporter.intermediary.IntermediaryWhyReportInUK
 import navigation.NavigatorForReporter
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,7 +60,8 @@ class IntermediaryWhyReportInUKController @Inject()(
         "form"   -> preparedForm,
         "id" -> id,
         "mode"   -> mode,
-        "radios"  -> IntermediaryWhyReportInUK.radios(preparedForm)
+        "radios"  -> IntermediaryWhyReportInUK.radios(preparedForm),
+        "infoWithHint"-> whyReporterInfo
       )
 
       renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(Ok(_))
@@ -79,7 +80,8 @@ class IntermediaryWhyReportInUKController @Inject()(
             "form"   -> formWithErrors,
             "id" -> id,
             "mode"   -> mode,
-            "radios" -> IntermediaryWhyReportInUK.radios(formWithErrors)
+            "radios" -> IntermediaryWhyReportInUK.radios(formWithErrors),
+            "infoWithHint"-> whyReporterInfo
           )
 
           renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(BadRequest(_))
@@ -94,5 +96,9 @@ class IntermediaryWhyReportInUKController @Inject()(
 
         }
       )
+  }
+
+  private def whyReporterInfo(implicit messages: Messages): Html = {
+    Html(s"<p id='roleInfo' class='govuk-body'>${{ messages("whyReportInUK.info") }}</p> ${{ messages("whyReportInUK.hint") }}")
   }
 }
