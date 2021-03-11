@@ -29,7 +29,7 @@
 
         {% set hintText = messages("whatIsTheImplementationDate.part1.hint") + "<br><br>" + messages("whatIsTheImplementationDate.part2.hint", exampleDate)%}
 
-        <form action="{{ actionUrl }}" method="post">
+        <form action="{{ actionUrl }}" method="post" novalidate>
 
 
           {{ csrf() | safe }}

@@ -29,7 +29,7 @@
 
         {% set hintText = messages("whatIsTheImplementationDate.part1.hint") + "<br><br>" + messages("whatIsTheImplementationDate.part2.hint", exampleDate)%}
 
-        <form action="{{ routes.controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(id, mode).url }}" method="post">
+        <form action="{{ routes.controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(id, mode).url }}" method="post" novalidate>
 
           {{ csrf() | safe }}
 
