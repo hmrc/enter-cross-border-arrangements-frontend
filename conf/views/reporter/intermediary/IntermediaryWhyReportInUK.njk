@@ -28,33 +28,30 @@
         {% endif %}
 
         <form action="{{ routes.controllers.reporter.intermediary.IntermediaryWhyReportInUKController.onSubmit(id, mode).url }}" method="post">
-          <fieldset class="govuk-fieldset">
 
-              {{ csrf() | safe }}
+          {{ csrf() | safe }}
 
-              <legend>
-                  <h1 id="heading" class="govuk-heading-xl">
-                      {{ messages("whyReportInUK.heading") }}
-                  </h1>
-             </legend>
+          {{ govukRadios({
+            name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('whyReportInUK.heading'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+             },
+            hint: {
+              html: infoWithHint
+            },
+            items: radios,
+            errorMessage: form.value.error
+          }) }}
 
-              <p "id=reportInfo" class="govuk-body">{{ messages('whyReportInUK.info') }} </p>
+            {{ govukButton({
+                text: messages("site.saveAndContinue"),
+                attributes: {"id": "submit"}
+            }) }}
 
-              {{ govukRadios({
-                name: 'value',
-                hint: {
-                  text: messages('whyReportInUK.hint')
-                },
-                items: radios,
-                errorMessage: form.value.error
-              }) }}
-
-                {{ govukButton({
-                    text: messages("site.saveAndContinue"),
-                    attributes: {"id": "submit"}
-                }) }}
-
-            </fieldset>
         </form>
 
       </div>

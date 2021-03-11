@@ -21,16 +21,16 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.RoleInArrangementFormProvider
 import javax.inject.Inject
 import models.reporter.RoleInArrangement
-import models.{Mode, NormalMode, UserAnswers}
+import models.{Mode, NormalMode}
 import navigation.NavigatorForReporter
 import pages.reporter.RoleInArrangementPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,7 +60,8 @@ class RoleInArrangementController @Inject()(
         "form"   -> preparedForm,
         "id" -> id,
         "mode"   -> mode,
-        "radios"  -> RoleInArrangement.radios(preparedForm)
+        "radios"  -> RoleInArrangement.radios(preparedForm),
+        "paragraph" -> roleInformation
       )
 
       renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
@@ -80,7 +81,8 @@ class RoleInArrangementController @Inject()(
             "form"   -> formWithErrors,
             "id" -> id,
             "mode"   -> mode,
-            "radios" -> RoleInArrangement.radios(formWithErrors)
+            "radios" -> RoleInArrangement.radios(formWithErrors),
+            "paragraph" -> roleInformation
           )
 
           renderer.render("reporter/roleInArrangement.njk", json).map(BadRequest(_))
@@ -94,5 +96,9 @@ class RoleInArrangementController @Inject()(
           } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
+  }
+
+  private def roleInformation(implicit messages: Messages): Html = {
+    Html(s"<p id='roleInfo' class='govuk-body'>${{ messages("roleInArrangement.information") }}</p>")
   }
 }

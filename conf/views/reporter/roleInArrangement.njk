@@ -28,20 +28,21 @@
         {% endif %}
 
        <form action="{{ routes.controllers.reporter.RoleInArrangementController.onSubmit(id, mode).url }}" method="post">
-        <fieldset class="govuk-fieldset">
 
-        {{ csrf() | safe }}
-
-        <legend>
-            <h1 id="heading" class="govuk-heading-xl">
-                {{ messages("roleInArrangement.title") }}
-            </h1>
-        </legend>
-
-        <p "id=roleInfo" class="govuk-body">{{ messages('roleInArrangement.information') }} </p>
+       {{ csrf() | safe }}
 
         {{ govukRadios({
             name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('reporterOrganisationOrIndividual.title'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--xl"
+              }
+             },
+             hint: {
+                html: paragraph
+             },
             items: radios,
             errorMessage: form.value.error
         }) }}
@@ -51,7 +52,6 @@
             attributes: {"id": "submit"}
         }) }}
 
-        </fieldset>
        </form>
 
       </div>
