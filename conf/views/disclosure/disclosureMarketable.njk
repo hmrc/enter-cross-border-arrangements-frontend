@@ -32,7 +32,7 @@
 
         {{ csrf() | safe }}
 
-        <fieldset class="govuk-fieldset" id="fieldset">
+        <fieldset class="govuk-fieldset" aria-describedby="warning">
 
         <legend>
             <h1 class="govuk-heading-xl" id="heading">
@@ -44,7 +44,7 @@
           text: messages('disclosureMarketable.warning'),
           iconFallbackText: "Warning",
           attributes: {
-              "aria-describedby": "fieldset"
+              "id": "warning"
               }
         }) }}
 
