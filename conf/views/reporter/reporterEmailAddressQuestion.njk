@@ -28,13 +28,14 @@
         {% endif %}
 
         <form action="{{ actionUrl }}" method="post">
-            <fieldset class="govuk-fieldset">
 
-              {{ csrf() | safe }}
+          {{ csrf() | safe }}
+
+          <fieldset class="govuk-fieldset">
 
               {{ pageHeading | safe }}
 
-              <p "id=guidance" class="govuk-body">{{ messages('reporterEmailAddressQuestion.guidance') }} </p>
+              <p id="guidance" class="govuk-body">{{ messages('reporterEmailAddressQuestion.guidance') }} </p>
 
               {{ govukRadios({
                 classes: "govuk-radios",
