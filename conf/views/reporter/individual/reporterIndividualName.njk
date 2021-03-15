@@ -42,6 +42,8 @@
             classes: "govuk-!-width-two-thirds",
             id: "firstName",
             name: "firstName",
+            autocomplete: "given-name",
+            spellcheck: false,
             value: form.firstName.value,
             errorMessage: form.firstName.error
           }) }}
@@ -53,6 +55,8 @@
             classes: "govuk-!-width-two-thirds",
             id: "secondName",
             name: "secondName",
+            autocomplete: "family-name",
+            spellcheck: false,
             value: form.secondName.value,
             errorMessage: form.secondName.error
           }) }}
