@@ -33,7 +33,7 @@
 
           <h1 class="govuk-heading-xl">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.title")}}</h1>
 
-          <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint1")}}</p>
+          <p id="national-provisons-hint" class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint1")}}</p>
 
           <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint2")}}</p>
 
@@ -47,6 +47,7 @@
               id: "value",
               rows: 15,
               value: form.value.value,
+              describedBy: "national-provisons-hint",
               errorMessage: form.value.error
             })
           }}

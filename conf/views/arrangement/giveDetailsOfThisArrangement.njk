@@ -33,7 +33,7 @@
 
           <h1 class="govuk-heading-xl">{{messages("giveDetailsOfThisArrangement.title")}}</h1>
 
-          <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint1")}}</p>
+          <p id="details-hint" class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint1")}}</p>
 
           <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint2")}}</p>
 
@@ -46,6 +46,7 @@
               name: "value",
               id: "value",
               rows: 15,
+              describedBy: "details-hint",
               value: form.value.value,
               errorMessage: form.value.error
            })
