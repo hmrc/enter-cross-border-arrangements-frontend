@@ -159,7 +159,6 @@ class DisclosureDetailsController @Inject()(
     }
   }
 
-
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
@@ -176,7 +175,7 @@ class DisclosureDetailsController @Inject()(
 
     ua.get(DisclosureStatusPage, index) match {
       case Some(Completed) =>
-        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details")
+        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details", "item")
 
       case _ =>
         retrieveRowWithStatus(ua,
@@ -185,6 +184,7 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.disclosureTypeLink",
           id = "disclosure",
           ariaLabel = "disclosure-details",
+          itemType = "item",
           index
         )
     }
@@ -201,6 +201,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.hallmarksLink",
       id = "hallmarks",
       ariaLabel = "arrangementDetails",
+      itemType = "item",
       index
     )
   }
@@ -216,6 +217,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.arrangementDetailsLink",
       id = "arrangementDetails",
       ariaLabel = "arrangementDetails",
+      itemType = "item",
       index
     )
   }
@@ -231,6 +233,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.reporterDetailsLink",
       id = "reporter",
       ariaLabel = "reporterDetails",
+      itemType = "item",
       index
     )
   }
@@ -239,17 +242,18 @@ class DisclosureDetailsController @Inject()(
                                     page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
       ua.get(ReporterStatusPage, index) match {
         case Some(Completed) =>
-          retrieveRowWithStatusBottomless(ua: UserAnswers,
+          retrieveRowWithStatus(ua: UserAnswers,
             page,
             s"${frontendAppConfig.taxpayersUrl}/$index",
             linkContent = "disclosureDetails.relevantTaxpayersLink",
             id = "taxpayers",
             ariaLabel = "connected-parties",
+            itemType = "bottomless-item",
             index
           )
 
         case _ => taskListItemRestricted(
-          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties", "bottomless-item")
       }
 
     }
@@ -265,11 +269,12 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.associatedEnterpriseLink",
           id = "associatedEnterprise",
           ariaLabel = "connected-parties",
+          itemType = "item",
           index
         )
 
       case _ => taskListItemRestricted(
-        "disclosureDetails.associatedEnterpriseLink", "connected-parties")
+        "disclosureDetails.associatedEnterpriseLink", "connected-parties", "item")
     }
   }
 
@@ -282,6 +287,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.othersAffectedLink",
       id = "othersAffected",
       ariaLabel = "connected-parties",
+      itemType = "item",
       index
     )
   }
@@ -297,11 +303,12 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.intermediariesLink",
           id = "intermediaries",
           ariaLabel = "connected-parties",
+          itemType = "item",
           index
         )
 
       case _ => taskListItemRestricted(
-        "disclosureDetails.intermediariesLink", "connected-parties")
+        "disclosureDetails.intermediariesLink", "connected-parties", "item")
     }
   }
 }
