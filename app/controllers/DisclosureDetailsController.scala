@@ -32,7 +32,7 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstIniti
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
-import pages.reporter.ReporterStatusPage
+import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
@@ -45,8 +45,9 @@ import services.XMLGenerationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
-
 import javax.inject.Inject
+import models.reporter.RoleInArrangement.Taxpayer
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -184,7 +185,7 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.disclosureTypeLink",
           id = "disclosure",
           ariaLabel = "disclosure-details",
-          itemType = "item",
+          rowStyle = "item",
           index
         )
     }
@@ -201,7 +202,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.hallmarksLink",
       id = "hallmarks",
       ariaLabel = "arrangementDetails",
-      itemType = "item",
+      rowStyle = "item",
       index
     )
   }
@@ -217,7 +218,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.arrangementDetailsLink",
       id = "arrangementDetails",
       ariaLabel = "arrangementDetails",
-      itemType = "item",
+      rowStyle = "item",
       index
     )
   }
@@ -233,7 +234,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.reporterDetailsLink",
       id = "reporter",
       ariaLabel = "reporterDetails",
-      itemType = "item",
+      rowStyle = "item",
       index
     )
   }
@@ -248,7 +249,7 @@ class DisclosureDetailsController @Inject()(
             linkContent = "disclosureDetails.relevantTaxpayersLink",
             id = "taxpayers",
             ariaLabel = "connected-parties",
-            itemType = "bottomless-item",
+            rowStyle = "bottomless-item",
             index
           )
 
@@ -261,17 +262,23 @@ class DisclosureDetailsController @Inject()(
   private def associatedEnterpriseItem(ua: UserAnswers,
                                        page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    (ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
-      case (Some(_), Some(Completed)) =>
-        retrieveRowWithStatus(ua: UserAnswers,
-          page,
-          s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
-          linkContent = "disclosureDetails.associatedEnterpriseLink",
-          id = "associatedEnterprise",
-          ariaLabel = "connected-parties",
-          itemType = "item",
-          index
-        )
+    val rowWithStatus =
+      retrieveRowWithStatus(ua: UserAnswers,
+      page,
+      s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+      linkContent = "disclosureDetails.associatedEnterpriseLink",
+      id = "associatedEnterprise",
+      ariaLabel = "connected-parties",
+      rowStyle = "item",
+      index
+    )
+
+    (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
+      case (Some(Taxpayer), _, _) =>
+        rowWithStatus
+
+      case (Some(_), Some(_), Some(Completed)) =>
+        rowWithStatus
 
       case _ => taskListItemRestricted(
         "disclosureDetails.associatedEnterpriseLink", "connected-parties", "item")
@@ -287,7 +294,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.othersAffectedLink",
       id = "othersAffected",
       ariaLabel = "connected-parties",
-      itemType = "item",
+      rowStyle = "item",
       index
     )
   }
@@ -303,7 +310,7 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.intermediariesLink",
           id = "intermediaries",
           ariaLabel = "connected-parties",
-          itemType = "item",
+          rowStyle = "item",
           index
         )
 

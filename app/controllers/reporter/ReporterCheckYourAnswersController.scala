@@ -113,8 +113,4 @@ class ReporterCheckYourAnswersController  @Inject()(
           _ <- sessionRepository.set(userAnswers)
         } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
     }
-
-  private def addReporterToTaxpayerLoop(id: Int) = {
-
-  }
 }
