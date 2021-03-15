@@ -982,8 +982,8 @@ reporterIndividualName.heading = What is your full name?
 reporterIndividualName.firstName = First Name
 reporterIndividualName.secondName = Last Name
 reporterIndividualName.checkYourAnswersLabel = Reporter’s name
-reporterIndividualName.error.firstName.required = Provide a first name
-reporterIndividualName.error.secondName.required = Provide a last name
+reporterIndividualName.error.firstName.required = Enter your first name
+reporterIndividualName.error.secondName.required = Enter your last name
 reporterIndividualName.error.firstName.length = First name  must be 200 characters or less
 reporterIndividualName.error.secondName.length = Last name must be 200 characters or less
 
