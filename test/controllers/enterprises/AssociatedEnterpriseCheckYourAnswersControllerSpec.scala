@@ -44,7 +44,7 @@ import scala.concurrent.Future
 class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/associated-enterprises/update/0")
+  val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/associated-enterprises/update/0")
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 

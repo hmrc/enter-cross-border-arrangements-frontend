@@ -22,15 +22,12 @@ import matchers.JsonMatchers
 import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnterprises}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import models.{Country, NormalMode, UserAnswers}
-import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.{AssociatedEnterpriseLoopPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -152,7 +149,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/associated-enterprises/taxpayers/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/associated-enterprises/taxpayers/0"
 
       application.stop()
     }

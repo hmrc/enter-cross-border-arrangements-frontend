@@ -87,25 +87,25 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   private def assertDisclosureName(name: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Disclosure name"))
     row.value.text mustBe Some(Literal(name))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-name")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-name")(row.actions.head)
   }
 
   private def assertTypeDac6new()(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Type of disclosure"))
     row.value.text mustBe Some(Literal("A new arrangement"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-type")(row.actions.head)
   }
 
   private def assertTypeDac6add()(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Type of disclosure"))
     row.value.text mustBe Some(Literal("An addition to an existing arrangement"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-type")(row.actions.head)
   }
 
   private def assertTypeDac6rep()(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Type of disclosure"))
     row.value.text mustBe Some(Literal("A replacement of an existing disclosure"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-type")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-type")(row.actions.head)
   }
 
   private def assertArrangementID(arrangementID: String, href: String)(row: Row): Unit = {
@@ -117,13 +117,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   private def assertDisclosureID(disclosureID: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Disclosure ID"))
     row.value.text mustBe Some(Literal(disclosureID))
-    assertAction("/enter-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
   }
 
   private def assertMarketableArrangement(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Is this a marketable arrangement?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-marketable")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-marketable")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -164,7 +164,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertDisclosureName("My arrangement")(list.head)
         assertTypeDac6add()(list(1))
         assertArrangementID("GBA20210101ABC123",
-          "/enter-cross-border-arrangements/disclosure/change-identify-arrangement")(list(2))
+          "/disclose-cross-border-arrangements/manual/disclosure/change-identify-arrangement")(list(2))
         list.size mustBe 3
       }
     }
@@ -185,7 +185,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         assertDisclosureName("My arrangement")(list.head)
         assertTypeDac6rep()(list(1))
         assertArrangementID("GBA20210101ABC123",
-          "/enter-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
+          "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
         assertDisclosureID("GBD20210101ABC123")(list(3))
         list.size mustBe 4
       }
@@ -217,7 +217,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/manual/your-disclosure-details/1"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/your-disclosure-details/1"
 
       application.stop()
     }

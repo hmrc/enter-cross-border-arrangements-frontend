@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.intermediaries.IntermediariesTypeFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -129,7 +128,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/name/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/name/0"
 
       application.stop()
     }
@@ -189,7 +188,7 @@ class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with N
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/intermediaries/check-answers/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/intermediaries/check-answers/0"
 
       application.stop()
     }

@@ -148,7 +148,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Mockito
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/resident-country-tin-0/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/resident-country-tin-0/0"
 
       application.stop()
     }

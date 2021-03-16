@@ -19,8 +19,8 @@ package controllers.arrangement
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
-import models.{UnsubmittedDisclosure, UserAnswers}
 import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -88,7 +88,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
   def assertReasonToReportKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Reason for reporting known?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason-known/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-reporting-reason-known/0")(row.actions.head)
   }
 
   def assertReasonToReport(reasonAsString: String)(row: Row): Unit = {
@@ -96,7 +96,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
     val msg: String = msg"whyAreYouReportingThisArrangementNow.$reasonAsString".resolve
     row.key.text mustBe Some(Literal("Reason for reporting"))
     row.value.text mustBe Some(Literal(msg))
-    assertAction(href = "/enter-cross-border-arrangements/arrangement/change-reporting-reason/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-reporting-reason/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -106,7 +106,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertName(name: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Name of arrangement"))
         row.value.text mustBe Some(Literal(name))
-        assertAction("/enter-cross-border-arrangements/arrangement/change-name/0")(row.actions.head)
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-name/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>
@@ -127,7 +127,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertImplementationDate(implementationDateAsString: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Implementing date"))
         row.value.text mustBe Some(Literal(implementationDateAsString))
-        assertAction("/enter-cross-border-arrangements/arrangement/change-implementation-date/0"
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-implementation-date/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
@@ -171,7 +171,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         row.value.html.map { html =>
           html.value mustBe Html("United Kingdom")
         }
-        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved/0"
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
@@ -201,7 +201,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
               |<li>Sweden</li>
               |</ul>""".stripMargin)
         }
-        assertAction("/enter-cross-border-arrangements/arrangement/change-choose-countries-involved/0"
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0"
           , text = Some(Literal("Change")))(row.actions.head)
       }
 
@@ -228,7 +228,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         row.value.html.map { html =>
           html.value mustBe Html("CURRENCY 1")
         }
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-value/0")(row.actions.head)
+        assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-value/0")(row.actions.head)
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -247,7 +247,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertNationalProvisions(content: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("National provisions"))
         row.value.text mustBe Some(Literal(content))
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-national-provisions/0")(row.actions.head)
+        assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-national-provisions/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>
@@ -268,7 +268,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
       def assertNationalProvisions(content: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Description"))
         row.value.text mustBe Some(Literal(content))
-        assertAction(href = "/enter-cross-border-arrangements/arrangement/change-details/0")(row.actions.head)
+        assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-details/0")(row.actions.head)
       }
 
       textTuples.foreach { case (given, expected) =>

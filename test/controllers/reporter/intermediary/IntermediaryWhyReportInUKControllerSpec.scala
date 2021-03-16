@@ -41,7 +41,7 @@ import scala.concurrent.Future
 
 class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/enter-cross-border-arrangements/reporter/intermediary/role/0")
+  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/intermediary/role/0")
 
   lazy val whyReportInUKRoute = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(0, NormalMode).url
 

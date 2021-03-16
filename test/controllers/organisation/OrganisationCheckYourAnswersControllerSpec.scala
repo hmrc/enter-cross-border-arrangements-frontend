@@ -94,13 +94,13 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
   def assertName(row: Row): Unit = {
     row.key.text mustBe Some(Literal("What is the name of the organisation?"))
     row.value.text mustBe Some(Literal("Organisation"))
-    assertAction("/enter-cross-border-arrangements/organisation/change-name/0")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/organisation/change-name/0")(row.actions.head)
   }
 
   def assertAddressKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-do-you-know-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/organisation/change-do-you-know-address/0")(row.actions.head)
   }
 
   def assertAddress(address: Address)(row: Row): Unit = {
@@ -116,19 +116,19 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
                |        United Kingdom
                |     """.stripMargin)
     }
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-main-address-in-uk/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/organisation/change-main-address-in-uk/0")(row.actions.head)
   }
 
   def assertEmailKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their email address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-email-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/organisation/change-email-address/0")(row.actions.head)
   }
 
   def assertEmail(email: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Email address"))
     row.value.text mustBe Some(Literal(email))
-    assertAction(href = "/enter-cross-border-arrangements/organisation/change-what-is-email-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/organisation/change-what-is-email-address/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {

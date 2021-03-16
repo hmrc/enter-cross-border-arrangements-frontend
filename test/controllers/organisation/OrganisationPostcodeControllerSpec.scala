@@ -125,7 +125,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/select-address/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/select-address/0"
 
       application.stop()
     }

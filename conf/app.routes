@@ -374,10 +374,10 @@ POST      /intermediaries/check-answers/:id                     controllers.inte
 
 # DISCLOSURE
 
-GET        /manual/unsubmitted-disclosures          controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
+GET        /unsubmitted-disclosures          controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
-GET        /manual/remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onPageLoad(id: Int)
-POST       /manual/remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onSubmit(id: Int)
+GET        /remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onPageLoad(id: Int)
+POST       /remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onSubmit(id: Int)
 
 GET        /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onPageLoad()
 POST       /disclosure/check-your-answers           controllers.disclosure.DisclosureCheckYourAnswersController.onContinue()
@@ -402,10 +402,10 @@ POST       /disclosure/identify-arrangement            controllers.disclosure.Di
 GET        /disclosure/change-identify-arrangement     controllers.disclosure.DisclosureIdentifyArrangementController.onPageLoad(mode: Mode = CheckMode)
 POST       /disclosure/change-identify-arrangement     controllers.disclosure.DisclosureIdentifyArrangementController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manual/disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = NormalMode)
-POST       /manual/disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = NormalMode)
-GET        /manual/disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = CheckMode)
-POST       /manual/disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = CheckMode)
+GET        /disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = NormalMode)
+POST       /disclosure/identify                 controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = NormalMode)
+GET        /disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onPageLoad(mode: Mode = CheckMode)
+POST       /disclosure/change-identify          controllers.disclosure.ReplaceOrDeleteADisclosureController.onSubmit(mode: Mode = CheckMode)
 
 GET        /disclosure/delete                       controllers.disclosure.DisclosureDeleteCheckYourAnswersController.onPageLoad
 POST       /disclosure/delete                       controllers.disclosure.DisclosureDeleteCheckYourAnswersController.onContinue
@@ -504,17 +504,17 @@ POST       /reporter/taxpayers/change-implementation-date/:id           controll
 
 # CONFIRMATION PAGES
 
-GET        /manual/there-is-a-problem/:id                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad(id: Int)
-GET        /manual/confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
-GET        /manual/disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /manual/addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /manual/replacement-received/:id                             controllers.confirmation.ReplacementDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /there-is-a-problem/:id                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad(id: Int)
+GET        /confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
+GET        /disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /replacement-received/:id                             controllers.confirmation.ReplacementDisclosureConfirmationController.onPageLoad(id: Int)
 GET        /disclosure/disclosure-has-been-deleted                      controllers.confirmation.YourDisclosureHasBeenDeletedController.onPageLoad()
-GET        /manual/unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
+GET        /unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 # DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
-GET        /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
-POST       /manual/your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
+GET        /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
+POST       /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
 
 
 ## REPORTER DETAILS - ORGANISATION

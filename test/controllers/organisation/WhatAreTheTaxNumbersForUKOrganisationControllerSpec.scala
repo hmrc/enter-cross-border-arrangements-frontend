@@ -153,7 +153,7 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/organisation/tax-resident-countries-1/0"
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/tax-resident-countries-1/0"
 
       application.stop()
     }

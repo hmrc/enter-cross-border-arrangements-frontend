@@ -213,7 +213,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
     "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
 
-      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
+      val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/taxpayers/update")
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -252,7 +252,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
     "must redirect to the taxpayers update page when valid data is submitted for an individual taxpayer" in {
 
-      val onwardRoute: Call = Call("GET", "/enter-cross-border-arrangements/taxpayers/update")
+      val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/taxpayers/update")
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value

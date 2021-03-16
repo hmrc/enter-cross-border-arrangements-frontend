@@ -110,7 +110,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
   private def assertDisclosureName(name: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Disclosure name"))
     row.value.text mustBe Some(Literal(name))
-    assertAction("/enter-cross-border-arrangements/disclosure/change-name")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-name")(row.actions.head)
   }
 
   private def assertArrangementID(arrangementID: String, href: String)(row: Row): Unit = {
@@ -122,7 +122,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
   private def assertDisclosureID(disclosureID: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Disclosure ID"))
     row.value.text mustBe Some(Literal(disclosureID))
-    assertAction("/enter-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/disclosure/change-identify")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {
@@ -142,7 +142,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
       verifyList(userAnswers) { list =>
         assertDisclosureName("My arrangement")(list.head)
         assertArrangementID("GBA20210101ABC123",
-          "/enter-cross-border-arrangements/manual/disclosure/change-identify")(list(1))
+          "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(1))
         assertDisclosureID("GBD20210101ABC123")(list(2))
         list.size mustBe 3
       }

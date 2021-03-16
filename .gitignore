@@ -39,3 +39,5 @@ bin
 .vscode/
 project/.bloop/
 project/metals.sbt
+docs/disclose-cross-border-arrangements-manual-frontend-auto-complete.js
+docs/enter-cross-border-arrangements-manual-frontend-auto-complete.js.js

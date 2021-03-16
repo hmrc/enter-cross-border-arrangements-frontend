@@ -16,8 +16,6 @@
 
 package controllers.individual
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import base.SpecBase
 import controllers.RowJsonReads
 import models.{Address, Country, Name, UnsubmittedDisclosure, UserAnswers}
@@ -98,38 +96,38 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   def assertName(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Name"))
     row.value.text mustBe Some(Literal("FirstName LastName"))
-    assertAction("/enter-cross-border-arrangements/individual/change-name/0")(row.actions.head)
+    assertAction("/disclose-cross-border-arrangements/manual/individual/change-name/0")(row.actions.head)
   }
 
   def assertBirthDateKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their date of birth?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-date-of-birth/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-do-you-know-date-of-birth/0")(row.actions.head)
   }
 
   def assertDateOfBirth(birthDateAsString: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Date of birth"))
     row.value.text mustBe Some(Literal(birthDateAsString))
-    assertAction("/enter-cross-border-arrangements/individual/change-date-of-birth/0"
+    assertAction("/disclose-cross-border-arrangements/manual/individual/change-date-of-birth/0"
       , text = Some(Literal("Change")))(row.actions.head)
   }
 
   def assertBirthPlaceKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know where they were born?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-birthplace/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-do-you-know-birthplace/0")(row.actions.head)
   }
 
   def assertBirthPlace(birthplace: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Birthplace"))
     row.value.text mustBe Some(Literal(birthplace))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-birthplace/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-birthplace/0")(row.actions.head)
   }
 
   def assertAddressKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-do-you-know-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-do-you-know-address/0")(row.actions.head)
   }
 
   def assertAddress(address: Address)(row: Row): Unit = {
@@ -145,19 +143,19 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
                |        United Kingdom
                |     """.stripMargin)
     }
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-live-in-uk/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-live-in-uk/0")(row.actions.head)
   }
 
   def assertEmailKnown(yesOrNo: Boolean)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Do you know their email address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-email-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-email-address/0")(row.actions.head)
   }
 
   def assertEmail(email: String)(row: Row): Unit = {
     row.key.text mustBe Some(Literal("Email address"))
     row.value.text mustBe Some(Literal(email))
-    assertAction(href = "/enter-cross-border-arrangements/individual/change-what-is-email-address/0")(row.actions.head)
+    assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-what-is-email-address/0")(row.actions.head)
   }
 
   "Check Your Answers Controller" - {

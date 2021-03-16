@@ -74,7 +74,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/taxpayers/implementation-date/0"
+        redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/taxpayers/implementation-date/0"
 
         application.stop()
       }
@@ -105,7 +105,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/taxpayers/implementation-date/0"
+        redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/taxpayers/implementation-date/0"
 
         application.stop()
       }
@@ -134,7 +134,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
+        redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
 
         application.stop()
       }
@@ -164,7 +164,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
+        redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
 
         application.stop()}
 
@@ -193,7 +193,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual "/enter-cross-border-arrangements/reporter/check-answers/0"
+        redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
 
         application.stop()
       }
