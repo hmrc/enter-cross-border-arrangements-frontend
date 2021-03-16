@@ -23,8 +23,6 @@ import models.arrangement.WhyAreYouReportingThisArrangementNow
 
 import scala.xml.NodeSeq
 
-import java.time.LocalDate
-
 class DisclosureInformationXMLSectionSpec extends SpecBase {
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
