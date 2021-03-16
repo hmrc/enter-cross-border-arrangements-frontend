@@ -18,7 +18,6 @@ package controllers.arrangement
 
 import controllers.actions._
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import javax.inject.Inject
 import models.arrangement.ArrangementDetails
 import models.hallmarks.JourneyStatus
 import models.{NormalMode, UserAnswers}
@@ -33,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CheckYourAnswersHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementCheckYourAnswersController @Inject()(
@@ -52,9 +52,9 @@ class ArrangementCheckYourAnswersController @Inject()(
 
       val list: Seq[SummaryList.Row] =
         Seq(helper.whatIsThisArrangementCalledPage(id)
-          , helper.whatIsTheImplementationDatePage(id)).flatten ++
-          helper.buildReportingThisArrangement(id) ++
-          Seq(helper.whichExpectedInvolvedCountriesArrangement(id)
+          , helper.whatIsTheImplementationDatePage(id)
+          , helper.buildWhyAreYouReportingThisArrangementNow(id)
+          , helper.whichExpectedInvolvedCountriesArrangement(id)
           , helper.whatIsTheExpectedValueOfThisArrangement(id)
           , helper.whichNationalProvisionsIsThisArrangementBasedOn(id)
           , helper.giveDetailsOfThisArrangement(id)).flatten

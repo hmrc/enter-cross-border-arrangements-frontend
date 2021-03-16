@@ -57,15 +57,11 @@ object ArrangementDetails {
   }
 
   private def getReportingReason(ua: UserAnswers, id: Int): Option[String] = {
-    ua.get(DoYouKnowTheReasonToReportArrangementNowPage, id) match {
-      case Some(true) =>
-        ua.get(WhyAreYouReportingThisArrangementNowPage, id).fold(
-          throw new Exception("Arrangement details must contain a reporting reason when 'yes' " +
-            "to 'do you know reporting reason' is selected"))(
-            reason => Some(reason.toString.toUpperCase)
-        )
-      case _ => None
-    }
+    ua.get(WhyAreYouReportingThisArrangementNowPage, id).fold(
+      throw new Exception("Arrangement details must contain a reporting reason when 'yes' " +
+        "to 'do you know reporting reason' is selected"))(
+      reason => Some(reason.toString.toUpperCase)
+    )
   }
 
   private def getCountriesInvolved(ua: UserAnswers, id: Int): List[String] = {

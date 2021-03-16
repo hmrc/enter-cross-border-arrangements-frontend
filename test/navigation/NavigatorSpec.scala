@@ -665,47 +665,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from What is the implementation date? page to " +
-        "Do you know the reason Do you know the reason this arrangement must be reported now? page" in {
+        "Why are you reporting this arrangement now? page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator
               .nextPage(WhatIsTheImplementationDatePage, 0, NormalMode, answers)
-              .mustBe(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "Do you know the reason this arrangement must be reported now? page to " +
-        "Why are you reporting this arrangement now? page when the answer is yes" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "Do you know the reason this arrangement must be reported now? page to " +
-        "'Which of these countries are expected to be involved in this arrangement?' page when the answer is No" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
-                .success.value
-
-            navigator
-              .nextPage(DoYouKnowTheReasonToReportArrangementNowPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode))
         }
       }
 

@@ -448,14 +448,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryDoYouKnowTheReasonToReportArrangementNowUserAnswersEntry: Arbitrary[(DoYouKnowTheReasonToReportArrangementNowPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[DoYouKnowTheReasonToReportArrangementNowPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitraryWhatIsTheImplementationDateUserAnswersEntry: Arbitrary[(WhatIsTheImplementationDatePage.type, JsValue)] =
     Arbitrary {
       for {

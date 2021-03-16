@@ -44,30 +44,14 @@ trait ArrangementRows extends RowBuilder {
     )
   }
 
-  def buildReportingThisArrangement(id: Int): Seq[Row] =
-    (userAnswers.get(DoYouKnowTheReasonToReportArrangementNowPage, id), userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id)) match {
-
-      case (Some(true), Some(reason)) =>
-        Seq(doYouKnowTheReasonToReportArrangementNow(true, id), whyAreYouReportingThisArrangementNow(reason, id))
-      case _ =>
-        Seq(doYouKnowTheReasonToReportArrangementNow(false, id))
-    }
-
-  private def doYouKnowTheReasonToReportArrangementNow(answer: Boolean, id: Int): Row =
+  def buildWhyAreYouReportingThisArrangementNow(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map { answer =>
 
     toRow(
-      msgKey  = "doYouKnowTheReasonToReportArrangementNow",
-      content = yesOrNo(answer),
-      href    = controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id, CheckMode).url
-    )
-
-  private def whyAreYouReportingThisArrangementNow(answer: WhyAreYouReportingThisArrangementNow, id: Int): Row =
-
-    toRow(
-      msgKey  = "whyAreYouReportingThisArrangementNow",
+      msgKey = "whyAreYouReportingThisArrangementNow",
       content = msg"whyAreYouReportingThisArrangementNow.$answer",
-      href    = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, CheckMode).url
+      href = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, CheckMode).url
     )
+  }
 
   private def formatCountries(countries: Set[WhichExpectedInvolvedCountriesArrangement]): Html = {
 
