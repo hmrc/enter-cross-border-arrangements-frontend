@@ -610,5 +610,3 @@ POST       /others-affected/change-type/:id                      controllers.aff
 GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
 POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
-GET       /test-only/generated-xml/:id                                     controllers.test.GeneratedXMLController.onPageLoad(id: Int)
-
