@@ -512,7 +512,7 @@ isIndividualResidentForTaxOtherCountries.error.required = Select yes if the orga
 
 whatIsThisArrangementCalled.title = What is this arrangement called?
 whatIsThisArrangementCalled.heading = What is this arrangement called?
-whatIsThisArrangementCalled.hint = Provide a name to help you identify this arrangement.
+whatIsThisArrangementCalled.hint = Enter a name to help you identify this arrangement or transaction. This can be an internal reference you use or the name used if it is marketable.
 whatIsThisArrangementCalled.checkYourAnswersLabel = Name of arrangement
 whatIsThisArrangementCalled.error.required = Provide a name for this arrangement
 whatIsThisArrangementCalled.error.length = Arrangement name must be 400 characters or less
