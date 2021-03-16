@@ -112,7 +112,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
           .success.value
         verifyList(userAnswers) { list =>
           assertName(expected)(list.head)
-          list.size mustBe(2)
+          list.size mustBe(1)
         }
       }
     }
