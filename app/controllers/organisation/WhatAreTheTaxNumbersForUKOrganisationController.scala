@@ -16,11 +16,10 @@
 
 package controllers.organisation
 
-import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
-import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
+import helpers.JourneyHelpers.getOrganisationName
 import models.{LoopDetails, Mode, TaxReferenceNumbers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhatAreTheTaxNumbersForUKOrganisationPage}
@@ -39,7 +38,6 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
                                                                  override val messagesApi: MessagesApi,
                                                                  sessionRepository: SessionRepository,
                                                                  navigator: NavigatorForOrganisation,
-                                                                 appConfig: FrontendAppConfig,
                                                                  identify: IdentifierAction,
                                                                  getData: DataRetrievalAction,
                                                                  requireData: DataRequiredAction,
@@ -70,7 +68,6 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
         "id" -> id,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "lostUTRUrl" -> appConfig.lostUTRUrl,
         "index" -> index
       )
 
@@ -91,7 +88,6 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
             "id" -> id,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "lostUTRUrl" -> appConfig.lostUTRUrl,
             "index" -> index
           )
 

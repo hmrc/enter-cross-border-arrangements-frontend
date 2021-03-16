@@ -17,7 +17,6 @@
 package controllers.organisation
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
@@ -39,8 +38,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
   val form: Form[TaxReferenceNumbers] = formProvider()
