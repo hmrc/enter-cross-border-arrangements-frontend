@@ -264,6 +264,102 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         }
       }
 
+      "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
+        " with associated enterprise section if reporter selected in associated enterprise journey" in {
+
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(organisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
+
+        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
+          Submission("id", validDisclosureDetails).copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
+
+        val expected =
+          s"""<RelevantTaxPayers>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Organisation>
+             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Organisation>
+             |        </ID>
+             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |    </RelevantTaxpayer>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Organisation>
+             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Organisation>
+             |        </ID>
+             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <AssociatedEnterprises>
+             |    <AssociatedEnterprise>
+             |        <AssociatedEnterpriseID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>GB</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |            </Individual>
+             |        </AssociatedEnterpriseID>
+             |        <AffectedPerson>false</AffectedPerson>
+             |    </AssociatedEnterprise>
+             |</AssociatedEnterprises>
+             |    </RelevantTaxpayer>
+             |</RelevantTaxPayers>""".stripMargin
+
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
+
+          prettyPrinter.format(result) mustBe expected
+        }
+      }
+
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with additional taxpayers as Individuals" in {
 
@@ -358,8 +454,139 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
+          prettyPrinter.format(result) mustBe expected
+        }
+      }
+
+      "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
+        " with associated enterprise section if reporter selected in associated enterprise journey" in {
+
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
+
+        val reporterDetails = ReporterDetails(
+          Some(individual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(today))))
+
+        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
+          Submission("id", validDisclosureDetails).copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
+
+        val expected =
+          s"""<RelevantTaxPayers>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Individual>
+             |        </ID>
+             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |    </RelevantTaxpayer>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Individual>
+             |        </ID>
+             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |    </RelevantTaxpayer>
+             |    <RelevantTaxpayer>
+             |        <ID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>Another</FirstName>
+             |                    <LastName>Individual</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <TIN issuedBy="FR">CS700100A</TIN>
+             |                <TIN issuedBy="FR">UTR5678</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>FR</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |                <ResCountryCode>FR</ResCountryCode>
+             |            </Individual>
+             |        </ID>
+             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |                <AssociatedEnterprises>
+             |    <AssociatedEnterprise>
+             |        <AssociatedEnterpriseID>
+             |            <Individual>
+             |                <IndividualName>
+             |                    <FirstName>FirstName</FirstName>
+             |                    <LastName>Surname</LastName>
+             |                </IndividualName>
+             |                <BirthDate>1990-01-01</BirthDate>
+             |                <BirthPlace>SomePlace</BirthPlace>
+             |                <TIN issuedBy="GB">UTR1234</TIN>
+             |                <Address>
+             |                    <Street>value 1</Street>
+             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                    <DistrictName>value 3</DistrictName>
+             |                    <PostCode>XX9 9XX</PostCode>
+             |                    <City>value 4</City>
+             |                    <Country>GB</Country>
+             |                </Address>
+             |                <EmailAddress>email@email.com</EmailAddress>
+             |                <ResCountryCode>GB</ResCountryCode>
+             |            </Individual>
+             |        </AssociatedEnterpriseID>
+             |        <AffectedPerson>false</AffectedPerson>
+             |    </AssociatedEnterprise>
+             |</AssociatedEnterprises>
+             |    </RelevantTaxpayer>
+             |</RelevantTaxPayers>""".stripMargin
+
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop), Option(reporterSection)).buildRelevantTaxpayers.map { result =>
 
           prettyPrinter.format(result) mustBe expected
         }
