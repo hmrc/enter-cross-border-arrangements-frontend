@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import models.arrangement.{WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.WhichExpectedInvolvedCountriesArrangement
 import pages._
 import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
@@ -44,7 +44,7 @@ trait ArrangementRows extends RowBuilder {
     )
   }
 
-  def buildWhyAreYouReportingThisArrangementNow(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map { answer =>
+  def buildWhyAreYouReportingThisArrangementNow(id: Int): Option[Row] = userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id) map { answer =>
 
     toRow(
       msgKey = "whyAreYouReportingThisArrangementNow",
