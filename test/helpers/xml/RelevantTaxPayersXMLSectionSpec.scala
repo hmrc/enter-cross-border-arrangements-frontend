@@ -530,34 +530,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |            </Individual>
              |        </ID>
              |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
-             |    </RelevantTaxpayer>
-             |    <RelevantTaxpayer>
-             |        <ID>
-             |            <Individual>
-             |                <IndividualName>
-             |                    <FirstName>Another</FirstName>
-             |                    <LastName>Individual</LastName>
-             |                </IndividualName>
-             |                <BirthDate>1990-01-01</BirthDate>
-             |                <BirthPlace>SomePlace</BirthPlace>
-             |                <TIN issuedBy="GB">UTR1234</TIN>
-             |                <TIN issuedBy="FR">CS700100A</TIN>
-             |                <TIN issuedBy="FR">UTR5678</TIN>
-             |                <Address>
-             |                    <Street>value 1</Street>
-             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                    <DistrictName>value 3</DistrictName>
-             |                    <PostCode>XX9 9XX</PostCode>
-             |                    <City>value 4</City>
-             |                    <Country>FR</Country>
-             |                </Address>
-             |                <EmailAddress>email@email.com</EmailAddress>
-             |                <ResCountryCode>GB</ResCountryCode>
-             |                <ResCountryCode>FR</ResCountryCode>
-             |            </Individual>
-             |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
-             |                <AssociatedEnterprises>
+             |                        <AssociatedEnterprises>
              |    <AssociatedEnterprise>
              |        <AssociatedEnterpriseID>
              |            <Individual>
