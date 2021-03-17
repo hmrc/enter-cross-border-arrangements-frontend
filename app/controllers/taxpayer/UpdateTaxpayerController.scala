@@ -60,6 +60,16 @@ class UpdateTaxpayerController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val namesOfTaxpayers: IndexedSeq[ItemList] = request.userAnswers.get(TaxpayerLoopPage, id) match {
+        case Some(list) =>
+          for {
+            taxpayer <- list
+          } yield {
+            ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+          }
+        case None => IndexedSeq.empty
+      }
+
       val preparedForm =  request.userAnswers.get(UpdateTaxpayerPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -67,7 +77,7 @@ class UpdateTaxpayerController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
+        "taxpayerList" -> Json.toJson(namesOfTaxpayers),
         "id" -> id,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
@@ -85,10 +95,20 @@ class UpdateTaxpayerController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val namesOfTaxpayers: IndexedSeq[ItemList] = request.userAnswers.get(TaxpayerLoopPage, id) match {
+            case Some(list) =>
+              for {
+                taxpayer <- list
+              } yield {
+                ItemList(name = taxpayer.nameAsString, changeUrl = "#", removeUrl = "#")
+              }
+            case None => IndexedSeq.empty
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "id" -> id,
-            "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
+            "taxpayerList" -> Json.toJson(namesOfTaxpayers),
             "mode"   -> mode,
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )
