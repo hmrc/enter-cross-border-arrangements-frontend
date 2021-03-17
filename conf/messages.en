@@ -401,8 +401,7 @@ doYouKnowAnyTINForUKOrganisation.error.required = Select yes if you know any tax
 
 whatAreTheTaxNumbersForUKOrganisation.title = What are the organisation’s tax reference numbers?
 whatAreTheTaxNumbersForUKOrganisation.heading = What are {0}’s tax reference numbers for the United Kingdom?
-whatAreTheTaxNumbersForUKOrganisation.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
-whatAreTheTaxNumbersForUKOrganisation.hintLink = find a lost UTR number
+whatAreTheTaxNumbersForUKOrganisation.hint = Provide up to 3 of the HMRC-issued numbers you know.
 whatAreTheTaxNumbersForUKOrganisation.label1 = UK tax number 1
 whatAreTheTaxNumbersForUKOrganisation.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKOrganisation.label3 = UK tax number 3 (optional)
@@ -467,8 +466,7 @@ isIndividualResidentForTaxOtherCountries.error.required = Select yes if the indi
 
 whatAreTheTaxNumbersForUKIndividual.title = What are their tax reference numbers?
 whatAreTheTaxNumbersForUKIndividual.heading = What are {0} tax reference numbers for the United Kingdom?
-whatAreTheTaxNumbersForUKIndividual.hint = Provide up to 3 of the HMRC-issued numbers you know. You can
-whatAreTheTaxNumbersForUKIndividual.hintLink = find a lost UTR number
+whatAreTheTaxNumbersForUKIndividual.hint = Provide up to 3 of the HMRC-issued numbers you know.
 whatAreTheTaxNumbersForUKIndividual.label1 = UK tax number 1
 whatAreTheTaxNumbersForUKIndividual.label2 = UK tax number 2 (optional)
 whatAreTheTaxNumbersForUKIndividual.label3 = UK tax number 3 (optional)

@@ -16,11 +16,9 @@
 
 package controllers.individual
 
-import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
-import helpers.JourneyHelpers.currentIndexInsideLoop
 import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
@@ -43,7 +41,6 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
                                                               getData: DataRetrievalAction,
                                                               requireData: DataRequiredAction,
                                                               formProvider: WhatAreTheTaxNumbersForUKIndividualFormProvider,
-                                                              appConfig: FrontendAppConfig,
                                                               val controllerComponents: MessagesControllerComponents,
                                                               renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -70,7 +67,6 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
         "id" -> id,
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers, id),
-        "lostUTRUrl" -> appConfig.lostUTRUrl,
         "index" -> index
       )
 
@@ -90,8 +86,7 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
             "form" -> formWithErrors,
             "id" -> id,
             "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers, id),
-            "lostUTRUrl" -> appConfig.lostUTRUrl
+            "name" -> getIndividualName(request.userAnswers, id)
           )
 
           renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
