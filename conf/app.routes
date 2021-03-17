@@ -261,11 +261,6 @@ POST       /arrangement/implementation-date/:id                  controllers.arr
 GET        /arrangement/change-implementation-date/:id                        controllers.arrangement.WhatIsTheImplementationDateController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /arrangement/change-implementation-date/:id                        controllers.arrangement.WhatIsTheImplementationDateController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /arrangement/reporting-reason-known/:id                        controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /arrangement/reporting-reason-known/:id                        controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /arrangement/change-reporting-reason-known/:id                  controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /arrangement/change-reporting-reason-known/:id                  controllers.arrangement.DoYouKnowTheReasonToReportArrangementNowController.onSubmit(id: Int, mode: Mode = CheckMode)
-
 GET        /arrangement/reporting-reason/:id                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /arrangement/reporting-reason/:id                        controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /arrangement/change-reporting-reason/:id                  controllers.arrangement.WhyAreYouReportingThisArrangementNowController.onPageLoad(id: Int, mode: Mode = CheckMode)

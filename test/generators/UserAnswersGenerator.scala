@@ -92,7 +92,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(WhatIsTheExpectedValueOfThisArrangementPage.type, JsValue)] ::
     arbitrary[(WhichExpectedInvolvedCountriesArrangementPage.type, JsValue)] ::
     arbitrary[(WhyAreYouReportingThisArrangementNowPage.type, JsValue)] ::
-    arbitrary[(DoYouKnowTheReasonToReportArrangementNowPage.type, JsValue)] ::
     arbitrary[(WhatIsTheImplementationDatePage.type, JsValue)] ::
     arbitrary[(WhatIsThisArrangementCalledPage.type, JsValue)] ::
     arbitrary[(DoYouKnowTINForNonUKIndividualPage.type, JsValue)] ::
