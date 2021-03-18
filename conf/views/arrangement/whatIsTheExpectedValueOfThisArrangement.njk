@@ -32,11 +32,11 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">
-          {{ messages("whatIsTheExpectedValueOfThisArrangement.heading") }}
-        </h1>
+          <h1 class="govuk-heading-xl">
+            {{ messages("whatIsTheExpectedValueOfThisArrangement.heading") }}
+          </h1>
 
-        <p class="govuk-body">{{ messages("whatIsTheExpectedValueOfThisArrangement.description") }}</p>
+          <p class="govuk-body">{{ messages("whatIsTheExpectedValueOfThisArrangement.description") }}</p>
 
           {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
@@ -46,9 +46,9 @@
             label: {
               text: messages('whatIsTheExpectedValueOfThisArrangement.currency')
             },
-                attributes: {"aria-labelledby": "currency"},
-                errorMessage: form.currency.error,
-                items: currencies
+            attributes: {"aria-labelledby": "currency"},
+            errorMessage: form.currency.error,
+            items: currencies
           }) }}
 
           {{ govukInput({

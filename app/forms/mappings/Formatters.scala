@@ -58,7 +58,7 @@ trait Formatters {
   private[mappings] def intFormatter(requiredKey: String, wholeNumberKey: String, nonNumericKey: String, args: Seq[String] = Seq.empty): Formatter[Int] =
     new Formatter[Int] {
 
-      val decimalRegexp = """^-?(\d*\.\d*)$"""
+      val decimalCommaRegexp = """^-?(\d*[\.\,]\d*)$"""
 
       private val baseFormatter = stringFormatter(requiredKey)
 
@@ -66,7 +66,7 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .right.flatMap {
-          case s if s.matches(decimalRegexp) =>
+          case s if s.matches(decimalCommaRegexp) =>
             Left(Seq(FormError(key, wholeNumberKey, args)))
           case s =>
             nonFatalCatch
