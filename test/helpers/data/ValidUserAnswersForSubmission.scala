@@ -149,7 +149,6 @@ object ValidUserAnswersForSubmission {
     .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, validToday).success.value
     .set(TaxpayerLoopPage, 0, validTaxpayers).success.value
     .set(WhatIsTheImplementationDatePage, 0, validToday).success.value
-    .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
     .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
     .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
     .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value
@@ -177,7 +176,6 @@ object ValidUserAnswersForSubmission {
     .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, validToday).success.value
     .set(TaxpayerLoopPage, 0, validTaxpayers).success.value
     .set(WhatIsTheImplementationDatePage, 0, validToday).success.value
-    .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true).success.value
     .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6703).success.value
     .set(WhatIsThisArrangementCalledPage, 0, "Arrangement name").success.value
     .set(GiveDetailsOfThisArrangementPage, 0, "Some description").success.value

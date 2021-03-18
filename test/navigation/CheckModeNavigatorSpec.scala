@@ -214,35 +214,6 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
-      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
-        "Why are you reporting this arrangement now? page when the answer is 'Yes'" in {
-
-        assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage,
-          controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(0, CheckMode)) {
-          _
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
-            .success
-            .value
-
-        }
-      }
-
-      "Do you know the reason Do you know the reason this arrangement must be reported now? page to " +
-        "Check your answers page when the answer is No" in {
-
-        assertRedirect(DoYouKnowTheReasonToReportArrangementNowPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) {
-          _
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
-            .success
-            .value
-
-        }
-
-      }
-
       "must go from the 'Why are reporting this arrangement now?' page to Check your answers page" in {
 
         assertRedirect(WhyAreYouReportingThisArrangementNowPage

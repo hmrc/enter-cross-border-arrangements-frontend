@@ -32,7 +32,7 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstIniti
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
-import pages.reporter.ReporterStatusPage
+import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, QuestionPage, ValidationErrorsPage}
@@ -45,8 +45,9 @@ import services.XMLGenerationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
-
 import javax.inject.Inject
+import models.reporter.RoleInArrangement.Taxpayer
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -159,7 +160,6 @@ class DisclosureDetailsController @Inject()(
     }
   }
 
-
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
@@ -176,7 +176,7 @@ class DisclosureDetailsController @Inject()(
 
     ua.get(DisclosureStatusPage, index) match {
       case Some(Completed) =>
-        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details")
+        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details", "item")
 
       case _ =>
         retrieveRowWithStatus(ua,
@@ -185,6 +185,7 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.disclosureTypeLink",
           id = "disclosure",
           ariaLabel = "disclosure-details",
+          rowStyle = "item",
           index
         )
     }
@@ -201,6 +202,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.hallmarksLink",
       id = "hallmarks",
       ariaLabel = "arrangementDetails",
+      rowStyle = "item",
       index
     )
   }
@@ -216,6 +218,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.arrangementDetailsLink",
       id = "arrangementDetails",
       ariaLabel = "arrangementDetails",
+      rowStyle = "item",
       index
     )
   }
@@ -231,6 +234,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.reporterDetailsLink",
       id = "reporter",
       ariaLabel = "reporterDetails",
+      rowStyle = "item",
       index
     )
   }
@@ -239,17 +243,18 @@ class DisclosureDetailsController @Inject()(
                                     page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
       ua.get(ReporterStatusPage, index) match {
         case Some(Completed) =>
-          retrieveRowWithStatusBottomless(ua: UserAnswers,
+          retrieveRowWithStatus(ua: UserAnswers,
             page,
             s"${frontendAppConfig.taxpayersUrl}/$index",
             linkContent = "disclosureDetails.relevantTaxpayersLink",
             id = "taxpayers",
             ariaLabel = "connected-parties",
+            rowStyle = "bottomless-item",
             index
           )
 
         case _ => taskListItemRestricted(
-          "disclosureDetails.relevantTaxpayersLink", "connected-parties")
+          "disclosureDetails.relevantTaxpayersLink", "connected-parties", "bottomless-item")
       }
 
     }
@@ -257,19 +262,26 @@ class DisclosureDetailsController @Inject()(
   private def associatedEnterpriseItem(ua: UserAnswers,
                                        page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    (ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
-      case (Some(_), Some(Completed)) =>
-        retrieveRowWithStatus(ua: UserAnswers,
-          page,
-          s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
-          linkContent = "disclosureDetails.associatedEnterpriseLink",
-          id = "associatedEnterprise",
-          ariaLabel = "connected-parties",
-          index
-        )
+    val rowWithStatus =
+      retrieveRowWithStatus(ua: UserAnswers,
+      page,
+      s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+      linkContent = "disclosureDetails.associatedEnterpriseLink",
+      id = "associatedEnterprise",
+      ariaLabel = "connected-parties",
+      rowStyle = "item",
+      index
+    )
+
+    (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
+      case (Some(Taxpayer), _, _) =>
+        rowWithStatus
+
+      case (Some(_), Some(_), Some(Completed)) =>
+        rowWithStatus
 
       case _ => taskListItemRestricted(
-        "disclosureDetails.associatedEnterpriseLink", "connected-parties")
+        "disclosureDetails.associatedEnterpriseLink", "connected-parties", "item")
     }
   }
 
@@ -282,6 +294,7 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.othersAffectedLink",
       id = "othersAffected",
       ariaLabel = "connected-parties",
+      rowStyle = "item",
       index
     )
   }
@@ -297,11 +310,12 @@ class DisclosureDetailsController @Inject()(
           linkContent = "disclosureDetails.intermediariesLink",
           id = "intermediaries",
           ariaLabel = "connected-parties",
+          rowStyle = "item",
           index
         )
 
       case _ => taskListItemRestricted(
-        "disclosureDetails.intermediariesLink", "connected-parties")
+        "disclosureDetails.intermediariesLink", "connected-parties", "item")
     }
   }
 }

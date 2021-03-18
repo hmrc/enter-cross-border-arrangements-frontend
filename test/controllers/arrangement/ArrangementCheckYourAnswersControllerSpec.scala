@@ -19,6 +19,8 @@ package controllers.arrangement
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
+import models.{UnsubmittedDisclosure, UserAnswers}
 import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -85,12 +87,6 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
     action.visuallyHiddenText mustBe visuallyHiddenText
   }
 
-  def assertReasonToReportKnown(yesOrNo: Boolean)(row: Row): Unit = {
-    row.key.text mustBe Some(Literal("Reason for reporting known?"))
-    row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
-    assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-reporting-reason-known/0")(row.actions.head)
-  }
-
   def assertReasonToReport(reasonAsString: String)(row: Row): Unit = {
     import uk.gov.hmrc.viewmodels._
     val msg: String = msg"whyAreYouReportingThisArrangementNow.$reasonAsString".resolve
@@ -116,8 +112,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
           .success.value
         verifyList(userAnswers) { list =>
           assertName(expected)(list.head)
-          assertReasonToReportKnown(yesOrNo = false)(list(1))
-          list.size mustBe(2)
+          list.size mustBe(1)
         }
       }
     }
@@ -139,25 +134,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         .success.value
       verifyList(userAnswers) { list =>
         assertImplementationDate(dateFormatter.format(implementationDate))(list.head)
-        assertReasonToReportKnown(yesOrNo = false)(list(1))
-        list.size mustBe(2)
-      }
-    }
-
-    "must return reason to report rows, if known" in {
-
-      WhyAreYouReportingThisArrangementNow.values.map { reportReason =>
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
-          .success.value
-          .set(WhyAreYouReportingThisArrangementNowPage, 0, reportReason)
-          .success.value
-        verifyList(userAnswers) { list =>
-          assertReasonToReportKnown(yesOrNo = true)(list.head)
-          assertReasonToReport(reportReason.toString)(list(1))
-          list.size mustBe(2)
-        }
+        list.size mustBe(1)
       }
     }
 
@@ -180,9 +157,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
         .success.value
       verifyList(userAnswers) { list =>
-        assertReasonToReportKnown(yesOrNo = false)(list.head)
-        assertCountries("United Kingdom")(list(1))
-        list.size mustBe(2)
+        assertCountries("United Kingdom")(list.head)
+        list.size mustBe(1)
       }
     }
 
@@ -210,9 +186,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
         .success.value
       verifyList(userAnswers) { list =>
-        assertReasonToReportKnown(yesOrNo = false)(list.head)
-        assertCountries("<ul></ul>")(list(1))
-        list.size mustBe(2)
+        assertCountries("<ul></ul>")(list.head)
+        list.size mustBe(1)
       }
     }
 
@@ -236,9 +211,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
         .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
         .success.value
       verifyList(userAnswers) { list =>
-        assertReasonToReportKnown(yesOrNo = false)(list.head)
-        assertExpectedValue(list(1))
-        list.size mustBe(2)
+        assertExpectedValue(list.head)
+        list.size mustBe(1)
       }
     }
 
@@ -256,9 +230,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
           .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, given)
           .success.value
         verifyList(userAnswers) { list =>
-          assertReasonToReportKnown(yesOrNo = false)(list.head)
-          assertNationalProvisions(expected)(list(1))
-          list.size mustBe(2)
+          assertNationalProvisions(expected)(list.head)
+          list.size mustBe(1)
         }
       }
     }
@@ -277,9 +250,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
           .set(GiveDetailsOfThisArrangementPage, 0, given)
           .success.value
         verifyList(userAnswers) { list =>
-          assertReasonToReportKnown(yesOrNo = false)(list.head)
-          assertNationalProvisions(expected)(list(1))
-          list.size mustBe(2)
+          assertNationalProvisions(expected)(list.head)
+          list.size mustBe(1)
         }
       }
     }

@@ -191,9 +191,6 @@ trait PageGenerators {
   implicit lazy val arbitraryWhyAreYouReportingThisArrangementNowPage: Arbitrary[WhyAreYouReportingThisArrangementNowPage.type] =
     Arbitrary(WhyAreYouReportingThisArrangementNowPage)
 
-  implicit lazy val arbitraryDoYouKnowTheReasonToReportArrangementNowPage: Arbitrary[DoYouKnowTheReasonToReportArrangementNowPage.type] =
-    Arbitrary(DoYouKnowTheReasonToReportArrangementNowPage)
-
   implicit lazy val arbitraryWhatIsTheImplementationDatePage: Arbitrary[WhatIsTheImplementationDatePage.type] =
     Arbitrary(WhatIsTheImplementationDatePage)
 

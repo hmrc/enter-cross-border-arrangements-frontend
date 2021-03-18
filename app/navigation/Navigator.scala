@@ -57,8 +57,7 @@ class Navigator @Inject()() {
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
 
     case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, NormalMode))
-    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.DoYouKnowTheReasonToReportArrangementNowController.onPageLoad(id, NormalMode))
-    case DoYouKnowTheReasonToReportArrangementNowPage =>  doYouKnowTheReasonToReportArrangementNowRoutes(NormalMode)
+    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, NormalMode))
     case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, NormalMode))
     case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, NormalMode))
     case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, NormalMode))
@@ -98,7 +97,6 @@ class Navigator @Inject()() {
 
     case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case DoYouKnowTheReasonToReportArrangementNowPage => doYouKnowTheReasonToReportArrangementNowRoutes(CheckMode)
     case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
@@ -205,14 +203,6 @@ class Navigator @Inject()() {
       case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
       case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
     }
-
-  private def doYouKnowTheReasonToReportArrangementNowRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(DoYouKnowTheReasonToReportArrangementNowPage, id) map {
-      case true => controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, mode)
-      case false if mode == NormalMode => controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, mode)
-      case _ => controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id)
-    }
-  }
 
   private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
     ua.get(YouHaveNotAddedAnyIntermediariesPage, id) map {

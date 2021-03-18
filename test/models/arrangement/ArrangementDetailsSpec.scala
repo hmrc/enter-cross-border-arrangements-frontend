@@ -17,6 +17,7 @@
 package models.arrangement
 
 import generators.ModelGenerators
+import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
@@ -43,7 +44,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
+            .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
             .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
             .success.value
@@ -57,7 +58,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
         val expected = ArrangementDetails(
           arrangementName = "testArrangement",
           implementationDate = LocalDate.now(),
-          reportingReason = None,
+          reportingReason = Some("DAC6701"),
           countriesInvolved = List("GB"),
           expectedValue = ExpectedArrangementValue("GBP", 100),
           nationalProvisionDetails = "testNationalProvision",
@@ -79,7 +80,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
+            .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6701)
             .success.value
@@ -147,8 +148,6 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, true)
-            .success.value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -167,7 +166,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
+            .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
 
         val ex = intercept[Exception] {
@@ -187,7 +186,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
+            .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value
@@ -211,7 +210,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
             .success.value
-            .set(DoYouKnowTheReasonToReportArrangementNowPage, 0, false)
+            .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value

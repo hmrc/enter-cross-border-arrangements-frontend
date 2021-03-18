@@ -25,7 +25,7 @@ case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: 
 
   val associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection] = Option(AssociatedEnterprisesXMLSection(submission))
 
-  private[xml] def getRelevantTaxpayerst: IndexedSeq[NodeSeq] =
+  private[xml] def getRelevantTaxpayers: IndexedSeq[NodeSeq] =
     submission.taxpayers.map { taxpayer =>
       val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
       if (taxpayer.individual.isDefined) {
@@ -45,7 +45,7 @@ case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: 
   def buildRelevantTaxpayers: NodeSeq =
     Try {
       <RelevantTaxPayers>
-        {reporterSection.map(_.buildReporterAsTaxpayer).getOrElse(NodeSeq.Empty) ++ getRelevantTaxpayerst}
+        {reporterSection.map(_.buildReporterAsTaxpayer).getOrElse(NodeSeq.Empty) ++ getRelevantTaxpayers}
       </RelevantTaxPayers>
     }.getOrElse(NodeSeq.Empty)
 
