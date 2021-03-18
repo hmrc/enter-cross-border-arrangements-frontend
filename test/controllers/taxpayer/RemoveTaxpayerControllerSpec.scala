@@ -1,4 +1,4 @@
-package controllers
+package controllers.taxpayer
 
 import base.SpecBase
 import forms.taxpayer.RemoveTaxpayerFormProvider
@@ -28,7 +28,7 @@ class RemoveTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
   val formProvider = new RemoveTaxpayerFormProvider()
   val form = formProvider()
 
-  lazy val removeTaxpayerRoute = routes.RemoveTaxpayerController.onPageLoad(NormalMode).url
+  lazy val removeTaxpayerRoute = controllers.taxpayer.routes.RemoveTaxpayerController.onPageLoad(0).url
 
   "RemoveTaxpayer Controller" - {
 
@@ -65,7 +65,7 @@ class RemoveTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(RemoveTaxpayerPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(RemoveTaxpayerPage, 0, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, removeTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -143,38 +143,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       templateCaptor.getValue mustEqual "removeTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, removeTaxpayerRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, removeTaxpayerRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }

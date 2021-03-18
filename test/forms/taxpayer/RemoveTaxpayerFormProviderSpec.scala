@@ -1,7 +1,6 @@
-package forms
+package forms.taxpayer
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.taxpayer.RemoveTaxpayerFormProvider
 import play.api.data.FormError
 
 class RemoveTaxpayerFormProviderSpec extends BooleanFieldBehaviours {

@@ -1,7 +1,6 @@
-package pages
+package pages.taxpayer
 
 import pages.behaviours.PageBehaviours
-import pages.taxpayer.RemoveTaxpayerPage
 
 class RemoveTaxpayerPageSpec extends PageBehaviours {
 
