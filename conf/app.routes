@@ -366,6 +366,8 @@ POST       /intermediaries/change-exemption-known/:id           controllers.inte
 GET       /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad(id: Int)
 POST      /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
 
+GET        /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id: Int, itemId: String)
+POST       /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onSubmit(id: Int, itemId: String)
 
 # DISCLOSURE
 
