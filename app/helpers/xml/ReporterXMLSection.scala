@@ -28,6 +28,7 @@ import scala.xml.{Elem, NodeSeq}
 case class ReporterXMLSection(submission: Submission) {
 
   val reporterDetails: Option[ReporterDetails] = submission.reporterDetails
+  val associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection] = Option(AssociatedEnterprisesXMLSection(submission))
 
   val empty: Elem =
     <ID>
@@ -157,19 +158,20 @@ case class ReporterXMLSection(submission: Submission) {
           case RoleInArrangement.Taxpayer.toString =>
             if (reporterDetails.organisation.isDefined) {
               <RelevantTaxpayer>
-                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
-                {implementingDate}
+                {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}{implementingDate}{getAssociatedEnterprises(reporterDetails.organisation.get.organisationName)}
               </RelevantTaxpayer>
             } else {
               <RelevantTaxpayer>
-                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
-                {implementingDate}
+                {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}{implementingDate}{getAssociatedEnterprises(reporterDetails.individual.get.nameAsString)}
               </RelevantTaxpayer>
             }
           case _ => NodeSeq.Empty
         })
     }
   }
+
+  private[xml] def getAssociatedEnterprises(name: String) =
+    associatedEnterpriseSection.map(_.buildAssociatedEnterprises(name)).getOrElse(NodeSeq.Empty)
 
   private[xml] def buildReporterAsIntermediary: NodeSeq = {
 

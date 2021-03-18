@@ -50,8 +50,15 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return html for a restricted row with grey status on taskList page" in {
 
-        taskListItemRestricted(mockLinkContent, "restricted") mustBe Html(s"" +
+        taskListItemRestricted(mockLinkContent, "restricted", "item") mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='restricted'> $mockLinkContent</a>" +
+          s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong> </li>")
+      }
+
+      "must return html for a restricted row with grey status on taskList page with no bottom row line" in {
+
+        taskListItemRestricted(mockLinkContent, "restricted", "bottomless-item") mustBe Html(s"" +
+          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' aria-describedby='restricted'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong> </li>")
       }
     }
@@ -60,8 +67,15 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return html for a standard row with blue status on taskList page" in {
 
-        taskListItemLinkedProvider(mockUrl, "Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
+        taskListItemLinkedProvider(mockUrl, "Completed", mockLinkContent, "completed", "link", "item") mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='link'> $mockLinkContent</a>" +
+          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
+      }
+
+      "must return html for a standard row with blue status on taskList page with no bottom row line" in {
+
+        taskListItemLinkedProvider(mockUrl, "Completed", mockLinkContent, "completed", "link", "bottomless-item") mustBe Html(s"" +
+          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
       }
     }
@@ -70,8 +84,15 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return html for a row with no journey link but a blue status on taskList page" in {
 
-        taskListItemNotLinkedProvider("Completed", mockLinkContent, "completed", "link") mustBe Html(s"" +
+        taskListItemNotLinkedProvider("Completed", mockLinkContent, "completed", "link", "item") mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' aria-describedby='link'> $mockLinkContent</a>" +
+          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
+      }
+
+      "must return html for a row with no journey link but a blue status on taskList page with no bottom row line" in {
+
+        taskListItemNotLinkedProvider("Completed", mockLinkContent, "completed", "link", "bottomless-item") mustBe Html(s"" +
+          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong> </li>")
       }
     }
@@ -88,7 +109,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-completed'>Completed</strong> </li>")
       }
@@ -103,7 +124,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-inProgress'>In Progress</strong> </li>")
       }
@@ -119,7 +140,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", index) mustBe Html(s"" +
+        retrieveRowWithStatus(userAnswers, ReporterStatusPage, mockUrl, mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
           s"<li class='app-task-list__item'><a class='app-task-list__task-name' href='$mockUrl' aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong> </li>")
       }
