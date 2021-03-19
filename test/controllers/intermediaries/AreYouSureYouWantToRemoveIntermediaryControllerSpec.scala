@@ -81,7 +81,7 @@ class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val preparedForm = form.bind(Map("value" -> "false"))
+      val preparedForm = form
       val expectedJson = Json.obj(
         "form"   -> preparedForm,
         "id"     -> 0,
