@@ -65,10 +65,10 @@ object TaskListHelper  {
   def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]],
                                    ua: UserAnswers,
                                    id: Int,
-                                   replaceAMarketableAddDisclosure: Boolean): Boolean = {
+                                   isInitialDisclosureMarketable: Boolean): Boolean = {
     pageList.map(page => ua.get(page, id) match {
       case Some(Completed) => true
-      case _ if replaceAMarketableAddDisclosure && optionalCompletion.contains(page) => true
+      case _ if isInitialDisclosureMarketable && optionalCompletion.contains(page) => true
       case _ => false
     }).forall(bool => bool)
   }
@@ -87,11 +87,11 @@ object TaskListHelper  {
     (getDisclosureType, getMarketableFlag)
   }
 
-  def displaySectionOptional(ua: UserAnswers, id: Int, replaceAMarketableAddDisclosure: Boolean)(implicit messages: Messages): String =  {
+  def displaySectionOptional(ua: UserAnswers, id: Int, isInitialDisclosureMarketable: Boolean)(implicit messages: Messages): String =  {
     getDisclosureTypeWithMAFlag(ua, id) match {
       case (Some(Dac6add), true) =>
         messages("disclosureDetails.optional")
-      case (Some(Dac6rep), _) if replaceAMarketableAddDisclosure =>
+      case (Some(Dac6rep), _) if isInitialDisclosureMarketable =>
         messages("disclosureDetails.optional")
       case _ =>
         ""
@@ -100,7 +100,7 @@ object TaskListHelper  {
 
   def userCanSubmit(ua: UserAnswers,
                     id: Int,
-                    replaceAMarketableAddDisclosure: Boolean): Boolean = {
+                    isInitialDisclosureMarketable: Boolean): Boolean = {
 
     val submissionContainsTaxpayer: Boolean = ua.get(TaxpayerLoopPage, id).fold(false)(_.nonEmpty) ||
       ua.get(RoleInArrangementPage, id).fold(false)(_.equals(RoleInArrangement.Taxpayer))
@@ -120,7 +120,10 @@ object TaskListHelper  {
           mandatoryCompletion ++ optionalCompletion
       }
 
-    haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, replaceAMarketableAddDisclosure)
+    (ua.get(HallmarkStatusPage, id), ua.get(ArrangementStatusPage, id)) match {
+      case (Some(Completed), None) if isInitialDisclosureMarketable => false
+      case _ => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, isInitialDisclosureMarketable)
+    }
   }
 }
 
