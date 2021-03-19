@@ -20,3 +20,7 @@ $hmrc-assets-path: "/disclose-cross-border-arrangements/manual/assets/lib/hmrc-f
 .govuk-warning-text__text {
     margin-left: 11px;
 }
+
+svg.autocomplete__dropdown-arrow-down {
+  pointer-events: none;
+}
