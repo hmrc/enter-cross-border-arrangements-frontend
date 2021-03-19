@@ -21,7 +21,8 @@ import generators.Generators
 import helpers.TaskListHelper._
 import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
+import models.reporter.RoleInArrangement
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.affected.AffectedStatusPage
@@ -30,7 +31,7 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, Disclo
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
-import pages.reporter.ReporterStatusPage
+import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import uk.gov.hmrc.viewmodels.Html
@@ -266,7 +267,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
       }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
@@ -298,7 +299,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = true) mustBe true
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = true) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -339,7 +340,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -380,10 +381,10 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe false
       }
 
-      "must be false if user has Registered a taxpayer but no associated enterprise" in {
+      "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
@@ -398,10 +399,13 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .set(ReporterStatusPage, index, Completed)
           .success
           .value
+          .set(RoleInArrangementPage, index, RoleInArrangement.Taxpayer)
+          .success
+          .value
           .set(RelevantTaxpayerStatusPage, index, Completed)
           .success
           .value
-          .set(AssociatedEnterpriseStatusPage, index, InProgress)
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
           .success
           .value
           .set(IntermediariesStatusPage, index, Completed)
@@ -420,7 +424,50 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, addedTaxpayers = true, replaceAMarketableAddDisclosure = false) mustBe false
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+      }
+
+      "must be true if user has reported as a Intermediary but no associated enterprise" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(DisclosureTypePage, index, Dac6new)
+          .success
+          .value
+          .set(DisclosureMarketablePage, index, true)
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(RoleInArrangementPage, index, RoleInArrangement.Intermediary)
+          .success
+          .value
+          .set(RelevantTaxpayerStatusPage, index, Completed)
+          .success
+          .value
+          .set(AssociatedEnterpriseStatusPage, index, Restricted)
+          .success
+          .value
+          .set(IntermediariesStatusPage, index, Completed)
+          .success
+          .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
+          .success
+          .value
+          .set(HallmarkStatusPage, index, Completed)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, Completed)
+          .success
+          .value
+
+        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
       }
     }
 
