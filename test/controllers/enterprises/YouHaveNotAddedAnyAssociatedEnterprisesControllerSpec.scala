@@ -104,6 +104,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller = application.injector.instanceOf[YouHaveNotAddedAnyAssociatedEnterprisesController]
 
       val result = route(application, request).value
 
@@ -113,7 +114,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
 
       val filledForm = form.bind(Map("value" -> YouHaveNotAddedAnyAssociatedEnterprises.values.head.toString))
 
-      val expectedList = Json.arr("Organisation Ltd.")
+      val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
