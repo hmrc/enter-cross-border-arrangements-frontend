@@ -45,7 +45,9 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            preventDoubleClick: true,
+            attributes: {id:"submit"}
           }) }}
 
         </form>
