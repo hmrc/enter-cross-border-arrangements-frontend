@@ -21,6 +21,7 @@ import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.reporter.RoleInArrangement
 import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
@@ -28,8 +29,8 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
-import pages.reporter.ReporterStatusPage
-import pages.taxpayer.RelevantTaxpayerStatusPage
+import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
+import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Html
 
@@ -99,11 +100,13 @@ object TaskListHelper  {
 
   def userCanSubmit(ua: UserAnswers,
                     id: Int,
-                    addedTaxpayers: Boolean,
                     replaceAMarketableAddDisclosure: Boolean): Boolean = {
 
+    val submissionContainsTaxpayer: Boolean = ua.get(TaxpayerLoopPage, id).fold(false)(_.nonEmpty) ||
+      ua.get(RoleInArrangementPage, id).fold(false)(_.equals(RoleInArrangement.Taxpayer))
+
     val mandatoryCompletion =
-      if (addedTaxpayers) {
+      if (submissionContainsTaxpayer) {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage, AssociatedEnterpriseStatusPage)
       } else {
         Seq(ReporterStatusPage, RelevantTaxpayerStatusPage, IntermediariesStatusPage, DisclosureStatusPage, AffectedStatusPage)

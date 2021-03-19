@@ -75,13 +75,6 @@ class DisclosureDetailsController @Inject()(
           .getOrElse("")
       }
 
-      val addedTaxpayer = request.userAnswers.flatMap(_.get(TaxpayerLoopPage, id)) match {
-        case Some(taxpayer) if taxpayer.nonEmpty =>
-          true
-        case _ =>
-          false
-      }
-
       isReplacingAMarketableAddDisclosure(request.userAnswers.get, id).flatMap { replaceAMarketableAddDisclosure =>
 
         val json = Json.obj(
@@ -95,7 +88,7 @@ class DisclosureDetailsController @Inject()(
           "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
           "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
           "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, addedTaxpayer, replaceAMarketableAddDisclosure),
+          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
           "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
           "backLink" -> backLink
         )
