@@ -47,7 +47,7 @@ class AreYouSureYouWantToRemoveIntermediaryController @Inject()(
   def onPageLoad(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = form.fill(false)
+      val preparedForm = form
 
       val json = Json.obj(
         "form"   -> preparedForm,
