@@ -371,14 +371,14 @@ isIndividualAddressKnown.heading = Do you know {0} address?
 isIndividualAddressKnown.checkYourAnswersLabel = Do you know their address?
 isIndividualAddressKnown.error.required = Select yes if you know their address
 
-emailAddressQuestionForOrganisation.title = Do you know the email address for a main contact at the organisation?
-emailAddressQuestionForOrganisation.heading = Do you know the email address for a main contact at {0}?
-emailAddressQuestionForOrganisation.checkYourAnswersLabel = Do you know their email address?
+emailAddressQuestionForOrganisation.title = Do you want to provide an email address for a main contact at the organisation?
+emailAddressQuestionForOrganisation.heading = Do you want to provide an email address for a main contact at {0}?
+emailAddressQuestionForOrganisation.guidance = We will only use this to get in contact if we have any questions about the arrangement.
+emailAddressQuestionForOrganisation.checkYourAnswersLabel = Do you want to provide an email address?
 emailAddressQuestionForOrganisation.error.required = Select yes if you know the email address for a main contact at the organisation
 
-emailAddressForOrganisation.title = What is the email address for a main contact at the organisation?
-emailAddressForOrganisation.heading = What is the email address for a main contact at {0}?
-emailAddressForOrganisation.hint = We will only use this to get in contact if we have any questions about the arrangement.
+emailAddressForOrganisation.title = What is organisation's email address?
+emailAddressForOrganisation.heading = What is {0}'s email address?
 emailAddressForOrganisation.checkYourAnswersLabel = Email address
 emailAddressForOrganisation.error.required = Enter an email address
 emailAddressForOrganisation.error.invalid = Enter an email address in the correct format, like name@example.com
@@ -485,9 +485,10 @@ whichCountryTaxForIndividual.countryKey = Country
 whichCountryTaxFoIndividual.utrKey = Unique Taxpayer Reference (UTR)
 whichCountryTaxForIndividual.tinKey = Tax identification number for {0}
 
-emailAddressQuestionForIndividual.title = Do you know their email address?
-emailAddressQuestionForIndividual.heading = Do you know {0}’s email address?
-emailAddressQuestionForIndividual.checkYourAnswersLabel = Do you know their email address?
+emailAddressQuestionForIndividual.title = Do you want to provide their email address?
+emailAddressQuestionForIndividual.heading = Do you want to provide {0}’s email address?
+emailAddressQuestionForIndividual.guidance = We will only use this to get in contact if we have any questions about the arrangement.
+emailAddressQuestionForIndividual.checkYourAnswersLabel = Do you want to provide an email address?
 emailAddressQuestionForIndividual.error.required = Select yes if you know their email address
 
 emailAddressForIndividual.title = What is their email address?
@@ -1040,23 +1041,23 @@ reporterIndividualEmailAddress.error.required = Select yes if have a preferred e
 
 reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
 reporterEmailAddressQuestion.error.required = Select yes if you have an email address
-reporterOrganisationEmailAddressQuestion.title = Do you have an email address there?
-reporterOrganisationEmailAddressQuestion.heading = Do you have a contact email address at {0}?
-reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you have a contact email address at the organisation?
-reporterIndividualEmailAddressQuestion.title = Do you have a preferred email address?
-reporterIndividualEmailAddressQuestion.heading = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you have a preferred email address?
+reporterOrganisationEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
+reporterOrganisationEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
+reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
+reporterIndividualEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
+reporterIndividualEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
+reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
 
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
 reporterEmailAddress.error.required = Enter an email address
 reporterEmailAddress.error.length = Email address must be 254 characters or less
 reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
-reporterOrganisationEmailAddress.title = What is the email address?
-reporterOrganisationEmailAddress.heading = What is the email address at {0}?
+reporterOrganisationEmailAddress.title = What email address would you like to provide?
+reporterOrganisationEmailAddress.heading = What email address would you like to provide?
 reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
-reporterIndividualEmailAddress.title = What is your preferred email address?
-reporterIndividualEmailAddress.heading = What is your preferred email address?
+reporterIndividualEmailAddress.title = What email address would you like to provide?
+reporterIndividualEmailAddress.heading = What email address would you like to provide?
 reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
