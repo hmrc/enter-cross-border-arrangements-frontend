@@ -27,8 +27,8 @@ import java.util.UUID
 case class AssociatedEnterprise(enterpriseId: String,
                                 individual: Option[Individual] = None,
                                 organisation: Option[Organisation] = None,
-                                associatedTaxpayers: List[String],
-                                isAffectedBy: Boolean) {
+                                associatedTaxpayers: List[String] = List.empty,
+                                isAffectedBy: Boolean = false) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString

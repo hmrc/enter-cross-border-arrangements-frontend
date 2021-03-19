@@ -332,6 +332,9 @@ POST       /associated-enterprises/affected-by/:id             controllers.enter
 GET        /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /associated-enterprises/change-affected-by/:id      controllers.enterprises.IsAssociatedEnterpriseAffectedController.onSubmit(id: Int, mode: Mode = CheckMode)
 
+GET        /associated-enterprises/remove/:id/:itemId          controllers.enterprises.AreYouSureYouWantToRemoveEnterpriseController.onPageLoad(id: Int, itemId: String)
+POST       /associated-enterprises/remove/:id/:itemId          controllers.enterprises.AreYouSureYouWantToRemoveEnterpriseController.onSubmit(id: Int, itemId: String)
+
 # INTERMEDIARIES
 
 GET        /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(id: Int, mode: Mode = NormalMode)
