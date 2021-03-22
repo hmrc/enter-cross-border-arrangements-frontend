@@ -708,6 +708,9 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a val
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a valid date
 
+implementingArrangementDate.part1.hint = This is when the first step of the arrangement was or will be made.
+implementingArrangementDate.part2.hint = For example, {0}
+
 youHaveNotAddedAnyIntermediaries.title = Your intermediaries
 youHaveNotAddedAnyIntermediaries.subHeading.1 = Does this arrangement involve any intermediaries?
 youHaveNotAddedAnyIntermediaries.subHeading.2 = Do you need to add another intermediary?
