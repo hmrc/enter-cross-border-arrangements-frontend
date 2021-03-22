@@ -147,7 +147,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   }
 
   def assertEmailKnown(yesOrNo: Boolean)(row: Row): Unit = {
-    row.key.text mustBe Some(Literal("Do you know their email address?"))
+    row.key.text mustBe Some(Literal("Do you want to provide an email address?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
     assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-email-address/0")(row.actions.head)
   }

@@ -130,7 +130,7 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
         rows.contains("""{"key":{"text":"Reporter’s name","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
         rows.contains("""{"key":{"text":"Address","classes":"govuk-!-width-one-half"},"value":{"html":"\n        addressLine 1<br>\n        addressLine 2<br>\n        addressLine 3<br>\n        addressLine 4<br>\n        town<br>\n        county<br>\n        postcode\n     "}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you have a contact email address at the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+        rows.contains("""{"key":{"text":"Do you want to provide an additional email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
 
         rows.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true
@@ -188,7 +188,7 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 1990"}""") mustBe true
         rows.contains("""{"key":{"text":"Place of birth","classes":"govuk-!-width-one-half"},"value":{"text":"Place of Birth"}""") mustBe true
         rows.contains("""{"key":{"text":"Address","classes":"govuk-!-width-one-half"},"value":{"html":"\n        addressLine 1<br>\n        addressLine 2<br>\n        addressLine 3<br>\n        addressLine 4<br>\n        town<br>\n        county<br>\n        postcode\n     "}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you have a preferred email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+        rows.contains("""{"key":{"text":"Do you want to provide an additional email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
 
         rows.contains("""{"key":{"text":"Tax resident countries","classes":"govuk-!-width-one-half"},"value":{"text":""}""") mustBe true

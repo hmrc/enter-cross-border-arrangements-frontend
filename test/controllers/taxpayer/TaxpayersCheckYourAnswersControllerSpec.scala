@@ -99,7 +99,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
         rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
       }
     }
@@ -130,7 +130,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know where they were born?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
         rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
       }
     }
