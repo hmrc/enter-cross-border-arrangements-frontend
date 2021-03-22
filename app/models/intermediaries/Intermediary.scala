@@ -18,6 +18,7 @@ package models.intermediaries
 
 import java.util.UUID
 import models.individual.Individual
+import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
 import models.{IsExemptionKnown, SelectType, UserAnswers}
 import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
@@ -26,8 +27,8 @@ import play.api.libs.json.{Json, OFormat}
 case class Intermediary(intermediaryId: String,
                         individual: Option[Individual] = None,
                         organisation: Option[Organisation] = None,
-                        whatTypeofIntermediary: WhatTypeofIntermediary,
-                        isExemptionKnown: IsExemptionKnown,
+                        whatTypeofIntermediary: WhatTypeofIntermediary = IDoNotKnow,
+                        isExemptionKnown: IsExemptionKnown = IsExemptionKnown.Unknown,
                         isExemptionCountryKnown: Option[Boolean] = None,
                         exemptCountries: Option[Set[ExemptCountries]] = None){
 

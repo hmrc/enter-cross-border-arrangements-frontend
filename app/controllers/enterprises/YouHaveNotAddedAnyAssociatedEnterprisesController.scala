@@ -19,8 +19,9 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
-import models.{Mode, UserAnswers}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.hallmarks.JourneyStatus
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseLoopPage, AssociatedEnterpriseStatusPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,10 +31,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import javax.inject.Inject
-import models.hallmarks.JourneyStatus
-import models.taxpayer.UpdateTaxpayer
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
@@ -53,12 +52,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      def namesOfAssociatedEnterprises(id: Int): IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-        case Some(list) =>
-          list.map(_.nameAsString)
-        case None => IndexedSeq.empty
-      }
-
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -66,10 +59,10 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios"  -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm),
-        "associatedEnterpriseList" -> namesOfAssociatedEnterprises(id)
+        "id"                       -> id,
+        "mode"                     -> mode,
+        "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm),
+        "associatedEnterpriseList" -> Json.toJson(toItemList(request.userAnswers, id))
       )
 
       renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(Ok(_))
@@ -78,24 +71,30 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAssociatedEnterprises]): Call =
     navigator.routeMap(YouHaveNotAddedAnyAssociatedEnterprisesPage)(checkRoute)(id)(value)(0)
 
+  private[enterprises] def toItemList(userAnswers: UserAnswers, id: Int): IndexedSeq[ItemList] = userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
+    case Some(list) =>
+      for {
+        enterprise <- list
+      } yield {
+        val changeUrl = "#" // TODO correct the change url
+        val removeUrl = routes.AreYouSureYouWantToRemoveEnterpriseController.onPageLoad(id, enterprise.enterpriseId).url
+        ItemList(enterprise.nameAsString, changeUrl, removeUrl)
+      }
+    case None => IndexedSeq.empty
+  }
+
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfAssociatedEnterprises: IndexedSeq[String] = request.userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-            case Some(list) =>
-              list.map(_.nameAsString)
-            case None => IndexedSeq.empty
-          }
-
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
-            "associatedEnterpriseList" -> namesOfAssociatedEnterprises
+            "id"                       -> id,
+            "mode"                     -> mode,
+            "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
+            "associatedEnterpriseList" -> Json.toJson(toItemList(request.userAnswers, id)),
           )
 
           renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))

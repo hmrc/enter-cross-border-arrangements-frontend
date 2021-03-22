@@ -20,7 +20,8 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
-import models.{Mode, UserAnswers}
+import models.hallmarks.JourneyStatus
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, AffectedStatusPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,10 +31,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import javax.inject.Inject
-import models.hallmarks.JourneyStatus
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouHaveNotAddedAnyAffectedController @Inject()(
@@ -58,24 +57,12 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val namesOfAffected: IndexedSeq[String] = request.userAnswers.get(AffectedLoopPage, id) match {
-        case Some(list) =>
-          for {
-            affected <- list
-          } yield {
-            //TODO Uncomment for change and remove links and change to "affectedList" -> Json.toJson(namesOfAffected)
-            //ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
-            affected.nameAsString
-          }
-        case None => IndexedSeq.empty
-      }
-
       val json = Json.obj(
         "form" -> preparedForm,
-        "id" -> id,
-        "mode"       -> mode,
-        "affectedList" -> namesOfAffected,
-        "radios" -> YouHaveNotAddedAnyAffected.radios(preparedForm)
+        "id"           -> id,
+        "mode"         -> mode,
+        "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
+        "radios"       -> YouHaveNotAddedAnyAffected.radios(preparedForm)
       )
 
       renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(Ok(_))
@@ -84,30 +71,30 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[YouHaveNotAddedAnyAffected]): Call =
     navigator.routeMap(YouHaveNotAddedAnyAffectedPage)(checkRoute)(id)(value)(0)
 
+  private[affected] def toItemList(userAnswers: UserAnswers, id: Int): IndexedSeq[ItemList] = userAnswers.get(AffectedLoopPage, id) match {
+    case Some(list) =>
+      for {
+        affected <- list
+      } yield {
+        val changeUrl = "#" // TODO correct the change url
+        val removeUrl = routes.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id, affected.affectedId).url
+        ItemList(affected.nameAsString, changeUrl, removeUrl)
+      }
+    case None => IndexedSeq.empty
+  }
+
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val namesOfAffected: IndexedSeq[String] = request.userAnswers.get(AffectedLoopPage, id) match {
-            case Some(list) =>
-              for {
-                affected <- list
-              } yield {
-                //TODO Uncomment for change and remove links and change to "affectedList" -> Json.toJson(namesOfAffected)
-                //ItemList(name = affected.nameAsString, changeUrl = "#", removeUrl = "#")
-                affected.nameAsString
-              }
-            case None => IndexedSeq.empty
-          }
-
           val json = Json.obj(
             "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "affectedList" -> namesOfAffected,
-            "radios" -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
+            "id"           -> id,
+            "mode"         -> mode,
+            "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
+            "radios"       -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
           )
 
           renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(BadRequest(_))
