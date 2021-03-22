@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("areYouSureYouWantToRemoveAffected.title", name), form.errors) }}
+  {{ title(messages("areYouSureYouWantToRemoveAffected.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
