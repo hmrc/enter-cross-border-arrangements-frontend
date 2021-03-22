@@ -168,7 +168,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       }
 
-      "must return TRUE when mandatory Journeys have a COMPLETED status and optional Journeys are not started for a replace disclosure" in {
+      "must return TRUE when mandatory Journeys have a COMPLETED status and optional Journeys are NOT STARTED" in {
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
@@ -184,6 +184,31 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
         haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
+
+      }
+
+      "must return FALSE when mandatory Journeys have a COMPLETED status and optional Journeys are IN PROGRESS" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
+          .success
+          .value
+          .set(HallmarkStatusPage, index, InProgress)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, InProgress)
+          .success
+          .value
+
+        val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
+
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
 
       }
 
@@ -467,7 +492,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
       }
 
       "must be false if user is doing ADDITIONAL DISCLOSURE for an initial disclosure that IS MARKETABLE and " +

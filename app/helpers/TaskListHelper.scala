@@ -68,6 +68,7 @@ object TaskListHelper  {
                                    isInitialDisclosureMarketable: Boolean): Boolean = {
     pageList.map(page => ua.get(page, id) match {
       case Some(Completed) => true
+      case Some(InProgress) if isInitialDisclosureMarketable && optionalCompletion.contains(page) => false
       case _ if isInitialDisclosureMarketable && optionalCompletion.contains(page) => true
       case _ => false
     }).forall(bool => bool)
@@ -114,7 +115,7 @@ object TaskListHelper  {
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
       getDisclosureTypeWithMAFlag(ua, id) match {
-        case (Some(DisclosureType.Dac6add), true) =>
+        case (Some(DisclosureType.Dac6add), true) if !isInitialDisclosureMarketable =>
           mandatoryCompletion
         case _ =>
           mandatoryCompletion ++ optionalCompletion

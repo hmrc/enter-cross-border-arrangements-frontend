@@ -159,39 +159,6 @@ class DisclosureDetailsController @Inject()(
     }
   }
 
-  private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
-                                                 (implicit hc: HeaderCarrier): Future[Boolean] = {
-
-    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
-      case Some(details) => details
-      case None => throw new Exception("Missing disclosure details")
-    }
-
-    if (disclosureDetails.disclosureType == Dac6rep) {
-      historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
-        firstDisclosureDetails =>
-          historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
-            submissionHistory =>
-              for {
-                userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
-                _           <- sessionRepository.set(userAnswers)
-              } yield {
-                if (submissionHistory.details.nonEmpty &&
-                  submissionHistory.details.head.importInstruction == "Add" &&
-                  firstDisclosureDetails.initialDisclosureMA) {
-                  //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
-                  true
-                } else {
-                  false
-                }
-              }
-          }
-      }
-    } else {
-      Future.successful(false)
-    }
-  }
-
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
       val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
