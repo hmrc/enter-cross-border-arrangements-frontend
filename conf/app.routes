@@ -288,8 +288,8 @@ POST       /arrangement/change-details/:id                  controllers.arrangem
 
 # TAXPAYER ROUTES
 
-GET        /taxpayer/remove/:id                             controllers.taxpayer.RemoveTaxpayerController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /taxpayer/remove/:id                             controllers.taxpayer.RemoveTaxpayerController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onPageLoad(id: Int, itemId: String)
+POST       /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onSubmit(id: Int, itemId: String)
 
 GET        /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad(id: Int)
 POST       /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)

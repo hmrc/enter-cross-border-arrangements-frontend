@@ -27,16 +27,15 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.taxpayer.RemoveTaxpayerController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.taxpayer.RemoveTaxpayerController.onSubmit(id, itemId).url }}" method="post">
 
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            classes: "govuk-radios--inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('removeTaxpayer.title'),
+                text: messages('removeTaxpayer.heading', name),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
@@ -46,7 +45,9 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            preventDoubleClick: true,
+            attributes: {id:"submit"}
           }) }}
 
         </form>

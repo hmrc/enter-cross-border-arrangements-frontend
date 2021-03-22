@@ -19,9 +19,8 @@ package controllers.taxpayer
 import controllers.actions._
 import forms.taxpayer.RemoveTaxpayerFormProvider
 import javax.inject.Inject
-import models.Mode
-import navigation.Navigator
-import pages.taxpayer.RemoveTaxpayerPage
+import models.UserAnswers
+import pages.taxpayer.TaxpayerLoopPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +34,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemoveTaxpayerController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
-    navigator: Navigator,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -46,24 +44,23 @@ class RemoveTaxpayerController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(RemoveTaxpayerPage, id) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm = form
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "mode"   -> mode,
+        "id"     -> id,
+        "itemId" -> itemId,
+        "name"   -> getTaxpayerName(request.userAnswers, id, itemId),
         "radios" -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("taxpayer/removeTaxpayer.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -71,17 +68,25 @@ class RemoveTaxpayerController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "mode"   -> mode,
+            "id"     -> id,
+            "itemId" -> itemId,
+            "name"   -> getTaxpayerName(request.userAnswers, id, itemId),
             "radios" -> Radios.yesNo(formWithErrors("value"))
           )
 
           renderer.render("taxpayer/removeTaxpayer.njk", json).map(BadRequest(_))
         },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveTaxpayerPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RemoveTaxpayerPage, id, mode, updatedAnswers))
+        value => {
+          if (value) {
+            val updatedLoop = request.userAnswers.get(TaxpayerLoopPage, id).map(_.filterNot(_.taxpayerId == itemId)).getOrElse(IndexedSeq.empty)
+            request.userAnswers.set(TaxpayerLoopPage, id, updatedLoop).foreach(sessionRepository.set)
+          }
+          Future.successful(Redirect(routes.UpdateTaxpayerController.onPageLoad(id)))
+        }
       )
   }
+
+  def getTaxpayerName(ua: UserAnswers, id: Int, itemId: String): String =
+    ua.get(TaxpayerLoopPage, id).flatMap(_.find(_.taxpayerId == itemId)).map(_.nameAsString).getOrElse("")
+
 }

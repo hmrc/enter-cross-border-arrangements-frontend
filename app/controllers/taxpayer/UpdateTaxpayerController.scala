@@ -67,7 +67,7 @@ class UpdateTaxpayerController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "taxpayerList" -> Json.toJson(getTaxpayerNames(request.userAnswers, id)),
+        "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
         "id" -> id,
         "mode"   -> mode,
         "radios"  -> UpdateTaxpayer.radios(preparedForm)
@@ -88,7 +88,7 @@ class UpdateTaxpayerController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "id" -> id,
-            "taxpayerList" -> Json.toJson(getTaxpayerNames(request.userAnswers, id)),
+            "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
             "mode"   -> mode,
             "radios" -> UpdateTaxpayer.radios(formWithErrors)
           )
@@ -136,17 +136,16 @@ class UpdateTaxpayerController @Inject()(
     }
   }
 
-  private def getTaxpayerNames(ua: UserAnswers, id: Int) = {
+  private[taxpayer] def toItemList(ua: UserAnswers, id: Int) = ua.get(TaxpayerLoopPage, id) match {
 
-    ua.get(TaxpayerLoopPage, id) match {
-      case Some(list) =>
-        for {
-          taxpayer <- list
-        } yield {
-          val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.TaxpayerSelectTypeController.onPageLoad(id, NormalMode).url else "#"
-          ItemList(name = taxpayer.nameAsString, changeUrl = changeUrl, removeUrl = "#")
-        }
-      case None => IndexedSeq.empty
-    }
+    case Some(list) =>
+      for {
+        taxpayer <- list
+      } yield {
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.TaxpayerSelectTypeController.onPageLoad(id, NormalMode).url else "#"
+        val removeUrl = routes.RemoveTaxpayerController.onPageLoad(id, taxpayer.taxpayerId).url
+        ItemList(taxpayer.nameAsString, changeUrl, removeUrl)
+      }
+    case None => IndexedSeq.empty
   }
 }
