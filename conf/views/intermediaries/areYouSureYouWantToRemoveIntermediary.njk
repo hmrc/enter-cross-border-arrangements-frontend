@@ -22,7 +22,7 @@
 
         {% if form.errors.length > 0 %}
           {{ govukErrorSummary({
-            "titleText": messages("error.summary.title", name),
+            "titleText": messages("error.summary.heading", name),
             "errorList": form.errors
           }) }}
         {% endif %}
@@ -35,7 +35,7 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('areYouSureYouWantToRemoveIntermediary.title', name),
+                text: messages('areYouSureYouWantToRemoveIntermediary.heading', name),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
