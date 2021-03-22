@@ -517,7 +517,7 @@ whatIsThisArrangementCalled.error.length = Arrangement name must be 400 characte
 
 whatIsTheImplementationDate.title = What is the implementation date?
 whatIsTheImplementationDate.heading = What is the implementation date?
-whatIsTheImplementationDate.part1.hint = This is when the first step of the arrangement was or will be made.
+whatIsTheImplementationDate.part1.hint = This is when the first step of the arrangement was or will be made. It can also be the reporting trigger date or an estimate of when advice was given.
 whatIsTheImplementationDate.part2.hint = For example, {0}
 whatIsTheImplementationDate.checkYourAnswersLabel = Implementing date
 whatIsTheImplementationDate.error.required.all = Provide a date
