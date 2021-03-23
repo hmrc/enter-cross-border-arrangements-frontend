@@ -21,9 +21,10 @@ import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
+import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
-import models.hallmarks.JourneyStatus.Completed
+import models.hallmarks.JourneyStatus.{Completed, NotStarted}
 import models.{NormalMode, Submission, UserAnswers}
 import navigation.NavigatorForDisclosure
 import pages.affected.AffectedStatusPage
@@ -45,6 +46,7 @@ import services.XMLGenerationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
+
 import javax.inject.Inject
 import models.reporter.RoleInArrangement.Taxpayer
 
@@ -75,21 +77,21 @@ class DisclosureDetailsController @Inject()(
           .getOrElse("")
       }
 
-      isReplacingAMarketableAddDisclosure(request.userAnswers.get, id).flatMap { replaceAMarketableAddDisclosure =>
+      isInitialDisclosureMarketable(request.userAnswers.get, id).flatMap { isInitialDisclosureMarketable =>
 
         val json = Json.obj(
           "id" -> id,
           "arrangementID" -> arrangementMessage,
           "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
-          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id),
+          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id, isInitialDisclosureMarketable),
           "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
           "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
           "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
           "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
           "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
           "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
-          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, replaceAMarketableAddDisclosure),
+          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, isInitialDisclosureMarketable),
+          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, isInitialDisclosureMarketable),
           "backLink" -> backLink
         )
         renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
@@ -119,37 +121,39 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-
-  private def isReplacingAMarketableAddDisclosure(userAnswers: UserAnswers, id: Int)
-                                                 (implicit hc: HeaderCarrier): Future[Boolean] = {
+  private def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int)
+                                           (implicit hc: HeaderCarrier): Future[Boolean] = {
 
     val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
       case Some(details) => details
       case None => throw new Exception("Missing disclosure details")
     }
 
-    if (disclosureDetails.disclosureType == Dac6rep) {
-      historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
-        firstDisclosureDetails =>
-          historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
-            submissionHistory =>
-              for {
-                userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
-                _           <- sessionRepository.set(userAnswers)
-              } yield {
-                if (submissionHistory.details.nonEmpty &&
-                  submissionHistory.details.head.importInstruction == "Add" &&
-                  firstDisclosureDetails.initialDisclosureMA) {
-                  //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
-                  true
-                } else {
-                  false
+    historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
+      firstDisclosureDetails =>
+        disclosureDetails.disclosureType match {
+          case DisclosureType.Dac6add => Future.successful(firstDisclosureDetails.initialDisclosureMA)
+          case DisclosureType.Dac6rep =>
+            historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
+              submissionHistory =>
+                for {
+                  userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
+                  _ <- sessionRepository.set(userAnswers)
+                } yield {
+                  if (submissionHistory.details.nonEmpty &&
+                    submissionHistory.details.head.importInstruction == "Add" &&
+                    firstDisclosureDetails.initialDisclosureMA) {
+                    //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
+                    true
+                  } else {
+                    false
+                  }
                 }
-              }
-          }
-      }
-    } else {
-      Future.successful(false)
+            }
+          case _ => Future.successful(false)
+        }
+    }.recoverWith {
+      case _ => Future.successful(false)
     }
   }
 
@@ -201,19 +205,27 @@ class DisclosureDetailsController @Inject()(
   }
 
   private def arrangementsItem(ua: UserAnswers,
-                               page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+                               page: QuestionPage[JourneyStatus],
+                               index: Int,
+                               isInitialDisclosureMarketable: Boolean)(implicit messages: Messages) = {
 
     val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
 
-    retrieveRowWithStatus(ua: UserAnswers,
-      page,
-      dynamicLink,
-      linkContent = "disclosureDetails.arrangementDetailsLink",
-      id = "arrangementDetails",
-      ariaLabel = "arrangementDetails",
-      rowStyle = "item",
-      index
-    )
+    ua.get(HallmarkStatusPage, index) match {
+      case None if isInitialDisclosureMarketable =>
+        taskListItemRestricted(
+          "disclosureDetails.arrangementDetailsLink", "arrangementDetails", "item")
+      case _ =>
+        retrieveRowWithStatus(ua: UserAnswers,
+          page,
+          dynamicLink,
+          linkContent = "disclosureDetails.arrangementDetailsLink",
+          id = "arrangementDetails",
+          ariaLabel = "arrangementDetails",
+          rowStyle = "item",
+          index
+        )
+    }
   }
 
   private def reporterDetailsItem(ua: UserAnswers,

@@ -164,11 +164,11 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
 
       }
 
-      "must return TRUE when mandatory Journeys have a COMPLETED status and optional Journeys are not started for a replace disclosure" in {
+      "must return TRUE when mandatory Journeys have a COMPLETED status and optional Journeys are NOT STARTED" in {
 
         val userAnswers = UserAnswers(userAnswersId)
           .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
@@ -183,7 +183,32 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, replaceAMarketableAddDisclosure = true) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
+
+      }
+
+      "must return FALSE when mandatory Journeys have a COMPLETED status and optional Journeys are IN PROGRESS" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
+          .success
+          .value
+          .set(HallmarkStatusPage, index, InProgress)
+          .success
+          .value
+          .set(ArrangementStatusPage, index, InProgress)
+          .success
+          .value
+
+        val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
+
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
 
       }
 
@@ -202,7 +227,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
 
       }
     }
@@ -267,7 +292,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
       }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
@@ -299,7 +324,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = true) mustBe true
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
       }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -340,7 +365,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
       }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -381,7 +406,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe false
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
       }
 
       "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
@@ -424,7 +449,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
       }
 
       "must be true if user has reported as a Intermediary but no associated enterprise" in {
@@ -467,7 +492,42 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        userCanSubmit(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe true
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+      }
+
+      "must be false if user is doing ADDITIONAL DISCLOSURE for an initial disclosure that IS MARKETABLE and " +
+        "has completed HALLMARKS but not ARRANGEMENT DETAILS journey" in {
+
+        val userAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+          .success
+          .value
+          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
+          .success
+          .value
+          .set(ReporterStatusPage, index, Completed)
+          .success
+          .value
+          .set(RelevantTaxpayerStatusPage, index, Completed)
+          .success
+          .value
+          .set(IntermediariesStatusPage, index, Completed)
+          .success
+          .value
+          .set(AffectedStatusPage, index, Completed)
+          .success
+          .value
+          .set(AssociatedEnterpriseStatusPage, index, Completed)
+          .success
+          .value
+          .set(DisclosureStatusPage, index, Completed)
+          .success
+          .value
+          .set(HallmarkStatusPage, index, Completed)
+          .success
+          .value
+
+        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
       }
     }
 
@@ -484,7 +544,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe "(optional)"
+        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe "(optional)"
       }
 
       "must return string '(optional)' when user is submitting a REPLACEMENT disclosure " +
@@ -498,7 +558,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = true) mustBe "(optional)"
+        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = true) mustBe "(optional)"
       }
 
       "must return an empty string when user is disclosing an other arrangement combo" in {
@@ -511,7 +571,7 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
           .success
           .value
 
-        displaySectionOptional(userAnswers, index, replaceAMarketableAddDisclosure = false) mustBe ""
+        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe ""
       }
     }
   }
