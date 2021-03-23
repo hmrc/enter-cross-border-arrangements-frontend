@@ -129,20 +129,16 @@ class DisclosureDetailsController @Inject()(
       case None => throw new Exception("Missing disclosure details")
     }
 
-    disclosureDetails.disclosureType match {
-      case DisclosureType.Dac6add =>
-        historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).map {
-          firstDisclosureDetails =>
-            firstDisclosureDetails.initialDisclosureMA
-        }
-      case DisclosureType.Dac6rep =>
-        historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
-          firstDisclosureDetails =>
+    historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
+      firstDisclosureDetails =>
+        disclosureDetails.disclosureType match {
+          case DisclosureType.Dac6add => Future.successful(firstDisclosureDetails.initialDisclosureMA)
+          case DisclosureType.Dac6rep =>
             historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
               submissionHistory =>
                 for {
                   userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
-                  _           <- sessionRepository.set(userAnswers)
+                  _ <- sessionRepository.set(userAnswers)
                 } yield {
                   if (submissionHistory.details.nonEmpty &&
                     submissionHistory.details.head.importInstruction == "Add" &&
@@ -154,7 +150,9 @@ class DisclosureDetailsController @Inject()(
                   }
                 }
             }
+          case _ => Future.successful(false)
         }
+    }.recoverWith {
       case _ => Future.successful(false)
     }
   }
