@@ -517,7 +517,7 @@ whatIsThisArrangementCalled.error.length = Arrangement name must be 400 characte
 
 whatIsTheImplementationDate.title = What is the implementation date?
 whatIsTheImplementationDate.heading = What is the implementation date?
-whatIsTheImplementationDate.part1.hint = This is when the first step of the arrangement was or will be made.
+whatIsTheImplementationDate.part1.hint = This is when the first step of the arrangement was or will be made. It can also be the reporting trigger date or an estimate of when advice was given.
 whatIsTheImplementationDate.part2.hint = For example, {0}
 whatIsTheImplementationDate.checkYourAnswersLabel = Implementing date
 whatIsTheImplementationDate.error.required.all = Provide a date
@@ -707,6 +707,9 @@ whatIsTaxpayersStartDateForImplementingArrangement.error.required = The implemen
 whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a valid date
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a valid date
+
+implementingArrangementDate.part1.hint = This is when the first step of the arrangement was or will be made.
+implementingArrangementDate.part2.hint = For example, {0}
 
 youHaveNotAddedAnyIntermediaries.title = Your intermediaries
 youHaveNotAddedAnyIntermediaries.subHeading.1 = Does this arrangement involve any intermediaries?
