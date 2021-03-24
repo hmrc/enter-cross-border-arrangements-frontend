@@ -671,7 +671,7 @@ associatedEnterpriseType.error.required = Select the type of associated enterpri
 
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} is exempt from reporting in?
-isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known
+isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known?
 isExemptionCountryKnown.error.required = Select yes if you know which countries the intermediary is exempt from reporting in
 
 isExemptionKnown.title = Are they exempt from reporting?
@@ -683,13 +683,13 @@ isExemptionKnown.hint.4 = the intermediary is covered by legal, professional pri
 isExemptionKnown.yes = Yes
 isExemptionKnown.no = No
 isExemptionKnown.unknown = I do not know
-isExemptionKnown.checkYourAnswersLabel = Any reporting exemptions known?
+isExemptionKnown.checkYourAnswersLabel = Reporting exemption known?
 isExemptionKnown.error.required = Select yes if you know the intermediary is exempt from reporting in an EU member state, or in the UK
 
 exemptCountries.title = Choose exempt countries
 exemptCountries.heading = Which countries is {0} exempt from reporting in?
 exemptCountries.hint = Select all that apply.
-exemptCountries.checkYourAnswersLabel = Exempt Countries
+exemptCountries.checkYourAnswersLabel = Exempt countries
 exemptCountries.error.required = Select all countries you know the intermediary is exempt from reporting in
 
 whatIsTaxpayersStartDateForImplementingArrangement.title = What is their implementation date?

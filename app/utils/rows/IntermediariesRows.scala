@@ -17,6 +17,7 @@
 package utils.rows
 
 import models.CheckMode
+import models.intermediaries.ExemptCountries
 import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage}
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
@@ -69,7 +70,6 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-
   def gbSort(exemptCountries : List[String]) : List[String] = {
 
     val gbMessage = msg"countriesListCheckboxes.GB".resolve
@@ -86,7 +86,7 @@ trait IntermediariesRows extends RowBuilder {
 
       Row(
         key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(gbSort(answer.map(_.toString).toList.map(country => msg"countriesListCheckboxes.$country".resolve)).mkString(",<br>"))),
+        value   = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty))),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -95,6 +95,18 @@ trait IntermediariesRows extends RowBuilder {
           )
         )
       )
+  }
+
+  private def formatExemptCountriesList(selectedCountries: Set[ExemptCountries], singleItem: Boolean) = {
+
+    val getCountryName = selectedCountries.map(_.toString).toSeq.map(
+      countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
+
+    if (singleItem) {
+      getCountryName.head
+    } else {
+      s"<ul class='govuk-list govuk-list--bullet'>${getCountryName.foldLeft("")((a, b) => s"$a<li>$b</li>")}</ul>"
+    }
   }
 
   import pages.intermediaries.WhatTypeofIntermediaryPage
