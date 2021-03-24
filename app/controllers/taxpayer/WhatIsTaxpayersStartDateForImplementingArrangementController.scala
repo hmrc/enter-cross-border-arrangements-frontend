@@ -56,10 +56,16 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val viewModel: DateInput.ViewModel = DateInput.localDate(form("value"))
+      val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) match {
+        case Some(value) => form.fill(value)
+        case None        => form
+      }
+
+      val viewModel = DateInput.localDate(preparedForm("value"))
+
 
       val json = Json.obj (
-        "form" -> form,
+        "form" -> preparedForm,
         "mode" -> mode,
         "date" -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),

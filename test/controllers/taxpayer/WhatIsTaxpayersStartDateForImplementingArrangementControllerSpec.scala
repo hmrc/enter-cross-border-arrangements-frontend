@@ -131,10 +131,18 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val viewModel = DateInput.localDate(form("value"))
+      val filledForm = form.bind(
+        Map(
+          "value.day"   -> validAnswer.getDayOfMonth.toString,
+          "value.month" -> validAnswer.getMonthValue.toString,
+          "value.year"  -> validAnswer.getYear.toString
+        )
+      )
+
+      val viewModel = DateInput.localDate(filledForm("value"))
 
       val expectedJson = Json.obj(
-        "form" -> form,
+        "form" -> filledForm,
         "mode" -> NormalMode,
         "date" -> viewModel
       )
