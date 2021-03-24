@@ -57,16 +57,11 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-          val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-
           val json = Json.obj(
-            "form" -> preparedForm,
+            "form" -> form,
             "id" -> id,
             "mode" -> mode,
-            "checkboxes" -> enterpriseCheckboxes(preparedForm, request.userAnswers, id)
+            "checkboxes" -> enterpriseCheckboxes(form, request.userAnswers, id)
           )
           renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
   }

@@ -124,12 +124,10 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(List("Taxpayer Ltd"))
-
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
+        "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> taxpayerCheckboxes(filledForm, taxpayers)
+        "checkboxes" -> taxpayerCheckboxes(form, taxpayers)
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
@@ -166,10 +164,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(List("Taxpayer Ltd"))
-
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
+        "form"       -> form,
         "mode"       -> NormalMode,
         "checkboxes" -> Checkboxes.set(field,
           Seq(Checkboxes.Checkbox(label = Literal(reporterName), value = s"$reporterName")))
