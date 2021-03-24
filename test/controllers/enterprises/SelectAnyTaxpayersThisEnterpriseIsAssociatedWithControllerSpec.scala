@@ -167,7 +167,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       
       val expectedJson = Json.obj(
-        "form"       -> form,
+        "form"       -> filledForm,
         "mode"       -> NormalMode,
         "checkboxes" -> Checkboxes.set(field,
           Seq(Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}")))
