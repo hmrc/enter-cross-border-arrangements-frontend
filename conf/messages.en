@@ -377,8 +377,8 @@ emailAddressQuestionForOrganisation.guidance = We will only use this to get in c
 emailAddressQuestionForOrganisation.checkYourAnswersLabel = Do you want to provide an email address?
 emailAddressQuestionForOrganisation.error.required = Select yes if you know the email address for a main contact at the organisation
 
-emailAddressForOrganisation.title = What is organisation's email address?
-emailAddressForOrganisation.heading = What is {0}'s email address?
+emailAddressForOrganisation.title = What is organisation’s email address?
+emailAddressForOrganisation.heading = What is {0}’s email address?
 emailAddressForOrganisation.checkYourAnswersLabel = Email address
 emailAddressForOrganisation.error.required = Enter an email address
 emailAddressForOrganisation.error.invalid = Enter an email address in the correct format, like name@example.com
