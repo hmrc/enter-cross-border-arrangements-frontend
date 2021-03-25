@@ -16,11 +16,22 @@
 
 package pages.reporter
 
-import models.{Address, AddressLookup, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
+import models.CountriesListEUCheckboxes.Austria
+import models.YesNoDoNotKnowRadios.Yes
+import models.intermediaries.WhatTypeofIntermediary.Serviceprovider
+import models.reporter.RoleInArrangement.Intermediary
+import models.reporter.intermediary.IntermediaryRole.Promoter
+import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
+import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
+import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
+import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.reporter.individual._
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation._
+import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
@@ -130,5 +141,48 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
       }
     }
 
+    "must reset Reporter, Taxpayer and Intermediary values if role is updated" in {
+      val unitedKingdom: Country = Country("valid", "GB", "United Kingdom")
+      val utr: TaxReferenceNumbers = TaxReferenceNumbers("UTR12341234", None, None)
+      val loopDetailsUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(unitedKingdom), Some(false), None, Some(true), Some(utr)))
+
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+           .set(IntermediaryExemptionInEUPage, 0, Yes).success.value
+           .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK).success.value
+           .set(WhatTypeofIntermediaryPage, 0, Serviceprovider).success.value
+           .set(IntermediaryRolePage, 0, Promoter).success.value
+           .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
+           .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.values.toSet).success.value
+           .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident).success.value
+           .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries).success.value
+           .set(ReporterTaxResidentCountryPage, 0, unitedKingdom).success.value
+           .set(ReporterTaxResidencyLoopPage, 0, loopDetailsUK).success.value
+           .set(ReporterTinNonUKQuestionPage, 0, true).success.value
+           .set(ReporterNonUKTaxNumbersPage, 0, utr).success.value
+           .set(RoleInArrangementPage, 0, Intermediary).success.value
+           .set(ReporterOtherTaxResidentQuestionPage, 0 , true).success.value
+           .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation)
+           .success.value
+
+          result.get(IntermediaryExemptionInEUPage, 0) must not be defined
+          result.get(IntermediaryWhyReportInUKPage, 0) must not be defined
+          result.get(IntermediaryRolePage, 0) must not be defined
+          result.get(WhatTypeofIntermediaryPage, 0) must not be defined
+          result.get(IntermediaryDoYouKnowExemptionsPage, 0) must not be defined
+          result.get(IntermediaryWhichCountriesExemptPage, 0) must not be defined
+          result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
+          result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+          result.get(ReporterTaxResidentCountryPage, 0) must not be defined
+          result.get(ReporterTaxResidencyLoopPage, 0) must not be defined
+          result.get(ReporterTinNonUKQuestionPage, 0) must not be defined
+          result.get(RoleInArrangementPage, 0) must not be defined
+          result.get(ReporterOtherTaxResidentQuestionPage, 0) must not be defined
+          result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+
+      }
+    }
   }
 }
