@@ -49,12 +49,15 @@
       </span>
       {%- endif -%}
 
+      {# TODO remove "if/endif" after DAC6-413 is merged #}
+      {%- if item.removeUrl != "#" -%}
       <span class="hmrc-add-to-a-list__remove">
         <a class="govuk-link" href="{{ item.removeUrl }}">
           <span aria-hidden="true">{{messages.remove}}</span>
           <span class="govuk-visually-hidden">{{messages.aria.before}} {{ item.name }} {{messages.aria.after}}</span>
         </a>
       </span>
+      {%- endif -%}
 
       </li>
     {% else %}
