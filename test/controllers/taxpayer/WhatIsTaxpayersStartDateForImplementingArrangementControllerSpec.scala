@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
 import models.SelectType.Organisation
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -51,6 +51,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
   lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, NormalMode).url
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementCheckRoute = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, CheckMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -75,12 +76,9 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(OrganisationNamePage, 0, "validAnswer")
-        .success
-        .value
-        .set(TaxpayerSelectTypePage, 0, Organisation)
-        .success
-        .value
+        .set(OrganisationNamePage, 0, "validAnswer").success.value
+        .set(TaxpayerSelectTypePage, 0, Organisation).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -105,7 +103,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when in check mode and the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -125,7 +123,9 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val request = FakeRequest("GET", whatIsTaxpayersStartDateForImplementingArrangementCheckRoute)
+
+      val result = route(application, request).value
 
       status(result) mustEqual OK
 
@@ -143,7 +143,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode,
+        "mode" -> CheckMode,
         "date" -> viewModel
       )
 

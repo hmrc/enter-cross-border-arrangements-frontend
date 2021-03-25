@@ -17,15 +17,15 @@
 package controllers.reporter.taxpayer
 
 import java.time.LocalDate
-
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import helpers.DateHelper.dateFormatterNumericDMY
 import helpers.JourneyHelpers._
+
 import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
-import models.{Mode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import navigation.NavigatorForReporter
 import pages.reporter.ReporterOrganisationOrIndividualPage
 import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangementPage
@@ -63,8 +63,8 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+        case Some(value) if mode == CheckMode => form.fill(value)
+        case _ => form
       }
 
       val viewModel = DateInput.localDate(preparedForm("value"))
