@@ -170,7 +170,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val filledForm = form.fill(List("Taxpayer Ltd"))
 
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
+        "form"       -> form,
         "mode"       -> NormalMode,
         "checkboxes" -> Checkboxes.set(field,
           Seq(Checkboxes.Checkbox(label = Literal(reporterName), value = s"$reporterName")))
