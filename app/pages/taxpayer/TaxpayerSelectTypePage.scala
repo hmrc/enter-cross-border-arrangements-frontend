@@ -17,10 +17,8 @@
 package pages.taxpayer
 
 import models.{SelectType, UserAnswers}
-import pages.individual._
-import pages.organisation._
-import play.api.libs.json.JsPath
 import pages._
+import play.api.libs.json.JsPath
 
 import scala.util.Try
 
@@ -29,4 +27,7 @@ case object TaxpayerSelectTypePage extends QuestionPage[SelectType] with CleanUp
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "selectType"
+
+  override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
 }

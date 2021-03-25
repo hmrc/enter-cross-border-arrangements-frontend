@@ -20,6 +20,7 @@ import models.{SelectType, UserAnswers}
 import pages.individual._
 import pages.organisation._
 
+
 import scala.util.{Success, Try}
 
 trait CleanUpSelectTypePage extends QuestionPage[SelectType] {

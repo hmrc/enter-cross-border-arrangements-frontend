@@ -31,10 +31,10 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.reporter.individual._
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation._
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZoneOffset}
 
 class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
 
@@ -158,6 +158,7 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
            .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.values.toSet).success.value
            .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident).success.value
            .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries).success.value
+            .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now(ZoneOffset.UTC)).success.value
            .set(ReporterTaxResidentCountryPage, 0, unitedKingdom).success.value
            .set(ReporterTaxResidencyLoopPage, 0, loopDetailsUK).success.value
            .set(ReporterTinNonUKQuestionPage, 0, true).success.value
@@ -175,6 +176,7 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
           result.get(IntermediaryWhichCountriesExemptPage, 0) must not be defined
           result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
           result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+          result.get(ReporterTaxpayersStartDateForImplementingArrangementPage, 0) must not be defined
           result.get(ReporterTaxResidentCountryPage, 0) must not be defined
           result.get(ReporterTaxResidencyLoopPage, 0) must not be defined
           result.get(ReporterTinNonUKQuestionPage, 0) must not be defined

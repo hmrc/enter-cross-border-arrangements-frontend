@@ -112,13 +112,13 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, validAnswer)
-        .success
-        .value
         .set(TaxpayerSelectTypePage, 0, Organisation)
         .success
         .value
         .set(OrganisationNamePage, 0, "validAnswer")
+        .success
+        .value
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, validAnswer)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

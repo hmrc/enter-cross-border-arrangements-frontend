@@ -23,7 +23,7 @@ import pages.intermediaries.WhatTypeofIntermediaryPage
 import pages.reporter.individual._
 import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation._
-import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -41,7 +41,8 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
   val taxpayersPageList = List(
     TaxpayerWhyReportInUKPage,
-    TaxpayerWhyReportArrangementPage
+    TaxpayerWhyReportArrangementPage,
+    ReporterTaxpayersStartDateForImplementingArrangementPage
   )
 
   val reporterPageList = List(
