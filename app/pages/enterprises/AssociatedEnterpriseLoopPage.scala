@@ -16,9 +16,12 @@
 
 package pages.enterprises
 
+import models.UserAnswers
 import models.enterprises.AssociatedEnterprise
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object AssociatedEnterpriseLoopPage extends QuestionPage[IndexedSeq[AssociatedEnterprise]] {
 
@@ -26,4 +29,12 @@ case object AssociatedEnterpriseLoopPage extends QuestionPage[IndexedSeq[Associa
 
   override def toString: String = "associatedEnterpriseLoop"
 
+  override def cleanup(value: Option[IndexedSeq[AssociatedEnterprise]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    for {
+      ua1 <- userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
+      ua2 <- ua1.remove(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id)
+      ua3 <- ua2.remove(AssociatedEnterpriseTypePage, id)
+      ua4 <- ua3.remove(IsAssociatedEnterpriseAffectedPage, id)
+    } yield ua4
+  }
 }

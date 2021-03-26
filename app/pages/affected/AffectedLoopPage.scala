@@ -29,4 +29,11 @@ case object AffectedLoopPage extends QuestionPage[IndexedSeq[Affected]] {
 
   override def toString: String = "affectedLoop"
 
+  override def cleanup(value: Option[IndexedSeq[Affected]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    for {
+      ua1 <- userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id)
+      ua2 <- ua1.remove(AffectedTypePage, id)
+    } yield ua2
+  }
+
 }

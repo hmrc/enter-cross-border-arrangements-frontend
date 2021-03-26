@@ -16,12 +16,26 @@
 
 package pages.intermediaries
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
 import models.intermediaries.Intermediary
 import pages.QuestionPage
+
+import scala.util.Try
 
 case object IntermediaryLoopPage extends QuestionPage[IndexedSeq[Intermediary]] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryLoop"
+
+  override def cleanup(value: Option[IndexedSeq[Intermediary]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    for {
+      ua1 <- userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id)
+      ua2 <- ua1.remove(IntermediariesTypePage, id)
+      ua3 <- ua2.remove(WhatTypeofIntermediaryPage, id)
+      ua4 <- ua3.remove(IsExemptionKnownPage, id)
+      ua5 <- ua4.remove(IsExemptionCountryKnownPage, id)
+      ua6 <- ua5.remove(ExemptCountriesPage, id)
+    } yield ua6
+  }
 }
