@@ -78,7 +78,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       for {
         intermediary <- list
       } yield {
-        val changeUrl = if (frontendAppConfig.changeLinkToggle) "#" else routes.IntermediariesTypeController.onPageLoad(id, NormalMode).url
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.IntermediariesTypeController.onPageLoad(id, NormalMode).url else "#"
         val removeUrl = routes.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id, intermediary.intermediaryId).url
         ItemList(intermediary.nameAsString, changeUrl, removeUrl)
       }

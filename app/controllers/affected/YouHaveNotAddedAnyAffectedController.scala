@@ -78,7 +78,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       for {
         affected <- list
       } yield {
-        val changeUrl = if (frontendAppConfig.changeLinkToggle) "#" else routes.AffectedTypeController.onPageLoad(id, NormalMode).url
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.AffectedTypeController.onPageLoad(id, NormalMode).url else "#"
         val removeUrl = routes.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id, affected.affectedId).url
         ItemList(affected.nameAsString, changeUrl, removeUrl)
       }
