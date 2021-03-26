@@ -16,12 +16,13 @@
 
 package controllers.intermediaries
 
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import models.hallmarks.JourneyStatus
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
-import models.{ItemList, Mode, UserAnswers}
+import models.{ItemList, Mode, NormalMode, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesStatusPage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -44,7 +45,8 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
   requireData: DataRequiredAction,
   formProvider: YouHaveNotAddedAnyIntermediariesFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  renderer: Renderer,
+  frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
@@ -76,7 +78,7 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
       for {
         intermediary <- list
       } yield {
-        val changeUrl = "#" // TODO correct the change url
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.IntermediariesTypeController.onPageLoad(id, NormalMode).url else "#"
         val removeUrl = routes.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id, intermediary.intermediaryId).url
         ItemList(intermediary.nameAsString, changeUrl, removeUrl)
       }

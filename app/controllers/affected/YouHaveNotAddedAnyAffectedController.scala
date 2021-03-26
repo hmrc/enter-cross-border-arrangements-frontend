@@ -16,12 +16,13 @@
 
 package controllers.affected
 
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
 import models.hallmarks.JourneyStatus
-import models.{ItemList, Mode, UserAnswers}
+import models.{ItemList, Mode, NormalMode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, AffectedStatusPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -44,7 +45,8 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
     formProvider: YouHaveNotAddedAnyAffectedFormProvider,
     val controllerComponents: MessagesControllerComponents,
     requireData: DataRequiredAction,
-    renderer: Renderer
+    renderer: Renderer,
+    frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
@@ -76,7 +78,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       for {
         affected <- list
       } yield {
-        val changeUrl = "#" // TODO correct the change url
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.AffectedTypeController.onPageLoad(id, NormalMode).url else "#"
         val removeUrl = routes.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id, affected.affectedId).url
         ItemList(affected.nameAsString, changeUrl, removeUrl)
       }
