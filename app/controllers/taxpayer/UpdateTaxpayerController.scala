@@ -16,6 +16,7 @@
 
 package controllers.taxpayer
 
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.UpdateTaxpayerFormProvider
@@ -26,7 +27,7 @@ import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.taxpayer.UpdateTaxpayer
-import models.{ItemList, Mode, UserAnswers}
+import models.{ItemList, Mode, NormalMode, UserAnswers}
 import navigation.NavigatorForTaxpayer
 import pages.disclosure.DisclosureDetailsPage
 import pages.reporter.RoleInArrangementPage
@@ -50,7 +51,8 @@ class UpdateTaxpayerController @Inject()(
   requireData: DataRequiredAction,
   formProvider: UpdateTaxpayerFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  renderer: Renderer,
+  frontendAppConfig: FrontendAppConfig
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
 
   private val form = formProvider()
@@ -140,7 +142,7 @@ class UpdateTaxpayerController @Inject()(
       for {
         taxpayer <- list
       } yield {
-        val changeUrl = "#" // TODO correct the change URL
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.TaxpayerSelectTypeController.onPageLoad(id, NormalMode).url else "#"
         val removeUrl = "#" // TODO correct after DAC6-413routes.RemoveTaxpayerController.onPageLoad(id, taxpayer.taxpayerId).url
         ItemList(taxpayer.nameAsString, changeUrl, removeUrl)
       }
