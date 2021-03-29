@@ -36,12 +36,12 @@ class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with Mockito
 
     def buildUserAnswers(list: IndexedSeq[Intermediary]): UserAnswers = UserAnswers(userAnswersId)
       .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+      .set(IntermediaryLoopPage, 0, list).success.value
       .set(IntermediariesTypePage, 0, SelectType.Organisation).success.value
       .set(OrganisationNamePage, 0, "Intermediary Ltd").success.value
       .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.IDoNotKnow).success.value
       .set(IsExemptionKnownPage,0, IsExemptionKnown.Unknown).success.value
       .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-      .set(IntermediaryLoopPage, 0, list).success.value
 
     val controller: IntermediariesCheckYourAnswersController = injector.instanceOf[IntermediariesCheckYourAnswersController]
 
