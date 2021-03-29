@@ -17,10 +17,10 @@
 package pages.enterprises
 
 import models.enterprises.AssociatedEnterprise
-import pages.{CleanablePage, QuestionPage}
+import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object AssociatedEnterpriseLoopPage extends CleanablePage[IndexedSeq[AssociatedEnterprise]] {
+case object AssociatedEnterpriseLoopPage extends LoopPage[IndexedSeq[AssociatedEnterprise]] {
 
   override def path: JsPath = JsPath \ toString
 

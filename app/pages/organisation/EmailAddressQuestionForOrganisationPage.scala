@@ -17,12 +17,13 @@
 package pages.organisation
 
 import models.UserAnswers
-import pages.QuestionPage
+import models.organisation.Organisation
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object EmailAddressQuestionForOrganisationPage extends QuestionPage[Boolean] {
+case object EmailAddressQuestionForOrganisationPage extends DetailsPage[Boolean, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -33,4 +34,6 @@ case object EmailAddressQuestionForOrganisationPage extends QuestionPage[Boolean
       case Some(false) => userAnswers.remove(EmailAddressForOrganisationPage, id)
       case _ =>  super.cleanup(value, userAnswers, id)
     }
+
+  def getFromModel(model: Organisation): Option[Boolean] = model.emailAddress.map(_ => true).orElse(Some(false))
 }

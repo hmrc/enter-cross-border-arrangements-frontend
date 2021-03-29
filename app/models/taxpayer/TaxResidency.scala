@@ -21,6 +21,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers]) {
 
+  val isUK: Boolean = country.exists(_.code == "GB")
+
+  val hasNumbers: Option[Boolean] = taxReferenceNumbers.map(_.firstTaxNumber.nonEmpty)
 }
 
 object TaxResidency {

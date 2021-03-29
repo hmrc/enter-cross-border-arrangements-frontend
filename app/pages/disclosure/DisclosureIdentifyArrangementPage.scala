@@ -26,6 +26,6 @@ case object DisclosureIdentifyArrangementPage extends DetailsPage[String, Disclo
 
   override def toString: String = "disclosureIdentifyArrangement"
 
-  override def getFromModel(model: DisclosureDetails): String = model.arrangementID.getOrElse("")
+  override def getFromModel(model: DisclosureDetails): Option[String] = model.arrangementID
 
 }

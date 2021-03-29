@@ -16,14 +16,15 @@
 
 package pages.individual
 
+import models.individual.Individual
 import models.{Address, UserAnswers}
 import pages.organisation.PostcodePage
-import pages.{QuestionPage, SelectedAddressLookupPage}
+import pages.{DetailsPage, SelectedAddressLookupPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IndividualAddressPage extends QuestionPage[Address] {
+case object IndividualAddressPage extends DetailsPage[Address, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -37,5 +38,7 @@ case object IndividualAddressPage extends QuestionPage[Address] {
           .flatMap(_.remove(PostcodePage, id))
       case None => super.cleanup(value, userAnswers, id)
     }
+
+  override def getFromModel(model: Individual): Option[Address] = model.address
 
 }

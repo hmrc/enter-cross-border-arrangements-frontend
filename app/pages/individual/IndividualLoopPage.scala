@@ -17,12 +17,15 @@
 package pages.individual
 
 import models.LoopDetails
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IndividualLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
+case object IndividualLoopPage extends DetailsPage[IndexedSeq[LoopDetails], Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "individualLoop"
+
+  override def getFromModel(model: Individual): Option[IndexedSeq[LoopDetails]] = Option(model.taxResidencies.map(LoopDetails(_))).filter(_.nonEmpty)
 }

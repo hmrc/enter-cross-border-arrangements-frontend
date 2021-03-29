@@ -16,13 +16,14 @@
 
 package models.intermediaries
 
-import java.util.UUID
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
-import models.{IsExemptionKnown, SelectType, UserAnswers}
-import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
+import models.{IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation}
+import pages.intermediaries._
 import play.api.libs.json.{Json, OFormat}
+
+import java.util.UUID
 
 case class Intermediary(intermediaryId: String,
                         individual: Option[Individual] = None,
@@ -30,14 +31,7 @@ case class Intermediary(intermediaryId: String,
                         whatTypeofIntermediary: WhatTypeofIntermediary = IDoNotKnow,
                         isExemptionKnown: IsExemptionKnown = IsExemptionKnown.Unknown,
                         isExemptionCountryKnown: Option[Boolean] = None,
-                        exemptCountries: Option[Set[ExemptCountries]] = None){
-
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Intermediary must contain either an individual or an organisation.")
-  }
-}
+                        exemptCountries: Option[Set[ExemptCountries]] = None) extends WithIndividualOrOrganisation
 
 object Intermediary {
 

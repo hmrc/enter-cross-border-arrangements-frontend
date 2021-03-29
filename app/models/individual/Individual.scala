@@ -16,15 +16,16 @@
 
 package models.individual
 
-import java.time.LocalDate
-
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, Name, UserAnswers}
+import models.{Address, AddressLookup, Country, Name, UserAnswers, WithRestore}
 import pages.SelectedAddressLookupPage
 import pages.individual._
 import pages.reporter.individual._
 import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage}
 import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
+import scala.util.Try
 
 case class Individual(individualName: Name,
                       birthDate: LocalDate,
@@ -32,8 +33,39 @@ case class Individual(individualName: Name,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
                       taxResidencies: IndexedSeq[TaxResidency]
-                     ) {
+                     ) extends WithRestore {
+
   val nameAsString: String = individualName.displayName
+
+  val firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
+
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+    implicit val org: Individual = implicitly(this)
+    for {
+      ua1 <- userAnswers.set(IndividualNamePage, id)
+
+      ua2 <- ua1.set(IsIndividualDateOfBirthKnownPage, id)
+      ua3 <- ua2.set(IndividualDateOfBirthPage, id)
+      ua4 <- ua3.set(IsIndividualPlaceOfBirthKnownPage, id)
+      ua5 <- ua4.set(IndividualPlaceOfBirthPage, id)
+
+      ua6 <- ua5.set(IsIndividualAddressKnownPage, id)
+      ua7 <- ua6.set(IsIndividualAddressUkPage, id)
+      ua8 <- ua7.set(IsIndividualAddressUkPage, id)
+      ua9 <- ua8.set(IndividualUkPostcodePage, id)
+      uaa <- ua9.set(IndividualSelectAddressPage, id)
+      uab <- uaa.set(EmailAddressQuestionForIndividualPage, id)
+      uac <- uab.set(EmailAddressForIndividualPage, id)
+
+      uad <- uac.set(IndividualLoopPage, id)
+      uae <- uad.set(WhichCountryTaxForIndividualPage, id)
+      uaf <- uae.set(DoYouKnowAnyTINForUKIndividualPage, id)
+      uag <- uaf.set(WhatAreTheTaxNumbersForUKIndividualPage, id)
+      uah <- uag.set(DoYouKnowTINForNonUKIndividualPage, id)
+      uai <- uah.set(WhatAreTheTaxNumbersForNonUKIndividualPage, id)
+      uaj <- uai.set(IsIndividualResidentForTaxOtherCountriesPage, id)
+    } yield uaj
+  }
 }
 
 object Individual {

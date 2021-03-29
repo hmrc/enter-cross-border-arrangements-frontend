@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxResidencies}
 import models.Country
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,23 @@ class WhichCountryTaxForOrganisationPageSpec extends PageBehaviours {
     beSettable[Country](WhichCountryTaxForOrganisationPage)
 
     beRemovable[Country](WhichCountryTaxForOrganisationPage)
+  }
+
+  "can restore from model " - {
+
+    "- when first detail in loop is the UK " in {
+
+      WhichCountryTaxForOrganisationPage.getFromModel(validOrganisation) mustBe(Some(Country.UK))
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      WhichCountryTaxForOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("valid", "FR", "France")))
+    }
+
+    "- when details are empty " in {
+
+      WhichCountryTaxForOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+    }
   }
 }

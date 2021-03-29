@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package pages.individual
+package models
 
-import models.individual.Individual
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+import scala.util.Try
 
-case object IndividualPlaceOfBirthPage extends DetailsPage[String, Individual] {
+trait WithRestore {
 
-  override def path: JsPath = JsPath \ toString
+  def matchItem(itemId: String): Boolean = false
 
-  override def toString: String = "individualPlaceOfBirth"
-
-  override def getFromModel(model: Individual): Option[String] = model.birthPlace.filter(_.nonEmpty)
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers]
 }

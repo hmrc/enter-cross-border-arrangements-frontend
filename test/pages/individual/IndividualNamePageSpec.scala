@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validIndividualName}
 import models.Name
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,13 @@ class IndividualNamePageSpec extends PageBehaviours {
     beSettable[Name](IndividualNamePage)
 
     beRemovable[Name](IndividualNamePage)
+  }
+
+  "can restore from model " - {
+
+    "- when name exists " in {
+
+      IndividualNamePage.getFromModel(validIndividual) mustBe(Some(validIndividualName))
+    }
   }
 }

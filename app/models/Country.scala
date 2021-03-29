@@ -18,8 +18,16 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Country(state: String, code: String, description: String)
+case class Country(state: String, code: String, description: String) {
+
+  val isUK: Boolean = code == "GB"
+
+  val isNotUK: Boolean = !isUK
+}
 
 object Country {
+
+  val UK: Country = Country("valid", "GB", "United Kingdom")
+
   implicit val format: OFormat[Country] = Json.format[Country]
 }

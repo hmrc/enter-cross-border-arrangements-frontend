@@ -16,8 +16,15 @@
 
 package pages.affected
 
-import pages.Page
+import models.affected.Affected
+import pages.DetailsPage
+import play.api.libs.json.JsPath
 
-case object AffectedCheckYourAnswersPage extends Page {
+case object AffectedCheckYourAnswersPage extends DetailsPage[String, Affected] {
+
+  override def path: JsPath = JsPath \ toString
+
   override def toString: String = "affectedCheckYourAnswers"
+
+  override def getFromModel(model: Affected): Option[String] = Option(model.affectedId)
 }

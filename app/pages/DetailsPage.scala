@@ -25,5 +25,5 @@ trait DetailsPage[A, M] extends QuestionPage[A] {
   def remove(userAnswers: Try[UserAnswers], id: Int): Try[UserAnswers] =
     userAnswers.map(_.remove(this, id)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
 
-  def getFromModel(model: M): A
+  def getFromModel(model: M): Option[A]
 }

@@ -16,11 +16,10 @@
 
 package models
 
-import java.time.LocalDateTime
-
 import pages._
 import play.api.libs.json._
 
+import java.time.LocalDateTime
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
@@ -89,6 +88,11 @@ final case class UserAnswers(
   def set[A](page: QuestionPage[A], index: Int, value: A)(implicit writes: Writes[A]): Try[UserAnswers] =
     set(UnsubmittedIndex.fromQuestionPage(page, index)(this), value)
 
+  def set[A, M](page: DetailsPage[A, M], index: Int)(implicit writes: Writes[A], model: M): Try[UserAnswers] =
+    page.getFromModel(model).fold[Try[UserAnswers]](Success(this)) { value =>
+      set(UnsubmittedIndex.fromQuestionPage(page, index)(this), value)
+    }
+
   def remove[A](page: UnsubmittedIndex[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, JsNull) match {
@@ -114,6 +118,15 @@ final case class UserAnswers(
   def hasNewValue[A](page: QuestionPage[A], id: Int, value: A)(implicit rds: Reads[A]): Boolean =
     get(page, id).exists(_ != value)
 
+  def restoreFromLoop[A](loopPage: LoopPage[IndexedSeq[A]], id: Int, itemId: Option[String])(implicit rds: Reads[A]): UserAnswers =
+    itemId
+      .filter(_.nonEmpty)
+      .flatMap { nonEmptyItemId =>
+        this
+          .get(loopPage, id)
+          .flatMap[A]{ _.find { _.asInstanceOf[WithRestore].matchItem(nonEmptyItemId) } }
+          .map { _.asInstanceOf[WithRestore].restore(this, id).getOrElse(this) }
+      }.getOrElse(this)
 }
 
 object UserAnswers {

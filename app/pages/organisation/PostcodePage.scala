@@ -16,12 +16,15 @@
 
 package pages.organisation
 
-import pages.QuestionPage
+import models.organisation.Organisation
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object PostcodePage extends QuestionPage[String] {
+case object PostcodePage extends DetailsPage[String, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "postcode"
+
+  def getFromModel(model: Organisation): Option[String] = model.address.flatMap(_.postCode)
 }

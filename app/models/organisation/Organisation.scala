@@ -17,20 +17,48 @@
 package models.organisation
 
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, UserAnswers}
+import models.{Address, AddressLookup, Country, UserAnswers, WithRestore}
 import pages.SelectedAddressLookupPage
-import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.organisation._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage}
 import play.api.libs.json.{Json, OFormat}
+
+import scala.util.Try
 
 case class Organisation(organisationName: String,
                         address: Option[Address] = None,
                         emailAddress: Option[String] = None,
                         taxResidencies: IndexedSeq[TaxResidency]
-                       )
+                       ) extends WithRestore {
+
+  val firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
+
+  implicit val org: Organisation = implicitly(this)
+
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    for {
+      ua1 <- userAnswers.set(OrganisationNamePage, id)
+      ua2 <- ua1.set(IsOrganisationAddressKnownPage, id)
+      ua3 <- ua2.set(IsOrganisationAddressUkPage, id)
+      ua4 <- ua3.set(OrganisationAddressPage, id)
+      ua5 <- ua4.set(PostcodePage, id)
+      ua6 <- ua5.set(SelectAddressPage, id)
+      ua7 <- ua6.set(EmailAddressQuestionForOrganisationPage, id)
+      ua8 <- ua7.set(EmailAddressForOrganisationPage, id)
+
+      ua9 <- ua8.set(OrganisationLoopPage, id)
+      uaa <- ua9.set(WhichCountryTaxForOrganisationPage, id)
+      uab <- uaa.set(DoYouKnowAnyTINForUKOrganisationPage, id)
+      uac <- uab.set(WhatAreTheTaxNumbersForUKOrganisationPage, id)
+      uad <- uac.set(DoYouKnowTINForNonUKOrganisationPage, id)
+      uae <- uad.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, id)
+      uaf <- uae.set(IsOrganisationResidentForTaxOtherCountriesPage, id)
+    } yield uaf
+}
 
 object Organisation {
+
   implicit val format: OFormat[Organisation] = Json.format[Organisation]
 
   private def convertAddressLookupToAddress(address: AddressLookup) = {

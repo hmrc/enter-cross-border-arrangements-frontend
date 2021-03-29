@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxResidencies}
 import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,23 @@ class WhatAreTheTaxNumbersForUKOrganisationPageSpec extends PageBehaviours {
     beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
 
     beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKOrganisationPage)
+  }
+
+  "can restore from model " - {
+
+    "- when first detail in loop is from the UK " in {
+
+      WhatAreTheTaxNumbersForUKOrganisationPage.getFromModel(validOrganisation) mustBe(validTaxResidencies.head.taxReferenceNumbers)
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      WhatAreTheTaxNumbersForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(None)
+    }
+
+    "- when details are empty " in {
+
+      WhatAreTheTaxNumbersForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+    }
   }
 }
