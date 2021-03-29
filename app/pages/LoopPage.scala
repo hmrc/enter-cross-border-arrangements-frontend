@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package pages.individual
+package pages
 
-import models.individual.Individual
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+import models.UserAnswers
 
-case object IndividualPlaceOfBirthPage extends DetailsPage[String, Individual] {
+import scala.util.{Success, Try}
 
-  override def path: JsPath = JsPath \ toString
+trait LoopPage[A] extends QuestionPage[A] {
 
-  override def toString: String = "individualPlaceOfBirth"
+  val cleanPages: Seq[QuestionPage[_]] = Seq.empty
 
-  override def getFromModel(model: Individual): Option[String] = model.birthPlace.filter(_.nonEmpty)
+  override def cleanup(value: Option[A], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    cleanPages
+      .foldLeft[Try[UserAnswers]](Success(userAnswers)) { case (ua, page: QuestionPage[_]) => ua.flatMap(_.remove(page, id)) }
 }

@@ -17,10 +17,10 @@
 package pages.taxpayer
 
 import models.taxpayer.Taxpayer
-import pages.{CleanablePage, QuestionPage}
+import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object TaxpayerLoopPage extends CleanablePage[IndexedSeq[Taxpayer]] {
+case object TaxpayerLoopPage extends LoopPage[IndexedSeq[Taxpayer]] {
 
   override def path: JsPath = JsPath \ toString
 

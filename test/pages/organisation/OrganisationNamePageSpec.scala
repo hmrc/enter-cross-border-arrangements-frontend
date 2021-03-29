@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import pages.behaviours.PageBehaviours
 
 
@@ -28,5 +29,13 @@ class OrganisationNamePageSpec extends PageBehaviours {
     beSettable[String](OrganisationNamePage)
 
     beRemovable[String](OrganisationNamePage)
+  }
+
+  "can restore from model " - {
+
+    "- when name exists " in {
+
+      OrganisationNamePage.getFromModel(validOrganisation) mustBe(Some("Taxpayers Ltd"))
+    }
   }
 }

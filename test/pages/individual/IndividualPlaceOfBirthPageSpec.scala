@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import pages.behaviours.PageBehaviours
 
 
@@ -28,5 +29,23 @@ class IndividualPlaceOfBirthPageSpec extends PageBehaviours {
     beSettable[String](IndividualPlaceOfBirthPage)
 
     beRemovable[String](IndividualPlaceOfBirthPage)
+  }
+
+  "can restore from model " - {
+
+    "- when place of birth exists " in {
+
+      IndividualPlaceOfBirthPage.getFromModel(validIndividual) mustBe(Some("SomePlace"))
+    }
+
+    "- when place of birth is empty " in {
+
+      IndividualPlaceOfBirthPage.getFromModel(validIndividual.copy(birthPlace = Some(""))) mustBe(None)
+    }
+
+    "- when place of birth is not defined " in {
+
+      IndividualPlaceOfBirthPage.getFromModel(validIndividual.copy(birthPlace = None)) mustBe(None)
+    }
   }
 }

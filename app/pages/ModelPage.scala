@@ -22,7 +22,7 @@ import scala.util.Try
 
 trait ModelPage[A] extends QuestionPage[A] {
 
-  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers]
+  def restore(userAnswers: UserAnswers, id: Int, from: Option[A]): Try[UserAnswers]
 
   def build(userAnswers: UserAnswers): A
 }

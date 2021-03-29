@@ -16,23 +16,19 @@
 
 package models.taxpayer
 
-import java.time.LocalDate
-import java.util.UUID
-
-import models.{SelectType, UserAnswers}
 import models.individual.Individual
 import models.organisation.Organisation
+import models.{SelectType, UserAnswers, WithIndividualOrOrganisation}
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class Taxpayer(taxpayerId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None, implementingDate: Option[LocalDate] = None) {
+import java.time.LocalDate
+import java.util.UUID
 
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Taxpayer must contain either an individual or an organisation.")
-  }
-}
+case class Taxpayer(taxpayerId: String
+                    , individual: Option[Individual] = None
+                    , organisation: Option[Organisation] = None
+                    , implementingDate: Option[LocalDate] = None) extends WithIndividualOrOrganisation
 
 object Taxpayer {
 

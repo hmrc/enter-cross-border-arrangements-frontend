@@ -14,37 +14,38 @@
  * limitations under the License.
  */
 
-package pages.organisation
+package pages.individual
 
-import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxResidencies}
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResidencies}
 import pages.behaviours.PageBehaviours
 
-class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
+class DoYouKnowAnyTINForNonUKIndividualPageSpec extends PageBehaviours {
 
-  "DoYouKnowAnyTINForUKOrganisationPage" - {
+  "DoYouKnowTINForNonUKIndividualPage" - {
 
-    beRetrievable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+    beRetrievable[Boolean](DoYouKnowTINForNonUKIndividualPage)
 
-    beSettable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+    beSettable[Boolean](DoYouKnowTINForNonUKIndividualPage)
 
-    beRemovable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+    beRemovable[Boolean](DoYouKnowTINForNonUKIndividualPage)
   }
 
   "can restore from model " - {
 
     "- when first detail in loop is from the UK " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation) mustBe(Some(true))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual) mustBe(Some(false))
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(false))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(true))
     }
 
     "- when details are empty " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
     }
   }
+
 }

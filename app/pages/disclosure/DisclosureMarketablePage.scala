@@ -26,6 +26,5 @@ case object DisclosureMarketablePage extends DetailsPage[Boolean, DisclosureDeta
 
   override def toString: String = "disclosureMarketable"
 
-  override def getFromModel(model: DisclosureDetails): Boolean = model.initialDisclosureMA
-
+  override def getFromModel(model: DisclosureDetails): Option[Boolean] = Option(model.initialDisclosureMA)
 }

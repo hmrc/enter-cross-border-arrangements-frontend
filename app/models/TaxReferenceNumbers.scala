@@ -23,9 +23,9 @@ case class TaxReferenceNumbers(firstTaxNumber: String,
                                thirdTaxNumber: Option[String]) {
 
   val isSingleTaxReferenceNumber: Boolean = secondTaxNumber.isDefined || thirdTaxNumber.isDefined
-
 }
 
 object TaxReferenceNumbers {
+
   implicit val format: OFormat[TaxReferenceNumbers] = Json.format[TaxReferenceNumbers]
 }

@@ -17,10 +17,10 @@
 package pages.intermediaries
 
 import models.intermediaries.Intermediary
-import pages.{CleanablePage, QuestionPage}
+import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object IntermediaryLoopPage extends CleanablePage[IndexedSeq[Intermediary]] {
+case object IntermediaryLoopPage extends LoopPage[IndexedSeq[Intermediary]] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryLoop"

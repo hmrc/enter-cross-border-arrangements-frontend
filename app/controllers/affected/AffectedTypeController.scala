@@ -19,20 +19,19 @@ package controllers.affected
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.AffectedTypeFormProvider
+import models.hallmarks.JourneyStatus
 import models.{Mode, NormalMode, SelectType, UserAnswersHelper}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedStatusPage, AffectedTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import javax.inject.Inject
-import models.hallmarks.JourneyStatus
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class AffectedTypeController @Inject()(
@@ -45,7 +44,7 @@ class AffectedTypeController @Inject()(
   formProvider: AffectedTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
   private val form = formProvider()
 

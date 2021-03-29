@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResidencies}
 import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,23 @@ class WhatAreTheTaxNumbersForUKIndividualPageSpec extends PageBehaviours {
     beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKIndividualPage)
 
     beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForUKIndividualPage)
+  }
+
+  "can restore from model " - {
+
+    "- when first detail in loop is from the UK " in {
+
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual) mustBe(validTaxResidencies.head.taxReferenceNumbers)
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(None)
+    }
+
+    "- when details are empty " in {
+
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+    }
   }
 }

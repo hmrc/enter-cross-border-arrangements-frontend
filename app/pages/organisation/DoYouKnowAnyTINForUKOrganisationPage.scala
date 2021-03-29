@@ -16,12 +16,15 @@
 
 package pages.organisation
 
-import pages.QuestionPage
+import models.organisation.Organisation
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object DoYouKnowAnyTINForUKOrganisationPage extends QuestionPage[Boolean] {
+case object DoYouKnowAnyTINForUKOrganisationPage extends DetailsPage[Boolean, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouKnowAnyTINForUKOrganisation"
+
+  override def getFromModel(model: Organisation): Option[Boolean] = model.firstTaxResidency.map(_.isUK).orElse(Some(false))
 }

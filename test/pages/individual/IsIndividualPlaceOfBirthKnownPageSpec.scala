@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import pages.behaviours.PageBehaviours
 
 class IsIndividualPlaceOfBirthKnownPageSpec extends PageBehaviours {
@@ -27,5 +28,23 @@ class IsIndividualPlaceOfBirthKnownPageSpec extends PageBehaviours {
     beSettable[Boolean](IsIndividualPlaceOfBirthKnownPage)
 
     beRemovable[Boolean](IsIndividualPlaceOfBirthKnownPage)
+  }
+
+  "can restore from model " - {
+
+    "- when place of birth exists " in {
+
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+    }
+
+    "- when place of birth is empty " in {
+
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = Some(""))) mustBe(Some(false))
+    }
+
+    "- when place of birth is not defined " in {
+
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = None)) mustBe(Some(false))
+    }
   }
 }

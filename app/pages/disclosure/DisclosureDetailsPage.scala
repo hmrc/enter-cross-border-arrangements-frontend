@@ -17,12 +17,11 @@
 package pages.disclosure
 
 import models.UserAnswers
-import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
+import models.disclosure.DisclosureType.{Dac6add, Dac6new}
 import models.disclosure.{DisclosureDetails, ReplaceOrDeleteADisclosure}
 import pages.{MessageRefIDPage, ModelPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-import scala.concurrent.Future
 import scala.util.{Success, Try}
 
 case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
@@ -41,15 +40,15 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       InitialDisclosureMAPage
     ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
 
-  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.get(DisclosureDetailsPage, id)
-      .fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
-        userAnswers.set(DisclosureNamePage, id, DisclosureNamePage.getFromModel(disclosureDetails))
-          .flatMap(_.set(DisclosureTypePage, id, DisclosureTypePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureMarketablePage, id, DisclosureMarketablePage.getFromModel(disclosureDetails)))
-          .flatMap(_.set(DisclosureIdentifyArrangementPage, id, DisclosureIdentifyArrangementPage.getFromModel(disclosureDetails)))
-          .flatMap(_.remove(DisclosureDetailsPage, id))
-      }
+  def restore(userAnswers: UserAnswers, id: Int, from: Option[DisclosureDetails]): Try[UserAnswers] =
+    from.fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
+      implicit val org: DisclosureDetails = implicitly(disclosureDetails)
+      userAnswers.set(DisclosureNamePage, id)
+        .flatMap(_.set(DisclosureTypePage, id))
+        .flatMap(_.set(DisclosureMarketablePage, id))
+        .flatMap(_.set(DisclosureIdentifyArrangementPage, id))
+        .flatMap(_.remove(DisclosureDetailsPage, id))
+    }
 
   def build(userAnswers: UserAnswers): DisclosureDetails = {
 

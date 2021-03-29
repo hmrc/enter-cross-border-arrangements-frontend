@@ -17,34 +17,36 @@
 package pages.individual
 
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResidencies}
+import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
-class DoYouKnowAnyTINForUKIndividualPageSpec extends PageBehaviours {
 
-  "DoYouKnowAnyTINForUKIndividualPage" - {
+class WhatAreTheTaxNumbersForNonUKIndividualPageSpec extends PageBehaviours {
 
-    beRetrievable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+  "WhatAreTheTaxNumbersForUKIndividualPage" - {
 
-    beSettable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+    beRetrievable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKIndividualPage)
 
-    beRemovable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
+    beSettable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKIndividualPage)
+
+    beRemovable[TaxReferenceNumbers](WhatAreTheTaxNumbersForNonUKIndividualPage)
   }
+
   "can restore from model " - {
 
     "- when first detail in loop is from the UK " in {
 
-      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual) mustBe(Some(true))
+      WhatAreTheTaxNumbersForNonUKIndividualPage.getFromModel(validIndividual) mustBe(None)
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(false))
+      WhatAreTheTaxNumbersForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(validTaxResidencies.reverse.head.taxReferenceNumbers)
     }
 
     "- when details are empty " in {
 
-      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+      WhatAreTheTaxNumbersForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
     }
   }
-
 }

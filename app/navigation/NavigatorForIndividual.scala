@@ -121,7 +121,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
     case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
     case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
-    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id)
+    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
     case _                                        => jumpOrCheckYourAnswers(id, routes.IndividualCheckYourAnswersController.onPageLoad(id), checkRoute)
   }
 
@@ -129,8 +129,8 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
-      case IntermediariesRouting(CheckMode)          => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
-      case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id)
+      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
+      case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
       case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad(id)
       case _                                        => jumpTo
     }

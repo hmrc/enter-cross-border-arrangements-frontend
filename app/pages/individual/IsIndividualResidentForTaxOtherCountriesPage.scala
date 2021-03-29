@@ -16,12 +16,15 @@
 
 package pages.individual
 
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IsIndividualResidentForTaxOtherCountriesPage extends QuestionPage[Boolean] {
+case object IsIndividualResidentForTaxOtherCountriesPage extends DetailsPage[Boolean, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isIndividualResidentForTaxOtherCountries"
+
+  override def getFromModel(model: Individual): Option[Boolean] = Some(false) // force to false
 }

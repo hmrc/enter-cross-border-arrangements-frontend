@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.affected.{AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
+import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -56,7 +56,7 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(0).url)
+    val request = FakeRequest(GET, controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(0, None).url)
 
     val result = route(application, request).value
 
@@ -228,6 +228,7 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       def buildUserAnswers(list: IndexedSeq[Affected]): UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(AffectedLoopPage, 0, list).success.value
+        .set(AffectedCheckYourAnswersPage, 0, "ID1").success.value
         .set(AffectedTypePage, 0, SelectType.Organisation).success.value
         .set(OrganisationNamePage, 0, "Affected Ltd").success.value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
@@ -242,10 +243,10 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       "if ids are not duplicated" in {
 
         val list1: IndexedSeq[Affected] = IndexedSeq(
-          buildAffected("ID1", "First Ltd"), buildAffected("ID2", "Second Ltd")
+          buildAffected("ID2", "First Ltd"), buildAffected("ID3", "Second Ltd")
         )
 
-        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString) :+ "Affected Ltd"
+        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.affectedId) must contain theSameElementsAs(list1).map(_.affectedId) :+ "ID1"
       }
 
       "if ids are duplicated" in {

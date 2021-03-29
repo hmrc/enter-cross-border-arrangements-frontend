@@ -16,14 +16,18 @@
 
 package pages.individual
 
-import java.time.LocalDate
-
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IndividualDateOfBirthPage extends QuestionPage[LocalDate] {
+import java.time.LocalDate
+
+case object IndividualDateOfBirthPage extends DetailsPage[LocalDate, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "individualDateOfBirth"
+
+  override def getFromModel(model: Individual): Option[LocalDate] =
+    Option(model.birthDate).filter(_.isAfter(LocalDate.of(1900,1,1)))
 }

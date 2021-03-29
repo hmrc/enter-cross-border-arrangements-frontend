@@ -17,12 +17,15 @@
 package pages.individual
 
 import models.Country
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhichCountryTaxForIndividualPage extends QuestionPage[Country] {
+case object WhichCountryTaxForIndividualPage extends DetailsPage[Country, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whichCountryTaxForIndividual"
+
+  override def getFromModel(model: Individual): Option[Country] = model.firstTaxResidency.flatMap(_.country)
 }

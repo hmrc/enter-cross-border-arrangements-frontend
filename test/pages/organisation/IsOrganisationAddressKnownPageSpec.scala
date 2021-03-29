@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import pages.behaviours.PageBehaviours
 
 class IsOrganisationAddressKnownPageSpec extends PageBehaviours {
@@ -27,5 +28,18 @@ class IsOrganisationAddressKnownPageSpec extends PageBehaviours {
     beSettable[Boolean](IsOrganisationAddressKnownPage)
 
     beRemovable[Boolean](IsOrganisationAddressKnownPage)
+  }
+
+  "can restore from model " - {
+
+    "- when address exists " in {
+
+      IsOrganisationAddressKnownPage.getFromModel(validOrganisation) mustBe(Some(true))
+    }
+
+    "- when address is empty " in {
+
+      IsOrganisationAddressKnownPage.getFromModel(validOrganisation.copy(address = None)) mustBe(Some(false))
+    }
   }
 }

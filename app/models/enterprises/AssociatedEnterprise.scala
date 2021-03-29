@@ -18,7 +18,7 @@ package models.enterprises
 
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{SelectType, UserAnswers}
+import models.{SelectType, UserAnswers, WithIndividualOrOrganisation}
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage}
 import play.api.libs.json.{Json, OFormat}
 
@@ -28,14 +28,7 @@ case class AssociatedEnterprise(enterpriseId: String,
                                 individual: Option[Individual] = None,
                                 organisation: Option[Organisation] = None,
                                 associatedTaxpayers: List[String] = List.empty,
-                                isAffectedBy: Boolean = false) {
-
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Associated enterprise must contain either an individual or an organisation.")
-  }
-}
+                                isAffectedBy: Boolean = false) extends WithIndividualOrOrganisation
 
 object AssociatedEnterprise {
 
