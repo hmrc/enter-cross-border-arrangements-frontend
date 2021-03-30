@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
+import helpers.JourneyHelpers.linkToHomePageText
 import models.disclosure.DisclosureType
 import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode, Submission}
@@ -67,7 +68,9 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
 
       renderer.render(
         "disclosure/check-your-answers-delete-disclosure.njk",
-        Json.obj("disclosureSummary" -> disclosureSummary
+        Json.obj(
+          "disclosureSummary" -> disclosureSummary,
+          "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text")
         )
       ).map(Ok(_))
   }

@@ -139,8 +139,8 @@ object JourneyHelpers {
     country <- loopDetails.whichCountry
   } yield country
 
-  def linkToHomePageText(href: String)(implicit messages: Messages): Html = {
-    Html(s"<a class='govuk-link' id='homepage-link' href='$href'>${{ messages("confirmation.link.text") }}</a>")
+  def linkToHomePageText(href: String, linkText: String = "confirmation.link.text")(implicit messages: Messages): Html = {
+    Html(s"<a class='govuk-link' id='homepage-link' href='$href'>${{ messages(linkText) }}</a>")
   }
 
   def surveyLinkText(href: String)(implicit messages: Messages): Html = {

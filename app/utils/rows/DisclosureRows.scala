@@ -28,7 +28,8 @@ trait DisclosureRows extends RowBuilder {
     toRow(
       msgKey  = "disclosureName",
       content = formatMaxChars(answer),
-      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url,
+      columnWidth = "govuk-!-width-one-third"
     )
   }
 
@@ -36,7 +37,8 @@ trait DisclosureRows extends RowBuilder {
     toRow(
       msgKey  = "disclosureMarketable",
       content = yesOrNo(answer),
-      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url,
+      columnWidth = "govuk-!-width-one-third"
     )
   }
 
@@ -44,7 +46,8 @@ trait DisclosureRows extends RowBuilder {
     toRow(
       msgKey  = "disclosureType",
       content = msg"disclosureType.$answer",
-      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url,
+      columnWidth = "govuk-!-width-one-third"
     )
   }
 
@@ -53,7 +56,8 @@ trait DisclosureRows extends RowBuilder {
     toRow(
       msgKey  = "disclosureIdentifyArrangement",
       content = lit"$arrangementID",
-      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url
+      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url,
+      columnWidth = "govuk-!-width-one-third"
     )
   }
 
@@ -62,12 +66,14 @@ trait DisclosureRows extends RowBuilder {
       toRow(
         msgKey  = "replaceOrDeleteADisclosure.arrangementID",
         content = lit"${answer.arrangementID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url
+        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+        columnWidth = "govuk-!-width-one-third"
       ),
       toRow(
         msgKey  = "replaceOrDeleteADisclosure.disclosureID",
         content = lit"${answer.disclosureID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url
+        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+        columnWidth = "govuk-!-width-one-third"
       )
     )
   }
