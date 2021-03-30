@@ -41,11 +41,14 @@ trait RowBuilder {
     MessageInterpolators(StringContext.apply(msgKey.head)).msg()
       .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail):_*)
 
-  private[utils] def toRow(msgKey: String, content: Content, href: String)(implicit messages: Messages): Row = {
+  private[utils] def toRow(msgKey: String,
+                           content: Content,
+                           href: String,
+                           columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): Row = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
     val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     Row(
-      key     = Key(message, classes = Seq("govuk-!-width-one-half")),
+      key     = Key(message, classes = Seq(columnWidth)),
       value   = Value(content),
       actions = List(
         Action(

@@ -17,6 +17,7 @@ site.service_name = Disclose cross-border arrangements for DAC6
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.selectAllThatApply = Select all that apply.
+site.homePageLink.text = Back to disclose cross-border arrangements
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
