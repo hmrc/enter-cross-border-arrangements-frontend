@@ -305,22 +305,13 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
       val controller: TaxpayersCheckYourAnswersController = injector.instanceOf[TaxpayersCheckYourAnswersController]
 
-      "if ids are not duplicated" in {
-
-        val list: IndexedSeq[Taxpayer] = IndexedSeq(
-          Taxpayer("ID1", None, Some(organisation("First Ltd"))), Taxpayer("ID2", None, Some(organisation("Second Ltd") ))
-        )
-
-        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString) :+ "Taxpayers Ltd"
-      }
-
-      "if ids are duplicated" in {
+      "if names are duplicated" in {
 
         val list: IndexedSeq[Taxpayer] = IndexedSeq(
           Taxpayer("ID1", None, Some(organisation("Taxpayers Ltd"))), Taxpayer("ID2", None, Some(organisation("Other") ))
         )
 
-        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString)
+        controller.updateLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs list.map(_.nameAsString) :+ "Taxpayers Ltd"
       }
     }
   }

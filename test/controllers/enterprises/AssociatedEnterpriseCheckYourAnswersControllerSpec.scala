@@ -242,22 +242,13 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
       val controller: AssociatedEnterpriseCheckYourAnswersController = injector.instanceOf[AssociatedEnterpriseCheckYourAnswersController]
 
-      "if ids are not duplicated" in {
-
-        val list: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
-          AssociatedEnterprise("ID1", None, Some(organisation("First Ltd")), List(), false), AssociatedEnterprise("ID2", None, Some(organisation("Second Ltd")), List(), false)
-        )
-
-        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString) :+ "Associated Ltd"
-      }
-
-      "if ids are duplicated" in {
+      "if taxpayer names are duplicated" in {
 
         val list: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
           AssociatedEnterprise("ID1", None, Some(organisation("Associated Ltd")), List(), false), AssociatedEnterprise("ID2", None, Some(organisation("Other")), List(), false)
         )
 
-        controller.updatedLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString)
+        controller.updateLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString) :+ "Associated Ltd"
       }
     }
 

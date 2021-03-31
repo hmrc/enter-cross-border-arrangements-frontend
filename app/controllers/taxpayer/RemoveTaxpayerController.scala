@@ -18,8 +18,11 @@ package controllers.taxpayer
 
 import controllers.actions._
 import forms.taxpayer.RemoveTaxpayerFormProvider
+
 import javax.inject.Inject
 import models.UserAnswers
+import models.enterprises.AssociatedEnterprise
+import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -78,15 +81,31 @@ class RemoveTaxpayerController @Inject()(
         },
         value => {
           if (value) {
-            val updatedLoop = request.userAnswers.get(TaxpayerLoopPage, id).map(_.filterNot(_.taxpayerId == itemId)).getOrElse(IndexedSeq.empty)
-            request.userAnswers.set(TaxpayerLoopPage, id, updatedLoop).foreach(sessionRepository.set)
+            val updatedTaxpayerLoop = request.userAnswers.get(TaxpayerLoopPage, id).map(_.filterNot(_.taxpayerId == itemId)).getOrElse(IndexedSeq.empty)
+
+            for {
+              userAnswers <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, id, updatedTaxpayerLoop))
+              userAnswersRemoveEnterprise <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, removeTaxpayerAssociations(userAnswers, id, itemId)))
+              _                             <- sessionRepository.set(userAnswersRemoveEnterprise)
+            } yield {
+              Redirect(routes.UpdateTaxpayerController.onPageLoad(id))
+            }
+          } else {
+            Future.successful(Redirect(routes.UpdateTaxpayerController.onPageLoad(id)))
           }
-          Future.successful(Redirect(routes.UpdateTaxpayerController.onPageLoad(id)))
         }
       )
   }
 
-  def getTaxpayerName(ua: UserAnswers, id: Int, itemId: String): String =
-    ua.get(TaxpayerLoopPage, id).flatMap(_.find(_.taxpayerId == itemId)).map(_.nameAsString).getOrElse("")
+  private [taxpayer] def removeTaxpayerAssociations(ua: UserAnswers, id: Int, itemId: String): IndexedSeq[AssociatedEnterprise] = {
+    ua.get(AssociatedEnterpriseLoopPage, id).map(enterpriseLoop =>
+      enterpriseLoop.map {
+        associatedEnterprise =>
+          associatedEnterprise.copy(associatedTaxpayers =  associatedEnterprise.associatedTaxpayers.filterNot(_ == itemId))
+      }
+    ).fold(IndexedSeq[AssociatedEnterprise]())(enterprise => enterprise.filterNot(_.associatedTaxpayers.isEmpty))
+  }
 
+  private[taxpayer] def getTaxpayerName(ua: UserAnswers, id: Int, itemId: String): String =
+    ua.get(TaxpayerLoopPage, id).flatMap(_.find(_.taxpayerId == itemId)).map(_.nameAsString).getOrElse("")
 }

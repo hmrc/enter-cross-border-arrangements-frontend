@@ -40,11 +40,11 @@ case class AssociatedEnterprisesXMLSection(submission: Submission) {
     }
   }
 
-  def buildAssociatedEnterprises(taxpayerName: String): NodeSeq = {
+  def buildAssociatedEnterprises(taxpayerID: String): NodeSeq = {
         val associatedEnterprisesList =
           associatedEnterprises.flatMap {
             associatedEnterprise =>
-              if (associatedEnterprise.associatedTaxpayers.contains(taxpayerName)) {
+              if (associatedEnterprise.associatedTaxpayers.contains(taxpayerID)) {
                 buildAssociatedEnterprise(associatedEnterprise)
               } else {
                 NodeSeq.Empty

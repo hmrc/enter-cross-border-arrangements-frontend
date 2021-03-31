@@ -61,7 +61,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
   private def taxpayerCheckboxes(form: Form[_], taxpayersList: IndexedSeq[Taxpayer]): Seq[Checkboxes.Item] = {
         val field = form("value")
         val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
-          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.nameAsString}")
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
         }
         Checkboxes.set(field, items)
   }

@@ -110,7 +110,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
   private def taxpayerToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] = {
     ua.get(TaxpayerLoopPage, id) match {
       case Some(taxpayersList) => taxpayersList.toSeq.map { taxpayer =>
-          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.nameAsString}")
+          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
         }
       case _ => Seq.empty
     }
