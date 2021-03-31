@@ -288,8 +288,6 @@ POST       /arrangement/change-details/:id                  controllers.arrangem
 
 # TAXPAYER ROUTES
 
-GET       /test-only/generated-xml/:id                                     controllers.test.GeneratedXMLController.onPageLoad(id: Int)
-
 GET        /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onPageLoad(id: Int, itemId: String)
 POST       /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onSubmit(id: Int, itemId: String)
 

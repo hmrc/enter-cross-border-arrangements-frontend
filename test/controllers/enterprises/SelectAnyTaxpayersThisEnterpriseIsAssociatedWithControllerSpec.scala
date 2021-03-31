@@ -173,7 +173,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
         "form"       -> form,
         "mode"       -> NormalMode,
         "checkboxes" -> Checkboxes.set(field,
-          Seq(Checkboxes.Checkbox(label = Literal(reporterName), value = s"$reporterName")))
+          Seq(Checkboxes.Checkbox(label = Literal(reporterName), value = s"organisation-reporter")))
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"

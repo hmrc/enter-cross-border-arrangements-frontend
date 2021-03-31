@@ -17,9 +17,10 @@
 package controllers.enterprises
 
 import base.SpecBase
+import helpers.data.ValidUserAnswersForSubmission.{todayMinusOneMonth, validOrganisation}
 import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnterprises}
 import models.organisation.Organisation
-import models.taxpayer.TaxResidency
+import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -29,6 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage, _}
 import pages.individual._
 import pages.organisation._
+import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
@@ -79,13 +81,18 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
     )
   }
 
-
   "AssociatedEnterpriseCheckYourAnswers Controller" - {
 
     "must return rows for an associated enterprise who is an organisation" in {
+
+      val validTaxpayer = IndexedSeq(
+        Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer One"))
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("generatedID-1234567"))
+        .success.value
+        .set(TaxpayerLoopPage, 0, validTaxpayer)
         .success.value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
         .success.value
@@ -100,7 +107,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
         .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
 
       verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayer One"}""") mustBe true
+        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
         rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
         rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
@@ -113,9 +120,14 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
     "must return rows for an associated enterprise who is an individual" in {
       val dob = LocalDate.of(2020, 1, 1)
 
+      val validTaxpayer = IndexedSeq(
+        Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
+
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer One"))
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("generatedID-1234567"))
+        .success.value
+        .set(TaxpayerLoopPage, 0, validTaxpayer)
         .success.value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
         .success.value
@@ -134,7 +146,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
         .set(IsAssociatedEnterpriseAffectedPage, 0, false).success.value
 
       verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayer One"}""") mustBe true
+        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
         rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
         rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
         rows.contains("""{"key":{"text":"Do you know where they were born?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true

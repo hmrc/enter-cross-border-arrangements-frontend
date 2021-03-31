@@ -101,8 +101,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
   private def reporterToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =  {
     (ua.get(RoleInArrangementPage, id), ua.get(ReporterIndividualNamePage, id), ua.get(ReporterOrganisationNamePage, id)) match {
-      case (Some(RoleInArrangement.Taxpayer), Some(individualName), None) => Seq(Checkboxes.Checkbox(label = Literal(individualName.displayName), value = s"${individualName.displayName}"))
-      case (Some(RoleInArrangement.Taxpayer), None, Some(organisationName)) => Seq(Checkboxes.Checkbox(label = Literal(organisationName), value = s"${organisationName}"))
+      case (Some(RoleInArrangement.Taxpayer), Some(individualName), None) => Seq(Checkboxes.Checkbox(label = Literal(individualName.displayName), value = "individual-reporter"))
+      case (Some(RoleInArrangement.Taxpayer), None, Some(organisationName)) => Seq(Checkboxes.Checkbox(label = Literal(organisationName), value = "organisation-reporter"))
       case _ => Seq.empty
     }
   }

@@ -54,9 +54,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
         case Some(SelectType.Organisation) =>
           (
-            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
-              helper.associatedEnterpriseType(id),
-              helper.organisationName(id)).flatten ++
+            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+             Seq(helper.associatedEnterpriseType(id),
+              helper.organisationName(id)
+             ).flatten ++
               helper.buildOrganisationAddressGroup(id) ++
               helper.buildOrganisationEmailAddressGroup(id),
             helper.buildTaxResidencySummaryForOrganisation(id)
@@ -64,9 +65,11 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
         case Some(SelectType.Individual) =>
           (
-            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+            Seq(
               helper.associatedEnterpriseType(id),
-              helper.individualName(id)).flatten ++
+              helper.individualName(id)
+            ).flatten ++
               helper.buildIndividualDateOfBirthGroup(id) ++
               helper.buildIndividualPlaceOfBirthGroup(id) ++
               helper.buildIndividualAddressGroup(id) ++
