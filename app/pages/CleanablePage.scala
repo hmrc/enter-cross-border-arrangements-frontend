@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package pages.affected
+package pages
 
-import models.affected.Affected
-import pages.{CleanablePage, QuestionPage}
-import play.api.libs.json.JsPath
+import models.UserAnswers
 
-case object AffectedLoopPage extends CleanablePage[IndexedSeq[Affected]] {
+import scala.util.{Success, Try}
 
-  override def path: JsPath = JsPath \ toString
+trait CleanablePage[A] extends QuestionPage[A] {
 
-  override def toString: String = "affectedLoop"
+  val cleanPages: Seq[QuestionPage[_]] = Seq.empty
 
-  override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    YouHaveNotAddedAnyAffectedPage
-    , AffectedTypePage
-  )
+  override def cleanup(value: Option[A], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    cleanPages
+      .foldLeft[Try[UserAnswers]](Success(userAnswers)) { case (ua, page: QuestionPage[_]) => ua.flatMap(_.remove(page, id)) }
 }

@@ -16,24 +16,19 @@
 
 package pages.taxpayer
 
-import models.UserAnswers
 import models.taxpayer.Taxpayer
-import pages.QuestionPage
+import pages.{CleanablePage, QuestionPage}
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object TaxpayerLoopPage extends QuestionPage[IndexedSeq[Taxpayer]] {
+case object TaxpayerLoopPage extends CleanablePage[IndexedSeq[Taxpayer]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "taxpayerLoop"
 
-  override def cleanup(value: Option[IndexedSeq[Taxpayer]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    for {
-      ua1 <- userAnswers.remove(UpdateTaxpayerPage, id)
-      ua2 <- ua1.remove(TaxpayerSelectTypePage, id)
-      ua3 <- ua2.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
-    } yield ua3
-  }
+  override val cleanPages: Seq[QuestionPage[_]] = Seq(
+    UpdateTaxpayerPage
+    , TaxpayerSelectTypePage
+    , WhatIsTaxpayersStartDateForImplementingArrangementPage
+  )
 }
