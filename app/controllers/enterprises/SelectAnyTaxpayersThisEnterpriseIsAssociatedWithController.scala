@@ -19,9 +19,10 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
+
 import javax.inject.Inject
 import models.reporter.RoleInArrangement
-import models.{Mode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.reporter.RoleInArrangementPage
@@ -58,8 +59,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
     implicit request =>
 
           val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) match {
-            case None => form
-            case Some(value) => form.fill(value)
+            case Some(value) if mode == CheckMode => form.fill(value)
+            case _ => form
           }
 
           val json = Json.obj(

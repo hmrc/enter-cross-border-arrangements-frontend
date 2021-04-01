@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
 import models.SelectType.Organisation
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{NormalMode, CheckMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -52,6 +52,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
   lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, NormalMode).url
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementCheckRoute = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, CheckMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -106,7 +107,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
       application.stop()
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when check mode and the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -126,7 +127,9 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val request = FakeRequest("GET", whatIsTaxpayersStartDateForImplementingArrangementCheckRoute)
+
+      val result = route(application, request).value
 
       status(result) mustEqual OK
 
@@ -144,7 +147,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec e
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode,
+        "mode" -> CheckMode,
         "date" -> viewModel
       )
 

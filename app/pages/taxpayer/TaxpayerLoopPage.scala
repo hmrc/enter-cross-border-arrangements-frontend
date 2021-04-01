@@ -17,12 +17,18 @@
 package pages.taxpayer
 
 import models.taxpayer.Taxpayer
-import pages.QuestionPage
+import pages.{CleanablePage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object TaxpayerLoopPage extends QuestionPage[IndexedSeq[Taxpayer]] {
+case object TaxpayerLoopPage extends CleanablePage[IndexedSeq[Taxpayer]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "taxpayerLoop"
+
+  override val cleanPages: Seq[QuestionPage[_]] = Seq(
+    UpdateTaxpayerPage
+    , TaxpayerSelectTypePage
+    , WhatIsTaxpayersStartDateForImplementingArrangementPage
+  )
 }

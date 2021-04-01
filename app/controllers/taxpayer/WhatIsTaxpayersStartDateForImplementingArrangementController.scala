@@ -21,7 +21,7 @@ import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProv
 import helpers.DateHelper.dateFormatterNumericDMY
 import helpers.JourneyHelpers
 import models.SelectType.{Individual, Organisation}
-import models.{Mode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,8 +57,8 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+        case Some(value) if mode == CheckMode => form.fill(value)
+        case _                                => form
       }
 
       val viewModel = DateInput.localDate(preparedForm("value"))

@@ -17,13 +17,19 @@
 package pages.enterprises
 
 import models.enterprises.AssociatedEnterprise
-import pages.QuestionPage
+import pages.{CleanablePage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object AssociatedEnterpriseLoopPage extends QuestionPage[IndexedSeq[AssociatedEnterprise]] {
+case object AssociatedEnterpriseLoopPage extends CleanablePage[IndexedSeq[AssociatedEnterprise]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "associatedEnterpriseLoop"
 
+  override val cleanPages: Seq[QuestionPage[_]] = Seq(
+    YouHaveNotAddedAnyAssociatedEnterprisesPage
+    , SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
+    , AssociatedEnterpriseTypePage
+    , IsAssociatedEnterpriseAffectedPage
+  )
 }

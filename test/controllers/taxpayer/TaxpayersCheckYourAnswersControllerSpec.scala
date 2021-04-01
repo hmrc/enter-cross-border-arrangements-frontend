@@ -296,10 +296,10 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
       def buildUserAnswers(list: IndexedSeq[Taxpayer]): UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerLoopPage, 0, list).success.value
         .set(TaxpayerSelectTypePage, 0, SelectType.Organisation).success.value
         .set(OrganisationNamePage, 0, "Taxpayers Ltd").success.value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-        .set(TaxpayerLoopPage, 0, list).success.value
 
       def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
 

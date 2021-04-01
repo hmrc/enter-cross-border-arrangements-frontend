@@ -231,12 +231,12 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
       def buildUserAnswers(list: IndexedSeq[AssociatedEnterprise]): UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AssociatedEnterpriseLoopPage, 0, list).success.value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation).success.value
         .set(OrganisationNamePage, 0, "Associated Ltd").success.value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer")).success.value
         .set(IsAssociatedEnterpriseAffectedPage, 0, false).success.value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-        .set(AssociatedEnterpriseLoopPage, 0, list).success.value
 
       def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
 

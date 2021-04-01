@@ -227,10 +227,10 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
 
       def buildUserAnswers(list: IndexedSeq[Affected]): UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AffectedLoopPage, 0, list).success.value
         .set(AffectedTypePage, 0, SelectType.Organisation).success.value
         .set(OrganisationNamePage, 0, "Affected Ltd").success.value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-        .set(AffectedLoopPage, 0, list).success.value
 
       val controller: AffectedCheckYourAnswersController = injector.instanceOf[AffectedCheckYourAnswersController]
 
