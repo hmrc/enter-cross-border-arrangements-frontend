@@ -50,22 +50,13 @@ class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with Mockito
     def buildIntermediary(id: String, name: String) =
       Intermediary(id, None, Some(organisation(name)), WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown)
 
-    "if ids are not duplicated" in {
-
-      val list1: IndexedSeq[Intermediary] = IndexedSeq(
-        buildIntermediary("ID1", "First Ltd"), buildIntermediary("ID2", "Second Ltd")
-      )
-
-      controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString) :+ "Intermediary Ltd"
-    }
-
-    "if ids are duplicated" in {
+    "if intermediary names are duplicated" in {
 
       val list1: IndexedSeq[Intermediary] = IndexedSeq(
         buildIntermediary("ID1", "Intermediary Ltd"), buildIntermediary("ID2", "Second Ltd")
       )
 
-      controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString)
+      controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString) :+ "Intermediary Ltd"
     }
   }
 

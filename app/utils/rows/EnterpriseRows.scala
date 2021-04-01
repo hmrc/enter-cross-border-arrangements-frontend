@@ -18,8 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.reporter.individual.ReporterIndividualNamePage
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
@@ -35,43 +34,34 @@ trait EnterpriseRows extends RowBuilder {
     )
   }
 
-  private def getTaxpayerNames(id: Int): Seq[String] = {
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
+    val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
+
     (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
       case (Some(selectionList), Some(taxpayers)) =>
+        val relevantTaxpayerNames: Seq[String] = selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
 
-        val taxpayerNames: Seq[String] = selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
-        val org = "organisation-reporter"
-        val individual = "individual-reporter"
-
-        if (selectionList.contains(org)){
-          getReporterIfSelected(org, id) ++ taxpayerNames
-        } else if (selectionList.contains(individual)) {
-          getReporterIfSelected(individual, id) ++ taxpayerNames
+        if (selectionList.contains(reporterName)) {
+          formatSelectedTaxpayers(Seq(reporterName) ++ relevantTaxpayerNames, id)
         } else {
-          taxpayerNames
+          formatSelectedTaxpayers(relevantTaxpayerNames, id)
         }
+
+      case (Some(_), None) =>
+        formatSelectedTaxpayers(Seq(reporterName), id)
+
       case _ => Seq.empty
     }
   }
 
-  private def getReporterIfSelected(reporterValue: String, id: Int): Seq[String] = {
-      (reporterValue, userAnswers.get(ReporterIndividualNamePage, id), userAnswers.get(ReporterOrganisationNamePage, id)) match {
-        case ("individual-reporter", Some(individualName), None) =>
-          Seq(individualName.displayName)
-        case ("organisation-reporter", None, Some(organisationName)) =>
-          Seq(organisationName)
-        case _ => Seq.empty
-      }
-  }
+  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int): Seq[Row] = {
 
-  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
-
-    val formattedTaxpayerList = if (getTaxpayerNames(id).size > 1) {
+    val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
-         |${getTaxpayerNames(id).map(selectedTaxpayer => s"<li>$selectedTaxpayer</li>").mkString("\n")}
+         |${taxpayerList.map(selectedTaxpayer => s"<li>$selectedTaxpayer</li>").mkString("\n")}
          |</ul>""".stripMargin
     } else {
-      s"${getTaxpayerNames(id).head}"
+      s"${taxpayerList.head}"
     }
 
     Seq(toRow(

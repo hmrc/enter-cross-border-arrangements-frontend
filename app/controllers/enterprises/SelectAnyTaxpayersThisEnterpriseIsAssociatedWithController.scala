@@ -23,11 +23,10 @@ import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormPro
 import javax.inject.Inject
 import models.reporter.RoleInArrangement
 import models.{CheckMode, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import pages.reporter.RoleInArrangementPage
-import pages.reporter.individual.ReporterIndividualNamePage
-import pages.reporter.organisation.ReporterOrganisationNamePage
+import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +38,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
@@ -100,9 +100,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
   }
 
   private def reporterToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =  {
-    (ua.get(RoleInArrangementPage, id), ua.get(ReporterIndividualNamePage, id), ua.get(ReporterOrganisationNamePage, id)) match {
-      case (Some(RoleInArrangement.Taxpayer), Some(individualName), None) => Seq(Checkboxes.Checkbox(label = Literal(individualName.displayName), value = "individual-reporter"))
-      case (Some(RoleInArrangement.Taxpayer), None, Some(organisationName)) => Seq(Checkboxes.Checkbox(label = Literal(organisationName), value = "organisation-reporter"))
+    ua.get(ReporterDetailsPage, id) match {
+      case Some(reporter) =>
+        Seq(Checkboxes.Checkbox(label = Literal(reporter.nameAsString), value = s"${reporter.nameAsString}"))
       case _ => Seq.empty
     }
   }

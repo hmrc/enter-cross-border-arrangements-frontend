@@ -343,7 +343,6 @@ POST       /associated-enterprises/remove/:id/:itemId          controllers.enter
 GET        /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /intermediaries/update/:id                          controllers.intermediaries.YouHaveNotAddedAnyIntermediariesController.onSubmit(id: Int, mode: Mode = NormalMode)
 
-
 GET        /intermediaries/type/:id                            controllers.intermediaries.IntermediariesTypeController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /intermediaries/type/:id                            controllers.intermediaries.IntermediariesTypeController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /intermediaries/change-type/:id                     controllers.intermediaries.IntermediariesTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)

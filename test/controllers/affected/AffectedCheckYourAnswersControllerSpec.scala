@@ -239,24 +239,13 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
       def buildAffected(id: String, name: String) =
         Affected(id, None, Some(organisation(name)))
 
-      "if ids are not duplicated" in {
-
-        val list1: IndexedSeq[Affected] = IndexedSeq(
-          buildAffected("ID1", "First Ltd"), buildAffected("ID2", "Second Ltd")
-        )
-
-        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString) :+ "Affected Ltd"
-      }
-
-      "if ids are duplicated" in {
+      "if affected person names are duplicated" in {
 
         val list1: IndexedSeq[Affected] = IndexedSeq(
           buildAffected("ID1", "Affected Ltd"), buildAffected("ID2", "Second Ltd")
         )
-
-        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString)
+        controller.updatedLoopList(buildUserAnswers(list1), 0).map(_.nameAsString) must contain theSameElementsAs(list1).map(_.nameAsString)  :+ "Affected Ltd"
       }
     }
-
   }
 }
