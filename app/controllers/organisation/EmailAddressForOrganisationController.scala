@@ -19,7 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.EmailAddressForOrganisationFormProvider
-import helpers.JourneyHelpers.{getOrganisationName, hasValueChanged}
+import helpers.JourneyHelpers.getOrganisationName
 import models.Mode
 import navigation.NavigatorForOrganisation
 import pages.organisation.EmailAddressForOrganisationPage
@@ -66,13 +66,8 @@ class EmailAddressForOrganisationController @Inject()(
       renderer.render("organisation/emailAddressForOrganisation.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
-    if (isAlt) {
-      navigator.routeAltMap(EmailAddressForOrganisationPage)(checkRoute)(id)(value)(0)
-    }
-    else {
-      navigator.routeMap(EmailAddressForOrganisationPage)(checkRoute)(id)(value)(0)
-    }
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
+    navigator.routeMap(EmailAddressForOrganisationPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -91,13 +86,11 @@ class EmailAddressForOrganisationController @Inject()(
         },
         value => {
 
-          val redirectUsers = hasValueChanged(value, id, EmailAddressForOrganisationPage, mode, request.userAnswers)
-
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressForOrganisationPage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
+          } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
   }
