@@ -1018,6 +1018,7 @@ reporterIndividualPostcode.title = What is your postcode?
 reporterIndividualPostcode.heading = What is your postcode?
 reporterIndividualPostcode.error.required = Enter a postcode
 reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
+reporterIndividualPostcode.error.notFound = Address not found - enter a different postcode or enter the address manually
 reporterIndividualPostcode.hint = Or enter the address manually
 reporterIndividualPostcode.submit = Find address
 
