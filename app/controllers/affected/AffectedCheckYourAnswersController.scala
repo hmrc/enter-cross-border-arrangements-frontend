@@ -18,7 +18,7 @@ package controllers.affected
 
 import controllers.actions._
 import controllers.exceptions.UnsupportedRouteException
-import controllers.mixins.{CheckRoute, DefaultRouting, RoutingSupport}
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.affected.Affected
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForAffected
@@ -97,8 +97,9 @@ class AffectedCheckYourAnswersController @Inject()(
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
         userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(request.userAnswers, id)))
         _                           <- sessionRepository.set(userAnswersWithAffectedLoop)
+        checkRoute                  =  toCheckRoute(NormalMode, userAnswersWithAffectedLoop)
       } yield {
-        Redirect(redirect(id, DefaultRouting(NormalMode)))
+        Redirect(redirect(id, checkRoute))
       }
   }
 
