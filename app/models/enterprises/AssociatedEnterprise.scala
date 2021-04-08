@@ -48,7 +48,8 @@ object AssociatedEnterprise {
   private def generateId: String = UUID.randomUUID.toString
 
   def apply(ua: UserAnswers, id: Int): AssociatedEnterprise = {
-    val enterprise: AssociatedEnterprise = (ua.get(AssociatedEnterpriseCheckYourAnswersPage, id).orElse(Some(generateId))
+    val enterprise: AssociatedEnterprise = (
+        ua.get(AssociatedEnterpriseCheckYourAnswersPage, id).orElse(Some(generateId))
       , ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id)
       , ua.get(IsAssociatedEnterpriseAffectedPage, id)) match {
       case (Some(itemId), Some(associatedTaxpayers), Some(isAffectedBy)) =>

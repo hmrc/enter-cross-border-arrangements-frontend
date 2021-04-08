@@ -28,6 +28,7 @@ case object IntermediaryLoopPage extends LoopPage[IndexedSeq[Intermediary]] {
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
     IntermediariesCheckYourAnswersPage
+    , YouHaveNotAddedAnyIntermediariesPage
     , WhatTypeofIntermediaryPage
     , IsExemptionKnownPage
     , IsExemptionCountryKnownPage
