@@ -25,9 +25,4 @@ case object AffectedLoopPage extends LoopPage[IndexedSeq[Affected]] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "affectedLoop"
-
-  override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    YouHaveNotAddedAnyAffectedPage
-    , AffectedTypePage
-  )
 }
