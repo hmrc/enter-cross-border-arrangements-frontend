@@ -21,6 +21,7 @@ import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormPro
 import helpers.data.ValidUserAnswersForSubmission.{reporterDetailsAsOrganisation, validTaxpayers}
 import matchers.JsonMatchers
 import models.organisation.Organisation
+import models.reporter.RoleInArrangement
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, CheckMode, Country, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -28,7 +29,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import pages.reporter.ReporterDetailsPage
+import pages.reporter.{ReporterDetailsPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -144,6 +145,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
         .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
         .success
         .value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer)
+        .success
+        .value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer Ltd"))
         .success
         .value
@@ -182,6 +186,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
         .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
         .success
         .value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer)
+        .success
+        .value
         .set(TaxpayerLoopPage, 0, validTaxpayers)
         .success
         .value
@@ -204,8 +211,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
+        "form" -> form,
+        "mode" -> NormalMode,
         "checkboxes" -> Checkboxes.set(field,
           Seq(Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}"),
             Checkboxes.Checkbox(label = Literal("Taxpayers Ltd"), value = "123"),
@@ -213,6 +220,49 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
           )
         )
       )
+    }
+
+      "must populate the view correctly on a GET when intermediary in reporter details & a relevant taxpayer have been selected" in {
+
+        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
+          .success
+          .value
+          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
+          .success
+          .value
+          .set(TaxpayerLoopPage, 0, validTaxpayers)
+          .success
+          .value
+          .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer Ltd"))
+          .success
+          .value
+
+        when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+
+        val field = form("value")
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+        val expectedJson = Json.obj(
+          "form"       -> form,
+          "mode"       -> NormalMode,
+          "checkboxes" -> Checkboxes.set(field,
+            Seq(
+              Checkboxes.Checkbox(label = Literal("Taxpayers Ltd"), value = "123"),
+              Checkboxes.Checkbox(label = Literal("Other Taxpayers Ltd"), value = s"Another ID")
+            )
+          )
+        )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
       jsonCaptor.getValue must containJson(expectedJson)

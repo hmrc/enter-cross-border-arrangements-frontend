@@ -19,14 +19,11 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
-
-import javax.inject.Inject
-import models.reporter.RoleInArrangement
+import models.reporter.RoleInArrangement.Taxpayer
 import models.{CheckMode, Mode, UserAnswers}
-import models.{Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-import pages.reporter.ReporterDetailsPage
+import pages.reporter.{ReporterDetailsPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -100,8 +97,8 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
   }
 
   private def reporterToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =  {
-    ua.get(ReporterDetailsPage, id) match {
-      case Some(reporter) =>
+    (ua.get(ReporterDetailsPage, id), ua.get(RoleInArrangementPage, id)) match {
+      case (Some(reporter), Some(Taxpayer)) =>
         Seq(Checkboxes.Checkbox(label = Literal(reporter.nameAsString), value = s"${reporter.nameAsString}"))
       case _ => Seq.empty
     }
