@@ -20,10 +20,13 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.PostcodeFormProvider
-import helpers.JourneyHelpers.{getIndividualName, getOrganisationName}
+import helpers.JourneyHelpers.getIndividualName
+import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForIndividual
+import pages.AddressLookupPage
 import pages.individual.IndividualUkPostcodePage
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -31,10 +34,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import javax.inject.Inject
-import pages.AddressLookupPage
-import pages.organisation.PostcodePage
-import play.api.data.FormError
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,7 +52,7 @@ class IndividualPostcodeController @Inject()(
 
   private val form = formProvider()
 
-  implicit val alternativeText: String = "the individual's"
+  implicit val alternativeText: String = "the individual’s"
 
   private def manualAddressURL(mode: Mode, id: Int): String = routes.IndividualAddressController.onPageLoad(id, mode).url //Todo update to correct value
 

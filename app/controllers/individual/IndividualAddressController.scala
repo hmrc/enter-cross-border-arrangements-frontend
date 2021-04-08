@@ -49,7 +49,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
 
   private def actionUrl(id: Int, mode: Mode) = routes.IndividualAddressController.onSubmit(id, mode).url
 
-  implicit val alternativeText: String = "the individual's"
+  implicit val alternativeText: String = "the individual’s"
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

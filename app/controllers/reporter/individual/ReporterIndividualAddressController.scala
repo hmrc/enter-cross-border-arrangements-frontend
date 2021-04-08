@@ -23,7 +23,6 @@ import helpers.JourneyHelpers.pageHeadingProvider
 import javax.inject.Inject
 import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.individual.{IndividualAddressPage, IndividualUkPostcodePage}
 import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualPostcodePage, ReporterIsIndividualAddressUKPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

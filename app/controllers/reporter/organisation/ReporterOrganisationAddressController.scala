@@ -23,7 +23,6 @@ import helpers.JourneyHelpers.{getReporterDetailsOrganisationName, hasValueChang
 import javax.inject.Inject
 import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualPostcodePage}
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationIsAddressUkPage, ReporterOrganisationPostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
