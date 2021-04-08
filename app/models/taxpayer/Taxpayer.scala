@@ -16,21 +16,19 @@
 
 package models.taxpayer
 
-import models.enterprises.AssociatedEnterprise
+import models.individual.Individual
+import models.organisation.Organisation
+import models.{SelectType, UserAnswers}
+import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 import java.util.UUID
-import models.{SelectType, UserAnswers}
-import models.individual.Individual
-import models.organisation.Organisation
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
-import play.api.libs.json.{Json, OFormat}
 
 case class Taxpayer(taxpayerId: String,
                     individual: Option[Individual] = None,
                     organisation: Option[Organisation] = None,
-                    implementingDate: Option[LocalDate] = None,
-                    associatedEnterprises: Option[List[AssociatedEnterprise]] = None) {
+                    implementingDate: Option[LocalDate] = None) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString
@@ -49,7 +47,7 @@ object Taxpayer {
         new Taxpayer(
         taxpayerId = generateId,
           organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
-          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id),
+          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
       )
       case Some(SelectType.Individual) =>
         new Taxpayer(
