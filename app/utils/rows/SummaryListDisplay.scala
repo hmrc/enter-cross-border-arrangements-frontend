@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package pages.individual
+package utils.rows
 
-import models.individual.Individual
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import play.api.libs.json.{OWrites, __}
+import uk.gov.hmrc.viewmodels.SummaryList.{Key, Value}
+import play.api.libs.functional.syntax._
 
-import java.time.LocalDate
+object SummaryListDisplay {
 
-case object IndividualDateOfBirthPage extends DetailsPage[LocalDate, Individual] {
+  final case class DisplayRow(key: Key, value: Value)
 
-  override def path: JsPath = JsPath \ toString
+  object DisplayRow {
 
-  override def toString: String = "individualDateOfBirth"
-
-  override def getFromModel(model: Individual): Option[LocalDate] =
-    model.birthDate.filter(_.isAfter(LocalDate.of(1900,1,1)))
+    implicit def writes(implicit messages: Messages): OWrites[DisplayRow] = (
+      (__ \ "key").write[Key] and
+        (__ \ "value").write[Value]
+      ){ row =>
+         (row.key, row.value)
+    }
+  }
 }

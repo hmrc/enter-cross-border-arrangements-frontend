@@ -93,6 +93,7 @@ class XMLGenerationService @Inject()(
             messageRefId => {
               for {
                 submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
+                p = printFile(submissionXML)
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
               } yield Right(ids.withMessageRefId(messageRefId).withXml(submissionXML.toString))
             }
@@ -100,5 +101,11 @@ class XMLGenerationService @Inject()(
         }
       }
     )
+  }
+
+  def printFile(xml: NodeSeq): Option[Boolean] = {
+    import java.io.PrintWriter
+    new PrintWriter("filename") { write(xml.toString()); close() }
+    Some(true)
   }
 }

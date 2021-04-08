@@ -181,7 +181,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
             val expected = ReporterDetails(
               individual = Some(Individual(
                 individualName = name,
-                birthDate = LocalDate.now(),
+                birthDate = Some(LocalDate.now()),
                 birthPlace = Some(birthPlace),
                 address = Some(address),
                 emailAddress = Some(email),
@@ -240,7 +240,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
             val expected = ReporterDetails(
               individual = Some(Individual(
                 individualName = name,
-                birthDate = LocalDate.now(),
+                birthDate = Some(LocalDate.now()),
                 birthPlace = Some(birthPlace),
                 address = Some(address),
                 emailAddress = Some(email),

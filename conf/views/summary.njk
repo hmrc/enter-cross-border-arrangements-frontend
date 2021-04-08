@@ -1,0 +1,94 @@
+{% extends "includes/layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("summary.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("summary.heading") }}
+        </h1>
+
+        <p class="govuk-body"><a href="#" class="govuk-link">{{ messages("summary.printLink") }}</a></p>
+
+        <p class="govuk-body">{{ messages("summary.p1") }}</p>
+
+        <p class="govuk-body">{{ messages("summary.p2", saveDate) }}</p>
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.disclosure.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: disclosureList
+        }) }}
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.hallmarks.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: hallmarkList
+        }) }}
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.arrangements.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: arrangementList
+        }) }}
+
+       <h2 class="govuk-heading-l">
+         {{ messages("summary.reporters.heading") }}
+       </h2>
+
+       {{ govukSummaryList({
+         rows: reportersList
+       }) }}
+
+       <h2 class="govuk-heading-l">
+         {{ messages("summary.taxpayers.heading") }}
+       </h2>
+
+       {{ govukSummaryList({
+         rows: taxpayersList
+       }) }}
+
+     <h2 class="govuk-heading-l">
+         {{ messages("summary.enterprises.heading") }}
+       </h2>
+
+       {{ govukSummaryList({
+         rows: enterprisesList
+       }) }}
+
+
+       <h2 class="govuk-heading-l">
+         {{ messages("summary.intermediaries.heading") }}
+       </h2>
+
+       {{ govukSummaryList({
+         rows: intermediariesList
+       }) }}
+
+       <h2 class="govuk-heading-l">
+         {{ messages("summary.others.heading") }}
+       </h2>
+
+       {{ govukSummaryList({
+         rows: othersList
+       }) }}
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

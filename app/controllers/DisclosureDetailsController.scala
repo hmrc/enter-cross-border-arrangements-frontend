@@ -77,6 +77,8 @@ class DisclosureDetailsController @Inject()(
           .getOrElse("")
       }
 
+      val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
+
       isInitialDisclosureMarketable(request.userAnswers.get, id).flatMap { isInitialDisclosureMarketable =>
 
         val json = Json.obj(
@@ -92,7 +94,8 @@ class DisclosureDetailsController @Inject()(
           "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
           "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, isInitialDisclosureMarketable),
           "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, isInitialDisclosureMarketable),
-          "backLink" -> backLink
+          "backLink" -> backLink,
+          "summaryLink" -> summaryLink
         )
         renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
       }
