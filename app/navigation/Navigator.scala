@@ -69,13 +69,6 @@ class Navigator @Inject()() {
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
-    case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(NormalMode)
-    case IntermediariesTypePage => intermediaryTypeRoutes(NormalMode)
-    case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(NormalMode)
-    case IsExemptionKnownPage => isExemptionKnownRoutes(NormalMode)
-    case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(NormalMode)
-    case ExemptCountriesPage => _ => id => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id))
-
     case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
 
     case _ => _ => id => _ => Some(routes.IndexController.onPageLoad())
@@ -107,13 +100,6 @@ class Navigator @Inject()() {
     case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
 
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
-
-    case YouHaveNotAddedAnyIntermediariesPage => youHaveNotAddedAnyIntermediariesRoutes(CheckMode)
-    case IntermediariesTypePage => intermediaryTypeRoutes(CheckMode)
-    case WhatTypeofIntermediaryPage => whatTypeofIntermediaryRoutes(CheckMode)
-    case IsExemptionKnownPage => isExemptionKnownRoutes(CheckMode)
-    case IsExemptionCountryKnownPage => isExemptionCountryKnownRoutes(CheckMode)
-    case ExemptCountriesPage => _ => id => _ => Some(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id))
 
     case _ => _ => id => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
   }
@@ -202,40 +188,6 @@ class Navigator @Inject()() {
     ua.get(TaxpayerSelectTypePage, id) map {
       case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
       case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
-    }
-
-  private def youHaveNotAddedAnyIntermediariesRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(YouHaveNotAddedAnyIntermediariesPage, id) map {
-      case YouHaveNotAddedAnyIntermediaries.YesAddNow => controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(id, mode)
-      case _ => controllers.routes.IndexController.onPageLoad()
-    }
-  }
-
-  private def intermediaryTypeRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(IntermediariesTypePage, id) map {
-      case SelectType.Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
-      case SelectType.Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
-    }
-  }
-
-  private def whatTypeofIntermediaryRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(WhatTypeofIntermediaryPage, id) map {
-      case Promoter => controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(id, mode)
-      case Serviceprovider | IDoNotKnow => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
-    }
-  }
-
-  private def isExemptionKnownRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] = {
-    ua.get(IsExemptionKnownPage, id) map {
-      case Yes => controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(id, mode)
-      case models.IsExemptionKnown.No | Unknown => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
-    }
-  }
-
-  private def isExemptionCountryKnownRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
-    ua.get(IsExemptionCountryKnownPage, id) map {
-      case true  => controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(id, mode)
-      case false => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
     }
 
   def nextPage(page: Page, id: Int, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {

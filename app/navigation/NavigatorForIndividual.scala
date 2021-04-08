@@ -76,7 +76,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
       }
 
     case EmailAddressForIndividualPage =>
-      checkRoute => id => _ => index => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
+      checkRoute => id => _ => _ => jumpOrCheckYourAnswers(id, routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, 0), checkRoute)
 
     case WhichCountryTaxForIndividualPage =>
       checkRoute => id => value => index => value match { case Some(country: Country) =>
@@ -129,7 +129,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
     checkRoute match {
       case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
-      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id)
+      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
       case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
       case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad(id)
       case _                                        => jumpTo

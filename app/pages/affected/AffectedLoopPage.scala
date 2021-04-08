@@ -26,8 +26,5 @@ case object AffectedLoopPage extends LoopPage[IndexedSeq[Affected]] {
 
   override def toString: String = "affectedLoop"
 
-  override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    YouHaveNotAddedAnyAffectedPage
-    , AffectedTypePage
-  )
+  override val cleanPages: Seq[QuestionPage[_]] = Seq(AffectedCheckYourAnswersPage)
 }

@@ -49,6 +49,7 @@ class AffectedCheckYourAnswersController @Inject()(
     implicit request =>
 
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(AffectedLoopPage, id, itemId)
+      sessionRepository.set(restoredUserAnswers)
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 

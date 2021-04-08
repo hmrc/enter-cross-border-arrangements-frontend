@@ -17,13 +17,14 @@
 package pages.intermediaries
 
 import models.IsExemptionKnown.{No, Unknown}
+import models.intermediaries.Intermediary
 import models.{IsExemptionKnown, UserAnswers}
-import pages.QuestionPage
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IsExemptionKnownPage extends QuestionPage[IsExemptionKnown] {
+case object IsExemptionKnownPage extends DetailsPage[IsExemptionKnown, Intermediary] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -36,4 +37,6 @@ case object IsExemptionKnownPage extends QuestionPage[IsExemptionKnown] {
       case _ => super.cleanup(value, userAnswers, id)
     }
   }
+
+  override def getFromModel(model: Intermediary): Option[IsExemptionKnown] = Option(model.isExemptionKnown)
 }

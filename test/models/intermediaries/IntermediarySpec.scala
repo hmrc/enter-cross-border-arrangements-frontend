@@ -75,7 +75,7 @@ class IntermediarySpec extends SpecBase {
         .set(ExemptCountriesPage, 0, exemptCountries)
         .success.value
 
-      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers, 0)
+      val intermediary = Intermediary(userAnswers, 0)
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
@@ -140,7 +140,7 @@ class IntermediarySpec extends SpecBase {
       val organisation = Organisation(
         organisationName = "Organisation name",Some(address),Some("email@email.com"), Seq(TaxResidency(Some(country),Some(taxRefNumbers))).toIndexedSeq)
 
-      val intermediary = Intermediary.buildIntermediaryDetails(userAnswers, 0)
+      val intermediary = Intermediary(userAnswers, 0)
 
       intermediary.organisation.get mustEqual organisation
       intermediary.whatTypeofIntermediary mustEqual Promoter
