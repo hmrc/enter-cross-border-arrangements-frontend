@@ -16,15 +16,14 @@
 
 package pages.enterprises
 
+import models.enterprises.AssociatedEnterprise
 import models.{SelectType, UserAnswers}
-import pages.{CleanUpSelectTypePage, QuestionPage}
-import pages.individual._
-import pages.organisation._
+import pages.{CleanUpSelectTypePage, DetailsPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object AssociatedEnterpriseTypePage extends QuestionPage[SelectType] with CleanUpSelectTypePage {
+case object AssociatedEnterpriseTypePage extends DetailsPage[SelectType, AssociatedEnterprise] with CleanUpSelectTypePage {
 
   override def path: JsPath = JsPath \ toString
 
@@ -32,4 +31,6 @@ case object AssociatedEnterpriseTypePage extends QuestionPage[SelectType] with C
 
   override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers.remove(IsAssociatedEnterpriseAffectedPage, id)
+
+  override def getFromModel(model: AssociatedEnterprise): Option[SelectType] = model.selectType.toOption
 }

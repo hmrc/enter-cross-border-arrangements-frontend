@@ -16,12 +16,15 @@
 
 package pages.enterprises
 
-import pages.QuestionPage
+import models.enterprises.AssociatedEnterprise
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IsAssociatedEnterpriseAffectedPage extends QuestionPage[Boolean] {
+case object IsAssociatedEnterpriseAffectedPage extends DetailsPage[Boolean, AssociatedEnterprise] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isAssociatedEnterpriseAffected"
+
+  override def getFromModel(model: AssociatedEnterprise): Option[Boolean] = Option(model.isAffectedBy)
 }

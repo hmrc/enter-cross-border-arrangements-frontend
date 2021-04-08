@@ -16,10 +16,15 @@
 
 package pages.enterprises
 
-import pages.Page
+import models.enterprises.AssociatedEnterprise
+import pages.DetailsPage
+import play.api.libs.json.JsPath
 
-case object AssociatedEnterpriseCheckYourAnswersPage extends Page {
+case object AssociatedEnterpriseCheckYourAnswersPage extends DetailsPage[String, AssociatedEnterprise] {
+
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "associatedEnterpriseCheckYourAnswers"
 
+  override def getFromModel(model: AssociatedEnterprise): Option[String] = Option(model.enterpriseId)
 }

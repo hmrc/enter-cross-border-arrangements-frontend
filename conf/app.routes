@@ -312,8 +312,8 @@ POST       /taxpayers/change-implementation-date/:id        controllers.taxpayer
 
 # ASSOCIATED ENTERPRISES
 
-GET        /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id: Int, itemId: Option[String])
+POST       /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id: Int)
 
 GET        /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(id: Int, mode: Mode = NormalMode)

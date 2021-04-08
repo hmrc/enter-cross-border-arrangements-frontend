@@ -97,14 +97,14 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
       "Intermediaries Check Your Answers Page if answer is No" in {
       navigator
         .routeMap(IsExemptionKnownPage)(IntermediariesRouting(NormalMode))(0)(Some(IsExemptionKnown.No))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
     }
 
     "Is *name* exempt from reporting in an EU member state, or the UK?' intermediaries page to " +
       "Intermediaries Check Your Answers Page if answer is I Do Not Know" in {
       navigator
         .routeMap(IsExemptionKnownPage)(IntermediariesRouting(NormalMode))(0)(Some(IsExemptionKnown.Unknown))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
     }
 
     "Do you know which countries *name* exempt from reporting in?' page to " +
@@ -118,14 +118,14 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
       "'Check your answers' page in the intermediaries journey when answer is false" in {
       navigator
         .routeMap(IsExemptionCountryKnownPage)(IntermediariesRouting(NormalMode))(0)(Some(false))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
     }
 
     "'Which countries is *name* exempt from reporting in?' page to " +
       "'Check your answers' page in the intermediaries journey when valid answer provided" in {
       navigator
         .routeMap(ExemptCountriesPage)(IntermediariesRouting(NormalMode))(0)(Some(ExemptCountries.UnitedKingdom))(0)
-        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+        .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
     }
 
     "'Check your answers' page to " +

@@ -286,7 +286,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'What type of intermediary is *name*?' page to " +
         "'Check your answers' page in the intermediaries journey when unknown" in {
         assertRedirect(WhatTypeofIntermediaryPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(WhatTypeofIntermediaryPage, 0, IDoNotKnow)
@@ -298,7 +298,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'What type of intermediary is *name*?' page to " +
         "'Check your answers' page in the intermediaries journey when I do not know" in {
         assertRedirect(WhatTypeofIntermediaryPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(WhatTypeofIntermediaryPage, 0, Serviceprovider)
@@ -324,7 +324,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
         "Check your answers?' page in the intermediaries journey when No" in {
         assertRedirect(IsExemptionKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(IsExemptionKnownPage, 0, No)
@@ -336,7 +336,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Is *name* exempt from reporting in an EU member state, or the UK?' page to " +
         "Check your answers?' page in the intermediaries journey when Unknown" in {
         assertRedirect(IsExemptionKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(IsExemptionKnownPage, 0, IsExemptionKnown.Unknown)
@@ -362,7 +362,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         "Check your answers' page in the intermediaries journey" +
         "when No" in {
         assertRedirect(IsExemptionCountryKnownPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(IsExemptionCountryKnownPage, 0, false)
@@ -374,7 +374,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       "must go from 'Which countries is *name* exempt from reporting in?' page to " +
         "'Check your answers' page in the intermediaries journey" in {
         assertRedirect(ExemptCountriesPage,
-          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0)) {
+          controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None)) {
           _
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
             .set(ExemptCountriesPage, 0, ExemptCountries.enumerable.withName("uk").toSet)

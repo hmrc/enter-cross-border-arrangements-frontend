@@ -521,7 +521,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatTypeofIntermediaryPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -538,7 +538,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatTypeofIntermediaryPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -572,7 +572,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsExemptionKnownPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -589,7 +589,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsExemptionKnownPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -625,7 +625,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(IsExemptionCountryKnownPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -643,7 +643,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
               navigator
                 .nextPage(ExemptCountriesPage, 0, NormalMode, updatedAnswers)
-                .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0))
+                .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
           }
         }
 

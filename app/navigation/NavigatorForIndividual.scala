@@ -127,7 +127,7 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
 
   private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
       case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
       case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
       case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)

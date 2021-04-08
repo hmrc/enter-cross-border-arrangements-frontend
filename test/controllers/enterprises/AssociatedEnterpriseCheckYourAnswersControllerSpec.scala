@@ -55,7 +55,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0).url)
+    val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None).url)
 
     val result = route(application, request).value
 
