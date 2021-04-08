@@ -619,3 +619,5 @@ POST       /others-affected/check-answers/:id                    controllers.aff
 
 GET        /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id: Int, itemId: String)
 POST       /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onSubmit(id: Int, itemId: String)
+
+GET        /disclosure-summary/:id                               controllers.SummaryController.onPageLoad(id: Int)

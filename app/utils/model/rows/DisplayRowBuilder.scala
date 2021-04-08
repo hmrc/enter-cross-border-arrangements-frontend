@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package utils.rows
+package utils.model.rows
 
-import java.time.format.DateTimeFormatter
-import models.{Address, AddressLookup, TaxReferenceNumbers, UserAnswers}
+import models.{Address, AddressLookup, TaxReferenceNumbers}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
-import utils.rows.SummaryListDisplay.DisplayRow
 
-trait RowBuilder {
+import java.time.format.DateTimeFormatter
 
-  implicit val messages: Messages
-  val userAnswers: UserAnswers
+trait DisplayRowBuilder {
+
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   private[utils] def yesOrNo(answer: Boolean): Content =
@@ -59,16 +57,6 @@ trait RowBuilder {
           attributes         = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
         )
       )
-    )
-  }
-
-  private[utils] def toDisplayRow(msgKey: String,
-                           content: Content,
-                           columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): DisplayRow = {
-    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    DisplayRow(
-      key     = Key(message, classes = Seq(columnWidth)),
-      value   = Value(content)
     )
   }
 

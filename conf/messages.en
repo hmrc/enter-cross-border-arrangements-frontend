@@ -165,6 +165,8 @@ disclosureDetails.relevantTaxpayersLink = Relevant taxpayers
 disclosureDetails.associatedEnterpriseLink = Taxpayers’ associated enterprises
 disclosureDetails.intermediariesLink = Intermediaries
 disclosureDetails.othersAffectedLink = Any others affected
+disclosureDetails.sendDisclosure.summary.1 = You can
+disclosureDetails.sendDisclosure.summary.2 =  check, save or print a copy of your answers (opens in a new tab)
 
 hallmarkCategories.title =Which categories of hallmarks are relevant to this arrangement?
 hallmarkCategories.heading =Which categories of hallmarks are relevant to this arrangement?
@@ -1180,3 +1182,17 @@ areYouSureYouWantToRemoveIntermediary.error.required = Select yes if you want to
 removeTaxpayer.title = Are you sure you want to remove a taxpayer?
 removeTaxpayer.heading = Are you sure you want to remove {0}?
 removeTaxpayer.error.required = Select yes if you want to remove this taxpayer
+
+summary.title = Disclosure summary
+summary.heading = Disclosure summary
+summary.printLink = Print or save this page
+summary.p1 = This is a draft disclosure summary.
+summary.p2 = This information has not been declared and was last saved on {0}.
+summary.disclosure.heading = Disclosure type
+summary.hallmarks.heading = Hallmarks
+summary.arrangements.heading = Arrangement details
+summary.reporters.heading = Reporter’s details
+summary.taxpayers.heading = Relevant taxpayer’s details
+summary.enterprises.heading = Associated enterprise’s details
+summary.intermediaries.heading = Intermediary’s details
+summary.others.heading = Other party’s details

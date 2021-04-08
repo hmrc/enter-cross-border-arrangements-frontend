@@ -138,6 +138,7 @@ object ValidUserAnswersForSubmission {
   val userAnswersForOrganisation = UserAnswers("id")
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(DisclosureDetailsPage, 0, validDisclosureDetails).success.value
+    .set(ArrangementDetailsPage, 0, validArrangementDetails).success.value
     .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
     .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
     .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value

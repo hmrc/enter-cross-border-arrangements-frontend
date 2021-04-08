@@ -59,6 +59,7 @@ class ArrangementCheckYourAnswersController @Inject()(
           , helper.whichNationalProvisionsIsThisArrangementBasedOn(id)
           , helper.giveDetailsOfThisArrangement(id)).flatten
 
+      val json = Json.toJson(list)
       renderer.render("arrangement/check-your-answers-arrangement.njk",
         Json.obj("list" -> list)
       ).map(Ok(_))
