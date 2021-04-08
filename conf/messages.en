@@ -317,6 +317,7 @@ postcode.individual.title = What is their postcode?
 postcode.checkYourAnswersLabel = What is the {0}’s postcode?
 postcode.error.required = Enter a postcode
 postcode.error.invalid = Enter a postcode, like AA1 1AA
+postcode.error.notFound = Address not found - enter a different postcode or enter the address manually
 postcode.submit = Find address
 postcode.hint = Or enter the address manually
 

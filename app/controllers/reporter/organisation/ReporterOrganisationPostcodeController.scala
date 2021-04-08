@@ -16,6 +16,7 @@
 
 package controllers.reporter.organisation
 
+import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.PostcodeFormProvider
@@ -23,7 +24,9 @@ import helpers.JourneyHelpers.getReporterDetailsOrganisationName
 import javax.inject.Inject
 import models.Mode
 import navigation.NavigatorForReporter
+import pages.AddressLookupPage
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -42,6 +45,7 @@ class ReporterOrganisationPostcodeController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: PostcodeFormProvider,
+  addressLookupConnector: AddressLookupConnector,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
@@ -78,7 +82,9 @@ class ReporterOrganisationPostcodeController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
+    val formReturned = form.bindFromRequest()
+
+    formReturned.fold(
         formWithErrors => {
 
           val json = Json.obj(
@@ -90,14 +96,38 @@ class ReporterOrganisationPostcodeController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("postcode.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationPostcodePage, id, value))
+          {for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.remove(ReporterOrganisationPostcodePage, id))
             _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+          } yield renderer.render("postcode.njk", json).map(BadRequest(_))}.flatten
+        },
+      postCode => {
+        addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+          case Nil =>
+            val formError = formReturned.withError(FormError("postcode", List("postcode.error.notFound")))
+
+            val json = Json.obj(
+              "form" -> formError,
+              "displayName" -> getReporterDetailsOrganisationName(request.userAnswers, id),
+              "manualAddressURL" -> manualAddressURL(id, mode),
+              "actionUrl" -> actionUrl(id, mode),
+              "individual" -> false,
+              "mode" -> mode
+            )
+
+            {for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationPostcodePage, id, postCode))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield renderer.render("postcode.njk", json).map(BadRequest(_))}.flatten
+          case addresses =>
+            for {
+              updatedAnswers              <- Future.fromTry(request.userAnswers.set(ReporterOrganisationPostcodePage, id, postCode))
+              updatedAnswersWithAddresses <- Future.fromTry(updatedAnswers.set(AddressLookupPage, id, addresses))
+              _                           <- sessionRepository.set(updatedAnswersWithAddresses)
+              checkRoute                   =  toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(postCode)))
+        }
+      }
+    )
   }
 }

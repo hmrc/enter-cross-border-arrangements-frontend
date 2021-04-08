@@ -21,9 +21,9 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged, pageHeadingProvider}
 import javax.inject.Inject
-import models.{Address, Mode, UserAnswers}
+import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForOrganisation
-import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage}
+import pages.organisation.{IsOrganisationAddressUkPage, OrganisationAddressPage, PostcodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -55,10 +55,14 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(OrganisationAddressPage, id) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm =
+        (request.userAnswers.get(OrganisationAddressPage, id), request.userAnswers.get(PostcodePage, id)) match {
+          case (None, Some(postCode)) =>
+            val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(addressWithPostCode)
+          case (Some(value), _) => form.fill(value)
+          case _ => form
+        }
 
       val json = Json.obj(
         "form"   -> preparedForm,

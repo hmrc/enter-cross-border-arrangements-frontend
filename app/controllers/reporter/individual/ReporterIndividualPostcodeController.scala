@@ -54,8 +54,6 @@ class ReporterIndividualPostcodeController @Inject()(
   private def manualAddressURL(id: Int, mode: Mode): String =
     controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(id, mode).url
 
-
-
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -99,7 +97,7 @@ class ReporterIndividualPostcodeController @Inject()(
         postCode => {
           addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
             case Nil =>
-              val formError = formReturned.withError(FormError("postCode", List("reporterIndividualPostcode.error.notFound")))
+              val formError = formReturned.withError(FormError("postcode", List("reporterIndividualPostcode.error.notFound")))
 
               val json = Json.obj(
                 "form" -> formError,
