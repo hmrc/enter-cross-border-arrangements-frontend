@@ -36,6 +36,9 @@ import pages.taxpayer._
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryRemoveTaxpayerPage: Arbitrary[RemoveTaxpayerPage.type] =
+    Arbitrary(RemoveTaxpayerPage)
+
   implicit lazy val arbitraryYouHaveNotAddedAnyAffectedPage: Arbitrary[YouHaveNotAddedAnyAffectedPage.type] =
     Arbitrary(YouHaveNotAddedAnyAffectedPage)
 

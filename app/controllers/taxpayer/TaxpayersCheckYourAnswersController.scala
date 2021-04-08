@@ -85,20 +85,20 @@ class TaxpayersCheckYourAnswersController @Inject()(
 
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage, id))
-        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, updateLoopList(request.userAnswers, id)))
         _                           <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, mode, userAnswersWithTaxpayerLoop))
       }
   }
 
-  private[taxpayer] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
-    val taxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
+  private[taxpayer] def updateLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
+    val buildTaxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
     userAnswers.get(TaxpayerLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
-        list.filterNot(_.nameAsString == taxpayer.nameAsString) :+ taxpayer
+        list :+ buildTaxpayer
       case None =>       // start new list
-        IndexedSeq[Taxpayer](taxpayer)
+        IndexedSeq[Taxpayer](buildTaxpayer)
     }
   }
 }

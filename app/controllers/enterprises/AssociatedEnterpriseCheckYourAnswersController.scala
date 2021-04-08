@@ -54,9 +54,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
         case Some(SelectType.Organisation) =>
           (
-            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
-              helper.associatedEnterpriseType(id),
-              helper.organisationName(id)).flatten ++
+            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+             Seq(helper.associatedEnterpriseType(id),
+              helper.organisationName(id)
+             ).flatten ++
               helper.buildOrganisationAddressGroup(id) ++
               helper.buildOrganisationEmailAddressGroup(id),
             helper.buildTaxResidencySummaryForOrganisation(id)
@@ -64,9 +65,11 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
         case Some(SelectType.Individual) =>
           (
-            Seq(helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id),
+            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+            Seq(
               helper.associatedEnterpriseType(id),
-              helper.individualName(id)).flatten ++
+              helper.individualName(id)
+            ).flatten ++
               helper.buildIndividualDateOfBirthGroup(id) ++
               helper.buildIndividualPlaceOfBirthGroup(id) ++
               helper.buildIndividualAddressGroup(id) ++
@@ -98,7 +101,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       for {
         userAnswers                   <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updateLoopList(request.userAnswers, id)))
         _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute                    =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
       } yield {
@@ -106,14 +109,13 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       }
   }
 
-  private[enterprises] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
+  private[enterprises] def updateLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
     val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise.buildAssociatedEnterprise(userAnswers, id)
     userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
-        list.filterNot(_.nameAsString == associatedEnterprise.nameAsString) :+ associatedEnterprise
+        list :+ associatedEnterprise
       case None =>      // start new list
         IndexedSeq[AssociatedEnterprise](associatedEnterprise)
     }
   }
-
 }

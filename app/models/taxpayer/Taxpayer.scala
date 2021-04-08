@@ -16,16 +16,19 @@
 
 package models.taxpayer
 
-import java.time.LocalDate
-import java.util.UUID
-
-import models.{SelectType, UserAnswers}
 import models.individual.Individual
 import models.organisation.Organisation
+import models.{SelectType, UserAnswers}
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class Taxpayer(taxpayerId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None, implementingDate: Option[LocalDate] = None) {
+import java.time.LocalDate
+import java.util.UUID
+
+case class Taxpayer(taxpayerId: String,
+                    individual: Option[Individual] = None,
+                    organisation: Option[Organisation] = None,
+                    implementingDate: Option[LocalDate] = None) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString

@@ -18,6 +18,8 @@ package utils.rows
 
 import models.CheckMode
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.reporter.ReporterDetailsPage
+import pages.taxpayer.TaxpayerLoopPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
 
@@ -32,21 +34,41 @@ trait EnterpriseRows extends RowBuilder {
     )
   }
 
-  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Option[Row] = userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) map {
-    answer =>
-      val taxpayers = if (answer.size > 1) {
-        s"""<ul class="govuk-list govuk-list--bullet">
-           |${answer.map(taxpayer => s"<li>$taxpayer</li>").mkString("\n")}
-           |</ul>""".stripMargin
-      } else {
-        s"${answer.head}"
-      }
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
+    val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
 
-      toRow(
-        msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
-        content = Html(s"$taxpayers"),
-        href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
-      )
+    (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
+      case (Some(selectionList), Some(taxpayers)) =>
+        val relevantTaxpayerNames: Seq[String] = selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
+
+        if (selectionList.contains(reporterName)) {
+          formatSelectedTaxpayers(Seq(reporterName) ++ relevantTaxpayerNames, id)
+        } else {
+          formatSelectedTaxpayers(relevantTaxpayerNames, id)
+        }
+
+      case (Some(_), None) =>
+        formatSelectedTaxpayers(Seq(reporterName), id)
+
+      case _ => Seq.empty
+    }
+  }
+
+  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int): Seq[Row] = {
+
+    val formattedTaxpayerList = if (taxpayerList.size > 1) {
+      s"""<ul class="govuk-list govuk-list--bullet">
+         |${taxpayerList.map(selectedTaxpayer => s"<li>$selectedTaxpayer</li>").mkString("\n")}
+         |</ul>""".stripMargin
+    } else {
+      s"${taxpayerList.head}"
+    }
+
+    Seq(toRow(
+      msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
+      content = Html(s"$formattedTaxpayerList"),
+      href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
+    ))
   }
 
   def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {

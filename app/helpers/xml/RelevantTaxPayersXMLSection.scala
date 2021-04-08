@@ -30,17 +30,17 @@ case class RelevantTaxPayersXMLSection(submission: Submission, reporterSection: 
       val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
       if (taxpayer.individual.isDefined) {
         <RelevantTaxpayer>
-          {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}{date}{getAssociatedEnterprises(taxpayer.individual.get.nameAsString)}
+          {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}{date}{getAssociatedEnterprises(taxpayer.taxpayerId)}
         </RelevantTaxpayer>
       } else {
         <RelevantTaxpayer>
-          {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}{date}{getAssociatedEnterprises(taxpayer.organisation.get.organisationName)}
+          {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}{date}{getAssociatedEnterprises(taxpayer.taxpayerId)}
         </RelevantTaxpayer>
         }
     }
 
-  private[xml] def getAssociatedEnterprises(name: String) =
-    associatedEnterpriseSection.map(_.buildAssociatedEnterprises(name)).getOrElse(NodeSeq.Empty)
+  private[xml] def getAssociatedEnterprises(taxpayerID: String) =
+    associatedEnterpriseSection.map(_.buildAssociatedEnterprises(taxpayerID)).getOrElse(NodeSeq.Empty)
 
   def buildRelevantTaxpayers: NodeSeq =
     Try {

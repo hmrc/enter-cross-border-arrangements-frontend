@@ -1141,7 +1141,6 @@ unsubmitted.heading = You have {0} unsubmitted disclosure{1}
 unsubmitted.advice = We save unsubmitted disclosures for 28 days from the last date you saved changes.
 unsubmitted.link = Create a new disclosure
 
-
 replaceOrDeleteADisclosure.title.replace = Which disclosure do you want to replace?
 replaceOrDeleteADisclosure.title.delete = Which disclosure do you want to delete?
 replaceOrDeleteADisclosure.heading.replace = Which disclosure do you want to replace?
@@ -1177,3 +1176,7 @@ areYouSureYouWantToRemoveEnterprise.error.required = Select yes if you want to r
 areYouSureYouWantToRemoveIntermediary.title = Are you sure you want to remove this intermediary?
 areYouSureYouWantToRemoveIntermediary.heading = Are you sure you want to remove {0}?
 areYouSureYouWantToRemoveIntermediary.error.required = Select yes if you want to remove this intermediary
+
+removeTaxpayer.title = Are you sure you want to remove a taxpayer?
+removeTaxpayer.heading = Are you sure you want to remove {0}?
+removeTaxpayer.error.required = Select yes if you want to remove this taxpayer

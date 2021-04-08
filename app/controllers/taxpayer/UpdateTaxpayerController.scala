@@ -143,7 +143,7 @@ class UpdateTaxpayerController @Inject()(
         taxpayer <- list
       } yield {
         val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.TaxpayerSelectTypeController.onPageLoad(id, NormalMode).url else "#"
-        val removeUrl = "#" // TODO correct after DAC6-413routes.RemoveTaxpayerController.onPageLoad(id, taxpayer.taxpayerId).url
+        val removeUrl = routes.RemoveTaxpayerController.onPageLoad(id, taxpayer.taxpayerId).url
         ItemList(taxpayer.nameAsString, changeUrl, removeUrl)
       }
     case None => IndexedSeq.empty

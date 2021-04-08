@@ -118,7 +118,7 @@ class IntermediariesCheckYourAnswersController @Inject()(
     val intermediary: Intermediary = Intermediary.buildIntermediaryDetails(userAnswers, id)
     userAnswers.get(IntermediaryLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
-        list.filterNot(_.nameAsString == intermediary.nameAsString) :+ intermediary
+        list :+ intermediary
       case None =>       // start new list
         IndexedSeq[Intermediary](intermediary)
     }

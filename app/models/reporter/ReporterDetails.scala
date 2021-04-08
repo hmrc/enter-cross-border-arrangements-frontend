@@ -24,10 +24,16 @@ import play.api.libs.json.{Json, OFormat}
 
 case class ReporterDetails(individual: Option[Individual] = None,
                            organisation: Option[Organisation] = None,
-                           liability: Option[ReporterLiability] = None)
+                           liability: Option[ReporterLiability] = None) {
+
+  val nameAsString: String = (individual, organisation) match {
+    case (Some(i), _) => i.nameAsString
+    case (_, Some(o)) => o.organisationName
+    case _            => throw new RuntimeException("Reporter must be either an individual or an organisation.")
+  }
+}
 
 object ReporterDetails {
-
 
   def buildReporterDetails(ua: UserAnswers, id: Int): ReporterDetails = {
 

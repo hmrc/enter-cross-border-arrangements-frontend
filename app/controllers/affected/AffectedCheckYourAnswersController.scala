@@ -104,7 +104,7 @@ class AffectedCheckYourAnswersController @Inject()(
     val affected: Affected = Affected.buildDetails(userAnswers, id)
     userAnswers.get(AffectedLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
-        list.filterNot(_.nameAsString == affected.nameAsString) :+ affected
+        list :+ affected
       case None =>      // start new list
         IndexedSeq[Affected](affected)
     }
