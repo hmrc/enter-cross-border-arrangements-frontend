@@ -27,7 +27,8 @@ case object AssociatedEnterpriseLoopPage extends LoopPage[IndexedSeq[AssociatedE
   override def toString: String = "associatedEnterpriseLoop"
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    YouHaveNotAddedAnyAssociatedEnterprisesPage
+    AssociatedEnterpriseCheckYourAnswersPage
+    , YouHaveNotAddedAnyAssociatedEnterprisesPage
     , SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
     , AssociatedEnterpriseTypePage
     , IsAssociatedEnterpriseAffectedPage
