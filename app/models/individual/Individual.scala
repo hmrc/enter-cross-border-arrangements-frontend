@@ -39,8 +39,9 @@ case class Individual(individualName: Name,
 
   val firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
 
-  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    implicit val org: Individual = implicitly(this)
+  implicit val org: Individual = implicitly(this)
+
+  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     for {
       ua1 <- userAnswers.set(IndividualNamePage, id)
 
@@ -51,7 +52,7 @@ case class Individual(individualName: Name,
 
       ua6 <- ua5.set(IsIndividualAddressKnownPage, id)
       ua7 <- ua6.set(IsIndividualAddressUkPage, id)
-      ua8 <- ua7.set(IsIndividualAddressUkPage, id)
+      ua8 <- ua7.set(IndividualAddressPage, id)
       ua9 <- ua8.set(IndividualUkPostcodePage, id)
       uaa <- ua9.set(IndividualSelectAddressPage, id)
       uab <- uaa.set(EmailAddressQuestionForIndividualPage, id)
@@ -65,7 +66,6 @@ case class Individual(individualName: Name,
       uai <- uah.set(WhatAreTheTaxNumbersForNonUKIndividualPage, id)
       uaj <- uai.set(IsIndividualResidentForTaxOtherCountriesPage, id)
     } yield uaj
-  }
 }
 
 object Individual {
