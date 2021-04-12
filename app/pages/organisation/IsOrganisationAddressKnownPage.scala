@@ -32,8 +32,9 @@ case object IsOrganisationAddressKnownPage extends DetailsPage[Boolean, Organisa
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(false) =>
-        userAnswers.remove(OrganisationAddressPage, id)
-        userAnswers.remove(SelectedAddressLookupPage, id)
+        userAnswers
+          .remove(OrganisationAddressPage, id)
+          .flatMap(_.remove(SelectedAddressLookupPage, id))
       case _ => super.cleanup(value, userAnswers, id)
     }
 

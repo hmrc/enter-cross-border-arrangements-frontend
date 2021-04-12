@@ -32,8 +32,9 @@ case object IsIndividualAddressKnownPage extends DetailsPage[Boolean, Individual
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(false) =>
-        userAnswers.remove(IndividualAddressPage, id)
-        userAnswers.remove(SelectedAddressLookupPage, id)
+        userAnswers
+          .remove(IndividualAddressPage, id)
+          .flatMap(_.remove(SelectedAddressLookupPage, id))
       case _ => super.cleanup(value, userAnswers, id)
     }
 
