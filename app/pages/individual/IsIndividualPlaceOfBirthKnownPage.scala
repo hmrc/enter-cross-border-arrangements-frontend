@@ -16,15 +16,24 @@
 
 package pages.individual
 
+import models.UserAnswers
 import models.individual.Individual
 import pages.DetailsPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object IsIndividualPlaceOfBirthKnownPage extends DetailsPage[Boolean, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isIndividualPlaceOfBirthKnown"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    value match {
+      case Some(false) => userAnswers.remove(IndividualPlaceOfBirthPage, id)
+      case _           => super.cleanup(value, userAnswers, id)
+    }
 
   override def getFromModel(model: Individual): Option[Boolean] = IndividualPlaceOfBirthPage.getFromModel(model).map(_.nonEmpty).orElse(Some(false))
 }
