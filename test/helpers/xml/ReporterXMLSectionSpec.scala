@@ -18,11 +18,10 @@ package helpers.xml
 
 import base.SpecBase
 import helpers.data.ValidUserAnswersForSubmission.{validDisclosureDetails, validIndividual, validOrganisation}
-import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
+import models.Submission
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
-import models.{IsExemptionKnown, Submission}
 
 import java.time.LocalDate
 import scala.xml.PrettyPrinter
@@ -46,7 +45,7 @@ class ReporterXMLSectionSpec extends SpecBase {
 
         val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(submission).buildReporterCapacity
+        val result = ReporterXMLSection(submission).buildReporterCapacity(reporterDetails)
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -60,7 +59,7 @@ class ReporterXMLSectionSpec extends SpecBase {
 
         val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(submission).buildReporterCapacity
+        val result = ReporterXMLSection(submission).buildReporterCapacity(reporterDetails)
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -70,11 +69,11 @@ class ReporterXMLSectionSpec extends SpecBase {
         val reporterDetails = ReporterDetails(
           None,
           Some(validOrganisation),
-          Some(ReporterLiability("Intermediary", None, Some(IntermediaryRole.Unknown.toString), None, None, None)))
+          Some(ReporterLiability("Intermediary", None, None, None, None, None)))
 
         val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = ReporterXMLSection(submission).buildReporterCapacity
+        val result = ReporterXMLSection(submission).buildReporterCapacity(reporterDetails)
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -458,239 +457,6 @@ class ReporterXMLSectionSpec extends SpecBase {
 
           prettyPrinter.format(result) mustBe expected
         }
-      }
-    }
-
-    "buildReporterAsTaxpayer" - {
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects ORGANISATION option " +
-        "on 'reporter/organisation-or-individual page" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
-
-        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Organisation>
-             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Organisation>
-             |    </ID>
-             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
-        "when arrangement is NOT MARKETABLE" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, None)))
-
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
-
-        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Organisation>
-             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Organisation>
-             |    </ID>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
-        "on 'reporter/organisation-or-individual page" in {
-
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
-
-        val result = ReporterXMLSection(submission).buildReporterAsTaxpayer
-
-        val expected =
-          s"""<RelevantTaxpayer>
-             |    <ID>
-             |        <Individual>
-             |            <IndividualName>
-             |                <FirstName>FirstName</FirstName>
-             |                <LastName>Surname</LastName>
-             |            </IndividualName>
-             |            <BirthDate>1990-01-01</BirthDate>
-             |            <BirthPlace>SomePlace</BirthPlace>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Individual>
-             |    </ID>
-             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
-             |</RelevantTaxpayer>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-    }
-
-    "buildReporterAsIntermediary" - {
-
-      val intermediary: Intermediary = Intermediary("123", None, Some(validOrganisation),
-        WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)
-
-      "must build intermediary section from REPORTER DETAILS for an ORGANISATION as an INTERMEDIARY " +
-        "who is a PROMOTER with KNOWN country EXEMPTION in FRANCE" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-            Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
-
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
-
-        val result = ReporterXMLSection(submission).buildReporterAsIntermediary//(intermediary)
-
-        val expected =
-          """<Intermediary>
-            |    <ID>
-            |        <Organisation>
-            |            <OrganisationName>Taxpayers Ltd</OrganisationName>
-            |            <TIN issuedBy="GB">UTR1234</TIN>
-            |            <TIN issuedBy="FR">CS700100A</TIN>
-            |            <TIN issuedBy="FR">UTR5678</TIN>
-            |            <Address>
-            |                <Street>value 1</Street>
-            |                <BuildingIdentifier>value 2</BuildingIdentifier>
-            |                <DistrictName>value 3</DistrictName>
-            |                <PostCode>XX9 9XX</PostCode>
-            |                <City>value 4</City>
-            |                <Country>FR</Country>
-            |            </Address>
-            |            <EmailAddress>email@email.com</EmailAddress>
-            |            <ResCountryCode>GB</ResCountryCode>
-            |            <ResCountryCode>FR</ResCountryCode>
-            |        </Organisation>
-            |    </ID>
-            |    <Capacity>DAC61101</Capacity>
-            |    <NationalExemption>
-            |        <Exemption>true</Exemption>
-            |        <CountryExemptions>
-            |            <CountryExemption>FR</CountryExemption>
-            |        </CountryExemptions>
-            |    </NationalExemption>
-            |</Intermediary>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
-
-      "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
-        "who is a SERVICE PROVIDER with KNOWN country EXEMPTION in FRANCE" in {
-
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-            Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
-
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
-
-        val result = ReporterXMLSection(submission).buildReporterAsIntermediary//(intermediary)
-
-        val expected =
-          s"""<Intermediary>
-             |    <ID>
-             |        <Individual>
-             |            <IndividualName>
-             |                <FirstName>FirstName</FirstName>
-             |                <LastName>Surname</LastName>
-             |            </IndividualName>
-             |            <BirthDate>1990-01-01</BirthDate>
-             |            <BirthPlace>SomePlace</BirthPlace>
-             |            <TIN issuedBy="GB">UTR1234</TIN>
-             |            <TIN issuedBy="FR">CS700100A</TIN>
-             |            <TIN issuedBy="FR">UTR5678</TIN>
-             |            <Address>
-             |                <Street>value 1</Street>
-             |                <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                <DistrictName>value 3</DistrictName>
-             |                <PostCode>XX9 9XX</PostCode>
-             |                <City>value 4</City>
-             |                <Country>FR</Country>
-             |            </Address>
-             |            <EmailAddress>email@email.com</EmailAddress>
-             |            <ResCountryCode>GB</ResCountryCode>
-             |            <ResCountryCode>FR</ResCountryCode>
-             |        </Individual>
-             |    </ID>
-             |    <Capacity>DAC61102</Capacity>
-             |    <NationalExemption>
-             |        <Exemption>true</Exemption>
-             |        <CountryExemptions>
-             |            <CountryExemption>FR</CountryExemption>
-             |        </CountryExemptions>
-             |    </NationalExemption>
-             |</Intermediary>""".stripMargin
-
-        prettyPrinter.formatNodes(result) mustBe expected
       }
     }
   }

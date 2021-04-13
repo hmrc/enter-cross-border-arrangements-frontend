@@ -20,11 +20,37 @@ import models.IsExemptionKnown.{No, Unknown, Yes}
 import models.Submission
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.intermediaries.{ExemptCountries, Intermediary}
+import models.reporter.RoleInArrangement
 
 import scala.util.Try
 import scala.xml.{Node, NodeSeq}
 
-case class IntermediariesXMLSection(submission: Submission, reporterSection: Option[ReporterXMLSection]) {
+case class IntermediariesXMLSection(submission: Submission) {
+
+  private val isReporterIntermediary: Option[Boolean] = submission.reporterDetails.flatMap(_.liability.map(x => x.role == RoleInArrangement.Intermediary.toString))
+
+  private[xml] def buildReporterAsIntermediary: NodeSeq = {
+
+    (isReporterIntermediary, submission.reporterDetails) match {
+      case (Some(true), Some(reporterDetails)) =>
+
+        if (reporterDetails.organisation.isDefined) {
+          <Intermediary>
+            {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
+            {ReporterXMLSection(submission).buildReporterCapacity(reporterDetails)}
+            {ReporterXMLSection(submission).buildReporterExemptions}
+          </Intermediary>
+        } else {
+          <Intermediary>
+            {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}
+            {ReporterXMLSection(submission).buildReporterCapacity(reporterDetails)}
+            {ReporterXMLSection(submission).buildReporterExemptions}
+          </Intermediary>
+        }
+
+      case _ => NodeSeq.Empty
+    }
+  }
 
   private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
     if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
@@ -84,7 +110,7 @@ case class IntermediariesXMLSection(submission: Submission, reporterSection: Opt
   def buildIntermediaries: NodeSeq = {
     Try {
       <Intermediaries>
-        {reporterSection.map(_.buildReporterAsIntermediary).getOrElse(NodeSeq.Empty) ++ getIntermediaries}
+        {buildReporterAsIntermediary ++ getIntermediaries}
       </Intermediaries>
     }.getOrElse(NodeSeq.Empty)
   }
