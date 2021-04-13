@@ -46,6 +46,7 @@ class SummaryController @Inject()(
 
       val disclosureList: Seq[SummaryListDisplay.DisplayRow] = summaryListGenerator.generateSummaryList(id, submission.disclosureDetails)
 
+      //ToDo refactor to remove get on option
       val arrangementList =  summaryListGenerator.generateSummaryList(id, submission.arrangementDetails.get)
 
       renderer.render("summary.njk",
