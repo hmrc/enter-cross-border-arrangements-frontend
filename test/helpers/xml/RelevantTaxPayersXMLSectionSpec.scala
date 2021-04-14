@@ -17,68 +17,39 @@
 package helpers.xml
 
 import base.SpecBase
-import helpers.data.ValidUserAnswersForSubmission.{validDisclosureDetails, validIndividual, validOrganisation}
+import helpers.data.ValidUserAnswersForSubmission._
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
-import models.organisation.Organisation
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
-import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, Name, Submission, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import pages.reporter._
-import pages.unsubmitted.UnsubmittedDisclosurePage
+import models.taxpayer.Taxpayer
+import models.{Name, Submission}
 
-import java.time.LocalDate
 import scala.xml.PrettyPrinter
 
 class RelevantTaxPayersXMLSectionSpec extends SpecBase {
-
-  //TODO - fix failing tests
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
   val reporterSection: ReporterXMLSection = mock[ReporterXMLSection]
   val associatedEnterpriseSection: AssociatedEnterprisesXMLSection = mock[AssociatedEnterprisesXMLSection]
 
-  val address: Address =
-    Address(
-      Some("value 1"),
-      Some("value 2"),
-      Some("value 3"),
-      "value 4",
-      Some("XX9 9XX"),
-      Country("valid","FR","France")
-    )
+  val taxpayersAsOrganisation: IndexedSeq[Taxpayer] = IndexedSeq(
+    Taxpayer("123", None, Some(validOrganisation), Some(todayMinusOneMonth)),
+    Taxpayer("Another ID", None, Some(validOrganisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths)))
 
-  val taxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
-    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
-  )
+  val taxpayersAsIndividuals: IndexedSeq[Taxpayer] = IndexedSeq(
+    Taxpayer("TP-123", Some(validIndividual), None, Some(todayMinusOneMonth)),
+    Taxpayer("TP-1230", Some(validIndividual.copy(individualName = Name("Another", "Individual"))), None, Some(todayMinusTwoMonths)))
 
-  val email = "email@email.com"
-  val individualName: Name = Name("FirstName", "Surname")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)
+  val taxpayerOrganisation: Taxpayer =
+    Taxpayer("123", None, Some(validOrganisation), Some(todayMinusOneMonth))
 
+  val taxpayerIndividual: Taxpayer = Taxpayer(
+    "TP-123",
+    Some(Individual(validIndividualName, validIndividualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)),
+    None, Some(todayMinusOneMonth))
 
-  val loopDetails = IndexedSeq(
-    LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
-      Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
-    LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
-
-  val organisation: Organisation = Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)
-
-  val today: LocalDate = LocalDate.now
-  val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
-  val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
-  val taxpayersAsOrganisation = IndexedSeq(
-    Taxpayer("123", None, Some(organisation), Some(todayMinusOneMonth)),
-    Taxpayer("Another ID", None, Some(organisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths)))
-
-  val taxpayersAsIndividuals = IndexedSeq(
-    Taxpayer("123", Some(individual), None, Some(todayMinusOneMonth)),
-    Taxpayer("Another ID", Some(individual.copy(individualName = Name("Another", "Individual"))), None, Some(todayMinusTwoMonths)))
-
-  private val submission = Submission("id", validDisclosureDetails)
+  private val submission: Submission = Submission("id", validDisclosureDetails)
 
   def toSubmission(reporterDetails: ReporterDetails, taxpayers: IndexedSeq[Taxpayer] = IndexedSeq.empty[Taxpayer]): Submission =
     submission.copy(reporterDetails = Option(reporterDetails), taxpayers = taxpayers)
@@ -94,10 +65,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         " with additional taxpayers as organisations" in {
 
         val reporterDetails = ReporterDetails(
-          Some(individual),
+          Some(validIndividual),
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
+            None, None, None, None, Some(validToday))))
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -126,7 +97,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -186,9 +157,9 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
         val reporterDetails = ReporterDetails(
           None,
-          Some(organisation),
+          Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
+            None, None, None, None, Some(validToday))))
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -212,7 +183,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -269,18 +240,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
         " with associated enterprise section if reporter selected in associated enterprise journey" in {
 
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
-          Submission("id", validDisclosureDetails).copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
-
         val expected =
           s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
@@ -303,61 +262,54 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
-             |    </RelevantTaxpayer>
-             |    <RelevantTaxpayer>
-             |        <ID>
-             |            <Organisation>
-             |                <OrganisationName>Taxpayers Ltd</OrganisationName>
-             |                <TIN issuedBy="GB">UTR1234</TIN>
-             |                <TIN issuedBy="FR">CS700100A</TIN>
-             |                <TIN issuedBy="FR">UTR5678</TIN>
-             |                <Address>
-             |                    <Street>value 1</Street>
-             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                    <DistrictName>value 3</DistrictName>
-             |                    <PostCode>XX9 9XX</PostCode>
-             |                    <City>value 4</City>
-             |                    <Country>FR</Country>
-             |                </Address>
-             |                <EmailAddress>email@email.com</EmailAddress>
-             |                <ResCountryCode>GB</ResCountryCode>
-             |                <ResCountryCode>FR</ResCountryCode>
-             |            </Organisation>
-             |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>2021-04-14</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
-             |    <AssociatedEnterprise>
-             |        <AssociatedEnterpriseID>
-             |            <Individual>
-             |                <IndividualName>
-             |                    <FirstName>FirstName</FirstName>
-             |                    <LastName>Surname</LastName>
-             |                </IndividualName>
-             |                <BirthDate>1990-01-01</BirthDate>
-             |                <BirthPlace>SomePlace</BirthPlace>
-             |                <TIN issuedBy="GB">UTR1234</TIN>
-             |                <Address>
-             |                    <Street>value 1</Street>
-             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                    <DistrictName>value 3</DistrictName>
-             |                    <PostCode>XX9 9XX</PostCode>
-             |                    <City>value 4</City>
-             |                    <Country>GB</Country>
-             |                </Address>
-             |                <EmailAddress>email@email.com</EmailAddress>
-             |                <ResCountryCode>GB</ResCountryCode>
-             |            </Individual>
-             |        </AssociatedEnterpriseID>
-             |        <AffectedPerson>false</AffectedPerson>
-             |    </AssociatedEnterprise>
-             |</AssociatedEnterprises>
+             |            <AssociatedEnterprise>
+             |                <AssociatedEnterpriseID>
+             |                    <Individual>
+             |                        <IndividualName>
+             |                            <FirstName>FirstName</FirstName>
+             |                            <LastName>Surname</LastName>
+             |                        </IndividualName>
+             |                        <BirthDate>1990-01-01</BirthDate>
+             |                        <BirthPlace>SomePlace</BirthPlace>
+             |                        <TIN issuedBy="GB">UTR1234</TIN>
+             |                        <TIN issuedBy="FR">CS700100A</TIN>
+             |                        <TIN issuedBy="FR">UTR5678</TIN>
+             |                        <Address>
+             |                            <Street>value 1</Street>
+             |                            <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                            <DistrictName>value 3</DistrictName>
+             |                            <PostCode>XX9 9XX</PostCode>
+             |                            <City>value 4</City>
+             |                            <Country>FR</Country>
+             |                        </Address>
+             |                        <EmailAddress>email@email.com</EmailAddress>
+             |                        <ResCountryCode>GB</ResCountryCode>
+             |                        <ResCountryCode>FR</ResCountryCode>
+             |                    </Individual>
+             |                </AssociatedEnterpriseID>
+             |                <AffectedPerson>false</AffectedPerson>
+             |            </AssociatedEnterprise>
+             |        </AssociatedEnterprises>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop)).buildRelevantTaxpayers.map { result =>
 
-          prettyPrinter.format(result) mustBe expected
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", Some(validIndividual), None, List(validOrganisation.organisationName), isAffectedBy = false))
+
+        val reporterDetails = ReporterDetails(
+          None,
+          Some(validOrganisation),
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(validToday))))
+
+        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
+          submission.copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
+
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop)).buildRelevantTaxpayers.map { result =>
+            prettyPrinter.format(result) mustBe expected
         }
       }
 
@@ -365,10 +317,10 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         " with additional taxpayers as Individuals" in {
 
         val reporterDetails = ReporterDetails(
-          Some(individual),
+          Some(validIndividual),
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
+            None, None, None, None, Some(validToday))))
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -397,7 +349,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -456,25 +408,13 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |</RelevantTaxPayers>""".stripMargin
 
           RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map { result =>
-
           prettyPrinter.format(result) mustBe expected
         }
       }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
-        " with associated enterprise section if reporter selected in associated enterprise journey" in {
-
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
-
-        val reporterDetails = ReporterDetails(
-          Some(individual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
-
-        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
-          Submission("id", validDisclosureDetails).copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
+        " with associated enterprise section if reporter selected in associated enterprise journey" +
+        "and with additional taxpayers as individuals" in {
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -503,7 +443,36 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>2021-04-14</TaxpayerImplementingDate>
+             |        <AssociatedEnterprises>
+             |            <AssociatedEnterprise>
+             |                <AssociatedEnterpriseID>
+             |                    <Individual>
+             |                        <IndividualName>
+             |                            <FirstName>FirstName</FirstName>
+             |                            <LastName>Surname</LastName>
+             |                        </IndividualName>
+             |                        <BirthDate>1990-01-01</BirthDate>
+             |                        <BirthPlace>SomePlace</BirthPlace>
+             |                        <TIN issuedBy="GB">UTR1234</TIN>
+             |                        <TIN issuedBy="FR">CS700100A</TIN>
+             |                        <TIN issuedBy="FR">UTR5678</TIN>
+             |                        <Address>
+             |                            <Street>value 1</Street>
+             |                            <BuildingIdentifier>value 2</BuildingIdentifier>
+             |                            <DistrictName>value 3</DistrictName>
+             |                            <PostCode>XX9 9XX</PostCode>
+             |                            <City>value 4</City>
+             |                            <Country>FR</Country>
+             |                        </Address>
+             |                        <EmailAddress>email@email.com</EmailAddress>
+             |                        <ResCountryCode>GB</ResCountryCode>
+             |                        <ResCountryCode>FR</ResCountryCode>
+             |                    </Individual>
+             |                </AssociatedEnterpriseID>
+             |                <AffectedPerson>false</AffectedPerson>
+             |            </AssociatedEnterprise>
+             |        </AssociatedEnterprises>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -530,50 +499,31 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
-             |                        <AssociatedEnterprises>
-             |    <AssociatedEnterprise>
-             |        <AssociatedEnterpriseID>
-             |            <Individual>
-             |                <IndividualName>
-             |                    <FirstName>FirstName</FirstName>
-             |                    <LastName>Surname</LastName>
-             |                </IndividualName>
-             |                <BirthDate>1990-01-01</BirthDate>
-             |                <BirthPlace>SomePlace</BirthPlace>
-             |                <TIN issuedBy="GB">UTR1234</TIN>
-             |                <Address>
-             |                    <Street>value 1</Street>
-             |                    <BuildingIdentifier>value 2</BuildingIdentifier>
-             |                    <DistrictName>value 3</DistrictName>
-             |                    <PostCode>XX9 9XX</PostCode>
-             |                    <City>value 4</City>
-             |                    <Country>GB</Country>
-             |                </Address>
-             |                <EmailAddress>email@email.com</EmailAddress>
-             |                <ResCountryCode>GB</ResCountryCode>
-             |            </Individual>
-             |        </AssociatedEnterpriseID>
-             |        <AffectedPerson>false</AffectedPerson>
-             |    </AssociatedEnterprise>
-             |</AssociatedEnterprises>
+             |        <TaxpayerImplementingDate>2021-03-14</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop)).buildRelevantTaxpayers.map { result =>
+        val enterpriseLoop = IndexedSeq(
+          AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.nameAsString), isAffectedBy = false))
 
+        val reporterDetails = ReporterDetails(
+          Some(validIndividual),
+          None,
+          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(validToday))))
+
+        def toSubmission(reporterDetails: ReporterDetails,
+                         taxpayer: IndexedSeq[Taxpayer],
+                         associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
+          submission.copy(reporterDetails = Option(reporterDetails), taxpayers = taxpayer, associatedEnterprises = associatedEnterprise)
+
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, IndexedSeq(taxpayerIndividual), enterpriseLoop)).buildRelevantTaxpayers.map { result =>
           prettyPrinter.format(result) mustBe expected
         }
       }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation " +
         "with additional taxpayers as Individuals" in {
-
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(organisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -597,7 +547,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${today}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -655,25 +605,16 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation)).buildRelevantTaxpayers.map { result =>
+        val reporterDetails = ReporterDetails(None, Some(validOrganisation), Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
+            None, None, None, None, Some(validToday))))
 
+        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map { result =>
           prettyPrinter.format(result) mustBe expected
         }
       }
 
       "must build a complete RelevantTaxPayers XML with additional taxpayers as organisations and " +
         "their associated enterprise - one organisation" in {
-
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", None, Some(organisation), List("Other Taxpayers Ltd"), isAffectedBy = false))
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary).success.value
-//          .set(TaxpayerLoopPage, 0, taxpayersAsOrganisation).success.value
-//          .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
-
-        val updatedSubmision = submission.copy(taxpayers = taxpayersAsOrganisation, associatedEnterprises = enterpriseLoop)
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -747,8 +688,12 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(updatedSubmision).buildRelevantTaxpayers.map { result =>
+        val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
+          AssociatedEnterprise("id", None, Some(validOrganisation), List(taxpayersAsOrganisation(1).taxpayerId), isAffectedBy = false))
 
+        val updatedSubmission: Submission = submission.copy(taxpayers = taxpayersAsOrganisation, associatedEnterprises = enterpriseLoop)
+
+        RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map { result =>
           prettyPrinter.format(result) mustBe expected
         }
       }
@@ -756,9 +701,9 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML with additional taxpayers as Individuals and " +
         "their associated enterprises - one individual and one organisation" in {
 
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = true),
-          AssociatedEnterprise("id2", None, Some(organisation), List(individual.nameAsString), isAffectedBy = true))
+        val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
+          AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.taxpayerId), isAffectedBy = true),
+          AssociatedEnterprise("id2", None, Some(validOrganisation), List(taxpayerIndividual.taxpayerId), isAffectedBy = true))
 
         val expected =
           s"""<RelevantTaxPayers>
@@ -872,8 +817,6 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
         val updatedSubmission = submission.copy(taxpayers = taxpayersAsIndividuals, associatedEnterprises = enterpriseLoop)
 
         RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map { result =>
-
-          println(s"\n\n@@@@@@@@@@ result: $result\n\n")
           prettyPrinter.format(result) mustBe expected
         }
       }
@@ -888,7 +831,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           None,
           Some(validOrganisation),
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
+            None, None, None, None, Some(validToday))))
 
         val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
@@ -915,7 +858,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |            <ResCountryCode>FR</ResCountryCode>
              |        </Organisation>
              |    </ID>
-             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
+             |    <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
         prettyPrinter.formatNodes(result) mustBe expected
@@ -967,7 +910,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
           Some(validIndividual),
           None,
           Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(today))))
+            None, None, None, None, Some(validToday))))
 
         val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
@@ -999,7 +942,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |            <ResCountryCode>FR</ResCountryCode>
              |        </Individual>
              |    </ID>
-             |    <TaxpayerImplementingDate>$today</TaxpayerImplementingDate>
+             |    <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
         prettyPrinter.formatNodes(result) mustBe expected
