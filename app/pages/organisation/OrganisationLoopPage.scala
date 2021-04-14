@@ -16,16 +16,12 @@
 
 package pages.organisation
 
-import models.LoopDetails
-import models.organisation.Organisation
-import pages.DetailsPage
+import pages.LoopDetailsPage
 import play.api.libs.json.JsPath
 
-case object OrganisationLoopPage extends DetailsPage[IndexedSeq[LoopDetails], Organisation] {
+case object OrganisationLoopPage extends LoopDetailsPage {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "organisationLoop"
-
-  def getFromModel(model: Organisation): Option[IndexedSeq[LoopDetails]] = Option(model.taxResidencies.map(LoopDetails(_))).filter(_.nonEmpty)
 }

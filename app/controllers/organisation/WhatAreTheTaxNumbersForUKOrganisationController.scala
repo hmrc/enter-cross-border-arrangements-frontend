@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.WhatAreTheTaxNumbersForUKOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
-import models.{LoopDetails, Mode, TaxReferenceNumbers}
+import models.{Mode, TaxReferenceNumbers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhatAreTheTaxNumbersForUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -94,22 +94,10 @@ class WhatAreTheTaxNumbersForUKOrganisationController @Inject()(
           renderer.render("organisation/whatAreTheTaxNumbersForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
-            case None =>
-              val newOrganisationLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
-              IndexedSeq[LoopDetails](newOrganisationLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
 
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(taxNumbersUK = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

@@ -17,14 +17,14 @@
 package models.organisation
 
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, UserAnswers, WithRestore}
+import models.{Address, AddressLookup, Country, LoopDetails, UserAnswers, WithRestore}
 import pages.SelectedAddressLookupPage
 import pages.organisation._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage}
 import play.api.libs.json.{Json, OFormat}
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case class Organisation(organisationName: String,
                         address: Option[Address] = None,
@@ -32,7 +32,7 @@ case class Organisation(organisationName: String,
                         taxResidencies: IndexedSeq[TaxResidency]
                        ) extends WithRestore {
 
-  val firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
+  def firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
 
   implicit val org: Organisation = implicitly(this)
 
@@ -47,7 +47,12 @@ case class Organisation(organisationName: String,
       ua7 <- ua6.set(EmailAddressQuestionForOrganisationPage, id)
       ua8 <- ua7.set(EmailAddressForOrganisationPage, id)
 
-      ua9 <- ua8.set(OrganisationLoopPage, id)
+      ua9 <- { // recreate Organisation loop page with current taxResidencies
+        taxResidencies.zipWithIndex.foldLeft[Try[UserAnswers]](Success(ua8)) { (ua, z) =>
+          ua.flatMap(_.set(OrganisationLoopPage, id, z._2){ _ => LoopDetails(z._1) })
+        }
+      }
+
       uaa <- ua9.set(WhichCountryTaxForOrganisationPage, id)
       uab <- uaa.set(DoYouKnowAnyTINForUKOrganisationPage, id)
       uac <- uab.set(WhatAreTheTaxNumbersForUKOrganisationPage, id)
@@ -81,8 +86,10 @@ object Organisation {
         case _ => None
       }
 
-    (ua.get(OrganisationNamePage, id), address,
-      ua.get(EmailAddressForOrganisationPage, id), ua.get(OrganisationLoopPage, id)) match {
+    (ua.get(OrganisationNamePage, id)
+      , address
+      , ua.get(EmailAddressForOrganisationPage, id)
+      , ua.get(OrganisationLoopPage, id)) match {
 
       case (Some(name), Some(address), Some(email), Some(loop)) => // All details
         new Organisation(name, Some(address), Some(email), TaxResidency.buildTaxResidency(loop))

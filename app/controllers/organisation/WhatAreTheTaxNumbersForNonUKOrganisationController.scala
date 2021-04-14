@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.WhatAreTheTaxNumbersForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
-import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
+import models.{Mode, TaxReferenceNumbers, UserAnswers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhatAreTheTaxNumbersForNonUKOrganisationPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -96,22 +96,10 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
           renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
-            case None =>
-              val newOrganisationLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
-              IndexedSeq[LoopDetails](newOrganisationLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(taxNumbersNonUK = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
 
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(taxNumbersNonUK = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

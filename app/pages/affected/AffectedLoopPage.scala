@@ -16,15 +16,26 @@
 
 package pages.affected
 
+import models.UserAnswers
 import models.affected.Affected
 import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object AffectedLoopPage extends LoopPage[IndexedSeq[Affected]] {
+case object AffectedLoopPage extends LoopPage[Affected] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "affectedLoop"
+
+  def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Affected] = {
+    val affected: Affected = Affected(userAnswers, id)
+    userAnswers.get(AffectedLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.affectedId == affected.affectedId) :+ affected
+      case None =>      // start new list
+        IndexedSeq[Affected](affected)
+    }
+  }
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(AffectedCheckYourAnswersPage)
 }

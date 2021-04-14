@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
-import models.{LoopDetails, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -104,22 +104,9 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
         },
         value => {
 
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
-            case None =>
-              val newIndividualLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
-              IndexedSeq[LoopDetails](newIndividualLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
-
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(doYouKnowTIN = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

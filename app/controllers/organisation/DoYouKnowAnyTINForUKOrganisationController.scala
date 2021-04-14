@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.DoYouKnowAnyTINForUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
-import models.{LoopDetails, Mode}
+import models.Mode
 import navigation.NavigatorForOrganisation
 import pages.organisation.{DoYouKnowAnyTINForUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -96,22 +96,10 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
           renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
-            case None =>
-              val newOrganisationLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
-              IndexedSeq[LoopDetails](newOrganisationLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(doYouKnowUTR = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(doYouKnowUTR = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), currentIndexInsideLoop(request)))

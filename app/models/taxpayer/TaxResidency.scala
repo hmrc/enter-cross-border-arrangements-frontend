@@ -29,19 +29,19 @@ case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[Ta
 object TaxResidency {
   implicit val format: OFormat[TaxResidency] = Json.format[TaxResidency]
 
-  def buildTaxResidency(taxResidencyLoop: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = {
+  def buildTaxResidency(loopDetails: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = {
     for {
-      singleTaxResidency <- taxResidencyLoop
+      loopDetail <- loopDetails
     } yield {
 
-      val matchingTINS =
-        if (singleTaxResidency.whichCountry.fold(false)(_.code == "GB")) {
-          singleTaxResidency.taxNumbersUK
+      val matchingTINS: Option[TaxReferenceNumbers] =
+        if (loopDetail.whichCountry.fold(false)(_.code == "GB")) {
+          if (loopDetail.doYouKnowUTR.contains(true)) { loopDetail.taxNumbersUK } else { None }
         } else {
-          singleTaxResidency.taxNumbersNonUK
+          if (loopDetail.doYouKnowTIN.contains(true)) { loopDetail.taxNumbersNonUK } else { None }
         }
 
-      new TaxResidency(singleTaxResidency.whichCountry, matchingTINS)
+      new TaxResidency(loopDetail.whichCountry, matchingTINS)
     }
   }
 }

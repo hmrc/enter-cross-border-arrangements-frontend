@@ -40,7 +40,7 @@ case class Affected(affectedId: String, individual: Option[Individual] = None, o
 
 object Affected {
 
-  def buildDetails(ua: UserAnswers, id: Int): Affected = {
+  def apply(ua: UserAnswers, id: Int): Affected = {
 
     val affected: Affected = ua.get(AffectedCheckYourAnswersPage, id)
       .fold(Affected(UUID.randomUUID.toString))(Affected(_))

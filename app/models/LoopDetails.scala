@@ -31,6 +31,8 @@ case class LoopDetails(taxResidentOtherCountries: Option[Boolean],
 
 object LoopDetails {
 
+  def apply(): LoopDetails = this(None, None, None, None, None, None)
+
   def apply(taxResidency: TaxResidency): LoopDetails = if (taxResidency.isUK) {
     this(Some(false), taxResidency.country, None, None, taxResidency.hasNumbers, taxResidency.taxReferenceNumbers)
   } else {

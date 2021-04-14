@@ -102,22 +102,10 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
           renderer.render("organisation/doYouKnowTINForNonUKOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-          val organisationLoopList = request.userAnswers.get(OrganisationLoopPage, id) match {
-            case None =>
-              val newOrganisationLoop = LoopDetails(None, None, doYouKnowTIN = Some(value), None, None, None)
-              IndexedSeq[LoopDetails](newOrganisationLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(doYouKnowTIN = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
 
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowTINForNonUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(doYouKnowTIN = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), currentIndexInsideLoop(request)))

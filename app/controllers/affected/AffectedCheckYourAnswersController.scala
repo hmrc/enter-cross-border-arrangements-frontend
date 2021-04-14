@@ -19,7 +19,6 @@ package controllers.affected
 import controllers.actions._
 import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import models.affected.Affected
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
@@ -95,23 +94,13 @@ class AffectedCheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        userAnswers                 <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
-        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.set(AffectedLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        userAnswers                 <- Future.fromTry(request.userAnswers.set(AffectedLoopPage, id))
+        userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
         _                           <- sessionRepository.set(userAnswersWithAffectedLoop)
         checkRoute                  =  toCheckRoute(NormalMode, userAnswersWithAffectedLoop)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
-  }
-
-  private[affected] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Affected] = {
-    val affected: Affected = Affected.buildDetails(userAnswers, id)
-    userAnswers.get(AffectedLoopPage, id) match {
-      case Some(list) => // append to existing list without duplication
-        list.filterNot(_.affectedId == affected.affectedId) :+ affected
-      case None =>      // start new list
-        IndexedSeq[Affected](affected)
-    }
   }
 }
 

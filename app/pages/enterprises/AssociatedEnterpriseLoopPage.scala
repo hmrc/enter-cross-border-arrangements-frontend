@@ -16,16 +16,26 @@
 
 package pages.enterprises
 
+import models.UserAnswers
 import models.enterprises.AssociatedEnterprise
 import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object AssociatedEnterpriseLoopPage extends LoopPage[IndexedSeq[AssociatedEnterprise]] {
+case object AssociatedEnterpriseLoopPage extends LoopPage[AssociatedEnterprise] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "associatedEnterpriseLoop"
 
+  def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
+    val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise(userAnswers, id)
+    userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.enterpriseId == associatedEnterprise.enterpriseId) :+ associatedEnterprise
+      case None =>      // start new list
+        IndexedSeq[AssociatedEnterprise](associatedEnterprise)
+    }
+  }
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
     AssociatedEnterpriseCheckYourAnswersPage
     , YouHaveNotAddedAnyAssociatedEnterprisesPage

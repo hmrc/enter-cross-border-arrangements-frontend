@@ -19,7 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.WhatAreTheTaxNumbersForUKIndividualFormProvider
-import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
+import models.{Mode, TaxReferenceNumbers, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IndividualNamePage, WhatAreTheTaxNumbersForUKIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -92,22 +92,10 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
           renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
-            case None =>
-              val newIndividualLoop = LoopDetails(None, None, None, None, None, taxNumbersUK = Some(value))
-              IndexedSeq[LoopDetails](newIndividualLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(taxNumbersUK = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
-          for {
 
+          for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(taxNumbersUK = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

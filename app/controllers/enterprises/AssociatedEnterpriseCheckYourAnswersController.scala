@@ -19,7 +19,6 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import models.enterprises.AssociatedEnterprise
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
@@ -103,22 +102,12 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        userAnswers                   <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updateLoopList(request.userAnswers, id)))
+        userAnswers                   <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseLoopPage, id))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
         _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
         checkRoute                    =  toCheckRoute(NormalMode, userAnswersWithEnterpriseLoop)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
-  }
-
-  private[enterprises] def updateLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
-    val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise(userAnswers, id)
-    userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-      case Some(list) => // append to existing list without duplication
-        list.filterNot(_.enterpriseId == associatedEnterprise.enterpriseId) :+ associatedEnterprise
-      case None =>      // start new list
-        IndexedSeq[AssociatedEnterprise](associatedEnterprise)
-    }
   }
 }

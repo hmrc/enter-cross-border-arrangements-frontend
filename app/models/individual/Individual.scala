@@ -17,7 +17,7 @@
 package models.individual
 
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, Name, UserAnswers, WithRestore}
+import models.{Address, AddressLookup, Country, LoopDetails, Name, UserAnswers, WithRestore}
 import pages.SelectedAddressLookupPage
 import pages.individual._
 import pages.reporter.individual._
@@ -25,7 +25,7 @@ import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLo
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case class Individual(individualName: Name,
                       birthDate: LocalDate,
@@ -37,7 +37,7 @@ case class Individual(individualName: Name,
 
   val nameAsString: String = individualName.displayName
 
-  val firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
+  def firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
 
   implicit val org: Individual = implicitly(this)
 
@@ -58,7 +58,12 @@ case class Individual(individualName: Name,
       uab <- uaa.set(EmailAddressQuestionForIndividualPage, id)
       uac <- uab.set(EmailAddressForIndividualPage, id)
 
-      uad <- uac.set(IndividualLoopPage, id)
+      uad <- { // recreate Individual loop page with current taxResidencies
+          taxResidencies.zipWithIndex.foldLeft[Try[UserAnswers]](Success(uac)) { (ua, z) =>
+            ua.flatMap(_.set(IndividualLoopPage, id, z._2){ _ => LoopDetails(z._1) })
+          }
+      }
+
       uae <- uad.set(WhichCountryTaxForIndividualPage, id)
       uaf <- uae.set(DoYouKnowAnyTINForUKIndividualPage, id)
       uag <- uaf.set(WhatAreTheTaxNumbersForUKIndividualPage, id)

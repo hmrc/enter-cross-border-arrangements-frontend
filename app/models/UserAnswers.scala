@@ -93,6 +93,18 @@ final case class UserAnswers(
       set(UnsubmittedIndex.fromQuestionPage(page, index)(this), value)
     }
 
+  def set[A](page: LoopPage[A], index: Int)(implicit writes: Writes[A]): Try[UserAnswers] =
+    set(UnsubmittedIndex.fromQuestionPage(page, index)(this), page.updatedLoopList(this, index))
+
+  def set(loopPage: LoopDetailsPage, index: Int, position: Int)(f: LoopDetails => LoopDetails): Try[UserAnswers] = {
+    val loopDetails = get(loopPage, index).fold(IndexedSeq[LoopDetails](f(LoopDetails()))) { list =>
+      list
+        .lift(position).map(f)
+        .fold(list) { updatedLoop => list.updated(position, updatedLoop) }
+    }
+    set(UnsubmittedIndex.fromQuestionPage(loopPage, index)(this), loopDetails)
+  }
+
   def remove[A](page: UnsubmittedIndex[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, JsNull) match {
@@ -118,7 +130,7 @@ final case class UserAnswers(
   def hasNewValue[A](page: QuestionPage[A], id: Int, value: A)(implicit rds: Reads[A]): Boolean =
     get(page, id).exists(_ != value)
 
-  def restoreFromLoop[A](loopPage: LoopPage[IndexedSeq[A]], id: Int, itemId: Option[String])(implicit rds: Reads[A]): UserAnswers =
+  def restoreFromLoop[A](loopPage: LoopPage[A], id: Int, itemId: Option[String])(implicit rds: Reads[A]): UserAnswers =
     itemId
       .filter(_.nonEmpty)
       .flatMap { nonEmptyItemId =>
@@ -127,6 +139,7 @@ final case class UserAnswers(
           .flatMap[A]{ _.find { _.asInstanceOf[WithRestore].matchItem(nonEmptyItemId) } }
           .map { _.asInstanceOf[WithRestore].restore(this, id).getOrElse(this) }
       }.getOrElse(this)
+
 }
 
 object UserAnswers {

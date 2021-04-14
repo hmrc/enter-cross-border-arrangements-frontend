@@ -19,7 +19,6 @@ package controllers.intermediaries
 import controllers.actions._
 import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import models.intermediaries.Intermediary
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.intermediaries.{IntermediariesCheckYourAnswersPage, IntermediariesTypePage, IntermediaryLoopPage, YouHaveNotAddedAnyIntermediariesPage}
@@ -109,23 +108,13 @@ class IntermediariesCheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        userAnswers                     <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
-        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.set(IntermediaryLoopPage, id, updatedLoopList(request.userAnswers, id)))
+        userAnswers                     <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id))
+        userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
         _                               <- sessionRepository.set(userAnswersWithIntermediaryLoop)
         checkRoute                      =  toCheckRoute(NormalMode, userAnswersWithIntermediaryLoop, id)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
-  }
-
-  private[intermediaries] def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Intermediary] = {
-    val intermediary: Intermediary = Intermediary(userAnswers, id)
-    userAnswers.get(IntermediaryLoopPage, id) match {
-      case Some(list) => // append to existing list without duplication
-        list.filterNot(_.intermediaryId == intermediary.intermediaryId) :+ intermediary
-      case None =>       // start new list
-        IndexedSeq[Intermediary](intermediary)
-    }
   }
 }
 
