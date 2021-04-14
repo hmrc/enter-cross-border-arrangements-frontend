@@ -18,16 +18,15 @@ package controllers.enterprises
 
 import base.SpecBase
 import helpers.data.ValidUserAnswersForSubmission.{todayMinusOneMonth, validOrganisation}
-import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnterprises}
-import models.organisation.Organisation
-import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
+import models.taxpayer.Taxpayer
+import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage, _}
+import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.TaxpayerLoopPage
@@ -233,35 +232,6 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with M
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
-    }
-
-    "must ensure the correct updated loop list" - {
-
-      val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
-      val email = "email@email.com"
-      val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
-
-      def buildUserAnswers(list: IndexedSeq[AssociatedEnterprise]): UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AssociatedEnterpriseLoopPage, 0, list).success.value
-        .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation).success.value
-        .set(OrganisationNamePage, 0, "Associated Ltd").success.value
-        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer")).success.value
-        .set(IsAssociatedEnterpriseAffectedPage, 0, false).success.value
-        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-
-      def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
-
-      val controller: AssociatedEnterpriseCheckYourAnswersController = injector.instanceOf[AssociatedEnterpriseCheckYourAnswersController]
-
-      "if taxpayer names are duplicated" in {
-
-        val list: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
-          AssociatedEnterprise("ID1", None, Some(organisation("Associated Ltd")), List(), false), AssociatedEnterprise("ID2", None, Some(organisation("Other")), List(), false)
-        )
-
-        controller.updateLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs(list).map(_.nameAsString) :+ "Associated Ltd"
-      }
     }
 
   }

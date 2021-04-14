@@ -16,7 +16,6 @@
 
 package pages.organisation
 
-import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxResidencies}
 import models.LoopDetails
 import pages.behaviours.PageBehaviours
 
@@ -29,18 +28,5 @@ class OrganisationLoopPageSpec extends PageBehaviours {
     beSettable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
 
     beRemovable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
-  }
-
-  "can restore from model " - {
-
-    "- when details exist " in {
-
-      OrganisationLoopPage.getFromModel(validOrganisation) mustBe(Some(validTaxResidencies.map(LoopDetails(_))))
-    }
-
-    "- when details are empty " in {
-
-      OrganisationLoopPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
-    }
   }
 }
