@@ -62,6 +62,11 @@ class ReporterIndividualAddressController @Inject()(
 
       val preparedForm =
         (request.userAnswers.get(ReporterIndividualAddressPage, id), request.userAnswers.get(ReporterIndividualPostcodePage, id)) match {
+          case (Some(value), Some(postCode)) =>
+            val fullAddressWithPostCode = Address(Some(value.addressLine1).flatten, Some(value.addressLine2).flatten,
+              Some(value.addressLine3).flatten, value.city, Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(fullAddressWithPostCode)
+
           case (None, Some(postCode)) =>
             val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
             form.fill(addressWithPostCode)

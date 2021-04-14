@@ -57,6 +57,10 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
       val preparedForm =
         (request.userAnswers.get(OrganisationAddressPage, id), request.userAnswers.get(PostcodePage, id)) match {
+          case (Some(value), Some(postCode)) =>
+            val fullAddressWithPostCode = Address(Some(value.addressLine1).flatten, Some(value.addressLine2).flatten,
+              Some(value.addressLine3).flatten, value.city, Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(fullAddressWithPostCode)
           case (None, Some(postCode)) =>
             val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
             form.fill(addressWithPostCode)
