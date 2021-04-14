@@ -26,12 +26,13 @@ class TaxResidencySpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
     "must be created with taxNumbersUK when Country is 'GB'" in {
 
-      val loopDetailsWithUK = IndexedSeq(LoopDetails(Some(true),
-        Some(Country("valid", "GB", "United Kingdom")),
-        Some(true),
-        None,
-        Some(false),
-        Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
+      val loopDetailsWithUK = IndexedSeq(LoopDetails(
+        taxResidentOtherCountries = Some(true),
+        whichCountry              = Some(Country("valid", "GB", "United Kingdom")),
+        doYouKnowTIN              = Some(false), // non uk
+        taxNumbersNonUK           = None,
+        doYouKnowUTR              = Some(true), // uk
+        taxNumbersUK              = Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
 
       TaxResidency.buildFromLoopDetails(loopDetailsWithUK) mustEqual
       IndexedSeq(TaxResidency(Some(Country("valid", "GB", "United Kingdom")),
@@ -41,12 +42,13 @@ class TaxResidencySpec extends FreeSpec with MustMatchers with ScalaCheckPropert
 
     "must be created with taxNumbersNonUK when Country is not'GB'" in {
 
-      val loopDetailsWithNonUK = IndexedSeq(LoopDetails(Some(true),
-        Some(Country("valid", "FR", "France")),
-        Some(true),
-        Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
-        Some(false),
-        None)
+      val loopDetailsWithNonUK = IndexedSeq(LoopDetails(
+        taxResidentOtherCountries = Some(true),
+        whichCountry              = Some(Country("valid", "FR", "France")),
+        doYouKnowTIN              = Some(true), // non uk
+        taxNumbersNonUK           = Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
+        doYouKnowUTR              = Some(false), // uk
+        taxNumbersUK              = None)
       )
 
       TaxResidency.buildFromLoopDetails(loopDetailsWithNonUK) mustEqual
