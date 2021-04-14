@@ -52,7 +52,7 @@ class OrganisationSpec extends FreeSpec
               organisationName = name,
               address = None,
               emailAddress = None,
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)
@@ -81,7 +81,7 @@ class OrganisationSpec extends FreeSpec
               organisationName = name,
               address = Some(address),
               emailAddress = Some(email),
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)

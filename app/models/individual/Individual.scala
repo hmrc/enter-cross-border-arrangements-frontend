@@ -17,7 +17,7 @@
 package models.individual
 
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, LoopDetails, Name, UserAnswers, WithRestore}
+import models.{Address, AddressLookup, Country, LoopDetails, Name, UserAnswers, WithRestore, WithTaxResidency}
 import pages.SelectedAddressLookupPage
 import pages.individual._
 import pages.reporter.individual._
@@ -33,7 +33,7 @@ case class Individual(individualName: Name,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
                       taxResidencies: IndexedSeq[TaxResidency]
-                     ) extends WithRestore {
+                     ) extends WithRestore with WithTaxResidency {
 
   val nameAsString: String = individualName.displayName
 
@@ -58,11 +58,7 @@ case class Individual(individualName: Name,
       uab <- uaa.set(EmailAddressQuestionForIndividualPage, id)
       uac <- uab.set(EmailAddressForIndividualPage, id)
 
-      uad <- { // recreate Individual loop page with current taxResidencies
-          taxResidencies.zipWithIndex.foldLeft[Try[UserAnswers]](Success(uac)) { (ua, z) =>
-            ua.flatMap(_.set(IndividualLoopPage, id, z._2){ _ => LoopDetails(z._1) })
-          }
-      }
+      uad <- uac.set(IndividualLoopPage, id)
 
       uae <- uad.set(WhichCountryTaxForIndividualPage, id)
       uaf <- uae.set(DoYouKnowAnyTINForUKIndividualPage, id)
@@ -104,7 +100,7 @@ object Individual {
 
   private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
     ua.get(IndividualLoopPage, id) match {
-      case Some(loop) => TaxResidency.buildTaxResidency(loop)
+      case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
       case None => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
     }
   }
@@ -144,8 +140,8 @@ object Individual {
 
   private def getReporterTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
     ua.get(ReporterTaxResidencyLoopPage, id) match {
-      case Some(loop) => TaxResidency.buildTaxResidency(loop)
-      case None => throw new Exception("Individual Reporter must contain date of birth")
+      case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
+      case None => throw new Exception("Individual Reporter must contain at minimum one tax residency")
     }
   }
 

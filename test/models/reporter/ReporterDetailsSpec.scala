@@ -75,7 +75,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 organisationName = name,
                 address = Some(address),
                 emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildTaxResidency(loop)
+                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
               )),
               liability = Some(ReporterLiability(
                 role = RoleInArrangement.Taxpayer.toString,
@@ -128,7 +128,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 organisationName = name,
                 address = Some(address),
                 emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildTaxResidency(loop)
+                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
               )),
               liability = Some(ReporterLiability(
                 role = RoleInArrangement.Intermediary.toString,
@@ -185,7 +185,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 birthPlace = Some(birthPlace),
                 address = Some(address),
                 emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildTaxResidency(loop)
+                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
               )),
               liability = Some(ReporterLiability(
                 role = RoleInArrangement.Taxpayer.toString,
@@ -244,7 +244,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 birthPlace = Some(birthPlace),
                 address = Some(address),
                 emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildTaxResidency(loop)
+                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
               )),
               liability = Some(ReporterLiability(
                 role = RoleInArrangement.Intermediary.toString,

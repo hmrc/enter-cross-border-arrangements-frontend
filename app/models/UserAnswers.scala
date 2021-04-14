@@ -105,6 +105,11 @@ final case class UserAnswers(
     set(UnsubmittedIndex.fromQuestionPage(loopPage, index)(this), loopDetails)
   }
 
+  def set(loopPage: LoopDetailsPage, index: Int)(implicit model: WithTaxResidency): Try[UserAnswers] =
+    Option(model.taxResidencies.map(LoopDetails.apply)).fold[Try[UserAnswers]](Success(this)) { value =>
+      set(UnsubmittedIndex.fromQuestionPage(loopPage, index)(this), value)
+    }
+
   def remove[A](page: UnsubmittedIndex[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, JsNull) match {

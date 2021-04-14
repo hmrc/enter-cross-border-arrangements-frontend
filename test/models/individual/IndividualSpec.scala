@@ -57,7 +57,7 @@ class IndividualSpec extends FreeSpec
               birthPlace = None,
               address = None,
               emailAddress = None,
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val individual = Individual.buildIndividualDetails(userAnswers, 0)
@@ -92,7 +92,7 @@ class IndividualSpec extends FreeSpec
               birthPlace = Some(birthPlace),
               address = Some(address),
               emailAddress = Some(email),
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val individual = Individual.buildIndividualDetails(userAnswers, 0)

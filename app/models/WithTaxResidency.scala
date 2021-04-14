@@ -18,11 +18,7 @@ package models
 
 import models.taxpayer.TaxResidency
 
-import scala.util.Try
+trait WithTaxResidency {
 
-trait WithRestore {
-
-  def matchItem(itemId: String): Boolean = false
-
-  def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers]
+  val taxResidencies: IndexedSeq[TaxResidency]
 }

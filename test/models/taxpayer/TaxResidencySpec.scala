@@ -33,7 +33,7 @@ class TaxResidencySpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         Some(false),
         Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
 
-      TaxResidency.buildTaxResidency(loopDetailsWithUK) mustEqual
+      TaxResidency.buildFromLoopDetails(loopDetailsWithUK) mustEqual
       IndexedSeq(TaxResidency(Some(Country("valid", "GB", "United Kingdom")),
         Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
 
@@ -49,7 +49,7 @@ class TaxResidencySpec extends FreeSpec with MustMatchers with ScalaCheckPropert
         None)
       )
 
-      TaxResidency.buildTaxResidency(loopDetailsWithNonUK) mustEqual
+      TaxResidency.buildFromLoopDetails(loopDetailsWithNonUK) mustEqual
       IndexedSeq(TaxResidency(Some(Country("valid", "FR", "France")),
         Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678")))))
 

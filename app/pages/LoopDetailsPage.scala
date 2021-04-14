@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{LoopDetails, UserAnswers}
+import models.{LoopDetails, UserAnswers, WithRestore}
 
 import scala.util.Try
 
@@ -24,11 +24,4 @@ trait LoopDetailsPage extends QuestionPage[IndexedSeq[LoopDetails]] {
 
   def remove(userAnswers: Try[UserAnswers], id: Int): Try[UserAnswers] =
     userAnswers.map(_.remove(this, id)).getOrElse(throw new IllegalStateException(s"Unable to remove page of type ${this.getClass}"))
-
-  def updateWithIndex(loop: Option[IndexedSeq[LoopDetails]], index: Int)(f: LoopDetails => LoopDetails): IndexedSeq[LoopDetails] =
-    loop.fold(IndexedSeq[LoopDetails](f(LoopDetails()))) { list =>
-      list
-        .lift(index).map(f)
-        .fold(list) { updatedLoop => list.updated(index, updatedLoop) }
-    }
 }

@@ -26,6 +26,12 @@ case class LoopDetails(taxResidentOtherCountries: Option[Boolean],
                        doYouKnowUTR: Option[Boolean],
                        taxNumbersUK: Option[TaxReferenceNumbers]) {
 
+  val matchingTINS: Option[TaxReferenceNumbers] =
+    (whichCountry.exists(_.isUK), doYouKnowUTR.contains(true), doYouKnowTIN.contains(true)) match {
+      case (true, true, _) => taxNumbersUK
+      case (true, _, true) => taxNumbersNonUK
+      case _               => None
+    }
 }
 
 
