@@ -95,6 +95,8 @@ trait DisplayRowBuilder {
     }
   }
 
+
+
   private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
     val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"${label}"

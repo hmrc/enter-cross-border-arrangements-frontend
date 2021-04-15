@@ -141,23 +141,23 @@ trait IndividualModelRows extends DisplayRowBuilder {
       href    = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(id, CheckMode).url
     )
 
-  def buildTaxResidencySummaryForIndividuals(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] = {
-
-    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
-
-    val header = toRow(
-      msgKey = "whichCountryTaxForIndividual",
-      content = lit"",
-      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 0).url
-    )
-
-   val details = validDetailsWithIndex flatMap {
-
-        case (taxResidency, index) =>
-          individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
-      }
-
-  }
+//  def buildTaxResidencySummaryForIndividuals(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] = {
+//
+//    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
+//
+//    val header = toRow(
+//      msgKey = "whichCountryTaxForIndividual",
+//      content = lit"",
+//      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 0).url
+//    )
+//
+//   val details = validDetailsWithIndex flatMap {
+//
+//        case (taxResidency, index) =>
+//          individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
+//      }
+//
+//  }
 
 
   private def individualCountryRow(countryOption: Option[Country], index: Int, loopSize: Int): Row = {
@@ -195,41 +195,41 @@ trait IndividualModelRows extends DisplayRowBuilder {
       value   = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}")
     ))
   }
-
-  def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "whichCountryTaxForIndividual",
-        content = lit"$answer",
-        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 1).url
-      )
-  }
-
-  def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "doYouKnowAnyTINForUKIndividual",
-        content = yesOrNo(answer),
-        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, CheckMode, 1).url
-      )
-  }
-
-  def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "whatAreTheTaxNumbersForUKIndividual",
-        content = lit"$answer",
-        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
-      )
-  }
-
-  def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "isIndividualResidentForTaxOtherCountries",
-        content = yesOrNo(answer),
-        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
-      )
-  }
+//
+//  def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
+//    answer =>
+//      toRow(
+//        msgKey  = "whichCountryTaxForIndividual",
+//        content = lit"$answer",
+//        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 1).url
+//      )
+//  }
+//
+//  def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
+//    answer =>
+//      toRow(
+//        msgKey  = "doYouKnowAnyTINForUKIndividual",
+//        content = yesOrNo(answer),
+//        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, CheckMode, 1).url
+//      )
+//  }
+//
+//  def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
+//    answer =>
+//      toRow(
+//        msgKey  = "whatAreTheTaxNumbersForUKIndividual",
+//        content = lit"$answer",
+//        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
+//      )
+//  }
+//
+//  def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
+//    answer =>
+//      toRow(
+//        msgKey  = "isIndividualResidentForTaxOtherCountries",
+//        content = yesOrNo(answer),
+//        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
+//      )
+//  }
 
 }

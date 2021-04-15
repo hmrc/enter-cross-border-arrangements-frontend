@@ -38,7 +38,7 @@ class LoopDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
       val loopNonUK = LoopDetails(
         taxResidentOtherCountries = Some(false),
-        whichCountry = Some(Country("valid", "FR", "France")),
+        whichCountry = Some(Country("", "FR", "France")),
         doYouKnowTIN = Some(true),
         taxNumbersNonUK = Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)),
         doYouKnowUTR = None,

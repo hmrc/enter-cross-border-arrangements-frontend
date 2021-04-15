@@ -121,7 +121,7 @@ class OrganisationSpec extends FreeSpec
         val taxNumberNonUK = Some(TaxReferenceNumbers("CS700100A",Some("UTR5678"),None))
         val loopDetails = Some(Vector(
           LoopDetails(Some(false), Some(Country.UK), None, None, Some(true), taxNumberUK)
-          , LoopDetails(Some(false), Some(Country("valid","FR","France")), Some(true), taxNumberNonUK, None, None))
+          , LoopDetails(Some(false), Some(Country("","FR","France")), Some(true), taxNumberNonUK, None, None))
         )
 
         validOrganisation.restore(userAnswers, 0).foreach { updatedAnswers =>

@@ -101,7 +101,7 @@ class IndividualSpec extends FreeSpec
         }
       }
 
-      "must have 1/1/1900 if date of birth data is missing" in {
+      "must be None if date of birth data is missing" in {
         forAll(arbitrary[Name], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, address, email, loop) =>
 
@@ -119,7 +119,7 @@ class IndividualSpec extends FreeSpec
 
             val expected = Individual.buildIndividualDetails(userAnswers, 0)
 
-            expected.birthDate mustEqual Some(LocalDate.of(1900,1,1))
+            expected.birthDate mustEqual None
         }
       }
 

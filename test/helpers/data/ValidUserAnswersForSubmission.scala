@@ -71,7 +71,7 @@ object ValidUserAnswersForSubmission {
 
   val validIndividualName: Name = Name("FirstName", "Surname")
   val validIndividualDOB: LocalDate = LocalDate.of(1990, 1, 1)
-  val validIndividual: Individual = Individual(validIndividualName, validIndividualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)
+  val validIndividual: Individual = Individual(validIndividualName, Some(validIndividualDOB), Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)
 
   val validOrganisation: Organisation = Organisation("Taxpayers Ltd", Some(validAddress), Some(validEmail), validTaxResidencies)
 
