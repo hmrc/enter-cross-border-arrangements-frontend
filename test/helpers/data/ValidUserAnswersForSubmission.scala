@@ -88,6 +88,7 @@ object ValidUserAnswersForSubmission {
   )
 
   def validToday: LocalDate = LocalDate.now
+
   val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
   val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
 

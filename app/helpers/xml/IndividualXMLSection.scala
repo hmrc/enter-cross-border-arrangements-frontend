@@ -18,16 +18,20 @@ package helpers.xml
 
 import models.individual.Individual
 
+import java.time.LocalDate
 import scala.xml.{Elem, NodeSeq}
 
 object IndividualXMLSection {
 
   private[xml] def buildIDForIndividual(individual: Individual,
                                         isAssociatedEnterprise: Boolean = false): Elem = {
+
+    val defaultDOB = LocalDate.of(1900,1,1)
+
     val mandatoryIndividualName =
       <IndividualName><FirstName>{individual.individualName.firstName}</FirstName><LastName>{individual.individualName.secondName}</LastName></IndividualName>
 
-    val mandatoryDOB = <BirthDate>{individual.birthDate}</BirthDate>
+    val mandatoryDOB = <BirthDate>{individual.birthDate.getOrElse(defaultDOB)}</BirthDate>
     val mandatoryPOB = <BirthPlace>{individual.birthPlace.fold("Unknown")(pob => pob)}</BirthPlace>
     val optionalEmail = individual.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
 

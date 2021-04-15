@@ -63,7 +63,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
   val individualName: Name = Name("Reporter", "Name")
   val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some("email@email.com"), taxResidencies)
+  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some("email@email.com"), taxResidencies)
 
   val intermediary: Intermediary = Intermediary("123", None, Some(organisation),
     WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)

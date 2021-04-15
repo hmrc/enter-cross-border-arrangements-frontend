@@ -63,7 +63,7 @@ class IntermediarySpec extends SpecBase {
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  LocalDateTime.now().toLocalDate,
+        birthDate =  Some(LocalDateTime.now().toLocalDate),
         None, None, None, Seq(TaxResidency(Some(country),Some(taxRefNumbers))).toIndexedSeq
       )
 

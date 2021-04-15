@@ -28,7 +28,7 @@ import java.time.LocalDate
 import scala.util.{Success, Try}
 
 case class Individual(individualName: Name,
-                      birthDate: LocalDate,
+                      birthDate: Option[LocalDate],
                       birthPlace: Option[String] = None,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
@@ -91,12 +91,8 @@ object Individual {
     }
   }
 
-  private def getIndividualDateOfBirth(ua: UserAnswers, id: Int): LocalDate = {
-    ua.get(IndividualDateOfBirthPage, id) match {
-      case Some(dob) => dob
-      case None => LocalDate.of(1900,1,1)
-    }
-  }
+  private def getIndividualDateOfBirth(ua: UserAnswers, id: Int): Option[LocalDate] =
+    ua.get(IndividualDateOfBirthPage, id)
 
   private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
     ua.get(IndividualLoopPage, id) match {
@@ -131,9 +127,9 @@ object Individual {
     }
   }
 
-  private def getReporterIndividualDOB(ua: UserAnswers, id: Int): LocalDate = {
+  private def getReporterIndividualDOB(ua: UserAnswers, id: Int): Option[LocalDate] = {
     ua.get(ReporterIndividualDateOfBirthPage, id) match {
-      case Some(dob) => dob
+      case dob => dob
       case None => throw new Exception("Individual Reporter must contain date of birth")
     }
   }
