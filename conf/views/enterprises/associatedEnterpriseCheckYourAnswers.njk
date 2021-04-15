@@ -23,7 +23,7 @@
           {{ messages("associatedEnterpriseCheckYourAnswers.heading") }}
         </h1>
 
-        <form action="{{ routes.controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id, mode).url }}" method="post">
+        <form action="{{ routes.controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id).url }}" method="post">
 
           {{ csrf() | safe }}
 

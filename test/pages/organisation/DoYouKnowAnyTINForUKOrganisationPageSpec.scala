@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxResidencies}
 import pages.behaviours.PageBehaviours
 
 class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
@@ -27,5 +28,23 @@ class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
     beSettable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
 
     beRemovable[Boolean](DoYouKnowAnyTINForUKOrganisationPage)
+  }
+
+  "can restore from model " - {
+
+    "- when first detail in loop is from the UK " in {
+
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation) mustBe(Some(true))
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(false))
+    }
+
+    "- when details are empty " in {
+
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+    }
   }
 }

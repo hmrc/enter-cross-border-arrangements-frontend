@@ -99,7 +99,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
         },
         value => {
 
-          val organisationLoopList = (request.userAnswers.get(OrganisationLoopPage, id), mode) match {
+          val organisationLoopList: IndexedSeq[LoopDetails] = (request.userAnswers.get(OrganisationLoopPage, id), mode) match {
             case (Some(list), NormalMode) => // Add to Loop in NormalMode
                 list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
             case (Some(list), CheckMode) =>

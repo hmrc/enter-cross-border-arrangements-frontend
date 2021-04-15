@@ -27,7 +27,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.individual._
 import pages.organisation._
-import pages.taxpayer.{TaxpayerLoopPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.JsObject
@@ -290,29 +290,6 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
       redirectLocation(result).value mustEqual onwardRoute.url
 
       application.stop()
-    }
-
-    "must ensure the correct updated loop list" - {
-
-      def buildUserAnswers(list: IndexedSeq[Taxpayer]): UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerLoopPage, 0, list).success.value
-        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation).success.value
-        .set(OrganisationNamePage, 0, "Taxpayers Ltd").success.value
-        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
-
-      def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
-
-      val controller: TaxpayersCheckYourAnswersController = injector.instanceOf[TaxpayersCheckYourAnswersController]
-
-      "if names are duplicated" in {
-
-        val list: IndexedSeq[Taxpayer] = IndexedSeq(
-          Taxpayer("ID1", None, Some(organisation("Taxpayers Ltd"))), Taxpayer("ID2", None, Some(organisation("Other") ))
-        )
-
-        controller.updateLoopList(buildUserAnswers(list), 0).map(_.nameAsString) must contain theSameElementsAs list.map(_.nameAsString) :+ "Taxpayers Ltd"
-      }
     }
   }
 

@@ -21,26 +21,18 @@ import play.api.libs.json.{Json, OFormat}
 
 case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers]) {
 
+  val isUK: Boolean = country.exists(_.code == "GB")
+
+  val hasNumbers: Option[Boolean] = taxReferenceNumbers.map(_.firstTaxNumber.nonEmpty)
 }
 
 object TaxResidency {
+
   implicit val format: OFormat[TaxResidency] = Json.format[TaxResidency]
 
-  def buildTaxResidency(taxResidencyLoop: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = {
-    for {
-      singleTaxResidency <- taxResidencyLoop
-    } yield {
+  def apply(loopDetail: LoopDetails): TaxResidency = this(loopDetail.whichCountry, loopDetail.matchingTINS)
 
-      val matchingTINS =
-        if (singleTaxResidency.whichCountry.fold(false)(_.code == "GB")) {
-          singleTaxResidency.taxNumbersUK
-        } else {
-          singleTaxResidency.taxNumbersNonUK
-        }
-
-      new TaxResidency(singleTaxResidency.whichCountry, matchingTINS)
-    }
-  }
+  def buildFromLoopDetails(loopDetails: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = loopDetails.map{ apply }
 }
 
 

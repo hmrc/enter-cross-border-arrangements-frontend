@@ -18,44 +18,35 @@ package models.affected
 
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{SelectType, UserAnswers}
-import pages.affected.AffectedTypePage
+import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
+import pages.affected.{AffectedCheckYourAnswersPage, AffectedTypePage}
 import play.api.libs.json.{Json, OFormat}
 
 import java.util.UUID
+import scala.util.Try
 
-case class Affected(affectedId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None) {
+case class Affected(affectedId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None)
+  extends WithIndividualOrOrganisation with WithRestore {
 
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Other parties affected must contain either an individual or an organisation.")
-  }
+  override def matchItem(itemId: String): Boolean = affectedId == itemId
+
+  implicit val a: Affected = implicitly(this)
+  override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers
+      .set(AffectedCheckYourAnswersPage, id)
+      .flatMap(_.set(AffectedTypePage, id))
+      .flatMap(restoreFromIndividualOrOrganisation(_, id))
 }
 
 object Affected {
 
-  private def generateId = UUID.randomUUID.toString
+  def apply(ua: UserAnswers, id: Int): Affected = {
 
-  private def buildIndividualAffected(ua: UserAnswers, id: Int): Affected =
-    new Affected(
-      affectedId = generateId,
-      individual = Some(Individual.buildIndividualDetails(ua, id)),
-      None
-    )
-
-  private def buildOrganisationAffected(ua: UserAnswers, id: Int): Affected =
-    new Affected(
-      affectedId = generateId,
-      None,
-      organisation = Some(Organisation.buildOrganisationDetails(ua, id))
-    )
-
-
-  def buildDetails(ua: UserAnswers, id: Int): Affected = {
+    val affected: Affected = ua.get(AffectedCheckYourAnswersPage, id)
+      .fold(Affected(UUID.randomUUID.toString))(Affected(_))
     ua.get(AffectedTypePage, id) match {
-      case Some(SelectType.Organisation) => buildOrganisationAffected(ua, id)
-      case Some(SelectType.Individual)   => buildIndividualAffected(ua, id)
+      case Some(SelectType.Organisation) => affected.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
+      case Some(SelectType.Individual)   => affected.copy(individual   = Some(Individual.buildIndividualDetails(ua, id)))
       case _                             => throw new Exception("Unable to retrieve other parties affected select type")
     }
   }

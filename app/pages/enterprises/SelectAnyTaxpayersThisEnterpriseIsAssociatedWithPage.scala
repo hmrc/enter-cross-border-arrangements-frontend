@@ -16,12 +16,15 @@
 
 package pages.enterprises
 
-import pages.QuestionPage
+import models.enterprises.AssociatedEnterprise
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage extends QuestionPage[List[String]] {
+case object SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage extends DetailsPage[List[String], AssociatedEnterprise] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith"
+
+  override def getFromModel(model: AssociatedEnterprise): Option[List[String]] = Option(model.associatedTaxpayers)
 }

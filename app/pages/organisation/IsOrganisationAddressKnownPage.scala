@@ -17,12 +17,13 @@
 package pages.organisation
 
 import models.UserAnswers
-import pages.{QuestionPage, SelectedAddressLookupPage}
+import models.organisation.Organisation
+import pages.{DetailsPage, SelectedAddressLookupPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IsOrganisationAddressKnownPage extends QuestionPage[Boolean] {
+case object IsOrganisationAddressKnownPage extends DetailsPage[Boolean, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -31,8 +32,11 @@ case object IsOrganisationAddressKnownPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(false) =>
-        userAnswers.remove(OrganisationAddressPage, id)
-        userAnswers.remove(SelectedAddressLookupPage, id)
+        userAnswers
+          .remove(OrganisationAddressPage, id)
+          .flatMap(_.remove(SelectedAddressLookupPage, id))
       case _ => super.cleanup(value, userAnswers, id)
     }
+
+  def getFromModel(model: Organisation): Option[Boolean] = model.address.map(_ => true).orElse(Some(false))
 }

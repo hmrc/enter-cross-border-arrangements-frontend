@@ -16,13 +16,16 @@
 
 package pages.organisation
 import models.Country
-import pages.QuestionPage
+import models.organisation.Organisation
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 
-case object WhichCountryTaxForOrganisationPage extends QuestionPage[Country] {
+case object WhichCountryTaxForOrganisationPage extends DetailsPage[Country, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whichCountryTaxForOrganisation"
+
+  override def getFromModel(model: Organisation): Option[Country] = model.firstTaxResidency.flatMap(_.country)
 }

@@ -16,12 +16,26 @@
 
 package pages.organisation
 
-import pages.QuestionPage
+import models.UserAnswers
+import models.organisation.Organisation
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object DoYouKnowTINForNonUKOrganisationPage extends QuestionPage[Boolean] {
+import scala.util.Try
+
+case object DoYouKnowTINForNonUKOrganisationPage extends DetailsPage[Boolean, Organisation] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouKnowTINForNonUKOrganisation"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    value match {
+      case Some(false) =>
+        userAnswers
+          .remove(WhatAreTheTaxNumbersForNonUKOrganisationPage, id)
+      case _ => super.cleanup(value, userAnswers, id)
+    }
+
+  def getFromModel(model: Organisation): Option[Boolean] = model.firstTaxResidency.map(!_.isUK).orElse(Some(false))
 }

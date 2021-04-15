@@ -16,8 +16,15 @@
 
 package pages.intermediaries
 
-import pages.Page
+import models.intermediaries.Intermediary
+import pages.DetailsPage
+import play.api.libs.json.JsPath
 
-case object IntermediariesCheckYourAnswersPage extends Page {
+case object IntermediariesCheckYourAnswersPage extends DetailsPage[String, Intermediary] {
+
+  override def path: JsPath = JsPath \ toString
+
   override def toString: String = "intermediariesCheckYourAnswers"
+
+  override def getFromModel(model: Intermediary): Option[String] = Option(model.intermediaryId)
 }

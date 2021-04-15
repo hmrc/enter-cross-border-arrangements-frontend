@@ -19,8 +19,7 @@ package controllers.taxpayer
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.exceptions.UnsupportedRouteException
-import models.taxpayer.Taxpayer
-import models.{Mode, NormalMode, SelectType, UserAnswers}
+import models.{Mode, NormalMode, SelectType}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -84,21 +83,11 @@ class TaxpayersCheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        userAnswers                 <- Future.fromTry(request.userAnswers.remove(UpdateTaxpayerPage, id))
-        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.set(TaxpayerLoopPage, id, updateLoopList(request.userAnswers, id)))
+        userAnswers                 <- Future.fromTry(request.userAnswers.set(TaxpayerLoopPage, id))
+        userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.remove(UpdateTaxpayerPage, id))
         _                           <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
         Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, mode, userAnswersWithTaxpayerLoop))
       }
-  }
-
-  private[taxpayer] def updateLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
-    val buildTaxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
-    userAnswers.get(TaxpayerLoopPage, id) match {
-      case Some(list) => // append to existing list without duplication
-        list :+ buildTaxpayer
-      case None =>       // start new list
-        IndexedSeq[Taxpayer](buildTaxpayer)
-    }
   }
 }

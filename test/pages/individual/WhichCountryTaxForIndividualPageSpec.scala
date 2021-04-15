@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResidencies}
 import models.Country
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,23 @@ class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
     beSettable[Country](WhichCountryTaxForIndividualPage)
 
     beRemovable[Country](WhichCountryTaxForIndividualPage)
+  }
+
+  "can restore from model " - {
+
+    "- when first detail in loop is the UK " in {
+
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual) mustBe(Some(Country.UK))
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("valid", "FR", "France")))
+    }
+
+    "- when details are empty " in {
+
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+    }
   }
 }

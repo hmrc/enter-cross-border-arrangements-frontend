@@ -17,12 +17,13 @@
 package pages.intermediaries
 
 import models.UserAnswers
-import pages.QuestionPage
+import models.intermediaries.Intermediary
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IsExemptionCountryKnownPage extends QuestionPage[Boolean] {
+case object IsExemptionCountryKnownPage extends DetailsPage[Boolean, Intermediary] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -35,4 +36,6 @@ case object IsExemptionCountryKnownPage extends QuestionPage[Boolean] {
       case _ => super.cleanup(value, userAnswers, id)
     }
   }
+
+  override def getFromModel(model: Intermediary): Option[Boolean] = model.exemptCountries.map(_.nonEmpty).orElse(Some(false))
 }

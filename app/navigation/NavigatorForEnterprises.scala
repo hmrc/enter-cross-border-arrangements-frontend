@@ -51,19 +51,19 @@ class NavigatorForEnterprises @Inject()() extends AbstractNavigator {
       }
 
     case IsAssociatedEnterpriseAffectedPage =>
-      _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+      _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
 
     case AssociatedEnterpriseCheckYourAnswersPage =>
       checkRoute => id => _ => _ => routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, checkRoute.mode)
   }
 
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
-    _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+    _ => id => _ => _ => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
 
   private[navigation] def jumpOrCheckYourAnswers(id:Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode) => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
-      case DefaultRouting(CheckMode)               => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id)
+      case AssociatedEnterprisesRouting(CheckMode) => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
+      case DefaultRouting(CheckMode)               => routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
       case _                                       => jumpTo
     }
   }

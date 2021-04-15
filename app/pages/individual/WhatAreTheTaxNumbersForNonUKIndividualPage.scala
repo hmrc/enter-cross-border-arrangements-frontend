@@ -17,12 +17,16 @@
 package pages.individual
 
 import models.TaxReferenceNumbers
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhatAreTheTaxNumbersForNonUKIndividualPage extends QuestionPage[TaxReferenceNumbers] {
+case object WhatAreTheTaxNumbersForNonUKIndividualPage extends DetailsPage[TaxReferenceNumbers, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatAreTheTaxNumbersForNonUKIndividual"
+
+  override def getFromModel(model: Individual): Option[TaxReferenceNumbers] =
+    model.firstTaxResidency.filterNot(_.isUK).flatMap(_.taxReferenceNumbers)
 }

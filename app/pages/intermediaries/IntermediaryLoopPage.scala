@@ -16,22 +16,33 @@
 
 package pages.intermediaries
 
+import models.UserAnswers
 import models.intermediaries.Intermediary
-import pages.{CleanablePage, QuestionPage}
+import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object IntermediaryLoopPage extends CleanablePage[IndexedSeq[Intermediary]] {
+case object IntermediaryLoopPage extends LoopPage[Intermediary] {
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryLoop"
 
+  def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Intermediary] = {
+    val intermediary: Intermediary = Intermediary(userAnswers, id)
+    userAnswers.get(IntermediaryLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list.filterNot(_.intermediaryId == intermediary.intermediaryId) :+ intermediary
+      case None =>       // start new list
+        IndexedSeq[Intermediary](intermediary)
+    }
+  }
+
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    YouHaveNotAddedAnyIntermediariesPage
-    , IntermediariesTypePage
+    IntermediariesCheckYourAnswersPage
+    , YouHaveNotAddedAnyIntermediariesPage
     , WhatTypeofIntermediaryPage
     , IsExemptionKnownPage
     , IsExemptionCountryKnownPage
     , ExemptCountriesPage
   )
-
 }

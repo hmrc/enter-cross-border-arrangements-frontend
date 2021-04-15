@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import pages.behaviours.PageBehaviours
 
 class IsIndividualAddressKnownPageSpec extends PageBehaviours {
@@ -27,5 +28,18 @@ class IsIndividualAddressKnownPageSpec extends PageBehaviours {
     beSettable[Boolean](IsIndividualAddressKnownPage)
 
     beRemovable[Boolean](IsIndividualAddressKnownPage)
+  }
+
+  "can restore from model " - {
+
+    "- when address exists " in {
+
+      IsIndividualAddressKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+    }
+
+    "- when address is empty " in {
+
+      IsIndividualAddressKnownPage.getFromModel(validIndividual.copy(address = None)) mustBe(Some(false))
+    }
   }
 }

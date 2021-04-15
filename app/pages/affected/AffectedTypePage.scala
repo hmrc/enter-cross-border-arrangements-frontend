@@ -16,17 +16,16 @@
 
 package pages.affected
 
-import models.{SelectType, UserAnswers}
-import pages.{CleanUpSelectTypePage, QuestionPage}
-import pages.individual._
-import pages.organisation._
+import models.SelectType
+import models.affected.Affected
+import pages.{CleanUpSelectTypePage, DetailsPage}
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object AffectedTypePage extends QuestionPage[SelectType] with CleanUpSelectTypePage {
+case object AffectedTypePage extends DetailsPage[SelectType, Affected] with CleanUpSelectTypePage {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "affectedType"
+
+  override def getFromModel(model: Affected): Option[SelectType] = model.selectType.toOption
 }

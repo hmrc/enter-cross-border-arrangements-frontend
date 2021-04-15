@@ -29,5 +29,4 @@ class OrganisationLoopPageSpec extends PageBehaviours {
 
     beRemovable[IndexedSeq[LoopDetails]](OrganisationLoopPage)
   }
-
 }

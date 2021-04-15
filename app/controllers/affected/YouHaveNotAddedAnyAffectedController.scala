@@ -22,7 +22,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import models.affected.YouHaveNotAddedAnyAffected
 import models.hallmarks.JourneyStatus
-import models.{ItemList, Mode, NormalMode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, AffectedStatusPage, YouHaveNotAddedAnyAffectedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -78,7 +78,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
       for {
         affected <- list
       } yield {
-        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.AffectedTypeController.onPageLoad(id, NormalMode).url else "#"
+        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.AffectedCheckYourAnswersController.onPageLoad(id, Option(affected.affectedId)).url else "#"
         val removeUrl = routes.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id, affected.affectedId).url
         ItemList(affected.nameAsString, changeUrl, removeUrl)
       }

@@ -25,7 +25,20 @@ case class AddressLookup(addressLine1: Option[String],
                          addressLine4: Option[String],
                          town: String,
                          county: Option[String],
-                         postcode: String)
+                         postcode: String) {
+
+  def formatAddress: String = {
+    Seq(
+      addressLine1
+      , addressLine2
+      , addressLine3
+      , addressLine4
+      , Option(town)
+      , county.filter(_.nonEmpty)
+
+    ).flatten.mkString(", ") + postcode
+  }
+}
 
 object AddressLookup {
 

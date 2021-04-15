@@ -16,12 +16,27 @@
 
 package pages.individual
 
-import pages.QuestionPage
+import models.UserAnswers
+import models.individual.Individual
+import pages.{DetailsPage, SelectedAddressLookupPage}
 import play.api.libs.json.JsPath
 
-case object IsIndividualAddressKnownPage extends QuestionPage[Boolean] {
+import scala.util.Try
+
+case object IsIndividualAddressKnownPage extends DetailsPage[Boolean, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isIndividualAddressKnown"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    value match {
+      case Some(false) =>
+        userAnswers
+          .remove(IndividualAddressPage, id)
+          .flatMap(_.remove(SelectedAddressLookupPage, id))
+      case _ => super.cleanup(value, userAnswers, id)
+    }
+
+  override def getFromModel(model: Individual): Option[Boolean] = model.address.map(_ => true).orElse(Some(false))
 }

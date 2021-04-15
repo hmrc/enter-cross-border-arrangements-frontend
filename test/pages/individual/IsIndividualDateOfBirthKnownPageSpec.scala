@@ -16,7 +16,10 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import pages.behaviours.PageBehaviours
+
+import java.time.LocalDate
 
 class IsIndividualDateOfBirthKnownPageSpec extends PageBehaviours {
 
@@ -27,5 +30,18 @@ class IsIndividualDateOfBirthKnownPageSpec extends PageBehaviours {
     beSettable[Boolean](IsIndividualDateOfBirthKnownPage)
 
     beRemovable[Boolean](IsIndividualDateOfBirthKnownPage)
+  }
+
+  "can restore from model " - {
+
+    "- when dob exists " in {
+
+      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+    }
+
+    "- when dob is empty (before 1900-01-02) " in {
+
+      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual.copy(birthDate = LocalDate.of(1900, 1, 1))) mustBe(Some(false))
+    }
   }
 }

@@ -64,16 +64,16 @@ object ValidUserAnswersForSubmission {
 
   val validEmail = "email@email.com"
 
-  private val taxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
-    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
+  val validTaxResidencies = IndexedSeq(
+    TaxResidency(Some(Country("valid", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
+    TaxResidency(Some(Country("valid", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
-  private val individualName: Name = Name("FirstName", "Surname")
+  val validIndividualName: Name = Name("FirstName", "Surname")
   private val individualDOB: LocalDate = LocalDate.of(1990, 1, 1)
-  val validIndividual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), taxResidencies)
+  val validIndividual: Individual = Individual(validIndividualName, individualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)
 
-  val validOrganisation: Organisation = Organisation("Taxpayers Ltd", Some(validAddress), Some(validEmail), taxResidencies)
+  val validOrganisation: Organisation = Organisation("Taxpayers Ltd", Some(validAddress), Some(validEmail), validTaxResidencies)
 
   val reporterDetailsAsIndividual = ReporterDetails(Some(validIndividual))
 

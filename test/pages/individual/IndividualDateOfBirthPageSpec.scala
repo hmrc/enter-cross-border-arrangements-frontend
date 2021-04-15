@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
@@ -34,5 +35,19 @@ class IndividualDateOfBirthPageSpec extends PageBehaviours {
     beSettable[LocalDate](IndividualDateOfBirthPage)
 
     beRemovable[LocalDate](IndividualDateOfBirthPage)
+  }
+
+  "can restore from model " - {
+
+    "- when dob exists " in {
+
+      val dob = LocalDate.of(1900, 1, 2)
+      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = dob)) mustBe(Some(dob))
+    }
+
+    "- when dob is empty (before 1900-01-02) " in {
+
+      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = LocalDate.of(1900, 1, 1))) mustBe(None)
+    }
   }
 }

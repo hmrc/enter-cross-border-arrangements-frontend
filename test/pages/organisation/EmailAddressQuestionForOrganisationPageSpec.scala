@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import pages.behaviours.PageBehaviours
 
 class EmailAddressQuestionForOrganisationPageSpec extends PageBehaviours {
@@ -27,5 +28,18 @@ class EmailAddressQuestionForOrganisationPageSpec extends PageBehaviours {
     beSettable[Boolean](EmailAddressQuestionForOrganisationPage)
 
     beRemovable[Boolean](EmailAddressQuestionForOrganisationPage)
+  }
+
+  "can restore from model " - {
+
+    "- when email exists " in {
+
+      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation) mustBe(Some(true))
+    }
+
+    "- when email is empty " in {
+
+      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation.copy(emailAddress = None)) mustBe(Some(false))
+    }
   }
 }

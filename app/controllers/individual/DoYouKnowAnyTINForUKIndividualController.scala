@@ -19,10 +19,9 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
-import helpers.JourneyHelpers.currentIndexInsideLoop
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForIndividual
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, DoYouKnowTINForNonUKIndividualPage, IndividualLoopPage, IndividualNamePage}
+import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -97,22 +96,9 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         },
         value => {
 
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
-            case None =>
-              val newIndividualLoop = LoopDetails(None, None, None, None, doYouKnowUTR = Some(value), None)
-              IndexedSeq[LoopDetails](newIndividualLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(doYouKnowUTR = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
-
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(doYouKnowUTR = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

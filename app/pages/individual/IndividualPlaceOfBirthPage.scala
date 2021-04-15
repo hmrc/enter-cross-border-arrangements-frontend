@@ -16,12 +16,15 @@
 
 package pages.individual
 
-import pages.QuestionPage
+import models.individual.Individual
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IndividualPlaceOfBirthPage extends QuestionPage[String] {
+case object IndividualPlaceOfBirthPage extends DetailsPage[String, Individual] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "individualPlaceOfBirth"
+
+  override def getFromModel(model: Individual): Option[String] = model.birthPlace.filter(_.nonEmpty)
 }

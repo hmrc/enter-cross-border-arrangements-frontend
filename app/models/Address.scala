@@ -27,16 +27,20 @@ case class Address(
                     country: Country
                   ){
 
-  def lines : Seq[String] = Seq(
-    addressLine1,
-    addressLine2,
-    addressLine3,
-    Some(city),
-    postCode,
-    Some(country.description)
-  ).flatten
+  def toAddressLookup: AddressLookup = AddressLookup(
+    addressLine1 = this.addressLine1,
+    addressLine2 = this.addressLine2,
+    addressLine3 = this.addressLine3,
+    addressLine4 = None,
+    town = this.city,
+    county = None,
+    postcode= this.postCode.getOrElse("")
+  )
+
+  def format: String = toAddressLookup.formatAddress
 }
 
 object Address {
+
   implicit val format = Json.format[Address]
 }

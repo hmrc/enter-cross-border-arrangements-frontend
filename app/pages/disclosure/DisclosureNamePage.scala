@@ -26,5 +26,5 @@ case object DisclosureNamePage extends DetailsPage[String, DisclosureDetails] {
 
   override def toString: String = "disclosureName"
 
-  override def getFromModel(model: DisclosureDetails): String = model.disclosureName
+  override def getFromModel(model: DisclosureDetails): Option[String] = Option(model.disclosureName)
 }

@@ -16,10 +16,16 @@
 
 package pages.taxpayer
 
-import pages.Page
+import models.taxpayer.Taxpayer
+import pages.DetailsPage
+import play.api.libs.json.JsPath
 
-case object TaxpayerCheckYourAnswersPage extends Page {
+case object TaxpayerCheckYourAnswersPage extends DetailsPage[String, Taxpayer] {
+
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "taxpayerCheckYourAnswersPage"
+
+  override def getFromModel(model: Taxpayer): Option[String] = Option(model.taxpayerId)
 
 }

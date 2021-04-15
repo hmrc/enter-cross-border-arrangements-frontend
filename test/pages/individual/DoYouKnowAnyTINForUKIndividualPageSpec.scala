@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResidencies}
 import pages.behaviours.PageBehaviours
 
 class DoYouKnowAnyTINForUKIndividualPageSpec extends PageBehaviours {
@@ -28,4 +29,22 @@ class DoYouKnowAnyTINForUKIndividualPageSpec extends PageBehaviours {
 
     beRemovable[Boolean](DoYouKnowAnyTINForUKIndividualPage)
   }
+  "can restore from model " - {
+
+    "- when first detail in loop is from the UK " in {
+
+      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual) mustBe(Some(true))
+    }
+
+    "- when first detail in loop is not from the UK " in {
+
+      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(false))
+    }
+
+    "- when details are empty " in {
+
+      DoYouKnowAnyTINForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+    }
+  }
+
 }

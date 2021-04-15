@@ -90,7 +90,7 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
           affectedPageAnswer =>
 
             navigator.routeMap(IsAssociatedEnterpriseAffectedPage)(DefaultRouting(NormalMode))(0)(Some(affectedPageAnswer))(0)
-              .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
+              .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -114,7 +114,7 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
       s"must go from $E4 to $E7 when a taxpayer(s) is selected" in {
 
         navigator.routeMap(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage)(routingInCheckMode)(0)(Some(Seq("taxpayer")))(0)
-          .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
+          .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
       }
 
       s"must go from $E2 to the disclosure details page when answer is 'Yes, add later'" in {
@@ -134,13 +134,13 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
         s"must go from $E7 to $E11 when answer is Organisation" in {
 
           navigator.routeMap(AssociatedEnterpriseTypePage)(routingInCheckMode)(0)(Some(SelectType.Organisation))(0)
-            .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
+            .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $E7 to $E11 when answer is Individual" in {
 
           navigator.routeMap(AssociatedEnterpriseTypePage)(routingInCheckMode)(0)(Some(SelectType.Individual))(0)
-            .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
+            .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -150,7 +150,7 @@ class NavigatorForEnterprisesSpec extends SpecBase with ScalaCheckPropertyChecks
           affectedPageAnswer =>
 
             navigator.routeMap(IsAssociatedEnterpriseAffectedPage)(routingInCheckMode)(0)(Some(affectedPageAnswer))(0)
-              .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0))
+              .mustBe(routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
         }
       }
     }

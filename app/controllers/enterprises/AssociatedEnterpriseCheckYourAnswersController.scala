@@ -19,8 +19,7 @@ package controllers.enterprises
 import controllers.actions._
 import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
-import models.enterprises.AssociatedEnterprise
-import models.{Mode, SelectType, UserAnswers}
+import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,12 +44,15 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
+      val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(AssociatedEnterpriseLoopPage, id, itemId)
+      sessionRepository.set(restoredUserAnswers)
 
-      val (summaryRows, countrySummary) = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
+      val helper = new CheckYourAnswersHelper(restoredUserAnswers)
+
+      val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
 
         case Some(SelectType.Organisation) =>
           (
@@ -84,7 +86,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
       val json = Json.obj(
         "id" -> id,
-        "mode" -> mode,
+        "mode" -> NormalMode,
         "summaryRows" -> summaryRows,
         "countrySummary" -> countrySummary,
         "isEnterpriseAffected" -> isEnterpriseAffected
@@ -96,26 +98,16 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute): Call =
     navigator.routeMap(AssociatedEnterpriseCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       for {
-        userAnswers                   <- Future.fromTry(request.userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
-        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.set(AssociatedEnterpriseLoopPage, id, updateLoopList(request.userAnswers, id)))
+        userAnswers                   <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseLoopPage, id))
+        userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
         _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
-        checkRoute                    =  toCheckRoute(mode, userAnswersWithEnterpriseLoop)
+        checkRoute                    =  toCheckRoute(NormalMode, userAnswersWithEnterpriseLoop)
       } yield {
         Redirect(redirect(id, checkRoute))
       }
-  }
-
-  private[enterprises] def updateLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[AssociatedEnterprise] = {
-    val associatedEnterprise: AssociatedEnterprise = AssociatedEnterprise.buildAssociatedEnterprise(userAnswers, id)
-    userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
-      case Some(list) => // append to existing list without duplication
-        list :+ associatedEnterprise
-      case None =>      // start new list
-        IndexedSeq[AssociatedEnterprise](associatedEnterprise)
-    }
   }
 }

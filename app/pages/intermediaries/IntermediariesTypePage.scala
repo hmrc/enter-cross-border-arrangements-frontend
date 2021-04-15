@@ -16,15 +16,14 @@
 
 package pages.intermediaries
 
+import models.intermediaries.Intermediary
 import models.{SelectType, UserAnswers}
-import pages.{CleanUpSelectTypePage, QuestionPage}
-import pages.individual._
-import pages.organisation._
+import pages.{CleanUpSelectTypePage, DetailsPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IntermediariesTypePage extends QuestionPage[SelectType] with CleanUpSelectTypePage {
+case object IntermediariesTypePage extends DetailsPage[SelectType, Intermediary] with CleanUpSelectTypePage {
 
   override def path: JsPath = JsPath \ toString
 
@@ -35,4 +34,6 @@ case object IntermediariesTypePage extends QuestionPage[SelectType] with CleanUp
     .flatMap(_.remove(IsExemptionCountryKnownPage, id))
     .flatMap(_.remove(IsExemptionKnownPage, id))
     .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
+
+  override def getFromModel(model: Intermediary): Option[SelectType] = model.selectType.toOption
 }

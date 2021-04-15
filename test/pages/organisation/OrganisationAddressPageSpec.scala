@@ -16,6 +16,7 @@
 
 package pages.organisation
 
+import helpers.data.ValidUserAnswersForSubmission.{validAddress, validOrganisation}
 import models.Address
 import pages.behaviours.PageBehaviours
 
@@ -29,5 +30,18 @@ class OrganisationAddressPageSpec extends PageBehaviours {
     beSettable[Address](OrganisationAddressPage)
 
     beRemovable[Address](OrganisationAddressPage)
+  }
+
+  "can restore from model " - {
+
+    "- when address exists " in {
+
+      OrganisationAddressPage.getFromModel(validOrganisation) mustBe(Some(validAddress))
+    }
+
+    "- when address is empty " in {
+
+      OrganisationAddressPage.getFromModel(validOrganisation.copy(address = None)) mustBe(None)
+    }
   }
 }

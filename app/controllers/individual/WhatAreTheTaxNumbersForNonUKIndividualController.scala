@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.WhatAreTheTaxNumbersForNonUKIndividualFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName}
-import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
+import models.{Mode, TaxReferenceNumbers, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, WhatAreTheTaxNumbersForNonUKIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -96,22 +96,10 @@ class WhatAreTheTaxNumbersForNonUKIndividualController @Inject()(
           renderer.render("individual/whatAreTheTaxNumbersForNonUKIndividual.njk", json).map(BadRequest(_))
         },
         value => {
-          val individualLoopList = request.userAnswers.get(IndividualLoopPage, id) match {
-            case None =>
-              val newIndividualLoop = LoopDetails(None, None, None, taxNumbersNonUK = Some(value), None, None)
-              IndexedSeq[LoopDetails](newIndividualLoop)
-            case Some(list) =>
-              if (list.lift(index).isDefined) {
-                val updatedLoop = list.lift(index).get.copy(taxNumbersNonUK = Some(value))
-                list.updated(index, updatedLoop)
-              } else {
-                list
-              }
-          }
 
           for {
             updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
+            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(taxNumbersNonUK = Some(value))))
             _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
             checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
           } yield Redirect(redirect(id, checkRoute, Some(value), index))

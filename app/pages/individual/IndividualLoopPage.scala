@@ -16,11 +16,10 @@
 
 package pages.individual
 
-import models.LoopDetails
-import pages.QuestionPage
+import pages.LoopDetailsPage
 import play.api.libs.json.JsPath
 
-case object IndividualLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
+case object IndividualLoopPage extends LoopDetailsPage {
 
   override def path: JsPath = JsPath \ toString
 

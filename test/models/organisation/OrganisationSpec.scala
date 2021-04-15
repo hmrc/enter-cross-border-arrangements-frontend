@@ -17,13 +17,14 @@
 package models.organisation
 
 import generators.ModelGenerators
+import helpers.data.ValidUserAnswersForSubmission.{validAddress, validOrganisation}
 import models.taxpayer.TaxResidency
-import models.{Address, LoopDetails, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.organisation.{EmailAddressForOrganisationPage, OrganisationAddressPage, OrganisationLoopPage, OrganisationNamePage}
+import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class OrganisationSpec extends FreeSpec
@@ -51,7 +52,7 @@ class OrganisationSpec extends FreeSpec
               organisationName = name,
               address = None,
               emailAddress = None,
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)
@@ -80,7 +81,7 @@ class OrganisationSpec extends FreeSpec
               organisationName = name,
               address = Some(address),
               emailAddress = Some(email),
-              taxResidencies = TaxResidency.buildTaxResidency(loop)
+              taxResidencies = TaxResidency.buildFromLoopDetails(loop)
             )
 
             val organisation = Organisation.buildOrganisationDetails(userAnswers, 0)
@@ -108,6 +109,38 @@ class OrganisationSpec extends FreeSpec
               }
 
             ex.getMessage mustEqual "Organisation Taxpayer must contain a name and at minimum one tax residency"
+        }
+      }
+
+      "must be able to restore pages from organisation" in {
+        val userAnswers =
+          UserAnswers("id")
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+
+        val taxNumberUK = Some(TaxReferenceNumbers("UTR1234",None,None))
+        val taxNumberNonUK = Some(TaxReferenceNumbers("CS700100A",Some("UTR5678"),None))
+        val loopDetails = Some(Vector(
+          LoopDetails(Some(false), Some(Country.UK), None, None, Some(true), taxNumberUK)
+          , LoopDetails(Some(false), Some(Country("valid","FR","France")), Some(true), taxNumberNonUK, None, None))
+        )
+
+        validOrganisation.restore(userAnswers, 0).foreach { updatedAnswers =>
+
+          updatedAnswers.get(OrganisationNamePage, 0) mustBe(Some("Taxpayers Ltd"))
+          updatedAnswers.get(IsOrganisationAddressKnownPage, 0) mustBe(Some(true))
+          updatedAnswers.get(IsOrganisationAddressUkPage, 0) mustBe(Some(false))
+          updatedAnswers.get(OrganisationAddressPage, 0) mustBe(Some(validAddress))
+          updatedAnswers.get(PostcodePage, 0) mustBe(validAddress.postCode)
+          updatedAnswers.get(SelectAddressPage, 0) mustBe(Some("value 1, value 2, value 3, value 4XX9 9XX"))
+          updatedAnswers.get(EmailAddressQuestionForOrganisationPage, 0) mustBe(Some(true))
+          updatedAnswers.get(EmailAddressForOrganisationPage, 0) mustBe(Some("email@email.com"))
+          updatedAnswers.get(OrganisationLoopPage, 0) mustBe(loopDetails)
+          updatedAnswers.get(WhichCountryTaxForOrganisationPage, 0) mustBe(Some(Country.UK))
+          updatedAnswers.get(DoYouKnowAnyTINForUKOrganisationPage, 0) mustBe(Some(true))
+          updatedAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage, 0) mustBe(taxNumberUK)
+          updatedAnswers.get(DoYouKnowTINForNonUKOrganisationPage, 0) mustBe(Some(false))
+          updatedAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0) mustBe(None)
+          updatedAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage, 0) mustBe(Some(false))
         }
       }
 

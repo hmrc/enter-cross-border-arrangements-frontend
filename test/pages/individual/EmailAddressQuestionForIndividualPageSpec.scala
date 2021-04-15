@@ -16,6 +16,7 @@
 
 package pages.individual
 
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import pages.behaviours.PageBehaviours
 
 class EmailAddressQuestionForIndividualPageSpec extends PageBehaviours {
@@ -27,5 +28,18 @@ class EmailAddressQuestionForIndividualPageSpec extends PageBehaviours {
     beSettable[Boolean](EmailAddressQuestionForIndividualPage)
 
     beRemovable[Boolean](EmailAddressQuestionForIndividualPage)
+  }
+
+  "can restore from model " - {
+
+    "- when email exists " in {
+
+      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual) mustBe(Some(true))
+    }
+
+    "- when email is empty " in {
+
+      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual.copy(emailAddress = None)) mustBe(Some(false))
+    }
   }
 }

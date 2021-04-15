@@ -312,8 +312,8 @@ POST       /taxpayers/change-implementation-date/:id        controllers.taxpayer
 
 # ASSOCIATED ENTERPRISES
 
-GET        /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id: Int, itemId: Option[String])
+POST       /associated-enterprises/check-answers/:id           controllers.enterprises.AssociatedEnterpriseCheckYourAnswersController.onSubmit(id: Int)
 
 GET        /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /associated-enterprises/update/:id                  controllers.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesController.onSubmit(id: Int, mode: Mode = NormalMode)
@@ -368,8 +368,8 @@ POST       /intermediaries/exemption-known/:id                  controllers.inte
 GET        /intermediaries/change-exemption-known/:id           controllers.intermediaries.IsExemptionKnownController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /intermediaries/change-exemption-known/:id           controllers.intermediaries.IsExemptionKnownController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET       /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad(id: Int)
-POST      /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET       /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onPageLoad(id: Int, itemId: Option[String])
+POST      /intermediaries/check-answers/:id                     controllers.intermediaries.IntermediariesCheckYourAnswersController.onSubmit(id: Int)
 
 GET        /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(id: Int, itemId: String)
 POST       /intermediaries/remove/:id/:itemId                   controllers.intermediaries.AreYouSureYouWantToRemoveIntermediaryController.onSubmit(id: Int, itemId: String)
@@ -614,8 +614,8 @@ POST       /others-affected/type/:id                             controllers.aff
 GET        /others-affected/change-type/:id                      controllers.affected.AffectedTypeController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /others-affected/change-type/:id                      controllers.affected.AffectedTypeController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int)
-POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onPageLoad(id: Int, itemId: Option[String])
+POST       /others-affected/check-answers/:id                    controllers.affected.AffectedCheckYourAnswersController.onSubmit(id: Int)
 
 GET        /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id: Int, itemId: String)
 POST       /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onSubmit(id: Int, itemId: String)

@@ -16,13 +16,15 @@
 
 package models.intermediaries
 
-import java.util.UUID
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
-import models.{IsExemptionKnown, SelectType, UserAnswers}
-import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
+import models.{IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
+import pages.intermediaries._
 import play.api.libs.json.{Json, OFormat}
+
+import java.util.UUID
+import scala.util.Try
 
 case class Intermediary(intermediaryId: String,
                         individual: Option[Individual] = None,
@@ -30,66 +32,44 @@ case class Intermediary(intermediaryId: String,
                         whatTypeofIntermediary: WhatTypeofIntermediary = IDoNotKnow,
                         isExemptionKnown: IsExemptionKnown = IsExemptionKnown.Unknown,
                         isExemptionCountryKnown: Option[Boolean] = None,
-                        exemptCountries: Option[Set[ExemptCountries]] = None){
+                        exemptCountries: Option[Set[ExemptCountries]] = None) extends WithIndividualOrOrganisation  with WithRestore {
 
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Intermediary must contain either an individual or an organisation.")
-  }
+  override def matchItem(itemId: String): Boolean = intermediaryId == itemId
+
+  implicit val a: Intermediary = implicitly(this)
+  override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers
+      .set(IntermediariesCheckYourAnswersPage, id)
+      .flatMap(_.set(IntermediariesTypePage, id))
+      .flatMap(_.set(ExemptCountriesPage, id))
+      .flatMap(_.set(IsExemptionCountryKnownPage, id))
+      .flatMap(_.set(IsExemptionKnownPage, id))
+      .flatMap(_.set(WhatTypeofIntermediaryPage, id))
+      .flatMap(restoreFromIndividualOrOrganisation(_, id))
 }
 
 object Intermediary {
 
   private def generateId = UUID.randomUUID.toString
 
-  def getIntermediaryAnswers(ua: UserAnswers, id: Int): (WhatTypeofIntermediary, IsExemptionKnown, Option[Boolean], Option[Set[ExemptCountries]]) = {
-    (ua.get(WhatTypeofIntermediaryPage, id),
+  def apply(ua: UserAnswers, id: Int): Intermediary = {
+    val intermediary = ( ua.get(IntermediariesCheckYourAnswersPage, id).orElse(Some(generateId)),
+      ua.get(WhatTypeofIntermediaryPage, id),
       ua.get(IsExemptionKnownPage, id),
       ua.get(IsExemptionCountryKnownPage, id),
       ua.get(ExemptCountriesPage, id)) match {
-      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
-        (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
-      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None)
-        => (whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), None)
-      case (Some(whatTypeOfIntermediary), Some(isExemptionKnown), None ,None)
-      => (whatTypeOfIntermediary, isExemptionKnown, None, None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
+        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None) =>
+        this(itemId, None, None, whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None ,None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, None, None)
       case _ =>
         throw new Exception("Unable to build intermediary")
     }
-  }
-
-  private def buildIndividualIntermediary(ua: UserAnswers, id: Int): Intermediary = {
-    val intermediaryAnswers = getIntermediaryAnswers(ua, id)
-    new Intermediary(
-                intermediaryId = generateId,
-                individual = Some(Individual.buildIndividualDetails(ua, id)),
-                None,
-                intermediaryAnswers._1,
-                intermediaryAnswers._2,
-                intermediaryAnswers._3,
-                intermediaryAnswers._4
-              )
-  }
-
-  private def buildOrganisationIntermediary(ua: UserAnswers, id: Int): Intermediary = {
-    val intermediaryAnswers = getIntermediaryAnswers(ua, id)
-    new Intermediary(
-      intermediaryId = generateId,
-      None,
-      organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
-      intermediaryAnswers._1,
-      intermediaryAnswers._2,
-      intermediaryAnswers._3,
-      intermediaryAnswers._4
-    )
-  }
-
-
-  def buildIntermediaryDetails(ua: UserAnswers, id: Int): Intermediary = {
     ua.get(IntermediariesTypePage, id) match {
-      case Some(SelectType.Organisation) => buildOrganisationIntermediary(ua, id)
-      case Some(SelectType.Individual)   => buildIndividualIntermediary(ua, id)
+      case Some(SelectType.Organisation) => intermediary.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
+      case Some(SelectType.Individual)   => intermediary.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
       case _ => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }

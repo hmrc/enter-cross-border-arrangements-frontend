@@ -38,5 +38,5 @@ case object DisclosureTypePage extends DetailsPage[DisclosureType, DisclosureDet
       case _ =>     super.cleanup(value, userAnswers, id)
     }
 
-  override def getFromModel(model: DisclosureDetails): DisclosureType = model.disclosureType
+  override def getFromModel(model: DisclosureDetails): Option[DisclosureType] = Option(model.disclosureType)
 }

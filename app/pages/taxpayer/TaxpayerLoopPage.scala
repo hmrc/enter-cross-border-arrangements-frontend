@@ -16,15 +16,26 @@
 
 package pages.taxpayer
 
+import models.UserAnswers
 import models.taxpayer.Taxpayer
-import pages.{CleanablePage, QuestionPage}
+import pages.{LoopPage, QuestionPage}
 import play.api.libs.json.JsPath
 
-case object TaxpayerLoopPage extends CleanablePage[IndexedSeq[Taxpayer]] {
+case object TaxpayerLoopPage extends LoopPage[Taxpayer] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "taxpayerLoop"
+
+  def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
+    val buildTaxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
+    userAnswers.get(TaxpayerLoopPage, id) match {
+      case Some(list) => // append to existing list without duplication
+        list :+ buildTaxpayer
+      case None =>       // start new list
+        IndexedSeq[Taxpayer](buildTaxpayer)
+    }
+  }
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
     UpdateTaxpayerPage

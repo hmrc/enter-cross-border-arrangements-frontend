@@ -18,53 +18,48 @@ package models.enterprises
 
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{SelectType, UserAnswers}
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage}
+import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
+import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage}
 import play.api.libs.json.{Json, OFormat}
 
 import java.util.UUID
+import scala.util.Try
 
 case class AssociatedEnterprise(enterpriseId: String,
                                 individual: Option[Individual] = None,
                                 organisation: Option[Organisation] = None,
                                 associatedTaxpayers: List[String] = List.empty,
-                                isAffectedBy: Boolean = false) {
+                                isAffectedBy: Boolean = false) extends WithIndividualOrOrganisation with WithRestore {
 
-  val nameAsString: String = (individual, organisation) match {
-    case (Some(i), _) => i.nameAsString
-    case (_, Some(o)) => o.organisationName
-    case _            => throw new RuntimeException("Associated enterprise must contain either an individual or an organisation.")
-  }
+  override def matchItem(itemId: String): Boolean = enterpriseId == itemId
+
+  implicit val a: AssociatedEnterprise = implicitly(this)
+  override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers
+      .set(AssociatedEnterpriseCheckYourAnswersPage, id)
+      .flatMap(_.set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id))
+      .flatMap(_.set(AssociatedEnterpriseTypePage, id))
+      .flatMap(_.set(IsAssociatedEnterpriseAffectedPage, id))
+      .flatMap(restoreFromIndividualOrOrganisation(_, id))
 }
 
 object AssociatedEnterprise {
 
   private def generateId: String = UUID.randomUUID.toString
 
-  private def getAssociatedEnterpriseAnswers(ua: UserAnswers, id: Int): (List[String], Boolean) = {
-    (ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), ua.get(IsAssociatedEnterpriseAffectedPage, id)) match {
-      case (Some(associatedTaxpayers), Some(isAffectedBy)) => (associatedTaxpayers, isAffectedBy)
+  def apply(ua: UserAnswers, id: Int): AssociatedEnterprise = {
+    val enterprise: AssociatedEnterprise = (
+        ua.get(AssociatedEnterpriseCheckYourAnswersPage, id).orElse(Some(generateId))
+      , ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id)
+      , ua.get(IsAssociatedEnterpriseAffectedPage, id)) match {
+      case (Some(itemId), Some(associatedTaxpayers), Some(isAffectedBy)) =>
+        this(itemId, None, None, associatedTaxpayers, isAffectedBy)
       case _ => throw new Exception("Unable to build associated enterprise")
     }
-  }
-
-  def buildAssociatedEnterprise(ua: UserAnswers, id: Int): AssociatedEnterprise = {
     ua.get(AssociatedEnterpriseTypePage, id) match {
-      case Some(SelectType.Organisation) =>
-        new AssociatedEnterprise(
-          enterpriseId = generateId,
-          organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
-          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua, id)._1,
-          isAffectedBy = getAssociatedEnterpriseAnswers(ua, id)._2
-        )
-      case Some(SelectType.Individual) =>
-        new AssociatedEnterprise(
-          enterpriseId = generateId,
-          individual = Some(Individual.buildIndividualDetails(ua, id)),
-          associatedTaxpayers = getAssociatedEnterpriseAnswers(ua, id)._1,
-          isAffectedBy = getAssociatedEnterpriseAnswers(ua, id)._2
-        )
-      case None => throw new Exception("Missing associated enterprise type")
+      case Some(SelectType.Organisation) => enterprise.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
+      case Some(SelectType.Individual)   => enterprise.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
+      case _ => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }
 

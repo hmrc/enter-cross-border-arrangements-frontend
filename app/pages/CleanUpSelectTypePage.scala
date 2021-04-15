@@ -24,6 +24,8 @@ import scala.util.{Success, Try}
 
 trait CleanUpSelectTypePage extends QuestionPage[SelectType] {
 
+  // TODO implement Cleanable trait
+
   override def cleanup(value: Option[SelectType], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     //Clear answers from unique pages in each journey
     (value match {
