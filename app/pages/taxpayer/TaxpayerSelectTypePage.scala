@@ -16,17 +16,16 @@
 
 package pages.taxpayer
 
-import models.{SelectType, UserAnswers}
-import pages.individual._
-import pages.organisation._
+import models.SelectType
+import models.taxpayer.Taxpayer
 import play.api.libs.json.JsPath
-import pages._
+import pages.{CleanUpSelectTypePage, DetailsPage}
 
-import scala.util.Try
-
-case object TaxpayerSelectTypePage extends QuestionPage[SelectType] with CleanUpSelectTypePage {
+case object TaxpayerSelectTypePage extends DetailsPage[SelectType, Taxpayer]  with CleanUpSelectTypePage {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "selectType"
+
+  override def getFromModel(model: Taxpayer): Option[SelectType] = model.selectType.toOption
 }

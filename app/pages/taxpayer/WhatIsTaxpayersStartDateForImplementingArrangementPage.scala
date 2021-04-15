@@ -17,13 +17,18 @@
 package pages.taxpayer
 
 import java.time.LocalDate
-import pages._
 
+import models.SelectType
+import models.enterprises.AssociatedEnterprise
+import models.taxpayer.Taxpayer
+import pages._
 import play.api.libs.json.JsPath
 
-case object WhatIsTaxpayersStartDateForImplementingArrangementPage extends QuestionPage[LocalDate] {
+case object WhatIsTaxpayersStartDateForImplementingArrangementPage extends  DetailsPage[LocalDate, Taxpayer]  {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsTaxpayersStartDateForImplementingArrangement"
+
+  override def getFromModel(model: Taxpayer): Option[LocalDate] = model.implementingDate
 }

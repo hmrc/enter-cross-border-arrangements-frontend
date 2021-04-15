@@ -291,8 +291,8 @@ POST       /arrangement/change-details/:id                  controllers.arrangem
 GET        /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onPageLoad(id: Int, itemId: String)
 POST       /taxpayer/remove/:id/:itemId                     controllers.taxpayer.RemoveTaxpayerController.onSubmit(id: Int, itemId: String)
 
-GET        /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad(id: Int)
-POST       /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id: Int, mode: Mode = NormalMode)
+GET        /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onPageLoad(id: Int, itemId: Option[String])
+POST       /taxpayers/check-answers/:id                     controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id: Int)
 
 GET        /taxpayers/update/:id                            controllers.taxpayer.UpdateTaxpayerController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /taxpayers/update/:id                            controllers.taxpayer.UpdateTaxpayerController.onSubmit(id: Int, mode: Mode = NormalMode)

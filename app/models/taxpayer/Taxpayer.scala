@@ -19,15 +19,11 @@ package models.taxpayer
 import java.time.LocalDate
 import java.util.UUID
 
-import models.{SelectType, UserAnswers}
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation}
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.libs.json.{Json, OFormat}
-
-import java.time.LocalDate
-import java.util.UUID
 
 case class Taxpayer(taxpayerId: String
                     , individual: Option[Individual] = None
