@@ -262,7 +262,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>2021-04-14</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -443,7 +443,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>2021-04-14</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -499,7 +499,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>2021-03-14</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
