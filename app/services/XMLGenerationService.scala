@@ -67,8 +67,8 @@ class XMLGenerationService @Inject()(
     submission.getDisclosureType match {
       case DisclosureType.Dac6del => NodeSeq.Empty
       case _ =>
-        RelevantTaxPayersXMLSection(submission, reporterSection).buildRelevantTaxpayers ++
-          IntermediariesXMLSection(submission, reporterSection).buildIntermediaries ++
+        RelevantTaxPayersXMLSection(submission).buildRelevantTaxpayers ++
+          IntermediariesXMLSection(submission).buildIntermediaries ++
           AffectedXMLSection(submission).buildAffectedPersons ++
           DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
