@@ -387,6 +387,9 @@ emailAddressForOrganisation.error.length = Email address must be 254 characters 
 
 whichCountryTaxForOrganisation.title = Which country is the organisation resident in for tax purposes?
 whichCountryTaxForOrganisation.heading = Which country is {0} resident in for tax purposes?
+whichCountryTaxForOrganisation.info = If unknown, use the jurisdiction where the organisation was incorporated or established, or where its business headquarters are.
+whichCountryTaxForOrganisation.hint = You can add more countries later if the organisation is tax resident in more than one country.
+whichCountryTaxForOrganisation.moreThanOne.hint = If the organisation is tax resident in more countries you can add them later.
 whichCountryTaxForOrganisation.checkYourAnswersLabel = Tax resident countries
 whichCountryTaxForOrganisation.countryCounter = Country {0}
 whichCountryTaxForOrganisation.countryKey = Country
@@ -479,6 +482,9 @@ whatAreTheTaxNumbersForUKIndividual.label3.error.length = Tax identification num
 
 whichCountryTaxForIndividual.title = Which country are they resident in for tax purposes?
 whichCountryTaxForIndividual.heading = Which country {0} resident in for tax purposes?
+whichCountryTaxForIndividual.info = If unknown, enter the country where their current address is.
+whichCountryTaxForIndividual.hint = You can add more countries later if the individual is tax resident in more than one country.
+whichCountryTaxForIndividual.moreThanOne.hint = If the individual is tax resident in more countries you can add them later.
 whichCountryTaxForIndividual.error.required = Select country
 whichCountryTaxForIndividual.checkYourAnswersLabel = Tax resident countries
 whichCountryTaxForIndividual.countryCounter = Country {0}
@@ -1065,8 +1071,11 @@ reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
 
 reporterOrganisationTaxResidentCountry.title = Which country are they resident in for tax purposes?
 reporterOrganisationTaxResidentCountry.heading = Which country is {0} {1} resident in for tax purposes?
-reporterOrganisationTaxResidentCountry.hint = If more than 1, you can add others later.
-reporterOrganisationTaxResidentCountry.moreThanOne.hint = You can add others later.
+reporterOrganisationTaxResidentCountry.info = If unknown, use the jurisdiction where the organisation was incorporated or established, or where its business headquarters are.
+reporterOrganisationTaxResidentCountry.hint = You can add more countries later if the organisation is tax resident in more than one country.
+reporterOrganisationTaxResidentCountry.moreThanOne.hint = If the organisation is tax resident in more countries you can add them later.
+reporterIndividualTaxResidentCountry.hint = You can add more countries later if you are tax resident in more than one country.
+reporterIndividualTaxResidentCountry.moreThanOne.hint = If you are tax resident in more countries you can add them later.
 reporterIndividualTaxResidentCountry.title = Which country are you resident in for tax purposes?
 reporterIndividualTaxResidentCountry.heading = Which country are you {1} resident in for tax purposes?
 reporterTaxResidentCountry.checkYourAnswersLabel = Tax resident countries

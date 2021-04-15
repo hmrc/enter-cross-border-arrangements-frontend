@@ -109,23 +109,27 @@ class ReporterTaxResidentCountryController @Inject()(
 
   private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int) = {
 
-    val dynamicGuidance = if (index >= 1) "reporterOrganisationTaxResidentCountry.moreThanOne.hint" else "reporterOrganisationTaxResidentCountry.hint"
-    val dynamicAlso = if (index >= 1) "also" else ""
+    val dynamicGuidanceForIndividual   = if (index >= 1) "reporterIndividualTaxResidentCountry.moreThanOne.hint" else "reporterIndividualTaxResidentCountry.hint"
+    val dynamicGuidanceForOrganisation = if (index >= 1) "reporterOrganisationTaxResidentCountry.moreThanOne.hint" else "reporterOrganisationTaxResidentCountry.hint"
+    val dynamicAlso                    = if (index >= 1) "also" else ""
 
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
-        Json.obj("pageTitle" -> "reporterIndividualTaxResidentCountry.title",
+        Json.obj(
+          "pageTitle" -> "reporterIndividualTaxResidentCountry.title",
           "pageHeading" -> "reporterIndividualTaxResidentCountry.heading",
+          "displayInfo" -> false,
           "dynamicAlso" -> dynamicAlso,
-          "guidance" -> dynamicGuidance)
+          "guidance" -> dynamicGuidanceForIndividual)
 
       case _ => //Display Organisation Content
         Json.obj(
           "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
           "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
+          "displayInfo" -> true,
           "name" -> getReporterDetailsOrganisationName(userAnswers, id),
           "dynamicAlso" -> dynamicAlso,
-          "guidance" -> dynamicGuidance)
+          "guidance" -> dynamicGuidanceForOrganisation)
     }
   }
 

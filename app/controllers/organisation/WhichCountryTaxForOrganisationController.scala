@@ -64,8 +64,12 @@ class WhichCountryTaxForOrganisationController @Inject()(
         "id" -> id,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "countries" -> countryJsonList(preparedForm.data, countries),
-         "index" -> index
+        "countries"   -> countryJsonList(preparedForm.data, countries),
+        "index"       -> index,
+        "pageTitle"   -> "whichCountryTaxForOrganisation.title",
+        "pageHeading" -> "whichCountryTaxForOrganisation.heading",
+        "dynamicAlso" -> dynamicAlso(index),
+        "guidance"    -> dynamicGuidance(index)
       )
 
       renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(Ok(_))
@@ -85,8 +89,12 @@ class WhichCountryTaxForOrganisationController @Inject()(
             "id" -> id,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
+            "countries"   -> countryJsonList(formWithErrors.data, countries),
+            "index"       -> index,
+            "pageTitle"   -> "whichCountryTaxForOrganisation.title",
+            "pageHeading" -> "whichCountryTaxForOrganisation.heading",
+            "dynamicAlso" -> dynamicAlso(index),
+            "guidance"    -> dynamicGuidance(index)
           )
 
           renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
@@ -119,5 +127,11 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
       )
   }
+
+  private def dynamicGuidance(index: Int): String =
+    if (index >= 1) "whichCountryTaxForOrganisation.moreThanOne.hint" else "whichCountryTaxForOrganisation.hint"
+
+  private def dynamicAlso(index: Int): String =
+    if (index >= 1) "also" else ""
 
 }

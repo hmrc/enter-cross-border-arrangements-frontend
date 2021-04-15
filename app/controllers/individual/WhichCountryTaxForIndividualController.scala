@@ -65,7 +65,11 @@ class WhichCountryTaxForIndividualController @Inject()(
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers, id),
         "countries" -> countryJsonList(preparedForm.data, countries),
-        "index" -> index
+        "index" -> index,
+        "pageTitle"   -> "whichCountryTaxForIndividual.title",
+        "pageHeading" -> "whichCountryTaxForIndividual.heading",
+        "dynamicAlso" -> dynamicAlso(index),
+        "guidance"    -> dynamicGuidance(index)
       )
 
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
@@ -86,7 +90,11 @@ class WhichCountryTaxForIndividualController @Inject()(
             "mode" -> mode,
             "name" -> getIndividualName(request.userAnswers, id),
             "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
+            "index" -> index,
+            "pageTitle"   -> "whichCountryTaxForIndividual.title",
+            "pageHeading" -> "whichCountryTaxForIndividual.heading",
+            "dynamicAlso" -> dynamicAlso(index),
+            "guidance"    -> dynamicGuidance(index)
           )
 
           renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
@@ -111,6 +119,12 @@ class WhichCountryTaxForIndividualController @Inject()(
       case None => "are they"
     }
   }
+
+  private def dynamicGuidance(index: Int): String =
+    if (index >= 1) "whichCountryTaxForIndividual.moreThanOne.hint" else "whichCountryTaxForIndividual.hint"
+
+  private def dynamicAlso(index: Int): String =
+    if (index >= 1) "also" else ""
 
   def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, id: Int,  index: Int): IndexedSeq[LoopDetails] =
       userAnswers.get(IndividualLoopPage, id) match {
