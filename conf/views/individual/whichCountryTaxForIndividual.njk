@@ -10,13 +10,14 @@
   {{ title(messages("whichCountryTaxForIndividual.title"), form.errors) }}
 {% endblock %}
 
-{% block mainContent %}
-
+{% block beforeContent %}
   {{ govukBackLink({
     text: messages("site.back")
   }) }}
+{% endblock %}
 
-  <div class="govuk-main-wrapper">
+{% block mainContent %}
+ <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
