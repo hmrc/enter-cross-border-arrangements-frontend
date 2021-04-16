@@ -18,15 +18,14 @@ package utils.model.rows
 
 import models.individual.Individual
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, CheckMode, Country, LoopDetails, TaxReferenceNumbers}
-import pages._
-import pages.individual._
+import models.{Address, CheckMode, Country, TaxReferenceNumbers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 
 import java.time.LocalDate
+
 
 trait IndividualModelRows extends DisplayRowBuilder {
 
@@ -110,13 +109,6 @@ trait IndividualModelRows extends DisplayRowBuilder {
       href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  private def individualAddress(addressLookup: AddressLookup, id: Int)(implicit messages: Messages): Row =
-    toRow(
-      msgKey  = "individualAddress",
-      content = formatAddress(addressLookup),
-      href    = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(id, CheckMode).url
-    )
-
   def buildIndividualEmailAddressGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
     individual.emailAddress match {
 
@@ -141,26 +133,25 @@ trait IndividualModelRows extends DisplayRowBuilder {
       href    = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(id, CheckMode).url
     )
 
-//  def buildTaxResidencySummaryForIndividuals(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] = {
-//
-//    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
-//
-//    val header = toRow(
-//      msgKey = "whichCountryTaxForIndividual",
-//      content = lit"",
-//      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 0).url
-//    )
-//
-//   val details = validDetailsWithIndex flatMap {
-//
-//        case (taxResidency, index) =>
-//          individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
-//      }
-//
-//  }
+  def buildTaxResidencySummaryForIndividuals(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] = {
 
+    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
 
-  private def individualCountryRow(countryOption: Option[Country], index: Int, loopSize: Int): Row = {
+    val header: Row = toRow(
+      msgKey = "whichCountryTaxForIndividual",
+      content = lit"",
+      href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 0).url
+    )
+
+   val details: IndexedSeq[Row] = validDetailsWithIndex flatMap {
+        case (taxResidency, index) =>
+          individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
+      }
+
+    header +: details
+  }
+
+  private def individualCountryRow(countryOption: Option[Country], index: Int, loopSize: Int)(implicit messages: Messages): Row = {
 
     val countryDescription = countryOption.map(_.description).getOrElse(
       throw new IllegalArgumentException("A country row must have a non-empty country"))
@@ -172,10 +163,10 @@ trait IndividualModelRows extends DisplayRowBuilder {
     )
   }
 
-  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers]): Seq[Row] = {
+  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[Row] = {
     (country, taxReferenceNumbers) match {
             case (Some(c), Some(taxnumbers)) =>
-              if (c.code == "GB") {
+              if (c.isUK) {
                 taxNumberRow("whatAreTheTaxNumbersForUKIndividual", taxnumbers, country)
               }
               else
@@ -184,7 +175,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
         }
     }
 
-  private def taxNumberRow(msgKey: String, taxReferenceNumber: TaxReferenceNumbers, country: Option[Country]): Seq[Row] = {
+  private def taxNumberRow(msgKey: String, taxReferenceNumber: TaxReferenceNumbers, country: Option[Country])(implicit messages: Messages): Seq[Row] = {
 
     val countryLabel = country.map(_.description).getOrElse("")
     val taxRefLabel: Text.Message =
@@ -195,41 +186,49 @@ trait IndividualModelRows extends DisplayRowBuilder {
       value   = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}")
     ))
   }
-//
-//  def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
-//    answer =>
-//      toRow(
-//        msgKey  = "whichCountryTaxForIndividual",
-//        content = lit"$answer",
-//        href    = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 1).url
-//      )
-//  }
-//
-//  def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
-//    answer =>
-//      toRow(
-//        msgKey  = "doYouKnowAnyTINForUKIndividual",
-//        content = yesOrNo(answer),
-//        href    = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, CheckMode, 1).url
-//      )
-//  }
-//
-//  def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
-//    answer =>
-//      toRow(
-//        msgKey  = "whatAreTheTaxNumbersForUKIndividual",
-//        content = lit"$answer",
-//        href    = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
-//      )
-//  }
-//
-//  def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
-//    answer =>
-//      toRow(
-//        msgKey  = "isIndividualResidentForTaxOtherCountries",
-//        content = yesOrNo(answer),
-//        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
-//      )
-//  }
+
+  def whichCountryTaxForIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[Row] = {
+    individual.firstTaxResidency.flatMap(_.country) map { country =>
+      toRow(
+        msgKey = "whichCountryTaxForIndividual",
+        content = lit"$country",
+        href = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(id, CheckMode, 1).url
+      )
+    }
+  }
+
+  def doYouKnowAnyTINForUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[Row] =
+    individual.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
+    toRow(
+      msgKey = "doYouKnowAnyTINForUKIndividual",
+      content = yesOrNo(douYouKnowTIN),
+      href = controllers.individual.routes.DoYouKnowAnyTINForUKIndividualController.onPageLoad(id, CheckMode, 1).url
+    )
+  }
+
+  def whatAreTheTaxNumbersForUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[Row] =
+    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
+      toRow(
+        msgKey = "whatAreTheTaxNumbersForUKIndividual",
+        content = lit"$taxnumbers",
+        href = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
+      )
+    }
+
+  def whatAreTheTaxNumbersForNonUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[Row] =
+    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumber =>
+      toRow(
+        msgKey = "whatAreTheTaxNumbersForNonUKIndividual",
+        content = lit"$taxnumber",
+        href = controllers.individual.routes.WhatAreTheTaxNumbersForUKIndividualController.onPageLoad(id, CheckMode, 1).url
+      )
+    }
+
+  def isIndividualResidentForTaxOtherCountries(id: Int)(implicit messages: Messages): Option[Row] =
+     Some( toRow(
+        msgKey  = "isIndividualResidentForTaxOtherCountries",
+        content = yesOrNo(false),
+        href    = controllers.individual.routes.IsIndividualResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
+      ))
 
 }

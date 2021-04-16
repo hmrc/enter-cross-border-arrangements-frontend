@@ -144,22 +144,22 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
   }
 
-  def buildHallmarksRow(ua: UserAnswers, id: Int): Row = {
+  def buildHallmarksRow(id: Int): Row = {
 
-    val hallmarkCPage = ua.get(HallmarkCPage, id)  match {
+    val hallmarkCPage = userAnswers.get(HallmarkCPage, id)  match {
       case Some(set) if set.contains(C1) && set.size == 1 => None
       case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
       case hallmarkSet => hallmarkSet
     }
 
-    val hallmarkDPage = ua.get(HallmarkDPage, id)  match {
+    val hallmarkDPage = userAnswers.get(HallmarkDPage, id)  match {
       case Some(set) if set.contains(D1) && set.size == 1 => None
       case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
       case hallmarkSet => hallmarkSet
     }
 
     val hallmarkPages = Seq(
-      ua.get(HallmarkD1Page, id),
+      userAnswers.get(HallmarkD1Page, id),
       hallmarkDPage
     )
 

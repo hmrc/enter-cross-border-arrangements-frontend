@@ -16,19 +16,17 @@
 
 package utils
 
-import models.UserAnswers
+import play.api.i18n.Messages
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.rows.SummaryListDisplay
 import utils.rows.SummaryListDisplay.DisplayRow
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import play.api.i18n.Messages
 
 class SummaryListGenerator()(implicit val messages: Messages) {
-
 
   def generateSummaryList[A](id: Int, dac6Data: A)(implicit converter: (Int, A) => Seq[Row]):
     Seq[SummaryListDisplay.DisplayRow] = converter(id, dac6Data).map(rowToDisplayRow)
 
   def generateCYAList[A](id: Int, dac6Data: A)(implicit converter: (Int, A) => Seq[Row]): Seq[Row] = converter(id, dac6Data)
 
-  private def rowToDisplayRow(row: Row): DisplayRow = DisplayRow(row.key, row.value)
+  def rowToDisplayRow(row: Row): DisplayRow = DisplayRow(row.key, row.value)
 }
