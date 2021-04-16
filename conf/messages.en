@@ -637,6 +637,7 @@ arrangementCheckYourAnswers.heading = Check your answers
 
 updateTaxpayer.title = Your taxpayers
 updateTaxpayer.heading = You have not added any taxpayers
+updateTaxpayer.checkYourAnswersLabel = Do you want to add a taxpayer?
 updateTaxpayer.h2 = Do you want to add a taxpayer?
 updateTaxpayer.h3 = Do you want to add another taxpayer?
 updateTaxpayer.now = Yes, add now
@@ -1222,7 +1223,8 @@ summary.disclosure.heading = Disclosure type
 summary.hallmarks.heading = Hallmarks
 summary.arrangements.heading = Arrangement details
 summary.reporters.heading = Reporter’s details
-summary.taxpayers.heading = Relevant taxpayer’s details
+summary.taxpayers.heading.one = Relevant taxpayers’s details
+summary.taxpayers.heading.many = Relevant taxpayer {0}
 summary.enterprises.heading = Associated enterprise’s details
 summary.intermediaries.heading = Intermediary’s details
 summary.others.heading = Other party’s details

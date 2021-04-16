@@ -67,14 +67,39 @@
           rows: roleDetails
         }) }}
 
+        {% if taxpayersList | length == 0 %}
 
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.taxpayers.heading") }}
-       </h2>
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.taxpayers.heading.one") }}
+               </h2>
 
-       {{ govukSummaryList({
-         rows: taxpayersList
-       }) }}
+               {{ govukSummaryList({
+                 rows: taxpayerUpdateRow
+               }) }}
+
+        {% elseif taxpayersList | length == 1 %}
+
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.taxpayers.heading.one") }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: taxpayersList | first
+               }) }}
+
+        {% else %}
+           {% for item in taxpayersList %}
+
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.taxpayers.heading.many", loop.index) }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: item
+               }) }}
+
+          {% endfor %}
+        {% endif %}
 
      <h2 class="govuk-heading-l">
          {{ messages("summary.enterprises.heading") }}

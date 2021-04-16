@@ -17,17 +17,12 @@
 package controllers
 
 import controllers.actions._
-import models.ReporterOrganisationOrIndividual.Organisation
-import models.{Submission, UserAnswers}
-import models.reporter.RoleInArrangement.Intermediary
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import models.Submission
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList
-import utils.rows.SummaryListDisplay
 import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
 
 import javax.inject.Inject
@@ -59,7 +54,9 @@ class SummaryController @Inject()(
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
       val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
 
-//      val taxPayers: Option[Seq[Seq[SummaryListDisplay.DisplayRow]]] = ???
+      val taxpayersList = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp))
+
+      val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
       renderer.render("summary.njk",
         Json.obj(
@@ -68,56 +65,12 @@ class SummaryController @Inject()(
                  "reporterDetails" -> reporterDetails,
                  "residentCountryDetails" -> residentCountryDetails,
                  "roleDetails" -> roleDetails,
-                 "hallmarksList" -> hallmarksList
+                 "hallmarksList" -> hallmarksList,
+                 "taxpayersList" -> taxpayersList,
+                 "taxpayerUpdateRow" -> taxpayerUpdateRow
           )
       ).map(Ok(_))
   }
 
-  private def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
-      .flatten
 
-  private def getArrangementSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    Seq(helper.whatIsThisArrangementCalledPage(id) //ToDo make unlimited string
-      , helper.whatIsTheImplementationDatePage(id)
-      , helper.buildWhyAreYouReportingThisArrangementNow(id)
-      , helper.whichExpectedInvolvedCountriesArrangement(id)
-      , helper.whatIsTheExpectedValueOfThisArrangement(id)
-      , helper.whichNationalProvisionsIsThisArrangementBasedOn(id) //ToDo make unlimited string
-      , helper.giveDetailsOfThisArrangement(id) //ToDo make unlimited string
-    ).flatten
-
-  private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-    ua.get(ReporterOrganisationOrIndividualPage, id) match {
-      case Some(Organisation) =>
-        Seq(helper.reporterOrganisationOrIndividual(id) ++
-          helper.reporterOrganisationName(id) ++
-          helper.buildOrganisationReporterAddressGroup(id) ++
-          helper.buildReporterOrganisationEmailGroup(id)).flatten
-
-      case _ =>
-        Seq(helper.reporterOrganisationOrIndividual(id) ++
-          helper.reporterIndividualName(id) ++
-          helper.reporterIndividualDateOfBirth(id) ++
-          helper.reporterIndividualPlaceOfBirth(id) ++
-          helper.buildIndividualReporterAddressGroup(id) ++
-          helper.buildReporterIndividualEmailGroup(id)).flatten
-    }
-  }
-
-  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-    ua.get(RoleInArrangementPage, id) match {
-      case Some(Intermediary) =>
-        Seq(helper.roleInArrangementPage(id) ++
-          helper.intermediaryWhyReportInUKPage(id) ++
-          helper.intermediaryRolePage(id) ++
-          helper.buildExemptCountriesSummary(id)).flatten
-
-      case _ =>
-        Seq(helper.roleInArrangementPage(id) ++
-          helper.buildTaxpayerReporterReasonGroup(id) ++
-          helper.taxpayerImplementationDate(id)).flatten
-
-    }
-  }
 }

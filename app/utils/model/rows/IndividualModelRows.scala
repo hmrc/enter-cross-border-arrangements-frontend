@@ -29,12 +29,12 @@ import java.time.LocalDate
 
 trait IndividualModelRows extends DisplayRowBuilder {
 
-  def individualName(id: Int, individual: Individual)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def individualName(id: Int, individual: Individual)(implicit messages: Messages): Row =
+    toRow(
       msgKey  = "individualName",
       content = lit"${individual.individualName.firstName} ${individual.individualName.secondName}",
       href    = controllers.individual.routes.IndividualNameController.onPageLoad(id, CheckMode).url
-    ))
+    )
 
 
   def buildIndividualDateOfBirthGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
