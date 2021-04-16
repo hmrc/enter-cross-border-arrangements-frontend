@@ -20,11 +20,13 @@ import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
-import utils.model.rows.{ArrangementModelRows, DisclosureModelRows}
+import utils.model.rows.{ArrangementModelRows, DisclosureModelRows, IndividualModelRows, OrganisationModelRows, TaxpayerModelRows}
 import models.taxpayer.Taxpayer
+
 import scala.language.implicitConversions
 
-trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows {
+trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
+with TaxpayerModelRows {
 
   implicit def convertDisclosureDetails(id: Int, dis: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
     List(disclosureNamePage(dis),
@@ -41,8 +43,29 @@ trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows {
       , giveDetailsOfThisArrangement(id, arrangementDetails)).flatten
 
   implicit def convertTaxPayer(id: Int, taxPayer: Taxpayer)(implicit messages: Messages): Seq[Row] =
-    Seq(
-
-    )
+    (taxPayer.individual, taxPayer.organisation) match {
+      case (Some(individual), _) =>
+        Seq(taxpayerSelectType(id, taxPayer),
+              individualName(id, individual) ) ++
+              buildIndividualDateOfBirthGroup(id, individual) ++
+              buildIndividualPlaceOfBirthGroup(id, individual) ++
+              buildIndividualAddressGroup(id, individual) ++
+              buildIndividualEmailAddressGroup(id, individual) ++
+              buildTaxResidencySummaryForIndividuals(id, individual) ++
+              (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
+                  case Some(row) => Seq(row)
+                  case _ => Seq()
+                })
+      case (_, Some(organisation)) =>
+            Seq(taxpayerSelectType(id, taxPayer),
+              organisationName(id, organisation)) ++
+              buildOrganisationAddressGroup(id, organisation) ++
+              buildOrganisationEmailAddressGroup(id, organisation) ++
+              buildTaxResidencySummaryForOrganisation(id, organisation) ++
+              (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
+                case Some(row) => Seq(row)
+                case _ => Seq()
+              })
+    }
 
 }

@@ -67,14 +67,16 @@
           rows: roleDetails
         }) }}
 
-
+       {% for item in taxpayersList %}
        <h2 class="govuk-heading-l">
          {{ messages("summary.taxpayers.heading") }}
        </h2>
 
+
        {{ govukSummaryList({
-         rows: taxpayersList
+         rows: item
        }) }}
+      {% endfor %}
 
      <h2 class="govuk-heading-l">
          {{ messages("summary.enterprises.heading") }}

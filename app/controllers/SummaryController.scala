@@ -59,7 +59,7 @@ class SummaryController @Inject()(
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
       val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
 
-//      val taxPayers: Option[Seq[Seq[SummaryListDisplay.DisplayRow]]] = ???
+      val taxpayersList: IndexedSeq[Seq[SummaryListDisplay.DisplayRow]] = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp))
 
       renderer.render("summary.njk",
         Json.obj(
@@ -68,7 +68,8 @@ class SummaryController @Inject()(
                  "reporterDetails" -> reporterDetails,
                  "residentCountryDetails" -> residentCountryDetails,
                  "roleDetails" -> roleDetails,
-                 "hallmarksList" -> hallmarksList
+                 "hallmarksList" -> hallmarksList,
+                 "taxpayersList" -> taxpayersList
           )
       ).map(Ok(_))
   }
