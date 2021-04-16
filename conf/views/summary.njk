@@ -35,7 +35,7 @@
         </h2>
 
         {{ govukSummaryList({
-          rows: hallmarkList
+          rows: hallmarksList
         }) }}
 
         <h2 class="govuk-heading-l">
@@ -50,9 +50,23 @@
          {{ messages("summary.reporters.heading") }}
        </h2>
 
-       {{ govukSummaryList({
-         rows: reportersList
-       }) }}
+        {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+          rows: reporterDetails
+        }) }}
+
+        {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: residentCountryDetails
+        }) }}
+
+        <hr>
+
+        {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+          rows: roleDetails
+        }) }}
+
 
        <h2 class="govuk-heading-l">
          {{ messages("summary.taxpayers.heading") }}
