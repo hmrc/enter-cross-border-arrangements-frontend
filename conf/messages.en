@@ -31,6 +31,8 @@ global.error.InternalServerError500.heading = Sorry, there is a problem with thi
 global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
 global.error.InternalServerError500.message = Try again later.
 
+global.error.badRequest400.info = If you entered any information, your answers will be saved.
+
 global.error.validation.section.taxpayerorreporter = Relevant taxpayers or reporter’s details
 
 footer.links.support_links = Help contacts

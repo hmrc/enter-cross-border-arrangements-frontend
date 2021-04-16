@@ -102,6 +102,7 @@ class ReporterIndividualPostcodeController @Inject()(
               val json = Json.obj(
                 "form" -> formError,
                 "mode" -> mode,
+                "id" -> id,
                 "manualAddressURL" -> manualAddressURL(id, mode)
               )
 

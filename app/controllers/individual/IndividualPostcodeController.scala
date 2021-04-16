@@ -87,7 +87,7 @@ class IndividualPostcodeController @Inject()(
 
       val formReturned = form.bindFromRequest()
 
-        form.bindFromRequest().fold(
+      formReturned.fold(
         formWithErrors => {
           val json = Json.obj(
             "form" -> formWithErrors,
