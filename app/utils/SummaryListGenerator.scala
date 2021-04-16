@@ -16,13 +16,16 @@
 
 package utils
 
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.rows.SummaryListDisplay
 import utils.rows.SummaryListDisplay.DisplayRow
 
-class SummaryListGenerator()(implicit val messages: Messages) {
+import javax.inject.Inject
 
+class SummaryListGenerator @Inject()(val controllerComponents: MessagesControllerComponents) {
+  implicit def messagesApi: MessagesApi = controllerComponents.messagesApi
   def generateSummaryList[A](id: Int, dac6Data: A)(implicit converter: (Int, A) => Seq[Row]):
     Seq[SummaryListDisplay.DisplayRow] = converter(id, dac6Data).map(rowToDisplayRow)
 

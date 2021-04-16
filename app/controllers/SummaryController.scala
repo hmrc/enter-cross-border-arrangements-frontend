@@ -38,6 +38,7 @@ class SummaryController @Inject()(
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    summaryListGenerator: SummaryListGenerator,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SummaryImplicits {
@@ -46,7 +47,6 @@ class SummaryController @Inject()(
     implicit request =>
     val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val summaryListGenerator = new SummaryListGenerator()
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       val disclosureList = summaryListGenerator.generateSummaryList(id, submission.disclosureDetails)
@@ -58,6 +58,8 @@ class SummaryController @Inject()(
       val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
       val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
+
+//      val taxPayers: Option[Seq[Seq[SummaryListDisplay.DisplayRow]]] = ???
 
       renderer.render("summary.njk",
         Json.obj(

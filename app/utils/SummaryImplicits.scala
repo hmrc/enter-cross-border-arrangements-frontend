@@ -21,7 +21,7 @@ import models.disclosure.DisclosureDetails
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.model.rows.{ArrangementModelRows, DisclosureModelRows}
-
+import models.taxpayer.Taxpayer
 import scala.language.implicitConversions
 
 trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows {
@@ -39,4 +39,10 @@ trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows {
       , whatIsTheExpectedValueOfThisArrangement(id, arrangementDetails)
       , whichNationalProvisionsIsThisArrangementBasedOn(id, arrangementDetails)
       , giveDetailsOfThisArrangement(id, arrangementDetails)).flatten
+
+  implicit def convertTaxPayer(id: Int, taxPayer: Taxpayer)(implicit messages: Messages): Seq[Row] =
+    Seq(
+
+    )
+
 }
