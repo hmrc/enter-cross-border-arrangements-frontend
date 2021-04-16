@@ -17,7 +17,7 @@
 package models.individual
 
 import models.taxpayer.TaxResidency
-import models.{Address, AddressLookup, Country, LoopDetails, Name, UserAnswers, WithRestore, WithTaxResidency}
+import models.{Address, AddressLookup, Country, Name, UserAnswers, WithRestore, WithTaxResidency}
 import pages.SelectedAddressLookupPage
 import pages.individual._
 import pages.reporter.individual._
@@ -25,7 +25,7 @@ import pages.reporter.{ReporterSelectedAddressLookupPage, ReporterTaxResidencyLo
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
-import scala.util.{Success, Try}
+import scala.util.Try
 
 case class Individual(individualName: Name,
                       birthDate: LocalDate,

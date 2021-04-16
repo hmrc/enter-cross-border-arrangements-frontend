@@ -19,7 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers._
 import models.{Country, LoopDetails, Mode}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
@@ -69,7 +69,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
         "pageTitle"   -> "whichCountryTaxForOrganisation.title",
         "pageHeading" -> "whichCountryTaxForOrganisation.heading",
         "dynamicAlso" -> dynamicAlso(index),
-        "guidance"    -> dynamicGuidance(index)
+        "guidance"    -> dynamicGuidance(index, "whichCountryTaxForOrganisation")
       )
 
       renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(Ok(_))
@@ -94,7 +94,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
             "pageTitle"   -> "whichCountryTaxForOrganisation.title",
             "pageHeading" -> "whichCountryTaxForOrganisation.heading",
             "dynamicAlso" -> dynamicAlso(index),
-            "guidance"    -> dynamicGuidance(index)
+            "guidance"    -> dynamicGuidance(index, "whichCountryTaxForOrganisation")
           )
 
           renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))
@@ -127,11 +127,5 @@ class WhichCountryTaxForOrganisationController @Inject()(
 
       )
   }
-
-  private def dynamicGuidance(index: Int): String =
-    if (index >= 1) "whichCountryTaxForOrganisation.moreThanOne.hint" else "whichCountryTaxForOrganisation.hint"
-
-  private def dynamicAlso(index: Int): String =
-    if (index >= 1) "also" else ""
 
 }

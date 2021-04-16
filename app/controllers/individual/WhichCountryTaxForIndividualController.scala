@@ -19,6 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.individual.WhichCountryTaxForIndividualFormProvider
+import helpers.JourneyHelpers._
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
@@ -69,7 +70,7 @@ class WhichCountryTaxForIndividualController @Inject()(
         "pageTitle"   -> "whichCountryTaxForIndividual.title",
         "pageHeading" -> "whichCountryTaxForIndividual.heading",
         "dynamicAlso" -> dynamicAlso(index),
-        "guidance"    -> dynamicGuidance(index)
+        "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
       )
 
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
@@ -94,7 +95,7 @@ class WhichCountryTaxForIndividualController @Inject()(
             "pageTitle"   -> "whichCountryTaxForIndividual.title",
             "pageHeading" -> "whichCountryTaxForIndividual.heading",
             "dynamicAlso" -> dynamicAlso(index),
-            "guidance"    -> dynamicGuidance(index)
+            "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
           )
 
           renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
@@ -115,16 +116,10 @@ class WhichCountryTaxForIndividualController @Inject()(
 
   private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
     userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${"is " + name.firstName + " " + name.secondName}"
+      case Some(name) => s"is ${name.displayName}"
       case None => "are they"
     }
   }
-
-  private def dynamicGuidance(index: Int): String =
-    if (index >= 1) "whichCountryTaxForIndividual.moreThanOne.hint" else "whichCountryTaxForIndividual.hint"
-
-  private def dynamicAlso(index: Int): String =
-    if (index >= 1) "also" else ""
 
   def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, id: Int,  index: Int): IndexedSeq[LoopDetails] =
       userAnswers.get(IndividualLoopPage, id) match {

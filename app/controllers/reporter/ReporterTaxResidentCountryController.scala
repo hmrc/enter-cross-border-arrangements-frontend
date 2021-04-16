@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.reporter.ReporterTaxResidentCountryFormProvider
 import helpers.JourneyHelpers._
-import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForReporter
@@ -35,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterTaxResidentCountryController @Inject()(
@@ -109,27 +109,23 @@ class ReporterTaxResidentCountryController @Inject()(
 
   private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int) = {
 
-    val dynamicGuidanceForIndividual   = if (index >= 1) "reporterIndividualTaxResidentCountry.moreThanOne.hint" else "reporterIndividualTaxResidentCountry.hint"
-    val dynamicGuidanceForOrganisation = if (index >= 1) "reporterOrganisationTaxResidentCountry.moreThanOne.hint" else "reporterOrganisationTaxResidentCountry.hint"
-    val dynamicAlso                    = if (index >= 1) "also" else ""
-
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
         Json.obj(
           "pageTitle" -> "reporterIndividualTaxResidentCountry.title",
           "pageHeading" -> "reporterIndividualTaxResidentCountry.heading",
           "displayInfo" -> false,
-          "dynamicAlso" -> dynamicAlso,
-          "guidance" -> dynamicGuidanceForIndividual)
+          "dynamicAlso" -> dynamicAlso(index),
+          "guidance"    -> dynamicGuidance(index, "reporterIndividualTaxResidentCountry"))
 
       case _ => //Display Organisation Content
         Json.obj(
           "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
           "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
           "displayInfo" -> true,
-          "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "dynamicAlso" -> dynamicAlso,
-          "guidance" -> dynamicGuidanceForOrganisation)
+          "name"        -> getReporterDetailsOrganisationName(userAnswers, id),
+          "dynamicAlso" -> dynamicAlso(index),
+          "guidance"    -> dynamicGuidance(index, "reporterOrganisationTaxResidentCountry"))
     }
   }
 

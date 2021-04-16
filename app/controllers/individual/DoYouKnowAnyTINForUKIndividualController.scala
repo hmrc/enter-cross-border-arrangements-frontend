@@ -19,9 +19,10 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.DoYouKnowAnyTINForUKIndividualFormProvider
-import models.{LoopDetails, Mode, UserAnswers}
+import helpers.JourneyHelpers.getIndividualName
+import models.Mode
 import navigation.NavigatorForIndividual
-import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage, IndividualNamePage}
+import pages.individual.{DoYouKnowAnyTINForUKIndividualPage, IndividualLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -67,7 +68,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         "id" -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers, id),
+        "name" -> getIndividualName(request.userAnswers, id, Some("their")),
         "index" -> index
       )
 
@@ -105,12 +106,5 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
         }
       )
 
-  }
-
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
-    userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
-      case None => "their"
-    }
   }
 }
