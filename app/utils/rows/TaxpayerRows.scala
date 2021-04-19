@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import pages.taxpayer.TaxpayerSelectTypePage
+import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -41,6 +41,15 @@ trait TaxpayerRows extends RowBuilder {
         msgKey  = "whatIsTaxpayersStartDateForImplementingArrangement",
         content = Literal(answer.format(dateFormatter)),
         href    = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
+      )
+  }
+
+  def updateTaxpayers(id: Int): Option[Row] = userAnswers.get(UpdateTaxpayerPage, id) map {
+    answer =>
+      toRow(
+        msgKey  = "updateTaxpayer",
+        content = msg"site.no",
+        href    = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id).url
       )
   }
 }

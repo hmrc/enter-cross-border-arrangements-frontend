@@ -38,7 +38,6 @@ trait TaxpayerModelRows extends DisplayRowBuilder {
       )
   }
 
-
   def whatIsTaxpayersStartDateForImplementingArrangement(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): Option[Row] =
     taxpayer.implementingDate map { implementingDate =>
       toRow(

@@ -17,16 +17,16 @@
 package controllers
 
 import controllers.actions._
-import models.ReporterOrganisationOrIndividual.Organisation
-import models.reporter.RoleInArrangement.Intermediary
-import models.{Submission, UserAnswers}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import models.taxpayer.UpdateTaxpayer
+import models.{Submission, WithIndividualOrOrganisation}
+import pages.taxpayer.UpdateTaxpayerPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
 
 import javax.inject.Inject
@@ -60,6 +60,8 @@ class SummaryController @Inject()(
 
       val taxpayersList = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp))
 
+      val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+
       renderer.render("summary.njk",
         Json.obj(
           "disclosureList" -> disclosureList,
@@ -68,7 +70,8 @@ class SummaryController @Inject()(
                  "residentCountryDetails" -> residentCountryDetails,
                  "roleDetails" -> roleDetails,
                  "hallmarksList" -> hallmarksList,
-                 "taxpayersList" -> taxpayersList
+                 "taxpayersList" -> taxpayersList,
+          "taxpayerUpdateRow" -> taxpayerUpdateRow
           )
       ).map(Ok(_))
   }

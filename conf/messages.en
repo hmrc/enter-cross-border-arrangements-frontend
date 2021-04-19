@@ -614,6 +614,7 @@ arrangementCheckYourAnswers.heading = Check your answers
 
 updateTaxpayer.title = Your taxpayers
 updateTaxpayer.heading = You have not added any taxpayers
+updateTaxpayer.checkYourAnswersLabel = Do you want to add a taxpayer?
 updateTaxpayer.h2 = Do you want to add a taxpayer?
 updateTaxpayer.h3 = Do you want to add another taxpayer?
 updateTaxpayer.now = Yes, add now
