@@ -31,6 +31,8 @@ global.error.InternalServerError500.heading = Sorry, there is a problem with thi
 global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
 global.error.InternalServerError500.message = Try again later.
 
+global.error.badRequest400.info = If you entered any information, your answers will be saved.
+
 global.error.validation.section.taxpayerorreporter = Relevant taxpayers or reporter’s details
 
 footer.links.support_links = Help contacts
@@ -317,6 +319,7 @@ postcode.individual.title = What is their postcode?
 postcode.checkYourAnswersLabel = What is the {0}’s postcode?
 postcode.error.required = Enter a postcode
 postcode.error.invalid = Enter a postcode, like AA1 1AA
+postcode.error.notFound = Address not found - enter a different postcode or enter the address manually
 postcode.submit = Find address
 postcode.hint = Or enter the address manually
 
@@ -1018,6 +1021,7 @@ reporterIndividualPostcode.title = What is your postcode?
 reporterIndividualPostcode.heading = What is your postcode?
 reporterIndividualPostcode.error.required = Enter a postcode
 reporterIndividualPostcode.error.invalid = Enter a postcode, like AA1 1AA
+reporterIndividualPostcode.error.notFound = Address not found - enter a different postcode or enter the address manually
 reporterIndividualPostcode.hint = Or enter the address manually
 reporterIndividualPostcode.submit = Find address
 

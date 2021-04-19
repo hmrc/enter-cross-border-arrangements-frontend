@@ -21,9 +21,9 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.{countryJsonList, getIndividualName, pageHeadingProvider}
 import javax.inject.Inject
-import models.{Address, Mode, UserAnswers}
+import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForIndividual
-import pages.individual.{IndividualAddressPage, IsIndividualAddressUkPage}
+import pages.individual.{IndividualAddressPage, IndividualUkPostcodePage, IsIndividualAddressUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -49,7 +49,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
 
   private def actionUrl(id: Int, mode: Mode) = routes.IndividualAddressController.onSubmit(id, mode).url
 
-  implicit val alternativeText: String = "the individual's"
+  implicit val alternativeText: String = "the individual’s"
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -57,10 +57,18 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(IndividualAddressPage, id) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm =
+        (request.userAnswers.get(IndividualAddressPage, id), request.userAnswers.get(IndividualUkPostcodePage, id)) match {
+          case (Some(value), Some(postCode)) =>
+            val fullAddressWithPostCode = Address(Some(value.addressLine1).flatten, Some(value.addressLine2).flatten,
+              Some(value.addressLine3).flatten, value.city, Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(fullAddressWithPostCode)
+          case (None, Some(postCode)) =>
+            val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(addressWithPostCode)
+          case (Some(value), _) => form.fill(value)
+          case _ => form
+        }
 
       val json = Json.obj(
         "form"   -> preparedForm,

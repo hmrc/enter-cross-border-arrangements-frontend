@@ -21,9 +21,9 @@ import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.AddressFormProvider
 import helpers.JourneyHelpers.pageHeadingProvider
 import javax.inject.Inject
-import models.{Address, Mode, UserAnswers}
+import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForReporter
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIsIndividualAddressUKPage}
+import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualPostcodePage, ReporterIsIndividualAddressUKPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -60,10 +60,19 @@ class ReporterIndividualAddressController @Inject()(
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(ReporterIndividualAddressPage, id) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm =
+        (request.userAnswers.get(ReporterIndividualAddressPage, id), request.userAnswers.get(ReporterIndividualPostcodePage, id)) match {
+          case (Some(value), Some(postCode)) =>
+            val fullAddressWithPostCode = Address(Some(value.addressLine1).flatten, Some(value.addressLine2).flatten,
+              Some(value.addressLine3).flatten, value.city, Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(fullAddressWithPostCode)
+
+          case (None, Some(postCode)) =>
+            val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(addressWithPostCode)
+          case (Some(value), _) => form.fill(value)
+          case _ => form
+        }
 
       val json = Json.obj(
         "form" -> preparedForm,
