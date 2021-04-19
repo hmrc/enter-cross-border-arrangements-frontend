@@ -16,12 +16,17 @@
 
 package utils
 
+import models.ReporterOrganisationOrIndividual.Organisation
+import models.UserAnswers
 import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
+import models.reporter.RoleInArrangement.Intermediary
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.model.rows.{ArrangementModelRows, DisclosureModelRows, IndividualModelRows, OrganisationModelRows, TaxpayerModelRows}
 import models.taxpayer.Taxpayer
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
+import uk.gov.hmrc.viewmodels.SummaryList
 
 import scala.language.implicitConversions
 
@@ -68,4 +73,51 @@ with TaxpayerModelRows {
               })
     }
 
+  def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+    Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
+      .flatten
+
+  def getArrangementSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+    Seq(helper.whatIsThisArrangementCalledPage(id) //ToDo make unlimited string
+      , helper.whatIsTheImplementationDatePage(id)
+      , helper.buildWhyAreYouReportingThisArrangementNow(id)
+      , helper.whichExpectedInvolvedCountriesArrangement(id)
+      , helper.whatIsTheExpectedValueOfThisArrangement(id)
+      , helper.whichNationalProvisionsIsThisArrangementBasedOn(id) //ToDo make unlimited string
+      , helper.giveDetailsOfThisArrangement(id) //ToDo make unlimited string
+    ).flatten
+
+  def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(ReporterOrganisationOrIndividualPage, id) match {
+      case Some(Organisation) =>
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+          helper.reporterOrganisationName(id) ++
+          helper.buildOrganisationReporterAddressGroup(id) ++
+          helper.buildReporterOrganisationEmailGroup(id)).flatten
+
+      case _ =>
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+          helper.reporterIndividualName(id) ++
+          helper.reporterIndividualDateOfBirth(id) ++
+          helper.reporterIndividualPlaceOfBirth(id) ++
+          helper.buildIndividualReporterAddressGroup(id) ++
+          helper.buildReporterIndividualEmailGroup(id)).flatten
+    }
+  }
+
+  def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(RoleInArrangementPage, id) match {
+      case Some(Intermediary) =>
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.intermediaryWhyReportInUKPage(id) ++
+          helper.intermediaryRolePage(id) ++
+          helper.buildExemptCountriesSummary(id)).flatten
+
+      case _ =>
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.buildTaxpayerReporterReasonGroup(id) ++
+          helper.taxpayerImplementationDate(id)).flatten
+
+    }
+  }
 }

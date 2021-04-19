@@ -67,16 +67,31 @@
           rows: roleDetails
         }) }}
 
-       {% for item in taxpayersList %}
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.taxpayers.heading") }}
-       </h2>
+        {% if taxpayersList | length > 1 %}
+           {% for item in taxpayersList %}
 
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.taxpayers.many", loop.index) }}
+               </h2>
 
-       {{ govukSummaryList({
-         rows: item
-       }) }}
-      {% endfor %}
+               {{ govukSummaryList({
+                 rows: item
+               }) }}
+
+          {% endfor %}
+        {% endif %}
+
+        {% if taxpayersList | length == 1 %}
+
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.taxpayers.heading.one") }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: taxpayersList
+               }) }}
+
+        {% endif %}
 
      <h2 class="govuk-heading-l">
          {{ messages("summary.enterprises.heading") }}
