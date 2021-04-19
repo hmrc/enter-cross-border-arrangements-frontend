@@ -35,7 +35,8 @@ trait TaxpayerRows extends RowBuilder {
       )
   }
 
-  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int): Option[Row] = userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
+  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int): Option[Row] =
+    userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
     answer =>
       toRow(
         msgKey  = "whatIsTaxpayersStartDateForImplementingArrangement",
@@ -48,7 +49,7 @@ trait TaxpayerRows extends RowBuilder {
     answer =>
       toRow(
         msgKey  = "updateTaxpayer",
-        content = msg"site.no",
+        content = msg"updateTaxpayer.$answer",
         href    = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id).url
       )
   }

@@ -20,6 +20,9 @@ import models.ReporterOrganisationOrIndividual.Organisation
 import models.UserAnswers
 import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
+import models.enterprises.AssociatedEnterprise
+import models.individual.Individual
+import models.organisation.Organisation
 import models.reporter.RoleInArrangement.Intermediary
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
@@ -50,29 +53,72 @@ with TaxpayerModelRows {
   implicit def convertTaxPayer(id: Int, taxPayer: Taxpayer)(implicit messages: Messages): Seq[Row] =
     (taxPayer.individual, taxPayer.organisation) match {
       case (Some(individual), _) =>
-        Seq(taxpayerSelectType(id, taxPayer),
-              individualName(id, individual) ) ++
-              buildIndividualDateOfBirthGroup(id, individual) ++
-              buildIndividualPlaceOfBirthGroup(id, individual) ++
-              buildIndividualAddressGroup(id, individual) ++
-              buildIndividualEmailAddressGroup(id, individual) ++
-              buildTaxResidencySummaryForIndividuals(id, individual) ++
-              (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
-                  case Some(row) => Seq(row)
-                  case _ => Seq()
-                })
+        Seq(taxpayerSelectType(id, taxPayer)) ++
+        individualRowsFromModel(id, individual) ++
+        (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
+            case Some(row) => Seq(row)
+            case _ => Seq()
+          })
       case (_, Some(organisation)) =>
-            Seq(taxpayerSelectType(id, taxPayer),
-              organisationName(id, organisation)) ++
-              buildOrganisationAddressGroup(id, organisation) ++
-              buildOrganisationEmailAddressGroup(id, organisation) ++
-              buildTaxResidencySummaryForOrganisation(id, organisation) ++
-              (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
-                case Some(row) => Seq(row)
-                case _ => Seq()
-              })
+            Seq(taxpayerSelectType(id, taxPayer)) ++
+            organisationRowsFromModel(id, organisation) ++
+            (whatIsTaxpayersStartDateForImplementingArrangement(id, taxPayer) match {
+              case Some(row) => Seq(row)
+              case _ => Seq()
+            })
     }
 
+  def individualRowsFromModel(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
+      Seq(individualName(id, individual) ) ++
+      buildIndividualDateOfBirthGroup(id, individual) ++
+      buildIndividualPlaceOfBirthGroup(id, individual) ++
+      buildIndividualAddressGroup(id, individual) ++
+      buildIndividualEmailAddressGroup(id, individual) ++
+      buildTaxResidencySummaryForIndividuals(id, individual)
+
+  def organisationRowsFromModel(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[Row] =
+      Seq(organisationName(id, organisation)) ++
+      buildOrganisationAddressGroup(id, organisation) ++
+      buildOrganisationEmailAddressGroup(id, organisation) ++
+      buildTaxResidencySummaryForOrganisation(id, organisation)
+
+  def convertEnterprises(id: Int, enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[Row] = {
+    (enterprises.individual, enterprises.organisation) match {
+      case (Some(individual), _) => ???
+      case (None, Some(organisation)) => ???
+    }
+//    val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
+//
+//      case Some(SelectType.Organisation) =>
+//        (
+//          helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+//            Seq(helper.associatedEnterpriseType(id),
+//              helper.organisationName(id)
+//            ).flatten ++
+//            helper.buildOrganisationAddressGroup(id) ++
+//            helper.buildOrganisationEmailAddressGroup(id),
+//          helper.buildTaxResidencySummaryForOrganisation(id)
+//        )
+//
+//      case Some(SelectType.Individual) =>
+//        (
+//          helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+//            Seq(
+//              helper.associatedEnterpriseType(id),
+//              helper.individualName(id)
+//            ).flatten ++
+//            helper.buildIndividualDateOfBirthGroup(id) ++
+//            helper.buildIndividualPlaceOfBirthGroup(id) ++
+//            helper.buildIndividualAddressGroup(id) ++
+//            helper.buildIndividualEmailAddressGroup(id),
+//          helper.buildTaxResidencySummaryForIndividuals(id)
+//        )
+//
+//      case _ => throw new UnsupportedRouteException(id)
+//    }
+//
+//    val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
+  }
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
     Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
       .flatten

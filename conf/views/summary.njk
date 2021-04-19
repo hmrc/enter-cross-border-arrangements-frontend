@@ -67,9 +67,6 @@
           rows: roleDetails
         }) }}
 
-{{ taxpayersList | length == 0 }}
-{{ taxpayersList | length == 1 }}
-
         {% if taxpayersList | length == 0 %}
 
                <h2 class="govuk-heading-l">
@@ -85,15 +82,14 @@
                <h2 class="govuk-heading-l">
                  {{ messages("summary.taxpayers.heading.one") }}
                </h2>
--------------------------------------
 
                {{ govukSummaryList({
                  rows: taxpayersList | first
                }) }}
 
------------------------------------------
         {% else %}
            {% for item in taxpayersList %}
+
                <h2 class="govuk-heading-l">
                  {{ messages("summary.taxpayers.heading.many", loop.index) }}
                </h2>
@@ -101,6 +97,7 @@
                {{ govukSummaryList({
                  rows: item
                }) }}
+
           {% endfor %}
         {% endif %}
 

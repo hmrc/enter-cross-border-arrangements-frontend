@@ -17,16 +17,12 @@
 package controllers
 
 import controllers.actions._
-import models.taxpayer.UpdateTaxpayer
-import models.{Submission, WithIndividualOrOrganisation}
-import pages.taxpayer.UpdateTaxpayerPage
+import models.Submission
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
 
 import javax.inject.Inject
@@ -71,7 +67,7 @@ class SummaryController @Inject()(
                  "roleDetails" -> roleDetails,
                  "hallmarksList" -> hallmarksList,
                  "taxpayersList" -> taxpayersList,
-          "taxpayerUpdateRow" -> taxpayerUpdateRow
+                 "taxpayerUpdateRow" -> taxpayerUpdateRow
           )
       ).map(Ok(_))
   }
