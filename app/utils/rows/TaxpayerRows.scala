@@ -21,7 +21,7 @@ import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
-import utils.SummaryListGenerator.rowToDisplayRow
+import utils.CreateDisplayRows.toRow
 
 trait TaxpayerRows extends RowBuilder {
 
@@ -46,7 +46,7 @@ trait TaxpayerRows extends RowBuilder {
       )
   }
 
-  def updateTaxpayersDisplay(id: Int): Seq[Row] = userAnswers.get(UpdateTaxpayerPage, id)
+  def updateTaxpayers(id: Int): Option[Row] = userAnswers.get(UpdateTaxpayerPage, id)
     .map { answer =>
       toRow(
         msgKey  = "updateTaxpayer",
@@ -54,5 +54,4 @@ trait TaxpayerRows extends RowBuilder {
         href    = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id).url
       )
     }
-    .fold(Seq.empty) { row => Seq(rowToDisplayRow(row)) }
 }

@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
 import models.{Submission, UserAnswers}
 import models.taxpayer.Taxpayer
@@ -63,8 +64,6 @@ class SummaryController @Inject()(
 
       val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
-
-
       val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
         ent.copy(associatedTaxpayers =
           ent.associatedTaxpayers.map(
@@ -96,18 +95,55 @@ class SummaryController @Inject()(
                  "hallmarksList" -> hallmarksList,
                  "taxpayersList" -> taxpayersList,
                  "taxpayerUpdateRow" -> taxpayerUpdateRow,
-                "enterprisesList"-> enterprisesList,
-                "enterprisesUpdateRow" -> enterprisesUpdateRow,
-                "intermediaryList"-> intermediaryList,
-                "intermediaryUpdateRow" -> intermediaryUpdateRow,
-                "affectedList" -> affectedList,
-                "affectedUpdateRow" -> affectedUpdateRow
+                 "enterprisesList"-> enterprisesList,
+                 "enterprisesUpdateRow" -> enterprisesUpdateRow,
+                 "intermediaryList"-> intermediaryList,
+                 "intermediaryUpdateRow" -> intermediaryUpdateRow,
+                 "affectedList" -> affectedList,
+                 "affectedUpdateRow" -> affectedUpdateRow
           )
       ).map(Ok(_))
   }
 
+  def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+    Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
+      .flatten
 
   private def getTaxpayerNameFromID(search: String, taxpayers: Seq[Taxpayer]): Option[String] =
     taxpayers.find(_.taxpayerId == search).map(_.nameAsString)
+
+  private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(ReporterOrganisationOrIndividualPage, id) match {
+      case Some(Organisation) =>
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+          helper.reporterOrganisationName(id) ++
+          helper.buildOrganisationReporterAddressGroup(id) ++
+          helper.buildReporterOrganisationEmailGroup(id)).flatten
+
+      case _ =>
+        Seq(helper.reporterOrganisationOrIndividual(id) ++
+          helper.reporterIndividualName(id) ++
+          helper.reporterIndividualDateOfBirth(id) ++
+          helper.reporterIndividualPlaceOfBirth(id) ++
+          helper.buildIndividualReporterAddressGroup(id) ++
+          helper.buildReporterIndividualEmailGroup(id)).flatten
+    }
+  }
+
+  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    ua.get(RoleInArrangementPage, id) match {
+      case Some(Intermediary) =>
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.intermediaryWhyReportInUKPage(id) ++
+          helper.intermediaryRolePage(id) ++
+          helper.buildExemptCountriesSummary(id)).flatten
+
+      case _ =>
+        Seq(helper.roleInArrangementPage(id) ++
+          helper.buildTaxpayerReporterReasonGroup(id) ++
+          helper.taxpayerImplementationDate(id)).flatten
+
+    }
+  }
 
 }

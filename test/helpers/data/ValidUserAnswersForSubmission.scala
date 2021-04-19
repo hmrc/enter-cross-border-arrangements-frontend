@@ -65,8 +65,8 @@ object ValidUserAnswersForSubmission {
   val validEmail = "email@email.com"
 
   val validTaxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("valid", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
-    TaxResidency(Some(Country("valid", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
+    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
+    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
   val validIndividualName: Name = Name("FirstName", "Surname")

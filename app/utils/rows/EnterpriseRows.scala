@@ -22,8 +22,6 @@ import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
-import utils.SummaryListGenerator.rowToDisplayRow
-import utils.rows.SummaryListDisplay.DisplayRow
 
 trait EnterpriseRows extends RowBuilder {
 
@@ -36,7 +34,7 @@ trait EnterpriseRows extends RowBuilder {
     )
   }
 
-  def youHaveNotAddedAnyAssociatedEnterprisesDisplay(id: Int): Seq[DisplayRow] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
+  def youHaveNotAddedAnyAssociatedEnterprisesDisplay(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
     .map { answer =>
 
       toRow(
@@ -45,7 +43,6 @@ trait EnterpriseRows extends RowBuilder {
         href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
       )
     }
-    .fold(Seq.empty) { row => Seq(rowToDisplayRow(row)) }
 
   def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
     val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
