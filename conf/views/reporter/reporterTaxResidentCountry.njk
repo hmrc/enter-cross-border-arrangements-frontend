@@ -34,6 +34,10 @@
 
         <h1 class="govuk-heading-xl">{{messages(pageHeading, name, dynamicAlso)}}</h1>
 
+        {% if displayInfo %}
+          <p class="govuk-body">{{ messages("reporterOrganisationTaxResidentCountry.info") }}</p>
+        {% endif %}
+
         <p class="govuk-body">{{messages(guidance)}}</p>
 
         {{ govukSelect({

@@ -102,7 +102,7 @@ class IndividualDateOfBirthController @Inject()(
 
   private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
     userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${name.firstName + " " + name.secondName + "’s"}"
+      case Some(name) => s"${name.displayName}’s"
       case None => "their"
     }
   }

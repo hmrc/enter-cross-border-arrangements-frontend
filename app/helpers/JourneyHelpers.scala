@@ -28,10 +28,10 @@ import uk.gov.hmrc.viewmodels.Html
 
 object JourneyHelpers {
 
-  def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+  def getIndividualName(userAnswers: UserAnswers, id: Int, defaultMessage: Option[String] = Some("the individual")): String = {
     userAnswers.get(IndividualNamePage, id) match {
       case Some(indName) => indName.displayName
-      case _ => "the individual"
+      case _ => defaultMessage.getOrElse(throw new IllegalArgumentException("Individual must contain a name"))
     }
   }
 
@@ -147,4 +147,11 @@ object JourneyHelpers {
     Html(s"<a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
       s"${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
   }
+
+  def dynamicGuidance(index: Int, key: String): String =
+    if (index >= 1) s"$key.moreThanOne.hint" else s"$key.hint"
+
+  def dynamicAlso(index: Int): String =
+    if (index >= 1) "also" else ""
+
 }

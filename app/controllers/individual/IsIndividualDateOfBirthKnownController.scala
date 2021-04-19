@@ -19,9 +19,10 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IsIndividualDateOfBirthKnownFormProvider
-import models.{Mode, UserAnswers}
+import helpers.JourneyHelpers.getIndividualName
+import models.Mode
 import navigation.NavigatorForIndividual
-import pages.individual.{IndividualNamePage, IsIndividualDateOfBirthKnownPage}
+import pages.individual.IsIndividualDateOfBirthKnownPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -80,7 +81,7 @@ class IsIndividualDateOfBirthKnownController @Inject()(
             "id" -> id,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
-            "name"   -> getIndividualName(request.userAnswers, id)
+            "name"   -> getIndividualName(request.userAnswers, id, Some(""))
           )
 
           renderer.render("individual/isIndividualDateOfBirthKnown.njk", json).map(BadRequest(_))
@@ -93,12 +94,4 @@ class IsIndividualDateOfBirthKnownController @Inject()(
           } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
   }
-
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
-    userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${name.firstName + " " + name.secondName}"
-      case None => ""
-    }
-  }
-
 }

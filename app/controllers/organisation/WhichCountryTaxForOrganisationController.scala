@@ -19,7 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
-import helpers.JourneyHelpers.getOrganisationName
+import helpers.JourneyHelpers._
 import models.{Country, LoopDetails, Mode}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{OrganisationLoopPage, WhichCountryTaxForOrganisationPage}
@@ -64,8 +64,12 @@ class WhichCountryTaxForOrganisationController @Inject()(
         "id" -> id,
         "mode" -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "countries" -> countryJsonList(preparedForm.data, countries),
-         "index" -> index
+        "countries"   -> countryJsonList(preparedForm.data, countries),
+        "index"       -> index,
+        "pageTitle"   -> "whichCountryTaxForOrganisation.title",
+        "pageHeading" -> "whichCountryTaxForOrganisation.heading",
+        "dynamicAlso" -> dynamicAlso(index),
+        "guidance"    -> dynamicGuidance(index, "whichCountryTaxForOrganisation")
       )
 
       renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(Ok(_))
@@ -85,8 +89,12 @@ class WhichCountryTaxForOrganisationController @Inject()(
             "id" -> id,
             "mode" -> mode,
             "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
+            "countries"   -> countryJsonList(formWithErrors.data, countries),
+            "index"       -> index,
+            "pageTitle"   -> "whichCountryTaxForOrganisation.title",
+            "pageHeading" -> "whichCountryTaxForOrganisation.heading",
+            "dynamicAlso" -> dynamicAlso(index),
+            "guidance"    -> dynamicGuidance(index, "whichCountryTaxForOrganisation")
           )
 
           renderer.render("organisation/whichCountryTaxForOrganisation.njk", json).map(BadRequest(_))

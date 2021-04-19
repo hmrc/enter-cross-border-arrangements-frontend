@@ -19,6 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.individual.WhichCountryTaxForIndividualFormProvider
+import helpers.JourneyHelpers._
 import models.{Country, LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualLoopPage, IndividualNamePage, WhichCountryTaxForIndividualPage}
@@ -65,7 +66,11 @@ class WhichCountryTaxForIndividualController @Inject()(
         "mode" -> mode,
         "name" -> getIndividualName(request.userAnswers, id),
         "countries" -> countryJsonList(preparedForm.data, countries),
-        "index" -> index
+        "index" -> index,
+        "pageTitle"   -> "whichCountryTaxForIndividual.title",
+        "pageHeading" -> "whichCountryTaxForIndividual.heading",
+        "dynamicAlso" -> dynamicAlso(index),
+        "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
       )
 
       renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(Ok(_))
@@ -86,7 +91,11 @@ class WhichCountryTaxForIndividualController @Inject()(
             "mode" -> mode,
             "name" -> getIndividualName(request.userAnswers, id),
             "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
+            "index" -> index,
+            "pageTitle"   -> "whichCountryTaxForIndividual.title",
+            "pageHeading" -> "whichCountryTaxForIndividual.heading",
+            "dynamicAlso" -> dynamicAlso(index),
+            "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
           )
 
           renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
@@ -107,7 +116,7 @@ class WhichCountryTaxForIndividualController @Inject()(
 
   private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
     userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${"is " + name.firstName + " " + name.secondName}"
+      case Some(name) => s"is ${name.displayName}"
       case None => "are they"
     }
   }
