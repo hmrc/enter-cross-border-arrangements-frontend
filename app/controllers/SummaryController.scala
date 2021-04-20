@@ -44,7 +44,7 @@ class SummaryController @Inject()(
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-    val helper = new CheckYourAnswersHelper(request.userAnswers)
+    val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 

@@ -23,14 +23,15 @@ import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
+import utils.CheckYourAnswersHelper
 
-trait ArrangementRows extends RowBuilder {
+trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
   def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map { answer =>
 
     toRow(
       msgKey  = "whatIsThisArrangementCalled",
-      content = formatMaxChars(answer),
+      content = formatMaxChars(answer, maxVisibleChars),
       href    = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(id, CheckMode).url
     )
   }
@@ -87,7 +88,7 @@ trait ArrangementRows extends RowBuilder {
 
     toRow(
       msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
-      content = formatMaxChars(answer),
+      content = formatMaxChars(answer, self.maxVisibleChars),
       href    = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
     )
   }
@@ -96,7 +97,7 @@ trait ArrangementRows extends RowBuilder {
 
     toRow(
       msgKey  = "giveDetailsOfThisArrangement",
-      content = formatMaxChars(answer),
+      content = formatMaxChars(answer, self.maxVisibleChars),
       href    = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, CheckMode).url
     )
   }
