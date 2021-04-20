@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import models.Submission
+import models.taxpayer.Taxpayer
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -58,6 +59,22 @@ class SummaryController @Inject()(
 
       val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
+
+
+      val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
+        ent.copy(associatedTaxpayers =
+          ent.associatedTaxpayers.map(
+            txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
+          ))
+      }
+
+      val enterprisesList =
+        enterprisesWithDisplayTaxnames.map(entp =>
+          summaryListGenerator.generateSummaryList(id, entp))
+
+
+      val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprisesDisplay(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+
       renderer.render("summary.njk",
         Json.obj(
           "disclosureList" -> disclosureList,
@@ -67,10 +84,15 @@ class SummaryController @Inject()(
                  "roleDetails" -> roleDetails,
                  "hallmarksList" -> hallmarksList,
                  "taxpayersList" -> taxpayersList,
-                 "taxpayerUpdateRow" -> taxpayerUpdateRow
+                 "taxpayerUpdateRow" -> taxpayerUpdateRow,
+                "enterprisesList"-> enterprisesList,
+                "enterprisesUpdateRow" -> enterprisesUpdateRow
           )
       ).map(Ok(_))
   }
 
+
+  private def getTaxpayerNameFromID(search: String, taxpayers: Seq[Taxpayer]): Option[String] =
+    taxpayers.find(_.taxpayerId == search).map(_.nameAsString)
 
 }

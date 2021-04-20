@@ -16,7 +16,6 @@
 
 package utils
 
-import models.ReporterOrganisationOrIndividual.Organisation
 import models.UserAnswers
 import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
@@ -26,7 +25,7 @@ import models.organisation.Organisation
 import models.reporter.RoleInArrangement.Intermediary
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
-import utils.model.rows.{ArrangementModelRows, DisclosureModelRows, IndividualModelRows, OrganisationModelRows, TaxpayerModelRows}
+import utils.model.rows.{ArrangementModelRows, DisclosureModelRows, EnterpriseModelRows, IndividualModelRows, OrganisationModelRows, TaxpayerModelRows}
 import models.taxpayer.Taxpayer
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import uk.gov.hmrc.viewmodels.SummaryList
@@ -34,7 +33,7 @@ import uk.gov.hmrc.viewmodels.SummaryList
 import scala.language.implicitConversions
 
 trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
-with TaxpayerModelRows {
+with TaxpayerModelRows with EnterpriseModelRows {
 
   implicit def convertDisclosureDetails(id: Int, dis: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
     List(disclosureNamePage(dis),
@@ -68,57 +67,39 @@ with TaxpayerModelRows {
             })
     }
 
+  implicit def convertEnterprises(id: Int, enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[Row] = {
+    (enterprises.individual, enterprises.organisation) match {
+      case (Some(individual), _) =>
+        selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id, enterprises) ++
+          Seq(associatedEnterpriseType(id, enterprises)) ++
+          individualRowsFromModel(id, individual) ++
+          Seq(isAssociatedEnterpriseAffected(id, enterprises))
+
+      case (None, Some(organisation)) =>
+        selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id, enterprises) ++
+          Seq(associatedEnterpriseType(id, enterprises)) ++
+          organisationRowsFromModel(id, organisation) ++
+          Seq(isAssociatedEnterpriseAffected(id, enterprises))
+    }
+  }
+
+
   def individualRowsFromModel(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
-      Seq(individualName(id, individual) ) ++
-      buildIndividualDateOfBirthGroup(id, individual) ++
-      buildIndividualPlaceOfBirthGroup(id, individual) ++
-      buildIndividualAddressGroup(id, individual) ++
-      buildIndividualEmailAddressGroup(id, individual) ++
-      buildTaxResidencySummaryForIndividuals(id, individual)
+  Seq(individualName(id, individual) ) ++
+  buildIndividualDateOfBirthGroup(id, individual) ++
+  buildIndividualPlaceOfBirthGroup(id, individual) ++
+  buildIndividualAddressGroup(id, individual) ++
+  buildIndividualEmailAddressGroup(id, individual) ++
+  buildTaxResidencySummaryForIndividuals(id, individual)
 
   def organisationRowsFromModel(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[Row] =
-      Seq(organisationName(id, organisation)) ++
-      buildOrganisationAddressGroup(id, organisation) ++
-      buildOrganisationEmailAddressGroup(id, organisation) ++
-      buildTaxResidencySummaryForOrganisation(id, organisation)
+  Seq(organisationName(id, organisation)) ++
+  buildOrganisationAddressGroup(id, organisation) ++
+  buildOrganisationEmailAddressGroup(id, organisation) ++
+  buildTaxResidencySummaryForOrganisation(id, organisation)
 
-  def convertEnterprises(id: Int, enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[Row] = {
-    (enterprises.individual, enterprises.organisation) match {
-      case (Some(individual), _) => ???
-      case (None, Some(organisation)) => ???
-    }
-//    val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
-//
-//      case Some(SelectType.Organisation) =>
-//        (
-//          helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-//            Seq(helper.associatedEnterpriseType(id),
-//              helper.organisationName(id)
-//            ).flatten ++
-//            helper.buildOrganisationAddressGroup(id) ++
-//            helper.buildOrganisationEmailAddressGroup(id),
-//          helper.buildTaxResidencySummaryForOrganisation(id)
-//        )
-//
-//      case Some(SelectType.Individual) =>
-//        (
-//          helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-//            Seq(
-//              helper.associatedEnterpriseType(id),
-//              helper.individualName(id)
-//            ).flatten ++
-//            helper.buildIndividualDateOfBirthGroup(id) ++
-//            helper.buildIndividualPlaceOfBirthGroup(id) ++
-//            helper.buildIndividualAddressGroup(id) ++
-//            helper.buildIndividualEmailAddressGroup(id),
-//          helper.buildTaxResidencySummaryForIndividuals(id)
-//        )
-//
-//      case _ => throw new UnsupportedRouteException(id)
-//    }
-//
-//    val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
-  }
+
+
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
     Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
       .flatten
@@ -134,6 +115,7 @@ with TaxpayerModelRows {
     ).flatten
 
   def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+    import models.ReporterOrganisationOrIndividual.Organisation
     ua.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Organisation) =>
         Seq(helper.reporterOrganisationOrIndividual(id) ++
