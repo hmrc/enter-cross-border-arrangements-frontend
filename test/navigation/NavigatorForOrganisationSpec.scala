@@ -581,7 +581,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(OrganisationNamePage)(routingInCheckMode)(0)(Some("name"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
@@ -595,7 +595,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(IsOrganisationAddressKnownPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
@@ -624,7 +624,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(SelectAddressPage)(routingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         // manual?
@@ -636,7 +636,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
@@ -650,14 +650,14 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(EmailAddressQuestionForOrganisationPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D8 to $T11 " in {
 
           navigator
             .routeMap(EmailAddressForOrganisationPage)(routingInCheckMode)(0)(Some("email@email.com"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
@@ -727,7 +727,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 

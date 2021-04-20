@@ -21,34 +21,37 @@ import java.util.UUID
 
 import models.individual.Individual
 import models.organisation.Organisation
-import models.{SelectType, UserAnswers, WithIndividualOrOrganisation}
-import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
+import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
+import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage}
 import play.api.libs.json.{Json, OFormat}
+
+import scala.util.Try
 
 case class Taxpayer(taxpayerId: String
                     , individual: Option[Individual] = None
                     , organisation: Option[Organisation] = None
-                    , implementingDate: Option[LocalDate] = None) extends WithIndividualOrOrganisation
+                    , implementingDate: Option[LocalDate] = None) extends WithIndividualOrOrganisation with WithRestore {
+
+  override def matchItem(itemId: String): Boolean = taxpayerId == itemId
+
+  implicit val t: Taxpayer = implicitly(this)
+  override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    userAnswers
+      .set(TaxpayerCheckYourAnswersPage, id)
+      .flatMap(_.set(TaxpayerSelectTypePage, id))
+      .flatMap(restoreFromIndividualOrOrganisation(_, id))
+}
 
 object Taxpayer {
 
-  private def generateId = UUID.randomUUID.toString
+  def apply(ua: UserAnswers, id: Int): Taxpayer = {
 
-  def buildTaxpayerDetails(ua: UserAnswers, id: Int): Taxpayer = {
+    val taxpayer: Taxpayer = ua.get(TaxpayerCheckYourAnswersPage, id)
+      .fold(Taxpayer(UUID.randomUUID.toString))(Taxpayer(_))
     ua.get(TaxpayerSelectTypePage, id) match {
-      case Some(SelectType.Organisation) =>
-        new Taxpayer(
-        taxpayerId = generateId,
-          organisation = Some(Organisation.buildOrganisationDetails(ua, id)),
-          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
-      )
-      case Some(SelectType.Individual) =>
-        new Taxpayer(
-          taxpayerId = generateId,
-          individual = Some(Individual.buildIndividualDetails(ua, id)),
-          implementingDate = ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)
-        )
-      case _ => throw new Exception("Unable to retrieve Taxpayer select type")
+      case Some(SelectType.Organisation) => taxpayer.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
+      case Some(SelectType.Individual)   => taxpayer.copy(individual   = Some(Individual.buildIndividualDetails(ua, id)))
+      case _                             => throw new Exception("Unable to retrieve taxpayer select type")
     }
   }
 

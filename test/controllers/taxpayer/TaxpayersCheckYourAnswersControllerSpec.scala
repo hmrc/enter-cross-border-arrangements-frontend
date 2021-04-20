@@ -49,7 +49,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
     val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
+    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
 
     val result = route(application, request).value
 
@@ -152,7 +152,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
+      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
       val result = route(application, request).value
       status(result) mustEqual OK
 
@@ -189,7 +189,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url)
+      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
       val result = route(application, request).value
       status(result) mustEqual OK
 
@@ -209,7 +209,7 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
 
   "TaxpayersCheckYourAnswersController - onSubmit" - {
 
-    lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0).url
+    lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url
 
     "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
 

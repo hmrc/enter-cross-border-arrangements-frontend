@@ -92,7 +92,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
         userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.remove(UpdateTaxpayerPage, id))
         _                           <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
-        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, userAnswersWithTaxpayerLoop))
+        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, NormalMode, userAnswersWithTaxpayerLoop))
       }
   }
 }
