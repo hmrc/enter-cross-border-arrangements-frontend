@@ -17,6 +17,7 @@
 package controllers.taxpayer
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import matchers.JsonMatchers
 import models.individual.Individual
@@ -43,6 +44,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
   lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val formProvider = new UpdateTaxpayerFormProvider()
   val form = formProvider()
 
@@ -77,20 +79,27 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       application.stop()
     }
 
-    //TODO Include test for change and remove links if needed
-    "must return OK and the correct view with the list of all taxpayers for a GET" ignore {
+    "must return OK and the correct view with the list of all taxpayers for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val individual = Individual(
-        individualName = Name("John", "Smith"),
-        birthDate =  LocalDate.now(), None, None,
-        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
+      when(mockFrontendAppConfig.changeLinkToggle).thenReturn(true)
+
+      val taxpayerLoop = IndexedSeq(
+        Taxpayer("id",
+          Some(Individual(
+            individualName = Name("John", "Smith"),
+            birthDate = LocalDate.now(), None, None,
+            taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None)
+            ))),
+          organisation = None,
+          implementingDate = None)
       )
 
-      val taxpayerLoop = IndexedSeq(Taxpayer("id", Some(individual), None, None))
-      val userAnswers = UserAnswers(userAnswersId).set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, updateTaxpayerRoute)
@@ -103,7 +112,10 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedList = Json.arr(Json.obj("name" -> "John Smith", "changeUrl" -> "#", "removeUrl" -> "#"))
+      val expectedList = Json.arr(Json.obj("name" -> "John Smith",
+        "changeUrl" -> routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url,
+        "removeUrl" -> routes.RemoveTaxpayerController.onPageLoad(0, taxpayerLoop.head.taxpayerId).url)
+      )
 
       val expectedJson = Json.obj(
         "form"   -> form,
@@ -144,8 +156,6 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
         "mode"   -> NormalMode,
         "radios" -> UpdateTaxpayer.radios(filledForm)
       )
-
-
 
       templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)

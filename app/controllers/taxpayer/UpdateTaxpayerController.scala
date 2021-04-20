@@ -20,17 +20,11 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.UpdateTaxpayerFormProvider
-
-import javax.inject.Inject
-import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
+import helpers.StatusHelper.checkTaxpayerStatusConditions
 import models.hallmarks.JourneyStatus
-import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.taxpayer.UpdateTaxpayer
 import models.{ItemList, Mode, NormalMode, UserAnswers}
 import navigation.NavigatorForTaxpayer
-import pages.disclosure.DisclosureDetailsPage
-import pages.reporter.RoleInArrangementPage
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -40,6 +34,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateTaxpayerController @Inject()(
@@ -111,28 +106,8 @@ class UpdateTaxpayerController @Inject()(
   private def setStatus(selectedAnswer: UpdateTaxpayer, ua: UserAnswers, id: Int): JourneyStatus = {
     selectedAnswer match {
       case UpdateTaxpayer.Later => JourneyStatus.InProgress
-      case UpdateTaxpayer.No => checkStatusConditions(ua, id)
+      case UpdateTaxpayer.No => checkTaxpayerStatusConditions(ua, id)
       case _ => JourneyStatus.NotStarted
-    }
-  }
-
-  private def checkStatusConditions(ua: UserAnswers, id: Int): JourneyStatus = {
-
-    val oneRelevantTaxpayerAdded: Boolean = ua.get(TaxpayerLoopPage, id).exists(list => list.nonEmpty)
-    val getMarketableFlag: Boolean = ua.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA)
-    val getDisclosureType: Option[DisclosureType] = ua.get(DisclosureDetailsPage, id).map(_.disclosureType)
-
-    (getDisclosureType, getMarketableFlag, ua.get(RoleInArrangementPage, id)) match {
-
-        case (Some(Dac6new), true, _) => JourneyStatus.Completed //new & marketable
-
-        case (Some(Dac6new), false, Some(Taxpayer)) => JourneyStatus.Completed //new & non marketable & Reporter is Taxpayer
-
-        case (Some(Dac6add | Dac6rep), _, Some(Taxpayer)) => JourneyStatus.Completed // add | replace & Reporter is taxpayer
-
-        case (_, _, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed  //non marketable & Reporter is Intermediary but has added a taxpayer
-
-        case _ => JourneyStatus.NotStarted
     }
   }
 
