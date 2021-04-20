@@ -8,7 +8,7 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
+<div class="govuk-main-wrapper" xmlns="http://www.w3.org/1999/html">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -101,14 +101,38 @@
           {% endfor %}
         {% endif %}
 
-     <h2 class="govuk-heading-l">
-         {{ messages("summary.enterprises.heading") }}
-       </h2>
 
-       {{ govukSummaryList({
-         rows: enterprisesList
-       }) }}
+        {% if enterprisesList | length == 0 %}
 
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.enterprises.heading.one") }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: enterprisesUpdateRow
+               }) }}
+
+        {% elseif enterprisesList | length == 1 %}
+
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.enterprises.heading.one") }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: enterprisesList | first
+               }) }}
+        {% else %}
+           {% for item in enterprisesList %}
+
+               <h2 class="govuk-heading-l">
+                 {{ messages("summary.enterprises.heading.many", loop.index) }}
+               </h2>
+
+               {{ govukSummaryList({
+                 rows: item
+               }) }}
+          {% endfor %}
+        {% endif %}
 
        <h2 class="govuk-heading-l">
          {{ messages("summary.intermediaries.heading") }}

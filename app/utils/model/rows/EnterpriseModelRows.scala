@@ -16,11 +16,8 @@
 
 package utils.model.rows
 
-import models.CheckMode
 import models.enterprises.AssociatedEnterprise
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
-import pages.reporter.ReporterDetailsPage
-import pages.taxpayer.TaxpayerLoopPage
+import models.{CheckMode, SelectType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
@@ -28,27 +25,11 @@ import uk.gov.hmrc.viewmodels._
 trait EnterpriseModelRows extends DisplayRowBuilder {
 
 
-  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
-    val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages):
+  Seq[Row] =
+          formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers, id)
 
-    (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
-      case (Some(selectionList), Some(taxpayers)) =>
-        val relevantTaxpayerNames: Seq[String] = selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
-
-        if (selectionList.contains(reporterName)) {
-          formatSelectedTaxpayers(Seq(reporterName) ++ relevantTaxpayerNames, id)
-        } else {
-          formatSelectedTaxpayers(relevantTaxpayerNames, id)
-        }
-
-      case (Some(_), None) =>
-        formatSelectedTaxpayers(Seq(reporterName), id)
-
-      case _ => Seq.empty
-    }
-  }
-
-  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int): Seq[Row] = {
+  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int)(implicit messages: Messages): Seq[Row] = {
 
     val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
@@ -65,22 +46,26 @@ trait EnterpriseModelRows extends DisplayRowBuilder {
     ))
   }
 
-  def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {
-    answer =>
+  def associatedEnterpriseType(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): Row = {
+    val selectType = (associatedEnterprise.individual, associatedEnterprise.organisation) match {
+      case (Some(_), None) => SelectType.Individual
+      case (None, Some(_)) => SelectType.Organisation
+      case _ => throw new Exception("Cannot retrieve associated enterprise type")
+    }
       toRow(
         msgKey = "associatedEnterpriseType",
-        content = msg"selectType.$answer",
+        content = msg"selectType.${selectType.toString}",
         href = controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(id, CheckMode).url
       )
   }
 
-  def isAssociatedEnterpriseAffected(id: Int): Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage, id) map {
-    answer =>
+
+  def isAssociatedEnterpriseAffected(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): Row =
       toRow(
         msgKey = "isAssociatedEnterpriseAffected",
-        content = yesOrNo(answer),
+        content = yesOrNo(associatedEnterprise.isAffectedBy),
         href = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, CheckMode).url
       )
-  }
+
 
 }
