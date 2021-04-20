@@ -23,16 +23,18 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 class SummaryListGeneratorSpec extends SpecBase with SummaryImplicits {
 
-  implicit override val messages: Messages = messagesApi.preferred(fakeRequest)
-
   val dis: DisclosureDetails = DisclosureDetails("aName")
 
+
   "SummaryListGenerator " - {
+
+    val sl = injector.instanceOf[SummaryListGenerator]
+
     "should produce valid disclosure list summary" in {
-     val sl = new  SummaryListGenerator()
      val summary =  sl.generateSummaryList(0, dis)
       summary.length mustBe 3
       summary.head.value.content mustBe Literal("aName")
     }
+
   }
 }
