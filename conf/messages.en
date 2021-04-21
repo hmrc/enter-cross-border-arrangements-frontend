@@ -404,7 +404,7 @@ doYouKnowAnyTINForUKOrganisation.title = Do you know the organisation’s tax re
 doYouKnowAnyTINForUKOrganisation.heading = Do you know any of {0}’s tax reference numbers for the United Kingdom?
 doYouKnowAnyTINForUKOrganisation.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
 doYouKnowAnyTINForUKOrganisation.checkYourAnswersLabel = doYouKnowAnyTINForUKOrganisation
-doYouKnowAnyTINForUKOrganisation.error.required = Select yes if know the organisation’s tax identification numbers
+doYouKnowAnyTINForUKOrganisation.error.required = Select yes if you know the organisation’s tax identification numbers
 
 whatAreTheTaxNumbersForUKOrganisation.title = What are the organisation’s tax reference numbers?
 whatAreTheTaxNumbersForUKOrganisation.heading = What are {0}’s tax reference numbers for the United Kingdom?
