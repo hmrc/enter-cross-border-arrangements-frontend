@@ -517,7 +517,7 @@ doYouKnowTINForNonUKIndividual.error.required = Select yes if you know the indiv
 isIndividualResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
-isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in another country
+isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is tax resident in another country
 
 whatIsThisArrangementCalled.title = What is this arrangement called?
 whatIsThisArrangementCalled.heading = What is this arrangement called?
