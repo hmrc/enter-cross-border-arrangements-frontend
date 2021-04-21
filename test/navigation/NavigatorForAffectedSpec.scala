@@ -32,7 +32,7 @@ class NavigatorForAffectedSpec extends SpecBase with ScalaCheckPropertyChecks wi
   val A2 = "Is this an organisation or an individual?"
   val A3 = "What is {0}'s date of birth?"
   val A7 = "Check your answers"
-  val TL = "Your DAC6 Disclosure Details"
+  val TL = "Your DAC6 disclosure"
 
   "NavigatorForAffected" - {
 
