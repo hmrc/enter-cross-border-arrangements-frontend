@@ -101,5 +101,4 @@ trait DisplayRowBuilder {
     val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"${label}"
   }
-
 }

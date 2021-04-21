@@ -1,0 +1,33 @@
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+
+{% if list | length == 0 %}
+
+  <h2 class="govuk-heading-l">
+    {{ messages("summary."+key+".heading.one") }}
+  </h2>
+
+  {{ govukSummaryList({
+    rows: updateRow
+  }) }}
+
+{% elseif list | length == 1 %}
+
+  <h2 class="govuk-heading-l">
+    {{ messages("summary."+key+".heading.one") }}
+  </h2>
+
+  {{ govukSummaryList({
+    rows: list | first
+  }) }}
+{% else %}
+  {% for item in list %}
+
+    <h2 class="govuk-heading-l">
+      {{ messages("summary."+key+".heading.many", loop.index) }}
+    </h2>
+
+    {{ govukSummaryList({
+      rows: item
+    }) }}
+  {% endfor %}
+{% endif %}

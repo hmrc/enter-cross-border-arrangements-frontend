@@ -24,6 +24,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.SummaryListGenerator.rowToDisplayRow
 import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
 
 import javax.inject.Inject
@@ -47,19 +48,15 @@ class SummaryController @Inject()(
 
       val disclosureList = summaryListGenerator.generateSummaryList(id, submission.disclosureDetails)
 
-      val arrangementList = getArrangementSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
+      val arrangementList = getArrangementSummaryList(id, helper).map(rowToDisplayRow)
 
-      val hallmarksList = getHallmarkSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
+      val hallmarksList = getHallmarkSummaryList(id, helper).map(rowToDisplayRow)
 
-      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
-      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
-      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
+      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(rowToDisplayRow)
+      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(rowToDisplayRow)
+      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(rowToDisplayRow)
 
       val taxpayersList = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp))
-
-      val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
-
-
 
       val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
         ent.copy(associatedTaxpayers =
@@ -72,21 +69,26 @@ class SummaryController @Inject()(
         enterprisesWithDisplayTaxnames.map(entp =>
           summaryListGenerator.generateSummaryList(id, entp))
 
+      val intermediariesList = submission.intermediaries.map(affected => summaryListGenerator.generateSummaryList(id, affected))
 
-      val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprisesDisplay(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+      val affectedList = submission.affectedPersons.map(affected => summaryListGenerator.generateSummaryList(id, affected))
 
       renderer.render("summary.njk",
         Json.obj(
-          "disclosureList" -> disclosureList,
-                 "arrangementList" -> arrangementList,
-                 "reporterDetails" -> reporterDetails,
-                 "residentCountryDetails" -> residentCountryDetails,
-                 "roleDetails" -> roleDetails,
-                 "hallmarksList" -> hallmarksList,
-                 "taxpayersList" -> taxpayersList,
-                 "taxpayerUpdateRow" -> taxpayerUpdateRow,
-                "enterprisesList"-> enterprisesList,
-                "enterprisesUpdateRow" -> enterprisesUpdateRow
+          "disclosureList"          -> disclosureList,
+                 "arrangementList"         -> arrangementList,
+                 "reporterDetails"         -> reporterDetails,
+                 "residentCountryDetails"  -> residentCountryDetails,
+                 "roleDetails"             -> roleDetails,
+                 "hallmarksList"           -> hallmarksList,
+                 "taxpayersList"           -> taxpayersList,
+                 "taxpayerUpdateRow"       -> helper.updateTaxpayersDisplay(id),
+                 "enterprisesList"         -> enterprisesList,
+                 "enterprisesUpdateRow"    -> helper.youHaveNotAddedAnyAssociatedEnterprisesDisplay(id),
+                 "intermediariesList"      -> intermediariesList,
+                 "intermediariesUpdateRow" -> helper.youHaveNotAddedAnyIntermediariesDisplay(id),
+                 "affectedList"            -> affectedList,
+                 "affectedUpdateRow"       -> helper.youHaveNotAddedAnyAffectedDisplay(id)
           )
       ).map(Ok(_))
   }

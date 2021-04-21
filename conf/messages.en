@@ -741,6 +741,7 @@ youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
 youHaveNotAddedAnyAffected.no = No
 youHaveNotAddedAnyAffected.checkYourAnswersLabel = Other affected parties
 youHaveNotAddedAnyAffected.error.required = Select an option to add other affected party now, later or not at all
+youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any affected parties?
 
 intermediariesType.title = Is this an organisation or an individual?
 intermediariesType.heading = Is this an organisation or an individual?
@@ -1199,4 +1200,6 @@ summary.taxpayers.heading.many = Relevant taxpayer {0}
 summary.enterprises.heading.one = Associated enterprise’s details
 summary.enterprises.heading.many = Associated enterprise {0}
 summary.intermediaries.heading = Intermediary’s details
-summary.others.heading = Other party’s details
+summary.affected.heading = Other party’s details
+summary.affected.heading.one = Other party’s details
+summary.affected.heading.many = Other party {0}

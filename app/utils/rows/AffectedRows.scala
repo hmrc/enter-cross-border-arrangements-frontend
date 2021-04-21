@@ -17,9 +17,11 @@
 package utils.rows
 
 import models.CheckMode
-import pages.affected.AffectedTypePage
+import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
+import utils.SummaryListGenerator.rowToDisplayRow
+import utils.rows.SummaryListDisplay.DisplayRow
 
 trait AffectedRows extends RowBuilder {
 
@@ -32,4 +34,14 @@ trait AffectedRows extends RowBuilder {
     )
   }
 
+  def youHaveNotAddedAnyAffectedDisplay(id: Int): Seq[DisplayRow] = userAnswers.get(YouHaveNotAddedAnyAffectedPage, id)
+    .map { answer =>
+
+      toRow(
+        msgKey  = "youHaveNotAddedAnyAffected",
+        content = msg"youHaveNotAddedAnyAffected.$answer",
+        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
+      )
+    }
+    .fold(Seq.empty) { row => Seq(rowToDisplayRow(row)) }
 }

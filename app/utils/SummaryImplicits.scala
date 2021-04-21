@@ -17,15 +17,17 @@
 package utils
 
 import models.UserAnswers
+import models.affected.Affected
 import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
+import models.intermediaries.Intermediary
 import models.organisation.Organisation
-import models.reporter.RoleInArrangement.Intermediary
+import models.reporter.RoleInArrangement.{Intermediary => IntermediaryRole}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
-import utils.model.rows.{ArrangementModelRows, DisclosureModelRows, EnterpriseModelRows, IndividualModelRows, OrganisationModelRows, TaxpayerModelRows}
+import utils.model.rows.{AffectedModelRows, ArrangementModelRows, DisclosureModelRows, EnterpriseModelRows, IndividualModelRows, IntermediariesModelRows, OrganisationModelRows, TaxpayerModelRows}
 import models.taxpayer.Taxpayer
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import uk.gov.hmrc.viewmodels.SummaryList
@@ -33,7 +35,7 @@ import uk.gov.hmrc.viewmodels.SummaryList
 import scala.language.implicitConversions
 
 trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
-with TaxpayerModelRows with EnterpriseModelRows {
+with TaxpayerModelRows with EnterpriseModelRows with AffectedModelRows with IntermediariesModelRows {
 
   implicit def convertDisclosureDetails(id: Int, dis: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
     List(disclosureNamePage(dis),
@@ -83,6 +85,17 @@ with TaxpayerModelRows with EnterpriseModelRows {
     }
   }
 
+  implicit def convertIntermediaries(id: Int, model: Intermediary)(implicit messages: Messages): Seq[Row] =
+    (model.individual, model.organisation) match {
+      case (Some(individual), _)      => Seq(intermediariesType(id, model)) ++ individualRowsFromModel(id, individual)
+      case (None, Some(organisation)) => Seq(intermediariesType(id, model)) ++ organisationRowsFromModel(id, organisation)
+    }
+
+  implicit def convertAffected(id: Int, model: Affected)(implicit messages: Messages): Seq[Row] =
+    (model.individual, model.organisation) match {
+      case (Some(individual), _)      => Seq(affectedType(id, model)) ++ individualRowsFromModel(id, individual)
+      case (None, Some(organisation)) => Seq(affectedType(id, model)) ++ organisationRowsFromModel(id, organisation)
+    }
 
   def individualRowsFromModel(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
   Seq(individualName(id, individual) ) ++
@@ -135,7 +148,7 @@ with TaxpayerModelRows with EnterpriseModelRows {
 
   def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
     ua.get(RoleInArrangementPage, id) match {
-      case Some(Intermediary) =>
+      case Some(IntermediaryRole) =>
         Seq(helper.roleInArrangementPage(id) ++
           helper.intermediaryWhyReportInUKPage(id) ++
           helper.intermediaryRolePage(id) ++

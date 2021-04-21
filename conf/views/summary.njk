@@ -1,6 +1,7 @@
 {% extends "includes/layout.njk" %}
 {% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
 {% from "macros/title.njk"                         import title %}
+{% from "summary-list/macro.njk"                   import hmrcSummaryList %}
 
 {% block pageTitle %}
   {{ title(messages("summary.title")) }}
@@ -67,88 +68,13 @@
           rows: roleDetails
         }) }}
 
-        {% if taxpayersList | length == 0 %}
+        {{ hmrcSummaryList(taxpayersList, taxpayerUpdateRow, "taxpayers") }}
 
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.taxpayers.heading.one") }}
-               </h2>
+        {{ hmrcSummaryList(enterprisesList, enterprisesUpdateRow, "enterprises") }}
 
-               {{ govukSummaryList({
-                 rows: taxpayerUpdateRow
-               }) }}
+        {{ hmrcSummaryList(intermediariesList, intermediariesUpdateRow, "intermediaries") }}
 
-        {% elseif taxpayersList | length == 1 %}
-
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.taxpayers.heading.one") }}
-               </h2>
-
-               {{ govukSummaryList({
-                 rows: taxpayersList | first
-               }) }}
-
-        {% else %}
-           {% for item in taxpayersList %}
-
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.taxpayers.heading.many", loop.index) }}
-               </h2>
-
-               {{ govukSummaryList({
-                 rows: item
-               }) }}
-
-          {% endfor %}
-        {% endif %}
-
-
-        {% if enterprisesList | length == 0 %}
-
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.enterprises.heading.one") }}
-               </h2>
-
-               {{ govukSummaryList({
-                 rows: enterprisesUpdateRow
-               }) }}
-
-        {% elseif enterprisesList | length == 1 %}
-
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.enterprises.heading.one") }}
-               </h2>
-
-               {{ govukSummaryList({
-                 rows: enterprisesList | first
-               }) }}
-        {% else %}
-           {% for item in enterprisesList %}
-
-               <h2 class="govuk-heading-l">
-                 {{ messages("summary.enterprises.heading.many", loop.index) }}
-               </h2>
-
-               {{ govukSummaryList({
-                 rows: item
-               }) }}
-          {% endfor %}
-        {% endif %}
-
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.intermediaries.heading") }}
-       </h2>
-
-       {{ govukSummaryList({
-         rows: intermediariesList
-       }) }}
-
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.others.heading") }}
-       </h2>
-
-       {{ govukSummaryList({
-         rows: othersList
-       }) }}
+        {{ hmrcSummaryList(affectedList, affectedUpdateRow, "affected") }}
 
       </div>
     </div>
