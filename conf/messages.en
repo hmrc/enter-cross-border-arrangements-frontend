@@ -1012,11 +1012,11 @@ reporterIndividualDateOfBirth.error.invalid = Provide a valid date of birth
 reporterIndividualDateOfBirth.error.futureDate = Provide a date of birth before {0}
 reporterIndividualDateOfBirth.error.pastDate = Provide a date of birth on or after 1 January 1903
 
-reporterIndividualPlaceOfBirth.title = What is your place of birth?
-reporterIndividualPlaceOfBirth.heading = What is your place of birth?
-reporterIndividualPlaceOfBirth.hint = Provide the town or city and country
+reporterIndividualPlaceOfBirth.title = Where were you born?
+reporterIndividualPlaceOfBirth.heading = Where were you born?
+reporterIndividualPlaceOfBirth.hint = Enter the town or city and country.
 reporterIndividualPlaceOfBirth.checkYourAnswersLabel = Place of birth
-reporterIndividualPlaceOfBirth.error.required = Provide a place of birth
+reporterIndividualPlaceOfBirth.error.required = Enter the town or city and country
 reporterIndividualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
 
 reporterIsIndividualAddressUK.title = Do you live in the United Kingdom?
