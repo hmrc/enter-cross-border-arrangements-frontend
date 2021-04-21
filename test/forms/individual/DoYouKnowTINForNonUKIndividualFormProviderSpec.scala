@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 
 class DoYouKnowTINForNonUKIndividualFormProviderSpec extends BooleanFieldBehaviours  with GuiceOneAppPerSuite{
 
-  val requiredMessage = "Select yes if you know their tax identification numbers for France"
+  val requiredMessage = "Select yes if you know the individual’s tax identification numbers for France"
   val invalidKey = "error.boolean"
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
