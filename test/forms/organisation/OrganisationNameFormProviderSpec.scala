@@ -25,7 +25,7 @@ class OrganisationNameFormProviderSpec extends StringFieldBehaviours {
   val lengthKey = "organisationName.error.length"
   val invalidKey = "organisationName.error.invalid"
 
-  val maxLength = 35
+  val maxLength = 200
 
   val form = new OrganisationNameFormProvider()()
 

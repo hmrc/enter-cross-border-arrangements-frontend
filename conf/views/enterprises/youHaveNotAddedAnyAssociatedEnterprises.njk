@@ -28,7 +28,7 @@
 
           {{ csrf() | safe }}
 
-          {{ hmrcAddToAList({
+          {{ hmrcAddToAList({forms.organisation.OrganisationNameFormProviderSpec
             itemList: associatedEnterpriseList,
             itemType: {
               singular: messages("youHaveNotAddedAnyAssociatedEnterprises.singular"),
