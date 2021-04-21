@@ -469,7 +469,7 @@ doYouKnowAnyTINForUKIndividual.error.required =  Select yes if you know the indi
 isIndividualResidentForTaxOtherCountries.title = Is the individual resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.heading = {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = Is the individual resident for tax purposes in any other countries?
-isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is tax resident in any other countries
+isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is tax resident in another country
 
 whatAreTheTaxNumbersForUKIndividual.title = What are their tax reference numbers?
 whatAreTheTaxNumbersForUKIndividual.heading = What are {0} tax reference numbers for the United Kingdom?
@@ -517,7 +517,7 @@ doYouKnowTINForNonUKIndividual.error.required = Select yes if you know the indiv
 isIndividualResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
-isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in any other countries
+isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is resident for tax in another country
 
 whatIsThisArrangementCalled.title = What is this arrangement called?
 whatIsThisArrangementCalled.heading = What is this arrangement called?
