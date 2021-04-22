@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package utils.rows
+package utils.model.rows
 
-import models.CheckMode
-import models.intermediaries.ExemptCountries
-import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage, YouHaveNotAddedAnyIntermediariesPage}
+import models.intermediaries.{ExemptCountries, Intermediary}
+import models.{CheckMode, SelectType}
+import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
-import utils.SummaryListGenerator.rowToDisplayRow
-import utils.rows.SummaryListDisplay.DisplayRow
 
-trait IntermediariesRows extends RowBuilder {
+trait IntermediariesModelRows extends DisplayRowBuilder {
 
 
-  def intermediariesType(id: Int): Option[Row] = userAnswers.get(IntermediariesTypePage, id) map {
-    answer =>
+  def intermediariesType(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
+     {
+       val selectType = (intermediary.individual, intermediary.organisation) match {
+         case (Some(_), None) => SelectType.Individual
+         case (None, Some(_)) => SelectType.Organisation
+       }
+
       Row(
         key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"intermediariesType.$answer"),
+        value   = Value(msg"intermediariesType.$selectType"),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -42,11 +45,10 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def isExemptionKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionKnownPage, id) map {
-    answer =>
+  def isExemptionKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
       Row(
         key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"isExemptionKnown.$answer"),
+        value   = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}"),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -55,9 +57,9 @@ trait IntermediariesRows extends RowBuilder {
           )
         )
       )
-  }
 
-  def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionCountryKnownPage, id) map {
+  def isExemptionCountryKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[Row] =
+    intermediary.isExemptionCountryKnown map {
     answer =>
       Row(
         key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -72,7 +74,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def gbSort(exemptCountries : List[String]) : List[String] = {
+  def gbSort(exemptCountries : List[String])(implicit messages: Messages) : List[String] = {
 
     val gbMessage = msg"countriesListCheckboxes.GB".resolve
 
@@ -83,9 +85,8 @@ trait IntermediariesRows extends RowBuilder {
     }
   }
 
-  def exemptCountries(id: Int): Option[Row] = userAnswers.get(ExemptCountriesPage, id) map {
+  def exemptCountries(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[Row] = intermediary.exemptCountries map {
     answer =>
-
       Row(
         key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty))),
@@ -99,7 +100,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  private def formatExemptCountriesList(selectedCountries: Set[ExemptCountries], singleItem: Boolean) = {
+  private def formatExemptCountriesList(selectedCountries: Set[ExemptCountries], singleItem: Boolean)(implicit messages: Messages) = {
 
     val getCountryName = selectedCountries.map(_.toString).toSeq.map(
       countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
@@ -111,12 +112,10 @@ trait IntermediariesRows extends RowBuilder {
     }
   }
 
-  import pages.intermediaries.WhatTypeofIntermediaryPage
-  def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage, id) map {
-    answer =>
+  def whatTypeofIntermediary(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
       Row(
         key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whatTypeofIntermediary.$answer"),
+        value   = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}"),
         actions = List(
           Action(
             content            = msg"site.edit",
@@ -125,15 +124,5 @@ trait IntermediariesRows extends RowBuilder {
           )
         )
       )
-  }
 
-  def youHaveNotAddedAnyIntermediariesDisplay(id: Int): Seq[DisplayRow] = userAnswers.get(YouHaveNotAddedAnyIntermediariesPage, id)
-    .map { answer =>
-      toRow(
-        msgKey  = "youHaveNotAddedAnyIntermediaries",
-        content = msg"youHaveNotAddedAnyIntermediaries.$answer",
-        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
-      )
-    }
-    .fold(Seq.empty) { row => Seq(rowToDisplayRow(row)) }
 }

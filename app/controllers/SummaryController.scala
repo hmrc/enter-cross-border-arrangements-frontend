@@ -17,15 +17,20 @@
 package controllers
 
 import controllers.actions._
-import models.Submission
+import models.reporter.RoleInArrangement.Intermediary
+import models.{Submission, UserAnswers}
 import models.taxpayer.Taxpayer
+import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
+import uk.gov.hmrc.viewmodels.SummaryList
+import utils.{CheckYourAnswersHelper, SummaryListGenerator}
 import utils.CreateDisplayRows._
+import utils.rows.SummaryListDisplay
+import utils.rows.SummaryListDisplay.DisplayRow
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -38,17 +43,15 @@ class SummaryController @Inject()(
     summaryListGenerator: SummaryListGenerator,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SummaryImplicits {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport  {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-    val helper = new CheckYourAnswersHelper(request.userAnswers)
+    val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      val disclosureList = summaryListGenerator.generateSummaryListByImplicitParameter(id, submission.disclosureDetails)
-
-      val arrangementList = getArrangementSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
+      val arrangementList: Seq[DisplayRow] = submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.rowToDisplayRow(id))
 
       val hallmarksList = getHallmarkSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
 
@@ -56,7 +59,7 @@ class SummaryController @Inject()(
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
       val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
 
-      val taxpayersList = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp))
+      val taxpayersList = submission.taxpayers.map(_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
 
       val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
@@ -73,12 +76,19 @@ class SummaryController @Inject()(
         enterprisesWithDisplayTaxnames.map(entp =>
           summaryListGenerator.generateSummaryList(id, entp))
 
-
       val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+
+      val intermediaryList = submission.intermediaries map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
+
+      val intermediaryUpdateRow = Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+
+      val affectedList =  submission.affectedPersons map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
+
+      val affectedUpdateRow = Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
       renderer.render("summary.njk",
         Json.obj(
-          "disclosureList" -> disclosureList,
+          "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
                  "arrangementList" -> arrangementList,
                  "reporterDetails" -> reporterDetails,
                  "residentCountryDetails" -> residentCountryDetails,
@@ -87,7 +97,11 @@ class SummaryController @Inject()(
                  "taxpayersList" -> taxpayersList,
                  "taxpayerUpdateRow" -> taxpayerUpdateRow,
                 "enterprisesList"-> enterprisesList,
-                "enterprisesUpdateRow" -> enterprisesUpdateRow
+                "enterprisesUpdateRow" -> enterprisesUpdateRow,
+                "intermediaryList"-> intermediaryList,
+                "intermediaryUpdateRow" -> intermediaryUpdateRow,
+                "affectedList" -> affectedList,
+                "affectedUpdateRow" -> affectedUpdateRow
           )
       ).map(Ok(_))
   }

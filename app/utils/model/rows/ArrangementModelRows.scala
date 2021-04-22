@@ -64,7 +64,7 @@ trait ArrangementModelRows extends DisplayRowBuilder {
   def whichExpectedInvolvedCountriesArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
     Some(toRow(
       msgKey  = "whichExpectedInvolvedCountriesArrangement",
-      content = formatCountries(arrangementDetails.countriesInvolved),
+      content = lit"${arrangementDetails.countriesInvolved}",
       href    = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, CheckMode).url
     ))
 
@@ -78,14 +78,14 @@ trait ArrangementModelRows extends DisplayRowBuilder {
   def whichNationalProvisionsIsThisArrangementBasedOn(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
     Some(toRow(
       msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
-      content = formatMaxChars(arrangementDetails.nationalProvisionDetails),
+      content = lit"${arrangementDetails.nationalProvisionDetails}",
       href    = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
     ))
 
   def giveDetailsOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
     Some(toRow(
       msgKey  = "giveDetailsOfThisArrangement",
-      content = formatMaxChars(arrangementDetails.arrangementDetails),
+      content = lit"${arrangementDetails.arrangementDetails}",
       href    = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, CheckMode).url
     ))
 

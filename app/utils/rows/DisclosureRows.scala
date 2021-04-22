@@ -21,13 +21,14 @@ import models.disclosure.DisclosureType._
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
+import utils.CheckYourAnswersHelper
 
-trait DisclosureRows extends RowBuilder {
+trait DisclosureRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
   def disclosureNamePage: Option[Row] = userAnswers.getBase(DisclosureNamePage) map { answer =>
     toRow(
       msgKey  = "disclosureName",
-      content = formatMaxChars(answer),
+      content = formatMaxChars(answer, maxVisibleChars),
       href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url,
       columnWidth = "govuk-!-width-one-third"
     )
