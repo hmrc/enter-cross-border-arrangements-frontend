@@ -32,8 +32,10 @@ import uk.gov.hmrc.viewmodels.SummaryList
 
 import scala.language.implicitConversions
 
+
 trait SummaryImplicits  extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
 with TaxpayerModelRows with EnterpriseModelRows {
+
 
   implicit def convertDisclosureDetails(id: Int, dis: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
     List(disclosureNamePage(dis),

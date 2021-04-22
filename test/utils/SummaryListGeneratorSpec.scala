@@ -20,6 +20,7 @@ import base.SpecBase
 import models.disclosure.DisclosureDetails
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Text.Literal
+import utils.CreateDisplayRows._
 
 class SummaryListGeneratorSpec extends SpecBase with SummaryImplicits {
 
@@ -31,7 +32,7 @@ class SummaryListGeneratorSpec extends SpecBase with SummaryImplicits {
     val sl = injector.instanceOf[SummaryListGenerator]
 
     "should produce valid disclosure list summary" in {
-     val summary =  sl.generateSummaryList(0, dis)
+     val summary =  sl.generateSummaryListByImplicitParameter(0, dis)
       summary.length mustBe 3
       summary.head.value.content mustBe Literal("aName")
     }

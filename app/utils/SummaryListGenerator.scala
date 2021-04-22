@@ -22,14 +22,19 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.rows.SummaryListDisplay
 import utils.rows.SummaryListDisplay.DisplayRow
 
+
 import javax.inject.Inject
 
 class SummaryListGenerator @Inject()(val controllerComponents: MessagesControllerComponents) {
   implicit def messagesApi: MessagesApi = controllerComponents.messagesApi
+
   def generateSummaryList[A](id: Int, dac6Data: A)(implicit converter: (Int, A) => Seq[Row]):
     Seq[SummaryListDisplay.DisplayRow] = converter(id, dac6Data).map(rowToDisplayRow)
 
   def generateCYAList[A](id: Int, dac6Data: A)(implicit converter: (Int, A) => Seq[Row]): Seq[Row] = converter(id, dac6Data)
+
+  def generateSummaryListByImplicitParameter[A](id: Int, dac6Data: A)(implicit converter: CreateDisplayRows[A], messages: Messages): Seq[Row]
+      = converter.createDisplayRows(id, dac6Data)
 
   def rowToDisplayRow(row: Row): DisplayRow = DisplayRow(row.key, row.value)
 }
