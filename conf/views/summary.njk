@@ -67,6 +67,8 @@
           rows: roleDetails
         }) }}
 
+          <p></p>
+
         {% if taxpayersList | length == 0 %}
 
                <h2 class="govuk-heading-l">
@@ -134,21 +136,73 @@
           {% endfor %}
         {% endif %}
 
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.intermediaries.heading") }}
-       </h2>
+        {% if intermediaryList | length == 0 %}
 
-       {{ govukSummaryList({
-         rows: intermediariesList
-       }) }}
+              <h2 class="govuk-heading-l">
+                  {{ messages("summary.intermediaries.heading.one") }}
+              </h2>
 
-       <h2 class="govuk-heading-l">
-         {{ messages("summary.others.heading") }}
-       </h2>
+              {{ govukSummaryList({
+              rows: intermediaryUpdateRow
+              }) }}
 
-       {{ govukSummaryList({
-         rows: othersList
-       }) }}
+        {% elseif intermediaryList | length == 1 %}
+
+                  <h2 class="govuk-heading-l">
+                      {{ messages("summary.intermediaries.heading.one") }}
+                  </h2>
+
+                  {{ govukSummaryList({
+                  rows: intermediaryList | first
+                  }) }}
+
+          {% else %}
+
+             {% for item in intermediaryList %}
+
+                  <h2 class="govuk-heading-l">
+                      {{ messages("summary.intermediaries.heading.many", loop.index) }}
+                  </h2>
+
+                  {{ govukSummaryList({
+                    rows: item
+                  }) }}
+              {% endfor %}
+          {% endif %}
+
+          {% if affectedList | length == 0 %}
+
+              <h2 class="govuk-heading-l">
+                  {{ messages("summary.others.heading.one") }}
+              </h2>
+
+              {{ govukSummaryList({
+              rows: affectedUpdateRow
+              }) }}
+
+          {% elseif affectedList | length == 1 %}
+
+              <h2 class="govuk-heading-l">
+                  {{ messages("summary.others.heading.one") }}
+              </h2>
+
+              {{ govukSummaryList({
+              rows: affectedList | first
+              }) }}
+
+          {% else %}
+
+              {% for item in affectedList %}
+
+                  <h2 class="govuk-heading-l">
+                      {{ messages("summary.affected.others.many", loop.index) }}
+                  </h2>
+
+                  {{ govukSummaryList({
+                  rows: item
+                  }) }}
+              {% endfor %}
+          {% endif %}
 
       </div>
     </div>

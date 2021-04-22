@@ -14,31 +14,28 @@
  * limitations under the License.
  */
 
-package utils.rows
+package utils.model.rows
 
-import models.CheckMode
-import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
+import models.affected.Affected
+import models.{CheckMode, SelectType}
+import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 
-trait AffectedRows extends RowBuilder {
+trait AffectedModelRows extends DisplayRowBuilder {
 
-  def affectedType(id: Int): Option[Row] = userAnswers.get(AffectedTypePage, id) map { answer =>
+  def affectedType(id: Int, affected: Affected)(implicit messages: Messages): Row = {
+
+    val selectType = (affected.individual, affected.organisation) match {
+      case (Some(_), None) => SelectType.Individual
+      case (None, Some(_)) => SelectType.Organisation
+    }
 
     toRow(
       msgKey  = "affectedType",
-      content = msg"affectedType.$answer",
+      content = msg"affectedType.${selectType}",
       href    = controllers.affected.routes.AffectedTypeController.onPageLoad(id, CheckMode).url
     )
-  }
-
-  def youHaveNotAddedAnyAffected(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "youHaveNotAddedAnyAffected",
-        content = msg"youHaveNotAddedAnyAffected.$answer",
-        href    = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(id).url
-      )
   }
 
 }

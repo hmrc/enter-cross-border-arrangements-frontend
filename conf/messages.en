@@ -634,7 +634,7 @@ youHaveNotAddedAnyAssociatedEnterprises.emptyList = You have not added any assoc
 youHaveNotAddedAnyAssociatedEnterprises.yesAddNow = Yes, add now
 youHaveNotAddedAnyAssociatedEnterprises.yesAddLater = Yes, add later
 youHaveNotAddedAnyAssociatedEnterprises.no = No
-youHaveNotAddedAnyAssociatedEnterprises.checkYourAnswersLabel = Associated enterprises
+youHaveNotAddedAnyAssociatedEnterprises.checkYourAnswersLabel = Are there any associated enterprises?
 youHaveNotAddedAnyAssociatedEnterprises.error.required = Select to add an associated enterprise now, later or not at all
 youHaveNotAddedAnyAssociatedEnterprisesDisplay.checkYourAnswersLabel = Are there any associated enterprises?
 
@@ -727,7 +727,7 @@ youHaveNotAddedAnyIntermediaries.hint = An intermediary is an individual or orga
 youHaveNotAddedAnyIntermediaries.yesAddNow = Yes, add now
 youHaveNotAddedAnyIntermediaries.yesAddLater = Yes, add later
 youHaveNotAddedAnyIntermediaries.no = No
-youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Intermediaries
+youHaveNotAddedAnyIntermediaries.checkYourAnswersLabel = Are there any intermediaries?
 youHaveNotAddedAnyIntermediaries.error.required = Select an option to add an intermediary now, later or not at all
 
 youHaveNotAddedAnyAffected.title = Other affected parties
@@ -739,7 +739,7 @@ youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
 youHaveNotAddedAnyAffected.yesAddNow = Yes, add now
 youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
 youHaveNotAddedAnyAffected.no = No
-youHaveNotAddedAnyAffected.checkYourAnswersLabel = Other affected parties
+youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any others affected?
 youHaveNotAddedAnyAffected.error.required = Select an option to add other affected party now, later or not at all
 
 intermediariesType.title = Is this an organisation or an individual?
@@ -1198,5 +1198,7 @@ summary.taxpayers.heading.one = Relevant taxpayers’s details
 summary.taxpayers.heading.many = Relevant taxpayer {0}
 summary.enterprises.heading.one = Associated enterprise’s details
 summary.enterprises.heading.many = Associated enterprise {0}
-summary.intermediaries.heading = Intermediary’s details
-summary.others.heading = Other party’s details
+summary.intermediaries.heading.one = Intermediary’s details
+summary.intermediaries.heading.many = Intermediary {0}
+summary.others.heading.one = Other party’s details
+summary.others.heading.many = Other party {0}
