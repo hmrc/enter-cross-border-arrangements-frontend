@@ -1063,7 +1063,7 @@ reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you want to pr
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
 reporterEmailAddress.error.required = Enter an email address
-reporterEmailAddress.error.length = Email address must be 254 characters or less
+reporterEmailAddress.error.length = Email address must be 400 characters or less
 reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 reporterOrganisationEmailAddress.title = What email address would you like to provide?
 reporterOrganisationEmailAddress.heading = What email address would you like to provide?
