@@ -223,6 +223,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .set(OrganisationNamePage, 0, "CheckYourAnswers Ltd")
         .success
         .value
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
+        .success
+        .value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
         .success.value
 
@@ -263,6 +266,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar
         .success
         .value
         .set(IndividualDateOfBirthPage, 0, LocalDate.now())
+        .success
+        .value
+        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
         .success
         .value
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
