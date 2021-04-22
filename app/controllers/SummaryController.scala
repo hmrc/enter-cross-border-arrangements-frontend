@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersHelper, SummaryImplicits, SummaryListGenerator}
+import utils.CreateDisplayRows._
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -45,7 +46,7 @@ class SummaryController @Inject()(
 
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      val disclosureList = summaryListGenerator.generateSummaryList(id, submission.disclosureDetails)
+      val disclosureList = summaryListGenerator.generateSummaryListByImplicitParameter(id, submission.disclosureDetails)
 
       val arrangementList = getArrangementSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
 
@@ -73,7 +74,7 @@ class SummaryController @Inject()(
           summaryListGenerator.generateSummaryList(id, entp))
 
 
-      val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprisesDisplay(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
+      val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
       renderer.render("summary.njk",
         Json.obj(
