@@ -16,26 +16,22 @@
 
 package utils
 
-import base.SpecBase
 import models.disclosure.DisclosureDetails
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.Text.Literal
-import utils.CreateDisplayRows._
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 
-class SummaryListGeneratorSpec extends SpecBase with SummaryImplicits {
+import model.rows.DisclosureModelRows
 
-  val dis: DisclosureDetails = DisclosureDetails("aName")
+abstract class CreateDisplayRows[A] {
+  def createDisplayRows(id: Int, dac6Data: A)(implicit messages: Messages): Seq[Row]
+}
 
+object CreateDisplayRows extends DisclosureModelRows {
 
-  "SummaryListGenerator " - {
-
-    val sl = injector.instanceOf[SummaryListGenerator]
-
-    "should produce valid disclosure list summary" in {
-     val summary =  sl.generateSummaryListByImplicitParameter(0, dis)
-      summary.length mustBe 3
-      summary.head.value.content mustBe Literal("aName")
-    }
-
+  implicit val disclosureCreateDisplayRows = new CreateDisplayRows[DisclosureDetails] {
+    override def createDisplayRows(id: Int, dac6Data: DisclosureDetails)(implicit messages: Messages) = List(disclosureNamePage(dac6Data),
+      disclosureTypePage(dac6Data)) ++
+      buildDisclosureSummaryDetails(dac6Data)
   }
+
 }
