@@ -44,25 +44,22 @@ case class Taxpayer(taxpayerId: String
       .flatMap(restoreFromIndividualOrOrganisation(_, id))
 }
 
-  object Taxpayer {
-
-    private def generateId: String = UUID.randomUUID.toString
-
-    def apply(ua: UserAnswers, id: Int): Taxpayer = {
-
-      val taxpayer: Taxpayer = (
-        ua.get(TaxpayerCheckYourAnswersPage, id).orElse(Some(generateId))
-        , ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) match {
-        case (Some(itemId), Some(date)) =>
-          this(itemId, None, None, Some(date))
-        case _ => throw new Exception("Unable to build taxpayer")
-      }
-
-      ua.get(TaxpayerSelectTypePage, id) match {
-        case Some(SelectType.Organisation) => taxpayer.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
-        case Some(SelectType.Individual) => taxpayer.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-        case _ => throw new Exception("Unable to retrieve taxpayer select type")
-      }
+object Taxpayer {
+  private def generateId: String = UUID.randomUUID.toString
+  def apply(ua: UserAnswers, id: Int): Taxpayer = {
+    val taxpayer: Taxpayer = (ua.get(TaxpayerCheckYourAnswersPage, id).orElse(Some(generateId))
+      , ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) match {
+      case (Some(itemId), Some(startDate)) =>
+        this(itemId, None, None, Some(startDate))
+      case (Some(itemId), None) =>
+        this(itemId, None, None, None)
+      case _ => throw new Exception("Unable to build taxpayer")
     }
-    implicit val format: OFormat[Taxpayer] = Json.format[Taxpayer]
+    ua.get(TaxpayerSelectTypePage, id) match {
+      case Some(SelectType.Organisation) => taxpayer.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
+      case Some(SelectType.Individual) => taxpayer.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
+      case _ => throw new Exception("Unable to retrieve taxpayer select type")
+    }
   }
+  implicit val format: OFormat[Taxpayer] = Json.format[Taxpayer]
+}
