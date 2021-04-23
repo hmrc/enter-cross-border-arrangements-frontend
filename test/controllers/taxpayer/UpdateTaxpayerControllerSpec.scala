@@ -16,6 +16,8 @@
 
 package controllers.taxpayer
 
+import java.time.LocalDate
+
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.taxpayer.UpdateTaxpayerFormProvider
@@ -37,7 +39,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
@@ -105,6 +106,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
       val request = FakeRequest(GET, updateTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller = application.injector.instanceOf[UpdateTaxpayerController]
 
       val result = route(application, request).value
 
@@ -112,10 +114,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedList = Json.arr(Json.obj("name" -> "John Smith",
-        "changeUrl" -> routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url,
-        "removeUrl" -> routes.RemoveTaxpayerController.onPageLoad(0, taxpayerLoop.head.taxpayerId).url)
-      )
+      val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
         "form"   -> form,
@@ -129,7 +128,6 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       application.stop()
     }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))

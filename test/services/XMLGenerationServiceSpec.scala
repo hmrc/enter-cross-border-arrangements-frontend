@@ -16,37 +16,10 @@
 
 package services
 
-import java.time.LocalDate
-
 import base.SpecBase
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForIndividual, userAnswersForOrganisation}
 import helpers.xml.GeneratedXMLExamples
 import models.Submission
-import helpers.xml.GeneratedXMLExamples
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
-import models.disclosure.{DisclosureDetails, DisclosureType}
-import models.enterprises.AssociatedEnterprise
-import models.hallmarks.{HallmarkD, HallmarkD1}
-import models.individual.Individual
-import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
-import models.organisation.Organisation
-import models.reporter.RoleInArrangement
-import models.reporter.taxpayer.TaxpayerWhyReportInUK
-import models.requests.DataRequestWithContacts
-import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import org.joda.time.DateTime
-import pages.arrangement._
-import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage, FirstInitialDisclosureMAPage}
-import pages.enterprises.AssociatedEnterpriseLoopPage
-import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
-import pages.reporter.individual._
-import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
-import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
-import pages.taxpayer.TaxpayerLoopPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 class XMLGenerationServiceSpec extends SpecBase {
 

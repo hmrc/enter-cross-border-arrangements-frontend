@@ -28,17 +28,18 @@ case object TaxpayerLoopPage extends LoopPage[Taxpayer] {
   override def toString: String = "taxpayerLoop"
 
   def updatedLoopList(userAnswers: UserAnswers, id: Int): IndexedSeq[Taxpayer] = {
-    val buildTaxpayer: Taxpayer = Taxpayer.buildTaxpayerDetails(userAnswers, id)
+    val buildTaxpayer: Taxpayer = Taxpayer(userAnswers, id)
     userAnswers.get(TaxpayerLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
-        list :+ buildTaxpayer
+        list.filterNot(_.taxpayerId == buildTaxpayer.taxpayerId) :+ buildTaxpayer
       case None =>       // start new list
         IndexedSeq[Taxpayer](buildTaxpayer)
     }
   }
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    UpdateTaxpayerPage
+    TaxpayerCheckYourAnswersPage
+    , UpdateTaxpayerPage
     , TaxpayerSelectTypePage
     , WhatIsTaxpayersStartDateForImplementingArrangementPage
   )

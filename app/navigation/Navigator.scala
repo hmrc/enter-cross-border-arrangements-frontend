@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.routes
-import models.IsExemptionKnown.{Unknown, Yes}
+import javax.inject.{Inject, Singleton}
 import models.SelectType.{Individual, Organisation}
 import models._
 import models.hallmarks.HallmarkC.C1
@@ -26,17 +26,12 @@ import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, Cat
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
-import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
-import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
-import pages.intermediaries._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.mvc.{AnyContent, Call, Request}
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject()() {
@@ -66,7 +61,7 @@ class Navigator @Inject()() {
     case PostcodePage => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, NormalMode))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
     case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
@@ -97,7 +92,7 @@ class Navigator @Inject()() {
     case GiveDetailsOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
 
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 

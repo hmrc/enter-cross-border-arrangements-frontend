@@ -43,11 +43,11 @@ class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
       checkRoute => id => value => _ =>
         value match {
           case Some(true) => routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, checkRoute.mode)
-          case _ => jumpOrCheckYourAnswers(id, routes.TaxpayersCheckYourAnswersController.onPageLoad(id), checkRoute)
+          case _ => jumpOrCheckYourAnswers(id, routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None), checkRoute)
         }
 
     case _ =>
-      checkRoute => id => _ => _ => checkRoute.mode match {
+      checkRoute => _ => _ => _ => checkRoute.mode match {
         case NormalMode => indexRoute
         case CheckMode  => controllers.routes.IndexController.onPageLoad()
       }
@@ -55,11 +55,11 @@ class NavigatorForTaxpayer @Inject()() extends AbstractNavigator {
   }
 
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
-    _ => _ => id => _ => _ => routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
+    _ => _ => id => _ => _ => routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None)
 
   private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.TaxpayersCheckYourAnswersController.onPageLoad(id)
+      case DefaultRouting(CheckMode)               => routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None)
       case _                                       => jumpTo
     }
   }

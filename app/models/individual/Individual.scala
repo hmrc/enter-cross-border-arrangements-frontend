@@ -16,6 +16,8 @@
 
 package models.individual
 
+import java.time.LocalDate
+
 import models.taxpayer.TaxResidency
 import models.{Address, AddressLookup, Country, Name, UserAnswers, WithRestore, WithTaxResidency}
 import pages.SelectedAddressLookupPage

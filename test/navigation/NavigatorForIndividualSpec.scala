@@ -668,7 +668,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IndividualNamePage)(routingInCheckMode)(0)(Some(Name("first", "last")))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D2 page to $D3 when answer is 'Yes' " in {
@@ -682,7 +682,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IsIndividualDateOfBirthKnownPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D4 to the $D5 when answer is 'Yes' " in {
@@ -696,14 +696,14 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IsIndividualPlaceOfBirthKnownPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D5 to $T11" in {
 
           navigator
             .routeMap(IndividualPlaceOfBirthPage)(routingInCheckMode)(0)(Some("address"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D6 to $D7 when answer is 'Yes' " in {
@@ -717,7 +717,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IsIndividualAddressKnownPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D7 to $D10 when the answer is 'No' " in {
@@ -745,14 +745,14 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IndividualSelectAddressPage)(routingInCheckMode)(0)(Some("A99 AA9"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D10 to $T11" in {
 
           navigator
             .routeMap(IndividualAddressPage)(routingInCheckMode)(0)(Some(address))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D11 to $D12 when the answer is 'Yes' " in {
@@ -766,14 +766,14 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(EmailAddressQuestionForIndividualPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D12 to $T11" in {
 
           navigator
             .routeMap(EmailAddressForIndividualPage)(routingInCheckMode)(0)(Some("test@email.com"))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
 
         s"must go from $D13 to $D14 when the country is GB" in {
@@ -843,7 +843,7 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
           navigator
             .routeMap(IsIndividualResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
       }
     }

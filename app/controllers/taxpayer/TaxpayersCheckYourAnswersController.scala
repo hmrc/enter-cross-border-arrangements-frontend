@@ -19,7 +19,7 @@ package controllers.taxpayer
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.exceptions.UnsupportedRouteException
-import models.{Mode, NormalMode, SelectType}
+import models.{Mode, NormalMode, SelectType, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -44,11 +44,16 @@ class TaxpayersCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) = request.userAnswers.get(TaxpayerSelectTypePage, id) match {
+      val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(TaxpayerLoopPage, id, itemId)
+      sessionRepository.set(restoredUserAnswers)
+
+      val helper = new CheckYourAnswersHelper(restoredUserAnswers)
+
+      val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) =
+        restoredUserAnswers.get(TaxpayerSelectTypePage, id) match {
         case Some(SelectType.Organisation) =>
           (helper.taxpayerSelectType(id).toSeq ++ helper.organisationName(id).toSeq ++
             helper.buildOrganisationAddressGroup(id) ++ helper.buildOrganisationEmailAddressGroup(id),
@@ -79,7 +84,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
         )).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       for {
@@ -87,7 +92,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
         userAnswersWithTaxpayerLoop <- Future.fromTry(userAnswers.remove(UpdateTaxpayerPage, id))
         _                           <- sessionRepository.set(userAnswersWithTaxpayerLoop)
       } yield {
-        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, mode, userAnswersWithTaxpayerLoop))
+        Redirect(navigator.nextPage(TaxpayerCheckYourAnswersPage, id, NormalMode, userAnswersWithTaxpayerLoop))
       }
   }
 }

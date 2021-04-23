@@ -16,6 +16,8 @@
 
 package navigation
 
+import java.time.LocalDate
+
 import base.SpecBase
 import controllers.routes
 import generators.Generators
@@ -26,8 +28,6 @@ import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountr
 import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
-import models.intermediaries.WhatTypeofIntermediary.{IDoNotKnow, Promoter, Serviceprovider}
-import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
 import models.taxpayer.UpdateTaxpayer.{Later, No}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -35,14 +35,11 @@ import pages._
 import pages.arrangement._
 import pages.hallmarks._
 import pages.individual._
-import pages.intermediaries._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-
-import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -519,7 +516,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -541,7 +538,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0))
+              .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
