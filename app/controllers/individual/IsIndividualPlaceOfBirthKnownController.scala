@@ -97,8 +97,8 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
 
   private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
     userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"${name.displayName} was"
-      case None => "they were"
+      case Some(name) => s"${name.displayName}’s"
+      case None => "the individual’s"
     }
   }
 }
