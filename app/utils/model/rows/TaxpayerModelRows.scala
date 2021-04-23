@@ -16,34 +16,32 @@
 
 package utils.model.rows
 
+import models.SelectType
 import models.taxpayer.Taxpayer
-import models.{CheckMode, SelectType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.MessageInterpolators
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
+import utils.SummaryListDisplay.DisplayRow
 
 trait TaxpayerModelRows extends DisplayRowBuilder {
 
-  def taxpayerSelectType(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): Row = {
+  def taxpayerSelectType(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): DisplayRow = {
     val selectType = (taxpayer.individual, taxpayer.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
     }
 
-    toRow(
+    toDisplayRow(
         msgKey = "selectType",
-        content = msg"selectType.$selectType",
-        href = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(id, CheckMode).url
+        content = msg"selectType.$selectType"
       )
   }
 
-  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): Option[Row] =
+  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): Option[DisplayRow] =
     taxpayer.implementingDate map { implementingDate =>
-      toRow(
+      toDisplayRow(
         msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",
-        content = Literal(implementingDate.format(dateFormatter)),
-        href = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
+        content = Literal(implementingDate.format(dateFormatter))
       )
     }
 }

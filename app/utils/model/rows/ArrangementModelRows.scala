@@ -22,31 +22,29 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
+import utils.SummaryListDisplay.DisplayRow
 
 trait ArrangementModelRows extends DisplayRowBuilder {
 
-  def whatIsThisArrangementCalledPage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def whatIsThisArrangementCalledPage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey  = "whatIsThisArrangementCalled",
-      content = formatMaxChars(arrangementDetails.arrangementName),
-      href    = controllers.arrangement.routes.WhatIsThisArrangementCalledController.onPageLoad(id, CheckMode).url
+      content = formatMaxChars(arrangementDetails.arrangementName)
     ))
 
 
-  def whatIsTheImplementationDatePage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def whatIsTheImplementationDatePage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey = "whatIsTheImplementationDate",
-      content = Literal(arrangementDetails.implementationDate.format(dateFormatter)),
-      href = controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, CheckMode).url
+      content = Literal(arrangementDetails.implementationDate.format(dateFormatter))
     ))
 
 
-  def buildWhyAreYouReportingThisArrangementNow(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
+  def buildWhyAreYouReportingThisArrangementNow(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     arrangementDetails.reportingReason map { answer =>
-    toRow(
+      toDisplayRow(
       msgKey = "whyAreYouReportingThisArrangementNow",
-      content = msg"whyAreYouReportingThisArrangementNow.$answer",
-      href = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, CheckMode).url
+      content = msg"whyAreYouReportingThisArrangementNow.${answer.substring(0,1).toLowerCase + answer.substring(1)}"
     )
   }
 
@@ -61,32 +59,28 @@ trait ArrangementModelRows extends DisplayRowBuilder {
     Html(list)
   }
 
-  def whichExpectedInvolvedCountriesArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def whichExpectedInvolvedCountriesArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey  = "whichExpectedInvolvedCountriesArrangement",
-      content = lit"${arrangementDetails.countriesInvolved}",
-      href    = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, CheckMode).url
+      content = formatCountries(arrangementDetails.countriesInvolved)
     ))
 
-  def whatIsTheExpectedValueOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def whatIsTheExpectedValueOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey  = "whatIsTheExpectedValueOfThisArrangement",
-      content = lit"${arrangementDetails.expectedValue.currency} ${arrangementDetails.expectedValue.amount}",
-      href    = controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, CheckMode).url
+      content = lit"${arrangementDetails.expectedValue.currency} ${arrangementDetails.expectedValue.amount}"
     ))
 
-  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
-      content = lit"${arrangementDetails.nationalProvisionDetails}",
-      href    = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
+      content = lit"${arrangementDetails.nationalProvisionDetails}"
     ))
 
-  def giveDetailsOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[Row] =
-    Some(toRow(
+  def giveDetailsOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(toDisplayRow(
       msgKey  = "giveDetailsOfThisArrangement",
-      content = lit"${arrangementDetails.arrangementDetails}",
-      href    = controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, CheckMode).url
+      content = lit"${arrangementDetails.arrangementDetails}"
     ))
 
 }

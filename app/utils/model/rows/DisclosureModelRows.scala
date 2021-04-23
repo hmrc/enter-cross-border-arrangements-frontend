@@ -16,68 +16,55 @@
 
 package utils.model.rows
 
-import models.CheckMode
 import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType._
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
+import utils.SummaryListDisplay.DisplayRow
 
 trait DisclosureModelRows extends DisplayRowBuilder {
 
-  def disclosureNamePage(disclosure: DisclosureDetails)(implicit messages: Messages): Row =
-    toRow(
+  def disclosureNamePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "disclosureName",
-      content = formatMaxChars(disclosure.disclosureName),
-      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
+      content = formatMaxChars(disclosure.disclosureName)
     )
 
-  private def disclosureMarketablePage(disclosure: DisclosureDetails)(implicit messages: Messages): Row =
-    toRow(
+  private def disclosureMarketablePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "disclosureMarketable",
-      content = yesOrNo(disclosure.initialDisclosureMA),
-      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
+      content = yesOrNo(disclosure.initialDisclosureMA)
     )
 
-  def disclosureTypePage(disclosure: DisclosureDetails)(implicit messages: Messages): Row =
-    toRow(
+  def disclosureTypePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "disclosureType",
-      content = msg"disclosureType.${disclosure.disclosureType}",
-      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
+      content = msg"disclosureType.${disclosure.disclosureType}"
     )
 
 
-  private def disclosureIdentifyArrangement(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Option[Row] = {
+  private def disclosureIdentifyArrangement(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Option[DisplayRow] = {
     disclosureDetails.arrangementID map { arrangementID =>
-      toRow(
+      toDisplayRow(
         msgKey = "disclosureIdentifyArrangement",
-        content = lit"$arrangementID",
-        href = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url,
-        columnWidth = "govuk-!-width-one-third"
+        content = lit"$arrangementID"
       )
     }
   }
 
-  private def replaceOrDeleteADisclosureRows(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
+  private def replaceOrDeleteADisclosureRows(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Seq[DisplayRow] =
      Seq(
-      toRow(
+      toDisplayRow(
         msgKey  = "replaceOrDeleteADisclosure.arrangementID",
-        content = lit"${disclosureDetails.arrangementID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
-        columnWidth = "govuk-!-width-one-third"
+        content = lit"${disclosureDetails.arrangementID}"
       ),
-      toRow(
+      toDisplayRow(
         msgKey  = "replaceOrDeleteADisclosure.disclosureID",
-        content = lit"${disclosureDetails.disclosureID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
-        columnWidth = "govuk-!-width-one-third"
+        content = lit"${disclosureDetails.disclosureID}"
       )
     )
 
-  def buildDisclosureSummaryDetails(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Seq[Row] =
+  def buildDisclosureSummaryDetails(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Seq[DisplayRow] =
     disclosureDetails.disclosureType match {
       case Dac6new =>
         Seq(disclosureMarketablePage(disclosureDetails))

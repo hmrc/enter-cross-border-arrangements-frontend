@@ -21,15 +21,14 @@ import connectors.HistoryConnector
 import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
-import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.Dac6rep
 import models.hallmarks.JourneyStatus
-import models.hallmarks.JourneyStatus.{Completed, NotStarted}
+import models.hallmarks.JourneyStatus.Completed
+import models.reporter.RoleInArrangement.Taxpayer
 import models.{NormalMode, Submission, UserAnswers}
 import navigation.NavigatorForDisclosure
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
@@ -43,13 +42,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.XMLGenerationService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
 import javax.inject.Inject
-import models.reporter.RoleInArrangement.Taxpayer
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -79,7 +75,7 @@ class DisclosureDetailsController @Inject()(
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers.get, id).flatMap { isInitialDisclosureMarketable =>
+      isInitialDisclosureMarketable(request.userAnswers.get, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable =>
 
         val json = Json.obj(
           "id" -> id,
@@ -124,41 +120,7 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-  private def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int)
-                                           (implicit hc: HeaderCarrier): Future[Boolean] = {
 
-    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
-      case Some(details) => details
-      case None => throw new Exception("Missing disclosure details")
-    }
-
-    historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
-      firstDisclosureDetails =>
-        disclosureDetails.disclosureType match {
-          case DisclosureType.Dac6add => Future.successful(firstDisclosureDetails.initialDisclosureMA)
-          case DisclosureType.Dac6rep =>
-            historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
-              submissionHistory =>
-                for {
-                  userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
-                  _ <- sessionRepository.set(userAnswers)
-                } yield {
-                  if (submissionHistory.details.nonEmpty &&
-                    submissionHistory.details.head.importInstruction == "Add" &&
-                    firstDisclosureDetails.initialDisclosureMA) {
-                    //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
-                    true
-                  } else {
-                    false
-                  }
-                }
-            }
-          case _ => Future.successful(false)
-        }
-    }.recoverWith {
-      case _ => Future.successful(false)
-    }
-  }
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
     (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>

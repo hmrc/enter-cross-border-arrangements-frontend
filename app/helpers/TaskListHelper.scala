@@ -16,6 +16,7 @@
 
 package helpers
 
+import connectors.HistoryConnector
 import models.UserAnswers
 import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
@@ -25,14 +26,18 @@ import models.reporter.RoleInArrangement
 import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import play.api.i18n.Messages
+import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.Html
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object TaskListHelper  {
 
@@ -124,6 +129,44 @@ object TaskListHelper  {
     (ua.get(HallmarkStatusPage, id), ua.get(ArrangementStatusPage, id)) match {
       case (Some(Completed), None) if isInitialDisclosureMarketable => false
       case _ => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, isInitialDisclosureMarketable)
+    }
+  }
+
+  def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int,
+                                    historyConnector: HistoryConnector,
+                                    sessionRepository: SessionRepository)
+                                           (implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Boolean] = {
+
+    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
+      case Some(details) => details
+      case None => throw new Exception("Missing disclosure details")
+    }
+
+    historyConnector.retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse("")).flatMap {
+      firstDisclosureDetails =>
+        disclosureDetails.disclosureType match {
+          case DisclosureType.Dac6add => Future.successful(firstDisclosureDetails.initialDisclosureMA)
+          case DisclosureType.Dac6rep =>
+            historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
+              submissionHistory =>
+                for {
+                  userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
+                  _ <- sessionRepository.set(userAnswers)
+                } yield {
+                  if (submissionHistory.details.nonEmpty &&
+                    submissionHistory.details.head.importInstruction == "Add" &&
+                    firstDisclosureDetails.initialDisclosureMA) {
+                    //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
+                    true
+                  } else {
+                    false
+                  }
+                }
+            }
+          case _ => Future.successful(false)
+        }
+    }.recoverWith {
+      case _ => Future.successful(false)
     }
   }
 }

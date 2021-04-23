@@ -16,20 +16,20 @@
 
 package utils.model.rows
 
+import models.SelectType
 import models.enterprises.AssociatedEnterprise
-import models.{CheckMode, SelectType}
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels._
+import utils.SummaryListDisplay.DisplayRow
 
 trait EnterpriseModelRows extends DisplayRowBuilder {
 
 
   def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages):
-  Seq[Row] =
+  Seq[DisplayRow] =
           formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers, id)
 
-  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int)(implicit messages: Messages): Seq[Row] = {
+  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int)(implicit messages: Messages): Seq[DisplayRow] = {
 
     val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
@@ -39,32 +39,29 @@ trait EnterpriseModelRows extends DisplayRowBuilder {
       s"${taxpayerList.head}"
     }
 
-    Seq(toRow(
+    Seq(toDisplayRow(
       msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
-      content = Html(s"$formattedTaxpayerList"),
-      href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
+      content = Html(s"$formattedTaxpayerList")
     ))
   }
 
-  def associatedEnterpriseType(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): Row = {
+  def associatedEnterpriseType(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow = {
     val selectType = (associatedEnterprise.individual, associatedEnterprise.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
       case _ => throw new Exception("Cannot retrieve associated enterprise type")
     }
-      toRow(
+      toDisplayRow(
         msgKey = "associatedEnterpriseType",
-        content = msg"selectType.${selectType.toString}",
-        href = controllers.enterprises.routes.AssociatedEnterpriseTypeController.onPageLoad(id, CheckMode).url
+        content = msg"selectType.${selectType.toString}"
       )
   }
 
 
-  def isAssociatedEnterpriseAffected(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): Row =
-      toRow(
+  def isAssociatedEnterpriseAffected(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
         msgKey = "isAssociatedEnterpriseAffected",
-        content = yesOrNo(associatedEnterprise.isAffectedBy),
-        href = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, CheckMode).url
+        content = yesOrNo(associatedEnterprise.isAffectedBy)
       )
 
 

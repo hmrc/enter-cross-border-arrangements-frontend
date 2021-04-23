@@ -17,7 +17,7 @@
           {{ messages("summary.heading") }}
         </h1>
 
-        <p class="govuk-body"><a href="#" class="govuk-link">{{ messages("summary.printLink") }}</a></p>
+        <p class="govuk-body"><a href="#" id="printLink" class="govuk-link">{{ messages("summary.printLink") }}</a></p>
 
         <p class="govuk-body">{{ messages("summary.p1") }}</p>
 
@@ -68,13 +68,19 @@
           rows: roleDetails
         }) }}
 
+          <p></p>
+
         {{ hmrcSummaryList(taxpayersList, taxpayerUpdateRow, "taxpayers") }}
 
         {{ hmrcSummaryList(enterprisesList, enterprisesUpdateRow, "enterprises") }}
 
-        {{ hmrcSummaryList(intermediariesList, intermediariesUpdateRow, "intermediaries") }}
+        {{ hmrcSummaryList(intermediaryList, intermediaryUpdateRow, "intermediaries") }}
 
-        {{ hmrcSummaryList(affectedList, affectedUpdateRow, "affected") }}
+        {{ hmrcSummaryList(affectedList, affectedUpdateRow, "others") }}
+
+          <p class="govuk-body">
+              <a href= "{{ backtoDisclosuresLink }}" class="govuk-link"> {{ messages("summary.backtodisclosures.link") }} </a>
+          </p>
 
       </div>
     </div>

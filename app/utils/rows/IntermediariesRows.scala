@@ -21,7 +21,6 @@ import models.intermediaries.ExemptCountries
 import pages.intermediaries._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
-import utils.rows.SummaryListDisplay.DisplayRow
 
 trait IntermediariesRows extends RowBuilder {
 

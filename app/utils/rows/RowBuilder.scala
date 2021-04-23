@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
-import utils.rows.SummaryListDisplay.DisplayRow
+import utils.SummaryListDisplay.DisplayRow
 
 trait RowBuilder {
 

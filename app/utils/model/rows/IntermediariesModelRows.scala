@@ -16,61 +16,41 @@
 
 package utils.model.rows
 
+import models.SelectType
 import models.intermediaries.{ExemptCountries, Intermediary}
-import models.{CheckMode, SelectType}
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.{Key, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
+import utils.SummaryListDisplay.DisplayRow
 
 trait IntermediariesModelRows extends DisplayRowBuilder {
 
 
-  def intermediariesType(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
+  def intermediariesType(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
      {
        val selectType = (intermediary.individual, intermediary.organisation) match {
          case (Some(_), None) => SelectType.Individual
          case (None, Some(_)) => SelectType.Organisation
        }
 
-      Row(
+      DisplayRow(
         key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"intermediariesType.$selectType"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IntermediariesTypeController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"intermediariesType.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(msg"intermediariesType.$selectType")
       )
   }
 
-  def isExemptionKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
-      Row(
+  def isExemptionKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+    DisplayRow(
         key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionKnownController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionKnown.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}")
       )
 
-  def isExemptionCountryKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[Row] =
+  def isExemptionCountryKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] =
     intermediary.isExemptionCountryKnown map {
     answer =>
-      Row(
+      DisplayRow(
         key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.IsExemptionCountryKnownController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isExemptionCountryKnown.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(yesOrNo(answer))
       )
   }
 
@@ -85,18 +65,11 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
     }
   }
 
-  def exemptCountries(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[Row] = intermediary.exemptCountries map {
+  def exemptCountries(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
     answer =>
-      Row(
+      DisplayRow(
         key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.ExemptCountriesController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"exemptCountries.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty)))
       )
   }
 
@@ -112,17 +85,10 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
     }
   }
 
-  def whatTypeofIntermediary(id: Int, intermediary: Intermediary)(implicit messages: Messages): Row =
-      Row(
+  def whatTypeofIntermediary(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+    DisplayRow(
         key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatTypeofIntermediary.checkYourAnswersLabel"))
-          )
-        )
+        value   = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}")
       )
 
 }

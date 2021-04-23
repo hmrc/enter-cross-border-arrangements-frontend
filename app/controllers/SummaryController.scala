@@ -19,8 +19,8 @@ package controllers
 import controllers.actions._
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
-import models.{Submission, UserAnswers}
 import models.taxpayer.Taxpayer
+import models.{Submission, UserAnswers}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -28,81 +28,69 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
-import utils.{CheckYourAnswersHelper, SummaryListGenerator}
+import utils.{CheckYourAnswersHelper, SummaryListDisplay}
 import utils.CreateDisplayRows._
-import utils.rows.SummaryListDisplay
-import utils.rows.SummaryListDisplay.DisplayRow
+import SummaryListDisplay.DisplayRow
+import connectors.HistoryConnector
+import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
+import play.api.mvc.Results.Redirect
+import repositories.SessionRepository
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SummaryController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    summaryListGenerator: SummaryListGenerator,
     val controllerComponents: MessagesControllerComponents,
+    historyConnector: HistoryConnector,
+    sessionRepository: SessionRepository,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport  {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-    val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
-      val submission = Submission(request.userAnswers, id, request.enrolmentID)
+      val backtoDisclosuresLink = controllers.routes.DisclosureDetailsController.onPageLoad(id).url
 
-      val arrangementList: Seq[DisplayRow] = submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.rowToDisplayRow(id))
+      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable => {
 
-      val hallmarksList = getHallmarkSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
+        if (userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable)) {
+          val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
-      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
-      val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
-      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
+          val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      val taxpayersList = submission.taxpayers.map(_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
+          val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
+            ent.copy(associatedTaxpayers =
+              ent.associatedTaxpayers.map(
+                txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
+              ))
+          }
 
-      val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
-
-      val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
-        ent.copy(associatedTaxpayers =
-          ent.associatedTaxpayers.map(
-            txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
-          ))
+          renderer.render("summary.njk",
+            Json.obj(
+              "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
+              "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.createDisplayRows(id)),
+              "reporterDetails" -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow),
+              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow),
+              "roleDetails" -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow),
+              "hallmarksList" -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow),
+              "taxpayersList" -> submission.taxpayers.map(_.createDisplayRows(id)),
+              "taxpayerUpdateRow" -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "enterprisesList" -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows(id)),
+              "enterprisesUpdateRow" -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "intermediaryList" -> submission.intermediaries.map(_.createDisplayRows(id)),
+              "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "affectedList" -> submission.affectedPersons.map(_.createDisplayRows(id)),
+              "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "backtoDisclosuresLink" -> backtoDisclosuresLink
+            )
+          ).map(Ok(_))
+        } else Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
       }
-
-      val enterprisesList =
-        enterprisesWithDisplayTaxnames.map(entp =>
-          summaryListGenerator.generateSummaryList(id, entp))
-
-      val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
-
-      val intermediaryList = submission.intermediaries map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
-
-      val intermediaryUpdateRow = Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
-
-      val affectedList =  submission.affectedPersons map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
-
-      val affectedUpdateRow = Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
-
-      renderer.render("summary.njk",
-        Json.obj(
-          "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
-                 "arrangementList" -> arrangementList,
-                 "reporterDetails" -> reporterDetails,
-                 "residentCountryDetails" -> residentCountryDetails,
-                 "roleDetails" -> roleDetails,
-                 "hallmarksList" -> hallmarksList,
-                 "taxpayersList" -> taxpayersList,
-                 "taxpayerUpdateRow" -> taxpayerUpdateRow,
-                 "enterprisesList"-> enterprisesList,
-                 "enterprisesUpdateRow" -> enterprisesUpdateRow,
-                 "intermediaryList"-> intermediaryList,
-                 "intermediaryUpdateRow" -> intermediaryUpdateRow,
-                 "affectedList" -> affectedList,
-                 "affectedUpdateRow" -> affectedUpdateRow
-          )
-      ).map(Ok(_))
+    }
   }
 
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =

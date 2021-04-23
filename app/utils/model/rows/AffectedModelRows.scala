@@ -16,25 +16,24 @@
 
 package utils.model.rows
 
+import models.SelectType
 import models.affected.Affected
-import models.{CheckMode, SelectType}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.MessageInterpolators
-import uk.gov.hmrc.viewmodels.SummaryList.Row
+import utils.SummaryListDisplay.DisplayRow
 
 trait AffectedModelRows extends DisplayRowBuilder {
 
-  def affectedType(id: Int, affected: Affected)(implicit messages: Messages): Row = {
+  def affectedType(id: Int, affected: Affected)(implicit messages: Messages): DisplayRow = {
 
     val selectType = (affected.individual, affected.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
     }
 
-    toRow(
+    toDisplayRow(
       msgKey  = "affectedType",
-      content = msg"affectedType.${selectType}",
-      href    = controllers.affected.routes.AffectedTypeController.onPageLoad(id, CheckMode).url
+      content = msg"affectedType.${selectType}"
     )
   }
 

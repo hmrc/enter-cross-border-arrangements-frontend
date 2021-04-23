@@ -18,21 +18,21 @@ package utils.model.rows
 
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import models.{Address, CheckMode, Country, TaxReferenceNumbers}
+import models.{Address, Country, TaxReferenceNumbers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
+import uk.gov.hmrc.viewmodels.SummaryList.{Key, Value}
 import uk.gov.hmrc.viewmodels._
+import utils.SummaryListDisplay.DisplayRow
 
 trait OrganisationModelRows extends DisplayRowBuilder {
 
-  def organisationName(id: Int, organisation: Organisation)(implicit messages: Messages): Row =
-    toRow(
+  def organisationName(id: Int, organisation: Organisation)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "organisationName",
-      content = lit"${organisation.organisationName}",
-      href    = controllers.organisation.routes.OrganisationNameController.onPageLoad(id, CheckMode).url
+      content = lit"${organisation.organisationName}"
     )
 
-  def buildOrganisationAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[Row] =
+  def buildOrganisationAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
     organisation.address match {
       case Some(manualAddress) =>
         Seq(isOrganisationAddressKnown(true, id), organisationAddress(manualAddress, id))
@@ -40,21 +40,19 @@ trait OrganisationModelRows extends DisplayRowBuilder {
         Seq(isOrganisationAddressKnown(false, id))
     }
 
-  private def isOrganisationAddressKnown(addressKnown: Boolean, id: Int)(implicit messages: Messages): Row =
-    toRow(
+  private def isOrganisationAddressKnown(addressKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "isOrganisationAddressKnown",
-      content = yesOrNo(addressKnown),
-      href    = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(id, CheckMode).url
+      content = yesOrNo(addressKnown)
     )
 
-  private def organisationAddress(manualAddress: Address, id: Int)(implicit messages: Messages): Row =
-    toRow(
+  private def organisationAddress(manualAddress: Address, id: Int)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "organisationAddress",
-      content = formatAddress(manualAddress),
-      href    = controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(id, CheckMode).url
+      content = formatAddress(manualAddress)
     )
 
-  def buildOrganisationEmailAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[Row] =
+  def buildOrganisationEmailAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
    organisation.emailAddress match {
       case Some(email) =>
         Seq(emailAddressQuestionForOrganisation(true, id)
@@ -63,31 +61,28 @@ trait OrganisationModelRows extends DisplayRowBuilder {
         Seq(emailAddressQuestionForOrganisation(false, id))
     }
 
-  private def emailAddressQuestionForOrganisation(isKnown: Boolean, id: Int)(implicit messages: Messages): Row =
-    toRow(
+  private def emailAddressQuestionForOrganisation(isKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "emailAddressQuestionForOrganisation",
-      content = yesOrNo(isKnown),
-      href    = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(id, CheckMode).url
+      content = yesOrNo(isKnown)
     )
 
-  private def emailAddressForOrganisation(email: String, id: Int)(implicit messages: Messages): Row =
-    toRow(
+  private def emailAddressForOrganisation(email: String, id: Int)(implicit messages: Messages): DisplayRow =
+    toDisplayRow(
       msgKey  = "emailAddressForOrganisation",
-      content = lit"$email",
-      href    = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(id, CheckMode).url
+      content = lit"$email"
     )
 
-  def buildTaxResidencySummaryForOrganisation(id: Int,organisation: Organisation)(implicit messages: Messages): Seq[Row] = {
+  def buildTaxResidencySummaryForOrganisation(id: Int,organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] = {
 
     val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = organisation.taxResidencies.filter(_.country.isDefined).zipWithIndex
 
-    val header: Row = toRow(
+    val header: DisplayRow = toDisplayRowNoBorder(
       msgKey = "whichCountryTaxForOrganisation",
-      content = lit"",
-      href = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(id, CheckMode, 0).url
+      content = lit""
     )
 
-    val details: IndexedSeq[Row] = validDetailsWithIndex flatMap {
+    val details: IndexedSeq[DisplayRow] = validDetailsWithIndex flatMap {
       case (taxResidency, index) =>
         organisationCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
     }
@@ -95,19 +90,20 @@ trait OrganisationModelRows extends DisplayRowBuilder {
     header +: details
   }
 
-  private def organisationCountryRow(countryOption: Option[Country], index: Int, loopSize: Int): Row = {
+  private def organisationCountryRow(countryOption: Option[Country], index: Int, loopSize: Int): DisplayRow = {
 
     val countryDescription = countryOption.map(_.description).getOrElse(
       throw new IllegalArgumentException("A country row must have a non-empty country"))
     val label = messageWithPluralFormatter("whichCountryTaxForOrganisation.countryCounter")(loopSize > 1, (index + 1).toString)
 
-    Row(
+    DisplayRow(
       key     = Key(label, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"$countryDescription")
+      value   = Value(lit"$countryDescription"),
+      classes = Seq("govuk-summary-list--no-border")
     )
   }
 
-  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[Row] =
+  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[DisplayRow] =
   {
     (country, taxReferenceNumbers) match {
       case (Some(c), Some(taxnumbers)) =>
@@ -120,51 +116,48 @@ trait OrganisationModelRows extends DisplayRowBuilder {
     }
   }
 
-  private def taxNumberRow(msgKey: String, taxReferenceNumbers: TaxReferenceNumbers, country: Option[Country])(implicit messages: Messages): Seq[Row] = {
+  private def taxNumberRow(msgKey: String, taxReferenceNumbers: TaxReferenceNumbers, country: Option[Country])(implicit messages: Messages): Seq[DisplayRow] = {
 
     val countryLabel = country.map(_.description).getOrElse("")
     val taxRefLabel: Text.Message =
       messageWithPluralFormatter(s"$msgKey.checkYourAnswersLabel", countryLabel)(taxReferenceNumbers.isSingleTaxReferenceNumber)
 
-    Seq(Row(
+    Seq(DisplayRow(
       key     = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}")
+      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}"),
+      classes = Seq("govuk-summary-list--no-border")
     ))
   }
 
-  def whichCountryTaxForOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[Row] =
+  def whichCountryTaxForOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
   organisation.firstTaxResidency.flatMap(_.country) map { country =>
 
-      toRow(
+      toDisplayRowNoBorder(
         msgKey  = "whichCountryTaxForOrganisation",
-        content = lit"$country",
-        href    = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(id, CheckMode, 1).url
+        content = lit"$country"
       )
   }
 
-  def doYouKnowAnyTINForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[Row] =
+  def doYouKnowAnyTINForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
   organisation.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
-      toRow(
+      toDisplayRow(
         msgKey  = "doYouKnowAnyTINForUKOrganisation",
-        content = yesOrNo(douYouKnowTIN),
-        href    = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(id, CheckMode, 1).url
+        content = yesOrNo(douYouKnowTIN)
       )
   }
 
-  def whatAreTheTaxNumbersForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[Row] =
+  def whatAreTheTaxNumbersForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
     organisation.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
-      toRow(
+      toDisplayRow(
         msgKey  = "whatAreTheTaxNumbersForUKOrganisation",
-        content = lit"$taxnumbers",
-        href    = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(id, CheckMode, 1).url
+        content = lit"$taxnumbers"
       )
   }
 
-  def isOrganisationResidentForTaxOtherCountries(id: Int)(implicit messages: Messages): Option[Row] =
-      Some(toRow(
+  def isOrganisationResidentForTaxOtherCountries(id: Int)(implicit messages: Messages): Option[DisplayRow] =
+      Some(toDisplayRow(
         msgKey  = "isOrganisationResidentForTaxOtherCountries",
-        content = yesOrNo(false),
-        href    = controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(id, CheckMode, 1).url
+        content = yesOrNo(false)
       ))
 
 }

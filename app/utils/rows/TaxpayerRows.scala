@@ -21,7 +21,6 @@ import pages.taxpayer.{TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
-import utils.CreateDisplayRows.toRow
 
 trait TaxpayerRows extends RowBuilder {
 

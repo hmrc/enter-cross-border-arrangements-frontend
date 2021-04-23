@@ -29,58 +29,49 @@ import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{OWrites, __}
 import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
 import utils.model.rows._
-import utils.rows.SummaryListDisplay.DisplayRow
+import SummaryListDisplay.{DisplayRow, emptyRowForBorder}
 
 import scala.collection.immutable
 
 trait CreateDisplayRows[A] {
-  def createDisplayRows(id: Int, dac6Data: A)(implicit messages: Messages): Seq[Row]
+  def createDisplayRows(id: Int, dac6Data: A)(implicit messages: Messages): Seq[DisplayRow]
 
-  def rowToDisplayRow(id: Int, dac6Data: A)(implicit messages: Messages): Seq[DisplayRow] =
-    createDisplayRows(id, dac6Data).map(row => DisplayRow(row.key, row.value))
 }
 
 object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
   with TaxpayerModelRows with EnterpriseModelRows with IntermediariesModelRows with AffectedModelRows {
 
-//  implicit def writes(implicit messages: Messages): OWrites[Row] = (
-//    (__ \ "key").write[Key] and
-//      (__ \ "value").write[Value]
-//    ){ row =>
-//    (row.key, row.value)
-//  }
-
   def apply[A](implicit instance: CreateDisplayRows[A]): CreateDisplayRows[A] = instance
 
-  def createDisplayRows[A: CreateDisplayRows](id: Int, dac6Data: A)(implicit messages: Messages): Seq[Row] =
+  def createDisplayRows[A: CreateDisplayRows](id: Int, dac6Data: A)(implicit messages: Messages): Seq[DisplayRow] =
     CreateDisplayRows[A].createDisplayRows(id: Int, dac6Data: A)
 
   implicit class CreateDisplayRowOps[A: CreateDisplayRows](a: A) {
 
-    def createDisplayRows(id: Int)(implicit messages: Messages): Seq[Row] = CreateDisplayRows[A].createDisplayRows(id: Int, a: A)
+    def createDisplayRows(id: Int)(implicit messages: Messages): Seq[DisplayRow] = CreateDisplayRows[A].createDisplayRows(id: Int, a: A)
 
-    def rowToDisplayRow(id: Int)(implicit messages: Messages): Seq[DisplayRow] = CreateDisplayRows[A].rowToDisplayRow(id, a)
   }
 
   implicit val disclosureCreateDisplayRows: CreateDisplayRows[DisclosureDetails] = new CreateDisplayRows[DisclosureDetails] {
-    override def createDisplayRows(id: Int, dac6Data: DisclosureDetails)(implicit messages: Messages): immutable.Seq[Row] = List(disclosureNamePage(dac6Data),
-      disclosureTypePage(dac6Data)) ++
-      buildDisclosureSummaryDetails(dac6Data)
+    override def createDisplayRows(id: Int, disclosure: DisclosureDetails)(implicit messages: Messages): immutable.Seq[DisplayRow] =
+      List(disclosureNamePage(disclosure),
+      disclosureTypePage(disclosure)) ++
+      buildDisclosureSummaryDetails(disclosure)
   }
 
   implicit val arrangementDetailsDisplayRows: CreateDisplayRows[ArrangementDetails] = new CreateDisplayRows[ArrangementDetails] {
-    override def createDisplayRows(id: Int, dac6Data: ArrangementDetails)(implicit messages: Messages): Seq[Row] =
-      Seq(whatIsThisArrangementCalledPage(id, dac6Data)
-        , whatIsTheImplementationDatePage(id, dac6Data)
-        , buildWhyAreYouReportingThisArrangementNow(id, dac6Data)
-        , whichExpectedInvolvedCountriesArrangement(id, dac6Data)
-        , whatIsTheExpectedValueOfThisArrangement(id, dac6Data)
-        , whichNationalProvisionsIsThisArrangementBasedOn(id, dac6Data)
-        , giveDetailsOfThisArrangement(id, dac6Data)).flatten
+    override def createDisplayRows(id: Int, arrangement: ArrangementDetails)(implicit messages: Messages): Seq[DisplayRow] =
+      Seq(whatIsThisArrangementCalledPage(id, arrangement)
+        , whatIsTheImplementationDatePage(id, arrangement)
+        , buildWhyAreYouReportingThisArrangementNow(id, arrangement)
+        , whichExpectedInvolvedCountriesArrangement(id, arrangement)
+        , whatIsTheExpectedValueOfThisArrangement(id, arrangement)
+        , whichNationalProvisionsIsThisArrangementBasedOn(id, arrangement)
+        , giveDetailsOfThisArrangement(id, arrangement)).flatten
   }
 
   implicit val taxpayerDisplayRows: CreateDisplayRows[Taxpayer] = new CreateDisplayRows[Taxpayer] {
-    override def createDisplayRows(id: Int, taxPayer: Taxpayer)(implicit messages: Messages): Seq[Row] =
+    override def createDisplayRows(id: Int, taxPayer: Taxpayer)(implicit messages: Messages): Seq[DisplayRow] =
       (taxPayer.individual, taxPayer.organisation) match {
         case (Some(individual), _) =>
           Seq(taxpayerSelectType(id, taxPayer)) ++
@@ -100,7 +91,7 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
   }
 
   implicit val enterprisesDisplayRow: CreateDisplayRows[AssociatedEnterprise] = new CreateDisplayRows[AssociatedEnterprise] {
-    override def createDisplayRows(id: Int, enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[Row] = {
+    override def createDisplayRows(id: Int, enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[DisplayRow] = {
       (enterprises.individual, enterprises.organisation) match {
         case (Some(individual), _) =>
           selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id, enterprises) ++
@@ -118,49 +109,52 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
   }
 
   implicit val intermediariesDisplayRow: CreateDisplayRows[Intermediary] = new CreateDisplayRows[Intermediary] {
-    override def createDisplayRows(id: Int, dac6Data: Intermediary)(implicit messages: Messages): Seq[Row] = {
-      val header = (dac6Data.individual, dac6Data.organisation) match {
+    override def createDisplayRows(id: Int, inter: Intermediary)(implicit messages: Messages): Seq[DisplayRow] = {
+      val header = (inter.individual, inter.organisation) match {
         case (Some(ind), None) =>
-          Seq(intermediariesType(id, dac6Data)) ++
+          Seq(intermediariesType(id, inter)) ++
             individualRowsFromModel(id, ind)
         case (None, Some(org)) =>
-          Seq(intermediariesType(id, dac6Data)) ++
+          Seq(intermediariesType(id, inter)) ++
             organisationRowsFromModel(id, org)
       }
 
       header ++
-      Seq(whatTypeofIntermediary(id, dac6Data),
-      isExemptionKnown(id, dac6Data)) ++
-      isExemptionCountryKnown(id, dac6Data) ++
-      exemptCountries(id, dac6Data).toSeq
+      Seq(whatTypeofIntermediary(id, inter),
+      isExemptionKnown(id, inter)) ++
+      isExemptionCountryKnown(id, inter) ++
+      exemptCountries(id, inter).toSeq
     }
   }
 
   implicit val affectedDisplayRow: CreateDisplayRows[Affected] = new CreateDisplayRows[Affected] {
-    override def createDisplayRows(id: Int, dac6Data: Affected)(implicit messages: Messages): Seq[Row] = {
-     (dac6Data.individual, dac6Data.organisation) match {
+    override def createDisplayRows(id: Int, affected: Affected)(implicit messages: Messages): Seq[DisplayRow] = {
+     (affected.individual, affected.organisation) match {
         case (Some(ind), None) =>
-          Seq(affectedType(id, dac6Data)) ++
+          Seq(affectedType(id, affected)) ++
             individualRowsFromModel(id, ind)
         case (None, Some(org)) =>
-          Seq(affectedType(id, dac6Data)) ++
+          Seq(affectedType(id, affected)) ++
             organisationRowsFromModel(id, org)
       }
     }
   }
 
-  def individualRowsFromModel(id: Int, individual: Individual)(implicit messages: Messages): Seq[Row] =
+  def individualRowsFromModel(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     Seq(individualName(id, individual) ) ++
       buildIndividualDateOfBirthGroup(id, individual) ++
       buildIndividualPlaceOfBirthGroup(id, individual) ++
       buildIndividualAddressGroup(id, individual) ++
       buildIndividualEmailAddressGroup(id, individual) ++
-      buildTaxResidencySummaryForIndividuals(id, individual)
+      buildTaxResidencySummaryForIndividuals(id, individual) ++
+      Seq(emptyRowForBorder())
 
-  def organisationRowsFromModel(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[Row] =
+  def organisationRowsFromModel(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
     Seq(organisationName(id, organisation)) ++
       buildOrganisationAddressGroup(id, organisation) ++
       buildOrganisationEmailAddressGroup(id, organisation) ++
-      buildTaxResidencySummaryForOrganisation(id, organisation)
+      buildTaxResidencySummaryForOrganisation(id, organisation) ++
+      Seq(emptyRowForBorder())
+
 
 }
