@@ -19,9 +19,10 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IndividualPlaceOfBirthFormProvider
-import models.{Mode, UserAnswers}
+import helpers.JourneyHelpers._
+import models.Mode
 import navigation.NavigatorForIndividual
-import pages.individual.{IndividualNamePage, IndividualPlaceOfBirthPage}
+import pages.individual.IndividualPlaceOfBirthPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -91,13 +92,5 @@ class IndividualPlaceOfBirthController @Inject()(
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(id, checkRoute, Some(value)))
       )
-  }
-
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
-    userAnswers.get(IndividualNamePage, id) match {
-      case Some(name) => s"was ${name.displayName}"
-      case None => "were they"
-    }
-
   }
 }

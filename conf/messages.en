@@ -361,7 +361,7 @@ individualDateOfBirth.error.nonNumericKey = Date of birth must only include numb
 
 isIndividualPlaceOfBirthKnown.title = Do you know their place of birth?
 isIndividualPlaceOfBirthKnown.heading = Do you know {0}’s place of birth?
-isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know where they were born?
+isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know their place of birth?
 isIndividualPlaceOfBirthKnown.error.required = Select yes if you know their place of birth
 
 individualPlaceOfBirth.title = What is their place of birth?
