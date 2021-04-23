@@ -27,6 +27,6 @@ class OrganisationNameFormProvider @Inject() extends Mappings with RegexConstant
     Form(
       "value" -> validatedText("organisationName.error.required",
         "organisationName.error.invalid",
-        "organisationName.error.length", orgNameRegex, 35)
+        "organisationName.error.length", orgNameRegex, 200)
     )
 }

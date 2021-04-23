@@ -17,16 +17,14 @@
 package controllers.affected
 
 import base.SpecBase
-import models.affected.{Affected, YouHaveNotAddedAnyAffected}
-import models.organisation.Organisation
-import models.taxpayer.TaxResidency
-import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.affected.YouHaveNotAddedAnyAffected
+import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.affected.{AffectedCheckYourAnswersPage, AffectedLoopPage, AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
+import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -138,7 +136,7 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         verifyList(userAnswers) { rows =>
           rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
           rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
-          rows.contains("""{"key":{"text":"Do you know where they were born?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their place of birth?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
           rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
           rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
           rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true

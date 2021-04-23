@@ -35,14 +35,14 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">{{ messages(pageHeading, name) }}</h1>
+          <h1 class="govuk-heading-xl text-overflow">{{ messages(pageHeading, name) }}</h1>
 
           {{ govukDateInput({
             fieldset: {
               legend: {
                 text: messages(pageHeading, name),
                 isPageHeading: false,
-                classes: "govuk-fieldset__legend--xl govuk-visually-hidden"
+                classes: "govuk-fieldset__legend--xl govuk-visually-hidden text-overflow"
               }
             },
             hint: {

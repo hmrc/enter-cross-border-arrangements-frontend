@@ -285,7 +285,7 @@ organisationName.title = What is the name of the organisation?
 organisationName.heading = What is the name of the organisation?
 organisationName.checkYourAnswersLabel = What is the name of the organisation?
 organisationName.error.required = Enter the name of the organisation
-organisationName.error.length = Organisation name must be 35 characters or less
+organisationName.error.length = Organisation name must be 200 characters or less
 organisationName.error.invalid = Organisation name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 
 organisationAddress.title = What is the organisation’s main address?
@@ -360,16 +360,17 @@ individualDateOfBirth.error.futureDate = Date of birth must be before {0}
 individualDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1903
 individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
 
-isIndividualPlaceOfBirthKnown.title = Do you know where they were born?
-isIndividualPlaceOfBirthKnown.heading = Do you know where {0} born?
-isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know where they were born?
-isIndividualPlaceOfBirthKnown.error.required = Select yes if you know where they were born
+isIndividualPlaceOfBirthKnown.title = Do you know their place of birth?
+isIndividualPlaceOfBirthKnown.heading = Do you know {0}’s place of birth?
+isIndividualPlaceOfBirthKnown.checkYourAnswersLabel = Do you know their place of birth?
+isIndividualPlaceOfBirthKnown.error.required = Select yes if you know their place of birth
 
-individualPlaceOfBirth.title = Where were they born?
-individualPlaceOfBirth.heading = Where {0} born?
+individualPlaceOfBirth.title = What is their place of birth?
+individualPlaceOfBirth.heading = What is {0}’s place of birth?
+individualPlaceOfBirth.hint = Provide the town or city and country
 individualPlaceOfBirth.checkYourAnswersLabel = Birthplace
-individualPlaceOfBirth.error.length = Birthplace must be 200 characters or less
-individualPlaceOfBirth.error.required = Enter their birthplace
+individualPlaceOfBirth.error.length = Place of birth must be 200 characters or less
+individualPlaceOfBirth.error.required = Enter their place of birth
 
 isIndividualAddressKnown.title = Do you know their address?
 isIndividualAddressKnown.heading = Do you know {0} address?
@@ -387,7 +388,7 @@ emailAddressForOrganisation.heading = What is {0}’s email address?
 emailAddressForOrganisation.checkYourAnswersLabel = Email address
 emailAddressForOrganisation.error.required = Enter an email address
 emailAddressForOrganisation.error.invalid = Enter an email address in the correct format, like name@example.com
-emailAddressForOrganisation.error.length = Email address must be 254 characters or less
+emailAddressForOrganisation.error.length = Email address must be 400 characters or less
 
 whichCountryTaxForOrganisation.title = Which country is the organisation resident in for tax purposes?
 whichCountryTaxForOrganisation.heading = Which country is {0} resident in for tax purposes?
@@ -1063,7 +1064,7 @@ reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you want to pr
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
 reporterEmailAddress.error.required = Enter an email address
-reporterEmailAddress.error.length = Email address must be 254 characters or less
+reporterEmailAddress.error.length = Email address must be 400 characters or less
 reporterEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 reporterOrganisationEmailAddress.title = What email address would you like to provide?
 reporterOrganisationEmailAddress.heading = What email address would you like to provide?

@@ -113,7 +113,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   }
 
   def assertBirthPlaceKnown(yesOrNo: Boolean)(row: Row): Unit = {
-    row.key.text mustBe Some(Literal("Do you know where they were born?"))
+    row.key.text mustBe Some(Literal("Do you know their place of birth?"))
     row.value.text mustBe Some(Literal(if (yesOrNo) "Yes" else "No"))
     assertAction(href = "/disclose-cross-border-arrangements/manual/individual/change-do-you-know-birthplace/0")(row.actions.head)
   }

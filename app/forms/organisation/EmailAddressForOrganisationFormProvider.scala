@@ -23,7 +23,7 @@ import utils.RegexConstants
 
 class EmailAddressForOrganisationFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 254
+  private val maxLength = 400
 
   def apply(): Form[String] =
   Form(
