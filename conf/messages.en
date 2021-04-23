@@ -145,6 +145,8 @@ compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service was tested by HMRC and included disabled users.
 compliant.nine.p3=This page was prepared on [date when it was first published]. It was last updated on [date when it was last updated].
 
+findLostUTR.link=find a lost UTR number
+
 disclosureDetails.title = Your DAC6 disclosure
 disclosureDetails.heading = Your DAC6 disclosure {0}
 disclosureDetails.heading.forArrangement = for arrangement {0}
@@ -1093,7 +1095,7 @@ reporterOrganisationTaxResidentCountry.also = also
 
 reporterOrganisationTinUKQuestion.title = Do you know any of their tax identification numbers for the UK?
 reporterOrganisationTinUKQuestion.heading = Do you know any of {0}’s tax identification numbers for the United Kingdom?
-reporterOrganisationTinUKQuestion.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number.
+reporterOrganisationTinUKQuestion.hint = This is any number issued by HMRC, like a Unique Taxpayer Reference (UTR) or VAT number. {0}
 reporterIndividualTinUKQuestion.title = Do you have any tax identification numbers for the UK?
 reporterIndividualTinUKQuestion.heading = Do you have any tax identification numbers for the United Kingdom?
 reporterIndividualTinUKQuestion.hint = This is any number issued by HMRC, like a National Insurance number or Unique Taxpayer Reference.
