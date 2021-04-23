@@ -16,26 +16,51 @@
 
 package utils
 
-import models.disclosure.DisclosureDetails
-import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.Row
-import model.rows.{AffectedModelRows, ArrangementModelRows, DisclosureModelRows, EnterpriseModelRows, IndividualModelRows, IntermediariesModelRows, OrganisationModelRows, TaxpayerModelRows}
 import models.affected.Affected
 import models.arrangement.ArrangementDetails
+import models.disclosure.DisclosureDetails
 import models.enterprises.AssociatedEnterprise
 import models.individual.Individual
 import models.intermediaries.Intermediary
 import models.organisation.Organisation
 import models.taxpayer.Taxpayer
+import play.api.i18n.Messages
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{OWrites, __}
+import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
+import utils.model.rows._
+import utils.rows.SummaryListDisplay.DisplayRow
 
 import scala.collection.immutable
 
-abstract class CreateDisplayRows[A] {
+trait CreateDisplayRows[A] {
   def createDisplayRows(id: Int, dac6Data: A)(implicit messages: Messages): Seq[Row]
+
+  def rowToDisplayRow(id: Int, dac6Data: A)(implicit messages: Messages): Seq[DisplayRow] =
+    createDisplayRows(id, dac6Data).map(row => DisplayRow(row.key, row.value))
 }
 
 object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
   with TaxpayerModelRows with EnterpriseModelRows with IntermediariesModelRows with AffectedModelRows {
+
+//  implicit def writes(implicit messages: Messages): OWrites[Row] = (
+//    (__ \ "key").write[Key] and
+//      (__ \ "value").write[Value]
+//    ){ row =>
+//    (row.key, row.value)
+//  }
+
+  def apply[A](implicit instance: CreateDisplayRows[A]): CreateDisplayRows[A] = instance
+
+  def createDisplayRows[A: CreateDisplayRows](id: Int, dac6Data: A)(implicit messages: Messages): Seq[Row] =
+    CreateDisplayRows[A].createDisplayRows(id: Int, dac6Data: A)
+
+  implicit class CreateDisplayRowOps[A: CreateDisplayRows](a: A) {
+
+    def createDisplayRows(id: Int)(implicit messages: Messages): Seq[Row] = CreateDisplayRows[A].createDisplayRows(id: Int, a: A)
+
+    def rowToDisplayRow(id: Int)(implicit messages: Messages): Seq[DisplayRow] = CreateDisplayRows[A].rowToDisplayRow(id, a)
+  }
 
   implicit val disclosureCreateDisplayRows: CreateDisplayRows[DisclosureDetails] = new CreateDisplayRows[DisclosureDetails] {
     override def createDisplayRows(id: Int, dac6Data: DisclosureDetails)(implicit messages: Messages): immutable.Seq[Row] = List(disclosureNamePage(dac6Data),

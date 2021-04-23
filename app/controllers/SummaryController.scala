@@ -29,6 +29,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.{CheckYourAnswersHelper, SummaryListGenerator}
 import utils.CreateDisplayRows._
+import utils.rows.SummaryListDisplay
+import utils.rows.SummaryListDisplay.DisplayRow
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -49,9 +51,7 @@ class SummaryController @Inject()(
 
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      val disclosureList = summaryListGenerator.generateSummaryList(id, submission.disclosureDetails)
-
-      val arrangementList = getArrangementSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
+      val arrangementList: Seq[DisplayRow] = submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.rowToDisplayRow(id))
 
       val hallmarksList = getHallmarkSummaryList(id, helper).map(summaryListGenerator.rowToDisplayRow)
 
@@ -59,7 +59,7 @@ class SummaryController @Inject()(
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id).map(summaryListGenerator.rowToDisplayRow)
       val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(summaryListGenerator.rowToDisplayRow)
 
-      val taxpayersList = submission.taxpayers.map(txp => summaryListGenerator.generateSummaryList(id,txp).map(summaryListGenerator.rowToDisplayRow))
+      val taxpayersList = submission.taxpayers.map(_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
 
       val taxpayerUpdateRow = Seq(helper.updateTaxpayers(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
@@ -76,22 +76,19 @@ class SummaryController @Inject()(
         enterprisesWithDisplayTaxnames.map(entp =>
           summaryListGenerator.generateSummaryList(id, entp))
 
-
       val enterprisesUpdateRow = Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
-      val intermediaryList = submission.intermediaries map (inter => summaryListGenerator.generateSummaryList(id, inter)
-        .map(summaryListGenerator.rowToDisplayRow))
+      val intermediaryList = submission.intermediaries map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
 
       val intermediaryUpdateRow = Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
-      val affectedList =  submission.affectedPersons map (aff => summaryListGenerator.generateSummaryList(id, aff)
-        .map(summaryListGenerator.rowToDisplayRow))
+      val affectedList =  submission.affectedPersons map (_.createDisplayRows(id).map(summaryListGenerator.rowToDisplayRow))
 
       val affectedUpdateRow = Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(summaryListGenerator.rowToDisplayRow)
 
       renderer.render("summary.njk",
         Json.obj(
-          "disclosureList" -> disclosureList,
+          "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
                  "arrangementList" -> arrangementList,
                  "reporterDetails" -> reporterDetails,
                  "residentCountryDetails" -> residentCountryDetails,
@@ -116,16 +113,6 @@ class SummaryController @Inject()(
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
     Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
       .flatten
-
-  def getArrangementSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    Seq(helper.whatIsThisArrangementCalledPage(id) //ToDo make unlimited string
-      , helper.whatIsTheImplementationDatePage(id)
-      , helper.buildWhyAreYouReportingThisArrangementNow(id)
-      , helper.whichExpectedInvolvedCountriesArrangement(id)
-      , helper.whatIsTheExpectedValueOfThisArrangement(id)
-      , helper.whichNationalProvisionsIsThisArrangementBasedOn(id) //ToDo make unlimited string
-      , helper.giveDetailsOfThisArrangement(id) //ToDo make unlimited string
-    ).flatten
 
   def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
     ua.get(ReporterOrganisationOrIndividualPage, id) match {
