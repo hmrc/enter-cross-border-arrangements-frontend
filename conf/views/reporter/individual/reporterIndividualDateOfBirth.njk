@@ -32,16 +32,22 @@
 
           {{ csrf() | safe }}
 
+          <fieldset class="govuk-fieldset">
+
+          <legend>
+              <h1 id="heading" class="govuk-heading-xl">
+                  {{ messages("reporterIndividualDateOfBirth.heading") }}
+              </h1>
+          </legend>
+
+          <p class="govuk-body">{{ messages('reporterIndividualDateOfBirth.info') }} </p>
+
           {{ govukDateInput({
-            fieldset: {
-              legend: {
-                text: messages('reporterIndividualDateOfBirth.heading'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
-              }
-            },
             hint: {
               text: messages('reporterIndividualDateOfBirth.hint')
+            },
+            attributes: {
+                "aria-labelledby": "heading"
             },
             errorMessage: date.error,
             items: date.items
@@ -54,6 +60,7 @@
             }
           }) }}
 
+        </fieldset>
         </form>
 
       </div>

@@ -148,8 +148,8 @@ object JourneyHelpers {
       s"${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
   }
 
-  def lostUtrLink(href: String)(implicit messages: Messages): Html = {
-    Html(s"<span> You can <a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
+  def hintWithLostUtrLink(hintText: String, href: String)(implicit messages: Messages): Html = {
+    Html(s"${{messages(hintText)}}<span> You can <a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
       s"${{ messages("findLostUTR.link")}}</a>.</span>")
   }
 

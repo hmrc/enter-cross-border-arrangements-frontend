@@ -115,16 +115,14 @@ class ReporterTinUKQuestionController @Inject()(
       case Some(Individual) => //Display Individual Content
         Json.obj("pageTitle" -> "reporterIndividualTinUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinUKQuestion.heading",
-          "hintText" -> s"reporterIndividualTinUKQuestion.hint",
-          "hintLink" -> lostUtrLink(appConfig.lostUTRUrl))
+          "hintText" -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint", appConfig.lostUTRUrl))
 
       case _ => //Display Organisation Content
         Json.obj(
           "pageTitle" -> "reporterOrganisationTinUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinUKQuestion.heading",
           "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "hintText" -> s"reporterOrganisationTinUKQuestion.hint ${lostUtrLink(appConfig.lostUTRUrl)}",
-          "hintLink" -> lostUtrLink(appConfig.lostUTRUrl))
+          "hintText" -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint", appConfig.lostUTRUrl))
     }
   }
 
