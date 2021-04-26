@@ -148,11 +148,6 @@ object JourneyHelpers {
       s"${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
   }
 
-  def hintWithLostUtrLink(hintText: String, href: String)(implicit messages: Messages): Html = {
-    Html(s"${{messages(hintText)}}<span> You can <a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
-      s"${{ messages("findLostUTR.link")}}</a>.</span>")
-  }
-
   def dynamicGuidance(index: Int, key: String): String =
     if (index >= 1) s"$key.moreThanOne.hint" else s"$key.hint"
 

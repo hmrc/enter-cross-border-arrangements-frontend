@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport, Radios}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -115,15 +115,20 @@ class ReporterTinUKQuestionController @Inject()(
       case Some(Individual) => //Display Individual Content
         Json.obj("pageTitle" -> "reporterIndividualTinUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinUKQuestion.heading",
-          "hintText" -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint", appConfig.lostUTRUrl))
+          "hintText" -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint"))
 
       case _ => //Display Organisation Content
         Json.obj(
           "pageTitle" -> "reporterOrganisationTinUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinUKQuestion.heading",
           "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "hintText" -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint", appConfig.lostUTRUrl))
+          "hintText" -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint"))
     }
+  }
+
+  private def hintWithLostUtrLink(hintText: String)(implicit messages: Messages): Html = {
+    Html(s"${{messages(hintText)}}<span> You can <a class='govuk-link' id='feedback-link' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
+      s"${{ messages("findLostUTR.link")}}</a>.</span>")
   }
 
   private def getReporterTaxResidentLoopDetails(value: Boolean, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
