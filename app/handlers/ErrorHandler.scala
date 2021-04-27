@@ -51,6 +51,8 @@ class ErrorHandler @Inject()(
         renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND   =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
+      case REQUEST_ENTITY_TOO_LARGE   =>
+        renderer.render("entityTooLarge.njk", Json.obj()).map(EntityTooLarge(_))
       case _           =>
         renderer.render("error.njk", Json.obj()).map {
           content =>
