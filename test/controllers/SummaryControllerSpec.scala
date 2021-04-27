@@ -17,30 +17,46 @@
 package controllers
 
 import base.SpecBase
+import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
+import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
+import models.disclosure.{DisclosureDetails, DisclosureType}
+import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.Taxpayer
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
-import models.{AddressLookup, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
+import models.subscription.ContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.affected.AffectedStatusPage
+import pages.arrangement.ArrangementStatusPage
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.enterprises.AssociatedEnterpriseStatusPage
+import pages.hallmarks.HallmarkStatusPage
+import pages.intermediaries.IntermediariesStatusPage
+import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterStatusPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.taxpayer.RelevantTaxpayerStatusPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.XMLGenerationService
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends SpecBase with MockitoSugar {
+class SummaryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),
@@ -55,14 +71,29 @@ class SummaryControllerSpec extends SpecBase with MockitoSugar {
   val tins: TaxReferenceNumbers = TaxReferenceNumbers("TIN123123", Some("TIN123123"), Some("TIN123123"))
   val loopDetailsNonUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(france), Some(true), Some(tins),Some(false), None))
 
+  private val mockHistoryConnector = mock[HistoryConnector]
+
+  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
   "Summary Controller" - {
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val firstDisclosureSubmissionDetails = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
+        Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
+
+      val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetails))
+
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        arrangementID = Some("arrangementID"),
+        disclosureID = Some("disclosureID"),
+        disclosureType = DisclosureType.Dac6add
+      )
 
       val userAnswers =   userAnswersForOrganisation
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success.value
         .set(ReporterOrganisationOrIndividualPage, 0, Individual)
         .success.value
         .set(ReporterIndividualNamePage, 0, Name("firstname","surname"))
@@ -89,8 +120,34 @@ class SummaryControllerSpec extends SpecBase with MockitoSugar {
         .success.value
         .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.of(2020, 1, 1))
         .success.value
+        .set(ReporterStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(RelevantTaxpayerStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(IntermediariesStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(DisclosureStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(AffectedStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(AssociatedEnterpriseStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(HallmarkStatusPage, 0, JourneyStatus.Completed)
+        .success.value
+        .set(ArrangementStatusPage, 0, JourneyStatus.Completed)
+        .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[HistoryConnector].toInstance(mockHistoryConnector)
+        ).build()
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
 
       val getRequest = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -100,6 +157,7 @@ class SummaryControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
       //ToDo test output from page
       templateCaptor.getValue mustEqual "summary.njk"
