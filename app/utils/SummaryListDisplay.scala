@@ -41,8 +41,6 @@ object SummaryListDisplay {
       row.value, classes = Seq.empty[String]
     )
 
-    def rowToDisplayRowNoBorder(row: Row): DisplayRow = DisplayRow(row.key, row.value, classes = Seq("govuk-summary-list--no-border"))
-
     def removeClassFromDisplayRow(row: DisplayRow): DisplayRow = DisplayRow(row.key,row.value)
 
     def removeClassesFromLastElementInSeq(rows: Seq[DisplayRow]): Seq[DisplayRow] = if(rows.nonEmpty) {

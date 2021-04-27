@@ -32,7 +32,6 @@ import scala.collection.immutable
 
 trait CreateDisplayRows[A] {
   def createDisplayRows(id: Int, dac6Data: A)(implicit messages: Messages): Seq[DisplayRow]
-
 }
 
 object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
