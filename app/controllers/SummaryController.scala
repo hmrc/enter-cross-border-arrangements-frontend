@@ -57,37 +57,39 @@ class SummaryController @Inject()(
       isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable => {
 
         if (userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable)) {
-          val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
+            val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
-          val submission = Submission(request.userAnswers, id, request.enrolmentID)
+            val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-          val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
-            ent.copy(associatedTaxpayers =
-              ent.associatedTaxpayers.map(
-                txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
-              ))
-          }
+            val enterprisesWithDisplayTaxnames = submission.associatedEnterprises map { ent =>
+              ent.copy(associatedTaxpayers =
+                ent.associatedTaxpayers.map(
+                  txname => getTaxpayerNameFromID(txname, submission.taxpayers).getOrElse(txname)
+                ))
+            }
 
-          renderer.render("summary.njk",
-            Json.obj(
-              "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
-              "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.createDisplayRows(id)),
-              "reporterDetails" -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "roleDetails" -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "hallmarksList" -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "taxpayersList" -> submission.taxpayers.map(_.createDisplayRows(id)),
-              "taxpayerUpdateRow" -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-              "enterprisesList" -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows(id)),
-              "enterprisesUpdateRow" -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-              "intermediaryList" -> submission.intermediaries.map(_.createDisplayRows(id)),
-              "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-              "affectedList" -> submission.affectedPersons.map(_.createDisplayRows(id)),
-              "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-              "backtoDisclosuresLink" -> backtoDisclosuresLink
-            )
-          ).map(Ok(_))
-        } else Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+            renderer.render("summary.njk",
+              Json.obj(
+                "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
+                "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.createDisplayRows(id)),
+                "reporterDetails" -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+                "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
+                "roleDetails" -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+                "hallmarksList" -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+                "taxpayersList" -> submission.taxpayers.map(_.createDisplayRows(id)),
+                "taxpayerUpdateRow" -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+                "enterprisesList" -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows(id)),
+                "enterprisesUpdateRow" -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+                "intermediaryList" -> submission.intermediaries.map(_.createDisplayRows(id)),
+                "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+                "affectedList" -> submission.affectedPersons.map(_.createDisplayRows(id)),
+                "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
+                "backtoDisclosuresLink" -> backtoDisclosuresLink
+              )
+            ).map(Ok(_))
+        } else {
+          Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+        }
       }
     }
   }
