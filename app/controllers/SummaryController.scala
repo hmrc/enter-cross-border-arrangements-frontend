@@ -36,7 +36,7 @@ import utils.SummaryListDisplay.DisplayRow
 import utils.{CheckYourAnswersHelper, SummaryListDisplay}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class SummaryController @Inject()(
     override val messagesApi: MessagesApi,
@@ -88,7 +88,7 @@ class SummaryController @Inject()(
               )
             ).map(Ok(_))
         } else {
-          Future.successful(Redirect(routes.SessionExpiredController.onPageLoad()))
+          throw new RuntimeException("Submission not ready")
         }
       }
     }
