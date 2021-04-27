@@ -33,6 +33,15 @@ global.error.InternalServerError500.message = Try again later.
 
 global.error.badRequest400.info = If you entered any information, your answers will be saved.
 
+undefined.title = Sorry, there is a problem with this service
+undefined.heading = Sorry, there is a problem with this service
+undefined.info = If you entered any information, your answers will be saved.
+
+global.error.entityTooLarge413.heading = Sorry, there is a problem with this service
+global.error.entityTooLarge413.message = If you entered any information, your answers will be saved.
+global.error.entityTooLarge413.info = Try again later.
+global.error.entityTooLarge413.title = Sorry, there is a problem with this service
+
 global.error.validation.section.taxpayerorreporter = Relevant taxpayers or reporter’s details
 
 footer.links.support_links = Help contacts
