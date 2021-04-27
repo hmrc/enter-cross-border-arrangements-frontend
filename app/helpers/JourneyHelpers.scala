@@ -16,10 +16,12 @@
 
 package helpers
 
+import models.ReporterOrganisationOrIndividual.Individual
 import models.{CheckMode, Country, Currency, LoopDetails, Mode, UserAnswers}
 import pages.QuestionPage
 import pages.individual.{IndividualLoopPage, IndividualNamePage}
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
+import pages.reporter.ReporterOrganisationOrIndividualPage
 import pages.reporter.organisation.ReporterOrganisationNamePage
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json, Reads}
@@ -154,4 +156,10 @@ object JourneyHelpers {
   def dynamicAlso(index: Int): String =
     if (index >= 1) "also" else ""
 
+  def getReporterTypeKey(userAnswers: UserAnswers, id: Int): String = {
+    userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
+      case Some(Individual) => "reporterIndividual"
+      case _ => "reporterOrganisation"
+    }
+  }
 }

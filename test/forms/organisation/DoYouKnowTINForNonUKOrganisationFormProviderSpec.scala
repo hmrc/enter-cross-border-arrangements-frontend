@@ -33,7 +33,7 @@ class DoYouKnowTINForNonUKOrganisationFormProviderSpec extends BooleanFieldBehav
   val messages: Messages = defaultMessagesApi.preferred(request)
 
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
-  val form: Form[Boolean] = formProvider("United Kingdom")(messages)
+  val form: Form[Boolean] = formProvider()(messages)
 
   ".confirm" - {
 

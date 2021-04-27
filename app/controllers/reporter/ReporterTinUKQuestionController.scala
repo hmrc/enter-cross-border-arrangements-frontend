@@ -52,10 +52,10 @@ class ReporterTinUKQuestionController @Inject()(
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterTinUKQuestionPage)(checkRoute)(id)(value)(index)
 
-  private val form = formProvider()
-
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
@@ -82,6 +82,8 @@ class ReporterTinUKQuestionController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       form.bindFromRequest().fold(
         formWithErrors => {

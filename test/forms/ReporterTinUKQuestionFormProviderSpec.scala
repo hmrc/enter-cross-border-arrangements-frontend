@@ -25,7 +25,8 @@ class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = "reporterTinUKQuestion.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new ReporterTinUKQuestionFormProvider()()
+  val formProvider = new ReporterTinUKQuestionFormProvider()
+  val form = formProvider("reporterIndividual")
 
   ".value" - {
 

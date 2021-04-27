@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.reporter.ReporterTinNonUKQuestionFormProvider
 import helpers.JourneyHelpers._
-import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForReporter
@@ -33,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterTinNonUKQuestionController @Inject()(
@@ -57,8 +57,7 @@ class ReporterTinNonUKQuestionController @Inject()(
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index).fold("the country")(_.description)
-      val form = formProvider(country)
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
@@ -78,8 +77,7 @@ class ReporterTinNonUKQuestionController @Inject()(
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
         "index" -> index,
-        "country" -> country
-      ) ++ contentProvider(request.userAnswers, id)
+      ) ++ contentProvider(request.userAnswers, id, index)
 
       renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(Ok(_))
   }
@@ -87,8 +85,7 @@ class ReporterTinNonUKQuestionController @Inject()(
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index).fold("the country")(_.description)
-      val form = formProvider(country)
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -99,8 +96,7 @@ class ReporterTinNonUKQuestionController @Inject()(
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("value")),
             "index" -> index,
-            "country" -> country
-          ) ++ contentProvider(request.userAnswers, id)
+          ) ++ contentProvider(request.userAnswers, id, index)
 
           renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(BadRequest(_))
         },
@@ -117,20 +113,24 @@ class ReporterTinNonUKQuestionController @Inject()(
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers, id: Int): JsObject =
+  private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int): JsObject = {
+    val country = getCountry(userAnswers, id, ReporterTaxResidencyLoopPage, index).fold("the country")(_.description)
+
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
-        Json.obj("pageTitle" -> "reporterIndividualTinNonUKQuestion.title",
+        Json.obj("country" -> country,
+          "pageTitle" -> "reporterIndividualTinNonUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinNonUKQuestion.heading",
           "hintText" -> "reporterIndividualTinNonUKQuestion.hint")
 
       case _ => //Display Organisation Content
-        Json.obj(
+        Json.obj("country" -> country,
           "pageTitle" -> "reporterOrganisationTinNonUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinNonUKQuestion.heading",
           "name" -> getReporterDetailsOrganisationName(userAnswers, id),
           "hintText" -> "reporterOrganisationTinNonUKQuestion.hint")
     }
+  }
 
   private def getReporterTaxResidentLoopDetails(value: Boolean, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
     userAnswers.get(ReporterTaxResidencyLoopPage, id) match {

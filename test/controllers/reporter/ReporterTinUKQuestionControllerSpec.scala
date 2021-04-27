@@ -43,7 +43,7 @@ class ReporterTinUKQuestionControllerSpec extends SpecBase with MockitoSugar wit
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/uk-tax-numbers-0/0")
 
   val formProvider = new ReporterTinUKQuestionFormProvider()
-  val form = formProvider()
+  val form = formProvider("reporterIndividual")
   val index = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 

@@ -22,8 +22,8 @@ import play.api.data.Form
 
 class ReporterTinUKQuestionFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(typeOfReporter: String): Form[Boolean] =
     Form(
-      "value" -> boolean("reporterTinUKQuestion.error.required")
+      "value" -> boolean(s"${typeOfReporter}TinUKQuestion.error.required")
     )
 }

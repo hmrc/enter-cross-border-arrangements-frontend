@@ -21,10 +21,10 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class ReporterTinNonUKQuestionFormProvider @Inject() extends Mappings {
+class  ReporterTinNonUKQuestionFormProvider @Inject() extends Mappings {
 
-  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
+  def apply(typeOfReporter: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean(messages("reporterTinNonUKQuestion.error.required", country))
+      "value" -> boolean(messages(s"${typeOfReporter}TinNonUKQuestion.error.required"))
     )
 }

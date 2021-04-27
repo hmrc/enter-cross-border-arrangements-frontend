@@ -43,7 +43,7 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/tax-resident-countries-1/0")
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
-  val form = formProvider()
+  val form = formProvider("reporterIndividual")
   val index = 0
 
   val taxNumber: String = "123ABC"

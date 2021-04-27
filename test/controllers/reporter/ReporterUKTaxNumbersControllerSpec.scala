@@ -45,7 +45,7 @@ class ReporterUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar with
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val formProvider = new ReporterUKTaxNumbersFormProvider()
-  val form = formProvider()
+  val form = formProvider("reporterIndividual")
   val index = 0
 
   val utr: String = "1234567890"

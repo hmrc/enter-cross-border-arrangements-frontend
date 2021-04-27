@@ -26,11 +26,11 @@ class ReporterUKTaxNumbersFormProvider @Inject() extends Mappings {
 
   val maxLength: Int = 200
 
-  def apply(): Form[TaxReferenceNumbers] =
+  def apply(reporterType: String): Form[TaxReferenceNumbers] =
     Form(
       mapping(
         "firstTaxNumber" -> validatedTextMaxLength(
-          "reporterUKTaxNumbers.error.required",
+          s"${reporterType}UKTaxNumbers.error.required",
           "reporterUKTaxNumbers.error.length.label1",
           maxLength),
         "secondTaxNumber" -> validatedOptionalTextMaxLength(

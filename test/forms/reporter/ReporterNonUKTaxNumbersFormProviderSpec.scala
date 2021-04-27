@@ -27,7 +27,8 @@ class ReporterNonUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
   val lengthKeyLabel3 = "reporterNonUKTaxNumbers.error.length.label3"
   val maxLength = 200
 
-  val form = new ReporterNonUKTaxNumbersFormProvider()()
+  val formProvider = new ReporterNonUKTaxNumbersFormProvider()
+  val form = formProvider("reporterIndividual")
 
   ".firstTaxNumber" - {
 
