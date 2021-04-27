@@ -25,11 +25,8 @@ import models.intermediaries.Intermediary
 import models.organisation.Organisation
 import models.taxpayer.Taxpayer
 import play.api.i18n.Messages
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{OWrites, __}
-import uk.gov.hmrc.viewmodels.SummaryList.{Key, Row, Value}
+import utils.SummaryListDisplay.{DisplayRow, removeClassesFromLastElementInSeq}
 import utils.model.rows._
-import SummaryListDisplay.{DisplayRow, emptyRowForBorder}
 
 import scala.collection.immutable
 
@@ -146,15 +143,13 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
       buildIndividualPlaceOfBirthGroup(id, individual) ++
       buildIndividualAddressGroup(id, individual) ++
       buildIndividualEmailAddressGroup(id, individual) ++
-      buildTaxResidencySummaryForIndividuals(id, individual) ++
-      Seq(emptyRowForBorder())
+      removeClassesFromLastElementInSeq(buildTaxResidencySummaryForIndividuals(id, individual))
 
   def organisationRowsFromModel(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
     Seq(organisationName(id, organisation)) ++
       buildOrganisationAddressGroup(id, organisation) ++
       buildOrganisationEmailAddressGroup(id, organisation) ++
-      buildTaxResidencySummaryForOrganisation(id, organisation) ++
-      Seq(emptyRowForBorder())
+      removeClassesFromLastElementInSeq(buildTaxResidencySummaryForOrganisation(id, organisation))
 
 
 }

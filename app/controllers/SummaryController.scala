@@ -16,7 +16,9 @@
 
 package controllers
 
+import connectors.HistoryConnector
 import controllers.actions._
+import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
 import models.taxpayer.Taxpayer
@@ -26,15 +28,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
-import utils.{CheckYourAnswersHelper, SummaryListDisplay}
 import utils.CreateDisplayRows._
-import SummaryListDisplay.DisplayRow
-import connectors.HistoryConnector
-import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
-import play.api.mvc.Results.Redirect
-import repositories.SessionRepository
+import utils.SummaryListDisplay.DisplayRow
+import utils.{CheckYourAnswersHelper, SummaryListDisplay}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,18 +72,18 @@ class SummaryController @Inject()(
             Json.obj(
               "disclosureList" -> submission.disclosureDetails.createDisplayRows(id),
               "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(a => a.createDisplayRows(id)),
-              "reporterDetails" -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow),
-              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow),
-              "roleDetails" -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow),
-              "hallmarksList" -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow),
+              "reporterDetails" -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "roleDetails" -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "hallmarksList" -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
               "taxpayersList" -> submission.taxpayers.map(_.createDisplayRows(id)),
-              "taxpayerUpdateRow" -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "taxpayerUpdateRow" -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
               "enterprisesList" -> enterprisesWithDisplayTaxnames.map(_.createDisplayRows(id)),
-              "enterprisesUpdateRow" -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "enterprisesUpdateRow" -> Seq(helper.youHaveNotAddedAnyAssociatedEnterprises(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
               "intermediaryList" -> submission.intermediaries.map(_.createDisplayRows(id)),
-              "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
               "affectedList" -> submission.affectedPersons.map(_.createDisplayRows(id)),
-              "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow),
+              "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
               "backtoDisclosuresLink" -> backtoDisclosuresLink
             )
           ).map(Ok(_))
