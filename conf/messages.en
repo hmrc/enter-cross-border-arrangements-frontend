@@ -434,7 +434,7 @@ doYouKnowTINForNonUKOrganisation.error.required = Select yes if you know the org
 
 whatAreTheTaxNumbersForNonUKOrganisation.title = What are the organisation’s tax identification numbers?
 whatAreTheTaxNumbersForNonUKOrganisation.heading = What are {0}’s tax identification numbers for {1}?
-whatAreTheTaxNumbersForNonUKOrganisation.hint = Provide up to 3.
+whatAreTheTaxNumbersForNonUKOrganisation.hint = Enter up to three tax identification numbers.
 whatAreTheTaxNumbersForNonUKOrganisation.label1 = Tax identification number 1
 whatAreTheTaxNumbersForNonUKOrganisation.label2 = Tax identification number 2 (optional)
 whatAreTheTaxNumbersForNonUKOrganisation.label3 = Tax identification number 3 (optional)
@@ -446,7 +446,7 @@ whatAreTheTaxNumbersForNonUKOrganisation.label3.error.length = Tax identificatio
 
 whatAreTheTaxNumbersForNonUKIndividual.title = What are the individuals’s tax identification numbers?
 whatAreTheTaxNumbersForNonUKIndividual.heading = What are {0}’s tax identification numbers for {1}?
-whatAreTheTaxNumbersForNonUKIndividual.hint = Provide up to 3.
+whatAreTheTaxNumbersForNonUKIndividual.hint = Enter up to three tax identification numbers.
 whatAreTheTaxNumbersForNonUKIndividual.label1 = Tax identification number 1
 whatAreTheTaxNumbersForNonUKIndividual.label2 = Tax identification number 2 (optional)
 whatAreTheTaxNumbersForNonUKIndividual.label3 = Tax identification number 3 (optional)
