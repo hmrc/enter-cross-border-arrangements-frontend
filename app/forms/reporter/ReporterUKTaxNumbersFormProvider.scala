@@ -17,20 +17,22 @@
 package forms.reporter
 
 import forms.mappings.Mappings
+
 import javax.inject.Inject
 import models.TaxReferenceNumbers
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.i18n.Messages
 
 class ReporterUKTaxNumbersFormProvider @Inject() extends Mappings {
 
   val maxLength: Int = 200
 
-  def apply(reporterType: String): Form[TaxReferenceNumbers] =
+  def apply(reporterType: String)(implicit messages: Messages): Form[TaxReferenceNumbers] =
     Form(
       mapping(
         "firstTaxNumber" -> validatedTextMaxLength(
-          s"${reporterType}UKTaxNumbers.error.required",
+          messages(s"${reporterType}UKTaxNumbers.error.required"),
           "reporterUKTaxNumbers.error.length.label1",
           maxLength),
         "secondTaxNumber" -> validatedOptionalTextMaxLength(

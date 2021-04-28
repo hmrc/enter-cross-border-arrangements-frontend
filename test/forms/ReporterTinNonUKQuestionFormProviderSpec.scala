@@ -18,26 +18,16 @@ package forms
 
 import forms.behaviours.BooleanFieldBehaviours
 import forms.reporter.ReporterTinNonUKQuestionFormProvider
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.{Form, FormError}
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 
-class ReporterTinNonUKQuestionFormProviderSpec extends BooleanFieldBehaviours with GuiceOneAppPerSuite {
+class ReporterTinNonUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "Select yes if you know any tax identification numbers for France"
   val invalidKey = "error.boolean"
-
-  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  val defaultMessagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val messages: Messages = defaultMessagesApi.preferred(request)
-
   val formProvider = new ReporterTinNonUKQuestionFormProvider()
-  val form: Form[Boolean] = formProvider("France")(messages)
 
-  ".value" - {
+  ".value for reporter as individual" - {
 
+    val form: Form[Boolean] = formProvider("reporterIndividual")(messages)
     val fieldName = "value"
 
     behave like booleanField(
@@ -49,7 +39,26 @@ class ReporterTinNonUKQuestionFormProviderSpec extends BooleanFieldBehaviours wi
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, "Select yes if you know your tax identification numbers")
+    )
+  }
+
+
+  ".value for reporter as organisation" - {
+
+    val form: Form[Boolean] = formProvider("reporterOrganisation")(messages)
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, "Select yes if you know the organisation’s tax identification numbers")
     )
   }
 }

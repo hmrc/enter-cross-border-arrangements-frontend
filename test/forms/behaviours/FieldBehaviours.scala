@@ -19,10 +19,15 @@ package forms.behaviours
 import forms.FormSpec
 import generators.Generators
 import org.scalacheck.Gen
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
 
-trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators {
+trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators with GuiceOneAppPerSuite {
+
+  val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   def fieldThatBindsValidData(form: Form[_],
                               fieldName: String,

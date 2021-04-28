@@ -21,17 +21,16 @@ import play.api.data.FormError
 
 class ReporterNonUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "reporterNonUKTaxNumbers.error.required"
   val lengthKeyLabel1 = "reporterNonUKTaxNumbers.error.length.label1"
   val lengthKeyLabel2 = "reporterNonUKTaxNumbers.error.length.label2"
   val lengthKeyLabel3 = "reporterNonUKTaxNumbers.error.length.label3"
   val maxLength = 200
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
-  val form = formProvider("reporterIndividual")
 
-  ".firstTaxNumber" - {
+  ".firstTaxNumber for reporter as individual" - {
 
+    val form = formProvider("reporterIndividual")
     val fieldName = "firstTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -50,12 +49,38 @@ class ReporterNonUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, "reporterIndividualNonUKTaxNumbers.error.required")
+    )
+  }
+
+  ".firstTaxNumber for reporter as organisation" - {
+
+    val form = formProvider("reporterOrganisation")
+    val fieldName = "firstTaxNumber"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKeyLabel1)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, "reporterOrganisationNonUKTaxNumbers.error.required")
     )
   }
 
   ".secondTaxNumber" - {
 
+    val form = formProvider("reporterIndividual")
     val fieldName = "secondTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -74,6 +99,7 @@ class ReporterNonUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
   ".thirdTaxNumber" - {
 
+    val form = formProvider("reporterIndividual")
     val fieldName = "thirdTaxNumber"
 
     behave like fieldThatBindsValidData(
