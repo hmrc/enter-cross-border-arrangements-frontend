@@ -20,19 +20,21 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
+import helpers.DateHelper.formatSummaryTimeStamp
 import models.affected.YouHaveNotAddedAnyAffected
 import models.hallmarks.JourneyStatus
 import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForAffected
 import pages.affected.{AffectedLoopPage, AffectedStatusPage, YouHaveNotAddedAnyAffectedPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
+import java.time.{ZoneId, ZonedDateTime}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,6 +56,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -64,7 +67,8 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
         "id"           -> id,
         "mode"         -> mode,
         "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
-        "radios"       -> YouHaveNotAddedAnyAffected.radios(preparedForm)
+        "radios"       -> YouHaveNotAddedAnyAffected.radios(preparedForm),
+        "timeStamp" -> getTimeStamp
       )
 
       renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(Ok(_))
@@ -110,6 +114,16 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
           } yield Redirect(redirect(id, checkRoute, Some(value)))
         }
       )
+  }
+
+  def taskListItemLinkedProvider(url: String, status: String, linkContent: String, id: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
+    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' href='$url' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
+  }
+
+  private def getTimeStamp()(implicit messages : Messages) = {
+    Html(s"<p class='govuk-body'>${ messages("disclosureSummary.timestamp", formatSummaryTimeStamp(ZonedDateTime.now(ZoneId.of("Europe/London"))))}</p>")
+
   }
 
   private def setStatus(selectedAnswer: YouHaveNotAddedAnyAffected, ua: UserAnswers): JourneyStatus = {

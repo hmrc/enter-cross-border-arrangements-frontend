@@ -1204,3 +1204,5 @@ areYouSureYouWantToRemoveIntermediary.error.required = Select yes if you want to
 removeTaxpayer.title = Are you sure you want to remove a taxpayer?
 removeTaxpayer.heading = Are you sure you want to remove {0}?
 removeTaxpayer.error.required = Select yes if you want to remove this taxpayer
+
+disclosureSummary.timestamp = This is your draft disclosure as at {0}. It has not been sent.
