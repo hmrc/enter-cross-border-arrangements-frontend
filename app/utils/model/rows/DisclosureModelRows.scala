@@ -56,11 +56,11 @@ trait DisclosureModelRows extends DisplayRowBuilder {
      Seq(
       toDisplayRow(
         msgKey  = "replaceOrDeleteADisclosure.arrangementID",
-        content = lit"${disclosureDetails.arrangementID}"
+        content = lit"${disclosureDetails.arrangementID.getOrElse(throw new RuntimeException("Cannot retrieve Arrangement ID"))}"
       ),
       toDisplayRow(
         msgKey  = "replaceOrDeleteADisclosure.disclosureID",
-        content = lit"${disclosureDetails.disclosureID}"
+        content = lit"${disclosureDetails.disclosureID.getOrElse(throw new RuntimeException("Cannot retrieve Disclosure ID"))}"
       )
     )
 

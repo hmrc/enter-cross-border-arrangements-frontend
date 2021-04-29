@@ -79,14 +79,11 @@ trait IndividualModelRows extends DisplayRowBuilder {
       content = lit"$placeOfBirth"
     )
 
-  //ToDo addressLookup is not in the model look into this
   def buildIndividualAddressGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     individual.address
     match {
-      case Some(manualAddress) =>
-        Seq(isIndividualAddressKnown(true, id), individualAddress(manualAddress, id))
-      //        case (Some(true), _, Some(addressLookup)) =>
-      //          Seq(isIndividualAddressKnown(true, id), individualAddress(addressLookup, id))
+      case Some(address) =>
+        Seq(isIndividualAddressKnown(true, id), individualAddress(address, id))
       case _ =>
         Seq(isIndividualAddressKnown(false, id))
     }
@@ -174,7 +171,8 @@ trait IndividualModelRows extends DisplayRowBuilder {
 
     Seq(DisplayRow(
       key     = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}")
+      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}"),
+      classes = Seq("govuk-summary-list--no-border")
     ))
   }
 
