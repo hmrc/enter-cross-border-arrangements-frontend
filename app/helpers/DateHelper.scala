@@ -16,8 +16,9 @@
 
 package helpers
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object DateHelper {
 
@@ -28,5 +29,16 @@ object DateHelper {
   def today: LocalDate = LocalDate.now()
   def yesterday: LocalDate = LocalDate.now().minusDays(1)
   def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+  def dateOfWeek = today.getDayOfWeek
+
+  private val dateFormatterSummaryDate: DateTimeFormatter = DateTimeFormatter.ofPattern(s"h:mma 'on' d MMMM yyyy", Locale.UK)
+
+  def formatSummaryTimeStamp(dateTime: ZonedDateTime): String = {
+    val str = dateFormatterSummaryDate.format(dateTime)
+    val suffix = str.takeRight(2).toLowerCase
+    val prefix = str.take(str.length -2)
+    prefix + suffix
+  }
+
 
 }

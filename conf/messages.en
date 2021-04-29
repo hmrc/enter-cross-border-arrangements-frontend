@@ -1234,3 +1234,4 @@ summary.intermediaries.heading.many = Intermediary {0}
 summary.others.heading.one = Other party’s details
 summary.others.heading.many = Other party {0}
 summary.backtodisclosures.link = Back to your disclosure details
+disclosureSummary.timestamp = This is your draft disclosure as at {0}. It has not been sent.
