@@ -18,23 +18,25 @@ package controllers
 
 import connectors.HistoryConnector
 import controllers.actions._
+import helpers.DateHelper.formatSummaryTimeStamp
 import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
 import models.taxpayer.Taxpayer
 import models.{Submission, UserAnswers}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, RoleInArrangementPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList
+import uk.gov.hmrc.viewmodels.{Html, SummaryList}
 import utils.CreateDisplayRows._
 import utils.SummaryListDisplay.DisplayRow
 import utils.{CheckYourAnswersHelper, SummaryListDisplay}
 
+import java.time.{ZoneId, ZonedDateTime}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -84,7 +86,8 @@ class SummaryController @Inject()(
                 "intermediaryUpdateRow" -> Seq(helper.youHaveNotAddedAnyIntermediaries(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
                 "affectedList" -> submission.affectedPersons.map(_.createDisplayRows(id)),
                 "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
-                "backtoDisclosuresLink" -> backtoDisclosuresLink
+                "backtoDisclosuresLink" -> backtoDisclosuresLink,
+                "timeStamp" -> getTimeStamp
               )
             ).map(Ok(_))
         } else {
@@ -92,6 +95,11 @@ class SummaryController @Inject()(
         }
       }
     }
+  }
+
+
+  private def getTimeStamp()(implicit messages : Messages) = {
+    Html(s"<p class='govuk-body'>${ messages("disclosureSummary.timestamp", formatSummaryTimeStamp(ZonedDateTime.now(ZoneId.of("Europe/London"))))}</p>")
   }
 
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
