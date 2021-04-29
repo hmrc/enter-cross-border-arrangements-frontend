@@ -34,12 +34,23 @@ trait EnterpriseRows extends RowBuilder {
     )
   }
 
+  def youHaveNotAddedAnyAssociatedEnterprisesDisplay(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
+    .map { answer =>
+
+      toRow(
+        msgKey  = "youHaveNotAddedAnyAssociatedEnterprisesDisplay",
+        content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
+        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
+      )
+    }
+
   def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
     val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
 
     (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
       case (Some(selectionList), Some(taxpayers)) =>
-        val relevantTaxpayerNames: Seq[String] = selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
+        val relevantTaxpayerNames: Seq[String] =
+          selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
 
         if (selectionList.contains(reporterName)) {
           formatSelectedTaxpayers(Seq(reporterName) ++ relevantTaxpayerNames, id)

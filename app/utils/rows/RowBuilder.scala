@@ -22,6 +22,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
+import utils.SummaryListDisplay.DisplayRow
 
 trait RowBuilder {
 
@@ -61,6 +62,16 @@ trait RowBuilder {
     )
   }
 
+  private[utils] def toDisplayRow(msgKey: String,
+                           content: Content,
+                           columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): DisplayRow = {
+    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+    DisplayRow(
+      key     = Key(message, classes = Seq(columnWidth)),
+      value   = Value(content)
+    )
+  }
+
   private[utils] def formatAddress(address: Address): Html = {
 
     Html(s"""
@@ -97,7 +108,7 @@ trait RowBuilder {
   }
 
   private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
-    val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
+    val label = if (maxVisibleChars > 0 && text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"${label}"
   }
 

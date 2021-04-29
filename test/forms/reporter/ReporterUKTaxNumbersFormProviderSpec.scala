@@ -21,16 +21,16 @@ import play.api.data.FormError
 
 class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "reporterUKTaxNumbers.error.required"
   val lengthKeyLabel1 = "reporterUKTaxNumbers.error.length.label1"
   val lengthKeyLabel2 = "reporterUKTaxNumbers.error.length.label2"
   val lengthKeyLabel3 = "reporterUKTaxNumbers.error.length.label3"
   val maxLength = 200
 
-  val form = new ReporterUKTaxNumbersFormProvider()()
+  val formProvider = new ReporterUKTaxNumbersFormProvider()
 
-  ".firstTaxNumber" - {
+  ".firstTaxNumber for reporter as individual" - {
 
+    val form = formProvider("reporterIndividual")(messages)
     val fieldName = "firstTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -49,12 +49,38 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, "Enter your tax identification numbers")
+    )
+  }
+
+  ".firstTaxNumber" - {
+
+    val form = formProvider("reporterOrganisation")(messages)
+    val fieldName = "firstTaxNumber"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKeyLabel1)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, "Enter the organisation’s tax identification numbers")
     )
   }
 
   ".secondTaxNumber" - {
 
+    val form = formProvider("reporterIndividual")(messages)
     val fieldName = "secondTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -73,6 +99,7 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
   ".thirdTaxNumber" - {
 
+    val form = formProvider("reporterIndividual")(messages)
     val fieldName = "thirdTaxNumber"
 
     behave like fieldThatBindsValidData(

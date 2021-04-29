@@ -19,13 +19,14 @@ package controllers.reporter
 import base.SpecBase
 import forms.reporter.ReporterNonUKTaxNumbersFormProvider
 import matchers.JsonMatchers
+import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.{Country, LoopDetails, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterTaxResidencyLoopPage}
+import pages.reporter.{ReporterNonUKTaxNumbersPage, ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -43,12 +44,13 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/tax-resident-countries-1/0")
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
-  val form = formProvider()
   val index = 0
 
   val taxNumber: String = "123ABC"
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
   val selectedCountry: Country = Country("valid", "FR", "France")
+  val reporterIndividualKey = "reporterIndividual"
+  val reporterOrganisationKey = "reporterOrganisation"
 
   lazy val reporterNonUKTaxNumbersRoute = routes.ReporterNonUKTaxNumbersController.onPageLoad(0, NormalMode, index).url
 
@@ -59,6 +61,7 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val form = formProvider(reporterIndividualKey)
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -93,6 +96,7 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
         .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
         .success.value
 
+      val form = formProvider(reporterIndividualKey)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -148,12 +152,51 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with MockitoSugar w
       application.stop()
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted for reporter as Individual" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, Individual)
+        .success.value
+
+      val form = formProvider(reporterIndividualKey)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form" -> boundForm,
+        "mode" -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "reporter/reporterNonUKTaxNumbers.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted for reporter as Organisation" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val form = formProvider(reporterOrganisationKey)
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(ReporterOrganisationOrIndividualPage, 0, Organisation)
+        .success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

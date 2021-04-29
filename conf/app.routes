@@ -504,21 +504,6 @@ POST       /reporter/taxpayers/implementation-date/:id                  controll
 GET        /reporter/taxpayers/change-implementation-date/:id           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /reporter/taxpayers/change-implementation-date/:id           controllers.reporter.taxpayer.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-# CONFIRMATION PAGES
-
-GET        /there-is-a-problem/:id                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad(id: Int)
-GET        /confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
-GET        /disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /replacement-received/:id                             controllers.confirmation.ReplacementDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /disclosure/disclosure-has-been-deleted                      controllers.confirmation.YourDisclosureHasBeenDeletedController.onPageLoad()
-GET        /unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
-
-# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
-GET        /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
-POST       /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
-
-
 ## REPORTER DETAILS - ORGANISATION
 
 GET        /reporter/organisation/name/:id                                       controllers.reporter.organisation.ReporterOrganisationNameController.onPageLoad(id: Int, mode: Mode = NormalMode)
@@ -603,7 +588,6 @@ POST       /reporter/individual/select-address/:id               controllers.rep
 GET        /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /reporter/individual/change-select-address/:id        controllers.reporter.individual.ReporterIndividualSelectAddressController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-
 # OTHER PARTIES AFFECTED
 
 GET        /others-affected/update/:id                           controllers.affected.YouHaveNotAddedAnyAffectedController.onPageLoad(id: Int, mode: Mode = NormalMode)
@@ -619,3 +603,19 @@ POST       /others-affected/check-answers/:id                    controllers.aff
 
 GET        /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onPageLoad(id: Int, itemId: String)
 POST       /others-affected/remove/:id/:itemId                   controllers.affected.AreYouSureYouWantToRemoveAffectedController.onSubmit(id: Int, itemId: String)
+
+# CONFIRMATION PAGES
+
+GET        /there-is-a-problem/:id                               controllers.confirmation.DisclosureValidationErrorsController.onPageLoad(id: Int)
+GET        /confirmation-type/:id                                controllers.confirmation.FileTypeGatewayController.onRouting(id: Int)
+GET        /disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /replacement-received/:id                             controllers.confirmation.ReplacementDisclosureConfirmationController.onPageLoad(id: Int)
+GET        /disclosure/disclosure-has-been-deleted                      controllers.confirmation.YourDisclosureHasBeenDeletedController.onPageLoad()
+GET        /unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
+
+# DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
+GET        /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onPageLoad(id: Int)
+POST       /your-disclosure-details/:id                          controllers.DisclosureDetailsController.onSubmit(id: Int)
+
+GET        /disclosure-summary/:id                               controllers.SummaryController.onPageLoad(id: Int)

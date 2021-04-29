@@ -48,7 +48,7 @@ class AffectedXMLSectionSpec extends SpecBase {
   val email = "email@email.com"
   val individualName: Name = Name("FirstName", "Surname")
   val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, individualDOB, Some("SomePlace"), Some(address), Some(email), taxResidencies)
+  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
 
   val organisation: Organisation = Organisation(
     organisationName = "Organisation Ltd.",

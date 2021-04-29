@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.CheckMode
-import pages.affected.AffectedTypePage
+import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import uk.gov.hmrc.viewmodels.MessageInterpolators
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 
@@ -30,6 +30,15 @@ trait AffectedRows extends RowBuilder {
       content = msg"affectedType.$answer",
       href    = controllers.affected.routes.AffectedTypeController.onPageLoad(id, CheckMode).url
     )
+  }
+
+  def youHaveNotAddedAnyAffected(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) map {
+    answer =>
+      toRow(
+        msgKey  = "youHaveNotAddedAnyAffected",
+        content = msg"youHaveNotAddedAnyAffected.$answer",
+        href    = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(id).url
+      )
   }
 
 }

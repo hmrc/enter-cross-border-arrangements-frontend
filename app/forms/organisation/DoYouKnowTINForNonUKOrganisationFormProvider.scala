@@ -23,8 +23,8 @@ import play.api.i18n.Messages
 
 class DoYouKnowTINForNonUKOrganisationFormProvider @Inject() extends Mappings {
 
-  def apply(country: String)(implicit messages: Messages): Form[Boolean] =
+  def apply()(implicit messages: Messages): Form[Boolean] =
     Form(
-      "confirm" -> boolean(messages("doYouKnowTINForNonUKOrganisation.error.required", country))
+      "confirm" -> boolean(messages("doYouKnowTINForNonUKOrganisation.error.required"))
     )
 }

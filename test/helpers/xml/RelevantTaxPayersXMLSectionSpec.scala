@@ -46,7 +46,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
   val taxpayerIndividual: Taxpayer = Taxpayer(
     "TP-123",
-    Some(Individual(validIndividualName, validIndividualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)),
+    Some(Individual(validIndividualName, Some(validIndividualDOB), Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)),
     None, Some(todayMinusOneMonth))
 
   private val submission: Submission = Submission("id", validDisclosureDetails)

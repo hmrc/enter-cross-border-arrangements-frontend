@@ -16,27 +16,29 @@
 
 package controllers.reporter
 
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.ReporterTinUKQuestionFormProvider
-import helpers.JourneyHelpers.getReporterDetailsOrganisationName
-import javax.inject.Inject
+import helpers.JourneyHelpers._
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{LoopDetails, Mode, UserAnswers}
 import navigation.NavigatorForReporter
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, ReporterTinUKQuestionPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterTinUKQuestionController @Inject()(
   override val messagesApi: MessagesApi,
+  appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
   identify: IdentifierAction,
@@ -50,10 +52,10 @@ class ReporterTinUKQuestionController @Inject()(
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterTinUKQuestionPage)(checkRoute)(id)(value)(index)
 
-  private val form = formProvider()
-
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
         case None => form
@@ -81,6 +83,8 @@ class ReporterTinUKQuestionController @Inject()(
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
+
       form.bindFromRequest().fold(
         formWithErrors => {
 
@@ -107,20 +111,27 @@ class ReporterTinUKQuestionController @Inject()(
       )
   }
 
-  private def contentProvider(userAnswers: UserAnswers, id: Int) =
+  private def contentProvider(userAnswers: UserAnswers, id: Int)(implicit messages: Messages) = {
+
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
         Json.obj("pageTitle" -> "reporterIndividualTinUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinUKQuestion.heading",
-          "hintText" -> "reporterIndividualTinUKQuestion.hint")
+          "hintText" -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint"))
 
       case _ => //Display Organisation Content
         Json.obj(
           "pageTitle" -> "reporterOrganisationTinUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinUKQuestion.heading",
           "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "hintText" -> "reporterOrganisationTinUKQuestion.hint")
+          "hintText" -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint"))
     }
+  }
+
+  private def hintWithLostUtrLink(hintText: String)(implicit messages: Messages): Html = {
+    Html(s"${{messages(hintText)}}<span> You can <a class='govuk-link' id='feedback-link' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
+      s"${{ messages("findLostUTR.link")}}</a>.</span>")
+  }
 
   private def getReporterTaxResidentLoopDetails(value: Boolean, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
     userAnswers.get(ReporterTaxResidencyLoopPage, id) match {

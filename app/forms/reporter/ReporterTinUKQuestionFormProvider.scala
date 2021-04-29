@@ -17,13 +17,15 @@
 package forms.reporter
 
 import forms.mappings.Mappings
+
 import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
 
 class ReporterTinUKQuestionFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(typeOfReporter: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("reporterTinUKQuestion.error.required")
+      "value" -> boolean(messages(s"${typeOfReporter}TinUKQuestion.error.required"))
     )
 }

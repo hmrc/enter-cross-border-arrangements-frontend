@@ -39,7 +39,7 @@ import scala.concurrent.Future
 class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
-  val form = formProvider("the country")
+  val form = formProvider()
 
   val selectedCountry: Country = Country("valid", "FR", "France")
   val index: Int = 0

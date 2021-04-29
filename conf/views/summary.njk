@@ -1,0 +1,89 @@
+{% extends "includes/layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk"  import govukSummaryList %}
+{% from "macros/title.njk"                         import title %}
+{% from "summary-list/macro.njk"                   import hmrcSummaryList %}
+
+{% block pageTitle %}
+  {{ title(messages("summary.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+<div class="govuk-main-wrapper" xmlns="http://www.w3.org/1999/html">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("summary.heading") }}
+        </h1>
+
+        <p class="govuk-body"><a href="#" id="printLink" class="govuk-link">{{ messages("summary.printLink") }}</a></p>
+
+        <p class="govuk-body">{{ messages("summary.p1") }}</p>
+
+        <p class="govuk-body">{{ messages("summary.p2", saveDate) }}</p>
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.disclosure.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: disclosureList
+        }) }}
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.hallmarks.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: hallmarksList
+        }) }}
+
+        <h2 class="govuk-heading-l">
+          {{ messages("summary.arrangements.heading") }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: arrangementList
+        }) }}
+
+       <h2 class="govuk-heading-l">
+         {{ messages("summary.reporters.heading") }}
+       </h2>
+
+        {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+          rows: reporterDetails
+        }) }}
+
+        {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: residentCountryDetails
+        }) }}
+
+        <hr>
+
+        {{ govukSummaryList({
+          classes: 'govuk-!-margin-bottom-0',
+          rows: roleDetails
+        }) }}
+
+          <p></p>
+
+        {{ hmrcSummaryList(taxpayersList, taxpayerUpdateRow, "taxpayers") }}
+
+        {{ hmrcSummaryList(enterprisesList, enterprisesUpdateRow, "enterprises") }}
+
+        {{ hmrcSummaryList(intermediaryList, intermediaryUpdateRow, "intermediaries") }}
+
+        {{ hmrcSummaryList(affectedList, affectedUpdateRow, "others") }}
+
+          <p class="govuk-body">
+              <a href= "{{ backtoDisclosuresLink }}" class="govuk-link"> {{ messages("summary.backtodisclosures.link") }} </a>
+          </p>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -65,13 +65,13 @@ object ValidUserAnswersForSubmission {
   val validEmail = "email@email.com"
 
   val validTaxResidencies = IndexedSeq(
-    TaxResidency(Some(Country("valid", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
-    TaxResidency(Some(Country("valid", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
+    TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
+    TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
   val validIndividualName: Name = Name("FirstName", "Surname")
   val validIndividualDOB: LocalDate = LocalDate.of(1990, 1, 1)
-  val validIndividual: Individual = Individual(validIndividualName, validIndividualDOB, Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)
+  val validIndividual: Individual = Individual(validIndividualName, Some(validIndividualDOB), Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)
 
   val validOrganisation: Organisation = Organisation("Taxpayers Ltd", Some(validAddress), Some(validEmail), validTaxResidencies)
 
@@ -88,6 +88,7 @@ object ValidUserAnswersForSubmission {
   )
 
   def validToday: LocalDate = LocalDate.now
+
   val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
   val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
 
@@ -138,6 +139,7 @@ object ValidUserAnswersForSubmission {
   val userAnswersForOrganisation = UserAnswers("id")
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(DisclosureDetailsPage, 0, validDisclosureDetails).success.value
+    .set(ArrangementDetailsPage, 0, validArrangementDetails).success.value
     .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation).success.value
     .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer).success.value
     .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment).success.value

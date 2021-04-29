@@ -30,7 +30,7 @@ import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 import utils.rows._
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages: Messages)
+class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages)
   extends IndividualRows with OrganisationRows with ArrangementRows with EnterpriseRows with TaxpayerRows
     with IntermediariesRows with DisclosureRows with ReporterRows with AffectedRows {
 
@@ -84,7 +84,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
         Some(Row(
           key = Key(msg"hallmarkD1Other.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-          value = Value(formatMaxChars(answer)),
+          value = Value(formatMaxChars(answer, maxVisibleChars)),
           actions = List(
             Action(
               content = msg"site.edit",
@@ -144,22 +144,22 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers)(implicit val messages
       )
   }
 
-  def buildHallmarksRow(ua: UserAnswers, id: Int): Row = {
+  def buildHallmarksRow(id: Int): Row = {
 
-    val hallmarkCPage = ua.get(HallmarkCPage, id)  match {
+    val hallmarkCPage = userAnswers.get(HallmarkCPage, id)  match {
       case Some(set) if set.contains(C1) && set.size == 1 => None
       case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
       case hallmarkSet => hallmarkSet
     }
 
-    val hallmarkDPage = ua.get(HallmarkDPage, id)  match {
+    val hallmarkDPage = userAnswers.get(HallmarkDPage, id)  match {
       case Some(set) if set.contains(D1) && set.size == 1 => None
       case Some(set) if set.contains(D1) => Some(set.filter(_ != D1))
       case hallmarkSet => hallmarkSet
     }
 
     val hallmarkPages = Seq(
-      ua.get(HallmarkD1Page, id),
+      userAnswers.get(HallmarkD1Page, id),
       hallmarkDPage
     )
 

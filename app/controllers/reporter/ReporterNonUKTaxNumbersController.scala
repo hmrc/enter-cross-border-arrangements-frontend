@@ -19,7 +19,8 @@ package controllers.reporter
 import controllers.actions._
 import controllers.mixins.{CheckRoute, CountrySupport, RoutingSupport}
 import forms.reporter.ReporterNonUKTaxNumbersFormProvider
-import helpers.JourneyHelpers.getReporterDetailsOrganisationName
+import helpers.JourneyHelpers.{getReporterDetailsOrganisationName, getReporterTypeKey}
+
 import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{LoopDetails, Mode, TaxReferenceNumbers, UserAnswers}
@@ -54,10 +55,11 @@ class ReporterNonUKTaxNumbersController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
     navigator.routeMap(ReporterNonUKTaxNumbersPage)(checkRoute)(id)(value)(index)
 
-  private val form = formProvider()
-
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
+
 
       val country = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index).fold("the country")(_.description)
 
@@ -86,6 +88,8 @@ class ReporterNonUKTaxNumbersController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val country = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index).fold("the country")(_.description)
 
