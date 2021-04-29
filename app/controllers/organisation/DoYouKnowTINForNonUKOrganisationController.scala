@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.DoYouKnowTINForNonUKOrganisationFormProvider
 import helpers.JourneyHelpers.{currentIndexInsideLoop, getOrganisationName}
-import models.{LoopDetails, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForOrganisation
 import pages.organisation.{DoYouKnowTINForNonUKOrganisationPage, OrganisationLoopPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,8 +49,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers, id)
-      val form = formProvider(country)
+      val form = formProvider()
 
       val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
@@ -70,7 +69,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "country" -> country,
+        "country" -> getCountry(request.userAnswers, id),
         "index" -> index
       )
 
@@ -83,8 +82,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val country = getCountry(request.userAnswers, id)
-      val form = formProvider(country)
+      val form = formProvider()
 
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -95,7 +93,7 @@ class DoYouKnowTINForNonUKOrganisationController @Inject()(
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "country" -> country,
+            "country" -> getCountry(request.userAnswers, id),
             "index" -> index
           )
 

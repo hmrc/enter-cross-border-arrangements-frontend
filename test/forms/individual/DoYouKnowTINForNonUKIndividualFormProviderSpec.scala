@@ -17,20 +17,12 @@
 package forms.individual
 
 import forms.behaviours.BooleanFieldBehaviours
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.{Form, FormError}
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 
-class DoYouKnowTINForNonUKIndividualFormProviderSpec extends BooleanFieldBehaviours  with GuiceOneAppPerSuite{
+class DoYouKnowTINForNonUKIndividualFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredMessage = "Select yes if you know the individual’s tax identification numbers for France"
   val invalidKey = "error.boolean"
-
-  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  val defaultMessagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val messages: Messages = defaultMessagesApi.preferred(request)
 
   val formProvider = new DoYouKnowTINForNonUKIndividualFormProvider()
   val form: Form[Boolean] = formProvider("France")(messages)

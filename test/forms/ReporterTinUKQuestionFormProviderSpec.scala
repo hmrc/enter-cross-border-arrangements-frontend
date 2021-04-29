@@ -22,13 +22,12 @@ import play.api.data.FormError
 
 class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "reporterTinUKQuestion.error.required"
   val invalidKey = "error.boolean"
+  val formProvider = new ReporterTinUKQuestionFormProvider()
 
-  val form = new ReporterTinUKQuestionFormProvider()()
+  ".value for reporter as individual" - {
 
-  ".value" - {
-
+    val form = formProvider("reporterIndividual")(messages)
     val fieldName = "value"
 
     behave like booleanField(
@@ -40,7 +39,25 @@ class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, "Select yes if you have any tax identification numbers")
+    )
+  }
+
+  ".value for reporter as organisation" - {
+
+    val form = formProvider("reporterOrganisation")(messages)
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, "Select yes if you know the organisation’s tax identification numbers")
     )
   }
 }
