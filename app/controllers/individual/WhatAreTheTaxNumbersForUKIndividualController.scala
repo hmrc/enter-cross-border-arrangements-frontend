@@ -86,7 +86,8 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
             "form" -> formWithErrors,
             "id" -> id,
             "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers, id)
+            "name" -> getIndividualName(request.userAnswers, id),
+            "index" -> index
           )
 
           renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
