@@ -30,14 +30,14 @@ class DateHelperSpec extends SpecBase {
 
     "should display correct timestamp for morning(AM)" in {
 
-      val result = DateHelper.formatSummaryTimeStamp(generateDate(4))
-      result mustBe "4:01AM on 1 January 2021"
+      val result = DateHelper.getSummaryTimestamp(generateDate(4))
+      result mustBe s"4:01AM on Friday 1 January 2021"
     }
 
     "should display correct timestamp for afternoon(PM)" in {
 
-      val result = DateHelper.formatSummaryTimeStamp(generateDate(16))
-      result mustBe "4:01PM on 1 January 2021"
+      val result = DateHelper.getSummaryTimestamp(generateDate(16))
+      result mustBe s"4:01PM on Friday 1 January 2021"
     }
   }
 

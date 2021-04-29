@@ -18,7 +18,7 @@ package controllers
 
 import connectors.HistoryConnector
 import controllers.actions._
-import helpers.DateHelper.formatSummaryTimeStamp
+import helpers.DateHelper.getSummaryTimestamp
 import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
@@ -97,9 +97,9 @@ class SummaryController @Inject()(
     }
   }
 
-
   private def getTimeStamp()(implicit messages : Messages) = {
-    Html(s"<p class='govuk-body'>${ messages("disclosureSummary.timestamp", formatSummaryTimeStamp(ZonedDateTime.now(ZoneId.of("Europe/London"))))}</p>")
+    val today = ZonedDateTime.now(ZoneId.of("Europe/London"))
+    Html(s"<p class='govuk-body'>${ messages("summary.timestamp", getSummaryTimestamp(today))}</p>")
   }
 
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
