@@ -41,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{IsMarketableService, XMLGenerationService}
+import services.{MarketableDisclosureService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -59,7 +59,7 @@ class DisclosureDetailsController @Inject()(
                                              frontendAppConfig: FrontendAppConfig,
                                              val controllerComponents: MessagesControllerComponents,
                                              navigator: NavigatorForDisclosure,
-                                             isMarketableService: IsMarketableService,
+                                             isMarketableService: MarketableDisclosureService,
                                              renderer: Renderer,
                                              sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {

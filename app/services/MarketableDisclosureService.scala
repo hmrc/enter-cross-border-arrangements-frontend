@@ -26,8 +26,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsMarketableService @Inject()(historyConnector: HistoryConnector,
-                                    sessionRepository: SessionRepository) {
+class MarketableDisclosureService @Inject()(historyConnector: HistoryConnector,
+                                            sessionRepository: SessionRepository) {
 
   def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int,
                                     )

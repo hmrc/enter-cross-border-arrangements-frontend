@@ -33,7 +33,7 @@ import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{Await, Future}
 
-class IsMarketableServiceSpec extends SpecBase with MockitoSugar{
+class MarketableDisclosureServiceSpec extends SpecBase with MockitoSugar{
 
   val mockHistoryConnector = mock[HistoryConnector]
   val mockSessionRepository = mock[SessionRepository]
@@ -67,7 +67,7 @@ class IsMarketableServiceSpec extends SpecBase with MockitoSugar{
           bind[SessionRepository].toInstance(mockSessionRepository)
         ).build()
 
-      val service = application.injector.instanceOf[IsMarketableService]
+      val service = application.injector.instanceOf[MarketableDisclosureService]
 
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosureSubmissionDetailsMarketable))
@@ -86,7 +86,7 @@ class IsMarketableServiceSpec extends SpecBase with MockitoSugar{
           bind[SessionRepository].toInstance(mockSessionRepository)
         ).build()
 
-      val service = application.injector.instanceOf[IsMarketableService]
+      val service = application.injector.instanceOf[MarketableDisclosureService]
 
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosureSubmissionDetailsNotMarketable))

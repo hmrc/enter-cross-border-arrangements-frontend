@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.IsMarketableService
+import services.MarketableDisclosureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.CreateDisplayRows._
@@ -43,7 +43,7 @@ class SummaryController @Inject()(
                                    getData: DataRetrievalAction,
                                    requireData: DataRequiredAction,
                                    val controllerComponents: MessagesControllerComponents,
-                                   isMarketableService: IsMarketableService,
+                                   isMarketableService: MarketableDisclosureService,
                                    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport  {
 
