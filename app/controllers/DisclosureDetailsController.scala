@@ -41,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.XMLGenerationService
+import services.{IsMarketableService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -50,18 +50,18 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 class DisclosureDetailsController @Inject()(
-    override val messagesApi: MessagesApi,
-    xmlGenerationService: XMLGenerationService,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
-    historyConnector: HistoryConnector,
-    frontendAppConfig: FrontendAppConfig,
-    val controllerComponents: MessagesControllerComponents,
-    navigator: NavigatorForDisclosure,
-    renderer: Renderer,
-    sessionRepository: SessionRepository
+                                             override val messagesApi: MessagesApi,
+                                             xmlGenerationService: XMLGenerationService,
+                                             identify: IdentifierAction,
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             contactRetrievalAction: ContactRetrievalAction,
+                                             frontendAppConfig: FrontendAppConfig,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             navigator: NavigatorForDisclosure,
+                                             isMarketableService: IsMarketableService,
+                                             renderer: Renderer,
+                                             sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
@@ -75,7 +75,7 @@ class DisclosureDetailsController @Inject()(
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers.get, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable =>
+      isMarketableService.isInitialDisclosureMarketable(request.userAnswers.get, id).flatMap { isInitialDisclosureMarketable =>
 
         val json = Json.obj(
           "id" -> id,
