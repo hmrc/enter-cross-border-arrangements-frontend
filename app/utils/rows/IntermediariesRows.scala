@@ -18,7 +18,7 @@ package utils.rows
 
 import models.CheckMode
 import models.intermediaries.ExemptCountries
-import pages.intermediaries.{ExemptCountriesPage, IntermediariesTypePage, IsExemptionCountryKnownPage, IsExemptionKnownPage}
+import pages.intermediaries._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
 
@@ -125,12 +125,12 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def youHaveNotAddedAnyIntermediaries(id: Int): Option[Row] = userAnswers.get(pages.intermediaries.YouHaveNotAddedAnyIntermediariesPage, id) map {
-    answer =>
+  def youHaveNotAddedAnyIntermediaries(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyIntermediariesPage, id)
+    .map { answer =>
       toRow(
         msgKey  = "youHaveNotAddedAnyIntermediaries",
         content = msg"youHaveNotAddedAnyIntermediaries.$answer",
         href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
       )
-  }
+    }
 }

@@ -16,6 +16,7 @@
 
 package helpers
 
+import connectors.HistoryConnector
 import models.UserAnswers
 import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
@@ -25,14 +26,18 @@ import models.reporter.RoleInArrangement
 import pages.QuestionPage
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
-import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
+import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage, FirstInitialDisclosureMAPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
 import pages.reporter.{ReporterStatusPage, RoleInArrangementPage}
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage}
 import play.api.i18n.Messages
+import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.Html
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object TaskListHelper  {
 

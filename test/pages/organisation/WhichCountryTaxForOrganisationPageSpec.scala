@@ -41,7 +41,7 @@ class WhichCountryTaxForOrganisationPageSpec extends PageBehaviours {
 
     "- when first detail in loop is not from the UK " in {
 
-      WhichCountryTaxForOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("valid", "FR", "France")))
+      WhichCountryTaxForOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("", "FR", "France")))
     }
 
     "- when details are empty " in {

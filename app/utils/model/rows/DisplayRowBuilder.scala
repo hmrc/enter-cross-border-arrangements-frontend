@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package utils.rows
+package utils.model.rows
 
-import java.time.format.DateTimeFormatter
-import models.{Address, AddressLookup, TaxReferenceNumbers, UserAnswers}
+import models.{Address, AddressLookup, TaxReferenceNumbers}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 import utils.SummaryListDisplay.DisplayRow
 
-trait RowBuilder {
+import java.time.format.DateTimeFormatter
 
-  implicit val messages: Messages
-  val userAnswers: UserAnswers
+trait DisplayRowBuilder {
+
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   private[utils] def yesOrNo(answer: Boolean): Content =
@@ -64,13 +64,27 @@ trait RowBuilder {
 
   private[utils] def toDisplayRow(msgKey: String,
                            content: Content,
-                           columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): DisplayRow = {
+                           columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+    val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     DisplayRow(
       key     = Key(message, classes = Seq(columnWidth)),
       value   = Value(content)
     )
   }
+
+  private[utils] def toDisplayRowNoBorder(msgKey: String,
+                                  content: Content,
+                                  columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
+    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+    val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
+    DisplayRow(
+      key     = Key(message, classes = Seq(columnWidth)),
+      value   = Value(content),
+      classes = Seq("govuk-summary-list--no-border")
+    )
+  }
+
 
   private[utils] def formatAddress(address: Address): Html = {
 
@@ -107,9 +121,10 @@ trait RowBuilder {
     }
   }
 
+
+
   private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
-    val label = if (maxVisibleChars > 0 && text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
+    val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"${label}"
   }
-
 }

@@ -87,7 +87,7 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  LocalDate.now(), None, None,
+        birthDate =  Some(LocalDate.now()), None, None,
         taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 

@@ -41,7 +41,7 @@ class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
 
     "- when first detail in loop is not from the UK " in {
 
-      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("valid", "FR", "France")))
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("", "FR", "France")))
     }
 
     "- when details are empty " in {
