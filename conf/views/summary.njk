@@ -31,6 +31,8 @@
           rows: disclosureList
         }) }}
 
+        <div class="govuk-!-margin-bottom-9"></div>
+
         <h2 class="govuk-heading-l">
           {{ messages("summary.hallmarks.heading") }}
         </h2>
@@ -39,6 +41,8 @@
           rows: hallmarksList
         }) }}
 
+        <div class="govuk-!-margin-bottom-9"></div>
+
         <h2 class="govuk-heading-l">
           {{ messages("summary.arrangements.heading") }}
         </h2>
@@ -46,6 +50,8 @@
         {{ govukSummaryList({
           rows: arrangementList
         }) }}
+
+        <div class="govuk-!-margin-bottom-9"></div>
 
        <h2 class="govuk-heading-l">
          {{ messages("summary.reporters.heading") }}
@@ -68,7 +74,7 @@
           rows: roleDetails
         }) }}
 
-          <p></p>
+        <div class="govuk-!-margin-bottom-9"></div>
 
         {{ hmrcSummaryList(taxpayersList, taxpayerUpdateRow, "taxpayers") }}
 
