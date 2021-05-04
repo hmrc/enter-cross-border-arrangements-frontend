@@ -54,6 +54,7 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) match {
         case None => form
         case Some(value) => form.fill(value)

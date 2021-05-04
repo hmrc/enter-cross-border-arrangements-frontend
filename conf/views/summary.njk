@@ -19,9 +19,7 @@
 
         <p class="govuk-body"><a href="#" id="printLink" class="govuk-link">{{ messages("summary.printLink") }}</a></p>
 
-        <p class="govuk-body">{{ messages("summary.p1") }}</p>
-
-        <p class="govuk-body">{{ messages("summary.p2", saveDate) }}</p>
+        {{ timeStamp | safe }}
 
         <h2 class="govuk-heading-l">
           {{ messages("summary.disclosure.heading") }}
