@@ -10,6 +10,8 @@
     rows: updateRow
   }) }}
 
+  <div class="govuk-!-margin-bottom-9"></div>
+
 {% elseif list | length == 1 %}
 
   <h2 class="govuk-heading-l">
@@ -19,6 +21,8 @@
   {{ govukSummaryList({
     rows: list | first
   }) }}
+
+  <div class="govuk-!-margin-bottom-9"></div>
 {% else %}
   {% for item in list %}
 
@@ -29,5 +33,7 @@
     {{ govukSummaryList({
       rows: item
     }) }}
+
+  <div class="govuk-!-margin-bottom-9"></div>
   {% endfor %}
 {% endif %}
