@@ -17,19 +17,23 @@
 package helpers
 
 import java.time.format.{DateTimeFormatter, TextStyle}
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.util.Locale;
 
 
 object DateHelper {
 
-  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  def today: LocalDate = LocalDate.now()
+  def yesterday: LocalDate = LocalDate.now().minusDays(1)
+  def todayDateTime: LocalDateTime = LocalDateTime.now()
 
   val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
 
-  def today: LocalDate = LocalDate.now()
-  def yesterday: LocalDate = LocalDate.now().minusDays(1)
+  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
+
+  val dateFormatterForXML: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
+  def formatXMLTimeStamp(date: LocalDateTime): String = date.format(dateFormatterForXML)
 
   private def summaryTimestampFormatter(dayOfWeek: String): DateTimeFormatter = {
     DateTimeFormatter.ofPattern(s"h:mma 'on' '$dayOfWeek' d MMMM yyyy", Locale.UK)

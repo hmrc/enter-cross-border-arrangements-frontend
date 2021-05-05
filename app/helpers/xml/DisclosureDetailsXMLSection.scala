@@ -20,7 +20,6 @@ package helpers.xml
 import models.Submission
 import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType._
-import org.joda.time.DateTime
 
 import scala.xml.{Elem, NodeSeq}
 
@@ -29,15 +28,12 @@ case class DisclosureDetailsXMLSection(submission: Submission) {
   val disclosure: DisclosureDetails = submission.disclosureDetails.validate.fold(e =>
     throw new IllegalStateException(e.defaultMessage), identity)
 
-  def buildHeader(enrolmentID: String): Elem = {
+  def buildHeader(enrolmentID: String, timeStamp: String): Elem = {
     val mandatoryMessageRefId = "GB" + enrolmentID + disclosure.disclosureName
-
-    //XML DateTime format e.g. 2021-01-06T12:25:14
-    val mandatoryTimestamp = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
 
     <Header>
       <MessageRefId>{mandatoryMessageRefId}</MessageRefId>
-      <Timestamp>{mandatoryTimestamp}</Timestamp>
+      <Timestamp>{timeStamp}</Timestamp>
     </Header>
   }
 
