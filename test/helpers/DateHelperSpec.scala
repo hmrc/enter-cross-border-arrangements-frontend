@@ -18,7 +18,7 @@ package helpers
 
 import base.SpecBase
 
-import java.time.{ZoneId, ZonedDateTime}
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 class DateHelperSpec extends SpecBase {
 
@@ -41,4 +41,12 @@ class DateHelperSpec extends SpecBase {
     }
   }
 
+  "formatXMLTimeStamp" - {
+
+    "should display correct timestamp for XML" in {
+
+      val result = DateHelper.formatXMLTimeStamp(LocalDateTime.of(2021, 1, 1, 1, 1 , 1 , 1))
+      result mustBe s"2021-01-01T01:01:01"
+    }
+  }
 }
