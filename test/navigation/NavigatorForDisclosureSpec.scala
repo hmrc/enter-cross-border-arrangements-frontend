@@ -95,11 +95,10 @@ class NavigatorForDisclosureSpec extends SpecBase with MustMatchers with ScalaCh
 
       "must go from 'What type of disclosure would you like to make?' page" +
         "to 'Which disclosure do you want to delete?' page" +
-        "when 'A DELETION OF AN EXISTING DISCLOSURE' option is selected" ignore {
+        "when 'A DELETION OF AN EXISTING DISCLOSURE' option is selected" in {
 
-          //TODO - Redirect to delete disclosure when page is built
-          navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6del))(0)
-            .mustBe(controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode))
+        navigator.routeMap(DisclosureTypePage)(DefaultRouting(NormalMode))(None)(Some(DisclosureType.Dac6del))(0)
+            .mustBe(controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(NormalMode))
       }
 
       "must go from 'What is the arrangement ID for this disclosure?' page" +

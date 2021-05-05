@@ -21,7 +21,6 @@ import controllers.mixins.{AssociatedEnterprisesRouting, DefaultRouting, Interme
 import generators.Generators
 import models._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages._
 import pages.organisation._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -59,18 +58,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
   val I13 = "[Add Intermediaries] Check your answers?"
 
   "Organisation Navigator" - {
-
-    "must go from a page that doesn't exist in the route map to Index" ignore {
-
-//  TODO Test is correct but sometimes fails with
-//  [info]     - must go from a page that doesn't exist in the route map to Index *** FAILED ***
-//  [info]       / was not equal to /enter-cross-border-arrangements (NavigatorForOrganisationSpec.scala:64)
-
-      case object UnknownPage extends Page
-
-      navigator.routeMap(UnknownPage)(DefaultRouting(NormalMode))(0)(None)(0)
-        .mustBe(controllers.routes.IndexController.onPageLoad())
-    }
 
     "Default routing" - {
 

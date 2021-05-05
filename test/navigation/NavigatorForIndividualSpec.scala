@@ -63,14 +63,6 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
   "Individual Navigator" - {
 
-    "must go from a page that doesn't exist in the route map to Index" ignore {
-
-      case object UnknownPage extends Page
-
-      navigator.routeMap(UnknownPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
-        .mustBe(controllers.routes.IndexController.onPageLoad())
-    }
-
     "Default routing" - {
 
       "in Normal mode" - {

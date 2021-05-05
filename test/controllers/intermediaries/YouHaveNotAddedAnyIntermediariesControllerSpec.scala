@@ -18,11 +18,10 @@ package controllers.intermediaries
 
 import base.SpecBase
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
+import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import matchers.JsonMatchers
 import models.intermediaries.{Intermediary, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
-import models.organisation.Organisation
-import models.taxpayer.TaxResidency
-import models.{Country, IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -80,26 +79,22 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Mocki
       application.stop()
     }
 
-    //TODO Include test for change and remove links if needed
-    "must return OK and the correct view with the list of all intermediaries for a GET" ignore {
+    "must return OK and the correct view with the list of all intermediaries for a GET" in {
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val organisation = Organisation(
-        organisationName = "Organisation Ltd.",
-        address = None,
-        emailAddress = None,
-        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
-      )
-
       val intermediariesLoop =
-        IndexedSeq(Intermediary("id", None, Some(organisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
-      val userAnswers = UserAnswers(userAnswersId).set(IntermediaryLoopPage, 0, intermediariesLoop).success.value
+        IndexedSeq(Intermediary("id", None, Some(validOrganisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(IntermediaryLoopPage, 0, intermediariesLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller = application.injector.instanceOf[YouHaveNotAddedAnyIntermediariesController]
 
       val result = route(application, request).value
 
@@ -107,7 +102,7 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedList = Json.arr(Json.obj("name" -> "Organisation Ltd.", "changeUrl" -> "#", "removeUrl" -> "#"))
+      val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
         "form"       -> form,

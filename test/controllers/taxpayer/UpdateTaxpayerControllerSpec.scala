@@ -16,15 +16,13 @@
 
 package controllers.taxpayer
 
-import java.time.LocalDate
-
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.taxpayer.UpdateTaxpayerFormProvider
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import matchers.JsonMatchers
-import models.individual.Individual
-import models.taxpayer.{TaxResidency, Taxpayer, UpdateTaxpayer}
-import models.{Country, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.taxpayer.{Taxpayer, UpdateTaxpayer}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -89,11 +87,7 @@ class UpdateTaxpayerControllerSpec extends SpecBase with MockitoSugar with Nunju
 
       val taxpayerLoop = IndexedSeq(
         Taxpayer("id",
-          Some(Individual(
-            individualName = Name("John", "Smith"),
-            birthDate = Some(LocalDate.now()), None, None,
-            taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None)
-            ))),
+          Some(validIndividual),
           organisation = None,
           implementingDate = None)
       )
