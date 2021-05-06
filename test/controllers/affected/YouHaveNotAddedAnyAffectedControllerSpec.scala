@@ -18,11 +18,10 @@ package controllers.affected
 
 import base.SpecBase
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
+import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import matchers.JsonMatchers
 import models.affected.{Affected, YouHaveNotAddedAnyAffected}
-import models.individual.Individual
-import models.taxpayer.TaxResidency
-import models.{Country, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -38,7 +37,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
@@ -80,32 +78,28 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockitoSuga
       application.stop()
     }
 
-    //TODO Include test for change and remove links if needed
-    "must return OK and the correct view with the list of all affected persons for a GET" ignore {
+    "must return OK and the correct view with the list of all affected persons for a GET" in {
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val individual = Individual(
-        individualName = Name("John", "Smith"),
-        birthDate =  Some(LocalDate.now()), None, None,
-        taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
-      )
+      val affectedLoop = IndexedSeq(Affected("id", Some(validIndividual)))
 
-      val affectedLoop = IndexedSeq(Affected("id", Some(individual)))
-      val userAnswers = UserAnswers(userAnswersId).set(AffectedLoopPage, 0, affectedLoop).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(AffectedLoopPage, 0, affectedLoop).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-
+      val controller = application.injector.instanceOf[YouHaveNotAddedAnyAffectedController]
       val result = route(application, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedList = Json.arr(Json.obj("name" -> "John Smith", "changeUrl" -> "#", "removeUrl" -> "#"))
+      val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
         "form"       -> form,
