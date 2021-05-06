@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.Inject
-import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
