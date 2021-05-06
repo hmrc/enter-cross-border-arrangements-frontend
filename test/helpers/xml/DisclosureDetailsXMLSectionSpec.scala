@@ -17,9 +17,11 @@
 package helpers.xml
 
 import base.SpecBase
+import helpers.DateHelper.formatXMLTimeStamp
 import models.Submission
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import org.joda.time.DateTime
+
+import java.time.LocalDateTime
 
 class DisclosureDetailsXMLSectionSpec extends SpecBase {
 
@@ -38,14 +40,13 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         )
 
         val submission = Submission("id", disclosureDetails)
-
-        val result = DisclosureDetailsXMLSection(submission).buildHeader("XADAC0001122345")
-        val now = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
+        val timestamp = formatXMLTimeStamp(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+        val result = DisclosureDetailsXMLSection(submission).buildHeader("XADAC0001122345", timestamp)
 
         val expected =
           s"""<Header>
              |    <MessageRefId>GBXADAC0001122345DisclosureName</MessageRefId>
-             |    <Timestamp>$now</Timestamp>
+             |    <Timestamp>2020-01-01T01:01:01</Timestamp>
              |</Header>""".stripMargin
 
         prettyPrinter.format(result) mustBe expected

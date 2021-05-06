@@ -17,6 +17,7 @@
 package services
 
 import connectors.{CrossBorderArrangementsConnector, ValidationConnector}
+import helpers.DateHelper.{formatXMLTimeStamp, todayDateTime}
 import helpers.xml.{AffectedXMLSection, DisclosureInformationXMLSection, IntermediariesXMLSection, RelevantTaxPayersXMLSection, _}
 import models.disclosure.DisclosureType
 import models.{GeneratedIDs, Submission}
@@ -47,7 +48,7 @@ class XMLGenerationService @Inject()(
     } yield {
       Try {
         <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
-          {disclosureSection.buildHeader(enrolmentID)}
+          {disclosureSection.buildHeader(enrolmentID, formatXMLTimeStamp(todayDateTime))}
           {disclosureSection.buildArrangementID}
           <DAC6Disclosures>
             {disclosureSection.buildDisclosureID}
