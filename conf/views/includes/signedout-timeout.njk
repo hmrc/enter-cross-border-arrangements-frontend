@@ -8,12 +8,6 @@
 
 
 {% block head %}
-{{ hmrcTimeoutDialog({
-  timeout: config.timeout,
-  countdown: config.countdown,
-  keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
-  signOutUrl: routes.controllers.SignOutController.signOut().url
-}) }}
   {% include "includes/head.njk" %}
 {% endblock %}
 
@@ -28,8 +22,6 @@
     serviceUrl: "/disclose-cross-border-arrangements/manual",
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
-    signOutUrl: routes.controllers.SignOutController.signOut().url,
-    timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad().url
   }) }}
 {% endblock %}
 
