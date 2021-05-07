@@ -67,7 +67,7 @@ taxpayerscheckYourAnswers.heading = Check your answers for relevant taxpayer det
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
-session_expired.guidance = Your answers have not been saved.
+session_expired.guidance = The details you entered will be saved for 28 days from when you last made changes.
 session_expired.link = Back to disclose cross-border arrangements
 
 unauthorised.title = You can’t access this service with this account
