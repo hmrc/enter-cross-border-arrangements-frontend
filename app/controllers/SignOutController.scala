@@ -18,23 +18,17 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SignOutController @Inject()(
   config: FrontendAppConfig,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  val controllerComponents: MessagesControllerComponents
-  )(implicit ec: ExecutionContext)
-extends FrontendBaseController
-    with I18nSupport {
+  val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
 
-  def signOut: Action[AnyContent] = (identify andThen getData).async {
+  def signOut: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(config.signOutUrl).withNewSession)
   }

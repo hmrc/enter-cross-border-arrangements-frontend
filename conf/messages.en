@@ -65,9 +65,10 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 taxpayerscheckYourAnswers.heading = Check your answers for relevant taxpayer details
 
-session_expired.title = For your security, this service has been reset
-session_expired.heading = For your security, this service has been reset
-session_expired.guidance = The details you have given have been deleted because you did not continue the service for 15 minutes.
+session_expired.title = For your security, we signed you out
+session_expired.heading = For your security, we signed you out
+session_expired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+session_expired.link = Back to disclose cross-border arrangements
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
