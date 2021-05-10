@@ -22,8 +22,8 @@ import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganis
 import matchers.JsonMatchers
 import models.affected.Affected
 import models.{UnsubmittedDisclosure, UserAnswers}
-import org.mockito.{ArgumentCaptor, Mockito}
-import org.mockito.Matchers.{any, argThat}
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.affected.AffectedLoopPage
@@ -36,7 +36,6 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import org.mockito.ArgumentMatcher
 
 import scala.concurrent.Future
 

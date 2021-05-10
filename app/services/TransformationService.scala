@@ -31,7 +31,7 @@ class TransformationService {
   def rewriteMessageRefID(xml:Elem, messageRefID: String): Option[NodeSeq] =
     new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
-        case Elem(prefix, "MessageRefId", attribs, scope, _*) =>
+        case Elem(_, "MessageRefId", _, _, _*) =>
           <MessageRefId>{ messageRefID }</MessageRefId>
         case other => other
       }

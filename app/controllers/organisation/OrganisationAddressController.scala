@@ -19,7 +19,7 @@ package controllers.organisation
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.AddressFormProvider
-import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, hasValueChanged, pageHeadingProvider}
+import helpers.JourneyHelpers.{countryJsonList, getOrganisationName, pageHeadingProvider}
 import javax.inject.Inject
 import models.{Address, Country, Mode, UserAnswers}
 import navigation.NavigatorForOrganisation

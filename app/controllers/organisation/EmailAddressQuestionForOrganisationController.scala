@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import helpers.JourneyHelpers.getOrganisationName
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.NavigatorForOrganisation
 import pages.organisation.EmailAddressQuestionForOrganisationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -87,11 +87,6 @@ class EmailAddressQuestionForOrganisationController @Inject()(
           renderer.render("organisation/emailAddressQuestionForOrganisation.njk", json).map(BadRequest(_))
         },
         value => {
-
-          val determineRoute = (value, mode) match {
-            case (false, CheckMode) => true
-            case  _ => false
-          }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailAddressQuestionForOrganisationPage, id, value))

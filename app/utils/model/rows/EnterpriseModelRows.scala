@@ -25,11 +25,11 @@ import utils.SummaryListDisplay.DisplayRow
 trait EnterpriseModelRows extends DisplayRowBuilder {
 
 
-  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages):
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages):
   Seq[DisplayRow] =
-          formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers, id)
+          formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers)
 
-  private def formatSelectedTaxpayers(taxpayerList: Seq[String], id: Int)(implicit messages: Messages): Seq[DisplayRow] = {
+  private def formatSelectedTaxpayers(taxpayerList: Seq[String])(implicit messages: Messages): Seq[DisplayRow] = {
 
     val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
@@ -45,7 +45,7 @@ trait EnterpriseModelRows extends DisplayRowBuilder {
     ))
   }
 
-  def associatedEnterpriseType(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow = {
+  def associatedEnterpriseType(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow = {
     val selectType = (associatedEnterprise.individual, associatedEnterprise.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
@@ -58,7 +58,7 @@ trait EnterpriseModelRows extends DisplayRowBuilder {
   }
 
 
-  def isAssociatedEnterpriseAffected(id: Int, associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow =
+  def isAssociatedEnterpriseAffected(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
         msgKey = "isAssociatedEnterpriseAffected",
         content = yesOrNo(associatedEnterprise.isAffectedBy)

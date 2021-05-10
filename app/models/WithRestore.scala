@@ -16,7 +16,6 @@
 
 package models
 
-import models.taxpayer.TaxResidency
 
 import scala.util.Try
 

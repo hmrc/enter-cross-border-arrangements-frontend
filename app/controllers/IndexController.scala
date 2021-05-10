@@ -21,11 +21,10 @@ import models.{NormalMode, UnsubmittedDisclosure}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IndexController @Inject()(
                                 identify: IdentifierAction,

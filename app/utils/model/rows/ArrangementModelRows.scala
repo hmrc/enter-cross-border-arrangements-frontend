@@ -16,31 +16,29 @@
 
 package utils.model.rows
 
-import models.CheckMode
 import models.arrangement.ArrangementDetails
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.SummaryListDisplay.DisplayRow
 
 trait ArrangementModelRows extends DisplayRowBuilder {
 
-  def whatIsThisArrangementCalledPage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def whatIsThisArrangementCalledPage( arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey  = "whatIsThisArrangementCalled",
       content = formatMaxChars(arrangementDetails.arrangementName)
     ))
 
 
-  def whatIsTheImplementationDatePage(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def whatIsTheImplementationDatePage(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey = "whatIsTheImplementationDate",
       content = Literal(arrangementDetails.implementationDate.format(dateFormatter))
     ))
 
 
-  def buildWhyAreYouReportingThisArrangementNow(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def buildWhyAreYouReportingThisArrangementNow(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     arrangementDetails.reportingReason map { answer =>
       toDisplayRow(
       msgKey = "whyAreYouReportingThisArrangementNow",
@@ -59,25 +57,25 @@ trait ArrangementModelRows extends DisplayRowBuilder {
     Html(list)
   }
 
-  def whichExpectedInvolvedCountriesArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def whichExpectedInvolvedCountriesArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey  = "whichExpectedInvolvedCountriesArrangement",
       content = formatCountries(arrangementDetails.countriesInvolved)
     ))
 
-  def whatIsTheExpectedValueOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def whatIsTheExpectedValueOfThisArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey  = "whatIsTheExpectedValueOfThisArrangement",
       content = lit"${arrangementDetails.expectedValue.currency} ${arrangementDetails.expectedValue.amount}"
     ))
 
-  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def whichNationalProvisionsIsThisArrangementBasedOn(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
       content = lit"${arrangementDetails.nationalProvisionDetails}"
     ))
 
-  def giveDetailsOfThisArrangement(id: Int, arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+  def giveDetailsOfThisArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
     Some(toDisplayRow(
       msgKey  = "giveDetailsOfThisArrangement",
       content = lit"${arrangementDetails.arrangementDetails}"

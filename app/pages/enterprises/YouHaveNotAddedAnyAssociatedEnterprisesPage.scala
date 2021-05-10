@@ -19,8 +19,6 @@ package pages.enterprises
 import models.UserAnswers
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import pages.QuestionPage
-import pages.individual._
-import pages.organisation._
 import play.api.libs.json.JsPath
 
 import scala.util.Try

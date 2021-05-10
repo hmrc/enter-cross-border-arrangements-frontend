@@ -24,7 +24,7 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait AffectedModelRows extends DisplayRowBuilder {
 
-  def affectedType(id: Int, affected: Affected)(implicit messages: Messages): DisplayRow = {
+  def affectedType(affected: Affected)(implicit messages: Messages): DisplayRow = {
 
     val selectType = (affected.individual, affected.organisation) match {
       case (Some(_), None) => SelectType.Individual

@@ -22,7 +22,7 @@ import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks.JourneyStatus
-import models.{ItemList, Mode, NormalMode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForEnterprises
 import pages.enterprises.{AssociatedEnterpriseLoopPage, AssociatedEnterpriseStatusPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
