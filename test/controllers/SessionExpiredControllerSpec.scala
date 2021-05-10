@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
 import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

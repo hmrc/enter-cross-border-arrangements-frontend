@@ -26,6 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.Elem
 
 class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+
   val url = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/validate-manual-submission"
 
   private val headers = Seq(

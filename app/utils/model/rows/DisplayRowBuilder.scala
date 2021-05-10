@@ -65,7 +65,7 @@ trait DisplayRowBuilder {
                            content: Content,
                            columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
+    
     DisplayRow(
       key     = Key(message, classes = Seq(columnWidth)),
       value   = Value(content)
@@ -76,7 +76,7 @@ trait DisplayRowBuilder {
                                   content: Content,
                                   columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
+    
     DisplayRow(
       key     = Key(message, classes = Seq(columnWidth)),
       value   = Value(content),

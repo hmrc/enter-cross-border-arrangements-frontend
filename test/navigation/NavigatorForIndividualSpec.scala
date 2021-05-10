@@ -22,7 +22,6 @@ import controllers.mixins.{AssociatedEnterprisesRouting, DefaultRouting, Interme
 import generators.Generators
 import models._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages._
 import pages.individual._
 
 class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

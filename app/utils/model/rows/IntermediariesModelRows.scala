@@ -26,7 +26,7 @@ import utils.SummaryListDisplay.DisplayRow
 trait IntermediariesModelRows extends DisplayRowBuilder {
 
 
-  def intermediariesType(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+  def intermediariesType( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
      {
        val selectType = (intermediary.individual, intermediary.organisation) match {
          case (Some(_), None) => SelectType.Individual
@@ -39,13 +39,13 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
       )
   }
 
-  def isExemptionKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+  def isExemptionKnown( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
     DisplayRow(
         key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}")
       )
 
-  def isExemptionCountryKnown(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] =
+  def isExemptionCountryKnown( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] =
     intermediary.isExemptionCountryKnown map {
     answer =>
       DisplayRow(
@@ -65,7 +65,7 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
     }
   }
 
-  def exemptCountries(id: Int, intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
+  def exemptCountries( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
     answer =>
       DisplayRow(
         key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -85,7 +85,7 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
     }
   }
 
-  def whatTypeofIntermediary(id: Int, intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+  def whatTypeofIntermediary( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
     DisplayRow(
         key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}")

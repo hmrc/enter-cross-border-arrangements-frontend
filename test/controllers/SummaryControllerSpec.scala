@@ -17,8 +17,8 @@
 package controllers
 
 import base.SpecBase
-import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import connectors.HistoryConnector
+import controllers.actions.FakeContactRetrievalAction
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
@@ -26,13 +26,13 @@ import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.Taxpayer
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
-import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
 import models.subscription.ContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
@@ -45,12 +45,10 @@ import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterInd
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer.RelevantTaxpayerStatusPage
-import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.XMLGenerationService
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import java.time.{LocalDate, LocalDateTime}

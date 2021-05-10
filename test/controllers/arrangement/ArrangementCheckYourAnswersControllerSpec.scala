@@ -21,7 +21,7 @@ import controllers.RowJsonReads
 import generators.ModelGenerators
 import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
 import models.{UnsubmittedDisclosure, UserAnswers}
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

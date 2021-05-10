@@ -25,7 +25,7 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait TaxpayerModelRows extends DisplayRowBuilder {
 
-  def taxpayerSelectType(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): DisplayRow = {
+  def taxpayerSelectType(taxpayer: Taxpayer)(implicit messages: Messages): DisplayRow = {
     val selectType = (taxpayer.individual, taxpayer.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
@@ -37,7 +37,7 @@ trait TaxpayerModelRows extends DisplayRowBuilder {
       )
   }
 
-  def whatIsTaxpayersStartDateForImplementingArrangement(id: Int, taxpayer: Taxpayer)(implicit messages: Messages): Option[DisplayRow] =
+  def whatIsTaxpayersStartDateForImplementingArrangement(taxpayer: Taxpayer)(implicit messages: Messages): Option[DisplayRow] =
     taxpayer.implementingDate map { implementingDate =>
       toDisplayRow(
         msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",
