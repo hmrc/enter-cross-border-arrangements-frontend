@@ -27,7 +27,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageMinimum := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    scalacOptions ++= Seq("-feature","-Ywarn-unused"),
+    scalacOptions ++= Seq("-feature"),
     javaOptions ++= Seq(
       "-Xms1024M", "-Xmx2048M",
       "-Xss2M",
