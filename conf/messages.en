@@ -745,7 +745,6 @@ youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
 youHaveNotAddedAnyAffected.yesAddNow = Yes, add now
 youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
 youHaveNotAddedAnyAffected.no = No
-youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any others affected?
 youHaveNotAddedAnyAffected.error.required = Select an option to add other affected party now, later or not at all
 youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any affected parties?
 
@@ -775,9 +774,6 @@ whatTypeofIntermediary.error.required = Select the type of intermediary
 
 ## DISCLOSURE DETAILS
 
-disclosureName.title = disclosureName
-disclosureName.heading = disclosureName
-disclosureName.checkYourAnswersLabel = disclosureName
 disclosureName.title = Provide a name for this disclosure
 disclosureName.heading = Provide a name for this disclosure
 disclosureName.info = Choose something that will help you identify this individual disclosure, particularly if you submit multiple. Do not use any sensitive information. We will combine it with your user ID to create a unique message reference ID that will be used by you, HMRC and the EU to tell disclosures apart.
@@ -1052,6 +1048,9 @@ reporterEmailAddressQuestion.error.required = Select yes if you have an email ad
 reporterOrganisationEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
 reporterOrganisationEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
 reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
+reporterIndividualEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
+reporterIndividualEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
+reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
 
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
@@ -1065,7 +1064,7 @@ reporterIndividualEmailAddress.title = What email address would you like to prov
 reporterIndividualEmailAddress.heading = What email address would you like to provide?
 reporterIndividualEmailAddress.label = Email
 reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
-reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
+reporterIndividualEmailAddress.error.required = Select yes if you have a preferred email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
 
@@ -1141,7 +1140,6 @@ reporterIndividualOtherTaxResidentQuestion.title = Are you resident for tax purp
 reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax purposes in any other countries?
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
-
 
 # Temporary page for displaying generated XML
 generatedXML.title = Generated XML
