@@ -1045,12 +1045,6 @@ reporterIndividualSelectAddress.3 = 4
 reporterIndividualSelectAddress.checkYourAnswersLabel = Address
 reporterIndividualSelectAddress.error.required = Select an address
 
-reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddress.label = Email
-reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
-reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
-
 ## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
 
 reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
@@ -1058,9 +1052,6 @@ reporterEmailAddressQuestion.error.required = Select yes if you have an email ad
 reporterOrganisationEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
 reporterOrganisationEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
 reporterOrganisationEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
-reporterIndividualEmailAddressQuestion.title = Do you want to provide an additional email address for this disclosure?
-reporterIndividualEmailAddressQuestion.heading = Do you want to provide an additional email address for this disclosure?
-reporterIndividualEmailAddressQuestion.checkYourAnswersLabel = Do you want to provide an additional email address?
 
 ## REPORTER DETAILS - EMAIL ADDRESS PAGE
 
@@ -1072,7 +1063,9 @@ reporterOrganisationEmailAddress.heading = What email address would you like to 
 reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
 reporterIndividualEmailAddress.title = What email address would you like to provide?
 reporterIndividualEmailAddress.heading = What email address would you like to provide?
+reporterIndividualEmailAddress.label = Email
 reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
+reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
 
