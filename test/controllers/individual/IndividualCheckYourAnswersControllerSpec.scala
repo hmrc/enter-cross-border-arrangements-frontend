@@ -131,7 +131,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
   }
 
   def assertAddress(address: Address)(row: Row): Unit = {
-    row.key.text mustBe Some(Literal("Address"))
+    row.key.text mustBe Some(Literal("What is the individual’s main address?"))
     row.value.html.map { html =>
       html.value mustBe
         Html("""

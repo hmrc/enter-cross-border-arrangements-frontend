@@ -1,7 +1,6 @@
 site.day.capitalized = Day
 site.month.capitalized = Month
 site.year.capitalized = Year
-
 site.back = Back
 site.delete = Remove
 site.edit = Change
@@ -33,16 +32,24 @@ global.error.InternalServerError500.message = Try again later.
 
 global.error.badRequest400.info = If you entered any information, your answers will be saved.
 
-undefined.title = Sorry, there is a problem with this service
-undefined.heading = Sorry, there is a problem with this service
-undefined.info = If you entered any information, your answers will be saved.
-
 global.error.entityTooLarge413.heading = Sorry, there is a problem with this service
 global.error.entityTooLarge413.message = If you entered any information, your answers will be saved.
 global.error.entityTooLarge413.info = Try again later.
 global.error.entityTooLarge413.title = Sorry, there is a problem with this service
 
 global.error.validation.section.taxpayerorreporter = Relevant taxpayers or reporter’s details
+
+undefined.title = Sorry, there is a problem with this service
+undefined.heading = Sorry, there is a problem with this service
+undefined.info = If you entered any information, your answers will be saved.
+
+session_expired.title = For your security, we signed you out
+session_expired.heading = For your security, we signed you out
+session_expired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+session_expired.link = Back to disclose cross-border arrangements
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account
 
 footer.links.support_links = Help contacts
 footer.links.help = Help using GOV.UK
@@ -64,14 +71,6 @@ phaseBanner.3 = will help us to improve it.
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 taxpayerscheckYourAnswers.heading = Check your answers for relevant taxpayer details
-
-session_expired.title = For your security, we signed you out
-session_expired.heading = For your security, we signed you out
-session_expired.guidance = The details you entered will be saved for 28 days from when you last made changes.
-session_expired.link = Back to disclose cross-border arrangements
-
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
 
 #### Compliance statement
 
@@ -473,10 +472,6 @@ isIndividualAddressUk.title = Do they live in the United Kingdom?
 isIndividualAddressUk.heading = Does {0} live in the United Kingdom?
 isIndividualAddressUk.error.required = Select yes if they live in the United Kingdom
 
-individualAddress.heading = What is {0}’s address?
-individualAddress.title = What is their address?
-individualAddress.checkYourAnswersLabel = Address
-
 doYouKnowAnyTINForUKIndividual.title = Do you know their tax identification numbers for the United Kingdom?
 doYouKnowAnyTINForUKIndividual.heading = Do you know {0} tax identification numbers for the United Kingdom?
 doYouKnowAnyTINForUKIndividual.hint = This is any number issued by HMRC, like National Insurance number or Unique Taxpayer Reference.
@@ -484,7 +479,7 @@ doYouKnowAnyTINForUKIndividual.checkYourAnswersLabel = Do you know their tax ide
 doYouKnowAnyTINForUKIndividual.error.required =  Select yes if you know the individual’s tax identification numbers
 
 isIndividualResidentForTaxOtherCountries.title = Is the individual resident for tax purposes in any other countries?
-isIndividualResidentForTaxOtherCountries.heading = {0} resident for tax purposes in any other countries?
+isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = Is the individual resident for tax purposes in any other countries?
 isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is tax resident in another country
 
@@ -530,11 +525,6 @@ doYouKnowTINForNonUKIndividual.heading = Do you know {0}’s tax identification 
 doYouKnowTINForNonUKIndividual.hint = This is a number given by the tax administration in the country where the individual is resident for tax purposes. It is used to identify individual taxpayers.
 doYouKnowTINForNonUKIndividual.checkYourAnswersLabel = Do you know the individual’s tax identification numbers for tax resident countries?
 doYouKnowTINForNonUKIndividual.error.required = Select yes if you know the individual’s tax identification numbers for {0}
-
-isIndividualResidentForTaxOtherCountries.title = Is the organisation resident for tax purposes in any other countries?
-isIndividualResidentForTaxOtherCountries.heading = Is {0} resident for tax purposes in any other countries?
-isIndividualResidentForTaxOtherCountries.checkYourAnswersLabel = isOrganisationResidentForTaxOtherCountries
-isIndividualResidentForTaxOtherCountries.error.required = Select yes if the individual is tax resident in another country
 
 whatIsThisArrangementCalled.title = What is this arrangement called?
 whatIsThisArrangementCalled.heading = What is this arrangement called?
@@ -691,14 +681,6 @@ selectAnyTaxpayersThisEnterpriseIsAssociatedWith.hint.3 = before continuing
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.checkYourAnswersLabel = Taxpayers associated with
 selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required = Select the taxpayer associated with this enterprise
 
-associatedEnterpriseCheckYourAnswers.title = Check your answers for associated enterprise details
-associatedEnterpriseCheckYourAnswers.heading = Check your answers for associated enterprise details
-
-associatedEnterpriseType.title = Is this an organisation or an individual?
-associatedEnterpriseType.heading = Is this an organisation or an individual?
-associatedEnterpriseType.checkYourAnswersLabel = Organisation or individual
-associatedEnterpriseType.error.required = Select the type of associated enterprise
-
 isExemptionCountryKnown.title = Do you know which countries they’re exempt from reporting in?
 isExemptionCountryKnown.heading = Do you know which countries {0} is exempt from reporting in?
 isExemptionCountryKnown.checkYourAnswersLabel = Exempt countries known?
@@ -763,7 +745,6 @@ youHaveNotAddedAnyAffected.plural = parties affected by this arrangement
 youHaveNotAddedAnyAffected.yesAddNow = Yes, add now
 youHaveNotAddedAnyAffected.yesAddLater = Yes, add later
 youHaveNotAddedAnyAffected.no = No
-youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any others affected?
 youHaveNotAddedAnyAffected.error.required = Select an option to add other affected party now, later or not at all
 youHaveNotAddedAnyAffected.checkYourAnswersLabel = Are there any affected parties?
 
@@ -793,9 +774,6 @@ whatTypeofIntermediary.error.required = Select the type of intermediary
 
 ## DISCLOSURE DETAILS
 
-disclosureName.title = disclosureName
-disclosureName.heading = disclosureName
-disclosureName.checkYourAnswersLabel = disclosureName
 disclosureName.title = Provide a name for this disclosure
 disclosureName.heading = Provide a name for this disclosure
 disclosureName.info = Choose something that will help you identify this individual disclosure, particularly if you submit multiple. Do not use any sensitive information. We will combine it with your user ID to create a unique message reference ID that will be used by you, HMRC and the EU to tell disclosures apart.
@@ -1063,12 +1041,6 @@ reporterIndividualSelectAddress.3 = 4
 reporterIndividualSelectAddress.checkYourAnswersLabel = Address
 reporterIndividualSelectAddress.error.required = Select an address
 
-reporterIndividualEmailAddress.title = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddress.heading = Do you have a preferred email address for this disclosure?
-reporterIndividualEmailAddress.label = Email
-reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
-reporterIndividualEmailAddress.error.required = Select yes if have a preferred email address
-
 ## REPORTER DETAILS - EMAIL ADDRESS QUESTION PAGE
 
 reporterEmailAddressQuestion.guidance = In case there are queries about your disclosure, you may provide an additional email address that can be used alongside the one registered to your DAC6 account.
@@ -1090,7 +1062,9 @@ reporterOrganisationEmailAddress.heading = What email address would you like to 
 reporterOrganisationEmailAddress.checkYourAnswersLabel = Email address
 reporterIndividualEmailAddress.title = What email address would you like to provide?
 reporterIndividualEmailAddress.heading = What email address would you like to provide?
+reporterIndividualEmailAddress.label = Email
 reporterIndividualEmailAddress.checkYourAnswersLabel = Email address
+reporterIndividualEmailAddress.error.required = Select yes if you have a preferred email address
 
 ## REPORTER DETAILS - TAX RESIDENCY PAGE
 
@@ -1166,7 +1140,6 @@ reporterIndividualOtherTaxResidentQuestion.title = Are you resident for tax purp
 reporterIndividualOtherTaxResidentQuestion.heading = Are you resident for tax purposes in any other countries?
 reporterOtherTaxResidentQuestion.checkYourAnswersLabel = reporterOtherTaxResidentQuestion
 reporterOtherTaxResidentQuestion.error.required = Select yes to add another residency for tax purposes
-
 
 # Temporary page for displaying generated XML
 generatedXML.title = Generated XML

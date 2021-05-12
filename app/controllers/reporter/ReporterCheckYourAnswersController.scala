@@ -19,7 +19,6 @@ package controllers.reporter
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.DefaultRouting
-import handlers.ErrorHandler
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.hallmarks.JourneyStatus
 import models.reporter.ReporterDetails
@@ -43,7 +42,6 @@ class ReporterCheckYourAnswersController  @Inject()(
    identify: IdentifierAction,
    getData: DataRetrievalAction,
    requireData: DataRequiredAction,
-   errorHandler: ErrorHandler,
    navigator: NavigatorForReporter,
    sessionRepository: SessionRepository,
    val controllerComponents: MessagesControllerComponents,
