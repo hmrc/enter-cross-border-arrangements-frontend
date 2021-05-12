@@ -20,12 +20,64 @@ import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.QuestionPage
 import pages.reporter.individual._
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation._
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
 case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOrganisationOrIndividual] {
+
+  private val reporterIndividualPages = List(
+    ReporterIndividualNamePage,
+    ReporterIndividualDateOfBirthPage,
+    ReporterIndividualPlaceOfBirthPage,
+    ReporterIndividualEmailAddressQuestionPage,
+    ReporterIndividualEmailAddressPage,
+    ReporterIndividualAddressPage,
+    ReporterSelectedAddressLookupPage,
+    ReporterIndividualPostcodePage,
+    ReporterIndividualSelectAddressPage,
+    ReporterIsIndividualAddressUKPage,
+    RoleInArrangementPage
+  )
+
+  private val reporterOrganisationPages = List(
+    ReporterOrganisationNamePage,
+    ReporterOrganisationEmailAddressQuestionPage,
+    ReporterOrganisationEmailAddressPage,
+    ReporterOrganisationAddressPage,
+    ReporterOrganisationIsAddressUkPage,
+    ReporterOrganisationPostcodePage,
+    ReporterOrganisationSelectAddressPage,
+    ReporterSelectedAddressLookupPage,
+    ReporterUKTaxNumbersPage,
+    RoleInArrangementPage,
+  )
+
+  private val reporterIntermediaryPages = List(
+    IntermediaryDoYouKnowExemptionsPage,
+    IntermediaryExemptionInEUPage,
+    IntermediaryRolePage,
+    IntermediaryWhichCountriesExemptPage,
+    IntermediaryWhyReportInUKPage
+  )
+
+  private val reporterTaxpayerPages = List(
+    TaxpayerWhyReportArrangementPage,
+    TaxpayerWhyReportInUKPage,
+    ReporterTaxpayersStartDateForImplementingArrangementPage
+  )
+
+  private val reporterResidencyPages = List(
+    ReporterUKTaxNumbersPage,
+    ReporterTaxResidencyLoopPage,
+    ReporterTinNonUKQuestionPage,
+    ReporterTaxResidentCountryPage,
+    ReporterOtherTaxResidentQuestionPage,
+    ReporterNonUKTaxNumbersPage
+  )
 
   override def path: JsPath = JsPath \ toString
 
@@ -35,30 +87,12 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
     value match {
       case Some(Organisation) =>
-        List(
-          ReporterIndividualNamePage,
-          ReporterIndividualDateOfBirthPage,
-          ReporterIndividualPlaceOfBirthPage,
-          ReporterIndividualEmailAddressQuestionPage,
-          ReporterIndividualEmailAddressPage,
-          ReporterIndividualAddressPage,
-          ReporterSelectedAddressLookupPage,
-          ReporterIndividualPostcodePage,
-          ReporterIndividualSelectAddressPage,
-          ReporterIsIndividualAddressUKPage
-        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
+      (reporterIndividualPages ++ reporterResidencyPages ++ reporterTaxpayerPages ++ reporterIntermediaryPages)
+        .foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
 
       case Some(Individual) =>
-        List(
-          ReporterOrganisationNamePage,
-          ReporterOrganisationEmailAddressQuestionPage,
-          ReporterOrganisationEmailAddressPage,
-          ReporterOrganisationAddressPage,
-          ReporterOrganisationIsAddressUkPage,
-          ReporterOrganisationPostcodePage,
-          ReporterOrganisationSelectAddressPage,
-          ReporterSelectedAddressLookupPage
-        ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
+        (reporterOrganisationPages ++ reporterResidencyPages ++ reporterTaxpayerPages ++ reporterIntermediaryPages)
+          .foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
 
       case _ => super.cleanup(value, userAnswers, id)
     }
