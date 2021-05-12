@@ -16,11 +16,17 @@
 
 package pages.reporter
 
-import models.{Address, AddressLookup, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
+import helpers.data.ValidUserAnswersForSubmission.{loopDetails, validCountry, validTaxReferenceNumber, validToday}
+import models.reporter.RoleInArrangement
+import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
+import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
+import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.reporter.individual._
+import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
 import pages.reporter.organisation._
+import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
@@ -74,6 +80,36 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
           .success.value
           .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
           .success.value
+          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
+          .success.value
+          .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
+          .success.value
+          .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes)
+          .success.value
+          .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
+          .success.value
+          .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+          .success.value
+          .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.GovernedByLaw)
+          .success.value
+          .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.OutsideUKOrEU)
+          .success.value
+          .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment)
+          .success.value
+          .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, validToday)
+          .success.value
+          .set(ReporterUKTaxNumbersPage, 0, validTaxReferenceNumber)
+          .success.value
+          .set(ReporterTaxResidencyLoopPage, 0, loopDetails)
+          .success.value
+          .set(ReporterTinNonUKQuestionPage, 0, true)
+          .success.value
+          .set(ReporterTaxResidentCountryPage, 0, validCountry)
+          .success.value
+          .set(ReporterOtherTaxResidentQuestionPage, 0, true)
+          .success.value
+          .set(ReporterNonUKTaxNumbersPage, 0, validTaxReferenceNumber)
+          .success.value
           .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual)
           .success.value
 
@@ -85,9 +121,23 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
         result.get(ReporterOrganisationPostcodePage, 0) must not be defined
         result.get(ReporterOrganisationSelectAddressPage, 0) must not be defined
         result.get(ReporterSelectedAddressLookupPage, 0) must not be defined
+        result.get(RoleInArrangementPage, 0) must not be defined
+        result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+        result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
+        result.get(ReporterTaxpayersStartDateForImplementingArrangementPage, 0) must not be defined
+        result.get(IntermediaryDoYouKnowExemptionsPage, 0) must not be defined
+        result.get(IntermediaryExemptionInEUPage, 0) must not be defined
+        result.get(IntermediaryRolePage, 0) must not be defined
+        result.get(IntermediaryWhichCountriesExemptPage, 0) must not be defined
+        result.get(IntermediaryWhyReportInUKPage, 0) must not be defined
+        result.get(ReporterUKTaxNumbersPage, 0) must not be defined
+        result.get(ReporterTaxResidencyLoopPage, 0) must not be defined
+        result.get(ReporterTinNonUKQuestionPage, 0) must not be defined
+        result.get(ReporterTaxResidentCountryPage, 0) must not be defined
+        result.get(ReporterOtherTaxResidentQuestionPage, 0) must not be defined
+        result.get(ReporterNonUKTaxNumbersPage, 0) must not be defined
     }
   }
-
 
     "must remove Individual details if reporter selects organisation" in {
       forAll(arbitrary[UserAnswers]) {
@@ -114,6 +164,36 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
             .success.value
             .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
             .success.value
+            .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
+            .success.value
+            .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
+            .success.value
+            .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes)
+            .success.value
+            .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
+            .success.value
+            .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+            .success.value
+            .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.GovernedByLaw)
+            .success.value
+            .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.OutsideUKOrEU)
+            .success.value
+            .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkPermanentEstablishment)
+            .success.value
+            .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, validToday)
+            .success.value
+            .set(ReporterUKTaxNumbersPage, 0, validTaxReferenceNumber)
+            .success.value
+            .set(ReporterTaxResidencyLoopPage, 0, loopDetails)
+            .success.value
+            .set(ReporterTinNonUKQuestionPage, 0, true)
+            .success.value
+            .set(ReporterTaxResidentCountryPage, 0, validCountry)
+            .success.value
+            .set(ReporterOtherTaxResidentQuestionPage, 0, true)
+            .success.value
+            .set(ReporterNonUKTaxNumbersPage, 0, validTaxReferenceNumber)
+            .success.value
             .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation)
             .success.value
 
@@ -127,8 +207,22 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
           result.get(ReporterIndividualPostcodePage, 0) must not be defined
           result.get(ReporterIndividualSelectAddressPage, 0) must not be defined
           result.get(ReporterSelectedAddressLookupPage, 0) must not be defined
+          result.get(RoleInArrangementPage, 0) must not be defined
+          result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
+          result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
+          result.get(ReporterTaxpayersStartDateForImplementingArrangementPage, 0) must not be defined
+          result.get(IntermediaryDoYouKnowExemptionsPage, 0) must not be defined
+          result.get(IntermediaryExemptionInEUPage, 0) must not be defined
+          result.get(IntermediaryRolePage, 0) must not be defined
+          result.get(IntermediaryWhichCountriesExemptPage, 0) must not be defined
+          result.get(IntermediaryWhyReportInUKPage, 0) must not be defined
+          result.get(ReporterUKTaxNumbersPage, 0) must not be defined
+          result.get(ReporterTaxResidencyLoopPage, 0) must not be defined
+          result.get(ReporterTinNonUKQuestionPage, 0) must not be defined
+          result.get(ReporterTaxResidentCountryPage, 0) must not be defined
+          result.get(ReporterOtherTaxResidentQuestionPage, 0) must not be defined
+          result.get(ReporterNonUKTaxNumbersPage, 0) must not be defined
       }
     }
-
   }
 }

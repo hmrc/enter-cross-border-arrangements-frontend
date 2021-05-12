@@ -57,6 +57,9 @@ object ValidUserAnswersForSubmission {
       Country("valid", "FR", "France")
     )
 
+  val validCountry: Country = Country("valid", "GB", "United Kingdom")
+  val validTaxReferenceNumber: TaxReferenceNumbers = TaxReferenceNumbers("UTR1234", None, None)
+
   val loopDetails = IndexedSeq(
     LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
       Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
