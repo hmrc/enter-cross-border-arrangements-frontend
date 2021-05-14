@@ -138,7 +138,15 @@ class DisclosureDetailsController @Inject()(
 
     ua.get(DisclosureStatusPage, index) match {
       case Some(Completed) =>
-        taskListItemNotLinkedProvider(JourneyStatus.Completed.toString, "disclosureDetails.disclosureTypeLink", "disclosure", "disclosure-details", "item")
+        taskListItemProvider(
+          None,
+          JourneyStatus.Completed.toString,
+          "disclosureDetails.disclosureTypeLink",
+          "disclosure",
+          "disclosure-details",
+          "item",
+          "govuk-tag"
+        )
 
       case _ =>
         retrieveRowWithStatus(ua,
@@ -156,7 +164,7 @@ class DisclosureDetailsController @Inject()(
   private def hallmarksItem(ua: UserAnswers,
                             page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.hallmarksUrl}/$index", s"${frontendAppConfig.hallmarksCYAUrl}/$index", index)
+    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.hallmarksUrl}/$index", s"${frontendAppConfig.hallmarksCYAUrl}/$index", index)
 
     retrieveRowWithStatus(ua: UserAnswers,
       page,
@@ -174,12 +182,20 @@ class DisclosureDetailsController @Inject()(
                                index: Int,
                                isInitialDisclosureMarketable: Boolean)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
+    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
 
     ua.get(HallmarkStatusPage, index) match {
       case None if isInitialDisclosureMarketable =>
-        taskListItemRestricted(
-          "disclosureDetails.arrangementDetailsLink", "arrangementDetails", "item")
+        taskListItemProvider(
+          None,
+          JourneyStatus.Restricted.toString,
+          "disclosureDetails.arrangementDetailsLink",
+          "section-restricted" ,
+          "arrangementDetails",
+          "item",
+          colourClass = "govuk-tag govuk-tag--grey"
+        )
+
       case _ =>
         retrieveRowWithStatus(ua: UserAnswers,
           page,
@@ -196,7 +212,7 @@ class DisclosureDetailsController @Inject()(
   private def reporterDetailsItem(ua: UserAnswers,
                                   page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val dynamicLink = startJourneyOrCya(ua, page, s"${frontendAppConfig.reportersUrl}/$index", s"${frontendAppConfig.reportersCYAUrl}/$index", index)
+    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.reportersUrl}/$index", s"${frontendAppConfig.reportersCYAUrl}/$index", index)
 
     retrieveRowWithStatus(ua: UserAnswers,
       page,
@@ -223,8 +239,15 @@ class DisclosureDetailsController @Inject()(
             index
           )
 
-        case _ => taskListItemRestricted(
-          "disclosureDetails.relevantTaxpayersLink", "connected-parties", "bottomless-item")
+        case _ => taskListItemProvider(
+          None,
+          JourneyStatus.Restricted.toString,
+          "disclosureDetails.relevantTaxpayersLink",
+          "section-restricted",
+          "connected-parties",
+          "bottomless-item",
+          "govuk-tag govuk-tag--grey"
+        )
       }
 
     }
@@ -250,8 +273,15 @@ class DisclosureDetailsController @Inject()(
       case (Some(_), Some(_), Some(Completed)) =>
         rowWithStatus
 
-      case _ => taskListItemRestricted(
-        "disclosureDetails.associatedEnterpriseLink", "connected-parties", "item")
+      case _ => taskListItemProvider(
+        None,
+        JourneyStatus.Restricted.toString,
+        "disclosureDetails.associatedEnterpriseLink",
+        "enterprises-restricted",
+        "connected-parties",
+        "item",
+        "govuk-tag govuk-tag--grey"
+      )
     }
   }
 
@@ -284,8 +314,15 @@ class DisclosureDetailsController @Inject()(
           index
         )
 
-      case _ => taskListItemRestricted(
-        "disclosureDetails.intermediariesLink", "connected-parties", "item")
+      case _ => taskListItemProvider(
+        None,
+        JourneyStatus.Restricted.toString,
+        "disclosureDetails.intermediariesLink",
+        "intermediaries-restricted",
+        "connected-parties",
+        "item",
+        "govuk-tag govuk-tag--grey"
+      )
     }
   }
 }

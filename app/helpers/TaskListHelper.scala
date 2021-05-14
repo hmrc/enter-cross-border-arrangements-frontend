@@ -43,27 +43,22 @@ object TaskListHelper  {
 
   val optionalCompletion: Seq[QuestionPage[JourneyStatus]] = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
-  def taskListItemRestricted(linkContent: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
-    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>${JourneyStatus.Restricted.toString}</strong> </li>")
-  }
+  def taskListItemProvider(href: Option[String], status: String, linkContent: String, id: String, ariaLabel:String,
+                           rowStyle: String, colourClass: String)(implicit messages: Messages): Html = {
 
-  def taskListItemLinkedProvider(url: String, status: String, linkContent: String, id: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
-    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' href='$url' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
-  }
-
-  def taskListItemNotLinkedProvider(status: String, linkContent: String, id: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
-    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='govuk-tag app-task-list__task-completed' id='$id'>$status</strong> </li>")
+    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' ${href.getOrElse("")} aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='$colourClass app-task-list__task-completed' id='$id'>$status</strong></li>")
   }
 
   def retrieveRowWithStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus],
                             url: String, linkContent: String, id: String, ariaLabel: String, rowStyle: String, index: Int)(implicit messages: Messages): Html = {
     ua.get(page, index) match {
-      case Some(Completed) => taskListItemLinkedProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle)
-      case Some(InProgress) => taskListItemLinkedProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle)
-      case _ => taskListItemLinkedProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle)
+      case Some(Completed) =>
+        taskListItemProvider(Some(s"href=$url"), Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle, "govuk-tag")
+      case Some(InProgress) =>
+        taskListItemProvider(Some(s"href=$url"), InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle, "govuk-tag govuk-tag--blue")
+      case _ =>
+        taskListItemProvider(Some(s"href=$url"), NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
     }
   }
 
@@ -79,7 +74,7 @@ object TaskListHelper  {
     }).forall(bool => bool)
   }
 
-  def startJourneyOrCya(ua: UserAnswers, page: QuestionPage[JourneyStatus], url: String, altUrl: String, id: Int): String = {
+  def hrefToStartJourneyOrCya(ua: UserAnswers, page: QuestionPage[JourneyStatus], url: String, altUrl: String, id: Int): String = {
     ua.get(page, id) match {
       case Some(Completed) => altUrl
       case _ => url
