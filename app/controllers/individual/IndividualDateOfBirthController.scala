@@ -19,7 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IndividualDateOfBirthFormProvider
-import models.{Country, Mode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}

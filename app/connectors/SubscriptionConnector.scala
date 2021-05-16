@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.UserAnswers
 import org.slf4j.LoggerFactory
 import play.api.http.Status.OK
 import models.subscription._

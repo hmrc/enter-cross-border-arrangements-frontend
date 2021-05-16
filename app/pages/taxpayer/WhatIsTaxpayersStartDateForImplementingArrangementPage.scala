@@ -18,8 +18,6 @@ package pages.taxpayer
 
 import java.time.LocalDate
 
-import models.SelectType
-import models.enterprises.AssociatedEnterprise
 import models.taxpayer.Taxpayer
 import pages._
 import play.api.libs.json.JsPath

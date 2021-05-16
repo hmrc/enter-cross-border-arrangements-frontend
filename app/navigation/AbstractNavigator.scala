@@ -17,7 +17,6 @@
 package navigation
 
 import controllers.mixins.CheckRoute
-import models.Mode
 import pages.Page
 import play.api.mvc.Call
 

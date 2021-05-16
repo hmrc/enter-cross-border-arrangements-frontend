@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import controllers.actions._
 import forms.arrangement.WhatIsTheImplementationDateFormProvider
-import helpers.DateHelper.{dateFormatterDMY, dateFormatterNumericDMY}
+import helpers.DateHelper.dateFormatterNumericDMY
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator

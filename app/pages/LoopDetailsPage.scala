@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{LoopDetails, UserAnswers, WithRestore}
+import models.{LoopDetails, UserAnswers}
 
 import scala.util.Try
 

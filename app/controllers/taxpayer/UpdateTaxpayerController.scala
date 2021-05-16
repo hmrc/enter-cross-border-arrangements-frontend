@@ -23,7 +23,7 @@ import forms.taxpayer.UpdateTaxpayerFormProvider
 import helpers.StatusHelper.checkTaxpayerStatusConditions
 import models.hallmarks.JourneyStatus
 import models.taxpayer.UpdateTaxpayer
-import models.{ItemList, Mode, NormalMode, UserAnswers}
+import models.{ItemList, Mode, UserAnswers}
 import navigation.NavigatorForTaxpayer
 import pages.taxpayer.{RelevantTaxpayerStatusPage, TaxpayerLoopPage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -22,7 +22,7 @@ import forms.reporter.ReporterOrganisationOrIndividualFormProvider
 
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
-import models.{Mode, NormalMode, ReporterOrganisationOrIndividual, UserAnswers, UserAnswersHelper}
+import models.{Mode, NormalMode, ReporterOrganisationOrIndividual, UserAnswersHelper}
 import navigation.NavigatorForReporter
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterStatusPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -16,11 +16,10 @@
 
 package pages.intermediaries
 
-import models.{SelectType, UserAnswers}
+import models.UserAnswers
 import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import play.api.libs.json.JsPath
 import pages._
-import pages.individual.IndividualNamePage
 
 import scala.util.Try
 

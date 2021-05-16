@@ -16,10 +16,8 @@
 
 package utils.model.rows
 
-import models.CheckMode
 import models.arrangement.ArrangementDetails
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.SummaryListDisplay.DisplayRow

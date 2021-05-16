@@ -18,17 +18,14 @@ package connectors
 
 import config.FrontendAppConfig
 import models.{ManualSubmissionValidationFailure, ManualSubmissionValidationResult, ManualSubmissionValidationSuccess}
-import play.api.Logger
 import play.api.http.HeaderNames
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.Elem
 
 class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
-  private val logger: Logger = Logger(this.getClass)
-
   val url = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/validate-manual-submission"
 
   private val headers = Seq(

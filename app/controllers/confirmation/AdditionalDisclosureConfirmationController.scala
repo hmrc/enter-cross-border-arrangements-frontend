@@ -27,7 +27,6 @@ import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
 import javax.inject.Inject
-import pages.disclosure.DisclosureIdentifyArrangementPage
 
 import scala.concurrent.ExecutionContext
 

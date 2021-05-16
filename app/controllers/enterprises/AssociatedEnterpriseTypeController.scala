@@ -32,7 +32,6 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import javax.inject.Inject
 import models.hallmarks.JourneyStatus
-import pages.taxpayer.RelevantTaxpayerStatusPage
 
 import scala.concurrent.{ExecutionContext, Future}
 

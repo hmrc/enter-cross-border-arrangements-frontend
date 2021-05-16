@@ -18,7 +18,7 @@ package navigation
 
 import controllers.taxpayer._
 import controllers.mixins.{CheckRoute, DefaultRouting}
-import models.taxpayer.UpdateTaxpayer.{Later, Now}
+import models.taxpayer.UpdateTaxpayer.Now
 import models.{CheckMode, NormalMode}
 import pages.Page
 import pages.disclosure.DisclosureMarketablePage
