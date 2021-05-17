@@ -22,9 +22,9 @@ import controllers.actions._
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
 import models.hallmarks.JourneyStatus
-import models.hallmarks.JourneyStatus.Completed
+import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement.Taxpayer
-import models.{NormalMode, Submission, UserAnswers}
+import models.{NormalMode, Submission, UserAnswers, WithName}
 import navigation.NavigatorForDisclosure
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
@@ -133,196 +133,136 @@ class DisclosureDetailsController @Inject()(
   private def backLink: String =
     navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0).url
 
-  private def disclosureTypeItem(ua: UserAnswers,
-                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+  private def disclosureTypeItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    ua.get(DisclosureStatusPage, index) match {
-      case Some(Completed) =>
-        taskListItemProvider(
-          None,
-          JourneyStatus.Completed.toString,
-          "disclosureDetails.disclosureTypeLink",
-          "disclosure",
-          "disclosure-details",
-          "item",
-          "govuk-tag"
-        )
-
-      case _ =>
-        retrieveRowWithStatus(ua,
-          page,
-          "",
-          linkContent = "disclosureDetails.disclosureTypeLink",
-          id = "disclosure",
-          ariaLabel = "disclosure-details",
-          rowStyle = "item",
-          index
-        )
-    }
-  }
-
-  private def hallmarksItem(ua: UserAnswers,
-                            page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
-
-    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.hallmarksUrl}/$index", s"${frontendAppConfig.hallmarksCYAUrl}/$index", index)
-
-    retrieveRowWithStatus(ua: UserAnswers,
-      page,
-      dynamicLink,
-      linkContent = "disclosureDetails.hallmarksLink",
-      id = "hallmarks",
-      ariaLabel = "arrangementDetails",
-      rowStyle = "item",
-      index
+    retrieveRowWithStatus(
+      getJourneyStatus(ua, page, index),
+      None,
+      linkContent = "disclosureDetails.disclosureTypeLink",
+      id = "disclosure",
+      ariaLabel = "disclosure-details",
+      rowStyle = "item"
     )
   }
 
-  private def arrangementsItem(ua: UserAnswers,
-                               page: QuestionPage[JourneyStatus],
-                               index: Int,
+  private def hallmarksItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+
+    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.hallmarksUrl}/$index", s"${frontendAppConfig.hallmarksCYAUrl}/$index", index)
+
+    retrieveRowWithStatus(
+      getJourneyStatus(ua, page, index),
+      Some(dynamicLink),
+      linkContent = "disclosureDetails.hallmarksLink",
+      id = "hallmarks",
+      ariaLabel = "arrangementDetails",
+      rowStyle = "item")
+  }
+
+  private def arrangementsItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int,
                                isInitialDisclosureMarketable: Boolean)(implicit messages: Messages) = {
 
     val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
 
-    ua.get(HallmarkStatusPage, index) match {
-      case None if isInitialDisclosureMarketable =>
-        taskListItemProvider(
-          None,
-          JourneyStatus.Restricted.toString,
-          "disclosureDetails.arrangementDetailsLink",
-          "section-restricted" ,
-          "arrangementDetails",
-          "item",
-          colourClass = "govuk-tag govuk-tag--grey"
-        )
-
-      case _ =>
-        retrieveRowWithStatus(ua: UserAnswers,
-          page,
-          dynamicLink,
-          linkContent = "disclosureDetails.arrangementDetailsLink",
-          id = "arrangementDetails",
-          ariaLabel = "arrangementDetails",
-          rowStyle = "item",
-          index
-        )
+    val isHallmarkSectionComplete = ua.get(HallmarkStatusPage, index) match {
+      case None if isInitialDisclosureMarketable => Restricted
+      case _ => getJourneyStatus(ua, page, index)
     }
+
+    retrieveRowWithStatus(
+      isHallmarkSectionComplete,
+      Some(dynamicLink),
+      linkContent = "disclosureDetails.arrangementDetailsLink",
+      id = "arrangementDetails",
+      ariaLabel = "arrangementDetails",
+      rowStyle = "item"
+    )
   }
 
-  private def reporterDetailsItem(ua: UserAnswers,
-                                  page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+  private def reporterDetailsItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
     val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.reportersUrl}/$index", s"${frontendAppConfig.reportersCYAUrl}/$index", index)
 
-    retrieveRowWithStatus(ua: UserAnswers,
-      page,
-      dynamicLink,
+    retrieveRowWithStatus(
+      getJourneyStatus(ua, page, index),
+      Some(dynamicLink),
       linkContent = "disclosureDetails.reporterDetailsLink",
       id = "reporter",
       ariaLabel = "reporterDetails",
-      rowStyle = "item",
-      index
+      rowStyle = "item"
     )
   }
 
-  private def relevantTaxpayersItem(ua: UserAnswers,
-                                    page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
-      ua.get(ReporterStatusPage, index) match {
-        case Some(Completed) =>
-          retrieveRowWithStatus(ua: UserAnswers,
-            page,
-            s"${frontendAppConfig.taxpayersUrl}/$index",
-            linkContent = "disclosureDetails.relevantTaxpayersLink",
-            id = "taxpayers",
-            ariaLabel = "connected-parties",
-            rowStyle = "bottomless-item",
-            index
-          )
+  private def relevantTaxpayersItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-        case _ => taskListItemProvider(
-          None,
-          JourneyStatus.Restricted.toString,
-          "disclosureDetails.relevantTaxpayersLink",
-          "section-restricted",
-          "connected-parties",
-          "bottomless-item",
-          "govuk-tag govuk-tag--grey"
-        )
+      val isReporterSectionComplete = ua.get(ReporterStatusPage, index) match {
+        case Some(Completed) => getJourneyStatus(ua, page, index)
+        case _ => Restricted
       }
 
+      retrieveRowWithStatus(
+        isReporterSectionComplete,
+        Some(s"${frontendAppConfig.taxpayersUrl}/$index"),
+        linkContent = "disclosureDetails.relevantTaxpayersLink",
+        id = "taxpayers",
+        ariaLabel = "connected-parties",
+        rowStyle = "bottomless-item"
+      )
     }
 
-  private def associatedEnterpriseItem(ua: UserAnswers,
-                                       page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+  private def associatedEnterpriseItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    val rowWithStatus =
-      retrieveRowWithStatus(ua: UserAnswers,
-      page,
-      s"${frontendAppConfig.associatedEnterpriseUrl}/$index",
+    val isTaxpayerSectionComplete =
+      (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
+        case (Some(Taxpayer), _, _) => getJourneyStatus(ua, page, index)
+        case (Some(_), Some(_), Some(Completed)) => getJourneyStatus(ua, page, index)
+        case _ => Restricted
+      }
+
+      retrieveRowWithStatus(
+        isTaxpayerSectionComplete,
+        Some(s"${frontendAppConfig.associatedEnterpriseUrl}/$index"),
       linkContent = "disclosureDetails.associatedEnterpriseLink",
       id = "associatedEnterprise",
       ariaLabel = "connected-parties",
-      rowStyle = "item",
-      index
+      rowStyle = "item"
     )
-
-    (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
-      case (Some(Taxpayer), _, _) =>
-        rowWithStatus
-
-      case (Some(_), Some(_), Some(Completed)) =>
-        rowWithStatus
-
-      case _ => taskListItemProvider(
-        None,
-        JourneyStatus.Restricted.toString,
-        "disclosureDetails.associatedEnterpriseLink",
-        "enterprises-restricted",
-        "connected-parties",
-        "item",
-        "govuk-tag govuk-tag--grey"
-      )
-    }
   }
 
-  private def othersAffectedItem(ua: UserAnswers,
-                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+  private def othersAffectedItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    retrieveRowWithStatus(ua: UserAnswers,
-      page,
-      s"${frontendAppConfig.othersAffectedUrl}/$index",
+    retrieveRowWithStatus(
+      getJourneyStatus(ua, page, index),
+      Some(s"${frontendAppConfig.othersAffectedUrl}/$index"),
       linkContent = "disclosureDetails.othersAffectedLink",
       id = "othersAffected",
       ariaLabel = "connected-parties",
-      rowStyle = "item",
-      index
+      rowStyle = "item"
     )
   }
 
   private def intermediariesItem(ua: UserAnswers,
                                  page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-    ua.get(ReporterStatusPage, index) match {
-      case Some(Completed) =>
-        retrieveRowWithStatus(ua: UserAnswers,
-          page,
-          s"${frontendAppConfig.intermediariesUrl}/$index",
-          linkContent = "disclosureDetails.intermediariesLink",
-          id = "intermediaries",
-          ariaLabel = "connected-parties",
-          rowStyle = "item",
-          index
-        )
+    val isReporterSectionComplete = ua.get(ReporterStatusPage, index) match {
+      case Some(Completed) => getJourneyStatus(ua, page, index)
+      case _ => Restricted
+    }
 
-      case _ => taskListItemProvider(
-        None,
-        JourneyStatus.Restricted.toString,
-        "disclosureDetails.intermediariesLink",
-        "intermediaries-restricted",
-        "connected-parties",
-        "item",
-        "govuk-tag govuk-tag--grey"
-      )
+    retrieveRowWithStatus(
+      isReporterSectionComplete,
+      Some(s"${frontendAppConfig.intermediariesUrl}/$index"),
+      linkContent = "disclosureDetails.intermediariesLink",
+      id = "intermediaries",
+      ariaLabel = "connected-parties",
+      rowStyle = "item"
+    )
+  }
+
+  private def getJourneyStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int): WithName with JourneyStatus = {
+    ua.get(page, index) match {
+      case Some(Completed) => Completed
+      case Some(InProgress) => InProgress
+      case _ => NotStarted
     }
   }
 }

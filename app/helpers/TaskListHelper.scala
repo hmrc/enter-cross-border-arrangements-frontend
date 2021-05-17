@@ -21,7 +21,7 @@ import models.UserAnswers
 import models.disclosure.DisclosureType
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
-import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement
 import pages.QuestionPage
 import pages.affected.AffectedStatusPage
@@ -43,22 +43,25 @@ object TaskListHelper  {
 
   val optionalCompletion: Seq[QuestionPage[JourneyStatus]] = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
-  def taskListItemProvider(href: Option[String], status: String, linkContent: String, id: String, ariaLabel:String,
+  def taskListItemProvider(url: Option[String], status: String, linkContent: String, id: String, ariaLabel:String,
                            rowStyle: String, colourClass: String)(implicit messages: Messages): Html = {
 
-    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' ${href.getOrElse("")} aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+    val utlToHref = url.fold("")(url => s"href=$url")
+
+    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' $utlToHref aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
       s"<strong class='$colourClass app-task-list__task-completed' id='$id'>$status</strong></li>")
   }
 
-  def retrieveRowWithStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus],
-                            url: String, linkContent: String, id: String, ariaLabel: String, rowStyle: String, index: Int)(implicit messages: Messages): Html = {
-    ua.get(page, index) match {
-      case Some(Completed) =>
-        taskListItemProvider(Some(s"href=$url"), Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle, "govuk-tag")
-      case Some(InProgress) =>
-        taskListItemProvider(Some(s"href=$url"), InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle, "govuk-tag govuk-tag--blue")
+  def retrieveRowWithStatus(status: JourneyStatus, url: Option[String], linkContent: String, id: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
+    status match {
+      case Completed =>
+        taskListItemProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle, "govuk-tag")
+      case InProgress =>
+        taskListItemProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle, "govuk-tag govuk-tag--blue")
+      case Restricted =>
+        taskListItemProvider(None, Restricted.toString, linkContent, s"$id-restricted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
       case _ =>
-        taskListItemProvider(Some(s"href=$url"), NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
+        taskListItemProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
     }
   }
 

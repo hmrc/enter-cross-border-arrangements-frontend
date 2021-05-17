@@ -39,8 +39,8 @@ import uk.gov.hmrc.viewmodels.Html
 
 class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val mockUrl = "href='home.gov.uk'"
-  val mockAltURL = "href='notHome.gov.uk'"
+  val mockUrl = "home.gov.uk"
+  val mockAltURL = "notHome.gov.uk"
   val mockLinkContent = "some link"
   val index = 0
   val mockDisclosure = DisclosureDetails("name", DisclosureType.Dac6new, Some("123"), Some("321"), initialDisclosureMA = true, Some("messageRefID"))
@@ -70,14 +70,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return html for a row with dark blue status on taskList page" in {
 
         taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' $mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
       }
 
       "must return html for a row with blue status on taskList page with no bottom row line" in {
 
         taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' $mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
       }
     }
@@ -87,14 +87,14 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
       "must return html for a row with dark light blue status on taskList page" in {
 
         taskListItemProvider(Some(mockUrl), JourneyStatus.InProgress.toString, mockLinkContent, "completed", "link", "item", "govuk-tag govuk-tag--blue") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' $mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>")
       }
 
       "must return html for a row with light blue status on taskList page with no bottom row line" in {
 
         taskListItemProvider(Some(mockUrl), JourneyStatus.InProgress.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag govuk-tag--blue") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' $mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>")
       }
     }
@@ -120,47 +120,23 @@ class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Gen
 
       "must return html for a row with COMPLETED status" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, "'home.gov.uk'", mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' $mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+        retrieveRowWithStatus(Completed, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-completed'>Completed</strong></li>")
       }
 
       "must return html for a row with IN PROGRESS status" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(ReporterStatusPage, index, InProgress)
-          .success
-          .value
-
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, "'home.gov.uk'", mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' $mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+        retrieveRowWithStatus(InProgress, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='reporter-inProgress'>In Progress</strong></li>")
       }
 
 
       "must return html for a row with NOT STARTED status" in {
-
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(ReporterStatusPage, index, NotStarted)
-          .success
-          .value
-
-        retrieveRowWithStatus(userAnswers, ReporterStatusPage, "'home.gov.uk'", mockLinkContent, "reporter", "aria", "item", index) mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' $mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+        
+        retrieveRowWithStatus(NotStarted, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
+          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
           s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong></li>")
       }
     }
