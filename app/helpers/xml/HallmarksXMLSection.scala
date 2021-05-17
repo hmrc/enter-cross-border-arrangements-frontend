@@ -16,10 +16,10 @@
 
 package helpers.xml
 
-import models.{HallmarkDetailsNotDefinedError, Submission}
+import models.Submission
 import models.hallmarks.HallmarkDetails
 
-import scala.xml.{Elem, NodeSeq}
+import scala.xml.NodeSeq
 
 case class HallmarksXMLSection(submission: Submission) {
 

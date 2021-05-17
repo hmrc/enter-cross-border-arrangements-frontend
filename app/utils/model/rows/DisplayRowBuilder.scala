@@ -20,7 +20,6 @@ import models.{Address, AddressLookup, TaxReferenceNumbers}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 import utils.SummaryListDisplay.DisplayRow
 

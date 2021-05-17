@@ -19,7 +19,7 @@ package controllers.taxpayer
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.exceptions.UnsupportedRouteException
-import models.{Mode, NormalMode, SelectType, UserAnswers}
+import models.{NormalMode, SelectType, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
