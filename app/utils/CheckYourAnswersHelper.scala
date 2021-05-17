@@ -16,7 +16,6 @@
 
 package utils
 
-import models.hallmarks.HallmarkC.C1
 import models.hallmarks.HallmarkC1._
 import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
@@ -145,12 +144,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
   }
 
   def buildHallmarksRow(id: Int): Row = {
-
-    val hallmarkCPage = userAnswers.get(HallmarkCPage, id)  match {
-      case Some(set) if set.contains(C1) && set.size == 1 => None
-      case Some(set) if set.contains(C1) => Some(set.filter(_ != C1))
-      case hallmarkSet => hallmarkSet
-    }
 
     val hallmarkDPage = userAnswers.get(HallmarkDPage, id)  match {
       case Some(set) if set.contains(D1) && set.size == 1 => None

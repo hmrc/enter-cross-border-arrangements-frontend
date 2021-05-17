@@ -30,99 +30,99 @@ import java.time.LocalDate
 
 trait IndividualModelRows extends DisplayRowBuilder {
 
-  def individualName(id: Int, individual: Individual)(implicit messages: Messages): DisplayRow =
+  def individualName(individual: Individual)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "individualName",
       content = lit"${individual.individualName.firstName} ${individual.individualName.secondName}"
     )
 
 
-  def buildIndividualDateOfBirthGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildIndividualDateOfBirthGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     individual.birthDate match {
 
       case Some(dateOfBirth) =>
-        Seq(isIndividualDateOfBirthKnown(true, id), individualDateOfBirth(dateOfBirth, id))
+        Seq(isIndividualDateOfBirthKnown(true), individualDateOfBirth(dateOfBirth))
       case _ =>
-        Seq(isIndividualDateOfBirthKnown(false, id))
+        Seq(isIndividualDateOfBirthKnown(false))
     }
 
-  def isIndividualDateOfBirthKnown(isKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  def isIndividualDateOfBirthKnown(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "isIndividualDateOfBirthKnown",
       content = yesOrNo(isKnown)
     )
 
-  def individualDateOfBirth(dateOfBirth: LocalDate, id: Int)(implicit messages: Messages): DisplayRow =
+  def individualDateOfBirth(dateOfBirth: LocalDate)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "individualDateOfBirth",
       content = Literal(dateOfBirth.format(dateFormatter))
     )
 
-  def buildIndividualPlaceOfBirthGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildIndividualPlaceOfBirthGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
    individual.birthPlace match {
 
       case Some(placeOfBirth) =>
-        Seq(isIndividualPlaceOfBirthKnown(true, id), individualPlaceOfBirth(placeOfBirth, id))
+        Seq(isIndividualPlaceOfBirthKnown(true), individualPlaceOfBirth(placeOfBirth))
       case _ =>
-        Seq(isIndividualPlaceOfBirthKnown(false, id))
+        Seq(isIndividualPlaceOfBirthKnown(false))
     }
 
-  private def isIndividualPlaceOfBirthKnown(isKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  private def isIndividualPlaceOfBirthKnown(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "isIndividualPlaceOfBirthKnown",
       content = yesOrNo(isKnown)
     )
 
-  private def individualPlaceOfBirth(placeOfBirth: String, id: Int)(implicit messages: Messages): DisplayRow =
+  private def individualPlaceOfBirth(placeOfBirth: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "individualPlaceOfBirth",
       content = lit"$placeOfBirth"
     )
 
-  def buildIndividualAddressGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildIndividualAddressGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     individual.address
     match {
       case Some(address) =>
-        Seq(isIndividualAddressKnown(true, id), individualAddress(address, id))
+        Seq(isIndividualAddressKnown(true), individualAddress(address))
       case _ =>
-        Seq(isIndividualAddressKnown(false, id))
+        Seq(isIndividualAddressKnown(false))
     }
 
-  private def isIndividualAddressKnown(addressKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  private def isIndividualAddressKnown(addressKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "isIndividualAddressKnown",
       content = yesOrNo(addressKnown)
     )
 
-  private def individualAddress(manualAddress: Address, id: Int)(implicit messages: Messages): DisplayRow =
+  private def individualAddress(manualAddress: Address)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "individualAddress",
       content = formatAddress(manualAddress)
     )
 
-  def buildIndividualEmailAddressGroup(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildIndividualEmailAddressGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     individual.emailAddress match {
 
       case Some(email) =>
-        Seq(emailAddressQuestionForIndividual(true, id)
-          , emailAddressForIndividual(email, id))
+        Seq(emailAddressQuestionForIndividual(true)
+          , emailAddressForIndividual(email))
       case _ =>
-        Seq(emailAddressQuestionForIndividual(false, id))
+        Seq(emailAddressQuestionForIndividual(false))
     }
 
-  private def emailAddressQuestionForIndividual(isKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  private def emailAddressQuestionForIndividual(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "emailAddressQuestionForIndividual",
       content = yesOrNo(isKnown)
     )
 
-  private def emailAddressForIndividual(email: String, id: Int)(implicit messages: Messages): DisplayRow =
+  private def emailAddressForIndividual(email: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "emailAddressForIndividual",
       content = lit"$email"
     )
 
-  def buildTaxResidencySummaryForIndividuals(id: Int, individual: Individual)(implicit messages: Messages): Seq[DisplayRow] = {
+  def buildTaxResidencySummaryForIndividuals(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] = {
 
     val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
 
@@ -176,7 +176,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
     ))
   }
 
-  def whichCountryTaxForIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[DisplayRow] = {
+  def whichCountryTaxForIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] = {
     individual.firstTaxResidency.flatMap(_.country) map { country =>
       toDisplayRowNoBorder(
         msgKey = "whichCountryTaxForIndividual",
@@ -185,7 +185,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
     }
   }
 
-  def doYouKnowAnyTINForUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
+  def doYouKnowAnyTINForUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
     individual.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
     toDisplayRow(
       msgKey = "doYouKnowAnyTINForUKIndividual",
@@ -193,7 +193,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
     )
   }
 
-  def whatAreTheTaxNumbersForUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
+  def whatAreTheTaxNumbersForUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
     individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
       toDisplayRow(
         msgKey = "whatAreTheTaxNumbersForUKIndividual",
@@ -201,7 +201,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
       )
     }
 
-  def whatAreTheTaxNumbersForNonUKIndividual(id: Int, individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
+  def whatAreTheTaxNumbersForNonUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
     individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumber =>
       toDisplayRow(
         msgKey = "whatAreTheTaxNumbersForNonUKIndividual",

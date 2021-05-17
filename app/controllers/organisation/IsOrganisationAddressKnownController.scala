@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.organisation.IsOrganisationAddressKnownFormProvider
 import helpers.JourneyHelpers.getOrganisationName
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.NavigatorForOrganisation
 import pages.organisation.IsOrganisationAddressKnownPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -86,11 +86,6 @@ class IsOrganisationAddressKnownController @Inject()(
           renderer.render("organisation/isOrganisationAddressKnown.njk", json).map(BadRequest(_))
         },
         value => {
-
-          val determineRoute = (value, mode) match {
-            case (false, CheckMode) => true
-            case  _ => false
-          }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsOrganisationAddressKnownPage, id, value))

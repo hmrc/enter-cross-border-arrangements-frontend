@@ -26,54 +26,54 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait OrganisationModelRows extends DisplayRowBuilder {
 
-  def organisationName(id: Int, organisation: Organisation)(implicit messages: Messages): DisplayRow =
+  def organisationName(organisation: Organisation)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "organisationName",
       content = lit"${organisation.organisationName}"
     )
 
-  def buildOrganisationAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildOrganisationAddressGroup(organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
     organisation.address match {
       case Some(manualAddress) =>
-        Seq(isOrganisationAddressKnown(true, id), organisationAddress(manualAddress, id))
+        Seq(isOrganisationAddressKnown(true), organisationAddress(manualAddress))
       case _ =>
-        Seq(isOrganisationAddressKnown(false, id))
+        Seq(isOrganisationAddressKnown(false))
     }
 
-  private def isOrganisationAddressKnown(addressKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  private def isOrganisationAddressKnown(addressKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "isOrganisationAddressKnown",
       content = yesOrNo(addressKnown)
     )
 
-  private def organisationAddress(manualAddress: Address, id: Int)(implicit messages: Messages): DisplayRow =
+  private def organisationAddress(manualAddress: Address)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "organisationAddress",
       content = formatAddress(manualAddress)
     )
 
-  def buildOrganisationEmailAddressGroup(id: Int, organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
+  def buildOrganisationEmailAddressGroup(organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
    organisation.emailAddress match {
       case Some(email) =>
-        Seq(emailAddressQuestionForOrganisation(true, id)
-          , emailAddressForOrganisation(email, id))
+        Seq(emailAddressQuestionForOrganisation(true)
+          , emailAddressForOrganisation(email))
       case _ =>
-        Seq(emailAddressQuestionForOrganisation(false, id))
+        Seq(emailAddressQuestionForOrganisation(false))
     }
 
-  private def emailAddressQuestionForOrganisation(isKnown: Boolean, id: Int)(implicit messages: Messages): DisplayRow =
+  private def emailAddressQuestionForOrganisation(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "emailAddressQuestionForOrganisation",
       content = yesOrNo(isKnown)
     )
 
-  private def emailAddressForOrganisation(email: String, id: Int)(implicit messages: Messages): DisplayRow =
+  private def emailAddressForOrganisation(email: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
       msgKey  = "emailAddressForOrganisation",
       content = lit"$email"
     )
 
-  def buildTaxResidencySummaryForOrganisation(id: Int,organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] = {
+  def buildTaxResidencySummaryForOrganisation(organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] = {
 
     val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = organisation.taxResidencies.filter(_.country.isDefined).zipWithIndex
 
@@ -129,7 +129,7 @@ trait OrganisationModelRows extends DisplayRowBuilder {
     ))
   }
 
-  def whichCountryTaxForOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
+  def whichCountryTaxForOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
   organisation.firstTaxResidency.flatMap(_.country) map { country =>
 
       toDisplayRowNoBorder(
@@ -138,7 +138,7 @@ trait OrganisationModelRows extends DisplayRowBuilder {
       )
   }
 
-  def doYouKnowAnyTINForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
+  def doYouKnowAnyTINForUKOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
   organisation.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
       toDisplayRow(
         msgKey  = "doYouKnowAnyTINForUKOrganisation",
@@ -146,7 +146,7 @@ trait OrganisationModelRows extends DisplayRowBuilder {
       )
   }
 
-  def whatAreTheTaxNumbersForUKOrganisation(id: Int, organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
+  def whatAreTheTaxNumbersForUKOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
     organisation.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
       toDisplayRow(
         msgKey  = "whatAreTheTaxNumbersForUKOrganisation",
