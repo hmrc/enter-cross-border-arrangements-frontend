@@ -59,7 +59,7 @@ class IntermediaryWhichCountriesExemptController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "checkboxes" -> CountryList.checkboxes(preparedForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(preparedForm)
       )
 
       renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(Ok(_))
@@ -78,7 +78,7 @@ class IntermediaryWhichCountriesExemptController @Inject()(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
-            "checkboxes" -> CountryList.checkboxes(formWithErrors)
+            "checkboxes" -> CountryList.nonGBCheckboxes(formWithErrors)
           )
 
           renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(BadRequest(_))

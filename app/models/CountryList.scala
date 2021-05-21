@@ -84,41 +84,46 @@ object CountryList extends Enumerable.Implicits {
     Sweden
   )
 
+  val items = Seq(
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.GB", UnitedKingdom.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", Austria.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.BE", Belgium.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.BG", Bulgaria.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.HR", Croatia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.CY", Cyprus.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.CZ", Czechia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.DK", Denmark.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.EE", Estonia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.FI", Finland.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.FR", France.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.DE", Germany.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.GR", Greece.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.HU", Hungary.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.IE", Ireland.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.IT", Italy.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.LV", Latvia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.LT", Lithuania.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.LU", Luxembourg.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.MT", Malta.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.NL", Netherlands.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.PL", Poland.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.PT", Portugal.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.RO", Romania.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.SK", Slovakia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.SI", Slovenia.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.ES", Spain.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString),
+  )
+
   def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
-
     val field = form("value")
-    val items = Seq(
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.GB", UnitedKingdom.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", Austria.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.BE", Belgium.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.BG", Bulgaria.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.HR", Croatia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.CY", Cyprus.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.CZ", Czechia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.DK", Denmark.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.EE", Estonia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.FI", Finland.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.FR", France.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.DE", Germany.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.GR", Greece.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.HU", Hungary.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.IE", Ireland.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.IT", Italy.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.LV", Latvia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.LT", Lithuania.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.LU", Luxembourg.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.MT", Malta.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.NL", Netherlands.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.PL", Poland.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.PT", Portugal.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.RO", Romania.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.SK", Slovakia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.SI", Slovenia.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.ES", Spain.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString),
-    )
-
     Checkboxes.set(field, items)
+  }
+
+  def nonGBCheckboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
+    val field = form("value")
+    //Removes the first element from the items list (GB)
+    Checkboxes.set(field, items.drop(1))
   }
 
   implicit val enumerable: Enumerable[CountryList] =
