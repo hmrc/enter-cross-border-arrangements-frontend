@@ -34,7 +34,7 @@ class IntermediariesLoopPageSpec extends PageBehaviours {
         selectTypeGen <- arbitrarySelectType.arbitrary
         isExemptionKnownGen <- arbitraryIsExemptionKnown.arbitrary
         isExemptionCountryKnownGen <- arbitrary[Boolean]
-        exemptCountriesGen <- listOf(arbitraryExemptCountries.arbitrary)
+        exemptCountriesGen <- listOf(arbitraryCountryList.arbitrary)
 
       } yield (userAnswersGen, youHaveNotAddedGen, selectTypeGen, isExemptionKnownGen, isExemptionCountryKnownGen, exemptCountriesGen)
 
@@ -48,11 +48,11 @@ class IntermediariesLoopPageSpec extends PageBehaviours {
           .set(ExemptCountriesPage, 0,  exemptCountries.toSet).success.value
         val answersAfterCleanUp = IntermediaryLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
         answersAfterCleanUp.foreach { ua =>
-          ua.get(YouHaveNotAddedAnyIntermediariesPage, 0) mustBe (None)
-          ua.get(IntermediariesTypePage, 0) mustBe (None)
-          ua.get(IsExemptionKnownPage, 0) mustBe (None)
-          ua.get(IsExemptionCountryKnownPage, 0) mustBe (None)
-          ua.get(ExemptCountriesPage, 0) mustBe (None)
+          ua.get(YouHaveNotAddedAnyIntermediariesPage, 0) mustBe None
+          ua.get(IntermediariesTypePage, 0) mustBe None
+          ua.get(IsExemptionKnownPage, 0) mustBe None
+          ua.get(IsExemptionCountryKnownPage, 0) mustBe None
+          ua.get(ExemptCountriesPage, 0) mustBe None
         }
       }
     }

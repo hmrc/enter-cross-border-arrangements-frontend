@@ -16,8 +16,7 @@
 
 package utils.rows
 
-import models.CheckMode
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
+import models.{CheckMode, CountryList}
 import pages._
 import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
@@ -54,7 +53,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
     )
   }
 
-  private def formatCountries(countries: Set[WhichExpectedInvolvedCountriesArrangement]): Html = {
+  private def formatCountries(countries: Set[CountryList]): Html = {
 
     val list: String = if (countries.size > 1) {
       s"""<ul>

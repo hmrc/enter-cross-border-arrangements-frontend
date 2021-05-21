@@ -22,12 +22,11 @@ import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.Promoter
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, Country, CountryList, IsExemptionKnown, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
-
 import java.time.{LocalDate, LocalDateTime}
 
 class IntermediarySpec extends SpecBase {
@@ -36,7 +35,7 @@ class IntermediarySpec extends SpecBase {
   val taxRefNumbers: TaxReferenceNumbers = TaxReferenceNumbers("utr", None, None)
   val address: Address = Address(None, None, None, "", None, country)
   val loopDetails: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(None, Some(country), None,None, Some(true), Some(taxRefNumbers)))
-  val exemptCountries: Set[ExemptCountries] = ExemptCountries.enumerable.withName("ES").toSet
+  val exemptCountries: Set[CountryList] = CountryList.enumerable.withName("ES").toSet
 
   "Intermediary" - {
 

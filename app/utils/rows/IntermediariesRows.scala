@@ -16,8 +16,7 @@
 
 package utils.rows
 
-import models.CheckMode
-import models.intermediaries.ExemptCountries
+import models.{CheckMode, CountryList}
 import pages.intermediaries._
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
@@ -97,7 +96,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  private def formatExemptCountriesList(selectedCountries: Set[ExemptCountries], singleItem: Boolean) = {
+  private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean) = {
 
     val getCountryName = selectedCountries.map(_.toString).toSeq.map(
       countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted

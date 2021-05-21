@@ -17,41 +17,44 @@
 package models
 
 import play.api.data.Form
+import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-sealed trait CountriesListEUCheckboxes
+sealed trait CountryList
 
-object CountriesListEUCheckboxes extends Enumerable.Implicits {
+object CountryList extends Enumerable.Implicits {
 
-  case object Austria extends WithName("AT") with CountriesListEUCheckboxes
-  case object Belgium extends WithName("BE") with CountriesListEUCheckboxes
-  case object Bulgaria extends WithName("BG") with CountriesListEUCheckboxes
-  case object Croatia extends WithName("HR") with CountriesListEUCheckboxes
-  case object Cyprus extends WithName("CY") with CountriesListEUCheckboxes
-  case object Czechia extends WithName("CZ") with CountriesListEUCheckboxes
-  case object Denmark extends WithName("DK") with CountriesListEUCheckboxes
-  case object Estonia extends WithName("EE") with CountriesListEUCheckboxes
-  case object Finland extends WithName("FI") with CountriesListEUCheckboxes
-  case object France extends WithName("FR") with CountriesListEUCheckboxes
-  case object Germany extends WithName("DE") with CountriesListEUCheckboxes
-  case object Greece extends WithName("GR") with CountriesListEUCheckboxes
-  case object Hungary extends WithName("HU") with CountriesListEUCheckboxes
-  case object Ireland extends WithName("IE") with CountriesListEUCheckboxes
-  case object Italy extends WithName("IT") with CountriesListEUCheckboxes
-  case object Latvia extends WithName("LV") with CountriesListEUCheckboxes
-  case object Lithuania extends WithName("LT") with CountriesListEUCheckboxes
-  case object Luxembourg extends WithName("LU") with CountriesListEUCheckboxes
-  case object Malta extends WithName("MT") with CountriesListEUCheckboxes
-  case object Netherlands extends WithName("NL") with CountriesListEUCheckboxes
-  case object Poland extends WithName("PL") with CountriesListEUCheckboxes
-  case object Portugal extends WithName("PT") with CountriesListEUCheckboxes
-  case object Romania extends WithName("RO") with CountriesListEUCheckboxes
-  case object Slovakia extends WithName("SK") with CountriesListEUCheckboxes
-  case object Slovenia extends WithName("SI") with CountriesListEUCheckboxes
-  case object Spain extends WithName("ES") with CountriesListEUCheckboxes
-  case object Sweden extends WithName("SE") with CountriesListEUCheckboxes
+  case object UnitedKingdom extends WithName("GB") with CountryList
+  case object Austria extends WithName("AT") with CountryList
+  case object Belgium extends WithName("BE") with CountryList
+  case object Bulgaria extends WithName("BG") with CountryList
+  case object Croatia extends WithName("HR") with CountryList
+  case object Cyprus extends WithName("CY") with CountryList
+  case object Czechia extends WithName("CZ") with CountryList
+  case object Denmark extends WithName("DK") with CountryList
+  case object Estonia extends WithName("EE") with CountryList
+  case object Finland extends WithName("FI") with CountryList
+  case object France extends WithName("FR") with CountryList
+  case object Germany extends WithName("DE") with CountryList
+  case object Greece extends WithName("GR") with CountryList
+  case object Hungary extends WithName("HU") with CountryList
+  case object Ireland extends WithName("IE") with CountryList
+  case object Italy extends WithName("IT") with CountryList
+  case object Latvia extends WithName("LV") with CountryList
+  case object Lithuania extends WithName("LT") with CountryList
+  case object Luxembourg extends WithName("LU") with CountryList
+  case object Malta extends WithName("MT") with CountryList
+  case object Netherlands extends WithName("NL") with CountryList
+  case object Poland extends WithName("PL") with CountryList
+  case object Portugal extends WithName("PT") with CountryList
+  case object Romania extends WithName("RO") with CountryList
+  case object Slovakia extends WithName("SK") with CountryList
+  case object Slovenia extends WithName("SI") with CountryList
+  case object Spain extends WithName("ES") with CountryList
+  case object Sweden extends WithName("SE") with CountryList
 
-  val values: Seq[CountriesListEUCheckboxes] = Seq(
+  val values: Seq[CountryList] = Seq(
+    UnitedKingdom,
     Austria,
     Belgium,
     Bulgaria,
@@ -81,10 +84,11 @@ object CountriesListEUCheckboxes extends Enumerable.Implicits {
     Sweden
   )
 
-  def checkboxes(form: Form[_]): Seq[Checkboxes.Item] = {
+  def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
 
     val field = form("value")
     val items = Seq(
+      Checkboxes.Checkbox(msg"countriesListCheckboxes.GB", UnitedKingdom.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", Austria.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.BE", Belgium.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.BG", Bulgaria.toString),
@@ -111,12 +115,12 @@ object CountriesListEUCheckboxes extends Enumerable.Implicits {
       Checkboxes.Checkbox(msg"countriesListCheckboxes.SK", Slovakia.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.SI", Slovenia.toString),
       Checkboxes.Checkbox(msg"countriesListCheckboxes.ES", Spain.toString),
-      Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString)
+      Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString),
     )
 
     Checkboxes.set(field, items)
   }
 
-  implicit val enumerable: Enumerable[CountriesListEUCheckboxes] =
+  implicit val enumerable: Enumerable[CountryList] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

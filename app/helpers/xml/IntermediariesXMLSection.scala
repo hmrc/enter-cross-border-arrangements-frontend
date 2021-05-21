@@ -17,9 +17,9 @@
 package helpers.xml
 
 import models.IsExemptionKnown.{No, Unknown, Yes}
-import models.Submission
+import models.{CountryList, Submission}
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
-import models.intermediaries.{ExemptCountries, Intermediary}
+import models.intermediaries.Intermediary
 import models.reporter.RoleInArrangement
 
 import scala.util.Try
@@ -66,7 +66,7 @@ case class IntermediariesXMLSection(submission: Submission) {
       case false => NodeSeq.Empty
       case true =>
         val getCountries = intermediary.exemptCountries.fold(NodeSeq.Empty)(setOfCountries =>
-          setOfCountries.toList.map((country: ExemptCountries) =>
+          setOfCountries.toList.map((country: CountryList) =>
               <CountryExemption>{country}</CountryExemption>))
 
         <CountryExemptions>

@@ -19,8 +19,7 @@ package controllers.arrangement
 import base.SpecBase
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
 import matchers.JsonMatchers
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -68,7 +67,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(form)
+        "checkboxes" -> CountryList.checkboxes(form)
       )
 
       templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
@@ -83,7 +82,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.values.toSet).success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -95,12 +94,12 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(WhichExpectedInvolvedCountriesArrangement.values.toSet)
+      val filledForm = form.fill(CountryList.values.toSet)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(filledForm)
+        "checkboxes" -> CountryList.checkboxes(filledForm)
       )
 
       templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
@@ -125,7 +124,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
 
       val request =
         FakeRequest(POST, whichExpectedInvolvedCountriesArrangementRoute)
-          .withFormUrlEncodedBody(("value[0]", WhichExpectedInvolvedCountriesArrangement.values.head.toString))
+          .withFormUrlEncodedBody(("value[0]", CountryList.values.head.toString))
 
       val result = route(application, request).value
 
@@ -156,7 +155,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(boundForm)
+        "checkboxes" -> CountryList.checkboxes(boundForm)
       )
 
       templateCaptor.getValue mustEqual "arrangement/whichExpectedInvolvedCountriesArrangement.njk"
@@ -181,7 +180,7 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, whichExpectedInvolvedCountriesArrangementRoute).withFormUrlEncodedBody(("value[0]", WhichExpectedInvolvedCountriesArrangement.values.head.toString))
+      val request = FakeRequest(POST, whichExpectedInvolvedCountriesArrangementRoute).withFormUrlEncodedBody(("value[0]", CountryList.values.head.toString))
 
       val result = route(application, request).value
 

@@ -24,7 +24,7 @@ import models.reporter.intermediary.IntermediaryRole.Promoter
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
-import models.{AddressLookup, CountriesListEUCheckboxes, Country, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{AddressLookup, Country, CountryList, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -39,8 +39,8 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-
 import java.time.LocalDate
+
 import scala.concurrent.Future
 
 class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
@@ -123,7 +123,7 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar 
         .success.value
         .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
         .success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
         .success.value
 
       verifyList(userAnswers) { rows =>

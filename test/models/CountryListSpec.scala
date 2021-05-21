@@ -18,44 +18,45 @@ package models
 
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class CountriesListEUCheckboxesSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class CountryListSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "IntermediaryWhichCountriesExempt" - {
+  "ExemptCountries" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[CountriesListEUCheckboxes]
+      val gen = Gen.oneOf(CountryList.values)
 
       forAll(gen) {
-        intermediaryWhichCountriesExempt =>
+        countries =>
 
-          JsString(intermediaryWhichCountriesExempt.toString).validate[CountriesListEUCheckboxes].asOpt.value mustEqual intermediaryWhichCountriesExempt
+          JsString(countries.toString).validate[CountryList].asOpt.value mustEqual countries
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!CountriesListEUCheckboxes.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!CountryList.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[CountriesListEUCheckboxes] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[CountryList] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = arbitrary[CountriesListEUCheckboxes]
+      val gen = Gen.oneOf(CountryList.values)
 
       forAll(gen) {
-        intermediaryWhichCountriesExempt =>
+        countries =>
 
-          Json.toJson(intermediaryWhichCountriesExempt) mustEqual JsString(intermediaryWhichCountriesExempt.toString)
+          Json.toJson(countries) mustEqual JsString(countries.toString)
       }
     }
   }

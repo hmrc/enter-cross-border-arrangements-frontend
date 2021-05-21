@@ -21,14 +21,14 @@ import helpers.data.ValidUserAnswersForSubmission.{validDisclosureDetails, valid
 import models.IsExemptionKnown.Yes
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.{Promoter, Serviceprovider}
-import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
+import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.TaxResidency
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, Submission, TaxReferenceNumbers}
-
+import models.{Address, Country, CountryList, IsExemptionKnown, LoopDetails, Name, Submission, TaxReferenceNumbers}
 import java.time.LocalDate
+
 import scala.xml.PrettyPrinter
 
 class IntermediariesXMLSectionSpec extends SpecBase {
@@ -59,7 +59,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
   val organisation: Organisation = Organisation("Reporter Name", Some(address), Some("email@email.com"), taxResidencies)
 
-  val exemptCountry: Set[ExemptCountries] = ExemptCountries.enumerable.withName("FR").toSet
+  val exemptCountry: Set[CountryList] = CountryList.enumerable.withName("FR").toSet
 
   val individualName: Name = Name("Reporter", "Name")
   val individualDOB: LocalDate = LocalDate.of(1990, 1,1)

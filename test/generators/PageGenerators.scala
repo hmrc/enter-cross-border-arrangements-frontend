@@ -21,18 +21,17 @@ import pages._
 import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.arrangement._
 import pages.disclosure._
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises._
 import pages.hallmarks._
 import pages.individual._
 import pages.intermediaries._
 import pages.organisation._
 import pages.reporter._
-import pages.reporter.individual.{ReporterIndividualAddressPage, ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage, ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage, ReporterIsIndividualAddressUKPage, _}
+import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.taxpayer._
-
 
 trait PageGenerators {
 
@@ -156,7 +155,7 @@ trait PageGenerators {
   implicit lazy val arbitraryIsExemptionKnownPage: Arbitrary[IsExemptionKnownPage.type] =
     Arbitrary(IsExemptionKnownPage)
 
-  implicit lazy val arbitraryisExemptionCountryKnownPage: Arbitrary[IsExemptionCountryKnownPage.type] =
+  implicit lazy val arbitraryIsExemptionCountryKnownPage: Arbitrary[IsExemptionCountryKnownPage.type] =
     Arbitrary(IsExemptionCountryKnownPage)
 
   implicit lazy val arbitraryExemptCountriesPage: Arbitrary[ExemptCountriesPage.type] =

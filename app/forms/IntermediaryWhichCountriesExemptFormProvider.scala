@@ -16,17 +16,16 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import javax.inject.Inject
+import models.CountryList
 import play.api.data.Form
 import play.api.data.Forms.set
-import models.CountriesListEUCheckboxes
 
 class IntermediaryWhichCountriesExemptFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[CountriesListEUCheckboxes]] =
+  def apply(): Form[Set[CountryList]] =
     Form(
-      "value" -> set(enumerable[CountriesListEUCheckboxes]("intermediaryWhichCountriesExempt.error.required")).verifying(nonEmptySet("intermediaryWhichCountriesExempt.error.required"))
+      "value" -> set(enumerable[CountryList]("intermediaryWhichCountriesExempt.error.required")).verifying(nonEmptySet("intermediaryWhichCountriesExempt.error.required"))
     )
 }

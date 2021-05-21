@@ -16,13 +16,15 @@
 
 package models.reporter
 
+import java.time.LocalDate
+
 import generators.ModelGenerators
 import models.individual.Individual
 import models.organisation.Organisation
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.TaxResidency
-import models.{Address, CountriesListEUCheckboxes, LoopDetails, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
+import models.{Address, CountryList, LoopDetails, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
@@ -33,8 +35,6 @@ import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrg
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-
-import java.time.LocalDate
 
 class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
 
@@ -119,7 +119,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 .success.value
                 .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
                 .success.value
-                .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+                .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
                 .success.value
 
 
@@ -233,7 +233,7 @@ class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckProp
                 .success.value
                 .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
                 .success.value
-                .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+                .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
                 .success.value
 
 

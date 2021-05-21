@@ -18,11 +18,11 @@ package generators
 
 import models._
 import models.affected.YouHaveNotAddedAnyAffected
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -74,10 +74,6 @@ trait ModelGenerators {
       Gen.oneOf(IsExemptionKnown.values.toSeq)
     }
 
-  implicit lazy val arbitraryExemptCountries: Arbitrary[ExemptCountries] =
-    Arbitrary {
-      Gen.oneOf(ExemptCountries.values.toSeq)
-    }
 
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
@@ -92,11 +88,6 @@ trait ModelGenerators {
   implicit lazy val arbitraryTaxpayerWhyReportInUK: Arbitrary[TaxpayerWhyReportInUK] =
     Arbitrary {
       Gen.oneOf(TaxpayerWhyReportInUK.values.toSeq)
-    }
-
-  implicit lazy val arbitraryIntermediaryWhichCountriesExempt: Arbitrary[CountriesListEUCheckboxes] =
-    Arbitrary {
-      Gen.oneOf(CountriesListEUCheckboxes.values.toSeq)
     }
 
   implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[YesNoDoNotKnowRadios] =
@@ -142,9 +133,9 @@ trait ModelGenerators {
       } yield ExpectedArrangementValue(currency, amount)
     }
 
-implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[WhichExpectedInvolvedCountriesArrangement] =
+implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
     Arbitrary {
-      Gen.oneOf(WhichExpectedInvolvedCountriesArrangement.values.toSeq)
+      Gen.oneOf(CountryList.values.toSeq)
     }
 
   implicit lazy val arbitraryWhyAreYouReportingThisArrangementNow: Arbitrary[WhyAreYouReportingThisArrangementNow] =

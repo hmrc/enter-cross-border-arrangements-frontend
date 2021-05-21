@@ -16,11 +16,11 @@
 
 package pages.arrangement
 
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
+import models.CountryList
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object WhichExpectedInvolvedCountriesArrangementPage extends QuestionPage[Set[WhichExpectedInvolvedCountriesArrangement]] {
+case object WhichExpectedInvolvedCountriesArrangementPage extends QuestionPage[Set[CountryList]] {
 
   override def path: JsPath = JsPath \ toString
 

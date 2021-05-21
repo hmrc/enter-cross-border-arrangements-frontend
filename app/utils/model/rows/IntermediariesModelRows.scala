@@ -16,8 +16,8 @@
 
 package utils.model.rows
 
-import models.SelectType
-import models.intermediaries.{ExemptCountries, Intermediary}
+import models.{CountryList, SelectType}
+import models.intermediaries.Intermediary
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Key, Value}
 import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
@@ -73,7 +73,7 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
       )
   }
 
-  private def formatExemptCountriesList(selectedCountries: Set[ExemptCountries], singleItem: Boolean)(implicit messages: Messages) = {
+  private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean)(implicit messages: Messages) = {
 
     val getCountryName = selectedCountries.map(_.toString).toSeq.map(
       countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted

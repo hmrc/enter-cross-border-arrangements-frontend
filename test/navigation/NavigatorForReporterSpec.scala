@@ -22,7 +22,7 @@ import generators.Generators
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
-import models.{YesNoDoNotKnowRadios, _}
+import models.{CountryList, YesNoDoNotKnowRadios, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter._
@@ -32,7 +32,6 @@ import pages.reporter.organisation._
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
 
 class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -234,14 +233,9 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
       "must go from 'Which countries are you exempt from reporting in?' page " +
         "to 'Check your Answers' page " +
         "when any option is selected" in {
-
-        forAll(arbitrary[CountriesListEUCheckboxes]) {
-          answers =>
-
             navigator
-              .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(0)(Some(Seq(answers)))(0)
+              .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(NormalMode))(0)(Some(Seq(CountryList.Austria, CountryList.Belgium)))(0)
                 .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
-        }
       }
     }
 
@@ -268,7 +262,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
     "on REPORTER DETAILS -  ORGANISATION JOURNEY in Normal Mode" - {
 
-      "must go from 'What is the name of the organisation your're reporting for' page " +
+      "must go from 'What is the name of the organisation you're reporting for' page " +
         "to 'Is [name]'s address in the United Kingdom' page " +
         "when a valid name is entered" in {
 
@@ -438,7 +432,7 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
 
   "on REPORTER DETAILS -  ORGANISATION JOURNEY in CHECK Mode" - {
 
-    "must go from 'What is the name of the organisation your're reporting for' page " +
+    "must go from 'What is the name of the organisation you're reporting for' page " +
       "to 'Check your answers for your reporter details' page " in {
 
       navigator
@@ -568,14 +562,9 @@ class NavigatorForReporterSpec extends SpecBase with ScalaCheckPropertyChecks wi
     "must go from 'Which countries are you exempt from reporting in?' page " +
       "to 'Check your answers for your reporter details' page " in {
 
-      forAll(arbitrary[CountriesListEUCheckboxes]) {
-        answers =>
-
           navigator
-            .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(CheckMode))(0)(Some(Seq(answers)))(0)
+            .routeMap(IntermediaryWhichCountriesExemptPage)(DefaultRouting(CheckMode))(0)(Some(Seq(CountryList.Austria)))(0)
             .mustBe(controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0))
-
-      }
     }
 
       "must go from 'Check your answers?' page " +

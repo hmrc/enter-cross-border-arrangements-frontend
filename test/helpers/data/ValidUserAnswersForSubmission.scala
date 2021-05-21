@@ -16,18 +16,20 @@
 
 package helpers.data
 
+import java.time.LocalDate
+
 import models.affected.Affected
-import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.enterprises.AssociatedEnterprise
 import models.hallmarks.{HallmarkD, HallmarkD1, HallmarkDetails}
 import models.individual.Individual
-import models.intermediaries.{ExemptCountries, Intermediary, WhatTypeofIntermediary}
+import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.reporter.taxpayer.TaxpayerWhyReportInUK
 import models.reporter.{ReporterDetails, ReporterLiability, RoleInArrangement}
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.{Address, Country, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
+import models.{Address, Country, CountryList, IsExemptionKnown, LoopDetails, Name, ReporterOrganisationOrIndividual, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.affected.AffectedLoopPage
 import pages.arrangement._
@@ -42,8 +44,6 @@ import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-
-import java.time.LocalDate
 
 object ValidUserAnswersForSubmission {
 
@@ -99,15 +99,15 @@ object ValidUserAnswersForSubmission {
     Taxpayer("123", None, Some(validOrganisation), Some(todayMinusOneMonth)),
     Taxpayer("Another ID", None, Some(validOrganisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths)))
 
-  val validExemptCountries: Set[ExemptCountries] = Seq(ExemptCountries.UnitedKingdom, ExemptCountries.France).toSet
+  val validExemptCountries: Set[CountryList] = Seq(CountryList.UnitedKingdom, CountryList.France).toSet
 
   val validIntermediaries = IndexedSeq(
     Intermediary("123", None, Some(validOrganisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.Yes, Some(true), Some(validExemptCountries)),
     Intermediary("Another ID", None, Some(validOrganisation.copy(organisationName = "Other Taxpayers Ltd")),
       WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
 
-  private val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
-    Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom, WhichExpectedInvolvedCountriesArrangement.France).toSet
+  private val countries: Set[CountryList] =
+    Seq(CountryList.UnitedKingdom, CountryList.France).toSet
 
   val validEnterprises = IndexedSeq(
     AssociatedEnterprise("id", Some(validIndividual), None, List(validOrganisation.organisationName), isAffectedBy = false))

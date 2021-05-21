@@ -16,15 +16,16 @@
 
 package pages.intermediaries
 
-import models.intermediaries.{ExemptCountries, Intermediary}
+import models.CountryList
+import models.intermediaries.Intermediary
 import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object ExemptCountriesPage extends DetailsPage[Set[ExemptCountries], Intermediary] {
+case object ExemptCountriesPage extends DetailsPage[Set[CountryList], Intermediary] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "exemptCountries"
 
-  override def getFromModel(model: Intermediary): Option[Set[ExemptCountries]] = model.exemptCountries
+  override def getFromModel(model: Intermediary): Option[Set[CountryList]] = model.exemptCountries
 }
