@@ -63,7 +63,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountryList.checkboxes(form)
+        "checkboxes" -> CountryList.nonGBCheckboxes(form)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"
@@ -78,7 +78,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.values.toSet).success.value
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.values.tail.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,12 +90,12 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(CountryList.values.toSet)
+      val filledForm = form.fill(CountryList.values.tail.toSet)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountryList.checkboxes(filledForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(filledForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"
@@ -148,7 +148,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountryList.checkboxes(boundForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(boundForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"
