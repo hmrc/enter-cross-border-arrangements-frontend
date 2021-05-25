@@ -20,7 +20,7 @@ import controllers.routes
 import javax.inject.{Inject, Singleton}
 import models.SelectType.{Individual, Organisation}
 import models._
-import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE, orderingByName}
+import models.hallmarks.HallmarkCategories.{CategoryD, orderingByName}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.hallmarks._
@@ -95,8 +95,8 @@ class Navigator @Inject()() {
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkDPage, id) match  {
       case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(id, mode))
-       case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
-       }
+      case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
+    }
 
   private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkD1Page, id) match  {

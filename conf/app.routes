@@ -27,8 +27,6 @@ POST       /hallmarks/hallmark-categories/:id                           controll
 GET        /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = CheckMode)
 
-GET        /hallmarks/there-is-a-problem/:id                            controllers.hallmarks.MainBenefitProblemController.onPageLoad(id: Int)
-
 GET        /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-category-d/:id                    controllers.hallmarks.HallmarkDController.onPageLoad(id: Int, mode: Mode = CheckMode)

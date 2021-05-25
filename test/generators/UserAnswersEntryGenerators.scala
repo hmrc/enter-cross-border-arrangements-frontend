@@ -675,31 +675,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHallmarkEUserAnswersEntry: Arbitrary[(HallmarkEPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkEPage.type]
-        value <- arbitrary[HallmarkE].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-
-  implicit lazy val arbitraryHallmarkC1UserAnswersEntry: Arbitrary[(HallmarkC1Page.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkC1Page.type]
-        value <- arbitrary[HallmarkC1].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryHallmarkCUserAnswersEntry: Arbitrary[(HallmarkCPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkCPage.type]
-        value <- arbitrary[HallmarkC].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitraryHallmarkD1OtherUserAnswersEntry: Arbitrary[(HallmarkD1OtherPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -721,30 +696,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[HallmarkDPage.type]
         value <- arbitrary[HallmarkD].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryHallmarkBUserAnswersEntry: Arbitrary[(HallmarkBPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkBPage.type]
-        value <- arbitrary[HallmarkB].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryMeetMainBenefitTestUserAnswersEntry: Arbitrary[(MainBenefitTestPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[MainBenefitTestPage.type]
-        value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryHallmarkAUserAnswersEntry: Arbitrary[(HallmarkAPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkAPage.type]
-        value <- arbitrary[HallmarkA].map(Json.toJson(_))
       } yield (page, value)
     }
 

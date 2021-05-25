@@ -74,7 +74,6 @@ trait ModelGenerators {
       Gen.oneOf(IsExemptionKnown.values)
     }
 
-
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
       Gen.oneOf(DisclosureType.values)
@@ -143,21 +142,6 @@ implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
       Gen.oneOf(WhyAreYouReportingThisArrangementNow.values)
     }
 
-  implicit lazy val arbitraryHallmarkE: Arbitrary[HallmarkE] =
-    Arbitrary {
-      Gen.oneOf(HallmarkE.values)
-    }
-
-  implicit lazy val arbitraryHallmarkC1: Arbitrary[HallmarkC1] =
-    Arbitrary {
-      Gen.oneOf(HallmarkC1.values)
-    }
-
-  implicit lazy val arbitraryHallmarkC: Arbitrary[HallmarkC] =
-    Arbitrary {
-      Gen.oneOf(HallmarkC.values)
-    }
-
   implicit lazy val arbitraryHallmarkD1: Arbitrary[HallmarkD1] =
     Arbitrary {
       Gen.oneOf(HallmarkD1.values)
@@ -166,16 +150,6 @@ implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
   implicit lazy val arbitraryHallmarkD: Arbitrary[HallmarkD] =
     Arbitrary {
       Gen.oneOf(HallmarkD.values)
-    }
-
-  implicit lazy val arbitraryHallmarkB: Arbitrary[HallmarkB] =
-    Arbitrary {
-      Gen.oneOf(HallmarkB.values)
-    }
-
-  implicit lazy val arbitraryHallmarkA: Arbitrary[HallmarkA] =
-    Arbitrary {
-      Gen.oneOf(HallmarkA.values)
     }
 
   implicit lazy val arbitraryHallmarkCategories: Arbitrary[HallmarkCategories] =

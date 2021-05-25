@@ -103,7 +103,7 @@ class SummaryController @Inject()(
   }
 
   def getHallmarkSummaryList(id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    Seq(Some(helper.buildHallmarksRow(id)), helper.mainBenefitTest(id), helper.hallmarkD1Other(id))
+    Seq(Some(helper.buildHallmarksRow(id)), helper.hallmarkD1Other(id))
       .flatten
 
   private def getTaxpayerNameFromID(search: String, taxpayers: Seq[Taxpayer]): Option[String] =

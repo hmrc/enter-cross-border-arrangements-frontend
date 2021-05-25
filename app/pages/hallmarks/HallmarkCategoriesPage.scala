@@ -18,7 +18,7 @@ package pages.hallmarks
 
 import models.UserAnswers
 import models.hallmarks.HallmarkCategories
-import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB, CategoryC, CategoryD, CategoryE}
+import models.hallmarks.HallmarkCategories.CategoryD
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
