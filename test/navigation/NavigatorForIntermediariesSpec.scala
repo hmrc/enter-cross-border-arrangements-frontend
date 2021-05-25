@@ -19,8 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.mixins._
 import generators.Generators
-import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
-import models.{IsExemptionKnown, NormalMode, SelectType}
+import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
+import models.{CountryList, IsExemptionKnown, NormalMode, SelectType}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.intermediaries._
 
@@ -124,7 +124,7 @@ class NavigatorForIntermediariesSpec extends SpecBase with ScalaCheckPropertyChe
     "'Which countries is *name* exempt from reporting in?' page to " +
       "'Check your answers' page in the intermediaries journey when valid answer provided" in {
       navigator
-        .routeMap(ExemptCountriesPage)(IntermediariesRouting(NormalMode))(0)(Some(ExemptCountries.UnitedKingdom))(0)
+        .routeMap(ExemptCountriesPage)(IntermediariesRouting(NormalMode))(0)(Some(CountryList.UnitedKingdom))(0)
         .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
     }
 

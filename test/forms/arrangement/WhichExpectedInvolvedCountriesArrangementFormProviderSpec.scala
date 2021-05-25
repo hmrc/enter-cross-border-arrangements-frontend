@@ -17,7 +17,7 @@
 package forms.arrangement
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
+import models.CountryList
 import play.api.data.FormError
 
 class WhichExpectedInvolvedCountriesArrangementFormProviderSpec extends CheckboxFieldBehaviours {
@@ -29,10 +29,10 @@ class WhichExpectedInvolvedCountriesArrangementFormProviderSpec extends Checkbox
     val fieldName = "value"
     val requiredKey = "whichExpectedInvolvedCountriesArrangement.error.required"
 
-    behave like checkboxField[WhichExpectedInvolvedCountriesArrangement](
+    behave like checkboxField[CountryList](
       form,
       fieldName,
-      validValues  = WhichExpectedInvolvedCountriesArrangement.values,
+      validValues  = CountryList.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

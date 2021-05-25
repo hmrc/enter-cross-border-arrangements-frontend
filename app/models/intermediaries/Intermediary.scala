@@ -19,11 +19,11 @@ package models.intermediaries
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
-import models.{IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
+import models.{CountryList, IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
 import pages.intermediaries._
 import play.api.libs.json.{Json, OFormat}
-
 import java.util.UUID
+
 import scala.util.Try
 
 case class Intermediary(intermediaryId: String,
@@ -32,7 +32,7 @@ case class Intermediary(intermediaryId: String,
                         whatTypeofIntermediary: WhatTypeofIntermediary = IDoNotKnow,
                         isExemptionKnown: IsExemptionKnown = IsExemptionKnown.Unknown,
                         isExemptionCountryKnown: Option[Boolean] = None,
-                        exemptCountries: Option[Set[ExemptCountries]] = None) extends WithIndividualOrOrganisation  with WithRestore {
+                        exemptCountries: Option[Set[CountryList]] = None) extends WithIndividualOrOrganisation  with WithRestore {
 
   override def matchItem(itemId: String): Boolean = intermediaryId == itemId
 

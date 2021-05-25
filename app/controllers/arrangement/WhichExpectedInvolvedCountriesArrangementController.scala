@@ -19,7 +19,7 @@ package controllers.arrangement
 import controllers.actions._
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CountryList, Mode}
 import navigation.Navigator
 import pages.arrangement.WhichExpectedInvolvedCountriesArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,7 +29,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +58,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(preparedForm)
+        "checkboxes" -> CountryList.checkboxes(preparedForm)
       )
 
       renderer.render("arrangement/whichExpectedInvolvedCountriesArrangement.njk", json).map(Ok(_))
@@ -75,7 +74,7 @@ class WhichExpectedInvolvedCountriesArrangementController @Inject()(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
-            "checkboxes" -> WhichExpectedInvolvedCountriesArrangement.checkboxes(formWithErrors)
+            "checkboxes" -> CountryList.checkboxes(formWithErrors)
           )
 
           renderer.render("arrangement/whichExpectedInvolvedCountriesArrangement.njk", json).map(BadRequest(_))

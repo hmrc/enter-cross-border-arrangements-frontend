@@ -16,13 +16,14 @@
 
 package controllers.arrangement
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
-import models.{UnsubmittedDisclosure, UserAnswers}
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.arrangement.ExpectedArrangementValue
+import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -37,8 +38,6 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach with ModelGenerators {
@@ -140,8 +139,8 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
     "must return one country row without bullets" in {
 
-      val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
-        Seq(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom).toSet
+      val countries: Set[CountryList] =
+        Seq(CountryList.UnitedKingdom).toSet
 
       def assertCountries(html: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Countries involved"))
@@ -164,9 +163,9 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
     "must return multiple country rows with bullets" in {
 
-      val countries: Set[WhichExpectedInvolvedCountriesArrangement] =
-        Set(WhichExpectedInvolvedCountriesArrangement.UnitedKingdom
-        , WhichExpectedInvolvedCountriesArrangement.Sweden)
+      val countries: Set[CountryList] =
+        Set(CountryList.UnitedKingdom
+        , CountryList.Sweden)
 
       def assertCountries(html: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Countries involved"))

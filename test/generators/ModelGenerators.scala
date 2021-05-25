@@ -18,11 +18,11 @@ package generators
 
 import models._
 import models.affected.YouHaveNotAddedAnyAffected
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.{ExemptCountries, YouHaveNotAddedAnyIntermediaries}
+import models.intermediaries.YouHaveNotAddedAnyIntermediaries
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -50,88 +50,79 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryReporterOrganisationOrIndividual: Arbitrary[ReporterOrganisationOrIndividual] =
     Arbitrary {
-      Gen.oneOf(ReporterOrganisationOrIndividual.values.toSeq)
+      Gen.oneOf(ReporterOrganisationOrIndividual.values)
     }
   import models.intermediaries.WhatTypeofIntermediary
 
   implicit lazy val arbitraryWhatTypeofIntermediary: Arbitrary[WhatTypeofIntermediary] =
     Arbitrary {
-      Gen.oneOf(WhatTypeofIntermediary.values.toSeq)
+      Gen.oneOf(WhatTypeofIntermediary.values)
     }
 
   implicit lazy val arbitraryYouHaveNotAddedAnyIntermediaries: Arbitrary[YouHaveNotAddedAnyIntermediaries] =
     Arbitrary {
-      Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values.toSeq)
+      Gen.oneOf(YouHaveNotAddedAnyIntermediaries.values)
     }
 
   implicit lazy val arbitraryYouHaveNotAddedAnyAffected: Arbitrary[YouHaveNotAddedAnyAffected] =
     Arbitrary {
-      Gen.oneOf(YouHaveNotAddedAnyAffected.values.toSeq)
+      Gen.oneOf(YouHaveNotAddedAnyAffected.values)
     }
 
   implicit lazy val arbitraryIsExemptionKnown: Arbitrary[IsExemptionKnown] =
     Arbitrary {
-      Gen.oneOf(IsExemptionKnown.values.toSeq)
+      Gen.oneOf(IsExemptionKnown.values)
     }
 
-  implicit lazy val arbitraryExemptCountries: Arbitrary[ExemptCountries] =
-    Arbitrary {
-      Gen.oneOf(ExemptCountries.values.toSeq)
-    }
 
   implicit lazy val arbitraryDisclosureType: Arbitrary[DisclosureType] =
     Arbitrary {
-      Gen.oneOf(DisclosureType.values.toSeq)
+      Gen.oneOf(DisclosureType.values)
     }
 
   implicit lazy val arbitraryTaxpayerWhyReportArrangement: Arbitrary[TaxpayerWhyReportArrangement] =
     Arbitrary {
-      Gen.oneOf(TaxpayerWhyReportArrangement.values.toSeq)
+      Gen.oneOf(TaxpayerWhyReportArrangement.values)
     }
 
   implicit lazy val arbitraryTaxpayerWhyReportInUK: Arbitrary[TaxpayerWhyReportInUK] =
     Arbitrary {
-      Gen.oneOf(TaxpayerWhyReportInUK.values.toSeq)
-    }
-
-  implicit lazy val arbitraryIntermediaryWhichCountriesExempt: Arbitrary[CountriesListEUCheckboxes] =
-    Arbitrary {
-      Gen.oneOf(CountriesListEUCheckboxes.values.toSeq)
+      Gen.oneOf(TaxpayerWhyReportInUK.values)
     }
 
   implicit lazy val arbitraryIntermediaryExemptionInEU: Arbitrary[YesNoDoNotKnowRadios] =
     Arbitrary {
-      Gen.oneOf(YesNoDoNotKnowRadios.values.toSeq)
+      Gen.oneOf(YesNoDoNotKnowRadios.values)
     }
 
   implicit lazy val arbitraryIntermediaryRole: Arbitrary[IntermediaryRole] =
     Arbitrary {
-      Gen.oneOf(IntermediaryRole.values.toSeq)
+      Gen.oneOf(IntermediaryRole.values)
     }
 
   implicit lazy val arbitraryWhyReportInUK: Arbitrary[IntermediaryWhyReportInUK] =
     Arbitrary {
-      Gen.oneOf(IntermediaryWhyReportInUK.values.toSeq)
+      Gen.oneOf(IntermediaryWhyReportInUK.values)
     }
 
   implicit lazy val arbitraryRoleInArrangement: Arbitrary[RoleInArrangement] =
     Arbitrary {
-      Gen.oneOf(RoleInArrangement.values.toSeq)
+      Gen.oneOf(RoleInArrangement.values)
     }
 
   implicit lazy val arbitrarySelectType: Arbitrary[SelectType] =
     Arbitrary {
-      Gen.oneOf(SelectType.values.toSeq)
+      Gen.oneOf(SelectType.values)
     }
 
   implicit lazy val arbitraryUpdateTaxpayer: Arbitrary[UpdateTaxpayer] =
     Arbitrary {
-      Gen.oneOf(UpdateTaxpayer.values.toSeq)
+      Gen.oneOf(UpdateTaxpayer.values)
     }
 
   implicit lazy val arbitraryYouHaveNotAddedAnyAssociatedEnterprises: Arbitrary[YouHaveNotAddedAnyAssociatedEnterprises] =
     Arbitrary {
-      Gen.oneOf(YouHaveNotAddedAnyAssociatedEnterprises.values.toSeq)
+      Gen.oneOf(YouHaveNotAddedAnyAssociatedEnterprises.values)
     }
 
   implicit lazy val arbitraryWhatIsTheExpectedValueOfThisArrangement: Arbitrary[ExpectedArrangementValue] =
@@ -142,54 +133,54 @@ trait ModelGenerators {
       } yield ExpectedArrangementValue(currency, amount)
     }
 
-implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangement: Arbitrary[WhichExpectedInvolvedCountriesArrangement] =
+implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
     Arbitrary {
-      Gen.oneOf(WhichExpectedInvolvedCountriesArrangement.values.toSeq)
+      Gen.oneOf(CountryList.values)
     }
 
   implicit lazy val arbitraryWhyAreYouReportingThisArrangementNow: Arbitrary[WhyAreYouReportingThisArrangementNow] =
     Arbitrary {
-      Gen.oneOf(WhyAreYouReportingThisArrangementNow.values.toSeq)
+      Gen.oneOf(WhyAreYouReportingThisArrangementNow.values)
     }
 
   implicit lazy val arbitraryHallmarkE: Arbitrary[HallmarkE] =
     Arbitrary {
-      Gen.oneOf(HallmarkE.values.toSeq)
+      Gen.oneOf(HallmarkE.values)
     }
 
   implicit lazy val arbitraryHallmarkC1: Arbitrary[HallmarkC1] =
     Arbitrary {
-      Gen.oneOf(HallmarkC1.values.toSeq)
+      Gen.oneOf(HallmarkC1.values)
     }
 
   implicit lazy val arbitraryHallmarkC: Arbitrary[HallmarkC] =
     Arbitrary {
-      Gen.oneOf(HallmarkC.values.toSeq)
+      Gen.oneOf(HallmarkC.values)
     }
 
   implicit lazy val arbitraryHallmarkD1: Arbitrary[HallmarkD1] =
     Arbitrary {
-      Gen.oneOf(HallmarkD1.values.toSeq)
+      Gen.oneOf(HallmarkD1.values)
     }
 
   implicit lazy val arbitraryHallmarkD: Arbitrary[HallmarkD] =
     Arbitrary {
-      Gen.oneOf(HallmarkD.values.toSeq)
+      Gen.oneOf(HallmarkD.values)
     }
 
   implicit lazy val arbitraryHallmarkB: Arbitrary[HallmarkB] =
     Arbitrary {
-      Gen.oneOf(HallmarkB.values.toSeq)
+      Gen.oneOf(HallmarkB.values)
     }
 
   implicit lazy val arbitraryHallmarkA: Arbitrary[HallmarkA] =
     Arbitrary {
-      Gen.oneOf(HallmarkA.values.toSeq)
+      Gen.oneOf(HallmarkA.values)
     }
 
   implicit lazy val arbitraryHallmarkCategories: Arbitrary[HallmarkCategories] =
     Arbitrary {
-      Gen.oneOf(HallmarkCategories.values.toSeq)
+      Gen.oneOf(HallmarkCategories.values)
     }
 
   implicit lazy val arbitraryCountry: Arbitrary[Country] = {

@@ -19,7 +19,7 @@ package controllers.reporter.intermediary
 import base.SpecBase
 import forms.IntermediaryWhichCountriesExemptFormProvider
 import matchers.JsonMatchers
-import models.{CountriesListEUCheckboxes, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -63,7 +63,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountriesListEUCheckboxes.checkboxes(form)
+        "checkboxes" -> CountryList.nonGBCheckboxes(form)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"
@@ -78,7 +78,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.values.toSet).success.value
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.values.tail.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,12 +90,12 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(CountriesListEUCheckboxes.values.toSet)
+      val filledForm = form.fill(CountryList.values.tail.toSet)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountriesListEUCheckboxes.checkboxes(filledForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(filledForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"
@@ -119,7 +119,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
 
       val request =
         FakeRequest(POST, intermediaryWhichCountriesExemptRoute)
-          .withFormUrlEncodedBody(("value[0]", CountriesListEUCheckboxes.values.head.toString))
+          .withFormUrlEncodedBody(("value[0]", CountryList.values.head.toString))
 
       val result = route(application, request).value
 
@@ -148,7 +148,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Mocki
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> CountriesListEUCheckboxes.checkboxes(boundForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(boundForm)
       )
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryWhichCountriesExempt.njk"

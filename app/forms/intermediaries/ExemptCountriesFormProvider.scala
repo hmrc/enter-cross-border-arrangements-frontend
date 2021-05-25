@@ -18,14 +18,14 @@ package forms.intermediaries
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.intermediaries.ExemptCountries
+import models.CountryList
 import play.api.data.Form
 import play.api.data.Forms.set
 
 class ExemptCountriesFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[ExemptCountries]] =
+  def apply(): Form[Set[CountryList]] =
     Form(
-      "value" -> set(enumerable[ExemptCountries]("exemptCountries.error.required")).verifying(nonEmptySet("exemptCountries.error.required"))
+      "value" -> set(enumerable[CountryList]("exemptCountries.error.required")).verifying(nonEmptySet("exemptCountries.error.required"))
     )
 }

@@ -18,14 +18,13 @@ package models.arrangement
 
 import generators.ModelGenerators
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
-import models.{UnsubmittedDisclosure, UserAnswers}
+import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
-
 import java.time.LocalDate
 
 class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
@@ -46,7 +45,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
             .success.value
-            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value
@@ -84,7 +83,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6701)
             .success.value
-            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value
@@ -190,7 +189,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value
-            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
             .success.value
 
         val ex = intercept[Exception] {
@@ -214,7 +213,7 @@ class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckP
             .success.value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
             .success.value
-            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+            .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
             .success.value
             .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "testNationalProvision")
             .success.value

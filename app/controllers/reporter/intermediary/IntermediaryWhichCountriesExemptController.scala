@@ -19,7 +19,8 @@ package controllers.reporter.intermediary
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.IntermediaryWhichCountriesExemptFormProvider
-import models.{CountriesListEUCheckboxes, Mode}
+import javax.inject.Inject
+import models.{CountryList, Mode}
 import navigation.NavigatorForReporter
 import pages.reporter.intermediary.IntermediaryWhichCountriesExemptPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,7 +31,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IntermediaryWhichCountriesExemptController @Inject()(
@@ -59,13 +59,13 @@ class IntermediaryWhichCountriesExemptController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "checkboxes" -> CountriesListEUCheckboxes.checkboxes(preparedForm)
+        "checkboxes" -> CountryList.nonGBCheckboxes(preparedForm)
       )
 
       renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Set[CountriesListEUCheckboxes]]): Call =
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Set[CountryList]]): Call =
     navigator.routeMap(IntermediaryWhichCountriesExemptPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -78,7 +78,7 @@ class IntermediaryWhichCountriesExemptController @Inject()(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
-            "checkboxes" -> CountriesListEUCheckboxes.checkboxes(formWithErrors)
+            "checkboxes" -> CountryList.nonGBCheckboxes(formWithErrors)
           )
 
           renderer.render("reporter/intermediary/intermediaryWhichCountriesExempt.njk", json).map(BadRequest(_))

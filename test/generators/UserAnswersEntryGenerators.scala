@@ -16,16 +16,16 @@
 
 package generators
 
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement, WhyAreYouReportingThisArrangementNow}
+import models.arrangement.{ExpectedArrangementValue, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.hallmarks._
-import models.intermediaries.{ExemptCountries, WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
+import models.intermediaries.{WhatTypeofIntermediary, YouHaveNotAddedAnyIntermediaries}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
 import models.taxpayer.UpdateTaxpayer
-import models.{CountriesListEUCheckboxes, IsExemptionKnown, ReporterOrganisationOrIndividual, SelectType, YesNoDoNotKnowRadios}
+import models.{CountryList, IsExemptionKnown, ReporterOrganisationOrIndividual, SelectType, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
@@ -36,11 +36,11 @@ import pages.hallmarks._
 import pages.individual.{IsIndividualDateOfBirthKnownPage, _}
 import pages.intermediaries.{WhatTypeofIntermediaryPage, YouHaveNotAddedAnyIntermediariesPage, _}
 import pages.organisation._
+import pages.reporter._
 import pages.reporter.individual.{ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, _}
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationEmailAddressPage, ReporterOrganisationEmailAddressQuestionPage, ReporterOrganisationPostcodePage}
 import pages.reporter.taxpayer.{TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import pages.taxpayer._
 import play.api.libs.json.{JsValue, Json}
 
@@ -296,13 +296,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIntermediaryWhichCountriesExemptUserAnswersEntry: Arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[IntermediaryWhichCountriesExemptPage.type]
-        value <- arbitrary[CountriesListEUCheckboxes].map(Json.toJson(_))
-      } yield (page, value)
-    }
 
   implicit lazy val arbitraryIntermediaryDoYouKnowExemptionsUserAnswersEntry: Arbitrary[(IntermediaryDoYouKnowExemptionsPage.type, JsValue)] =
     Arbitrary {
@@ -365,14 +358,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[IsExemptionCountryKnownPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryExemptCountriesUserAnswersEntry: Arbitrary[(ExemptCountriesPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[ExemptCountriesPage.type]
-        value <- arbitrary[ExemptCountries].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -440,11 +425,27 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryExemptCountriesUserAnswersEntry: Arbitrary[(ExemptCountriesPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ExemptCountriesPage.type]
+        value <- arbitrary[CountryList].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIntermediaryWhichCountriesExemptUserAnswersEntry: Arbitrary[(IntermediaryWhichCountriesExemptPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[IntermediaryWhichCountriesExemptPage.type]
+        value <- arbitrary[CountryList].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryWhichExpectedInvolvedCountriesArrangementUserAnswersEntry: Arbitrary[(WhichExpectedInvolvedCountriesArrangementPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[WhichExpectedInvolvedCountriesArrangementPage.type]
-        value <- arbitrary[WhichExpectedInvolvedCountriesArrangement].map(Json.toJson(_))
+        value <- arbitrary[CountryList].map(Json.toJson(_))
       } yield (page, value)
     }
 

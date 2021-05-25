@@ -16,6 +16,8 @@
 
 package pages.reporter
 
+import java.time.LocalDate
+
 import models.YesNoDoNotKnowRadios.Yes
 import models.reporter.RoleInArrangement
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
@@ -23,14 +25,12 @@ import models.reporter.intermediary.IntermediaryRole.Promoter
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
-import models.{CountriesListEUCheckboxes, UnsubmittedDisclosure, UserAnswers}
+import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-
-import java.time.LocalDate
 
 class RoleInArrangementPageSpec extends PageBehaviours {
 
@@ -76,7 +76,7 @@ class RoleInArrangementPageSpec extends PageBehaviours {
             .success.value
             .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
             .success.value
-            .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("Austria").toSet)
+            .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("Austria").toSet)
             .success.value
             .set(RoleInArrangementPage, 0, Taxpayer)
             .success.value

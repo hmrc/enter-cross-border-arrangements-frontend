@@ -20,8 +20,7 @@ import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.intermediaries.ExemptCountriesFormProvider
 import javax.inject.Inject
-import models.intermediaries.ExemptCountries
-import models.{Mode, UserAnswers}
+import models.{CountryList, Mode, UserAnswers}
 import navigation.NavigatorForIntermediaries
 import pages.individual.IndividualNamePage
 import pages.intermediaries.ExemptCountriesPage
@@ -62,14 +61,14 @@ class ExemptCountriesController @Inject()(
         "form"       -> preparedForm,
         "id" -> id,
         "mode"       -> mode,
-        "checkboxes" -> ExemptCountries.checkboxes(preparedForm),
+        "checkboxes" -> CountryList.checkboxes(preparedForm),
         "intermediary" -> getName(request.userAnswers, id)
       )
 
       renderer.render("intermediaries/exemptCountries.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Set[ExemptCountries]]): Call =
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[Set[CountryList]]): Call =
     navigator.routeMap(ExemptCountriesPage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -82,7 +81,7 @@ class ExemptCountriesController @Inject()(
             "form"       -> formWithErrors,
             "id" -> id,
             "mode"       -> mode,
-            "checkboxes" -> ExemptCountries.checkboxes(formWithErrors),
+            "checkboxes" -> CountryList.checkboxes(formWithErrors),
             "intermediary" -> getName(request.userAnswers, id)
           )
 

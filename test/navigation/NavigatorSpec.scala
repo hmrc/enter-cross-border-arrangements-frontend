@@ -22,9 +22,9 @@ import base.SpecBase
 import controllers.routes
 import generators.Generators
 import models.SelectType.{Individual, Organisation}
-import models._
+import models.{CountryList, _}
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
-import models.arrangement.{ExpectedArrangementValue, WhichExpectedInvolvedCountriesArrangement}
+import models.arrangement.ExpectedArrangementValue
 import models.hallmarks.HallmarkD.D2
 import models.hallmarks.HallmarkD1._
 import models.hallmarks._
@@ -456,7 +456,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(WhichExpectedInvolvedCountriesArrangementPage, 0, WhichExpectedInvolvedCountriesArrangement.enumerable.withName("GB").toSet)
+                .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
                 .success.value
 
             navigator

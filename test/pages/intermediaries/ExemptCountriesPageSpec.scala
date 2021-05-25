@@ -16,17 +16,17 @@
 
 package pages.intermediaries
 
-import models.intermediaries.ExemptCountries
+import models.CountryList
 import pages.behaviours.PageBehaviours
 
 class ExemptCountriesPageSpec extends PageBehaviours {
 
   "ExemptCountriesPage" - {
 
-    beRetrievable[Set[ExemptCountries]](ExemptCountriesPage)
+    beRetrievable[Set[CountryList]](ExemptCountriesPage)
 
-    beSettable[Set[ExemptCountries]](ExemptCountriesPage)
+    beSettable[Set[CountryList]](ExemptCountriesPage)
 
-    beRemovable[Set[ExemptCountries]](ExemptCountriesPage)
+    beRemovable[Set[CountryList]](ExemptCountriesPage)
   }
 }

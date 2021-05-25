@@ -18,7 +18,7 @@ package forms.reporter.intermediary
 
 import forms.IntermediaryWhichCountriesExemptFormProvider
 import forms.behaviours.CheckboxFieldBehaviours
-import models.CountriesListEUCheckboxes
+import models.CountryList
 import play.api.data.FormError
 
 class CountriesListEUCheckboxesFormProviderSpec extends CheckboxFieldBehaviours {
@@ -30,10 +30,10 @@ class CountriesListEUCheckboxesFormProviderSpec extends CheckboxFieldBehaviours 
     val fieldName = "value"
     val requiredKey = "intermediaryWhichCountriesExempt.error.required"
 
-    behave like checkboxField[CountriesListEUCheckboxes](
+    behave like checkboxField[CountryList](
       form,
       fieldName,
-      validValues  = CountriesListEUCheckboxes.values,
+      validValues  = CountryList.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

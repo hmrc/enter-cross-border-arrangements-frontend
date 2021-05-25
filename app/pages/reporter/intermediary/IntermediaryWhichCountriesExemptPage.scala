@@ -16,11 +16,11 @@
 
 package pages.reporter.intermediary
 
-import models.CountriesListEUCheckboxes
+import models.CountryList
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryWhichCountriesExemptPage extends QuestionPage[Set[CountriesListEUCheckboxes]] {
+case object IntermediaryWhichCountriesExemptPage extends QuestionPage[Set[CountryList]] {
 
   override def path: JsPath = JsPath \ toString
 

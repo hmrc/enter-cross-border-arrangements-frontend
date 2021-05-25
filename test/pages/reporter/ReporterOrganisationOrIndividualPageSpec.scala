@@ -16,20 +16,20 @@
 
 package pages.reporter
 
+import java.time.LocalDate
+
 import helpers.data.ValidUserAnswersForSubmission.{loopDetails, validCountry, validTaxReferenceNumber, validToday}
 import models.reporter.RoleInArrangement
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import models.{Address, AddressLookup, CountriesListEUCheckboxes, Country, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
+import models.{Address, AddressLookup, Country, CountryList, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import pages.reporter.individual._
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-
-import java.time.LocalDate
 
 class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
 
@@ -88,7 +88,7 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
           .success.value
           .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
           .success.value
-          .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+          .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
           .success.value
           .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.GovernedByLaw)
           .success.value
@@ -172,7 +172,7 @@ class ReporterOrganisationOrIndividualPageSpec extends PageBehaviours {
             .success.value
             .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
             .success.value
-            .set(IntermediaryWhichCountriesExemptPage, 0, CountriesListEUCheckboxes.enumerable.withName("FR").toSet)
+            .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
             .success.value
             .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.GovernedByLaw)
             .success.value

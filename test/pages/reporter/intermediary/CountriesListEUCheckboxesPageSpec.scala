@@ -16,17 +16,17 @@
 
 package pages.reporter.intermediary
 
-import models.CountriesListEUCheckboxes
+import models.CountryList
 import pages.behaviours.PageBehaviours
 
 class CountriesListEUCheckboxesPageSpec extends PageBehaviours {
 
   "IntermediaryWhichCountriesExemptPage" - {
 
-    beRetrievable[Set[CountriesListEUCheckboxes]](IntermediaryWhichCountriesExemptPage)
+    beRetrievable[Set[CountryList]](IntermediaryWhichCountriesExemptPage)
 
-    beSettable[Set[CountriesListEUCheckboxes]](IntermediaryWhichCountriesExemptPage)
+    beSettable[Set[CountryList]](IntermediaryWhichCountriesExemptPage)
 
-    beRemovable[Set[CountriesListEUCheckboxes]](IntermediaryWhichCountriesExemptPage)
+    beRemovable[Set[CountryList]](IntermediaryWhichCountriesExemptPage)
   }
 }

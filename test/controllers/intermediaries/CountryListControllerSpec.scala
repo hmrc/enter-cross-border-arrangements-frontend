@@ -19,8 +19,7 @@ package controllers.intermediaries
 import base.SpecBase
 import forms.intermediaries.ExemptCountriesFormProvider
 import matchers.JsonMatchers
-import models.intermediaries.ExemptCountries
-import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -37,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class CountryListControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   lazy val exemptCountriesRoute = routes.ExemptCountriesController.onPageLoad(0, NormalMode).url
 
@@ -64,7 +63,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"       -> form,
         "mode"       -> NormalMode,
-        "checkboxes" -> ExemptCountries.checkboxes(form)
+        "checkboxes" -> CountryList.checkboxes(form)
       )
 
       templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
@@ -79,7 +78,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ExemptCountriesPage, 0, ExemptCountries.values.toSet).success.value
+        .set(ExemptCountriesPage, 0, CountryList.values.toSet).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, exemptCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -91,12 +90,12 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.fill(ExemptCountries.values.toSet)
+      val filledForm = form.fill(CountryList.values.toSet)
 
       val expectedJson = Json.obj(
         "form"       -> filledForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> ExemptCountries.checkboxes(filledForm)
+        "checkboxes" -> CountryList.checkboxes(filledForm)
       )
 
       templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
@@ -120,7 +119,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val request =
         FakeRequest(POST, exemptCountriesRoute)
-          .withFormUrlEncodedBody(("value[0]", ExemptCountries.values.head.toString))
+          .withFormUrlEncodedBody(("value[0]", CountryList.values.head.toString))
 
       val result = route(application, request).value
 
@@ -151,7 +150,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"       -> boundForm,
         "mode"       -> NormalMode,
-        "checkboxes" -> ExemptCountries.checkboxes(boundForm)
+        "checkboxes" -> CountryList.checkboxes(boundForm)
       )
 
       templateCaptor.getValue mustEqual "intermediaries/exemptCountries.njk"
@@ -176,7 +175,7 @@ class ExemptCountriesControllerSpec extends SpecBase with MockitoSugar with Nunj
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, exemptCountriesRoute).withFormUrlEncodedBody(("value[0]", ExemptCountries.values.head.toString))
+      val request = FakeRequest(POST, exemptCountriesRoute).withFormUrlEncodedBody(("value[0]", CountryList.values.head.toString))
 
       val result = route(application, request).value
 

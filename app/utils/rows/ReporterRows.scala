@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
-import models.{Address, AddressLookup, CheckMode, CountriesListEUCheckboxes, Country, LoopDetails, TaxReferenceNumbers, YesNoDoNotKnowRadios}
+import models.{Address, AddressLookup, CheckMode, Country, CountryList, LoopDetails, TaxReferenceNumbers, YesNoDoNotKnowRadios}
 import pages.reporter._
 import pages.reporter.individual._
 import pages.reporter.intermediary._
@@ -269,7 +269,7 @@ trait ReporterRows extends RowBuilder {
     )
   }
 
-  private def formatExemptCountriesList(selectedCountries: Set[CountriesListEUCheckboxes], singleItem: Boolean) = {
+  private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean) = {
 
     val getCountryName = selectedCountries.map(_.toString).toSeq.map(
       countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted

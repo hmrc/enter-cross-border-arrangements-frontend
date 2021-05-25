@@ -16,17 +16,17 @@
 
 package pages.arrangement
 
-import models.arrangement.WhichExpectedInvolvedCountriesArrangement
+import models.CountryList
 import pages.behaviours.PageBehaviours
 
 class WhichExpectedInvolvedCountriesArrangementPageSpec extends PageBehaviours {
 
   "WhichExpectedInvolvedCountriesArrangementPage" - {
 
-    beRetrievable[Set[WhichExpectedInvolvedCountriesArrangement]](WhichExpectedInvolvedCountriesArrangementPage)
+    beRetrievable[Set[CountryList]](WhichExpectedInvolvedCountriesArrangementPage)
 
-    beSettable[Set[WhichExpectedInvolvedCountriesArrangement]](WhichExpectedInvolvedCountriesArrangementPage)
+    beSettable[Set[CountryList]](WhichExpectedInvolvedCountriesArrangementPage)
 
-    beRemovable[Set[WhichExpectedInvolvedCountriesArrangement]](WhichExpectedInvolvedCountriesArrangementPage)
+    beRemovable[Set[CountryList]](WhichExpectedInvolvedCountriesArrangementPage)
   }
 }
