@@ -20,10 +20,8 @@ import controllers.routes
 import javax.inject.{Inject, Singleton}
 import models.SelectType.{Individual, Organisation}
 import models._
-import models.hallmarks.HallmarkCategories.{CategoryD, orderingByName}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
-import models.hallmarks._
 import pages._
 import pages.arrangement._
 import pages.hallmarks._
@@ -36,7 +34,6 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
-    case HallmarkCategoriesPage => hallmarkCategoryRoutes(NormalMode)
     case HallmarkDPage => hallmarkDRoutes(NormalMode)
     case HallmarkD1Page => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
@@ -58,12 +55,11 @@ class Navigator @Inject()() {
 
     case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
 
-    case _ => _ => id => _ => Some(routes.IndexController.onPageLoad())
+    case _ => _ => _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
-    case HallmarkCategoriesPage => hallmarkCategoryRoutes(CheckMode)
     case HallmarkDPage => hallmarkDRoutes(CheckMode)
     case HallmarkD1Page => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
@@ -85,13 +81,6 @@ class Navigator @Inject()() {
     case _ => _ => id => _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
   }
 
- def catRoutes(key: HallmarkCategories): (Int, Mode) => Call = key match {
-   case CategoryD => controllers.hallmarks.routes.HallmarkDController.onPageLoad
- }
-
-  private def hallmarkCategoryRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkCategoriesPage, id) map  {catSet  =>  catRoutes(catSet.min(orderingByName))(id, mode)}
-
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
     ua.get(HallmarkDPage, id) match  {
       case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(id, mode))
@@ -102,7 +91,7 @@ class Navigator @Inject()() {
     ua.get(HallmarkD1Page, id) match  {
       case Some(set) if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(id, mode))
       case  _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
-        }
+    }
 
   private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
     Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))

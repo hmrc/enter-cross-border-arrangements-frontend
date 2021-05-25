@@ -123,7 +123,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(HallmarkD1OtherPage.type, JsValue)] ::
     arbitrary[(HallmarkD1Page.type, JsValue)] ::
     arbitrary[(HallmarkDPage.type, JsValue)] ::
-    arbitrary[(HallmarkCategoriesPage.type, JsValue)] ::
     Nil
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {

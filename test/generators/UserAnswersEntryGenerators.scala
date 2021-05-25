@@ -699,11 +699,4 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryHallmarkCategoriesUserAnswersEntry: Arbitrary[(HallmarkCategoriesPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[HallmarkCategoriesPage.type]
-        value <- arbitrary[HallmarkCategories].map(Json.toJson(_))
-      } yield (page, value)
-    }
 }

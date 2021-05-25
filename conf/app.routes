@@ -22,11 +22,6 @@ GET        /keep-alive                                  controllers.KeepAliveCon
 GET        /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad(id: Int)
 POST       /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onSubmit(id: Int)
 
-GET        /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = CheckMode)
-
 GET        /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-category-d/:id                    controllers.hallmarks.HallmarkDController.onPageLoad(id: Int, mode: Mode = CheckMode)

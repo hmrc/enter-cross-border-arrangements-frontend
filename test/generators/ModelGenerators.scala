@@ -152,11 +152,6 @@ implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
       Gen.oneOf(HallmarkD.values)
     }
 
-  implicit lazy val arbitraryHallmarkCategories: Arbitrary[HallmarkCategories] =
-    Arbitrary {
-      Gen.oneOf(HallmarkCategories.values)
-    }
-
   implicit lazy val arbitraryCountry: Arbitrary[Country] = {
     Arbitrary {
       for {

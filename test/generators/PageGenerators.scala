@@ -295,7 +295,4 @@ trait PageGenerators {
 
   implicit lazy val arbitraryHallmarkDPage: Arbitrary[HallmarkDPage.type] =
     Arbitrary(HallmarkDPage)
-
-  implicit lazy val arbitraryHallmarkCategoriesPage: Arbitrary[HallmarkCategoriesPage.type] =
-    Arbitrary(HallmarkCategoriesPage)
 }

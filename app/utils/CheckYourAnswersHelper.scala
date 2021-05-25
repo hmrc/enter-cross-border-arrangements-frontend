@@ -94,21 +94,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     }
   }
 
-  def hallmarkCategories(id: Int): Option[Row] = userAnswers.get(HallmarkCategoriesPage, id) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
-        value   = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
-          )
-        )
-      )
-  }
-
   def buildHallmarksRow(id: Int): Row = {
 
     val hallmarkDPage = userAnswers.get(HallmarkDPage, id)  match {
