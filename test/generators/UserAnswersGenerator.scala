@@ -120,16 +120,9 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(IsOrganisationAddressKnownPage.type, JsValue)] ::
     arbitrary[(IsOrganisationAddressUkPage.type, JsValue)] ::
     arbitrary[(PostcodePage.type, JsValue)] ::
-    arbitrary[(HallmarkEPage.type, JsValue)] ::
-    arbitrary[(HallmarkC1Page.type, JsValue)] ::
-    arbitrary[(HallmarkCPage.type, JsValue)] ::
     arbitrary[(HallmarkD1OtherPage.type, JsValue)] ::
     arbitrary[(HallmarkD1Page.type, JsValue)] ::
     arbitrary[(HallmarkDPage.type, JsValue)] ::
-    arbitrary[(HallmarkBPage.type, JsValue)] ::
-    arbitrary[(MainBenefitTestPage.type, JsValue)] ::
-    arbitrary[(HallmarkAPage.type, JsValue)] ::
-    arbitrary[(HallmarkCategoriesPage.type, JsValue)] ::
     Nil
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {

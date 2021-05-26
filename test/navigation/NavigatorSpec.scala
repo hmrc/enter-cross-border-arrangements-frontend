@@ -64,170 +64,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from 'Which categories of hallmarks are relevant to this arrangement' page " +
-        "to 'Which parts of hallmark A apply to this arrangement?' page " +
-        "when checkbox A is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
-                .success
-                .value
-
-            navigator
-              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkAController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which categories of hallmarks are relevant to this arrangement' page " +
-        "to 'Which parts of hallmark B apply to this arrangement?' page " +
-        "when checkbox B is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
-                .success
-                .value
-
-            navigator
-              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which categories of hallmarks are relevant to this arrangement' page " +
-        "to 'Which parts of hallmark D apply to this arrangement?' page " +
-        "when checkbox D is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
-                .success
-                .value
-
-            navigator
-              .nextPage(HallmarkCategoriesPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkDController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
-        "to 'Does the arrangement meet the Main Benefit Test?' page " +
-        "when checkbox A1, A2a, A2b & A3 is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("A").toSet)
-                .success.value
-                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
-                .success.value
-
-            navigator
-              .nextPage(HallmarkAPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which parts of hallmark A apply to this arrangement?' page " +
-        "to 'Which parts of hallmark B apply to this arrangement?' page " +
-        "if Hallmark B was also selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val hallmarkCategories = Set(HallmarkCategories.enumerable.withName("A").get,
-              HallmarkCategories.enumerable.withName("B").get)
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, hallmarkCategories)
-                .success.value
-                .set(HallmarkAPage, 0, HallmarkA.values.toSet)
-                .success.value
-
-            navigator
-              .nextPage(HallmarkAPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.HallmarkBController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which parts of hallmark B apply to this arrangement?' page " +
-        "to 'Does the arrangement meet the Main Benefit Test?' page " +
-        "when checkbox B1, B2, & B3 are selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("B").toSet)
-                .success.value
-                .set(HallmarkBPage, 0, HallmarkB.values.toSet)
-                .success.value
-
-            navigator
-              .nextPage(HallmarkBPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Does the arrangement meet the Main Benefit Test?' page " +
-        "to 'Check your answers' page when Yes is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(MainBenefitTestPage, 0, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(MainBenefitTestPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
-        }
-      }
-
-      "must go from 'Does the arrangement meet the Main Benefit Test?' page " +
-        "to 'There is a problem' page when No is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(MainBenefitTestPage, 0, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(MainBenefitTestPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.MainBenefitProblemController.onPageLoad(0))
-        }
-      }
-
       "must go from 'Which parts of hallmark D apply to this arrangement?' page " +
         "to 'Check your answers' page when D2 only is selected" in {
 
@@ -237,8 +73,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
-                .success.value
                 .set(HallmarkDPage, 0, HallmarkD.values.toSet.filter(_ == D2))
                 .success.value
 
@@ -258,34 +92,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
-                .success.value
                 .set(HallmarkDPage, 0, HallmarkD.values.toSet)
                 .success.value
 
             navigator
               .nextPage(HallmarkDPage, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which parts of hallmark D1 apply to this arrangement?' page " +
-        "to 'Which parts of hallmark E apply to this arrangement?' page if D1: Other is not selected and categories does not contain E" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
-                .success.value
-                .set(HallmarkD1Page, 0, values.toSet.filter(_ != D1other))
-                .success.value
-
-            navigator
-              .nextPage(HallmarkD1Page, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 
@@ -299,35 +111,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("D").toSet)
-                .success.value
                 .set(HallmarkD1Page, 0, values.toSet.filter(_ == D1other))
                 .success.value
 
             navigator
               .nextPage(HallmarkD1Page, 0, NormalMode, updatedAnswers)
               .mustBe(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(0, NormalMode))
-        }
-      }
-
-      "must go from 'Which category E hallmarks apply to this arrangement?' page " +
-        "to 'check your answers' if category E is selected" in {
-
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .set(HallmarkCategoriesPage, 0, HallmarkCategories.enumerable.withName("E").toSet)
-                .success.value
-                .set(HallmarkEPage, 0, HallmarkE.values.toSet)
-                .success.value
-
-
-            navigator
-              .nextPage(HallmarkEPage, 0, NormalMode, updatedAnswers)
-              .mustBe(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(0))
         }
       }
 

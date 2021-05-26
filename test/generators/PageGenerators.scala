@@ -287,15 +287,6 @@ trait PageGenerators {
   implicit lazy val arbitraryPostcodePage: Arbitrary[PostcodePage.type] =
     Arbitrary(PostcodePage)
 
-  implicit lazy val arbitraryHallmarkEPage: Arbitrary[HallmarkEPage.type] =
-    Arbitrary(HallmarkEPage)
-
-  implicit lazy val arbitraryHallmarkC1Page: Arbitrary[HallmarkC1Page.type] =
-    Arbitrary(HallmarkC1Page)
-
-  implicit lazy val arbitraryHallmarkCPage: Arbitrary[HallmarkCPage.type] =
-    Arbitrary(HallmarkCPage)
-
   implicit lazy val arbitraryHallmarkD1OtherPage: Arbitrary[HallmarkD1OtherPage.type] =
     Arbitrary(HallmarkD1OtherPage)
 
@@ -304,16 +295,4 @@ trait PageGenerators {
 
   implicit lazy val arbitraryHallmarkDPage: Arbitrary[HallmarkDPage.type] =
     Arbitrary(HallmarkDPage)
-
-  implicit lazy val arbitraryHallmarkBPage: Arbitrary[HallmarkBPage.type] =
-    Arbitrary(HallmarkBPage)
-
-  implicit lazy val arbitraryMeetMainBenefitTestPage: Arbitrary[MainBenefitTestPage.type] =
-    Arbitrary(MainBenefitTestPage)
-
-  implicit lazy val arbitraryHallmarkAPage: Arbitrary[HallmarkAPage.type] =
-    Arbitrary(HallmarkAPage)
-
-  implicit lazy val arbitraryHallmarkCategoriesPage: Arbitrary[HallmarkCategoriesPage.type] =
-    Arbitrary(HallmarkCategoriesPage)
 }

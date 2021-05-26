@@ -17,43 +17,10 @@ GET        /sign-out                                    controllers.SignOutContr
 GET        /keep-alive                                  controllers.KeepAliveController.keepAlive
 
 
-
 # HALLMARK ROUTES
 
 GET        /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onPageLoad(id: Int)
 POST       /hallmarks/check-answers/:id                                 controllers.hallmarks.CheckYourAnswersHallmarksController.onSubmit(id: Int)
-
-GET        /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-categories/:id                           controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmarks-categories/:id                   controllers.hallmarks.HallmarkCategoriesController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/hallmark-category-a/:id                           controllers.hallmarks.HallmarkAController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-category-a/:id                           controllers.hallmarks.HallmarkAController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmark-category-a/:id                    controllers.hallmarks.HallmarkAController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmark-category-a/:id                    controllers.hallmarks.HallmarkAController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/hallmark-category-b/:id                           controllers.hallmarks.HallmarkBController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-category-b/:id                           controllers.hallmarks.HallmarkBController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmark-category-b/:id                    controllers.hallmarks.HallmarkBController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmark-category-b/:id                    controllers.hallmarks.HallmarkBController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/main-benefit-test/:id                             controllers.hallmarks.MainBenefitTestController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/main-benefit-test/:id                             controllers.hallmarks.MainBenefitTestController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-main-benefit-test/:id                      controllers.hallmarks.MainBenefitTestController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-main-benefit-test/:id                      controllers.hallmarks.MainBenefitTestController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/there-is-a-problem/:id                            controllers.hallmarks.MainBenefitProblemController.onPageLoad(id: Int)
-
-GET        /hallmarks/hallmark-category-c/:id                           controllers.hallmarks.HallmarkCController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-category-c/:id                           controllers.hallmarks.HallmarkCController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmark-category-c/:id                    controllers.hallmarks.HallmarkCController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmark-category-c/:id                    controllers.hallmarks.HallmarkCController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/hallmark-category-c1/:id                          controllers.hallmarks.HallmarkC1Controller.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-category-c1/:id                          controllers.hallmarks.HallmarkC1Controller.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmark-category-c1/:id                   controllers.hallmarks.HallmarkC1Controller.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmark-category-c1/:id                   controllers.hallmarks.HallmarkC1Controller.onSubmit(id: Int, mode: Mode = CheckMode)
 
 GET        /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /hallmarks/hallmark-category-d/:id                           controllers.hallmarks.HallmarkDController.onSubmit(id: Int, mode: Mode = NormalMode)
@@ -69,11 +36,6 @@ GET        /hallmarks/hallmark-d1-other/:id                             controll
 POST       /hallmarks/hallmark-d1-other/:id                             controllers.hallmarks.HallmarkD1OtherController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /hallmarks/change-hallmark-d1-other/:id                      controllers.hallmarks.HallmarkD1OtherController.onPageLoad(id: Int, mode: Mode = CheckMode)
 POST       /hallmarks/change-hallmark-d1-other/:id                      controllers.hallmarks.HallmarkD1OtherController.onSubmit(id: Int, mode: Mode = CheckMode)
-
-GET        /hallmarks/hallmark-category-e/:id                           controllers.hallmarks.HallmarkEController.onPageLoad(id: Int, mode: Mode = NormalMode)
-POST       /hallmarks/hallmark-category-e/:id                           controllers.hallmarks.HallmarkEController.onSubmit(id: Int, mode: Mode = NormalMode)
-GET        /hallmarks/change-hallmark-category-e/:id                    controllers.hallmarks.HallmarkEController.onPageLoad(id: Int, mode: Mode = CheckMode)
-POST       /hallmarks/change-hallmark-category-e/:id                    controllers.hallmarks.HallmarkEController.onSubmit(id: Int, mode: Mode = CheckMode)
 
 
 # ORGANISATION ROUTES

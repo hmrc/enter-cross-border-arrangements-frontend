@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import base.SpecBase
-import models.hallmarks.{HallmarkA, HallmarkD1}
+import models.hallmarks.HallmarkD1
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -42,10 +42,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkAPage, 0, HallmarkA.enumerable.withName("A1").toSet)
-        .success
-        .value
-        .set(MainBenefitTestPage, 0, true)
+        .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("D1").toSet)
         .success
         .value
 

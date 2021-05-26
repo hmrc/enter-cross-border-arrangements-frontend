@@ -16,8 +16,6 @@
 
 package utils
 
-import models.hallmarks.HallmarkC1._
-import models.hallmarks.HallmarkCategories.{CategoryA, CategoryB}
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
@@ -94,53 +92,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         ))
       case _ => None
     }
-  }
-
-  def mainBenefitPredicate[A](set: Option[Set[A]], elem: A): Boolean = {
-    set match {
-      case Some(hm) => hm.contains(elem)
-      case None => false
-    }
-  }
-
-  def mainBenefitTest(id: Int): Option[Row] = if(
-    mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1bi) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1c) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkC1Page, id), C1d) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage, id), CategoryA) ||
-      mainBenefitPredicate(userAnswers.get(HallmarkCategoriesPage, id), CategoryB)) {
-
-    userAnswers.get(MainBenefitTestPage, id) map {
-      answer =>
-        Row(
-          key     = Key(msg"mainBenefitTest.checkYourAnswersLabel"),
-          value   = Value(yesOrNo(answer)),
-          actions = List(
-            Action(
-              content            = msg"site.edit",
-              href               = controllers.hallmarks.routes.MainBenefitTestController.onPageLoad(id, CheckMode).url,
-              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"mainBenefitTest.checkYourAnswersLabel"))
-            )
-          )
-        )
-    }
-  } else{
-    None
-  }
-
-  def hallmarkCategories(id: Int): Option[Row] = userAnswers.get(HallmarkCategoriesPage, id) map {
-    answer =>
-      Row(
-        key     = Key(msg"hallmarkCategories.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-third")),
-        value   = Value(Html(answer.map(a => msg"hallmarkCategories.$a".resolve).mkString(",<br>"))),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = controllers.hallmarks.routes.HallmarkCategoriesController.onPageLoad(id, CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"hallmarkCategories.checkYourAnswersLabel"))
-          )
-        )
-      )
   }
 
   def buildHallmarksRow(id: Int): Row = {

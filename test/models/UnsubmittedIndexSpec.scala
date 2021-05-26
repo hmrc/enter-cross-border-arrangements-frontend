@@ -52,11 +52,6 @@ class UnsubmittedIndexSpec extends SpecBase with MockitoSugar {
     }
 
     "must not construct from an index when useranswers doesn't have any unsubmitted" in {
-      val unsubmittedDisclosures = Seq(
-        UnsubmittedDisclosure("1", "My First Disclosure"),
-        UnsubmittedDisclosure("2", "The Revenge")
-      )
-
       implicit val userAnswers = UserAnswers(userAnswersId)
 
       assertThrows[Exception] {

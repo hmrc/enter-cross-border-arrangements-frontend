@@ -50,7 +50,7 @@ class CheckYourAnswersHallmarksController @Inject()(
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val hallmarks = helper.buildHallmarksRow(id)
-      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.mainBenefitTest(id), helper.hallmarkD1Other(id)).flatten
+      val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.hallmarkD1Other(id)).flatten
 
       renderer.render(
         "hallmarks/check-your-answers-hallmarks.njk",
