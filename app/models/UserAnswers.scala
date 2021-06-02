@@ -149,6 +149,8 @@ final case class UserAnswers(
 
 object UserAnswers {
 
+  val format: OFormat[UserAnswers] = OFormat(reads, writes)
+
   implicit lazy val reads: Reads[UserAnswers] = {
 
     import play.api.libs.functional.syntax._
