@@ -158,7 +158,7 @@ object UserAnswers {
     (
       (__ \ "_id").read[String] and
       (__ \ "data").read[JsObject] and
-      (__ \ "lastUpdated").read(MongoDateTimeFormats.localDateTimeRead)
+      (__ \ "lastUpdated").read[LocalDateTime]
     ) (UserAnswers.apply _)
   }
 
@@ -169,7 +169,7 @@ object UserAnswers {
     (
       (__ \ "_id").write[String] and
       (__ \ "data").write[JsObject] and
-      (__ \ "lastUpdated").write(MongoDateTimeFormats.localDateTimeWrite)
+      (__ \ "lastUpdated").write[LocalDateTime]
     ) (unlift(UserAnswers.unapply))
   }
 }
