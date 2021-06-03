@@ -55,7 +55,7 @@ class DefaultSessionRepository @Inject()(mongo: MongoComponent, config: Configur
     val data = userAnswers copy (lastUpdated = LocalDateTime.now)
     val options = ReplaceOptions().upsert(true)
 
-    collection.replaceOne(filter, data, options).toFuture.map(_.wasAcknowledged())
+    collection.replaceOne(filter, data, options).toFuture.map(_ => true)
   }
 
 }
