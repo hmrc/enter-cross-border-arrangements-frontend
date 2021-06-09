@@ -33,6 +33,7 @@ class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig)
     HeaderNames.CONTENT_TYPE -> "application/xml"
   )
 
+  //Sends XML for validation in backend - DAC6-858
   def sendForValidation(xml: Elem)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[Either[Seq[String], String]] = {
     http.POSTString[ManualSubmissionValidationResult](url, xml.mkString, headers).map {
       case ManualSubmissionValidationSuccess(a) => Right(a)

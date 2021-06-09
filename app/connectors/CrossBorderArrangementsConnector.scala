@@ -32,6 +32,7 @@ class CrossBorderArrangementsConnector @Inject()(
   httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
   val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
+  val submitUrl = s"$baseUrl/submit"
 
   def verificationUrl(arrangementId: String): String = {
     s"$baseUrl/verify-arrangement-id/$arrangementId"
@@ -87,8 +88,9 @@ class CrossBorderArrangementsConnector @Inject()(
     HeaderNames.CONTENT_TYPE -> "application/xml"
   )
 
+  //Submits document to backend - DAC6-858
   def submitXML(xml:NodeSeq)(implicit hc: HeaderCarrier): Future[GeneratedIDs] =
-    httpClient.POSTString[GeneratedIDs](s"$baseUrl/submit", xml.mkString, headers)
+    httpClient.POSTString[GeneratedIDs](submitUrl, xml.mkString, headers)
 
   def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.GET[HttpResponse](isMarketableArrangementUrl(arrangementId)).map { response =>

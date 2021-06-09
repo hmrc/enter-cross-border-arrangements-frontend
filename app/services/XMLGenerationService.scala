@@ -85,6 +85,7 @@ class XMLGenerationService @Inject()(
         throw error
       },
       xml => {
+
         //send it off to be validated and business rules
         validationConnector.sendForValidation(xml).flatMap {
           _.fold(
