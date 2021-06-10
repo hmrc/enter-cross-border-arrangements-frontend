@@ -39,29 +39,21 @@
         {{ item.name }}
       </span>
 
-      {# TODO remove "if/endif" after DAC6-444, DAC6-445, DAC6-446, DAC6-447 are merged #}
-      {%- if item.changeUrl != "#" -%}
-      <span class="hmrc-add-to-a-list__change">
+       <span class="hmrc-add-to-a-list__change">
         <a class="govuk-link" href="{{ item.changeUrl }}">
           <span aria-hidden="true">{{messages.change}}</span>
           <span class="govuk-visually-hidden">{{messages.change}} {{ item.name }}</span>
         </a>
       </span>
-      {%- endif -%}
 
-      {# TODO remove "if/endif" after DAC6-413 is merged #}
-      {%- if item.removeUrl != "#" -%}
       <span class="hmrc-add-to-a-list__remove">
         <a class="govuk-link" href="{{ item.removeUrl }}">
           <span aria-hidden="true">{{messages.remove}}</span>
           <span class="govuk-visually-hidden">{{messages.aria.before}} {{ item.name }} {{messages.aria.after}}</span>
         </a>
       </span>
-      {%- endif -%}
 
       </li>
-    {% else %}
-      {# empty list stuff goes here #}
     {% endfor %}
     {# end loop #}
     </ul>
