@@ -54,7 +54,7 @@ class IndividualPostcodeController @Inject()(
 
   implicit val alternativeText: String = "the individual’s"
 
-  private def manualAddressURL(mode: Mode, id: Int): String = routes.IndividualAddressController.onPageLoad(id, mode).url //Todo update to correct value
+  private def manualAddressURL(mode: Mode, id: Int): String = routes.IndividualAddressController.onPageLoad(id, mode).url
 
   private def actionUrl(mode: Mode, id: Int) = routes.IndividualPostcodeController.onSubmit(id, mode).url
 

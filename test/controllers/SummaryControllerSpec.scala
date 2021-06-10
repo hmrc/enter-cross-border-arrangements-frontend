@@ -157,7 +157,6 @@ class SummaryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupp
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
       verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
-      //ToDo test output from page
       templateCaptor.getValue mustEqual "summary.njk"
 
       application.stop()

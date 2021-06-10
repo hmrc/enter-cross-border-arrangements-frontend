@@ -42,7 +42,6 @@ class GeneratedXMLController @Inject()(
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
     implicit request =>
 
-      //TODO Delete later if no longer needed
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {

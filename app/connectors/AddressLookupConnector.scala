@@ -42,7 +42,6 @@ class AddressLookupConnector @Inject()(http: HttpClient, config: FrontendAppConf
       headers = Seq("X-Hmrc-Origin" -> "DAC6")
     ) flatMap {
       case response if response.status equals OK =>
-        //TODO Refactor once we shift to new play bootstrap
         Future.successful(response.json.as[Seq[AddressLookup]].filterNot(address =>
           address.addressLine1.isEmpty && address.addressLine2.isEmpty)
         )
