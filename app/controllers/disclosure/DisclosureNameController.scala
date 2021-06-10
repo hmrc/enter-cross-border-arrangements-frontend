@@ -48,8 +48,6 @@ class DisclosureNameController @Inject()(
 
   private val form = formProvider()
 
-  //TODO - read require Data when pages before this are implemented
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
 
