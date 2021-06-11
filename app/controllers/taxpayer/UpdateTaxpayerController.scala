@@ -94,7 +94,6 @@ class UpdateTaxpayerController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UpdateTaxpayerPage, id, value))
-//            cleanAnswers   <- Future.fromTry(updatedAnswers.remove(WhatIsTaxpayersStartDateForImplementingArrangementPage, id)) // TODO test when userAnswers are properly supplied
             updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, setStatus(value, updatedAnswers, id)))
             _              <- sessionRepository.set(updatedAnswersWithStatus)
             checkRoute     =  toCheckRoute(mode, updatedAnswersWithStatus, id)

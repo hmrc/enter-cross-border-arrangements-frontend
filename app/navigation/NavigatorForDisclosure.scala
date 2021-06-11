@@ -73,6 +73,6 @@ class NavigatorForDisclosure @Inject()(appConfig: FrontendAppConfig) {
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =
-    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad() //TODO - change when CYA page built
+    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
 
 }
