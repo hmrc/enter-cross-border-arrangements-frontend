@@ -39,6 +39,7 @@ class IndividualNameController @Inject()(
     navigator: NavigatorForIndividual,
     identify: IdentifierAction,
     getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
     formProvider: IndividualNameFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
@@ -46,10 +47,10 @@ class IndividualNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.flatMap(_.get(IndividualNamePage, id)) match {
+      val preparedForm = request.userAnswers.get(IndividualNamePage, id) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,7 +67,7 @@ class IndividualNameController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Name]): Call =
     navigator.routeMap(IndividualNamePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -82,11 +83,9 @@ class IndividualNameController @Inject()(
         },
 
         value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(IndividualNamePage, id, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualNamePage, id, value))
             _              <- sessionRepository.set(updatedAnswers)
             checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
           } yield Redirect(redirect(id, checkRoute, Some(value)))
