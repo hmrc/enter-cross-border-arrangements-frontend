@@ -33,6 +33,8 @@
 
             {{ csrf() | safe }}
 
+            <fieldset class="govuk-fieldset" aria-describedby="warning">
+
             <legend>
                 <h1 class="govuk-heading-xl" id="heading">
                     {{ messages("removeDisclosure.heading", disclosureName)}}
@@ -40,8 +42,11 @@
             </legend>
 
             {{ govukWarningText({
-              text: messages('disclosureMarketable.warning'),
-              iconFallbackText: "Warning"
+              text: messages('site.warning'),
+              iconFallbackText: "Warning",
+              attributes: {
+                  "id": "warning"
+                  }
             }) }}
 
             {{ govukRadios({

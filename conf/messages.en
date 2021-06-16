@@ -17,6 +17,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.selectAllThatApply = Select all that apply.
 site.homePageLink.text = Back to disclose cross-border arrangements
+site.warning = Check this is correct. If you need to change your answer at a later date, you may need to disclose it as a new arrangement.
 
 error.title.prefix = Error:
 error.summary.title = There is a problem
@@ -792,7 +793,6 @@ disclosureType.error.required = Select a type of disclosure
 
 disclosureMarketable.title = Is this a marketable arrangement?
 disclosureMarketable.heading = Is this a marketable arrangement?
-disclosureMarketable.warning = Check this is correct. If you need to change your answer at a later date, you may need to disclose it as a new arrangement.
 disclosureMarketable.checkYourAnswersLabel = Is this a marketable arrangement?
 disclosureMarketable.error.required = Select yes if this arrangement is marketable
 
