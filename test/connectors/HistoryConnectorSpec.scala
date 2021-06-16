@@ -49,10 +49,8 @@ class HistoryConnectorSpec extends SpecBase
 
           val json = Json.obj(
             "details" -> JsArray(Seq(Json.obj(
-              "enrolmentID" -> "enrolmentID",
-              "submissionTime" -> Json.obj(
-                "$date" -> 1196676930000L
-              ),
+              "enrolmentID" -> "enrolmentID", //1196676930000L
+              "submissionTime" -> LocalDateTime.now.toString,
               "fileName" -> "fileName",
               "importInstruction" -> "New",
               "initialDisclosureMA" -> false,
@@ -150,9 +148,7 @@ class HistoryConnectorSpec extends SpecBase
         "should return the submission details of the first disclosure of the given arrangement ID" in {
           val json = Json.obj(
             "enrolmentID" -> "enrolmentID",
-            "submissionTime" -> Json.obj(
-              "$date" -> 1589476200000L
-            ),
+            "submissionTime" -> "2020-05-14T17:10:00",
             "fileName" -> "fileName",
             "arrangementID" -> arrangementID,
             "disclosureID" -> disclosureID,
