@@ -44,7 +44,10 @@
             classes: "govuk-input govuk-!-width-two-thirds",
             attributes: {
                 "aria-labelledby": "heading"
-                },
+            },
+            hint: {
+                text: messages('disclosureName.info')
+            },
             value: form.disclosureName.value,
             errorMessage: form.disclosureName.error
         }) }}
