@@ -19,8 +19,7 @@ package controllers.individual
 import base.SpecBase
 import models.{Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.individual.IndividualLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage

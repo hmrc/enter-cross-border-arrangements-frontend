@@ -16,15 +16,14 @@
 
 package models.taxpayer
 
+import base.ModelSpecBase
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{Country, Name}
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import java.time.LocalDate
 
-class TaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class TaxpayerSpec extends ModelSpecBase {
 
   "Taxpayer" - {
 

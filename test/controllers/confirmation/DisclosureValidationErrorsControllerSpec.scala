@@ -20,9 +20,7 @@ import base.SpecBase
 import matchers.JsonMatchers.containJson
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.ValidationErrorsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.Application
@@ -33,7 +31,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSugar {
+class DisclosureValidationErrorsControllerSpec extends SpecBase {
 
   val errors = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
   lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
@@ -117,8 +115,6 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
 
       val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
@@ -142,8 +138,6 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with MockitoSuga
 
       val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 

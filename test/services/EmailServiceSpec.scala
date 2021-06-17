@@ -21,9 +21,7 @@ import connectors.EmailConnector
 import generators.Generators
 import models.GeneratedIDs
 import models.subscription.ContactDetails
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.bind
@@ -33,7 +31,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class EmailServiceSpec extends SpecBase with MockitoSugar
+class EmailServiceSpec extends SpecBase
   with Generators
   with ScalaCheckPropertyChecks {
 

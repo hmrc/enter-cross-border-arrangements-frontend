@@ -16,13 +16,12 @@
 
 package models.hallmarks
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class HallmarkDSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class HallmarkDSpec extends ModelSpecBase with ModelGenerators {
 
   "HallmarkD" - {
 

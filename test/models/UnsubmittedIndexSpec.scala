@@ -17,12 +17,11 @@
 package models
 
 import base.SpecBase
-import org.scalatestplus.mockito.MockitoSugar
 import pages.SelectTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsPath
 
-class UnsubmittedIndexSpec extends SpecBase with MockitoSugar {
+class UnsubmittedIndexSpec extends SpecBase {
   "Unsubmitted Index" - {
     "must be constructable from an index and useranswers containing that index" in {
       val unsubmittedDisclosures = Seq(

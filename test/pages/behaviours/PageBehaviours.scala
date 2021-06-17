@@ -16,17 +16,17 @@
 
 package pages.behaviours
 
+import base.ModelSpecBase
 import generators.Generators
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues, TryValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.{OptionValues, TryValues}
 import pages.QuestionPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json._
 
-trait PageBehaviours extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with OptionValues with TryValues {
+trait PageBehaviours extends ModelSpecBase with Generators with OptionValues with TryValues {
 
   class BeRetrievable[A] {
     def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {

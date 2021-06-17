@@ -16,14 +16,13 @@
 
 package models.reporter.intermediary
 
+import base.ModelSpecBase
 import models.YesNoDoNotKnowRadios
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class YesNoDoNotKnowRadiosSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class YesNoDoNotKnowRadiosSpec extends ModelSpecBase {
 
   "IntermediaryExemptionInEU" - {
 

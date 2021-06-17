@@ -17,11 +17,9 @@
 package controllers.organisation
 
 import base.SpecBase
-import controllers.RowJsonReads
 import models.{Address, Country, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -70,12 +68,11 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
-    import RowJsonReads._
+    val json: JsObject = jsonCaptor.getValue
     val list = (json \ "organisationSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"

@@ -26,24 +26,22 @@ import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.hallmarks.JourneyStatus
 import models.reporter.RoleInArrangement.Taxpayer
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
-import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
 import models.subscription.ContactDetails
+import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.affected.AffectedStatusPage
 import pages.arrangement.ArrangementStatusPage
 import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterSelectedAddressLookupPage, ReporterStatusPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
-import pages.reporter.individual.{ReporterIndividualDateOfBirthPage, ReporterIndividualEmailAddressPage, ReporterIndividualEmailAddressQuestionPage, ReporterIndividualNamePage, ReporterIndividualPlaceOfBirthPage}
+import pages.reporter.individual._
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
+import pages.reporter._
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -54,7 +52,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),

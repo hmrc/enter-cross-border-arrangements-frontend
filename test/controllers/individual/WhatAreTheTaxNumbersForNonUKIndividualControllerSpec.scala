@@ -22,9 +22,7 @@ import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeIndividualNavigator, NavigatorForIndividual}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual.{IndividualLoopPage, IndividualNamePage}
 import pages.organisation.WhatAreTheTaxNumbersForNonUKOrganisationPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatAreTheTaxNumbersForNonUKIndividualFormProvider
   val form = formProvider()

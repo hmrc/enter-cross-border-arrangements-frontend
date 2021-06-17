@@ -16,22 +16,18 @@
 
 package models.individual
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import models.taxpayer.TaxResidency
 import models.{Address, LoopDetails, Name, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.individual._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
 
-class IndividualSpec extends FreeSpec
-  with MustMatchers
-  with ScalaCheckPropertyChecks
-  with ModelGenerators {
+class IndividualSpec extends ModelSpecBase with ModelGenerators {
 
   "Individual" - {
 

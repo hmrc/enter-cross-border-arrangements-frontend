@@ -17,6 +17,7 @@
 package forms.behaviours
 
 import org.scalacheck.Gen
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.{Form, FormError}
 
 import java.time.LocalDate
@@ -39,7 +40,7 @@ class DateBehaviours extends FieldBehaviours {
 
           val result = form.bind(data)
 
-          result.value.value shouldEqual date
+          result.value.value mustEqual date
       }
     }
   }

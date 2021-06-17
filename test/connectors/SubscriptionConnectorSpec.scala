@@ -17,17 +17,15 @@
 package connectors
 
 import base.SpecBase
-import controllers.Assets.SERVICE_UNAVAILABLE
 import generators.Generators
 import helpers.JsonFixtures._
 import models.subscription._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsString, JsValue}

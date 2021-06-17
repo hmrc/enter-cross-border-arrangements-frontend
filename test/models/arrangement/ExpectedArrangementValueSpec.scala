@@ -16,15 +16,14 @@
 
 package models.arrangement
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.WhatIsTheExpectedValueOfThisArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class ExpectedArrangementValueSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
+class ExpectedArrangementValueSpec extends ModelSpecBase with ModelGenerators {
 
   "ExpectedArrangementValue" - {
 

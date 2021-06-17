@@ -21,9 +21,7 @@ import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual.IsIndividualAddressUkPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import scala.concurrent.Future
 
 
-class IsIndividualAddressUkControllerSpec extends  SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()

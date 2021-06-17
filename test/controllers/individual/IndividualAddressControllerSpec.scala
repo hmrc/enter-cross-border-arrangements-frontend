@@ -23,9 +23,7 @@ import matchers.JsonMatchers
 import models.Address._
 import models.{Address, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual.IndividualAddressPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -40,7 +38,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class IndividualAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IndividualAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]

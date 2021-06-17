@@ -16,11 +16,10 @@
 
 package models.taxpayer
 
+import base.ModelSpecBase
 import models.{Country, LoopDetails, TaxReferenceNumbers}
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class TaxResidencySpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class TaxResidencySpec extends ModelSpecBase {
 
   "TaxResidency" - {
 

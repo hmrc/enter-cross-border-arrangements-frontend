@@ -18,12 +18,10 @@ package controllers.disclosure
 
 import base.SpecBase
 import connectors.CrossBorderArrangementsConnector
-import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -69,7 +67,6 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json = jsonCaptor.getValue
-    import RowJsonReads._
     val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "disclosure/check-your-answers-disclosure.njk"

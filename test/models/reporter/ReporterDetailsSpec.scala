@@ -16,8 +16,6 @@
 
 package models.reporter
 
-import java.time.LocalDate
-
 import generators.ModelGenerators
 import models.individual.Individual
 import models.organisation.Organisation
@@ -27,7 +25,8 @@ import models.taxpayer.TaxResidency
 import models.{Address, CountryList, LoopDetails, Name, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.reporter.individual._
 import pages.reporter.intermediary._
@@ -36,7 +35,9 @@ import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrange
 import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class ReporterDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
+import java.time.LocalDate
+
+class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with ModelGenerators {
 
   "ReporterDetails" - {
 

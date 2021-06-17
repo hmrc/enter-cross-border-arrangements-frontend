@@ -22,9 +22,7 @@ import matchers.JsonMatchers
 import models.{NormalMode, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.ReporterOrganisationOrIndividualPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationOrIndividualControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationOrIndividualControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/organisation/name/0")
 

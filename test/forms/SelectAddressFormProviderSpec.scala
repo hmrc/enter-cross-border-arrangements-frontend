@@ -33,7 +33,7 @@ class SelectAddressFormProviderSpec extends OptionFieldBehaviours {
       for(value <- addresses) {
 
         val result = form.bind(Map(fieldName -> value)).apply(fieldName)
-        result.value.value shouldEqual value
+        result.value.value mustEqual value
       }
     }
 

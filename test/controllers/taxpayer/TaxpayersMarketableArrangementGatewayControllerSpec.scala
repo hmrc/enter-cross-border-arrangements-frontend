@@ -21,9 +21,7 @@ import connectors.CrossBorderArrangementsConnector
 import handlers.ErrorHandler
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -34,7 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.Future
 
-class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with MockitoSugar {
+class TaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase {
 
   val id = "ID"
 

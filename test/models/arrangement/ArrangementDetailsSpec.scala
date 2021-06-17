@@ -16,18 +16,18 @@
 
 package models.arrangement
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+
 import java.time.LocalDate
 
-class ArrangementDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
+class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
 
   "ArrangementDetails" - {
 

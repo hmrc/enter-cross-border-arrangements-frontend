@@ -21,9 +21,7 @@ import models.affected.YouHaveNotAddedAnyAffected
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
@@ -39,7 +37,7 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+class AffectedCheckYourAnswersControllerSpec extends SpecBase {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/others-affected/update/0")

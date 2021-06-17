@@ -21,8 +21,7 @@ import connectors.SubscriptionConnector
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import models.requests.{DataRequest, DataRequestWithContacts}
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsString, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global

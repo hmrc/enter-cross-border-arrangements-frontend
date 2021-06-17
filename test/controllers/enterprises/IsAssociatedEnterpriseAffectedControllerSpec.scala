@@ -21,9 +21,7 @@ import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.enterprises.IsAssociatedEnterpriseAffectedPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
   private val form = formProvider()

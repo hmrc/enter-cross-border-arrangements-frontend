@@ -23,9 +23,7 @@ import models.SelectType.Organisation
 import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.OrganisationNamePage
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -41,7 +39,7 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTaxpayersStartDateForImplementingArrangementFormProvider()
   private def form = formProvider()

@@ -17,6 +17,7 @@
 package forms.behaviours
 
 import forms.FormSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.{Form, FormError}
 
 trait CheckboxFieldBehaviours extends FormSpec {
@@ -31,7 +32,7 @@ trait CheckboxFieldBehaviours extends FormSpec {
       val data = Map(
         s"$fieldName[$i]" -> value.toString
       )
-      form.bind(data).get shouldEqual Set(value)
+      form.bind(data).get mustEqual Set(value)
     }
 
     "must fail to bind when the answer is invalid" in {

@@ -26,9 +26,7 @@ import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
 import models.{AddressLookup, Country, CountryList, LoopDetails, Name, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation._
@@ -39,11 +37,11 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import java.time.LocalDate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+class ReporterCheckYourAnswersControllerSpec extends SpecBase {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),

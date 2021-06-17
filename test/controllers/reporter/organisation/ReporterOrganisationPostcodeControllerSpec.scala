@@ -24,9 +24,7 @@ import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.FormError
@@ -41,7 +39,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 

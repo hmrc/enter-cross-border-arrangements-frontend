@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package base
 
+import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class WithNameSpec extends AnyFreeSpec with Matchers {
-
-  object Foo extends WithName("bar")
-
-  ".toString" - {
-
-    "must return the correct string" in {
-
-      Foo.toString mustEqual "bar"
-    }
-  }
-}
+trait ModelSpecBase extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues

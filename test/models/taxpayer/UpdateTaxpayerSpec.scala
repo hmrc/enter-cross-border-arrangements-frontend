@@ -16,13 +16,12 @@
 
 package models.taxpayer
 
+import base.ModelSpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class UpdateTaxpayerSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class UpdateTaxpayerSpec extends ModelSpecBase {
 
   "UpdateTaxpayer" - {
 

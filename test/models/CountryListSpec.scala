@@ -16,14 +16,13 @@
 
 package models
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class CountryListSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class CountryListSpec extends ModelSpecBase with ModelGenerators {
 
   "ExemptCountries" - {
 

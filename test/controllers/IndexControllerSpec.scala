@@ -18,8 +18,7 @@ package controllers
 
 import base.SpecBase
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

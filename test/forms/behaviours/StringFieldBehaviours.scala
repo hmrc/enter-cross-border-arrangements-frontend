@@ -30,7 +30,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       forAll(stringsLongerThan(maxLength) -> "longString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(lengthError)
+          result.errors mustEqual Seq(lengthError)
       }
     }
   }
@@ -46,7 +46,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       forAll(stringsLongerThanAlpha(maxLength) -> "longString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(lengthError)
+          result.errors mustEqual Seq(lengthError)
       }
     }
   }
@@ -61,7 +61,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       forAll(validEmailAdressToLong(maxLength) -> "longString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(lengthError)
+          result.errors mustEqual Seq(lengthError)
       }
     }
   }
@@ -73,7 +73,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
     s"must not bind strings of only whitespace" in {
 
       val result = form.bind(Map(fieldName -> " ")).apply(fieldName)
-      result.errors shouldEqual Seq(requiredError)
+      result.errors mustEqual Seq(requiredError)
     }
   }
 }

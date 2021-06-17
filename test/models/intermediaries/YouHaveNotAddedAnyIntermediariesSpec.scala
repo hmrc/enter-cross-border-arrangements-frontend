@@ -16,13 +16,12 @@
 
 package models.intermediaries
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class YouHaveNotAddedAnyIntermediariesSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class YouHaveNotAddedAnyIntermediariesSpec extends ModelSpecBase with ModelGenerators {
 
   "YouHaveNotAddedAnyIntermediaries" - {
 

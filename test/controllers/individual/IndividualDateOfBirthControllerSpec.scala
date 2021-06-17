@@ -21,9 +21,7 @@ import forms.individual.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual.IndividualDateOfBirthPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IndividualDateOfBirthControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IndividualDateOfBirthControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IndividualDateOfBirthFormProvider()
   private def form = formProvider()

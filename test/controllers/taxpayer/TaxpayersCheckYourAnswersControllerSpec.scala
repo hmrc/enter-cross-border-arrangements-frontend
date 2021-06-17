@@ -22,9 +22,7 @@ import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
@@ -40,7 +38,7 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 

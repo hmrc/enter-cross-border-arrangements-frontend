@@ -22,9 +22,7 @@ import matchers.JsonMatchers
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.taxpayer.TaxpayerWhyReportArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -37,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy val taxpayerWhyReportArrangementRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(0, NormalMode).url
 
