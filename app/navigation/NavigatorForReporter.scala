@@ -200,7 +200,7 @@ class NavigatorForReporter @Inject()() extends AbstractNavigator {
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
     _ => _ => id => _ => _ => routes.ReporterCheckYourAnswersController.onPageLoad(id)
 
-  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
+  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
       case DefaultRouting(CheckMode)               => routes.ReporterCheckYourAnswersController.onPageLoad(id)
       case _                                       => jumpTo

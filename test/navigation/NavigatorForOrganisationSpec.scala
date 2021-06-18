@@ -46,7 +46,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
   val D12 = "What are {0}’s tax reference numbers for the United Kingdom?"
   val D13 = "What are {0}’s tax identification numbers for {1}?"
   val D14 = "Is {0} resident for tax purposes in any other countries?"
-  val D15 = "[Organisation] Check your answers"
   // In the associated enterprise journey
   val E10 = "Is {0} affected by the arrangement?"
   val E11 = "[Associated Enterprises] Check your answers?"
@@ -208,38 +207,17 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index))
         }
-
-        s"must go from $D14 to $D15 if the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(DefaultRouting(NormalMode))(0)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
       }
 
       "in Check mode" - {
 
         val defaultRoutingInCheckMode = DefaultRouting(CheckMode)
 
-        s"must go from $D1 to $D15" in {
-
-          navigator
-            .routeMap(OrganisationNamePage)(defaultRoutingInCheckMode)(0)(Some("name"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
-
         s"must go from $D2 to $D3 when the answer is 'Yes' " in {
 
           navigator
             .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.IsOrganisationAddressUkController.onPageLoad(0, CheckMode))
-        }
-
-        s"must go from $D2 to $D15 when the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationAddressKnownPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D3 to $D4 when the answer is 'Yes' " in {
@@ -264,44 +242,11 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         }
 
-        s"must go from $D5 to $D15 " in {
-
-          navigator
-            .routeMap(SelectAddressPage)(defaultRoutingInCheckMode)(0)(Some("25 Testing Close, Othertown, Z9 3WW"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
-
-        // manual?
-
-        s"must go from $D6 to $D15 " in {
-
-          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-            Country("valid", "FR", "France"))
-
-          navigator
-            .routeMap(OrganisationAddressPage)(defaultRoutingInCheckMode)(0)(Some(address))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
-
         s"must go from $D7 to $D8 if the answer is 'Yes' " in {
 
           navigator
             .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, CheckMode))
-        }
-
-        s"must go from $D7 to $D15 if the answer is false " in {
-
-          navigator
-            .routeMap(EmailAddressQuestionForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
-
-        s"must go from $D8 to $D15 " in {
-
-          navigator
-            .routeMap(EmailAddressForOrganisationPage)(defaultRoutingInCheckMode)(0)(Some("email@email.com"))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
         }
 
         s"must go from $D9 to $D10 if the answer is GB" in {
@@ -367,12 +312,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
 
-        s"must go from $D14 to $D15 if the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(defaultRoutingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0))
-        }
       }
     }
 
@@ -536,13 +475,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
-        }
-
-        s"must go from $D14 to $E11 if the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None))
         }
       }
 
@@ -709,13 +641,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
         }
-
-        s"must go from $D14 to $T11 if the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None))
-        }
       }
 
     }
@@ -880,13 +805,6 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
           navigator
             .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(true))(0)
             .mustBe(controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, CheckMode, index))
-        }
-
-        s"must go from $D14 to $I13 if the answer is 'No' " in {
-
-          navigator
-            .routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(routingInCheckMode)(0)(Some(false))(0)
-            .mustBe(controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(0, None))
         }
       }
     }
