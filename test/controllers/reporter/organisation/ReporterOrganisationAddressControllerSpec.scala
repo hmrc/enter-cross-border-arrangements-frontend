@@ -59,6 +59,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[CountryListFactory].toInstance(mockCountryFactory)).build()
@@ -90,6 +91,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value

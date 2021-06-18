@@ -17,6 +17,7 @@
 package controllers.organisation
 
 import base.SpecBase
+import controllers.RowJsonReads
 import models.{Address, Country, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -73,6 +74,7 @@ class OrganisationCheckYourAnswersControllerSpec extends SpecBase with BeforeAnd
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json: JsObject = jsonCaptor.getValue
+    import RowJsonReads._
     val list = (json \ "organisationSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "organisation/check-your-answers-organisation.njk"

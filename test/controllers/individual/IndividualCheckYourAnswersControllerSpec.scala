@@ -17,6 +17,7 @@
 package controllers.individual
 
 import base.SpecBase
+import controllers.RowJsonReads
 import models.{Address, Country, Name, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -75,6 +76,7 @@ class IndividualCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json = jsonCaptor.getValue
+    import RowJsonReads._
     val list = (json \ "individualSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "individual/check-your-answers.njk"

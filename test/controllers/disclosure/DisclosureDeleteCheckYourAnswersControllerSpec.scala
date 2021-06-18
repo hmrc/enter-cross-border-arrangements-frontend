@@ -19,6 +19,7 @@ package controllers.disclosure
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, EmailConnector, SubscriptionConnector}
+import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -88,6 +89,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json : JsObject= jsonCaptor.getValue
+    import RowJsonReads._
     val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "disclosure/check-your-answers-delete-disclosure.njk"

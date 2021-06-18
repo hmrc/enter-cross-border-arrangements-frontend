@@ -33,7 +33,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CountryListFactory
+import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
@@ -59,9 +59,11 @@ class OrganisationAddressControllerSpec extends SpecBase with NunjucksSupport wi
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
+        .build()
 
       val request = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -90,6 +92,7 @@ class OrganisationAddressControllerSpec extends SpecBase with NunjucksSupport wi
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value

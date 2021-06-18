@@ -17,6 +17,7 @@
 package controllers.arrangement
 
 import base.SpecBase
+import controllers.RowJsonReads
 import generators.ModelGenerators
 import models.arrangement.ExpectedArrangementValue
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
@@ -64,6 +65,7 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json = jsonCaptor.getValue
+    import RowJsonReads._
     val list = (json \ "list" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "arrangement/check-your-answers-arrangement.njk"
