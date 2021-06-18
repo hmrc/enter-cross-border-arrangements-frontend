@@ -36,15 +36,16 @@
             {{ messages("disclosureName.heading")}}
         </h1>
 
-        <p class="govuk-body">{{ messages('disclosureName.info') }}</p>
-
         {{ govukInput({
             id: "disclosureName",
             name: "disclosureName",
             classes: "govuk-input govuk-!-width-two-thirds",
             attributes: {
                 "aria-labelledby": "heading"
-                },
+            },
+            hint: {
+                text: messages('disclosureName.info')
+            },
             value: form.disclosureName.value,
             errorMessage: form.disclosureName.error
         }) }}
