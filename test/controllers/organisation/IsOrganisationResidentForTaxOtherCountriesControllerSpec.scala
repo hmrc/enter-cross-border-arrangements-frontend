@@ -19,7 +19,7 @@ package controllers.organisation
 import base.SpecBase
 import forms.organisation.IsOrganisationResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
+import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -148,32 +148,6 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
       application.stop()
     }
 
-    "must redirect to the next page when no is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/check-answers/0"
-
-      application.stop()
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
@@ -199,34 +173,6 @@ class IsOrganisationResidentForTaxOtherCountriesControllerSpec extends SpecBase 
 
       templateCaptor.getValue mustEqual "organisation/isOrganisationResidentForTaxOtherCountries.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to the Check your answers page when in CheckMode and loop isn't incremented as users selected 'false'" in {
-      lazy val isOrganisationResidentForTaxOtherCountriesRoute =
-        controllers.organisation.routes.IsOrganisationResidentForTaxOtherCountriesController.onPageLoad(0, CheckMode, index).url
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, isOrganisationResidentForTaxOtherCountriesRoute)
-          .withFormUrlEncodedBody(("confirm", "false"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.organisation.routes.OrganisationCheckYourAnswersController.onPageLoad(0).url
 
       application.stop()
     }
