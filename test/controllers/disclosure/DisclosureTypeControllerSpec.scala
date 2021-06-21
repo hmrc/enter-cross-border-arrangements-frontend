@@ -23,9 +23,7 @@ import matchers.JsonMatchers
 import models.disclosure.DisclosureType
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -39,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 
-class DisclosureTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class DisclosureTypeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy val disclosureTypeRoute = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode).url
 

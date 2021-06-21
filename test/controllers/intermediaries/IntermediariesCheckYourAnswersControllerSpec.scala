@@ -21,12 +21,11 @@ import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
 import models.{Address, Country, IsExemptionKnown, LoopDetails, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.intermediaries.{IntermediariesTypePage, IntermediaryLoopPage, IsExemptionKnownPage, WhatTypeofIntermediaryPage}
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+class IntermediariesCheckYourAnswersControllerSpec extends SpecBase {
 
   "must ensure the correct updated loop list" - {
 

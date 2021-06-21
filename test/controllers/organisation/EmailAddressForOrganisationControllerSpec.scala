@@ -21,9 +21,7 @@ import forms.organisation.EmailAddressForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.EmailAddressForOrganisationPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class EmailAddressForOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class EmailAddressForOrganisationControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EmailAddressForOrganisationFormProvider()
   val form = formProvider()

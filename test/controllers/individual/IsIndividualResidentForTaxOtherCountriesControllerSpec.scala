@@ -21,9 +21,7 @@ import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.individual.{IndividualLoopPage, IndividualNamePage, IsIndividualResidentForTaxOtherCountriesPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsIndividualResidentForTaxOtherCountriesFormProvider()
   val form = formProvider()

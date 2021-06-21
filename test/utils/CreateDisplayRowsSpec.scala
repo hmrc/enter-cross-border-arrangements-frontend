@@ -17,15 +17,15 @@
 package utils
 
 import base.SpecBase
-import models.disclosure.{DisclosureDetails, DisclosureType}
-import CreateDisplayRows._
 import models.Country
 import models.affected.Affected
 import models.arrangement.{ArrangementDetails, ExpectedArrangementValue}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.enterprises.AssociatedEnterprise
+import models.intermediaries.Intermediary
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
-import models.intermediaries.Intermediary
+import utils.CreateDisplayRows._
 
 import java.time.LocalDate
 

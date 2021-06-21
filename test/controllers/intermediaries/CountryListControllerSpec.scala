@@ -21,9 +21,7 @@ import forms.intermediaries.ExemptCountriesFormProvider
 import matchers.JsonMatchers
 import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.intermediaries.ExemptCountriesPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class CountryListControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class CountryListControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy val exemptCountriesRoute = routes.ExemptCountriesController.onPageLoad(0, NormalMode).url
 

@@ -23,8 +23,7 @@ import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -85,11 +84,11 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json : JsObject= jsonCaptor.getValue
     import RowJsonReads._
     val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
 

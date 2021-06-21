@@ -19,9 +19,7 @@ package controllers.unsubmitted
 import base.SpecBase
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, route, status, _}
@@ -29,7 +27,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnsubmittedDisclosureControllerSpec extends SpecBase with MockitoSugar {
+class UnsubmittedDisclosureControllerSpec extends SpecBase {
   "Unsubmitted Disclosure Controller" - {
     "must display the unsubmitted disclosures when some are present" in {
 

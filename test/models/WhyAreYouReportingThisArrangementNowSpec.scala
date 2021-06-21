@@ -19,11 +19,13 @@ package models
 import models.arrangement.WhyAreYouReportingThisArrangementNow
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class WhyAreYouReportingThisArrangementNowSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class WhyAreYouReportingThisArrangementNowSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "WhyAreYouReportingThisArrangementNow" - {
 

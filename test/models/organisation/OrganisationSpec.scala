@@ -22,13 +22,14 @@ import models.taxpayer.TaxResidency
 import models.{Address, Country, LoopDetails, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class OrganisationSpec extends FreeSpec
-  with MustMatchers
+class OrganisationSpec extends AnyFreeSpec
+  with Matchers
   with ScalaCheckPropertyChecks
   with ModelGenerators {
 

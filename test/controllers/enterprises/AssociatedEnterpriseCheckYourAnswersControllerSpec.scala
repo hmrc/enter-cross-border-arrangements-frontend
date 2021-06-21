@@ -23,9 +23,7 @@ import models.taxpayer.Taxpayer
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.individual._
 import pages.organisation._
@@ -42,7 +40,7 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
+class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/associated-enterprises/update/0")

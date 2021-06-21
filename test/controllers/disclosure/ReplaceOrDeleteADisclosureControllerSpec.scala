@@ -24,9 +24,7 @@ import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteA
 import models.{Country, NormalMode, SubmissionDetails, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.{DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import play.api.data.FormError
 import play.api.inject.bind
@@ -41,7 +39,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 

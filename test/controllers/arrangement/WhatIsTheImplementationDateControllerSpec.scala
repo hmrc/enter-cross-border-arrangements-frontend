@@ -22,9 +22,7 @@ import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.arrangement.WhatIsTheImplementationDatePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -39,7 +37,7 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTheImplementationDateFormProvider()
   private def form = formProvider()

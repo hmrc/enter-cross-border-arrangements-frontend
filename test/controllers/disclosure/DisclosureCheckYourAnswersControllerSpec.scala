@@ -22,8 +22,7 @@ import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage

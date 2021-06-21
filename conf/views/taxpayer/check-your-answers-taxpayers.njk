@@ -25,7 +25,7 @@
           {{ messages("taxpayerscheckYourAnswers.heading") }}
        </h1>
 
-       <form action="{{ routes.controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id, mode).url }}" method="post">
+       <form action="{{ routes.controllers.taxpayer.TaxpayersCheckYourAnswersController.onSubmit(id).url }}" method="post">
 
        {{ govukSummaryList({
           classes: 'govuk-!-margin-bottom-0',

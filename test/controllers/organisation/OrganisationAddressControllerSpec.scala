@@ -22,9 +22,7 @@ import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.{Address, CheckMode, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.OrganisationAddressPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -35,11 +33,11 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CountryListFactory
+import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
-class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -61,9 +59,11 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
+        .build()
 
       val request = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -92,6 +92,7 @@ class OrganisationAddressControllerSpec extends SpecBase with MockitoSugar with 
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value

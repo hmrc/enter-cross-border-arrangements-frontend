@@ -16,12 +16,11 @@
 
 package models.disclosure
 
+import base.ModelSpecBase
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
-class DisclosureDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class DisclosureDetailsSpec extends ModelSpecBase {
 
   "DisclosureDetails" - {
 

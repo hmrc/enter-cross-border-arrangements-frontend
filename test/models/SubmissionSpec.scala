@@ -16,6 +16,7 @@
 
 package models
 
+import base.ModelSpecBase
 import models.affected.Affected
 import models.arrangement.ArrangementDetails
 import models.disclosure.DisclosureDetails
@@ -25,11 +26,9 @@ import models.intermediaries.Intermediary
 import models.reporter.ReporterDetails
 import models.taxpayer.Taxpayer
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure.FirstInitialDisclosureMAPage
 
-class SubmissionSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class SubmissionSpec extends ModelSpecBase {
 
   import helpers.data.ValidUserAnswersForSubmission._
 

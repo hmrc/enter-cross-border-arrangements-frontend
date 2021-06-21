@@ -22,9 +22,7 @@ import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.{ReporterOtherTaxResidentQuestionPage, ReporterTaxResidencyLoopPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
 

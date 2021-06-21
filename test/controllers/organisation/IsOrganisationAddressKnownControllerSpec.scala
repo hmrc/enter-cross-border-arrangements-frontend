@@ -21,9 +21,7 @@ import forms.organisation.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.IsOrganisationAddressKnownPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsOrganisationAddressKnownControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsOrganisationAddressKnownFormProvider()
   val form = formProvider()

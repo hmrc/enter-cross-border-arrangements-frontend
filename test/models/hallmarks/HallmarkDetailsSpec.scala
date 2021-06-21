@@ -16,15 +16,14 @@
 
 package models.hallmarks
 
+import base.ModelSpecBase
 import generators.ModelGenerators
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import org.scalatest.{FreeSpec, MustMatchers}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class HallmarkDetailsSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with ModelGenerators {
+class HallmarkDetailsSpec extends ModelSpecBase with ModelGenerators {
 
   "HallmarkDetails" - {
 

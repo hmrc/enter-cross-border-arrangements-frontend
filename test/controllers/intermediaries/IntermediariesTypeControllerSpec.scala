@@ -21,9 +21,7 @@ import forms.intermediaries.IntermediariesTypeFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.intermediaries.IntermediariesTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -37,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediariesTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IntermediariesTypeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IntermediariesTypeFormProvider()
   private val form: Form[SelectType] = formProvider()

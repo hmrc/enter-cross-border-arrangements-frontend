@@ -16,17 +16,13 @@
 
 package controllers.arrangement
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import base.SpecBase
 import controllers.RowJsonReads
 import generators.ModelGenerators
 import models.arrangement.ExpectedArrangementValue
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages.arrangement._
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -38,6 +34,8 @@ import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach with ModelGenerators {

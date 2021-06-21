@@ -23,9 +23,7 @@ import forms.PostcodeFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.PostcodePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.FormError
@@ -39,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class OrganisationPostcodeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationPostcodeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()

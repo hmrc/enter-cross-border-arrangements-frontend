@@ -22,9 +22,7 @@ import forms.AddressFormProvider
 import matchers.JsonMatchers
 import models.{Address, CheckMode, Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.organisation.ReporterOrganisationAddressPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
@@ -39,7 +37,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class ReporterOrganisationAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -61,6 +59,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with MockitoSug
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[CountryListFactory].toInstance(mockCountryFactory)).build()
@@ -92,6 +91,7 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with MockitoSug
         .thenReturn(Future.successful(Html("")))
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value

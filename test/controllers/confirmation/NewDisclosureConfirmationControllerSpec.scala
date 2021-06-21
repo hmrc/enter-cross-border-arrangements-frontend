@@ -21,9 +21,7 @@ import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.inject.bind
@@ -33,7 +31,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class NewDisclosureConfirmationControllerSpec extends SpecBase with MockitoSugar {
+class NewDisclosureConfirmationControllerSpec extends SpecBase {
 
   "NewDisclosureConfirmation Controller" - {
 

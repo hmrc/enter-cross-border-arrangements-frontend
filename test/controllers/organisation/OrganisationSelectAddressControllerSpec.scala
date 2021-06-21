@@ -23,9 +23,7 @@ import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -38,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class OrganisationSelectAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class OrganisationSelectAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]

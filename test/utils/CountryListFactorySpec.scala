@@ -19,8 +19,7 @@ package utils
 import base.SpecBase
 import config.FrontendAppConfig
 import models.Country
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.Environment
 import play.api.libs.json.{JsArray, Json}
 

@@ -26,9 +26,7 @@ import models.requests.DataRequest
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, Submission, SubmissionDetails, SubmissionHistory, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -42,7 +40,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class DisclosureDetailsControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class DisclosureDetailsControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   private val mockValidationConnector = mock[ValidationConnector]
   private val mockXMLGenerationService = mock[XMLGenerationService]

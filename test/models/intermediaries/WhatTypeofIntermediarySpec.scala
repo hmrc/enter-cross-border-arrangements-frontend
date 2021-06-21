@@ -16,13 +16,12 @@
 
 package models.intermediaries
 
+import base.ModelSpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class WhatTypeofIntermediarySpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class WhatTypeofIntermediarySpec extends ModelSpecBase {
 
   "WhatTypeofIntermediary" - {
 

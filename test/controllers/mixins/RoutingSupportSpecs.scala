@@ -16,14 +16,15 @@
 
 package controllers.mixins
 
+import base.ModelSpecBase
 import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
-import org.scalatest.{FreeSpec, MustMatchers, TryValues}
+import org.scalatest.TryValues
 import pages.enterprises.AssociatedEnterpriseTypePage
 import pages.intermediaries.IntermediariesTypePage
 import pages.taxpayer.TaxpayerSelectTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class RoutingSupportSpecs extends FreeSpec with MustMatchers with TryValues {
+class RoutingSupportSpecs extends ModelSpecBase with TryValues {
 
   val userAnswersId = "id"
 

@@ -24,9 +24,7 @@ import models.organisation.Organisation
 import models.taxpayer.TaxResidency
 import models.{Country, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.enterprises.{AssociatedEnterpriseLoopPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -39,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 

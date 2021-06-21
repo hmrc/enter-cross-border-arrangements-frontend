@@ -23,9 +23,7 @@ import models.reporter.intermediary.IntermediaryWhyReportInUK
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -39,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IntermediaryWhyReportInUKControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/intermediary/role/0")
 

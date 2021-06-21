@@ -19,21 +19,19 @@ package services
 import base.SpecBase
 import connectors.HistoryConnector
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
-import models.{SubmissionDetails, SubmissionHistory}
 import models.disclosure.{DisclosureDetails, DisclosureType}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import models.{SubmissionDetails, SubmissionHistory}
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
-import repositories.SessionRepository
 import play.api.inject.bind
+import repositories.SessionRepository
 
-import scala.concurrent.duration._
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-class MarketableDisclosureServiceSpec extends SpecBase with MockitoSugar{
+class MarketableDisclosureServiceSpec extends SpecBase {
 
   val mockHistoryConnector = mock[HistoryConnector]
   val mockSessionRepository = mock[SessionRepository]

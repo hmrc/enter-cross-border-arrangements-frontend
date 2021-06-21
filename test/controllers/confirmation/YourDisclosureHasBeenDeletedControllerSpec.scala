@@ -24,9 +24,7 @@ import matchers.JsonMatchers.containJson
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
 import models.{GeneratedIDs, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
@@ -36,7 +34,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockitoSugar {
+class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"

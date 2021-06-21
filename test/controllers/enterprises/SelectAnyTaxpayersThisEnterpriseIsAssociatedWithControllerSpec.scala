@@ -25,9 +25,7 @@ import models.reporter.RoleInArrangement
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, CheckMode, Country, NormalMode, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
 import pages.reporter.{ReporterDetailsPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
@@ -44,7 +42,7 @@ import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
 import scala.concurrent.Future
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode).url
   lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, CheckMode).url

@@ -18,7 +18,7 @@ package forms.disclosure
 
 import forms.behaviours.StringFieldBehaviours
 import models.Country
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.FormError
 import uk.gov.hmrc.http.HeaderCarrier
 

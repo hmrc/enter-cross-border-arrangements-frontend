@@ -21,7 +21,6 @@ import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
-import org.scalatestplus.mockito.MockitoSugar
 import pages.GeneratedIDPage
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -29,7 +28,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class FileTypeGatewayControllerSpec extends SpecBase with MockitoSugar {
+class FileTypeGatewayControllerSpec extends SpecBase {
 
   "FileTypeGateway Controller" - {
 

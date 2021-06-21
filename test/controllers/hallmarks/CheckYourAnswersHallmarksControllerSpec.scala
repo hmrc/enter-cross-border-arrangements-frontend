@@ -20,8 +20,7 @@ import base.SpecBase
 import models.hallmarks.HallmarkD1
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.ArgumentMatchers.any
 import pages.hallmarks._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.JsObject

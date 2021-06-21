@@ -21,9 +21,7 @@ import forms.intermediaries.IsExemptionKnownFormProvider
 import matchers.JsonMatchers
 import models.{IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import pages.intermediaries.IsExemptionKnownPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -36,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IsExemptionKnownControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class IsExemptionKnownControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
   lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(0, NormalMode).url
 
