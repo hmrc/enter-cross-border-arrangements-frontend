@@ -28,8 +28,7 @@
 
             <p class="govuk-body">{{ messages("disclosureDetails.p2") }}</p>
 
-          <ol class="app-task-list govuk-!-margin-top-9">
-            <li>
+            <div>
 
               <h2 class="app-task-list__section" id="disclosure-details">
                 <span class="app-task-list__section-number">1. </span>
@@ -41,9 +40,9 @@
                 {{ disclosureTaskListItem | safe }}
 
               </ul>
-            </li>
+            </div>
 
-            <li>
+            <div>
 
               <h2 class="app-task-list__section" id="arrangementDetails">
                 <span class="app-task-list__section-number">2. </span>
@@ -58,9 +57,9 @@
 
 
               </ul>
-            </li>
+            </div>
 
-            <li>
+            <div>
               <h2 class="app-task-list__section" id="reporterDetails">
                 <span class="app-task-list__section-number">3. </span>
                 {{ messages("disclosureDetails.section3") }}
@@ -72,8 +71,8 @@
 
               </ul>
 
-            </li>
-            <li>
+            </div>
+            <div>
 
               <h2 class="app-task-list__section" id="connected-parties">
                 <span class="app-task-list__section-number">4. </span>
@@ -95,8 +94,8 @@
               </ul>
 
 
-            </li>
-          </ol>
+            </div>
+
 
 
         {% if userCanSubmit %}
