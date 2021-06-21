@@ -31,4 +31,5 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
 
   override def cleanup(value: Option[UpdateTaxpayer], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers.remove(TaxpayerSelectTypePage, id)
+      .flatMap(_.remove(TaxpayerCheckYourAnswersPage, id))
 }

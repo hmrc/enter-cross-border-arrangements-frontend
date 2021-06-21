@@ -116,7 +116,7 @@ class UpdateTaxpayerController @Inject()(
       for {
         taxpayer <- list
       } yield {
-        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.TaxpayersCheckYourAnswersController.onPageLoad(id, Option(taxpayer.taxpayerId)).url else "#"
+        val changeUrl = routes.TaxpayersCheckYourAnswersController.onPageLoad(id, Option(taxpayer.taxpayerId)).url
         val removeUrl = routes.RemoveTaxpayerController.onPageLoad(id, taxpayer.taxpayerId).url
         ItemList(taxpayer.nameAsString, changeUrl, removeUrl)
       }
