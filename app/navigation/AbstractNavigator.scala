@@ -16,7 +16,8 @@
 
 package navigation
 
-import controllers.mixins.CheckRoute
+import controllers.mixins.{AffectedRouting, AssociatedEnterprisesRouting, CheckRoute, DefaultRouting, IntermediariesRouting, TaxpayersRouting}
+import models.{CheckMode, NormalMode}
 import pages.Page
 import play.api.mvc.Call
 
@@ -26,7 +27,25 @@ abstract class AbstractNavigator {
 
   val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ => _ => _ => _ => _ => Call("GET", "/")
 
-  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call
+  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call =
+    checkRoute match {
+      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
+      case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None)
+      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
+      case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
+      case DefaultRouting(CheckMode)                => throwRoutingError
+      case _                                        => jumpTo
+    }
+
+  private[navigation] def continueToParentJourney(id: Int, checkRoute: CheckRoute): Call = checkRoute match {
+    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
+    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
+    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
+    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
+    case _                                        => throwRoutingError
+  }
+
+  private[navigation] def throwRoutingError = throw new IllegalStateException("Organisation or Individual journeys must be called from a parent journey")
 
   val indexRoute: Call = controllers.routes.IndexController.onPageLoad()
 

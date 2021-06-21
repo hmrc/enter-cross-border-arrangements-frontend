@@ -81,7 +81,7 @@ class NavigatorForIntermediaries @Inject()() extends AbstractNavigator {
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
     _ => id => _ => _ => routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
 
-  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
+  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
     checkRoute match {
       case IntermediariesRouting(CheckMode)        => routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
       case _                                       => jumpTo

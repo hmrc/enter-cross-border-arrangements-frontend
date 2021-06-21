@@ -106,34 +106,5 @@ class NavigatorForIndividual @Inject()() extends AbstractNavigator {
         case Some(true) => routes.WhichCountryTaxForIndividualController.onPageLoad(id, checkRoute.mode, index)
         case _          => continueToParentJourney(id, checkRoute)
       }
-
-    case _ =>
-      checkRoute => id => _ => _ => checkRoute.mode match {
-        case NormalMode => indexRoute
-        case CheckMode  => routes.IndividualCheckYourAnswersController.onPageLoad(id)
-      }
   }
-
-  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
-    _ => _ => id => _ => _ => routes.IndividualCheckYourAnswersController.onPageLoad(id)
-
-  private[navigation] def continueToParentJourney(id: Int, checkRoute: CheckRoute): Call = checkRoute match {
-    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
-    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
-    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
-    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
-    case _                                        => jumpOrCheckYourAnswers(id, routes.IndividualCheckYourAnswersController.onPageLoad(id), checkRoute)
-  }
-
-  private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
-    checkRoute match {
-      case AssociatedEnterprisesRouting(CheckMode)  => controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, None)
-      case TaxpayersRouting(CheckMode)              => controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None)
-      case IntermediariesRouting(CheckMode)         => controllers.intermediaries.routes.IntermediariesCheckYourAnswersController.onPageLoad(id, None)
-      case AffectedRouting(CheckMode)               => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
-      case DefaultRouting(CheckMode)                => routes.IndividualCheckYourAnswersController.onPageLoad(id)
-      case _                                        => jumpTo
-    }
-  }
-
 }

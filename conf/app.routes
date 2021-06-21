@@ -40,8 +40,6 @@ POST       /hallmarks/change-hallmark-d1-other/:id                      controll
 
 # ORGANISATION ROUTES
 
-GET        /organisation/check-answers/:id                              controllers.organisation.OrganisationCheckYourAnswersController.onPageLoad(id: Int)
-
 GET        /organisation/main-address-in-uk/:id                         controllers.organisation.IsOrganisationAddressUkController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /organisation/main-address-in-uk/:id                         controllers.organisation.IsOrganisationAddressUkController.onSubmit(id: Int, mode: Mode = NormalMode)
 GET        /organisation/change-main-address-in-uk/:id                  controllers.organisation.IsOrganisationAddressUkController.onPageLoad(id: Int, mode: Mode = CheckMode)
@@ -114,8 +112,6 @@ POST       /organisation/change-non-uk-tax-numbers-:index/:id       controllers.
 
 
 # INDIVIDUAL ROUTES
-
-GET        /individual/check-answers/:id                               controllers.individual.IndividualCheckYourAnswersController.onPageLoad(id: Int)
 
 GET        /individual/date-of-birth/:id                               controllers.individual.IndividualDateOfBirthController.onPageLoad(id: Int, mode: Mode = NormalMode)
 POST       /individual/date-of-birth/:id                               controllers.individual.IndividualDateOfBirthController.onSubmit(id: Int, mode: Mode = NormalMode)
