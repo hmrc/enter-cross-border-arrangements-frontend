@@ -254,7 +254,8 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.intermediariesLink",
       id = "intermediaries",
       ariaLabel = "connected-parties",
-      rowStyle = "item"
+      rowStyle = "item",
+      extraStyle = Some("padding-top: 1.5em;")
     )
   }
 
