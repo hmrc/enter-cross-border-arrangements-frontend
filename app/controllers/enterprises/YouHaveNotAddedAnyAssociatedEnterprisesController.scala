@@ -78,7 +78,7 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
       for {
         enterprise <- list
       } yield {
-        val changeUrl = if (frontendAppConfig.changeLinkToggle) routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, Option(enterprise.enterpriseId)).url else "#"
+        val changeUrl = routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(id, Option(enterprise.enterpriseId)).url
         val removeUrl = routes.AreYouSureYouWantToRemoveEnterpriseController.onPageLoad(id, enterprise.enterpriseId).url
         ItemList(enterprise.nameAsString, changeUrl, removeUrl)
       }

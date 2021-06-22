@@ -31,4 +31,5 @@ case object YouHaveNotAddedAnyAssociatedEnterprisesPage extends QuestionPage[You
 
   override def cleanup(value: Option[YouHaveNotAddedAnyAssociatedEnterprises], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers.remove(AssociatedEnterpriseTypePage, id)
+      .flatMap(_.remove(AssociatedEnterpriseCheckYourAnswersPage, id))
 }

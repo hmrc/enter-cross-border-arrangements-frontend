@@ -81,8 +81,6 @@ class UpdateTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockFrontendAppConfig.changeLinkToggle).thenReturn(true)
-
       val taxpayerLoop = IndexedSeq(
         Taxpayer("id",
           Some(validIndividual),

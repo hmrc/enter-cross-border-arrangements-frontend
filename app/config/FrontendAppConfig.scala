@@ -73,8 +73,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val sendEmailToggle: Boolean = configuration.get[Boolean]("toggles.sendEmailToggle")
 
-  lazy val changeLinkToggle: Boolean = configuration.get[Boolean]("toggles.changeLink")
-
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
