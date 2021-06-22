@@ -43,26 +43,32 @@ object TaskListHelper  {
 
   val optionalCompletion: Seq[QuestionPage[JourneyStatus]] = Seq(HallmarkStatusPage, ArrangementStatusPage)
 
+  def retrieveRowWithStatus(status: JourneyStatus, url: Option[String], linkContent: String, id: String,
+                            ariaLabel: String, rowStyle: String, extraStyle: Option[String] = None)(implicit messages: Messages): Html = {
+    status match {
+      case Completed =>
+        taskListItemProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle, s"govuk-tag", extraStyle)
+      case InProgress =>
+        taskListItemProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle, s"govuk-tag govuk-tag--blue", extraStyle)
+      case Restricted =>
+        taskListItemProvider(None, Restricted.toString, linkContent, s"$id-restricted", ariaLabel, rowStyle, s"govuk-tag govuk-tag--grey", extraStyle)
+      case _ =>
+        taskListItemProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle, s"govuk-tag govuk-tag--grey", extraStyle)
+    }
+  }
+
   def taskListItemProvider(url: Option[String], status: String, linkContent: String, id: String, ariaLabel:String,
-                           rowStyle: String, colourClass: String)(implicit messages: Messages): Html = {
+                           rowStyle: String, colourClass: String, extraStyle: Option[String] = None)(implicit messages: Messages): Html = {
 
     val utlToHref = url.fold("")(url => s"href=$url")
 
-    Html(s"<li class='app-task-list__$rowStyle'><a class='app-task-list__task-name' $utlToHref aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
-      s"<strong class='$colourClass app-task-list__task-completed' id='$id'>$status</strong></li>")
-  }
-
-  def retrieveRowWithStatus(status: JourneyStatus, url: Option[String], linkContent: String, id: String, ariaLabel: String, rowStyle: String)(implicit messages: Messages): Html = {
-    status match {
-      case Completed =>
-        taskListItemProvider(url, Completed.toString, linkContent, s"$id-completed", ariaLabel, rowStyle, "govuk-tag")
-      case InProgress =>
-        taskListItemProvider(url, InProgress.toString, linkContent, s"$id-inProgress", ariaLabel, rowStyle, "govuk-tag govuk-tag--blue")
-      case Restricted =>
-        taskListItemProvider(None, Restricted.toString, linkContent, s"$id-restricted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
-      case _ =>
-        taskListItemProvider(url, NotStarted.toString, linkContent, s"$id-notStarted", ariaLabel, rowStyle, "govuk-tag govuk-tag--grey")
+    val liOptions = extraStyle match {
+      case Some(style) => s"class='app-task-list__$rowStyle' style='$style'"
+      case _ =>  s"class='app-task-list__$rowStyle'"
     }
+
+    Html(s"<li $liOptions><a class='app-task-list__task-name' $utlToHref aria-describedby='$ariaLabel'> ${messages(linkContent)}</a>" +
+      s"<strong class='$colourClass app-task-list__task-completed' id='$id'>$status</strong></li>")
   }
 
   def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]],
