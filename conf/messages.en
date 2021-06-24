@@ -23,9 +23,8 @@ error.title.prefix = Error:
 error.summary.title = There is a problem
 error.summary.heading = Sorry, there is a problem with this service.
 
-global.error.pageNotFound404.heading = Sorry, there is a problem with this service
-global.error.pageNotFound404.info = If you entered any information, your answers will be saved.
-global.error.pageNotFound404.message = Try again later.
+# overrides info to hide the message:
+global.error.pageNotFound404.info =
 
 global.error.InternalServerError500.heading = Sorry, there is a problem with this service
 global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
