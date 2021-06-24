@@ -26,6 +26,8 @@ error.summary.heading = Sorry, there is a problem with this service.
 # overrides info to hide the message:
 global.error.pageNotFound404.info =
 
+global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
+
 global.error.badRequest400.info = If you entered any information, your answers will be saved.
 
 global.error.entityTooLarge413.heading = Sorry, there is a problem with this service
