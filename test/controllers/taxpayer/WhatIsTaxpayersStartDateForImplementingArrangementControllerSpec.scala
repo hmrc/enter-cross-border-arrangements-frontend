@@ -34,7 +34,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future

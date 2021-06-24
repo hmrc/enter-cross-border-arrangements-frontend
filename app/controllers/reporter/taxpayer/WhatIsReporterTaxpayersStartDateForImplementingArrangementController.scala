@@ -16,14 +16,11 @@
 
 package controllers.reporter.taxpayer
 
-import java.time.LocalDate
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import helpers.DateHelper.dateFormatterNumericDMY
 import helpers.JourneyHelpers._
-
-import javax.inject.Inject
 import models.ReporterOrganisationOrIndividual.Individual
 import models.{CheckMode, Mode, UserAnswers}
 import navigation.NavigatorForReporter
@@ -35,8 +32,11 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject()(
