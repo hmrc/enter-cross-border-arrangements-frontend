@@ -19,11 +19,17 @@ package models.taxpayer
 import models.{Country, LoopDetails, TaxReferenceNumbers}
 import play.api.libs.json.{Json, OFormat}
 
-case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers]) {
+case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers]) extends Ordered[TaxResidency] {
 
   val isUK: Boolean = country.exists(_.code == "GB")
 
   val hasNumbers: Option[Boolean] = taxReferenceNumbers.map(_.firstTaxNumber.nonEmpty)
+
+  override def compare(that: TaxResidency): Int =
+    (country, that.country) match {
+      case (Some(thisCountry), Some(otherCountry)) => thisCountry.compare(otherCountry)
+      case _ => 0
+    }
 }
 
 object TaxResidency {

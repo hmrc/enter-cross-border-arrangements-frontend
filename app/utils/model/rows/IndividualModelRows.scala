@@ -124,7 +124,7 @@ trait IndividualModelRows extends DisplayRowBuilder {
 
   def buildTaxResidencySummaryForIndividuals(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] = {
 
-    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).zipWithIndex
+    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = individual.taxResidencies.filter(_.country.isDefined).sorted.zipWithIndex
 
     val header: DisplayRow = toDisplayRowNoBorder(
       msgKey = "whichCountryTaxForIndividual",
