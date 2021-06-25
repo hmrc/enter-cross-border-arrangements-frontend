@@ -54,17 +54,6 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
       )
   }
 
-//  def gbSort(exemptCountries : List[String])(implicit messages: Messages) : List[String] = {
-//
-//    val gbMessage = msg"countriesListCheckboxes.GB".resolve
-//
-//    if (exemptCountries.contains(gbMessage)) {
-//      List(gbMessage) ++ exemptCountries.filter(_ != gbMessage).sorted
-//    } else {
-//      exemptCountries.sorted
-//    }
-//  }
-
   def exemptCountries( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
     answer =>
       DisplayRow(
