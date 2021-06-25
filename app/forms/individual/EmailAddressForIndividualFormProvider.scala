@@ -29,7 +29,7 @@ class EmailAddressForIndividualFormProvider @Inject() extends Mappings with Rege
     Form(
       "email" -> validatedText(
         "emailAddressForIndividual.error.required",
-        "emailAddressForOrganisation.error.invalid",
+        "emailAddressForIndividual.error.invalid",
         "emailAddressForIndividual.error.length",
         emailRegex,
         maxLength)
