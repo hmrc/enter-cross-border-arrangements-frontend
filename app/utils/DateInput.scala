@@ -45,12 +45,16 @@ object DateInput extends NunjucksSupport {
 
   def localDate(field: Field): ViewModel = {
 
-    val error: Option[Text.Message] = field.error.map(formError => Text.Message(formError.message, formError.args: _*))
+    val error = (field.error orElse field("day").error orElse field("month").error orElse field("year").error)
+      .map(formError => Text.Message(formError.message, formError.args: _*))
 
-    def classes(fieldName: String, classes: String*): String = error match {
-      case Some(err) if err.args.map(_.toString).contains(fieldName) | err.args.isEmpty => (" govuk-input--error" :: classes.toList).mkString(" ")
-      case Some(_) => classes.toList.mkString(" ")
-      case _ => classes.toList.mkString(" ")
+    def classes(fieldName: String, classes: String*): String = {
+
+      error match {
+        case Some(err) if err.args.map(_.toString).contains(fieldName) | err.args.isEmpty => (" govuk-input--error" :: classes.toList).mkString(" ")
+        case Some(_) => classes.toList.mkString(" ")
+        case _ => classes.toList.mkString(" ")
+      }
     }
 
     val items = Seq(
