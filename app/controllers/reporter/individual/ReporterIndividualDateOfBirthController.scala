@@ -17,6 +17,7 @@
 package controllers.reporter.individual
 
 import controllers.actions._
+import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.reporter.individual.ReporterIndividualDateOfBirthFormProvider
 import models.Mode
 import navigation.NavigatorForReporter
@@ -27,12 +28,11 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
+
 import java.time.LocalDate
-
-import controllers.mixins.{CheckRoute, RoutingSupport}
 import javax.inject.Inject
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReporterIndividualDateOfBirthController @Inject()(

@@ -29,14 +29,14 @@ class IndividualDateOfBirthFormProviderSpec extends DateBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName = "dob"
 
     val validData = datesBetween(
       min = LocalDate.of(1903, 1, 1),
       max = LocalDate.now(ZoneOffset.UTC)
     )
 
-    behave like dateField(form, "value", validData)
+    behave like dateField(form, "dob", validData)
 
     behave like dateFieldWithMax(
       form = form,
@@ -56,6 +56,6 @@ class IndividualDateOfBirthFormProviderSpec extends DateBehaviours {
       )
     )
 
-    behave like mandatoryDateField(form, "value", "individualDateOfBirth.error.required.all")
+    behave like mandatoryDateField(form, fieldName, "individualDateOfBirth.error.required.all")
   }
 }

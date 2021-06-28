@@ -27,7 +27,7 @@ class IndividualDateOfBirthFormProvider @Inject() extends Mappings {
 
   def apply(): Form[LocalDate] =
     Form(
-      "value" -> localDate(
+      "dob" -> localDate(
         invalidKey     = "individualDateOfBirth.error.invalid",
         allRequiredKey = "individualDateOfBirth.error.required.all",
         twoRequiredKey = "individualDateOfBirth.error.required.two",

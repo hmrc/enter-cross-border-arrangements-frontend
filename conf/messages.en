@@ -368,7 +368,7 @@ individualDateOfBirth.checkYourAnswersLabel = Date of birth
 individualDateOfBirth.error.required.all = Enter a date of birth
 individualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 individualDateOfBirth.error.required = Date of birth must include {0}
-individualDateOfBirth.error.invalid = Enter a valid date of birth
+individualDateOfBirth.error.invalid = The date of birth must be a real date
 individualDateOfBirth.error.futureDate = Date of birth must be before {0}
 individualDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1903
 individualDateOfBirth.error.nonNumericKey = Date of birth must only include numbers 0-9
@@ -542,7 +542,7 @@ whatIsTheImplementationDate.checkYourAnswersLabel = Implementing date
 whatIsTheImplementationDate.error.required.all = Provide a date
 whatIsTheImplementationDate.error.required.two = The implementation date must include {0} and {1}
 whatIsTheImplementationDate.error.required = The implementation date must include {0}
-whatIsTheImplementationDate.error.invalid = Provide a date
+whatIsTheImplementationDate.error.invalid = The implementation date must be a real date
 whatIsTheImplementationDate.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTheImplementationDate.error.futureDate = Provide a valid date
 
@@ -717,7 +717,7 @@ whatIsTaxpayersStartDateForImplementingArrangement.checkYourAnswersLabel = Imple
 whatIsTaxpayersStartDateForImplementingArrangement.error.required.all = Provide a valid date
 whatIsTaxpayersStartDateForImplementingArrangement.error.required.two = The implementation date must include {0} and {1}
 whatIsTaxpayersStartDateForImplementingArrangement.error.required = The implementation date must include {0}
-whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = Provide a valid date
+whatIsTaxpayersStartDateForImplementingArrangement.error.invalid = The implementation date must be a real date
 whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate = Provide a valid date after 25 06 2018
 whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate = Provide a valid date
 
@@ -1007,7 +1007,7 @@ reporterIndividualDateOfBirth.error.required.all = Provide a date
 reporterIndividualDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 reporterIndividualDateOfBirth.error.required = Date of birth must include {0}
 reporterIndividualDateOfBirth.error.nonNumeric = Provide a date
-reporterIndividualDateOfBirth.error.invalid = Provide a valid date of birth
+reporterIndividualDateOfBirth.error.invalid = The date of birth must be a real date
 reporterIndividualDateOfBirth.error.futureDate = Provide a date of birth before {0}
 reporterIndividualDateOfBirth.error.pastDate = Provide a date of birth on or after 1 January 1903
 
