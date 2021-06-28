@@ -518,6 +518,7 @@ emailAddressForIndividual.heading = What is {0}’s email address?
 emailAddressForIndividual.hint = We will only use this to get in contact if we have any questions about the arrangement.
 emailAddressForIndividual.checkYourAnswersLabel = Email address
 emailAddressForIndividual.error.required = Enter an email address
+emailAddressForIndividual.error.invalid = Enter an email address in the correct format, like name@example.com
 emailAddressForIndividual.error.length = Email address must be 400 characters or less
 
 doYouKnowTINForNonUKIndividual.title = Do you know the individuals’s tax identification numbers?
