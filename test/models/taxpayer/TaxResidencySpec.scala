@@ -69,8 +69,7 @@ class TaxResidencySpec extends ModelSpecBase {
     "must be sorted with country UK first, then alphabetically" in {
 
       val sortedList: List[TaxResidency] = List(loopDetailsCH, loopDetailsUK, loopDetailsFR).flatMap(buildFromLoopDetails).sorted
-      println(sortedList)
-      sortedList.head.country mustEqual  Country("valid", "GB", "United Kingdom")
+      sortedList.head.country mustEqual  Some(Country("valid", "GB", "United Kingdom"))
     }
   }
 }

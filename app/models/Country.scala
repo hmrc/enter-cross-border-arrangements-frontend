@@ -24,9 +24,13 @@ case class Country(state: String, code: String, description: String) extends Ord
 
   val isNotUK: Boolean = !isUK
 
-  override def compare(that: Country): Int = {
-    this.description.compare(that.description)
-  }
+  override def compare(that: Country): Int =
+    (this.description, that.description) match {
+      case ("United Kingdom", _) => Int.MinValue
+      case (_, "United Kingdom") => Int.MaxValue
+      case (countryName, otherName) => countryName.compareTo(otherName)
+    }
+
 }
 
 object Country {

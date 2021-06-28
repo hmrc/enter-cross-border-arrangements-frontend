@@ -28,7 +28,7 @@ case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[Ta
   override def compare(that: TaxResidency): Int =
     (country, that.country) match {
       case (Some(thisCountry), Some(otherCountry)) => thisCountry.compare(otherCountry)
-      case _ => 0
+      case _ => throw new IllegalArgumentException("Unable to order")
     }
 }
 
