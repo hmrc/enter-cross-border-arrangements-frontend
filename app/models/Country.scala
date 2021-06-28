@@ -26,9 +26,9 @@ case class Country(state: String, code: String, description: String) extends Ord
 
   override def compare(that: Country): Int =
     (this.description, that.description) match {
-      case ("United Kingdom", _) => Int.MinValue
-      case (_, "United Kingdom") => Int.MaxValue
-      case (countryName, otherName) => countryName.compareTo(otherName)
+      case (Country.UK.description, _) => Int.MinValue
+      case (_, Country.UK.description) => Int.MaxValue
+      case (countryName, otherName)    => countryName.compareTo(otherName)
     }
 
 }
