@@ -64,7 +64,7 @@ class DisclosureDetailsController @Inject()(
     sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
 
       val arrangementMessage: String = request.userAnswers.fold("") {
@@ -97,7 +97,7 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
       val submission = Submission(request.userAnswers, id, request.enrolmentID)

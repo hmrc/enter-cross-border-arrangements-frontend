@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.intermediaries.IntermediariesTypeFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediariesTypeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IntermediariesTypeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IntermediariesTypeFormProvider()
   private val form: Form[SelectType] = formProvider()

@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import matchers.JsonMatchers
@@ -38,9 +38,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   lazy val youHaveNotAddedAnyIntermediariesRoute = routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(0).url
 

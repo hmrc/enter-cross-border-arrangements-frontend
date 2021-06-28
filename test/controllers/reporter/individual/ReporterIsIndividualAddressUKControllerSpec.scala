@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.individual.ReporterIsIndividualAddressUKFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,9 +36,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterIsIndividualAddressUKControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new ReporterIsIndividualAddressUKFormProvider()
   val form = formProvider()

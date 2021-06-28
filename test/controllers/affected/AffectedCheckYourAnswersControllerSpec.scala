@@ -16,7 +16,7 @@
 
 package controllers.affected
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import models.affected.YouHaveNotAddedAnyAffected
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -26,21 +26,18 @@ import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}
 import pages.individual._
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AffectedCheckYourAnswersControllerSpec extends SpecBase {
+class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/others-affected/update/0")
+  override val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/others-affected/update/0")
 
   val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
   val loopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
@@ -50,11 +47,11 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase {
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(0, None).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -63,14 +60,12 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase {
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json: JsObject = jsonCaptor.getValue
     val affectedSummary = (json \ "affectedSummary").toString
     val countrySummary = (json \ "countrySummary").toString
 
     templateCaptor.getValue mustEqual "affected/affectedCheckYourAnswers.njk"
     assertFunction(affectedSummary + countrySummary)
-
-    application.stop()
 
     reset(
       mockRenderer
@@ -161,22 +156,14 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase {
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val application =
-          applicationBuilder(userAnswers = Some(userAnswers))
-            .overrides(
-              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-              bind[SessionRepository].toInstance(mockSessionRepository)
-            )
-            .build()
+        retrieveUserAnswersData(userAnswers)
 
         val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-
-        application.stop()
       }
 
       "must redirect to the affected persons update page when valid data is submitted for an individual" in {
@@ -196,22 +183,14 @@ class AffectedCheckYourAnswersControllerSpec extends SpecBase {
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val application =
-          applicationBuilder(userAnswers = Some(userAnswers))
-            .overrides(
-              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-              bind[SessionRepository].toInstance(mockSessionRepository)
-            )
-            .build()
+        retrieveUserAnswersData(userAnswers)
 
         val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-
-        application.stop()
       }
     }
   }

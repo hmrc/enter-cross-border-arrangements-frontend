@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -25,7 +25,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccessibilityControllerSpec extends SpecBase {
+class AccessibilityControllerSpec extends SpecBase  with MockServiceApp {
 
   "Accessibility Controller" - {
 

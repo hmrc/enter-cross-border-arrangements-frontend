@@ -48,7 +48,7 @@ class DisclosureNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.flatMap(_.getBase(DisclosureNamePage)) match {
@@ -67,7 +67,7 @@ class DisclosureNameController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
     navigator.routeMap(DisclosureNamePage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
 
       form.bindFromRequest().fold(

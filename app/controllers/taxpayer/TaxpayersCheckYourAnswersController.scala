@@ -44,7 +44,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(TaxpayerLoopPage, id, itemId)
@@ -84,7 +84,7 @@ class TaxpayersCheckYourAnswersController @Inject()(
         )).map(Ok(_))
   }
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       for {

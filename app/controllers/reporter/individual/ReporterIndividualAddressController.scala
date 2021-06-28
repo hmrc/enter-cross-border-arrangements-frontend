@@ -54,7 +54,7 @@ class ReporterIndividualAddressController @Inject()(
 
   private def actionUrl(id: Int, mode: Mode) = routes.ReporterIndividualAddressController.onSubmit(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -93,7 +93,7 @@ class ReporterIndividualAddressController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Address], index: Int = 0): Call =
     navigator.routeMap(ReporterIndividualAddressPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))

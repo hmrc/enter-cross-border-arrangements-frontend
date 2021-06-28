@@ -23,7 +23,7 @@ import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new $className$FormProvider()
   val form = formProvider()

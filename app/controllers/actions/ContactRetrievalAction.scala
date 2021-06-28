@@ -30,6 +30,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactRetrievalActionImpl @Inject()(frontendAppConfig: FrontendAppConfig,
                                            subscriptionConnector: SubscriptionConnector)
                                           (implicit val executionContext: ExecutionContext) extends ContactRetrievalAction {
+  override def apply: ActionTransformer[DataRequest, DataRequestWithContacts] = new ContactRetrievalActionProvider(frontendAppConfig, subscriptionConnector)
+}
+
+class ContactRetrievalActionProvider @Inject()(frontendAppConfig: FrontendAppConfig,
+                                           subscriptionConnector: SubscriptionConnector)
+                                          (implicit val executionContext: ExecutionContext) extends ActionTransformer[DataRequest, DataRequestWithContacts] {
 
   override protected def transform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] = {
 
@@ -89,4 +95,6 @@ class ContactRetrievalActionImpl @Inject()(frontendAppConfig: FrontendAppConfig,
 
 }
 
-trait ContactRetrievalAction extends ActionTransformer[DataRequest, DataRequestWithContacts]
+trait ContactRetrievalAction  {
+  def apply: ActionTransformer[DataRequest, DataRequestWithContacts]
+}

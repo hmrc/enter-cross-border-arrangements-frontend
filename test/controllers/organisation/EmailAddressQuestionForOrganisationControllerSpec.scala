@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.organisation.EmailAddressQuestionForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
   val form = formProvider()

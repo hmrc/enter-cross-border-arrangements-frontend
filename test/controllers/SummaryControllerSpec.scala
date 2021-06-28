@@ -16,9 +16,9 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.HistoryConnector
-import controllers.actions.FakeContactRetrievalAction
+import controllers.actions.FakeContactRetrievalProvider
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
@@ -52,7 +52,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class SummaryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),
@@ -69,7 +69,7 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
 
   private val mockHistoryConnector = mock[HistoryConnector]
 
-  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
   "Summary Controller" - {
 

@@ -47,7 +47,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
@@ -77,7 +77,7 @@ class DoYouKnowAnyTINForUKIndividualController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
     navigator.routeMap(DoYouKnowAnyTINForUKIndividualPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

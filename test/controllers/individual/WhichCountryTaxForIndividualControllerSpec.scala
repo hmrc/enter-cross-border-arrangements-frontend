@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.individual.WhichCountryTaxForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class WhichCountryTaxForIndividualControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class WhichCountryTaxForIndividualControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhichCountryTaxForIndividualFormProvider()
   val form: Form[Country] = formProvider(Seq(Country("valid","GB","United Kingdom")))

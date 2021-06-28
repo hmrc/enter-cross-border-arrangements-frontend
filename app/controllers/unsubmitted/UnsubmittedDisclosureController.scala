@@ -42,7 +42,7 @@ class UnsubmittedDisclosureController  @Inject()(
     zipped._1.deleted || zipped._1.submitted
   }
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
 
       val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url

@@ -16,7 +16,7 @@
 
 package controllers.hallmarks
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.hallmarks.HallmarkDFormProvider
 import matchers.JsonMatchers
 import models.hallmarks.HallmarkD
@@ -37,9 +37,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class HallmarkDControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class HallmarkDControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   lazy val hallmarkDRoute = routes.HallmarkDController.onPageLoad(0, NormalMode).url
 

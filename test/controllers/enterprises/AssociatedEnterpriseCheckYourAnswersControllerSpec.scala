@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import helpers.data.ValidUserAnswersForSubmission.{todayMinusOneMonth, validOrganisation}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.taxpayer.Taxpayer
@@ -40,10 +40,9 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase {
+class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/associated-enterprises/update/0")
+  override val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/associated-enterprises/update/0")
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 
@@ -63,7 +62,7 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase {
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json: JsObject = jsonCaptor.getValue
     val summaryRows = (json \ "summaryRows").toString
     val countrySummary = (json \ "countrySummary").toString
     val isEnterpriseAffected = (json \ "isEnterpriseAffected").toString

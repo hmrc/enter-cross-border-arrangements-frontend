@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.disclosure.DisclosureNameFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class DisclosureNameControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class DisclosureNameControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DisclosureNameFormProvider()
   val form = formProvider()

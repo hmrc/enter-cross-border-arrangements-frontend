@@ -50,7 +50,7 @@ class IsIndividualAddressUkController @Inject()(
 
   implicit val alternativeText: String = "the individual's"
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(IsIndividualAddressUkPage, id) match {
@@ -72,7 +72,7 @@ class IsIndividualAddressUkController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
     navigator.routeMap(IsIndividualAddressUkPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

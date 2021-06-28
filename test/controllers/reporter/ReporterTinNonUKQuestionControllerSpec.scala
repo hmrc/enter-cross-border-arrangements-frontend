@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.ReporterTinNonUKQuestionFormProvider
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
@@ -37,9 +37,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterTinNonUKQuestionControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterTinNonUKQuestionControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/non-uk-tax-numbers-0/0")
+  override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/non-uk-tax-numbers-0/0")
 
   val formProvider = new ReporterTinNonUKQuestionFormProvider()
   val selectedCountry: Option[Country] = Some(Country("", "FR", "France"))

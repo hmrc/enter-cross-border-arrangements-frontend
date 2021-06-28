@@ -16,9 +16,9 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -40,7 +40,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class DisclosureDetailsControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class DisclosureDetailsControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   private val mockValidationConnector = mock[ValidationConnector]
   private val mockXMLGenerationService = mock[XMLGenerationService]
@@ -51,7 +51,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with NunjucksSupport with
     reset(mockRenderer, mockCrossBorderArrangementsConnector)
   }
 
-  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
   "DisclosureDetails Controller" - {
 

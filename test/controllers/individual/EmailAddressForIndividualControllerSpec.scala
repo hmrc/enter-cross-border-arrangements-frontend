@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.individual.EmailAddressForIndividualFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class EmailAddressForIndividualControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class EmailAddressForIndividualControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new EmailAddressForIndividualFormProvider()
   private val form = formProvider()

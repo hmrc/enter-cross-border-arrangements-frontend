@@ -57,7 +57,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -75,7 +75,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  def onContinue(): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
+  def onContinue(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {

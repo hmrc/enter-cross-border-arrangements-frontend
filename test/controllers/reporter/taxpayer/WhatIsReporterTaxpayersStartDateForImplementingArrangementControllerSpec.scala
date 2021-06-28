@@ -16,7 +16,7 @@
 
 package controllers.reporter.taxpayer
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
 import models.SelectType.Organisation
@@ -40,12 +40,12 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTaxpayersStartDateForImplementingArrangementFormProvider()
   private def form = formProvider()
 
-  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/check-answers/0")
+  override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/check-answers/0")
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 

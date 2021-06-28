@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.ReporterOrganisationOrIndividualFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, ReporterOrganisationOrIndividual, UnsubmittedDisclosure, UserAnswers}
@@ -36,9 +36,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationOrIndividualControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationOrIndividualControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/organisation/name/0")
+  override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/organisation/name/0")
 
   lazy val reporterOrganisationOrIndividualRoute = routes.ReporterOrganisationOrIndividualController.onPageLoad(0, NormalMode).url
 

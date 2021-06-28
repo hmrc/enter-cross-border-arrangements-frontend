@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
@@ -39,9 +39,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new ReplaceOrDeleteADisclosureFormProvider()
   val countries = List(Country("valid","GB","United Kingdom"))

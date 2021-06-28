@@ -16,7 +16,7 @@
 
 package controllers.hallmarks
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import models.hallmarks.HallmarkD1
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -30,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
+class CheckYourAnswersHallmarksControllerSpec extends SpecBase with MockServiceApp {
 
   "Check Your Answers Controller" - {
 

@@ -16,10 +16,10 @@
 
 package models
 
-import base.SpecBase
+import base.ModelSpecBase
 import play.api.libs.json.{JsSuccess, Json}
 
-class ManualSubmissionResultSpec extends SpecBase {
+class ManualSubmissionResultSpec extends ModelSpecBase {
 
   "ManualSubmissionResult" - {
     "must be able to read ManualSubmissionValidationSuccess from the trait" in {

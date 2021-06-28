@@ -54,7 +54,7 @@ class ReporterTinNonUKQuestionController @Inject()(
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterTinNonUKQuestionPage)(checkRoute)(id)(value)(index)
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
@@ -82,7 +82,7 @@ class ReporterTinNonUKQuestionController @Inject()(
       renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))

@@ -44,7 +44,7 @@ class AffectedCheckYourAnswersController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(AffectedLoopPage, id, itemId)
@@ -90,7 +90,7 @@ class AffectedCheckYourAnswersController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute): Call =
     navigator.routeMap(AffectedCheckYourAnswersPage)(checkRoute)(id)(None)(0)
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       for {

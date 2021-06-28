@@ -44,7 +44,7 @@ class AreYouSureYouWantToRemoveIntermediaryController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = form
@@ -60,7 +60,7 @@ class AreYouSureYouWantToRemoveIntermediaryController @Inject()(
       renderer.render("intermediaries/areYouSureYouWantToRemoveIntermediary.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

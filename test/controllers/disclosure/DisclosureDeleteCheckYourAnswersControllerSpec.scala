@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, EmailConnector, SubscriptionConnector}
 import controllers.RowJsonReads
@@ -24,7 +24,6 @@ import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -40,7 +39,7 @@ import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
-class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
 
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url

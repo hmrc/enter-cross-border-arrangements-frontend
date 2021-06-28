@@ -51,7 +51,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = getCountry(request.userAnswers, id, OrganisationLoopPage, index) match {
@@ -78,7 +78,7 @@ class WhichCountryTaxForOrganisationController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
     navigator.routeMap(WhichCountryTaxForOrganisationPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

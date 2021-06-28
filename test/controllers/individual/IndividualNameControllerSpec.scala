@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import config.FrontendAppConfig
 import forms.individual.IndividualNameFormProvider
 import matchers.JsonMatchers
@@ -36,10 +36,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IndividualNameControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IndividualNameControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new IndividualNameFormProvider()

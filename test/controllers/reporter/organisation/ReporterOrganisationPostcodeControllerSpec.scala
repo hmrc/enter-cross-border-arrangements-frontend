@@ -16,7 +16,7 @@
 
 package controllers.reporter.organisation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.PostcodeFormProvider
@@ -39,14 +39,13 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationPostcodeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()
 
-  val mockSessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig = mock[FrontendAppConfig]
   val mockAddressLookupConnector = mock[AddressLookupConnector]
 

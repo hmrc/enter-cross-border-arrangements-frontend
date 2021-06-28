@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
   private val form = formProvider()

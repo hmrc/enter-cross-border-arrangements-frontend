@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.individual.IndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IndividualDateOfBirthControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IndividualDateOfBirthFormProvider()
   private def form = formProvider()

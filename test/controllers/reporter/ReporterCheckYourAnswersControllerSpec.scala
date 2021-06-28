@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.YesNoDoNotKnowRadios.Yes
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
@@ -41,7 +41,7 @@ import play.twirl.api.Html
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ReporterCheckYourAnswersControllerSpec extends SpecBase {
+class ReporterCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp{
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),

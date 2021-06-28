@@ -42,7 +42,7 @@ class TaxpayersMarketableArrangementGatewayController @Inject()(
   val controllerComponents: MessagesControllerComponents
   )(implicit ec: ExecutionContext) extends FrontendBaseController {
 
-  def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       (request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {

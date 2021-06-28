@@ -52,7 +52,7 @@ class ReporterUKTaxNumbersController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[TaxReferenceNumbers], index: Int = 0): Call =
     navigator.routeMap(ReporterUKTaxNumbersPage)(checkRoute)(id)(value)(index)
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
@@ -80,7 +80,7 @@ class ReporterUKTaxNumbersController @Inject()(
       renderer.render("reporter/reporterUKTaxNumbers.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))

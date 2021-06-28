@@ -58,7 +58,7 @@ class IndividualPostcodeController @Inject()(
 
   private def actionUrl(mode: Mode, id: Int) = routes.IndividualPostcodeController.onSubmit(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
 
@@ -82,7 +82,7 @@ class IndividualPostcodeController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
     navigator.routeMap(IndividualUkPostcodePage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val formReturned = form.bindFromRequest()

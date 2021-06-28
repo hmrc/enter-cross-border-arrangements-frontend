@@ -52,7 +52,7 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       checkLoopDetailsContainsCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage)
@@ -80,7 +80,7 @@ class ReporterOtherTaxResidentQuestionController @Inject()(
       renderer.render("reporter/reporterOtherTaxResidentQuestion.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

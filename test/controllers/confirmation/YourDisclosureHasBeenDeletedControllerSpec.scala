@@ -16,9 +16,9 @@
 
 package controllers.confirmation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.SubscriptionConnector
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
@@ -34,7 +34,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
+class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockServiceApp {
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
@@ -60,7 +60,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
