@@ -54,17 +54,6 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
       )
   }
 
-  def gbSort(exemptCountries : List[String])(implicit messages: Messages) : List[String] = {
-
-    val gbMessage = msg"countriesListCheckboxes.GB".resolve
-
-    if (exemptCountries.contains(gbMessage)) {
-      List(gbMessage) ++ exemptCountries.filter(_ != gbMessage).sorted
-    } else {
-      exemptCountries.sorted
-    }
-  }
-
   def exemptCountries( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
     answer =>
       DisplayRow(
@@ -75,8 +64,9 @@ trait IntermediariesModelRows extends DisplayRowBuilder {
 
   private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean)(implicit messages: Messages) = {
 
-    val getCountryName = selectedCountries.map(_.toString).toSeq.map(
-      countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
+    val getCountryName = selectedCountries.toSeq.sorted.map(_.toString).map { countryCode =>
+      msg"countriesListCheckboxes.$countryCode".resolve
+    }
 
     if (singleItem) {
       getCountryName.head

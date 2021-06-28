@@ -16,7 +16,7 @@
 
 package models.arrangement
 
-import models.{ArrangementImplementingDateInvalidError, ArrangementNameEmptyError, SubmissionError, UserAnswers}
+import models.{ArrangementImplementingDateInvalidError, ArrangementNameEmptyError, CountryList, SubmissionError, UserAnswers}
 import pages.GiveDetailsOfThisArrangementPage
 import pages.arrangement._
 import play.api.libs.json.{Json, OFormat}
@@ -26,7 +26,7 @@ import java.time.LocalDate
 case class ArrangementDetails(arrangementName: String,
                               implementationDate: LocalDate,
                               reportingReason: Option[String] = None,
-                              countriesInvolved: List[String],
+                              countriesInvolved: List[CountryList],
                               expectedValue: ExpectedArrangementValue,
                               nationalProvisionDetails: String,
                               arrangementDetails: String
@@ -64,9 +64,9 @@ object ArrangementDetails {
     )
   }
 
-  private def getCountriesInvolved(ua: UserAnswers, id: Int): List[String] = {
+  private def getCountriesInvolved(ua: UserAnswers, id: Int): List[CountryList] = {
     ua.get(WhichExpectedInvolvedCountriesArrangementPage, id) match {
-      case Some(countries) => countries.map(_.toString).toList.sorted
+      case Some(countries) => countries.toList.sorted
       case _ => throw new Exception("Arrangement details must contain expected involved countries details for Disclosure Information")
     }
   }

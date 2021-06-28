@@ -27,28 +27,44 @@ class LoopDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
   "LoopDetails" - {
 
+    val loopUK = LoopDetails(
+      taxResidentOtherCountries = Some(false),
+      whichCountry = Some(Country.UK),
+      doYouKnowTIN = None,
+      taxNumbersNonUK = None,
+      doYouKnowUTR = Some(true),
+      taxNumbersUK = Some(TaxReferenceNumbers("UTR1234", None, None))
+    )
+
+    val loopFR = LoopDetails(
+      taxResidentOtherCountries = Some(false),
+      whichCountry = Some(Country("", "FR", "France")),
+      doYouKnowTIN = Some(true),
+      taxNumbersNonUK = Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)),
+      doYouKnowUTR = None,
+      taxNumbersUK = None
+    )
+
+    val loopCH = LoopDetails(
+      taxResidentOtherCountries = Some(false),
+      whichCountry = Some(Country("", "CH", "Switzerland")),
+      doYouKnowTIN = Some(true),
+      taxNumbersNonUK = Some(TaxReferenceNumbers("CS700100B", Some("UTR6789"), None)),
+      doYouKnowUTR = None,
+      taxNumbersUK = None
+    )
+
     "must read from tax residency" in {
 
-      val loopUK = LoopDetails(
-        taxResidentOtherCountries = Some(false),
-        whichCountry = Some(Country.UK),
-        doYouKnowTIN = None,
-        taxNumbersNonUK = None,
-        doYouKnowUTR = Some(true),
-        taxNumbersUK = Some(TaxReferenceNumbers("UTR1234", None, None))
-      )
-
-      val loopNonUK = LoopDetails(
-        taxResidentOtherCountries = Some(false),
-        whichCountry = Some(Country("", "FR", "France")),
-        doYouKnowTIN = Some(true),
-        taxNumbersNonUK = Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)),
-        doYouKnowUTR = None,
-        taxNumbersUK = None
-      )
-
       LoopDetails(validTaxResidencies(0)) mustBe loopUK
-      LoopDetails(validTaxResidencies(1)) mustBe loopNonUK
+      LoopDetails(validTaxResidencies(1)) mustBe loopFR
+    }
+
+    "must order starting with UK and then alphabetically" in {
+      val listOfCountries = List(loopFR, loopUK, loopCH).sorted
+      listOfCountries.head must be(loopUK)
+      listOfCountries(1) must be(loopFR)
+      listOfCountries(2) must be(loopCH)
     }
   }
 }

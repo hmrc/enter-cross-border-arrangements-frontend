@@ -58,5 +58,14 @@ class CountryListSpec extends ModelSpecBase with ModelGenerators {
           Json.toJson(countries) mustEqual JsString(countries.toString)
       }
     }
+
+    "must list UK first and then alphabetically" in {
+
+      import CountryList._
+      val sorted = List[CountryList](Sweden, UnitedKingdom, Belgium).sorted
+      sorted.head mustEqual UnitedKingdom
+      sorted(1) mustEqual Belgium
+      sorted(2) mustEqual Sweden
+    }
   }
 }

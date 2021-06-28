@@ -57,7 +57,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
     val list: String = if (countries.size > 1) {
       s"""<ul>
-        |${countries.map(a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.$a".resolve}</li>").mkString("\n")}
+        |${countries.toSeq.sorted.map(a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.$a".resolve}</li>").mkString("\n")}
         |</ul>""".stripMargin
     } else {
       countries.map(a => msg"whichExpectedInvolvedCountriesArrangement.$a".resolve).mkString

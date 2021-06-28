@@ -16,11 +16,22 @@
 
 package models
 
+import models.CountryList.UnitedKingdom
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-sealed trait CountryList
+sealed trait CountryList extends Ordered[CountryList] {
+
+  override def compare(that: CountryList): Int =
+    (this, that) match {
+      case (UnitedKingdom, _) => Int.MinValue
+      case (_, UnitedKingdom) => Int.MaxValue
+      case (country, other) => country.name.compareTo(other.name)
+    }
+
+  val name: String = getClass.getSimpleName
+}
 
 object CountryList extends Enumerable.Implicits {
 

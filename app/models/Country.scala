@@ -18,11 +18,19 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Country(state: String, code: String, description: String) {
+case class Country(state: String, code: String, description: String) extends Ordered[Country] {
 
   val isUK: Boolean = code == "GB"
 
   val isNotUK: Boolean = !isUK
+
+  override def compare(that: Country): Int =
+    (this.description, that.description) match {
+      case (Country.UK.description, _) => Int.MinValue
+      case (_, Country.UK.description) => Int.MaxValue
+      case (countryName, otherName)    => countryName.compareTo(otherName)
+    }
+
 }
 
 object Country {

@@ -179,6 +179,7 @@ trait ReporterRows extends RowBuilder {
 
     val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
       .filter(_.whichCountry.isDefined)
+      .sorted
       .zipWithIndex
     toRow(
       msgKey = "reporterTaxResidentCountry",
@@ -271,8 +272,9 @@ trait ReporterRows extends RowBuilder {
 
   private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean) = {
 
-    val getCountryName = selectedCountries.map(_.toString).toSeq.map(
-      countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
+    val getCountryName = selectedCountries.toSeq.sorted.map(_.toString).map { countryCode =>
+      msg"countriesListCheckboxes.$countryCode".resolve
+    }
 
     if (singleItem) {
       getCountryName.head

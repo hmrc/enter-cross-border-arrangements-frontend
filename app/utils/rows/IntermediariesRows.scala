@@ -98,8 +98,9 @@ trait IntermediariesRows extends RowBuilder {
 
   private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean) = {
 
-    val getCountryName = selectedCountries.map(_.toString).toSeq.map(
-      countryCode => msg"countriesListCheckboxes.$countryCode".resolve).sorted
+    val getCountryName = selectedCountries.toSeq.sorted.map(_.toString).map{ countryCode =>
+      msg"countriesListCheckboxes.$countryCode".resolve
+    }
 
     if (singleItem) {
       getCountryName.head

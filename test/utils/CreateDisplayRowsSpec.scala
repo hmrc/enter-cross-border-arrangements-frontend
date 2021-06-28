@@ -18,6 +18,7 @@ package utils
 
 import base.SpecBase
 import models.Country
+import models.CountryList.UnitedKingdom
 import models.affected.Affected
 import models.arrangement.{ArrangementDetails, ExpectedArrangementValue}
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -42,7 +43,7 @@ class CreateDisplayRowsSpec extends SpecBase {
       val arrangement = ArrangementDetails("arrangement1",
         LocalDate.now,
         Some("reason1"),
-        List("GB"),
+        List(UnitedKingdom),
         ExpectedArrangementValue("USD",10), "Provision1", "Details1")
       arrangement.createDisplayRows.length mustBe 7
     }

@@ -16,6 +16,7 @@
 
 package utils.model.rows
 
+import models.CountryList
 import models.arrangement.ArrangementDetails
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -46,13 +47,13 @@ trait ArrangementModelRows extends DisplayRowBuilder {
     )
   }
 
-  private def formatCountries(countries: List[String])(implicit messages: Messages): Html = {
+  private def formatCountries(countries: List[CountryList])(implicit messages: Messages): Html = {
     val list: String = if (countries.size > 1) {
       s"""<ul>
-        |${countries.map(a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.$a".resolve}</li>").mkString("\n")}
+        |${countries.sorted.map(a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve}</li>").mkString("\n")}
         |</ul>""".stripMargin
     } else {
-      countries.map(a => msg"whichExpectedInvolvedCountriesArrangement.$a".resolve).mkString
+      countries.map(a => msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve).mkString
     }
     Html(list)
   }

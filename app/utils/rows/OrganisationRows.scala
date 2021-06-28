@@ -94,6 +94,7 @@ trait OrganisationRows extends RowBuilder {
 
     val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
       .filter(_.whichCountry.isDefined)
+      .sorted
       .zipWithIndex
 
     toRow(
