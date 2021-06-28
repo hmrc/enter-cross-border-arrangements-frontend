@@ -16,8 +16,7 @@
 
 package controllers.arrangement
 
-import base.SpecBase
-import controllers.RowJsonReads
+import base.{MockServiceApp, SpecBase}
 import generators.ModelGenerators
 import models.arrangement.ExpectedArrangementValue
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
@@ -38,7 +37,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach with ModelGenerators {
+class ArrangementCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp with BeforeAndAfterEach with ModelGenerators {
 
   val oneHundredCharacters: String = "123456789 " * 10
   val textTuples = Seq(
@@ -51,11 +50,11 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -64,14 +63,12 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with BeforeAndA
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
-    import RowJsonReads._
+    val json: JsObject = jsonCaptor.getValue
+    import controllers.RowJsonReads._
     val list = (json \ "list" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "arrangement/check-your-answers-arrangement.njk"
     assertFunction(list)
-
-    application.stop()
 
     reset(
       mockRenderer

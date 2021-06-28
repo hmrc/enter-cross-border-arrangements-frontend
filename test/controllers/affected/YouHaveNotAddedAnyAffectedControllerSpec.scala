@@ -16,7 +16,7 @@
 
 package controllers.affected
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.affected.YouHaveNotAddedAnyAffectedFormProvider
 import helpers.data.ValidUserAnswersForSubmission.validIndividual
 import matchers.JsonMatchers
@@ -37,9 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   lazy val youHaveNotAddedAnyAffectedRoute = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(0).url
 

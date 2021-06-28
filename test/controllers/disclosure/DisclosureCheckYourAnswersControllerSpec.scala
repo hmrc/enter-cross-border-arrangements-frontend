@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.CrossBorderArrangementsConnector
 import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 import scala.concurrent.Future
 
-class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+class DisclosureCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
 
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 

@@ -16,7 +16,7 @@
 
 package services
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.HistoryConnector
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -31,11 +31,9 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-class MarketableDisclosureServiceSpec extends SpecBase {
+class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
   val mockHistoryConnector = mock[HistoryConnector]
-  val mockSessionRepository = mock[SessionRepository]
-
   val firstDisclosureSubmissionDetailsMarketable = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
     Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
 

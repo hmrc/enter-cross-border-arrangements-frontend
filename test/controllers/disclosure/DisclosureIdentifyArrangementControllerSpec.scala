@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import matchers.JsonMatchers
@@ -37,9 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureIdentifyArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
+class DisclosureIdentifyArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]

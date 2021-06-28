@@ -16,7 +16,7 @@
 
 package controllers.reporter.organisation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
@@ -37,11 +37,10 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationSelectAddressControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   lazy val selectAddressRoute = controllers.reporter.organisation.routes.ReporterOrganisationSelectAddressController.onPageLoad(0, NormalMode).url

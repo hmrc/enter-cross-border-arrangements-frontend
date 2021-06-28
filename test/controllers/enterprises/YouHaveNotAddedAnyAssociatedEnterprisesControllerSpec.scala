@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.enterprises.YouHaveNotAddedAnyAssociatedEnterprisesFormProvider
 import matchers.JsonMatchers
 import models.enterprises.{AssociatedEnterprise, YouHaveNotAddedAnyAssociatedEnterprises}
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 

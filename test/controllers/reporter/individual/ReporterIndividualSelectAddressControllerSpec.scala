@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
@@ -37,11 +37,11 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterIndividualSelectAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterIndividualSelectAddressControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   lazy val reporterIndividualSelectAddressRoute = routes.ReporterIndividualSelectAddressController.onPageLoad(0, NormalMode).url
   lazy val manualAddressURL = routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode).url

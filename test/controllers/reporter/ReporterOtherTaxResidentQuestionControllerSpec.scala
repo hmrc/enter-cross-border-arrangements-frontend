@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.ReporterOtherTaxResidentQuestionFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,9 +36,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
+  override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
 
   val formProvider = new ReporterOtherTaxResidentQuestionFormProvider()
   val form = formProvider()

@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.enterprises.AreYouSureYouWantToRemoveEnterpriseFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -37,9 +37,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new AreYouSureYouWantToRemoveEnterpriseFormProvider()
   val form = formProvider()
@@ -54,12 +54,6 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Nu
   val userAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
-
-  val mockSessionRepository = mock[SessionRepository]
-
-  override def afterEach() = {
-    reset(mockSessionRepository)
-  }
 
   "AreYouSureYouWantToRemoveEnterprise Controller" - {
 

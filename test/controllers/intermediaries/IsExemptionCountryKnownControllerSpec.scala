@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.intermediaries.IsExemptionCountryKnownFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsExemptionCountryKnownControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IsExemptionCountryKnownControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsExemptionCountryKnownFormProvider()
   val form = formProvider()

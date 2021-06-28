@@ -53,7 +53,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
 
   private def actionUrl(id: Int, mode: Mode): String = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) match {
@@ -79,7 +79,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
 
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

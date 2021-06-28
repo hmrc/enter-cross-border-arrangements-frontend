@@ -16,14 +16,14 @@
 
 package controllers.actions
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.SessionKeys
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SessionActionSpec extends SpecBase {
+class SessionActionSpec extends SpecBase with MockServiceApp {
 
   class Harness(action: IdentifierAction) {
     def onPageLoad() = action { request => Results.Ok }

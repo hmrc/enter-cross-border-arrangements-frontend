@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.taxpayer.RemoveTaxpayerFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -37,9 +37,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class RemoveTaxpayerControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new RemoveTaxpayerFormProvider()
   val form = formProvider()
@@ -54,12 +54,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
   val userAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
-
-  val mockSessionRepository = mock[SessionRepository]
-
-  override def afterEach() = {
-    reset(mockSessionRepository)
-  }
 
   "RemoveTaxpayer Controller" - {
 

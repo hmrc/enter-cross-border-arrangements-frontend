@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.organisation.IsOrganisationAddressKnownFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsOrganisationAddressKnownControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IsOrganisationAddressKnownControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsOrganisationAddressKnownFormProvider()
   val form = formProvider()

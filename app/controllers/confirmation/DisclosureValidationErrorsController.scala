@@ -41,7 +41,7 @@ class DisclosureValidationErrorsController @Inject()(
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val keyList: Seq[String] = request.userAnswers.get(ValidationErrorsPage, id).filter(_.nonEmpty)

@@ -48,7 +48,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(EmailAddressQuestionForOrganisationPage, id) match {
@@ -70,7 +70,7 @@ class EmailAddressQuestionForOrganisationController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean]): Call =
     navigator.routeMap(EmailAddressQuestionForOrganisationPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

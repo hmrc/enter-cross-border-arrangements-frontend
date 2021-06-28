@@ -49,7 +49,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
   private def actionUrl(id: Int, mode: Mode) = routes.OrganisationAddressController.onSubmit(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -84,7 +84,7 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Address]): Call =
     navigator.routeMap(OrganisationAddressPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))

@@ -16,7 +16,7 @@
 
 package controllers.unsubmitted
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +27,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnsubmittedDisclosureControllerSpec extends SpecBase {
+class UnsubmittedDisclosureControllerSpec extends SpecBase with MockServiceApp {
   "Unsubmitted Disclosure Controller" - {
     "must display the unsubmitted disclosures when some are present" in {
 

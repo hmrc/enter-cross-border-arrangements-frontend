@@ -17,12 +17,20 @@
 package controllers.actions
 
 import models.UserAnswers
-import models.requests.{DataRequest, DataRequestWithContacts}
+import models.requests.{DataRequest, DataRequestWithContacts, IdentifierRequest, OptionalDataRequest}
 import models.subscription.ContactDetails
+import play.api.mvc.ActionTransformer
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeContactRetrievalAction(dataToReturn: UserAnswers, contactDetails: Option[ContactDetails]) extends ContactRetrievalAction {
+class FakeContactRetrievalProvider(dataToReturn: UserAnswers, contactDetails: Option[ContactDetails]) extends ContactRetrievalAction {
+
+  def apply(): ActionTransformer[DataRequest, DataRequestWithContacts] =
+    new FakeContactRetrievalAction(dataToReturn, contactDetails)
+}
+
+class FakeContactRetrievalAction(dataToReturn: UserAnswers, contactDetails: Option[ContactDetails])
+  extends ActionTransformer[DataRequest, DataRequestWithContacts] {
 
   override protected def transform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] =
     Future(DataRequestWithContacts(request.request, request.internalId, request.enrolmentID, dataToReturn, contactDetails))

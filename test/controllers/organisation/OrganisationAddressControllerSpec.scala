@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
@@ -37,9 +37,8 @@ import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
-class OrganisationAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class OrganisationAddressControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 

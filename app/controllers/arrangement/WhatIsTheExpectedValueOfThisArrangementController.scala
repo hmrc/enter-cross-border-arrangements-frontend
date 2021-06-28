@@ -51,7 +51,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
 
   private val form = formProvider(currencies)
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
 
@@ -71,7 +71,7 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
       renderer.render("arrangement/whatIsTheExpectedValueOfThisArrangement.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.intermediaries.AreYouSureYouWantToRemoveIntermediaryFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -37,9 +37,9 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val formProvider = new AreYouSureYouWantToRemoveIntermediaryFormProvider()
   val form = formProvider()
@@ -54,12 +54,6 @@ class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with 
   val userAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(IntermediaryLoopPage, 0, intermediaryLoop).success.value
-
-  val mockSessionRepository = mock[SessionRepository]
-
-  override def afterEach() = {
-    reset(mockSessionRepository)
-  }
 
   "AreYouSureYouWantToRemoveIntermediary Controller" - {
 

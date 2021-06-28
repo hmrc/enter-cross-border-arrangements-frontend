@@ -16,11 +16,11 @@
 
 package controllers
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class SignOutControllerSpec extends SpecBase {
+class SignOutControllerSpec extends SpecBase with MockServiceApp {
 
   private def signOutRoute: String = controllers.routes.SignOutController.signOut().url
   private val application = applicationBuilder().build()

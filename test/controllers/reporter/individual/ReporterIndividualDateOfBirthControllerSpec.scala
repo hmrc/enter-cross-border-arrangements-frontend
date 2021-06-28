@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.individual.ReporterIndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,12 +36,12 @@ import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   val formProvider = new ReporterIndividualDateOfBirthFormProvider()
   private def form = formProvider()
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC).minusDays(1)
 

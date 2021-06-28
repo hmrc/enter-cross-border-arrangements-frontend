@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.reporter.RoleInArrangementFormProvider
 import matchers.JsonMatchers
 import models.reporter.RoleInArrangement
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class RoleInArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class RoleInArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
   lazy val roleInArrangementRoute = controllers.reporter.routes.RoleInArrangementController.onPageLoad(0, NormalMode).url
 

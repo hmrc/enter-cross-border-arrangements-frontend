@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
@@ -36,9 +36,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TaxpayerSelectTypeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class TaxpayerSelectTypeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url
 

@@ -60,7 +60,7 @@ class ReporterTaxResidentCountryController @Inject()(
   val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
   private val form = formProvider(countries)
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
     val preparedForm: Form[Country] = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index) match {
@@ -79,7 +79,7 @@ class ReporterTaxResidentCountryController @Inject()(
       renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
