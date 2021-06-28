@@ -66,7 +66,7 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .right.flatMap {
-          case s if s.matches(decimalCommaRegexp) =>
+          case s if s.trim.matches(decimalCommaRegexp) =>
             Left(Seq(FormError(key, wholeNumberKey, args)))
           case s =>
             nonFatalCatch
