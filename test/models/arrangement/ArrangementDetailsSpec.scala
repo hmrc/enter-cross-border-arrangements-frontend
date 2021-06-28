@@ -18,6 +18,7 @@ package models.arrangement
 
 import base.ModelSpecBase
 import generators.ModelGenerators
+import models.CountryList.UnitedKingdom
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
@@ -58,7 +59,7 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
           arrangementName = "testArrangement",
           implementationDate = LocalDate.now(),
           reportingReason = Some("DAC6701"),
-          countriesInvolved = List("GB"),
+          countriesInvolved = List(UnitedKingdom),
           expectedValue = ExpectedArrangementValue("GBP", 100),
           nationalProvisionDetails = "testNationalProvision",
           arrangementDetails = "testArrangementDetails"
@@ -96,7 +97,7 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
           arrangementName = "testArrangement",
           implementationDate = LocalDate.now(),
           reportingReason = Some("DAC6701"),
-          countriesInvolved = List("GB"),
+          countriesInvolved = List(UnitedKingdom),
           expectedValue = ExpectedArrangementValue("GBP", 100),
           nationalProvisionDetails = "testNationalProvision",
           arrangementDetails = "testArrangementDetails"

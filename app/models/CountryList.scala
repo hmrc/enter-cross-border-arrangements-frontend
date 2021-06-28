@@ -27,8 +27,10 @@ sealed trait CountryList extends Ordered[CountryList] {
     (this, that) match {
       case (UnitedKingdom, _) => Int.MinValue
       case (_, UnitedKingdom) => Int.MaxValue
-      case (country, other) => country.toString.compareTo(other.toString)
+      case (country, other) => country.name.compareTo(other.name)
     }
+
+  val name: String = getClass.getSimpleName
 }
 
 object CountryList extends Enumerable.Implicits {
