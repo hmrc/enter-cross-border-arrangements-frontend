@@ -601,12 +601,12 @@ whatIsTheExpectedValueOfThisArrangement.description = This is the exact amount i
 whatIsTheExpectedValueOfThisArrangement.currency = Currency
 whatIsTheExpectedValueOfThisArrangement.currency.hint = Enter a currency
 whatIsTheExpectedValueOfThisArrangement.amount = Amount
-whatIsTheExpectedValueOfThisArrangement.amount.hint = Enter an amount without a decimal point. For example, 10000 or 100000
+whatIsTheExpectedValueOfThisArrangement.amount.hint = Must be a whole number without punctuation, like 1000
 whatIsTheExpectedValueOfThisArrangement.checkYourAnswersLabel = Total value
 whatIsTheExpectedValueOfThisArrangement.error.currency.required = Enter a currency
-whatIsTheExpectedValueOfThisArrangement.error.amount.required = Enter an amount without a decimal point, this can be 0
+whatIsTheExpectedValueOfThisArrangement.error.amount.required = Enter an amount
 
-whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber = Enter an amount without a decimal point, this can be 0
+whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber = Amount must only include numbers 0 to 9
 whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric = Amount must only include numbers 0 to 9
 whatIsTheExpectedValueOfThisArrangement.error.amount.outOfRange = Amount must only include numbers 0 to 9
 
