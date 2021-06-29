@@ -41,6 +41,7 @@
                     },
                     id: "addressLine1",
                     name: "addressLine1",
+                    autocomplete: "address-line1",
                     value: form.addressLine1.value,
                     errorMessage: form.addressLine1.error
                   }) }}
@@ -51,6 +52,7 @@
                     },
                     id: "addressLine2",
                     name: "addressLine2",
+                    autocomplete: "address-line2",
                     value: form.addressLine2.value,
                     errorMessage: form.addressLine2.error
                   }) }}
@@ -61,6 +63,7 @@
                     },
                     id: "addressLine3",
                     name: "addressLine3",
+                    autocomplete: "address-level2",
                     value: form.addressLine3.value,
                     errorMessage: form.addressLine3.error
                   }) }}
@@ -71,6 +74,7 @@
                     },
                     id: "city",
                     name: "city",
+                    autocomplete: "address-level1",
                     value: form.city.value,
                     errorMessage: form.city.error
                   }) }}
@@ -87,24 +91,24 @@
                   }) }}
 
                 {% if isUkAddress %}
-                        {{ govukInput ({
-                            name: "country",
-                            value: "GB",
-                            attributes: {
-                                "hidden": "true"
-                            }
-                        }) }}
+                  {{ govukInput ({
+                      name: "country",
+                      value: "GB",
+                      attributes: {
+                          "hidden": "true"
+                      }
+                  }) }}
                 {% else %}
-                      {{ govukSelect({
-                         classes: "govuk-input--width-20 autocomplete",
-                         label: {
-                           text: messages('address.country')
-                         },
-                         id: "country",
-                         name: "country",
-                         errorMessage: form.country.error,
-                         items: countries
-                       }) }}
+                  {{ govukSelect({
+                     classes: "govuk-input--width-20 autocomplete",
+                     label: {
+                       text: messages('address.country')
+                     },
+                     id: "country",
+                     name: "country",
+                     errorMessage: form.country.error,
+                     items: countries
+                   }) }}
                 {% endif %}
 
                   {{ govukButton({
