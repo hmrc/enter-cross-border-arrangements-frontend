@@ -26,9 +26,7 @@
 
         <div class="govuk-body">
 
-          {% if emailToggle %}
-            <p>{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</p>
-          {% endif %}
+          <p>{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</p>
 
           {% if disclosureID %}
             <p>{{ messages("disclosureConfirmation.p2") }}</p>

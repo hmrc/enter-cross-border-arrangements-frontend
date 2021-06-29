@@ -102,20 +102,11 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
       }
   }
 
-  private def sendDeleteMail(ids: GeneratedIDs)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]]  = {
-
-    if (frontendAppConfig.sendEmailToggle) {
-
-      request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
-        case Some(detail) =>
-          emailService.sendEmail(request.contacts, GeneratedIDs(Some(detail.arrangementID), Some(detail.disclosureID)), "dac6del", ids.messageRefID.get)
-        case _ => throw new IllegalStateException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
-      }
+  private def sendDeleteMail(ids: GeneratedIDs)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]]  =
+    request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
+      case Some(detail) =>
+        emailService.sendEmail(request.contacts, GeneratedIDs(Some(detail.arrangementID), Some(detail.disclosureID)), "dac6del", ids.messageRefID.get)
+      case _ => throw new IllegalStateException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
     }
-    else {
-      logger.warn("Email not sent - toggle set to false")
-      Future.successful(None)
-    }
-  }
 }
 
