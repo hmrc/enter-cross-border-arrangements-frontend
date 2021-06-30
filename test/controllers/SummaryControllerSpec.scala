@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.HistoryConnector
 import controllers.actions.FakeContactRetrievalAction
-import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
+import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, validIndividual}
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -28,8 +28,9 @@ import models.reporter.RoleInArrangement.Taxpayer
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
+import models.reporter.{ReporterDetails, ReporterLiability}
 import models.subscription.ContactDetails
-import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
+import models.{AddressLookup, Country, LoopDetails, Name, Submission, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.affected.AffectedStatusPage
@@ -38,10 +39,10 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
+import pages.reporter._
 import pages.reporter.individual._
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -159,5 +160,28 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
 
       application.stop()
     }
+
+    "do not display associated enterprises under certain conditions" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val reporterLiability = ReporterLiability("intermediary")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
+      submission.displayAssociatedEnterprises mustBe(false)
+    }
+
+    "display associated enterprises otherwise" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val reporterLiability = ReporterLiability("taxpayer")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
+      submission.displayAssociatedEnterprises mustBe(true)
+    }
+
   }
 }

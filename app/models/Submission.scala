@@ -52,6 +52,9 @@ case class Submission(enrolmentID: String
 
   val getDisclosureType: DisclosureType = disclosureDetails.disclosureType
 
+  val displayAssociatedEnterprises: Boolean =
+    reporterDetails.exists(_.isTaxpayer) || associatedEnterprises.nonEmpty
+
   def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
 
   def updateIds(ids: GeneratedIDs): GeneratedIDs = ids match {
