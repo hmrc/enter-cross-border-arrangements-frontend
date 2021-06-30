@@ -33,6 +33,8 @@ case class ReporterDetails(individual: Option[Individual] = None,
   }
 
   val isTaxpayer: Boolean = liability.exists(_.role == "taxpayer")
+
+  val isIntermediary: Boolean = liability.exists(_.role == "intermediary")
 }
 
 object ReporterDetails {
