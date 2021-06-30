@@ -4,8 +4,6 @@ GET        /                                            controllers.IndexControl
 
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
-
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
@@ -569,7 +567,7 @@ GET        /confirmation-type/:id                                controllers.con
 GET        /disclosure-received/:id                              controllers.confirmation.NewDisclosureConfirmationController.onPageLoad(id: Int)
 GET        /addition-received/:id                                controllers.confirmation.AdditionalDisclosureConfirmationController.onPageLoad(id: Int)
 GET        /replacement-received/:id                             controllers.confirmation.ReplacementDisclosureConfirmationController.onPageLoad(id: Int)
-GET        /disclosure/disclosure-has-been-deleted                      controllers.confirmation.YourDisclosureHasBeenDeletedController.onPageLoad()
+GET        /disclosure/disclosure-has-been-deleted               controllers.confirmation.YourDisclosureHasBeenDeletedController.onPageLoad()
 GET        /unsubmitted-disclosures                              controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 # DISCLOSURE DETAILS ROUTES  -  (TASK LIST)
