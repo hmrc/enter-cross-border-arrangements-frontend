@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.HistoryConnector
 import controllers.actions._
+import controllers.exceptions.DiscloseDetailsNotAvailableException
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper._
 import models.hallmarks.JourneyStatus
@@ -64,32 +65,31 @@ class DisclosureDetailsController @Inject()(
     sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply()).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
-      val arrangementMessage: String = request.userAnswers.fold("") {
-        value => value.get(DisclosureDetailsPage, id).flatMap(_.arrangementID)
-          .map(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
-          .getOrElse("")
-      }
+
+      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new DiscloseDetailsNotAvailableException())
+
+      val arrangementMessage: String = disclosureDetails.arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers.get, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable =>
+      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable =>
 
         val json = Json.obj(
           "id" -> id,
           "arrangementID" -> arrangementMessage,
-          "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers.get, HallmarkStatusPage, id),
-          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers.get, ArrangementStatusPage, id, isInitialDisclosureMarketable),
-          "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers.get, ReporterStatusPage, id),
-          "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers.get, RelevantTaxpayerStatusPage, id),
-          "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers.get, AssociatedEnterpriseStatusPage, id),
-          "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers.get, IntermediariesStatusPage, id),
-          "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers.get, AffectedStatusPage, id),
-          "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers.get, DisclosureStatusPage, id),
-          "userCanSubmit" -> userCanSubmit(request.userAnswers.get, id, isInitialDisclosureMarketable),
-          "displaySectionOptional" -> displaySectionOptional(request.userAnswers.get, id, isInitialDisclosureMarketable),
+          "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
+          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, isInitialDisclosureMarketable),
+          "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
+          "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
+          "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
+          "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
+          "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
+          "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
+          "userCanSubmit" -> userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable),
+          "displaySectionOptional" -> displaySectionOptional(request.userAnswers, id, isInitialDisclosureMarketable),
           "backLink" -> backLink,
           "summaryLink" -> summaryLink
         )

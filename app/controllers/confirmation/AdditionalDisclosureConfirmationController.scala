@@ -20,14 +20,16 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
 import pages.GeneratedIDPage
+import pages.disclosure.DisclosureDetailsPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AdditionalDisclosureConfirmationController @Inject()(
@@ -38,6 +40,7 @@ class AdditionalDisclosureConfirmationController @Inject()(
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
+    sessionRepository: SessionRepository,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -63,6 +66,12 @@ class AdditionalDisclosureConfirmationController @Inject()(
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
       )
+
+      for {
+        updatedAnswers <- request.userAnswers.remove(DisclosureDetailsPage, id)
+      } yield {
+        sessionRepository.set(updatedAnswers)
+      }
 
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }

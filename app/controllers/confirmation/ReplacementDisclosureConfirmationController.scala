@@ -20,10 +20,12 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
 import pages.GeneratedIDPage
+import pages.disclosure.DisclosureDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -37,6 +39,7 @@ class ReplacementDisclosureConfirmationController @Inject()(
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
+    sessionRepository: SessionRepository,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -56,6 +59,12 @@ class ReplacementDisclosureConfirmationController @Inject()(
         "emailMessage" -> emailMessage,
         "emailToggle" -> appConfig.sendEmailToggle
       )
+
+      for {
+        updatedAnswers <- request.userAnswers.remove(DisclosureDetailsPage, id)
+      } yield {
+        sessionRepository.set(updatedAnswers)
+      }
 
       renderer.render("confirmation/replacementDisclosureConfirmation.njk", json).map(Ok(_))
   }

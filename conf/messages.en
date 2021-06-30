@@ -1207,3 +1207,6 @@ summary.others.heading.one = Other party’s details
 summary.others.heading.many = Other party {0}
 summary.backtodisclosures.link = Back to your disclosure details
 summary.timestamp = This is your draft disclosure as at {0}. It has not been sent.
+
+disclosureAlreadySent.title = You have already sent your disclosure
+disclosureAlreadySent.heading = You have already sent your disclosure
