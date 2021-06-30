@@ -75,7 +75,6 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
       bind[CurrencyListFactory].toInstance(mockCurrencyList)
     ).build()
 
-
     val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
     val result = route(application, request).value

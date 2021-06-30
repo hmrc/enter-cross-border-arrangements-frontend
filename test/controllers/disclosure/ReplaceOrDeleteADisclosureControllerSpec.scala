@@ -22,18 +22,16 @@ import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureType, IDVerificationStatus, ReplaceOrDeleteADisclosure}
 import models.{Country, NormalMode, SubmissionDetails, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.disclosure.{DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import play.api.data.FormError
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import java.time.LocalDateTime
@@ -41,9 +39,10 @@ import scala.concurrent.Future
 
 class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-
-
   val formProvider = new ReplaceOrDeleteADisclosureFormProvider()
+  val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+  val mockHistoryConnector = mock[HistoryConnector]
+
   val countries = List(Country("valid","GB","United Kingdom"))
   val form = formProvider(countries)
 
@@ -60,6 +59,18 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
   val userAnswers = emptyUserAnswers
     .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure(arrangementID, disclosureID)).success.value
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+      bind[HistoryConnector].toInstance(mockHistoryConnector)
+    )
+
+  override def beforeEach: Unit = {
+    reset(mockCrossBorderArrangementsConnector, mockHistoryConnector)
+    super.beforeEach
+  }
+
   "ReplaceOrDeleteADisclosure Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -67,12 +78,12 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, replaceOrDeleteADisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -85,8 +96,6 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -94,12 +103,13 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, replaceOrDeleteADisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -119,16 +129,9 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-      val mockHistoryConnector = mock[HistoryConnector]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -137,46 +140,26 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any())).thenReturn(Future.successful(submissionDetails))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
-            bind[HistoryConnector].toInstance(mockHistoryConnector)
-          )
-          .build()
-
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, replaceOrDeleteADisclosureRoute)
           .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
-
-      application.stop()
     }
 
     "must display id validation errors if arrangement ID is not found" in {
-
-      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-
+      retrieveUserAnswersData(emptyUserAnswers)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.ArrangementIDNotFound)))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
 
       val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
         .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
@@ -187,7 +170,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -200,26 +183,15 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return a Bad Request and display id validation errors if disclosure ID is not found for an enrolment ID" in {
-
-      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-
+      retrieveUserAnswersData(emptyUserAnswers)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.DisclosureIDNotFound)))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
 
       val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
         .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
@@ -230,7 +202,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -243,26 +215,16 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must display id validation errors if ids aren't from the same submission" in {
-
-      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.IDsDoNotMatch)))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
         .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
@@ -273,7 +235,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -286,26 +248,16 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must display id validation errors if ids do not exist" in {
 
-      val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-
+      retrieveUserAnswersData(emptyUserAnswers)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       when(mockCrossBorderArrangementsConnector.verifyDisclosureIDs(any(),any(), any())(any()))
         .thenReturn(Future.successful(IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
 
       val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute)
         .withFormUrlEncodedBody(("arrangementID", arrangementID), ("disclosureID", disclosureID))
@@ -317,7 +269,7 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -330,8 +282,6 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -339,13 +289,14 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(POST, replaceOrDeleteADisclosureRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -358,57 +309,47 @@ class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "disclosure/replaceOrDeleteADisclosure.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-       application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, replaceOrDeleteADisclosureRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, replaceOrDeleteADisclosureRoute)
           .withFormUrlEncodedBody(("arrangementID", "value 1"), ("disclosureID", "value 2"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must return RuntimeException if disclosure type is missing or not replace or delete" in {
-
-      val application = applicationBuilder(userAnswers = Some(UserAnswers(userAnswersId))).build()
+      retrieveUserAnswersData(UserAnswers(userAnswersId))
 
       val request =
         FakeRequest(POST, replaceOrDeleteADisclosureRoute)
           .withFormUrlEncodedBody(("arrangementID", "value 1"), ("disclosureID", "value 2"))
 
       intercept[RuntimeException] {
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
       }
-      application.stop()
     }
   }
 }
