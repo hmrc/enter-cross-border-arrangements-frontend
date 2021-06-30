@@ -38,11 +38,11 @@ abstract class AbstractNavigator {
     }
 
   private[navigation] def continueToParentJourney(id: Int, checkRoute: CheckRoute): Call = checkRoute match {
-    case AssociatedEnterprisesRouting(NormalMode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, NormalMode)
-    case TaxpayersRouting(NormalMode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, NormalMode)
-    case IntermediariesRouting(NormalMode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, NormalMode)
-    case AffectedRouting(NormalMode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
-    case _                                        => throwRoutingError
+    case AssociatedEnterprisesRouting(mode) => controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(id, mode)
+    case TaxpayersRouting(mode)             => controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(id, mode)
+    case IntermediariesRouting(mode)        => controllers.intermediaries.routes.WhatTypeofIntermediaryController.onPageLoad(id, mode)
+    case AffectedRouting(mode)              => controllers.affected.routes.AffectedCheckYourAnswersController.onPageLoad(id, None)
+    case _                                  => throwRoutingError
   }
 
   private[navigation] def throwRoutingError = throw new IllegalStateException("Organisation or Individual journeys must be called from a parent journey")

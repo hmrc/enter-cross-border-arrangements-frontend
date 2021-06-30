@@ -22,17 +22,19 @@ import forms.individual.IndividualDateOfBirthFormProvider
 import models.{Mode, UserAnswers}
 import navigation.NavigatorForIndividual
 import pages.individual.{IndividualDateOfBirthPage, IndividualNamePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.DateInput
 
 class IndividualDateOfBirthController @Inject()(
     override val messagesApi: MessagesApi,
@@ -56,7 +58,7 @@ class IndividualDateOfBirthController @Inject()(
         case None        => form
       }
 
-      val viewModel = DateInput.localDate(preparedForm("value"))
+      val viewModel = DateInput.localDate(preparedForm("dob"))
 
       val json = Json.obj(
         "form" -> preparedForm,
@@ -75,10 +77,11 @@ class IndividualDateOfBirthController @Inject()(
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>  {
 
-          val viewModel = DateInput.localDate(formWithErrors("value"))
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[LocalDate]) =>  {
+
+          val viewModel: DateInput.ViewModel = DateInput.localDate(field = formWithErrors("dob"))
 
           val json = Json.obj(
             "form" -> formWithErrors,

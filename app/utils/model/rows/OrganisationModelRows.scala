@@ -75,7 +75,7 @@ trait OrganisationModelRows extends DisplayRowBuilder {
 
   def buildTaxResidencySummaryForOrganisation(organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] = {
 
-    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = organisation.taxResidencies.filter(_.country.isDefined).zipWithIndex
+    val validDetailsWithIndex: IndexedSeq[(TaxResidency, Int)] = organisation.taxResidencies.filter(_.country.isDefined).sorted.zipWithIndex
 
     val header: DisplayRow = toDisplayRowNoBorder(
       msgKey = "whichCountryTaxForOrganisation",

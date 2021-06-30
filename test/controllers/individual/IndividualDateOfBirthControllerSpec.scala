@@ -31,7 +31,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -45,9 +46,9 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
 
   val validData =
     Map(
-      "value.day"   -> validAnswer.getDayOfMonth.toString,
-      "value.month" -> validAnswer.getMonthValue.toString,
-      "value.year"  -> validAnswer.getYear.toString
+      "dob.day"   -> validAnswer.getDayOfMonth.toString,
+      "dob.month" -> validAnswer.getMonthValue.toString,
+      "dob.year"  -> validAnswer.getYear.toString
     )
 
   lazy val individualDateOfBirthRoute = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(0, NormalMode).url
@@ -58,9 +59,9 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
   def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, individualDateOfBirthRoute)
       .withFormUrlEncodedBody(
-        "value.day"   -> validAnswer.getDayOfMonth.toString,
-        "value.month" -> validAnswer.getMonthValue.toString,
-        "value.year"  -> validAnswer.getYear.toString
+        "dob.day"   -> validAnswer.getDayOfMonth.toString,
+        "dob.month" -> validAnswer.getMonthValue.toString,
+        "dob.year"  -> validAnswer.getYear.toString
       )
 
   "IndividualDateOfBirth Controller" - {
@@ -80,7 +81,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val viewModel = DateInput.localDate(form("value"))
+      val viewModel = DateInput.localDate(form("dob"))
 
       val expectedJson = Json.obj(
         "form" -> form,
@@ -114,7 +115,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
 
       val filledForm = form.bind(validData)
 
-      val viewModel = DateInput.localDate(filledForm("value"))
+      val viewModel = DateInput.localDate(filledForm("dob"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -156,8 +157,8 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, individualDateOfBirthRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, individualDateOfBirthRoute).withFormUrlEncodedBody(("dob", "invalid value"))
+      val boundForm = form.bind(Map("dob" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -167,7 +168,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp w
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val viewModel = DateInput.localDate(boundForm("value"))
+      val viewModel = DateInput.localDate(boundForm("dob"))
 
       val expectedJson = Json.obj(
         "form" -> boundForm,

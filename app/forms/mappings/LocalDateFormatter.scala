@@ -58,6 +58,8 @@ private[mappings] class LocalDateFormatter(
     } yield date
   }
 
+  val returnKey: (String, String) => String = (key: String, fieldName: String) =>  s"${key}.$fieldName"
+
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map {
@@ -76,13 +78,15 @@ private[mappings] class LocalDateFormatter(
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
+        Left(List(FormError(returnKey(key, missingFields.head), requiredKey, missingFields ++ args)))
       case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
+        Left(List(FormError(returnKey(key, missingFields.head), twoRequiredKey, missingFields ++ args)))
       case _ =>
-        Left(List(FormError(key, allRequiredKey, args)))
+        Left(List(FormError(returnKey(key, "day"), allRequiredKey, args)))
     }
   }
+
+
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(

@@ -95,7 +95,7 @@ class DateBehaviours extends FieldBehaviours {
 
       val result = form.bind(Map.empty[String, String])
 
-      result.errors should contain only FormError(key, requiredAllKey, errorArgs)
+      result.errors should contain only FormError(s"$key.day", requiredAllKey, errorArgs)
     }
   }
 }

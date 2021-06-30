@@ -27,9 +27,11 @@ class EmailAddressForIndividualFormProvider @Inject() extends Mappings with Rege
 
   def apply(): Form[String] =
     Form(
-      "email" -> validatedTextMaxLength(
+      "email" -> validatedText(
         "emailAddressForIndividual.error.required",
+        "emailAddressForIndividual.error.invalid",
         "emailAddressForIndividual.error.length",
+        emailRegex,
         maxLength)
     )
 }

@@ -16,8 +16,7 @@
 
 package helpers.data
 
-import java.time.LocalDate
-
+import models.CountryList.{France, UnitedKingdom}
 import models.affected.Affected
 import models.arrangement.{ArrangementDetails, ExpectedArrangementValue, WhyAreYouReportingThisArrangementNow}
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -44,6 +43,8 @@ import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
+
+import java.time.LocalDate
 
 object ValidUserAnswersForSubmission {
 
@@ -133,7 +134,7 @@ object ValidUserAnswersForSubmission {
       "name",
       validToday,
       Some("DAC6703"),
-      List("GB", "FR"),
+      List(UnitedKingdom, France),
       ExpectedArrangementValue("GBP", 1000),
       "nationalProvisions",
       "arrangementDetails"
