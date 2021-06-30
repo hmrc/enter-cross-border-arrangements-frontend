@@ -56,6 +56,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
   override def beforeEach: Unit = {
     when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
     when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any())).thenReturn(Future.successful(None))
+    when(mockAppConfig.sendEmailToggle).thenReturn(true)
     when(mockEmailService.sendEmail(any(), any(), any(), any())(any()))
       .thenReturn(Future.successful(Some(HttpResponse(ACCEPTED, ""))))
     when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))

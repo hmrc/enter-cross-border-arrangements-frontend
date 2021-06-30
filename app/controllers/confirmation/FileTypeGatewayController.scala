@@ -53,7 +53,12 @@ class FileTypeGatewayController @Inject()(
 
       val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id)
 
-      sendMail(id, disclosureDetails.get.disclosureType.toString)
+      if (frontendAppConfig.sendEmailToggle) {
+        sendMail(id, disclosureDetails.get.disclosureType.toString)
+      } else {
+          logger.warn("Email not sent - toggle set to false")
+          Future.successful(None)
+        }
 
       Future.successful(disclosureDetails.map(_.disclosureType)).map { disclosureType =>
         Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))

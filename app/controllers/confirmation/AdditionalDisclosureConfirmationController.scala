@@ -58,6 +58,7 @@ class AdditionalDisclosureConfirmationController @Inject()(
         "panelTitle" -> confirmationPanelTitle,
         "panelText" -> confirmationPanelText(disclosureID),
         "emailMessage" -> emailMessage,
+        "emailToggle" -> appConfig.sendEmailToggle,
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)

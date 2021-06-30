@@ -58,6 +58,7 @@ class YourDisclosureHasBeenDeletedController @Inject()(
             "messageRefid" -> messageRefID,
             "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
             "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
+            "emailToggle" -> appConfig.sendEmailToggle,
             "emailMessage" -> emailMessage
           )
           renderer.render ("confirmation/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )

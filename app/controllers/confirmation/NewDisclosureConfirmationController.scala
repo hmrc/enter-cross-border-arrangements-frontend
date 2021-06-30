@@ -61,6 +61,7 @@ class NewDisclosureConfirmationController @Inject()(
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
+        "emailToggle" -> appConfig.sendEmailToggle,
         "emailMessage" -> emailMessage
       )
 

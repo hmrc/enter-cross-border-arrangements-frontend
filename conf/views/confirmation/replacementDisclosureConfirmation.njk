@@ -20,7 +20,9 @@
 
         <div class="govuk-body">
 
-          <p>{{ messages("replacementDisclosureConfirmation.p1", emailMessage) }}</p>
+          {% if emailToggle %}
+              <p>{{ messages("replacementDisclosureConfirmation.p1", emailMessage) }}</p>
+          {% endif %}
 
           <p>{{ messages("replacementDisclosureConfirmation.p2", messageRefID) }}</p>
 
