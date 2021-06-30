@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TaxpayerSelectTypeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

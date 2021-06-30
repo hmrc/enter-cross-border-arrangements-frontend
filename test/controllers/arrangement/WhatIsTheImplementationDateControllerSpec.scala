@@ -16,31 +16,25 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.WhatIsTheImplementationDateFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.arrangement.WhatIsTheImplementationDatePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.DateInput
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsTheImplementationDateControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhatIsTheImplementationDateControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTheImplementationDateFormProvider()
   private def form = formProvider()

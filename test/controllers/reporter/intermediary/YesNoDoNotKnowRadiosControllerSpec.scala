@@ -16,7 +16,7 @@
 
 package controllers.reporter.intermediary
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val intermediaryExemptionInEURoute = routes.IntermediaryExemptionInEUController.onPageLoad(0, NormalMode).url
 

@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsIndividualResidentForTaxOtherCountriesFormProvider()
   val form = formProvider()

@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +27,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SessionExpiredControllerSpec extends SpecBase with MockServiceApp {
+class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Session Expired Controller" - {
 

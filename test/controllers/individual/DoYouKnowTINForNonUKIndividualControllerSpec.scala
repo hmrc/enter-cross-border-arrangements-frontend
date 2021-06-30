@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.individual.DoYouKnowTINForNonUKIndividualFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class DoYouKnowTINForNonUKIndividualControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DoYouKnowTINForNonUKIndividualFormProvider()
   val form = formProvider("the country")

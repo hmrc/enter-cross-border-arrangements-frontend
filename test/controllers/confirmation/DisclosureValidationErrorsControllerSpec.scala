@@ -16,7 +16,7 @@
 
 package controllers.confirmation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers.containJson
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -30,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class DisclosureValidationErrorsControllerSpec extends SpecBase with MockServiceApp {
+class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val errors = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
   lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url

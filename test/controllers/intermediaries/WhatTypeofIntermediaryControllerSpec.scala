@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.intermediaries.WhatTypeofIntermediaryFormProvider
 import matchers.JsonMatchers
 import models.intermediaries.WhatTypeofIntermediary
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhatTypeofIntermediaryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhatTypeofIntermediaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val whatTypeofIntermediaryRoute = routes.WhatTypeofIntermediaryController.onPageLoad(0, NormalMode).url
 

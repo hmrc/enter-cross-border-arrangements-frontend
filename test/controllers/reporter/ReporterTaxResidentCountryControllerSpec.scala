@@ -16,7 +16,7 @@
 
 package controllers.reporter
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.ReporterTaxResidentCountryFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -38,7 +38,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class ReporterTaxResidentCountryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/non-uk-tin-known-0/0")
 

@@ -31,7 +31,7 @@ import play.api.mvc.Call
 import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
-trait MockServiceApp extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
   self: TestSuite =>
 
   def onwardRoute = Call("GET", "/foo")

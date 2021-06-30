@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import matchers.JsonMatchers
@@ -39,7 +39,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReplaceOrDeleteADisclosureControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

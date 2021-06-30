@@ -16,7 +16,7 @@
 
 package controllers.reporter.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.taxpayer.TaxpayerWhyReportArrangementFormProvider
 import matchers.JsonMatchers
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val taxpayerWhyReportArrangementRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(0, NormalMode).url
 

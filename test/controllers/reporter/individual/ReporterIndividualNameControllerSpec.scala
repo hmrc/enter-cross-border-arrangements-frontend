@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.individual.ReporterIndividualNameFormProvider
 import matchers.JsonMatchers
 import models.{Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterIndividualNameControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

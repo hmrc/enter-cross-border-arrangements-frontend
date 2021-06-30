@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.enterprises.AreYouSureYouWantToRemoveEnterpriseFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -37,9 +37,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
-
-
+class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new AreYouSureYouWantToRemoveEnterpriseFormProvider()
   val form = formProvider()

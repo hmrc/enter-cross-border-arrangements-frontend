@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class OrganisationSelectAddressControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]

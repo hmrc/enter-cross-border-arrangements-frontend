@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
@@ -40,7 +40,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class DisclosureDetailsControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val mockValidationConnector = mock[ValidationConnector]
   private val mockXMLGenerationService = mock[XMLGenerationService]

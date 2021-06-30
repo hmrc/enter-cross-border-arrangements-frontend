@@ -16,7 +16,7 @@
 
 package controllers.reporter.intermediary
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.IntermediaryWhichCountriesExemptFormProvider
 import matchers.JsonMatchers
 import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val intermediaryWhichCountriesExemptRoute = routes.IntermediaryWhichCountriesExemptController.onPageLoad(0, NormalMode).url
 

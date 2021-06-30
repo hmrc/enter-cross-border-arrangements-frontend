@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.unsubmitted.UnsubmittedDisclosurePage
@@ -26,7 +26,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class IndexControllerSpec extends SpecBase with MockServiceApp {
+class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Index Controller" - {
 

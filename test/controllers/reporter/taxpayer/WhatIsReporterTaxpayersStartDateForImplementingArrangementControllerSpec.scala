@@ -16,7 +16,7 @@
 
 package controllers.reporter.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementFormProvider
 import matchers.JsonMatchers
 import models.SelectType.Organisation
@@ -41,7 +41,7 @@ import utils.DateInput
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTaxpayersStartDateForImplementingArrangementFormProvider()
   private def form = formProvider()

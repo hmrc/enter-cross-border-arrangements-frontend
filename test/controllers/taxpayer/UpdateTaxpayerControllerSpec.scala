@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import forms.taxpayer.UpdateTaxpayerFormProvider
 import helpers.data.ValidUserAnswersForSubmission.validIndividual
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class UpdateTaxpayerControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 

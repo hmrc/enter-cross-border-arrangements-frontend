@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.ReporterEmailAddressFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterIndividualEmailAddressControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReporterIndividualEmailAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
 

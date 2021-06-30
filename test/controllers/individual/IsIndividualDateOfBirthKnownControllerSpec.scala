@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.individual.IsIndividualDateOfBirthKnownFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IsIndividualDateOfBirthKnownControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsIndividualDateOfBirthKnownFormProvider()
   private val form = formProvider()

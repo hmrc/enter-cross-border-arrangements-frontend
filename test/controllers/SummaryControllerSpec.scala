@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.HistoryConnector
 import controllers.actions.FakeContactRetrievalProvider
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
@@ -52,7 +52,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),

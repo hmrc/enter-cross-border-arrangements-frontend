@@ -16,7 +16,7 @@
 
 package controllers.confirmation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.subscription.ContactDetails
@@ -30,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class FileTypeGatewayControllerSpec extends SpecBase with MockServiceApp {
+class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
 
@@ -66,7 +66,6 @@ class FileTypeGatewayControllerSpec extends SpecBase with MockServiceApp {
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
-
 
      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 

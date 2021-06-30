@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.HistoryConnector
 import forms.disclosure.DisclosureTypeFormProvider
 import matchers.JsonMatchers
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.Future
 
 
-class DisclosureTypeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class DisclosureTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val disclosureTypeRoute = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode).url
 

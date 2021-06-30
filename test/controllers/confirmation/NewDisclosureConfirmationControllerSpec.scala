@@ -16,7 +16,7 @@
 
 package controllers.confirmation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
@@ -32,7 +32,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class NewDisclosureConfirmationControllerSpec extends SpecBase with MockServiceApp {
+class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
   override def beforeEach {

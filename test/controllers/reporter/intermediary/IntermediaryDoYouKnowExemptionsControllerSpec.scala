@@ -16,7 +16,7 @@
 
 package controllers.reporter.intermediary
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.intermediary.IntermediaryDoYouKnowExemptionsFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IntermediaryDoYouKnowExemptionsFormProvider()
   val form = formProvider()

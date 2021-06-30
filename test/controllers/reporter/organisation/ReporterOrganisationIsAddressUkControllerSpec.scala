@@ -16,7 +16,7 @@
 
 package controllers.reporter.organisation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.organisation.ReporterOrganisationIsAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new ReporterOrganisationIsAddressUkFormProvider()
   val form = formProvider()

@@ -16,7 +16,7 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.WhatIsTheExpectedValueOfThisArrangementFormProvider
 import matchers.JsonMatchers
 import models.arrangement.ExpectedArrangementValue
@@ -38,7 +38,7 @@ import utils.CurrencyListFactory
 
 import scala.concurrent.Future
 
-class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTheExpectedValueOfThisArrangementFormProvider()
   val mockCurrencyList = mock[CurrencyListFactory]

@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 

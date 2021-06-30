@@ -16,7 +16,7 @@
 
 package controllers.affected
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.affected.AreYouSureYouWantToRemoveAffectedFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new AreYouSureYouWantToRemoveAffectedFormProvider()
   val form = formProvider()

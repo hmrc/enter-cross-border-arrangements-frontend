@@ -16,7 +16,7 @@
 
 package controllers.confirmation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction, FakeContactRetrievalProvider, FakeDataRetrievalActionProvider}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
@@ -32,22 +32,19 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with MockServiceApp {
+class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-    .success.value
-    .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some(""),Some("")))
-    .success.value
-    .set(MessageRefIDPage, 0, "")
-    .success.value
+   val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
 
-  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  override def beforeEach {
+    Mockito.reset(mockContactRetrievalAction)
+    super.beforeEach()
+  }
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-     .overrides(bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
+      .overrides(bind[ContactRetrievalAction].toInstance(mockContactRetrievalAction))
 
   "AdditionalDisclosureConfirmation Controller" - {
 
@@ -56,7 +53,18 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with MockS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success.value
+        .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some(""),Some("")))
+        .success.value
+        .set(MessageRefIDPage, 0, "")
+        .success.value
+
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
       retrieveUserAnswersData(userAnswers)
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
       val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -95,11 +103,9 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with MockS
 
         templateCaptor.getValue mustEqual "internalServerError.njk"
       }
-
     }
 
     "throw an error then display technical error page if no disclosureID is present" in {
-
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 

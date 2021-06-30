@@ -16,7 +16,7 @@
 
 package controllers.confirmation
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.SubscriptionConnector
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
@@ -27,6 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +35,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockServiceApp {
+class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
@@ -44,6 +45,9 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockServi
     .setBase(DisclosureDeleteCheckYourAnswersPage, generatedIDs).success.value
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super.guiceApplicationBuilder()
+    .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
 
   val jsonPayload: String = displaySubscriptionPayloadNoSecondary(
     JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
@@ -92,7 +96,6 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with MockServi
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
 
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))

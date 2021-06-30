@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, EmailConnector, SubscriptionConnector}
 import controllers.RowJsonReads
@@ -39,7 +39,7 @@ import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
-class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
+class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url

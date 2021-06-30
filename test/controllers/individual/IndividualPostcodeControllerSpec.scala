@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.PostcodeFormProvider
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IndividualPostcodeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new PostcodeFormProvider()
   private val form = formProvider()

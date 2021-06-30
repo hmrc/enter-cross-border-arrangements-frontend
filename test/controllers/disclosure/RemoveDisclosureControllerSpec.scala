@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.RemoveDisclosureFormProvider
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class RemoveDisclosureControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

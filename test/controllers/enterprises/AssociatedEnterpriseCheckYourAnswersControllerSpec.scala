@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import helpers.data.ValidUserAnswersForSubmission.{todayMinusOneMonth, validOrganisation}
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.taxpayer.Taxpayer
@@ -40,7 +40,7 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
+class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   override val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/associated-enterprises/update/0")
 

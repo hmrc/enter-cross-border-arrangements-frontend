@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
@@ -38,7 +38,7 @@ import repositories.SessionRepository
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
+class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 

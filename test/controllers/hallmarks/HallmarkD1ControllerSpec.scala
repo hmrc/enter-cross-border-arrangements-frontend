@@ -16,7 +16,7 @@
 
 package controllers.hallmarks
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.hallmarks.HallmarkD1FormProvider
 import matchers.JsonMatchers
 import models.hallmarks.HallmarkD1
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class HallmarkD1ControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class HallmarkD1ControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

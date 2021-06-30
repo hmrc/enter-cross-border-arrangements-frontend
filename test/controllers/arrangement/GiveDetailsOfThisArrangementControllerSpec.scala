@@ -16,7 +16,7 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.GiveDetailsOfThisArrangementFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new GiveDetailsOfThisArrangementFormProvider()
   val form = formProvider()

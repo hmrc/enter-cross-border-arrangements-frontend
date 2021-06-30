@@ -16,7 +16,7 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.WhichExpectedInvolvedCountriesArrangementFormProvider
 import matchers.JsonMatchers
 import models.{CountryList, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val whichExpectedInvolvedCountriesArrangementRoute = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode).url
 

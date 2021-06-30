@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
@@ -25,7 +25,7 @@ import pages.intermediaries.{IntermediariesTypePage, IntermediaryLoopPage, IsExe
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
+class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "must ensure the correct updated loop list" - {
 

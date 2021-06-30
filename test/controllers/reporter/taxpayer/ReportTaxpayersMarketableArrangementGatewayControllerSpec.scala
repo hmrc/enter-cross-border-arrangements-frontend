@@ -16,7 +16,7 @@
 
 package controllers.reporter.taxpayer
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.CrossBorderArrangementsConnector
 import handlers.ErrorHandler
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.Future
 
-class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with MockServiceApp {
+class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val id = "ID"
 

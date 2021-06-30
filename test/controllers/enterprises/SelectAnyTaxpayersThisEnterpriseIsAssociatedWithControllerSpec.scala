@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.enterprises.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{reporterDetailsAsOrganisation, validTaxpayers}
 import matchers.JsonMatchers
@@ -42,7 +42,7 @@ import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 
 import scala.concurrent.Future
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode).url
   lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, CheckMode).url

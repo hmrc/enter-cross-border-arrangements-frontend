@@ -16,7 +16,7 @@
 
 package controllers.reporter.intermediary
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.intermediary.IntermediaryWhyReportInUKFormProvider
 import matchers.JsonMatchers
 import models.reporter.intermediary.IntermediaryWhyReportInUK
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryWhyReportInUKControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IntermediaryWhyReportInUKControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/intermediary/role/0")
 

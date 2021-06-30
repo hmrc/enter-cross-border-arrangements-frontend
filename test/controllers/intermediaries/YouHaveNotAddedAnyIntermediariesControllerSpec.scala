@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.intermediaries.YouHaveNotAddedAnyIntermediariesFormProvider
 import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import matchers.JsonMatchers
@@ -38,7 +38,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

@@ -16,7 +16,7 @@
 
 package controllers.affected
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.affected.AffectedTypeFormProvider
 import matchers.JsonMatchers
 import models.{CheckMode, NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
@@ -33,7 +33,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class AffectedTypeControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new AffectedTypeFormProvider()
   private val form: Form[SelectType] = formProvider()

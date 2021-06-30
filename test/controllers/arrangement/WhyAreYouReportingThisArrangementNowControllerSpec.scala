@@ -16,7 +16,7 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.WhyAreYouReportingThisArrangementNowFormProvider
 import matchers.JsonMatchers
 import models.arrangement.WhyAreYouReportingThisArrangementNow
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class WhyAreYouReportingThisArrangementNowControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val whyAreYouReportingThisArrangementNowRoute = controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(0, NormalMode).url
 

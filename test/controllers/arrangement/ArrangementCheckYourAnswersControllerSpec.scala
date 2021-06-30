@@ -16,7 +16,7 @@
 
 package controllers.arrangement
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import generators.ModelGenerators
 import models.arrangement.ExpectedArrangementValue
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
@@ -37,7 +37,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class ArrangementCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp with BeforeAndAfterEach with ModelGenerators {
+class ArrangementCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach with ModelGenerators {
 
   val oneHundredCharacters: String = "123456789 " * 10
   val textTuples = Seq(

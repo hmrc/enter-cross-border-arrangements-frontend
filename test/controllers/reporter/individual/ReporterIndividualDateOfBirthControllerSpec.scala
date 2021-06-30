@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.individual.ReporterIndividualDateOfBirthFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -37,7 +37,7 @@ import utils.DateInput
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new ReporterIndividualDateOfBirthFormProvider()
   private def form = formProvider()

@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.intermediaries.AreYouSureYouWantToRemoveIntermediaryFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
 
 

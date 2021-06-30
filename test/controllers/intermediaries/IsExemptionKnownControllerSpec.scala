@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import forms.intermediaries.IsExemptionKnownFormProvider
 import matchers.JsonMatchers
 import models.{IsExemptionKnown, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IsExemptionKnownControllerSpec extends SpecBase with MockServiceApp with NunjucksSupport with JsonMatchers {
+class IsExemptionKnownControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(0, NormalMode).url
 

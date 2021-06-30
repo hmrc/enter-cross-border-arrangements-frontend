@@ -16,7 +16,7 @@
 
 package controllers.affected
 
-import base.{MockServiceApp, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.affected.YouHaveNotAddedAnyAffected
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -35,7 +35,7 @@ import play.twirl.api.Html
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AffectedCheckYourAnswersControllerSpec extends SpecBase with MockServiceApp {
+class AffectedCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   override val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/others-affected/update/0")
 
