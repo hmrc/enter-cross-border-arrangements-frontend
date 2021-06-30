@@ -34,9 +34,12 @@
 
           <h1 class="govuk-heading-xl">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.title")}}</h1>
 
-          <p id="national-provisons-hint" class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint1")}}</p>
+          <div id="national-provisons-hint">
 
-          <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint2")}}</p>
+            <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint1")}}</p>
+
+            <p class="govuk-body">{{messages("whichNationalProvisionsIsThisArrangementBasedOn.hint2")}}</p>
+          </div>
 
           {{ govukTextarea({
               label: {

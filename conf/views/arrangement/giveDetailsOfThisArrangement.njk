@@ -34,9 +34,12 @@
 
           <h1 class="govuk-heading-xl">{{messages("giveDetailsOfThisArrangement.title")}}</h1>
 
-          <p id="details-hint" class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint1")}}</p>
+          <div id="details-hint" >
 
-          <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint2")}}</p>
+            <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint1")}}</p>
+
+            <p class="govuk-body">{{messages("giveDetailsOfThisArrangement.hint2")}}</p>
+          </div>
 
           {{ govukTextarea({
             label: {
