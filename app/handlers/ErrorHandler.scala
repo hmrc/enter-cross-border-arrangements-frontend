@@ -68,7 +68,7 @@ class ErrorHandler @Inject()(
     logError(request, exception)
     exception match {
       case e: DiscloseDetailsNotAvailableException =>
-        Future.successful(Redirect(routes.DisclosureAlreadySentController.onPageLoad()))
+        Future.successful(Redirect(routes.DisclosureAlreadySentController.onPageLoad(e.source)))
       case e: UnsupportedRouteException =>
         Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(e.id)))
       case ApplicationException(result, _) =>

@@ -21,11 +21,12 @@ import controllers.actions._
 import handlers.ErrorHandler
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
 import models.GeneratedIDs
-import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
+import pages.disclosure.{DisclosureDeleteCheckYourAnswersPage, ReplaceOrDeleteADisclosurePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class YourDisclosureHasBeenDeletedController @Inject()(
     contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
     errorHandler: ErrorHandler,
+    sessionRepository: SessionRepository,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -61,6 +63,13 @@ class YourDisclosureHasBeenDeletedController @Inject()(
             "emailToggle" -> appConfig.sendEmailToggle,
             "emailMessage" -> emailMessage
           )
+
+          for {
+            updatedAnswers <- request.userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
+          } yield {
+            sessionRepository.set(updatedAnswers)
+          }
+
           renderer.render ("confirmation/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
 
        case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))

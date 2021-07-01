@@ -69,7 +69,7 @@ class DisclosureDetailsController @Inject()(
     implicit request =>
 
 
-      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new DiscloseDetailsNotAvailableException())
+      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new DiscloseDetailsNotAvailableException("sent"))
 
       val arrangementMessage: String = disclosureDetails.arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
 

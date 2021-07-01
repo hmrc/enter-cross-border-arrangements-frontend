@@ -16,4 +16,4 @@
 
 package controllers.exceptions
 
-class DiscloseDetailsNotAvailableException() extends RuntimeException
+class DiscloseDetailsNotAvailableException(val source: String) extends RuntimeException

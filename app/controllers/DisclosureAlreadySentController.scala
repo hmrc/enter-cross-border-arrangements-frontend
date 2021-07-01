@@ -39,13 +39,15 @@ class DisclosureAlreadySentController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(source: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-    renderer.render(
+      val option = if (source == "deleted") "deleted" else "sent"
+      renderer.render(
       "disclosureAlreadySent.njk",
       Json.obj(
-        "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text")
+        "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
+        "option" -> option
       )
     ).map(Ok(_))
   }
