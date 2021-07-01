@@ -61,7 +61,8 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Contr
         .set(MessageRefIDPage, 0, "")
         .success.value
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers,
+        Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
       retrieveUserAnswersData(userAnswers)
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
