@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -48,10 +49,22 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
   private val mockHistoryConnector = mock[HistoryConnector]
 
   override def beforeEach: Unit = {
-    reset(mockRenderer, mockCrossBorderArrangementsConnector)
+    reset(mockCrossBorderArrangementsConnector,
+      mockXMLGenerationService,
+      mockValidationConnector,
+      mockHistoryConnector)
+    super.beforeEach()
   }
 
-  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation,
+    Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super.guiceApplicationBuilder()
+      .overrides(bind[XMLGenerationService].toInstance(mockXMLGenerationService),
+        bind[ValidationConnector].toInstance(mockValidationConnector),
+        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+        bind[HistoryConnector].toInstance(mockHistoryConnector),
+        bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
 
   "DisclosureDetails Controller" - {
 
@@ -60,6 +73,9 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val firstDisclosureSubmissionDetails = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
+        Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
+
       val disclosureDetails = DisclosureDetails(
         disclosureName = "",
         arrangementID = Some("arrangement"),
@@ -67,24 +83,26 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
         initialDisclosureMA = true
       )
 
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
+
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"), UnsubmittedDisclosure("2", "The Revenge"))).success.value
         .set(DisclosureDetailsPage, 1, disclosureDetails)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(1).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
-
-      application.stop()
     }
 
     "return OK and the correct view for a GET if it's a replacement disclosure" in {
@@ -115,15 +133,12 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[HistoryConnector].toInstance(mockHistoryConnector)
-        ).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -132,20 +147,13 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       verify(mockHistoryConnector, times(1)).searchDisclosures(any())(any())
 
       templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
-
-      application.stop()
     }
 
     "must redirect to confirmation page when user submits a completed application" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersForOrganisation))
-        .overrides(
-          bind[XMLGenerationService].toInstance(mockXMLGenerationService),
-          bind[ValidationConnector].toInstance(mockValidationConnector),
-          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
-        .build()
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      retrieveUserAnswersData(userAnswersForOrganisation)
       val submission = Submission(userAnswersForOrganisation, 0, "XADAC0001122345")
       val generatedIDs = GeneratedIDs(Some("XADAC0001122345"), Some("XADAC0001122345"))
 
@@ -161,14 +169,15 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(GeneratedIDs(None, None)))
 
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.FileTypeGatewayController.onRouting(0).url)
+      redirectLocation(result).value mustEqual controllers.confirmation.routes.FileTypeGatewayController.onRouting(0).url
 
     }
 
     "must update the submitted flag" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val controller = injector.instanceOf[DisclosureDetailsController]
       val list = List(
@@ -186,12 +195,9 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
 
     "must redirect to validation errors page when validation fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersModelsForOrganisation))
-        .overrides(
-          bind[XMLGenerationService].toInstance(mockXMLGenerationService),
-          bind[ValidationConnector].toInstance(mockValidationConnector),
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval))
-        .build()
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      retrieveUserAnswersData(userAnswersModelsForOrganisation)
 
       implicit val postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
       implicit val request: DataRequest[AnyContent] =
@@ -200,10 +206,10 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
         .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result) mustEqual Some(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url)
+      redirectLocation(result).value mustEqual controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
     }
   }
 

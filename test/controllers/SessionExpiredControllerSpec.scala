@@ -36,11 +36,11 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -55,8 +55,6 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
 
       templateCaptor.getValue mustEqual "session-expired.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

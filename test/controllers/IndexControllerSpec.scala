@@ -38,16 +38,14 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).get mustEqual controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to start a disclosure if all disclosures have been deleted" in {
@@ -58,16 +56,14 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", deleted = true))).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
-
-      application.stop()
     }
 
     "must redirect to start a disclosure if all disclosures have been submited" in {
@@ -78,16 +74,14 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", submitted = true))).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
-
-      application.stop()
     }
 
     "must redirect to start a disclosure when none is in progress" in {
@@ -95,16 +89,14 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).get mustEqual controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
-
-      application.stop()
     }
   }
 }

@@ -44,6 +44,7 @@ import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrange
 import pages.reporter._
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -70,6 +71,10 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
   private val mockHistoryConnector = mock[HistoryConnector]
 
   val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(bind[HistoryConnector].toInstance(mockHistoryConnector))
 
   "Summary Controller" - {
 
@@ -133,11 +138,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
         .set(ArrangementStatusPage, 0, JourneyStatus.Completed)
         .success.value
 
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[HistoryConnector].toInstance(mockHistoryConnector)
-        ).build()
+      retrieveUserAnswersData(userAnswers)
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -148,7 +149,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       val getRequest = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -156,8 +157,6 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
       templateCaptor.getValue mustEqual "summary.njk"
-
-      application.stop()
     }
   }
 }
