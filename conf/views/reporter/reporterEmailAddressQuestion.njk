@@ -34,11 +34,17 @@
 
           <fieldset class="govuk-fieldset">
 
-              {{ pageHeading | safe }}
-
-              <p id="guidance" class="govuk-body">{{ messages('reporterEmailAddressQuestion.guidance') }} </p>
-
               {{ govukRadios({
+                fieldset: {
+                  legend: {
+                  text: messages('reporterIndividualEmailAddressQuestion.heading'),
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--xl"
+                  }
+                },
+                hint: {
+                 text: messages('reporterEmailAddressQuestion.guidance')
+                 },
                 classes: "govuk-radios",
                 name: 'value',
                 items: radios,
