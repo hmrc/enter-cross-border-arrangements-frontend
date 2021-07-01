@@ -34,11 +34,11 @@ class AccessibilityControllerSpec extends SpecBase  with ControllerMockFixtures 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.AccessibilityController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -47,8 +47,6 @@ class AccessibilityControllerSpec extends SpecBase  with ControllerMockFixtures 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "accessibility.njk"
-
-      application.stop()
     }
   }
 }
