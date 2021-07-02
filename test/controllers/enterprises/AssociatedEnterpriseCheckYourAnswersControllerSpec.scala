@@ -21,7 +21,6 @@ import helpers.data.ValidUserAnswersForSubmission.{todayMinusOneMonth, validOrga
 import models.enterprises.YouHaveNotAddedAnyAssociatedEnterprises
 import models.taxpayer.Taxpayer
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
@@ -29,13 +28,11 @@ import pages.individual._
 import pages.organisation._
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -49,11 +46,11 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onPageLoad(0, None).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -69,8 +66,6 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
 
     templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseCheckYourAnswers.njk"
     assertFunction(summaryRows + countrySummary + isEnterpriseAffected)
-
-    application.stop()
 
     reset(
       mockRenderer
@@ -174,22 +169,14 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must redirect to the associated enterprise update page when valid data is submitted for an individual" in {
@@ -213,22 +200,14 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(POST, checkYourAnswersRoute).withFormUrlEncodedBody(("", ""))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
   }

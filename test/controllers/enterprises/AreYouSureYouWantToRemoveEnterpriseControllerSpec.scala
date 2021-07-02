@@ -26,13 +26,10 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
@@ -59,13 +56,14 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, areYouSureYouWantToRemoveEnterpriseRoute)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -82,8 +80,6 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       templateCaptor.getValue mustEqual "enterprises/areYouSureYouWantToRemoveEnterprise.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must not delete and return to the update page whe the answers is 'No' " in {
@@ -92,21 +88,17 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
         .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[SessionRepository].toInstance(mockSessionRepository)
-      ).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(POST, areYouSureYouWantToRemoveEnterpriseRoute).withFormUrlEncodedBody(("value", "false"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 
       verify(mockSessionRepository, times(0)).set(any())
-
-      application.stop()
     }
 
     "must delete the required item and redirect to the next page when 'Yes' is submitted" in {
@@ -115,12 +107,7 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       when(mockSessionRepository.set(userAnswersCaptor.capture())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(userAnswers)
 
       val postRoute = controllers.enterprises.routes.AreYouSureYouWantToRemoveEnterpriseController.onSubmit(0, "1").url
 
@@ -128,7 +115,7 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
         FakeRequest(POST, postRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
@@ -137,8 +124,6 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
       userAnswersCaptor.getValue.get(AssociatedEnterpriseLoopPage, 0).map { loop =>
         loop mustBe(enterpriseLoop.filterNot(_.enterpriseId == "1"))
       }
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -146,13 +131,14 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(POST, areYouSureYouWantToRemoveEnterpriseRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -168,40 +154,34 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       templateCaptor.getValue mustEqual "enterprises/areYouSureYouWantToRemoveEnterprise.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, areYouSureYouWantToRemoveEnterpriseRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, areYouSureYouWantToRemoveEnterpriseRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
