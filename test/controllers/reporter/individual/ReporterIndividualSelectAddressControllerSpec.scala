@@ -21,7 +21,6 @@ import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.individual.{ReporterIndividualPostcodePage, ReporterIndividualSelectAddressPage}
@@ -32,7 +31,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future

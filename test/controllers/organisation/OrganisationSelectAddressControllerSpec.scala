@@ -27,11 +27,11 @@ import org.mockito.ArgumentMatchers.any
 import pages.organisation.{PostcodePage, SelectAddressPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
@@ -57,6 +57,15 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
     Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
   )
 
+  override def beforeEach: Unit = {
+    reset(mockAddressLookupConnector)
+    super.beforeEach
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(bind[AddressLookupConnector].toInstance(mockAddressLookupConnector))
+
   "SelectAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -72,15 +81,13 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(answers)).overrides(
-        bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
+      retrieveUserAnswersData(answers)
 
       val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -95,14 +102,15 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -113,15 +121,13 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -138,8 +144,6 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -154,25 +158,17 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
         .success
         .value
 
-
-      val application =
-        applicationBuilder(userAnswers = Some(answers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-          ).build()
+      retrieveUserAnswersData(answers)
 
       val request =
         FakeRequest(POST, selectAddressRoute)
           .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/email-address/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -188,17 +184,14 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
+      retrieveUserAnswersData(answers)
 
       val request = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -213,39 +206,33 @@ class OrganisationSelectAddressControllerSpec extends SpecBase with ControllerMo
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, selectAddressRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, selectAddressRoute)
           .withFormUrlEncodedBody(("value", addressRadios.head.value))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
