@@ -26,7 +26,7 @@ import pages.reporter.individual.ReporterIndividualDateOfBirthPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html

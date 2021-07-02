@@ -17,11 +17,11 @@
 package controllers.confirmation
 
 import base.{ControllerMockFixtures, SpecBase}
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction, FakeContactRetrievalProvider}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentCaptor, Mockito}
 import pages.GeneratedIDPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind

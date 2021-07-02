@@ -25,10 +25,11 @@ import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.InternalServerError
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, route, status, writeableOf_AnyContentAsEmpty, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.Future
 
@@ -38,14 +39,19 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
   val httpClient: HttpClient = mock[HttpClient]
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+  val mockErrorHandler = mock[ErrorHandler]
 
-  def connectorStub(isMarketable: Boolean): CrossBorderArrangementsConnector = new CrossBorderArrangementsConnector(frontendAppConfig, httpClient) {
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+      bind[ErrorHandler].toInstance(mockErrorHandler)
+    )
 
-    override def isMarketableArrangement(arrangementId: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-      arrangementId must be (id)
-      Future.successful(isMarketable)
-    }
+  override def beforeEach: Unit = {
+    reset(mockCrossBorderArrangementsConnector, mockErrorHandler)
+    super.beforeEach
   }
 
   "Marketable Arrangement Gateway Controller" - {
@@ -64,17 +70,14 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        retrieveUserAnswersData(userAnswers)
         val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/taxpayers/implementation-date/0"
-
-        application.stop()
       }
 
       "or from an added arrangement " in {
@@ -90,24 +93,18 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
+        retrieveUserAnswersData(userAnswers)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(connectorStub(true))
-          )
-          .build()
+        when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/taxpayers/implementation-date/0"
-
-        application.stop()
       }
-
   }
 
     "must redirect to 'Check your Answers' page when the arrangement is not marketable " - {
@@ -125,16 +122,14 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        retrieveUserAnswersData(userAnswers)
         val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
-
-        application.stop()
       }
 
       "or from an added arrangement " in {
@@ -150,21 +145,18 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(connectorStub(false))
-          )
-          .build()
+        retrieveUserAnswersData(userAnswers)
+
+        when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(false))
 
         val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
-
-        application.stop()}
+      }
 
       "or from a replaced arrangement " in {
         val disclosureDetails = DisclosureDetails(
@@ -179,21 +171,17 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
           .set(DisclosureDetailsPage, 0, disclosureDetails)
           .success.value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(connectorStub(false))
-          )
-          .build()
+        retrieveUserAnswersData(userAnswers)
+
+        when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(false))
 
         val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/check-answers/0"
-
-        application.stop()
       }
 
     }
@@ -211,28 +199,16 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
       .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
       .set(DisclosureDetailsPage, 0, disclosureDetails)
       .success.value
-
-    val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+    retrieveUserAnswersData(userAnswers)
 
     when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.failed(new Exception("Error")))
 
-    val mockErrorHandler = mock[ErrorHandler]
-
     when(mockErrorHandler.onServerError(any(),any())).thenReturn(Future.successful(result = InternalServerError))
-
-    val application = applicationBuilder(userAnswers = Some(userAnswers))
-      .overrides(
-        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
-        bind[ErrorHandler].toInstance(mockErrorHandler)
-      )
-      .build()
 
     val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual INTERNAL_SERVER_ERROR
-
-    application.stop()
   }
 }

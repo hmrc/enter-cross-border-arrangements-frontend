@@ -25,12 +25,10 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.taxpayer.TaxpayerWhyReportInUKPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -49,12 +47,12 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, taxpayerWhyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -68,8 +66,6 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
 
       templateCaptor.getValue mustEqual "reporter/taxpayer/taxpayerWhyReportInUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -80,12 +76,12 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, taxpayerWhyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -101,32 +97,18 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
 
       templateCaptor.getValue mustEqual "reporter/taxpayer/taxpayerWhyReportInUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
+      retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, taxpayerWhyReportInUKRoute)
           .withFormUrlEncodedBody(("value", TaxpayerWhyReportInUK.values.head.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -134,13 +116,13 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, taxpayerWhyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -154,8 +136,6 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
 
       templateCaptor.getValue mustEqual "reporter/taxpayer/taxpayerWhyReportInUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

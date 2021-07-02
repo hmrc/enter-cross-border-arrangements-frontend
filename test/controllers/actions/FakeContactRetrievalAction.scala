@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.UserAnswers
-import models.requests.{DataRequest, DataRequestWithContacts, IdentifierRequest, OptionalDataRequest}
+import models.requests.{DataRequest, DataRequestWithContacts}
 import models.subscription.ContactDetails
 import play.api.mvc.ActionTransformer
 

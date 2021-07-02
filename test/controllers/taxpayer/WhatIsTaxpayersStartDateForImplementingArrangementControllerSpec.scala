@@ -29,7 +29,7 @@ import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplem
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -76,11 +76,11 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .set(OrganisationNamePage, 0, "validAnswer").success.value
         .set(TaxpayerSelectTypePage, 0, Organisation).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -96,8 +96,6 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when in check mode and the question has previously been answered" in {
@@ -116,13 +114,14 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
         .set(OrganisationNamePage, 0, "validAnswer")
         .success
         .value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest("GET", whatIsTaxpayersStartDateForImplementingArrangementCheckRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -146,31 +145,18 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -178,13 +164,13 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, whatIsTaxpayersStartDateForImplementingArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -200,33 +186,25 @@ class WhatIsTaxpayersStartDateForImplementingArrangementControllerSpec extends S
 
       templateCaptor.getValue mustEqual "implementingArrangementDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
+      retrieveNoData()
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
+      retrieveNoData()
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

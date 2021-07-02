@@ -18,7 +18,7 @@ package controllers.confirmation
 
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.SubscriptionConnector
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction, FakeContactRetrievalProvider}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
