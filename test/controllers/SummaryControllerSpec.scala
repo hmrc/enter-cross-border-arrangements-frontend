@@ -38,10 +38,10 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
+import pages.reporter._
 import pages.reporter.individual._
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

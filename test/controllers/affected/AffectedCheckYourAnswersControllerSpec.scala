@@ -19,7 +19,6 @@ package controllers.affected
 import base.{ControllerMockFixtures, SpecBase}
 import models.affected.YouHaveNotAddedAnyAffected
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.affected.{AffectedTypePage, YouHaveNotAddedAnyAffectedPage}

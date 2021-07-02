@@ -57,11 +57,11 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with ControllerMoc
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, controllers.reporter.routes.ReporterCheckYourAnswersController.onPageLoad(0).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -70,21 +70,17 @@ class ReporterCheckYourAnswersControllerSpec extends SpecBase with ControllerMoc
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json:JsObject = jsonCaptor.getValue
     val reporterDetails = (json \ "reporterDetails").toString
     val residentCountryDetails = (json \ "residentCountryDetails").toString
     val roleDetails = (json \ "roleDetails").toString
 
     templateCaptor.getValue mustEqual "reporter/reporterCheckYourAnswers.njk"
     assertFunction(reporterDetails + residentCountryDetails + roleDetails)
-
-    application.stop()
-
     reset(
       mockRenderer
     )
   }
-
 
   "ReporterCheckYourAnswers Controller" - {
 
