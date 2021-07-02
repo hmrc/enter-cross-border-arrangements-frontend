@@ -31,6 +31,10 @@ case class ReporterDetails(individual: Option[Individual] = None,
     case (_, Some(o)) => o.organisationName
     case _            => throw new RuntimeException("Reporter must be either an individual or an organisation.")
   }
+
+  val isTaxpayer: Boolean = liability.exists(_.role == "taxpayer")
+
+  val isIntermediary: Boolean = liability.exists(_.role == "intermediary")
 }
 
 object ReporterDetails {

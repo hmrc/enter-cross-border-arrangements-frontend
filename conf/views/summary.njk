@@ -76,7 +76,9 @@
 
         {{ hmrcSummaryList(taxpayersList, taxpayerUpdateRow, "taxpayers") }}
 
-        {{ hmrcSummaryList(enterprisesList, enterprisesUpdateRow, "enterprises") }}
+        {% if displayAssociatedEnterprises %}
+          {{ hmrcSummaryList(enterprisesList, enterprisesUpdateRow, "enterprises") }}
+        {% endif %}
 
         {{ hmrcSummaryList(intermediaryList, intermediaryUpdateRow, "intermediaries") }}
 
