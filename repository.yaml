@@ -1,2 +1,12 @@
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
 digital-service: DAC6
+
+leakDetectionExemptions:
+  - ruleId: 'aws_secret_access_key'
+    filePaths:
+       - '/app/utils/rows/ReporterRows.scala'
+       - '/app/utils/rows/IndividualRows.scala'
+       - '/app/utils/model/rows/IndividualModelRows.scala'
+       - '/test/forms/arrangement/DoYouKnowTheReasonToReportArrangementNowFormProviderSpec.scala'
+       - '/test/forms/individual/IsIndividualResidentForTaxOtherCountriesFormProviderSpec.scala'
+       - '/test/forms/organisation/WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec.scala'
