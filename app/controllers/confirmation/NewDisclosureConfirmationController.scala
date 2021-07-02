@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
 import pages.GeneratedIDPage
-import pages.disclosure.DisclosureDetailsPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,7 +41,7 @@ class NewDisclosureConfirmationController @Inject()(
     val controllerComponents: MessagesControllerComponents,
     sessionRepository: SessionRepository,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with UpdateDisclosureDetailsAsSent {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
@@ -68,11 +67,7 @@ class NewDisclosureConfirmationController @Inject()(
         "emailMessage" -> emailMessage
       )
 
-      for {
-        updatedAnswers <- request.userAnswers.remove(DisclosureDetailsPage, id)
-      } yield {
-        sessionRepository.set(updatedAnswers)
-      }
+      updateDisclosureDetailsAsSent(request.userAnswers, id).map(sessionRepository.set)
 
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }

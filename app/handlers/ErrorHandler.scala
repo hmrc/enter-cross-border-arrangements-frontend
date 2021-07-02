@@ -16,7 +16,7 @@
 
 package handlers
 
-import controllers.exceptions.{DiscloseDetailsNotAvailableException, UnsupportedRouteException}
+import controllers.exceptions.{DiscloseDetailsAlreadySentException, UnsupportedRouteException}
 import controllers.routes
 import org.slf4j.LoggerFactory
 import play.api.PlayException
@@ -67,8 +67,8 @@ class ErrorHandler @Inject()(
 
     logError(request, exception)
     exception match {
-      case e: DiscloseDetailsNotAvailableException =>
-        Future.successful(Redirect(routes.DisclosureAlreadySentController.onPageLoad(e.source)))
+      case e: DiscloseDetailsAlreadySentException =>
+        Future.successful(Redirect(routes.DisclosureAlreadySentController.onPageLoad(e.id)))
       case e: UnsupportedRouteException =>
         Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(e.id)))
       case ApplicationException(result, _) =>

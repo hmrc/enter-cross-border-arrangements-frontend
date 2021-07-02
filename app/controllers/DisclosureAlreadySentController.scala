@@ -18,7 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.mixins.DefaultRouting
 import helpers.JourneyHelpers.linkToHomePageText
+import models.NormalMode
+import models.disclosure.DisclosureType
+import models.disclosure.DisclosureType.Dac6del
+import navigation.NavigatorForConfirmation
+import pages.disclosure.DisclosureDetailsPage
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,18 +42,26 @@ class DisclosureAlreadySentController @Inject()(
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     frontendAppConfig: FrontendAppConfig,
+    navigator: NavigatorForConfirmation,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(source: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val option = if (source == "deleted") "deleted" else "sent"
+      val disclosureType: Option[DisclosureType] = request.userAnswers
+        .get(DisclosureDetailsPage, id)
+        .map(_.disclosureType)
+        .orElse(Some(DisclosureType.Dac6del))
+
+      val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0).url
+
       renderer.render(
       "disclosureAlreadySent.njk",
       Json.obj(
         "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
-        "option" -> option
+        "option" -> (if (disclosureType.contains(Dac6del)) "deleted" else "sent"),
+        "backLinkUrl" -> backLinkUrl
       )
     ).map(Ok(_))
   }

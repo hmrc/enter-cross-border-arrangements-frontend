@@ -35,7 +35,7 @@ class DisclosureAlreadySentControllerSpec extends SpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(application, request).value

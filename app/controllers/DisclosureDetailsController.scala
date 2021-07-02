@@ -19,9 +19,9 @@ package controllers
 import config.FrontendAppConfig
 import connectors.HistoryConnector
 import controllers.actions._
-import controllers.exceptions.DiscloseDetailsNotAvailableException
+import controllers.exceptions.DiscloseDetailsAlreadySentException
 import controllers.mixins.DefaultRouting
-import helpers.TaskListHelper._
+import helpers.TaskListHelper.{isInitialDisclosureMarketable, _}
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement.Taxpayer
@@ -69,7 +69,7 @@ class DisclosureDetailsController @Inject()(
     implicit request =>
 
 
-      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new DiscloseDetailsNotAvailableException("sent"))
+      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).filterNot(_.sent).getOrElse(throw new DiscloseDetailsAlreadySentException(id))
 
       val arrangementMessage: String = disclosureDetails.arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
 

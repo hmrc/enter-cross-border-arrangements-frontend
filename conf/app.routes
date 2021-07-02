@@ -576,4 +576,4 @@ POST       /your-disclosure-details/:id                          controllers.Dis
 
 GET        /disclosure-summary/:id                               controllers.SummaryController.onPageLoad(id: Int)
 
-GET        /disclosure-already-:source                           controllers.DisclosureAlreadySentController.onPageLoad(source: String)
+GET        /disclosure-already-sent/:id                          controllers.DisclosureAlreadySentController.onPageLoad(id: Int)
