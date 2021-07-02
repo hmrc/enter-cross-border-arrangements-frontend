@@ -100,6 +100,7 @@ class OrganisationNameControllerSpec extends SpecBase with ControllerMockFixture
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, organisationNameRoute)

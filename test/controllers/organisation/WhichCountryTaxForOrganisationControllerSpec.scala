@@ -131,6 +131,8 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Control
 
     "must redirect to the next page when valid data is submitted" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
+
       retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
@@ -145,6 +147,7 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Control
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

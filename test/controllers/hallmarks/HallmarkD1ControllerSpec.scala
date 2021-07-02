@@ -35,8 +35,6 @@ import scala.concurrent.Future
 
 class HallmarkD1ControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-
-
   lazy val hallmarkD1Route = routes.HallmarkD1Controller.onPageLoad(0, NormalMode).url
 
   val formProvider = new HallmarkD1FormProvider()

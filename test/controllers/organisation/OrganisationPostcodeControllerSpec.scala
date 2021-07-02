@@ -144,7 +144,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(Seq()))
       retrieveUserAnswersData(emptyUserAnswers)
@@ -176,7 +176,7 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

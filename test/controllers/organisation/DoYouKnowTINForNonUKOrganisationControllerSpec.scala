@@ -115,6 +115,7 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute)
