@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -64,20 +65,22 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
     reset(mockEmailService)
   }
 
-  def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
-
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
       bind[EmailService].toInstance(mockEmailService),
       bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[FrontendAppConfig].toInstance(mockAppConfig),
       bind[CountryListFactory].toInstance(mockCountryFactory),
       bind[CurrencyListFactory].toInstance(mockCurrencyList)
-    ).build()
+    )
 
+  def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
+    retrieveUserAnswersData(userAnswers)
     val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -94,8 +97,6 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
     assertFunction(list)
 
     verify(mockEmailService, times(0)).sendEmail(any(), any(), any(), any())(any())
-
-    application.stop()
   }
 
   private def assertAction(href: String, text: Option[Any] = Some(Literal("Change")), visuallyHiddenText: Option[Any] = None)(action: Action): Unit = {

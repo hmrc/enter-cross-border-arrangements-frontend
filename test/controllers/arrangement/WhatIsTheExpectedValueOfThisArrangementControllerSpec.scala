@@ -41,8 +41,6 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
   val formProvider = new WhatIsTheExpectedValueOfThisArrangementFormProvider()
   val mockCurrencyList = mock[CurrencyListFactory]
 
-  when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
-
   val form = formProvider(Seq( Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)")))
 
   override def beforeEach {
@@ -69,6 +67,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
+      when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
 
       val request = FakeRequest(GET, whatIsTheExpectedValueOfThisArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -93,6 +92,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -149,6 +149,7 @@ class WhatIsTheExpectedValueOfThisArrangementControllerSpec extends SpecBase wit
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
 
       retrieveUserAnswersData(emptyUserAnswers)
 
