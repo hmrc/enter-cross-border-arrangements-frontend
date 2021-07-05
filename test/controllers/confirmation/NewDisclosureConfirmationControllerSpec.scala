@@ -18,10 +18,12 @@ package controllers.confirmation
 
 import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentCaptor, Mockito}
+import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.inject.bind
@@ -47,6 +49,13 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
   "NewDisclosureConfirmation Controller" - {
 
+    val disclosureDetails = DisclosureDetails(
+      disclosureName = "",
+      arrangementID = Some("arrangement"),
+      disclosureType = DisclosureType.Dac6new,
+      initialDisclosureMA = true
+    )
+
     "return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
@@ -56,6 +65,8 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success.value
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), Some(""), Some("")))
+        .success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       retrieveUserAnswersData(userAnswers)

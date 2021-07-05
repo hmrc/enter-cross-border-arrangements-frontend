@@ -67,8 +67,10 @@ class ErrorHandler @Inject()(
 
     logError(request, exception)
     exception match {
+      case e: DiscloseDetailsAlreadySentException if e.id == 0 =>
+        Future.successful(Redirect(routes.DisclosureAlreadySentController.onDeleted()))
       case e: DiscloseDetailsAlreadySentException =>
-        Future.successful(Redirect(routes.DisclosureAlreadySentController.onPageLoad(e.id)))
+        Future.successful(Redirect(routes.DisclosureAlreadySentController.onSent(e.id)))
       case e: UnsupportedRouteException =>
         Future.successful(Redirect(routes.DisclosureDetailsController.onPageLoad(e.id)))
       case ApplicationException(result, _) =>

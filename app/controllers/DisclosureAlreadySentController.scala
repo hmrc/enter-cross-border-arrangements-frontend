@@ -22,18 +22,17 @@ import controllers.mixins.DefaultRouting
 import helpers.JourneyHelpers.linkToHomePageText
 import models.NormalMode
 import models.disclosure.DisclosureType
-import models.disclosure.DisclosureType.Dac6del
 import navigation.NavigatorForConfirmation
 import pages.disclosure.DisclosureDetailsPage
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 class DisclosureAlreadySentController @Inject()(
     override val messagesApi: MessagesApi,
@@ -46,13 +45,25 @@ class DisclosureAlreadySentController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onDeleted(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val disclosureType: Option[DisclosureType] = request.userAnswers
-        .get(DisclosureDetailsPage, id)
-        .map(_.disclosureType)
-        .orElse(Some(DisclosureType.Dac6del))
+      val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6del))(0).url
+
+      renderer.render(
+        "disclosureAlreadySent.njk",
+        Json.obj(
+          "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
+          "option" -> "deleted",
+          "backLinkUrl" -> backLinkUrl
+        )
+      ).map(Ok(_))
+  }
+
+  def onSent(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      val disclosureType = Try(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).getOrElse(None)
 
       val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0).url
 
@@ -60,7 +71,7 @@ class DisclosureAlreadySentController @Inject()(
       "disclosureAlreadySent.njk",
       Json.obj(
         "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
-        "option" -> (if (disclosureType.contains(Dac6del)) "deleted" else "sent"),
+        "option" -> "sent",
         "backLinkUrl" -> backLinkUrl
       )
     ).map(Ok(_))

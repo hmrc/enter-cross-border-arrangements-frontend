@@ -61,7 +61,9 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
-      if (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).isEmpty) throw new DiscloseDetailsAlreadySentException(-1)
+      if (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).isEmpty) {
+        throw new DiscloseDetailsAlreadySentException(0)
+      }
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
