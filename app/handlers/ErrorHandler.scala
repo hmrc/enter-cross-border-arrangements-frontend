@@ -16,7 +16,7 @@
 
 package handlers
 
-import controllers.exceptions.{DiscloseDetailsAlreadySentException, UnsupportedRouteException}
+import controllers.exceptions.{DiscloseDetailsAlreadyDeletedException, DiscloseDetailsAlreadySentException, UnsupportedRouteException}
 import controllers.routes
 import org.slf4j.LoggerFactory
 import play.api.PlayException
@@ -67,7 +67,7 @@ class ErrorHandler @Inject()(
 
     logError(request, exception)
     exception match {
-      case e: DiscloseDetailsAlreadySentException if e.id == 0 =>
+      case e: DiscloseDetailsAlreadyDeletedException =>
         Future.successful(Redirect(routes.DisclosureAlreadySentController.onDeleted()))
       case e: DiscloseDetailsAlreadySentException =>
         Future.successful(Redirect(routes.DisclosureAlreadySentController.onSent(e.id)))
