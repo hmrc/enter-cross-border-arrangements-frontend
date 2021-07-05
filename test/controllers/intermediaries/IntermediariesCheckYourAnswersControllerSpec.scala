@@ -42,7 +42,7 @@ class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with Control
       .set(IsExemptionKnownPage,0, IsExemptionKnown.Unknown).success.value
       .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
 
-    val controller: IntermediariesCheckYourAnswersController = injector.instanceOf[IntermediariesCheckYourAnswersController]
+    val controller: IntermediariesCheckYourAnswersController = app.injector.instanceOf[IntermediariesCheckYourAnswersController]
 
     def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
 

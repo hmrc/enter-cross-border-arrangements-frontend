@@ -22,15 +22,16 @@ import controllers.mixins.DefaultRouting
 import generators.Generators
 import models.NormalMode
 import models.disclosure.DisclosureType
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.disclosure._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
-class NavigatorForDisclosureSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NavigatorForDisclosureSpec extends SpecBase with GuiceOneServerPerSuite with ScalaCheckPropertyChecks with Generators {
 
-  val navigator: NavigatorForDisclosure = injector.instanceOf[NavigatorForDisclosure]
-  val appConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  val navigator: NavigatorForDisclosure = app.injector.instanceOf[NavigatorForDisclosure]
+  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val index: Int = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 

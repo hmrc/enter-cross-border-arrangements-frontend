@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
@@ -24,21 +24,23 @@ import models.disclosure.IDVerificationStatus
 import org.scalacheck.Gen.alphaStr
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.{NOT_FOUND, NO_CONTENT, BAD_REQUEST}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, NO_CONTENT}
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.WireMockHelper
 
 class CrossBorderArrangementsConnectorSpec extends SpecBase
+  with MockServiceApp
   with ScalaCheckPropertyChecks
   with WireMockHelper
   with Generators {
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
     .configure(
       "microservice.services.cross-border-arrangements.port" -> server.port()
-    ).build()
+    )
 
-  lazy val connector: CrossBorderArrangementsConnector = injector.instanceOf[CrossBorderArrangementsConnector]
+  lazy val connector: CrossBorderArrangementsConnector = app.injector.instanceOf[CrossBorderArrangementsConnector]
 
   "CrossBorderArrangementsConnector" - {
 

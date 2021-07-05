@@ -18,7 +18,7 @@ package controllers.confirmation
 
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.SubscriptionConnector
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
@@ -41,18 +41,23 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
   val disclosureID = "GBD20210101ABC123"
   val messageRefID = "GBXADAC0001122345Name"
   val generatedIDs = GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID))
+  val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
   val userAnswers = UserAnswers(userAnswersId)
     .setBase(DisclosureDeleteCheckYourAnswersPage, generatedIDs).success.value
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
+  override def beforeEach: Unit = {
+    reset(mockContactRetrievalAction, mockSubscriptionConnector)
+    super.beforeEach
+  }
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super.guiceApplicationBuilder()
-    .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+    .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+    bind[ContactRetrievalAction].toInstance(mockContactRetrievalAction))
 
   val jsonPayload: String = displaySubscriptionPayloadNoSecondary(
     JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
   val displaySubscriptionDetails: DisplaySubscriptionForDACResponse = Json.parse(jsonPayload).as[DisplaySubscriptionForDACResponse]
-
 
   "YourDisclosureHasBeenDeleted Controller" - {
 
@@ -64,17 +69,15 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
 
-      val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -88,8 +91,6 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
 
       templateCaptor.getValue mustEqual "confirmation/yourDisclosureHasBeenDeleted.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "return Internal Server Error if arrangement details are not in user answers" in {
@@ -99,17 +100,15 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with Controlle
 
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
+      val fakeDataRetrieval = new FakeContactRetrievalAction(emptyUserAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)).build()
-
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, routes.YourDisclosureHasBeenDeletedController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      application.stop()
     }
   }
 }

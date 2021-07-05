@@ -20,12 +20,16 @@ import base.SpecBase
 import models.UserAnswers
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import org.scalatest.concurrent.ScalaFutures
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import repositories.SessionRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with ScalaFutures {
+
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
   class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionProvider(sessionRepository) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)

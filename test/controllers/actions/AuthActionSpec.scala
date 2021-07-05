@@ -16,8 +16,9 @@
 
 package controllers.actions
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
 import play.api.mvc._
@@ -31,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase {
+class AuthActionSpec extends SpecBase  with ControllerMockFixtures {
 
   private implicit class HelperOps[A](a: A) {
     def ~[B](b: B) = new ~(a, b)
@@ -39,6 +40,7 @@ class AuthActionSpec extends SpecBase {
 
   lazy val mockMcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
   val bodyParsers: BodyParsers.Default = app.injector.instanceOf[BodyParsers.Default]
+  val frontendAppConfig =  app.injector.instanceOf[FrontendAppConfig]
 
   object Harness {
     sealed class Harness(authAction: IdentifierAction, controllerComponents: MessagesControllerComponents = mockMcc)

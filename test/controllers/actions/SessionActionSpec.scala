@@ -17,6 +17,7 @@
 package controllers.actions
 
 import base.{ControllerMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.SessionKeys
@@ -24,6 +25,8 @@ import uk.gov.hmrc.http.SessionKeys
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionActionSpec extends SpecBase with ControllerMockFixtures {
+
+  private val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   class Harness(action: IdentifierAction) {
     def onPageLoad() = action { request => Results.Ok }

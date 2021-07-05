@@ -39,7 +39,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
 
     "map keys to errors" in {
 
-      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+      val controller = app.injector.instanceOf[DisclosureValidationErrorsController]
 
       val keysToErrors = Map[String, Option[String]](
         "businessrules.initialDisclosure.needRelevantTaxPayer" ->
@@ -59,7 +59,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
 
     "map keys to table rows" in {
 
-      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+      val controller = app.injector.instanceOf[DisclosureValidationErrorsController]
 
       val rows: Seq[String] = controller.toTableRows(errors, Option(_)).flatten.map(_.toString)
 
@@ -93,7 +93,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "errorRows" -> injector.instanceOf[DisclosureValidationErrorsController].toTableRows(errors)
+        "errorRows" -> app.injector.instanceOf[DisclosureValidationErrorsController].toTableRows(errors)
       )
 
       templateCaptor.getValue mustEqual "confirmation/validationErrors.njk"

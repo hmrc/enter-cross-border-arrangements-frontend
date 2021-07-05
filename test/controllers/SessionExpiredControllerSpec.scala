@@ -17,6 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -41,6 +42,7 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
       val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
       val result = route(app, request).value
+      val frontendAppConfig =  app.injector.instanceOf[FrontendAppConfig]
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])

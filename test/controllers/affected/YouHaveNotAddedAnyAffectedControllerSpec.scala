@@ -46,13 +46,13 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -67,8 +67,6 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
 
       templateCaptor.getValue mustEqual "affected/youHaveNotAddedAnyAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return OK and the correct view with the list of all affected persons for a GET" in {

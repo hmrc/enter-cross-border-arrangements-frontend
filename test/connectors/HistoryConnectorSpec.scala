@@ -16,12 +16,11 @@
 
 package connectors
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import generators.Generators
 import models.{SubmissionDetails, SubmissionHistory}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
@@ -31,16 +30,18 @@ import utils.WireMockHelper
 import java.time.LocalDateTime
 
 class HistoryConnectorSpec extends SpecBase
+  with MockServiceApp
   with ScalaCheckPropertyChecks
   with WireMockHelper
   with Generators {
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
     .configure(
       "microservice.services.cross-border-arrangements.port" -> server.port()
-    ).build()
+    )
     
-    lazy val connector: HistoryConnector = injector.instanceOf[HistoryConnector]
+    lazy val connector: HistoryConnector = app.injector.instanceOf[HistoryConnector]
 
     "HistoryConnector" - {
 

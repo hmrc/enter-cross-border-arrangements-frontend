@@ -25,9 +25,11 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.Call
+import play.api.mvc.{AnyContentAsEmpty, Call}
+import play.api.test.{FakeRequest, Helpers}
 import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
@@ -39,6 +41,10 @@ trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppP
   final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
   final val mockSessionRepository: SessionRepository = mock[SessionRepository]
   protected val fakeNavigator: Navigator = new FakeNavigator(onwardRoute)
+
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+  def messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   override def beforeEach {
     Mockito.reset(

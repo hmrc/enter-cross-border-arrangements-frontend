@@ -23,6 +23,8 @@ import models.requests.{DataRequest, DataRequestWithContacts}
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsString, Json}
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,6 +32,7 @@ import scala.concurrent.Future
 class ContactRetrievalActionImplSpec extends SpecBase {
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
   class Harness(subscriptionConnector: SubscriptionConnector) extends ContactRetrievalActionProvider(mockAppConfig, subscriptionConnector) {
     def callTransform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] = transform(request)

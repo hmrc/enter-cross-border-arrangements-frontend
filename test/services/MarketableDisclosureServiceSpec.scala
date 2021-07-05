@@ -16,7 +16,7 @@
 
 package services
 
-import base.{ControllerMockFixtures, SpecBase}
+import base.{MockServiceApp, SpecBase}
 import connectors.HistoryConnector
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -24,6 +24,7 @@ import models.{SubmissionDetails, SubmissionHistory}
 import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDetailsPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionRepository
 
 import java.time.LocalDateTime
@@ -31,9 +32,11 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-class MarketableDisclosureServiceSpecController extends SpecBase with ControllerMockFixtures {
+class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
   val mockHistoryConnector = mock[HistoryConnector]
+  val mockSessionRepository = mock[SessionRepository]
+
   val firstDisclosureSubmissionDetailsMarketable = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
     Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
 
@@ -49,6 +52,17 @@ class MarketableDisclosureServiceSpecController extends SpecBase with Controller
     disclosureType = DisclosureType.Dac6add
   )
 
+  override def beforeEach: Unit = {
+    reset(mockHistoryConnector, mockSessionRepository)
+    super.beforeEach
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[HistoryConnector].toInstance(mockHistoryConnector),
+      bind[SessionRepository].toInstance(mockSessionRepository)
+    )
 
   "isMarketableService" - {
     "must return true when the arrangement is marketable" in {
@@ -57,32 +71,21 @@ class MarketableDisclosureServiceSpecController extends SpecBase with Controller
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[HistoryConnector].toInstance(mockHistoryConnector),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        ).build()
-
-      val service = application.injector.instanceOf[MarketableDisclosureService]
+      val service = app.injector.instanceOf[MarketableDisclosureService]
 
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosureSubmissionDetailsMarketable))
 
       Await.result(service.isInitialDisclosureMarketable(userAnswers, 0), 10.seconds) mustBe true
     }
+
     "must return false when the arrangement is not marketable" in {
 
     val userAnswers =   userAnswersForOrganisation
         .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[HistoryConnector].toInstance(mockHistoryConnector),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        ).build()
-
-      val service = application.injector.instanceOf[MarketableDisclosureService]
+      val service = app.injector.instanceOf[MarketableDisclosureService]
 
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosureSubmissionDetailsNotMarketable))

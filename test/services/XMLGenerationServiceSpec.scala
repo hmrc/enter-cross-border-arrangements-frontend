@@ -16,14 +16,14 @@
 
 package services
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForIndividual, userAnswersForOrganisation}
 import helpers.xml.GeneratedXMLExamples
 import models.Submission
 
-class XMLGenerationServiceSpec extends SpecBase {
+class XMLGenerationServiceSpec extends SpecBase with MockServiceApp {
 
-  val xmlGenerationService: XMLGenerationService = injector.instanceOf[XMLGenerationService]
+  val xmlGenerationService: XMLGenerationService = app.injector.instanceOf[XMLGenerationService]
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 

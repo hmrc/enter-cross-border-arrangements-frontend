@@ -23,16 +23,11 @@ import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.play.guice._
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait SpecBase extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with TryValues
+trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValues
   with ScalaFutures with IntegrationPatience with MockitoSugar with BeforeAndAfterEach {
 
   val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -42,17 +37,5 @@ trait SpecBase extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with O
   def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
 
-  def injector: Injector = app.injector
-
-  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
-  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
-
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
-
-
 }

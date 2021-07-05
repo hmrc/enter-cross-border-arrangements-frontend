@@ -179,7 +179,7 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
     "must update the submitted flag" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val controller = injector.instanceOf[DisclosureDetailsController]
+      val controller = app.injector.instanceOf[DisclosureDetailsController]
       val list = List(
         UnsubmittedDisclosure("0", "name_0"), UnsubmittedDisclosure("1", "name_1")
       )
