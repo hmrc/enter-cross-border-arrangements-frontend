@@ -26,11 +26,11 @@ import pages.individual.{IndividualLoopPage, WhichCountryTaxForIndividualPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
@@ -46,19 +46,22 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
   lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(0, NormalMode, index).url
 
+  override def applicationBuilder(userAnswers: Option[UserAnswers]): GuiceApplicationBuilder = super
+    .applicationBuilder(userAnswers)
+    .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
+
   "WhichCountryTaxForIndividual Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -71,8 +74,6 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
       templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -90,12 +91,13 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -114,58 +116,39 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
       templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when UK is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+     retrieveUserAnswersData(emptyUserAnswers)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
-
       val request =
         FakeRequest(POST, whichCountryTaxForIndividualRoute)
           .withFormUrlEncodedBody(("country", "GB"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/uk-tin-known-0/0"
-
-      application.stop()
     }
 
     "must redirect to the next page when non UK is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      retrieveUserAnswersData(emptyUserAnswers)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
 
       val request =
         FakeRequest(POST, whichCountryTaxForIndividualRoute)
           .withFormUrlEncodedBody(("country", "FR"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/resident-country-tin-0/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -173,13 +156,13 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, whichCountryTaxForIndividualRoute).withFormUrlEncodedBody(("country", ""))
       val boundForm = form.bind(Map("country" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -192,40 +175,34 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
       templateCaptor.getValue mustEqual "individual/whichCountryTaxForIndividual.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+     retrieveNoData()
 
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, whichCountryTaxForIndividualRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

@@ -22,13 +22,10 @@ import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganis
 import matchers.JsonMatchers
 import models.taxpayer.Taxpayer
 import models.{UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
