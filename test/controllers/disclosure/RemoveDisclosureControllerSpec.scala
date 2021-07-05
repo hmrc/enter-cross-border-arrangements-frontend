@@ -61,12 +61,11 @@ class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixture
 
       retrieveUserAnswersData(userAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, removeDisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 

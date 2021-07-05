@@ -38,9 +38,9 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must redirect to the session expired page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        retrieveNoData()
 
-        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val bodyParsers = app.injector.instanceOf[BodyParsers.Default]
 
         val sessionAction = new SessionIdentifierAction(frontendAppConfig, bodyParsers)
 
@@ -57,9 +57,9 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
 
       "must perform the action" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        retrieveNoData()
 
-        val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+        val bodyParsers = app.injector.instanceOf[BodyParsers.Default]
 
         val sessionAction = new SessionIdentifierAction(frontendAppConfig, bodyParsers)
 

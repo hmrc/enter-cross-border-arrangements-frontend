@@ -41,13 +41,14 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
   val formProvider = new WhichCountryTaxForIndividualFormProvider()
   val form: Form[Country] = formProvider(Seq(Country("valid","GB","United Kingdom")))
   val country: Country = Country("valid","GB","United Kingdom")
+  val nonUKCountry: Country = Country("valid","FR","France")
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
   val index: Int = 0
 
   lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(0, NormalMode, index).url
 
-  override def applicationBuilder(userAnswers: Option[UserAnswers]): GuiceApplicationBuilder = super
-    .applicationBuilder(userAnswers)
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
     .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
 
   "WhichCountryTaxForIndividual Controller" - {
@@ -56,6 +57,9 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(country, nonUKCountry)))
+
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -120,7 +124,9 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
     "must redirect to the next page when UK is submitted" in {
 
-     retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(country, nonUKCountry)))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       val request =
@@ -137,6 +143,8 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
     "must redirect to the next page when non UK is submitted" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
+
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(country, nonUKCountry)))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
