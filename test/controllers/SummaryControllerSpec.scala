@@ -18,8 +18,8 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.HistoryConnector
-import controllers.actions.FakeContactRetrievalProvider
-import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
+import controllers.actions.FakeContactRetrievalAction
+import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, validIndividual}
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -28,8 +28,9 @@ import models.reporter.RoleInArrangement.Taxpayer
 import models.reporter.intermediary.IntermediaryWhyReportInUK.TaxResidentUK
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement.NoIntermediaries
 import models.reporter.taxpayer.TaxpayerWhyReportInUK.UkTaxResident
+import models.reporter.{ReporterDetails, ReporterLiability}
 import models.subscription.ContactDetails
-import models.{AddressLookup, Country, LoopDetails, Name, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
+import models.{AddressLookup, Country, LoopDetails, Name, Submission, SubmissionDetails, SubmissionHistory, TaxReferenceNumbers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.affected.AffectedStatusPage
@@ -157,6 +158,76 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
       templateCaptor.getValue mustEqual "summary.njk"
+    }
+
+    "do not display associated enterprises under certain conditions" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val reporterLiability = ReporterLiability("intermediary")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
+      // conditions:
+      submission.disclosureDetails.initialDisclosureMA mustBe true
+      submission.reporterDetails.exists(_.isIntermediary) mustBe true
+      submission.taxpayers.isEmpty mustBe true
+
+      // therefore
+      submission.displayAssociatedEnterprises mustBe(false)
+    }
+
+    "display associated enterprises otherwise break condition 1" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name")
+      val reporterLiability = ReporterLiability("intermediary")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
+      // break condition 1:
+      submission.disclosureDetails.initialDisclosureMA mustBe false
+      submission.reporterDetails.exists(_.isIntermediary) mustBe true
+      submission.taxpayers.isEmpty mustBe true
+
+
+      submission.displayAssociatedEnterprises mustBe(true)
+    }
+
+    "display associated enterprises otherwise break condition 2" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val reporterLiability = ReporterLiability("taxpayer")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
+      // break condition 2:
+      submission.disclosureDetails.initialDisclosureMA mustBe true
+      submission.reporterDetails.exists(_.isIntermediary) mustBe false
+      submission.taxpayers.isEmpty mustBe true
+
+
+      submission.displayAssociatedEnterprises mustBe(true)
+    }
+
+    "display associated enterprises otherwise break condition 3" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val reporterLiability = ReporterLiability("intermediary")
+      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+
+      val taxpayers = IndexedSeq(models.taxpayer.Taxpayer("ID"))
+      val submission = Submission(
+        enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails), taxpayers = taxpayers)
+
+      // break condition 3:
+      submission.disclosureDetails.initialDisclosureMA mustBe true
+      submission.reporterDetails.exists(_.isIntermediary) mustBe true
+      submission.taxpayers.isEmpty mustBe false
+
+
+      submission.displayAssociatedEnterprises mustBe(true)
     }
   }
 }

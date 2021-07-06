@@ -87,6 +87,7 @@ class SummaryController @Inject()(
                 "affectedList" -> submission.affectedPersons.map(_.createDisplayRows),
                 "affectedUpdateRow" -> Seq(helper.youHaveNotAddedAnyAffected(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
                 "backtoDisclosuresLink" -> backtoDisclosuresLink,
+                "displayAssociatedEnterprises" -> submission.displayAssociatedEnterprises,
                 "timeStamp" -> getTimeStamp
               )
             ).map(Ok(_))
