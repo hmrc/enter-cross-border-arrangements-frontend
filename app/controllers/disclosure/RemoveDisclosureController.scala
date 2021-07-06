@@ -50,7 +50,7 @@ class RemoveDisclosureController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(RemoveDisclosurePage, id) match {
@@ -74,7 +74,7 @@ class RemoveDisclosureController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[Boolean], id: Int): Call =
     navigator.routeMap(RemoveDisclosurePage)(checkRoute)(Some(id))(value)(0)
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val disclosureDetails : DisclosureDetails =

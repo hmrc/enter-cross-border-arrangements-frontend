@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.CrossBorderArrangementsConnector
 import forms.disclosure.DisclosureIdentifyArrangementFormProvider
 import matchers.JsonMatchers
@@ -27,19 +27,16 @@ import pages.disclosure.DisclosureIdentifyArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.{Form, FormError}
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureIdentifyArrangementControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute: Call = Call("GET", "/foo")
+class DisclosureIdentifyArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
@@ -48,6 +45,17 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
 
   val formProvider = new DisclosureIdentifyArrangementFormProvider()
   val form: Form[String] = formProvider(countriesSeq)
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
+    )
+
+  override def beforeEach: Unit = {
+    reset(mockCrossBorderArrangementsConnector)
+    super.beforeEach
+  }
 
   lazy val disclosureIdentifyArrangementRoute: String = routes.DisclosureIdentifyArrangementController.onPageLoad(NormalMode).url
 
@@ -58,12 +66,13 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -76,29 +85,26 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
 
       templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .setBase(DisclosureIdentifyArrangementPage, validArrangementID).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-        ).build()
+
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -113,47 +119,29 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
 
       templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, disclosureIdentifyArrangementRoute)
           .withFormUrlEncodedBody(("arrangementID", validArrangementID))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure/check-your-answers"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors if arrangement id wasn't created by HMRC" in {
       when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(false)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", validArrangementID))
       val boundForm =
@@ -163,7 +151,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -176,22 +164,20 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
 
       templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", ""))
       val boundForm = form.bind(Map("arrangementID" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -204,40 +190,34 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Nunjucks
 
       templateCaptor.getValue mustEqual "disclosure/disclosureIdentifyArrangement.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+     retrieveNoData()
 
       val request =
         FakeRequest(POST, disclosureIdentifyArrangementRoute)
           .withFormUrlEncodedBody(("arrangementID", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

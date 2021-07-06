@@ -31,7 +31,7 @@ class ContactRetrievalActionImplSpec extends SpecBase {
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
-  class Harness(subscriptionConnector: SubscriptionConnector) extends ContactRetrievalActionImpl(mockAppConfig, subscriptionConnector) {
+  class Harness(subscriptionConnector: SubscriptionConnector) extends ContactRetrievalActionProvider(mockAppConfig, subscriptionConnector) {
     def callTransform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] = transform(request)
   }
 

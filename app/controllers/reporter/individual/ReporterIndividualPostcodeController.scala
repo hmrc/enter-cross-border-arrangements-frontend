@@ -54,7 +54,7 @@ class ReporterIndividualPostcodeController @Inject()(
   private def manualAddressURL(id: Int, mode: Mode): String =
     controllers.reporter.individual.routes.ReporterIndividualAddressController.onPageLoad(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ReporterIndividualPostcodePage, id) match {
@@ -75,7 +75,7 @@ class ReporterIndividualPostcodeController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], index: Int = 0): Call =
     navigator.routeMap(ReporterIndividualPostcodePage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val formReturned = form.bindFromRequest()

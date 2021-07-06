@@ -16,9 +16,9 @@
 
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.HistoryConnector
-import controllers.actions.FakeContactRetrievalAction
+import controllers.actions.FakeContactRetrievalProvider
 import helpers.data.ValidUserAnswersForSubmission.userAnswersForOrganisation
 import matchers.JsonMatchers
 import models.ReporterOrganisationOrIndividual.Individual
@@ -38,12 +38,13 @@ import pages.disclosure.{DisclosureDetailsPage, DisclosureStatusPage}
 import pages.enterprises.AssociatedEnterpriseStatusPage
 import pages.hallmarks.HallmarkStatusPage
 import pages.intermediaries.IntermediariesStatusPage
+import pages.reporter._
 import pages.reporter.individual._
 import pages.reporter.intermediary.IntermediaryWhyReportInUKPage
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter._
 import pages.taxpayer.RelevantTaxpayerStatusPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -52,7 +53,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
-class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val addressLookup = AddressLookup(
     Some("addressLine 1"),
@@ -69,7 +70,11 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
 
   private val mockHistoryConnector = mock[HistoryConnector]
 
-  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(bind[HistoryConnector].toInstance(mockHistoryConnector))
 
   "Summary Controller" - {
 
@@ -133,11 +138,7 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
         .set(ArrangementStatusPage, 0, JourneyStatus.Completed)
         .success.value
 
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[HistoryConnector].toInstance(mockHistoryConnector)
-        ).build()
+      retrieveUserAnswersData(userAnswers)
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -148,7 +149,7 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
       val getRequest = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -156,8 +157,6 @@ class SummaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatch
       verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
       templateCaptor.getValue mustEqual "summary.njk"
-
-      application.stop()
     }
   }
 }

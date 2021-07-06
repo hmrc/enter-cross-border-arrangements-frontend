@@ -16,7 +16,7 @@
 
 package controllers.hallmarks
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.hallmarks.HallmarkD1
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -30,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
+class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Check Your Answers Controller" - {
 
@@ -45,11 +45,11 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -59,8 +59,6 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
-
-      application.stop()
     }
 
     "must include 'Parts of hallmark D1 that apply to this arrangement' if D1 Other selected" in {
@@ -76,11 +74,11 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -95,9 +93,6 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("D1Other") mustBe true
       list.contains("Other page text") mustBe true
-
-      application.stop()
-
     }
 
     "must not include 'Parts of hallmark D1 that apply to this arrangement' if D1 Other is not selected" in {
@@ -113,11 +108,11 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -132,24 +127,19 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase {
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("D1a") mustBe true
       list.contains("Other page text") mustBe false
-
-      application.stop()
-
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

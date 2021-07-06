@@ -16,30 +16,27 @@
 
 package controllers.reporter.intermediary
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.intermediary.IntermediaryRoleFormProvider
 import matchers.JsonMatchers
 import models.reporter.intermediary.IntermediaryRole
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.intermediary.IntermediaryRolePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IntermediaryRoleControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/intermediary/exemption-known/0")
+  override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/intermediary/exemption-known/0")
 
   lazy val intermediaryRoleRoute = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(0, NormalMode).url
 
@@ -52,13 +49,13 @@ class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with 
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -72,8 +69,6 @@ class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with 
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -84,12 +79,12 @@ class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(IntermediaryRolePage, 0, IntermediaryRole.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -105,49 +100,35 @@ class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with 
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
+      retrieveUserAnswersData(emptyUserAnswers)
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       val request =
         FakeRequest(POST, intermediaryRoleRoute)
           .withFormUrlEncodedBody(("value", IntermediaryRole.values.head.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, intermediaryRoleRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -161,8 +142,6 @@ class IntermediaryRoleControllerSpec extends SpecBase with NunjucksSupport with 
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryRole.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

@@ -48,7 +48,7 @@ class RoleInArrangementController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(RoleInArrangementPage, id) match {
@@ -71,7 +71,7 @@ class RoleInArrangementController @Inject()(
     navigator.routeMap(RoleInArrangementPage)(checkRoute)(id)(value)(0)
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

@@ -16,9 +16,9 @@
 
 package controllers.confirmation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.SubscriptionConnector
-import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
 import helpers.JsonFixtures.displaySubscriptionPayloadNoSecondary
 import matchers.JsonMatchers.containJson
 import models.subscription.{ContactDetails, DisplaySubscriptionForDACResponse}
@@ -27,6 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureDeleteCheckYourAnswersPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +35,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
+class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val arrangementID = "GBA20210101ABC123"
   val disclosureID = "GBD20210101ABC123"
@@ -44,6 +45,9 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
     .setBase(DisclosureDeleteCheckYourAnswersPage, generatedIDs).success.value
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super.guiceApplicationBuilder()
+    .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
 
   val jsonPayload: String = displaySubscriptionPayloadNoSecondary(
     JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
@@ -60,7 +64,7 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -92,7 +96,6 @@ class YourDisclosureHasBeenDeletedControllerSpec extends SpecBase {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
 
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
         .thenReturn(Future.successful(Some(displaySubscriptionDetails)))

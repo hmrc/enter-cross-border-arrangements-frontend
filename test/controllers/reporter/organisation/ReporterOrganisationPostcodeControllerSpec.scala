@@ -16,41 +16,47 @@
 
 package controllers.reporter.organisation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.PostcodeFormProvider
 import matchers.JsonMatchers
 import models.{AddressLookup, NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.organisation.ReporterOrganisationPostcodePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.FormError
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class ReporterOrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new PostcodeFormProvider()
   val form = formProvider()
 
-  val mockSessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig = mock[FrontendAppConfig]
   val mockAddressLookupConnector = mock[AddressLookupConnector]
 
   lazy val reporterOrganisationPostcodeRoute = routes.ReporterOrganisationPostcodeController.onPageLoad(0, NormalMode).url
+
+  override def beforeEach: Unit = {
+    reset(mockAddressLookupConnector)
+    super.beforeEach
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+    )
 
   "ReporterOrganisationPostcode Controller" - {
 
@@ -59,12 +65,13 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(GET, reporterOrganisationPostcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -77,8 +84,6 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
 
       templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -89,12 +94,14 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(ReporterOrganisationPostcodePage, 0, "ZZ1 1ZZ").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, reporterOrganisationPostcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -109,8 +116,6 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
 
       templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -120,51 +125,39 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
         AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
       )
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, reporterOrganisationPostcodeRoute)
           .withFormUrlEncodedBody(("postcode", "AA1 1AA"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/organisation/select-address/0"
-
-      reset(mockAddressLookupConnector)
-      application.stop()
     }
 
     "must return a Bad Request and error when postcode is not matched" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(Seq()))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)).build()
-      val request = FakeRequest(POST, reporterOrganisationPostcodeRoute).withFormUrlEncodedBody(("postcode", "AA1 1AA"))
+      retrieveUserAnswersData(emptyUserAnswers)
+
+       val request = FakeRequest(POST, reporterOrganisationPostcodeRoute).withFormUrlEncodedBody(("postcode", "AA1 1AA"))
       val boundForm = form.bind(Map("postcode" -> "AA1 1AA"))
         .withError(FormError("postcode", List("Address not found - enter a different postcode or enter the address manually")))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -179,22 +172,21 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
       templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
-      reset(mockAddressLookupConnector)
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, reporterOrganisationPostcodeRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -207,40 +199,31 @@ class ReporterOrganisationPostcodeControllerSpec extends SpecBase with NunjucksS
 
       templateCaptor.getValue mustEqual "postcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
+      retrieveNoData()
       val request = FakeRequest(GET, reporterOrganisationPostcodeRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, reporterOrganisationPostcodeRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

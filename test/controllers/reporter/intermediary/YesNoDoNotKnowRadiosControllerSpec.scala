@@ -16,7 +16,7 @@
 
 package controllers.reporter.intermediary
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.intermediary.IntermediaryExemptionInEUFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers, YesNoDoNotKnowRadios}
@@ -24,17 +24,15 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.intermediary.IntermediaryExemptionInEUPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val intermediaryExemptionInEURoute = routes.IntermediaryExemptionInEUController.onPageLoad(0, NormalMode).url
 
@@ -48,12 +46,12 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, intermediaryExemptionInEURoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -67,8 +65,6 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -79,12 +75,12 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport w
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.values.head).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, intermediaryExemptionInEURoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -100,46 +96,32 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
+      retrieveUserAnswersData(emptyUserAnswers)
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       val request =
         FakeRequest(POST, intermediaryExemptionInEURoute)
           .withFormUrlEncodedBody(("value", YesNoDoNotKnowRadios.values.head.toString))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, intermediaryExemptionInEURoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -153,8 +135,6 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "reporter/intermediary/intermediaryExemptionInEU.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

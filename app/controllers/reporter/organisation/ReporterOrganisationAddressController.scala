@@ -53,7 +53,7 @@ class ReporterOrganisationAddressController @Inject()(override val messagesApi: 
 
   private def actionUrl(id: Int, mode: Mode) = routes.ReporterOrganisationAddressController.onSubmit(id, mode).url
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -94,7 +94,7 @@ class ReporterOrganisationAddressController @Inject()(override val messagesApi: 
       navigator.routeMap(ReporterOrganisationAddressPage)(checkRoute)(id)(value)(0)
     }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))

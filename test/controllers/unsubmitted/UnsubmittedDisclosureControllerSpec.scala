@@ -16,7 +16,7 @@
 
 package controllers.unsubmitted
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +27,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class UnsubmittedDisclosureControllerSpec extends SpecBase {
+class UnsubmittedDisclosureControllerSpec extends SpecBase with ControllerMockFixtures {
   "Unsubmitted Disclosure Controller" - {
     "must display the unsubmitted disclosures when some are present" in {
 
@@ -37,11 +37,11 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase {
       val unsubmittedDisclosures = Seq(UnsubmittedDisclosure("1", "My First Disclosure"), UnsubmittedDisclosure("2", "The Revenge"))
 
       val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -52,9 +52,9 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase {
     }
 
     "must redirect first time users to the disclosures homepage" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
     }
@@ -62,9 +62,9 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase {
     "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
       val unsubmittedDisclosures = Seq.empty[UnsubmittedDisclosure]
       val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
     }

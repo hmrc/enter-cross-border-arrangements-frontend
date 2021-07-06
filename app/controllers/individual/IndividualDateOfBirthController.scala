@@ -50,7 +50,7 @@ class IndividualDateOfBirthController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(IndividualDateOfBirthPage, id) match {
@@ -74,7 +74,7 @@ class IndividualDateOfBirthController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[LocalDate]): Call =
     navigator.routeMap(IndividualDateOfBirthPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
 

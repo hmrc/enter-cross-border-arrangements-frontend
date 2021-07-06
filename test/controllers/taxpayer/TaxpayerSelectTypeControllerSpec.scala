@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.taxpayer.TaxpayerSelectTypeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, SelectType, UnsubmittedDisclosure, UserAnswers}
@@ -27,7 +27,6 @@ import pages.taxpayer.TaxpayerSelectTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,9 +35,9 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class TaxpayerSelectTypeControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+
 
   lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url
 

@@ -16,7 +16,7 @@
 
 package controllers.reporter.individual
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.reporter.individual.ReporterIndividualNameFormProvider
 import matchers.JsonMatchers
 import models.{Name, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -24,21 +24,15 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.reporter.individual.ReporterIndividualNamePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class ReporterIndividualNameControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
-
+class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
   val formProvider = new ReporterIndividualNameFormProvider()
   val form = formProvider()
 
@@ -56,13 +50,12 @@ class ReporterIndividualNameControllerSpec extends SpecBase with NunjucksSupport
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, reporterIndividualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -75,21 +68,18 @@ class ReporterIndividualNameControllerSpec extends SpecBase with NunjucksSupport
 
       templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, reporterIndividualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -109,49 +99,34 @@ class ReporterIndividualNameControllerSpec extends SpecBase with NunjucksSupport
 
       templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, reporterIndividualNameRoute)
           .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/individual/date-of-birth/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, reporterIndividualNameRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -164,39 +139,33 @@ class ReporterIndividualNameControllerSpec extends SpecBase with NunjucksSupport
 
       templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-       application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, reporterIndividualNameRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, reporterIndividualNameRoute)
           .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

@@ -16,7 +16,7 @@
 
 package controllers.organisation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.organisation.WhichCountryTaxForOrganisationFormProvider
 import matchers.JsonMatchers
 import models.{Country, LoopDetails, NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -26,17 +26,17 @@ import pages.organisation.{OrganisationLoopPage, OrganisationNamePage, WhichCoun
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
@@ -47,6 +47,17 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
   val index: Int = 0
 
   lazy val whichCountryTaxForOrganisationRoute: String = controllers.organisation.routes.WhichCountryTaxForOrganisationController.onPageLoad(0, NormalMode, index).url
+
+  override def beforeEach: Unit = {
+    reset(mockCountryFactory)
+    super.beforeEach
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
+      bind[CountryListFactory].toInstance(mockCountryFactory)
+    )
 
   "WhichCountryTaxForOrganisation Controller" - {
 
@@ -60,15 +71,14 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
       val updatedUserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(OrganisationNamePage, 0, "Paper Org").success.value
-      val application = applicationBuilder(userAnswers = Some(updatedUserAnswers))
-        .overrides(
-          bind[CountryListFactory].toInstance(mockCountryFactory)
-        ).build()
+
+      retrieveUserAnswersData(updatedUserAnswers)
+
       val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -81,8 +91,6 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
 
       templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -99,15 +107,12 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[CountryListFactory].toInstance(mockCountryFactory)
-        ).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -120,49 +125,40 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
         "mode" -> NormalMode
       )
 
-        templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
+      templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, whichCountryTaxForOrganisationRoute)
           .withFormUrlEncodedBody(("country", "FR"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/organisation/resident-country-tin-0/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, whichCountryTaxForOrganisationRoute).withFormUrlEncodedBody(("country", ""))
       val boundForm = form.bind(Map("country" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -175,40 +171,34 @@ class WhichCountryTaxForOrganisationControllerSpec extends SpecBase with Nunjuck
 
       templateCaptor.getValue mustEqual "organisation/whichCountryTaxForOrganisation.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, whichCountryTaxForOrganisationRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, whichCountryTaxForOrganisationRoute)
           .withFormUrlEncodedBody(("value", "FR"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
