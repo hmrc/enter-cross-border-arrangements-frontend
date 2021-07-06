@@ -31,7 +31,6 @@ class IntermediaryRoleSpec extends ModelSpecBase {
 
       forAll(gen) {
         intermediaryRole =>
-
           JsString(intermediaryRole.toString).validate[IntermediaryRole].asOpt.value mustEqual intermediaryRole
       }
     }
@@ -42,7 +41,6 @@ class IntermediaryRoleSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[IntermediaryRole] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class IntermediaryRoleSpec extends ModelSpecBase {
 
       forAll(gen) {
         intermediaryRole =>
-
           Json.toJson(intermediaryRole) mustEqual JsString(intermediaryRole.toString)
       }
     }

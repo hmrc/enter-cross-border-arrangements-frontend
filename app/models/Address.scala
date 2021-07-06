@@ -19,13 +19,13 @@ package models
 import play.api.libs.json._
 
 case class Address(
-                    addressLine1: Option[String],
-                    addressLine2: Option[String],
-                    addressLine3: Option[String],
-                    city: String,
-                    postCode: Option[String],
-                    country: Country
-                  ){
+  addressLine1: Option[String],
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  city: String,
+  postCode: Option[String],
+  country: Country
+) {
 
   def toAddressLookup: AddressLookup = AddressLookup(
     addressLine1 = this.addressLine1,
@@ -34,7 +34,7 @@ case class Address(
     addressLine4 = None,
     town = this.city,
     county = None,
-    postcode= this.postCode.getOrElse("")
+    postcode = this.postCode.getOrElse("")
   )
 
   def format: String = toAddressLookup.formatAddress

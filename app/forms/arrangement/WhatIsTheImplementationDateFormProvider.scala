@@ -27,11 +27,11 @@ class WhatIsTheImplementationDateFormProvider @Inject() extends Mappings {
   def apply(): Form[LocalDate] =
     Form(
       "value" -> localDate(
-        invalidKey     = "whatIsTheImplementationDate.error.invalid",
+        invalidKey = "whatIsTheImplementationDate.error.invalid",
         allRequiredKey = "whatIsTheImplementationDate.error.required.all",
         twoRequiredKey = "whatIsTheImplementationDate.error.required.two",
-        requiredKey    = "whatIsTheImplementationDate.error.required"
+        requiredKey = "whatIsTheImplementationDate.error.required"
       ).verifying(maxDate(LocalDate.ofYearDay(3000, 1), "whatIsTheImplementationDate.error.futureDate"))
-        .verifying(minDate(LocalDate.of(2018,6,25),"whatIsTheImplementationDate.error.pastDate"))
+        .verifying(minDate(LocalDate.of(2018, 6, 25), "whatIsTheImplementationDate.error.pastDate"))
     )
 }

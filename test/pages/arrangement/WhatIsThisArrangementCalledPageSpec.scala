@@ -18,7 +18,6 @@ package pages.arrangement
 
 import pages.behaviours.PageBehaviours
 
-
 class WhatIsThisArrangementCalledPageSpec extends PageBehaviours {
 
   "WhatIsThisArrangementCalledPage" - {

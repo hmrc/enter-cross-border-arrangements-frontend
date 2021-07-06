@@ -27,10 +27,10 @@ import java.time.LocalDate
 
 class AssociatedEnterpriseTypePageSpec extends PageBehaviours {
 
-  val country: Country = Country("valid", "GB", "United Kingdom")
-  val taxRefNumbers: TaxReferenceNumbers = TaxReferenceNumbers("utr", None, None)
-  val address: Address = Address(None, None, None, "", None, country)
-  val loopDetails: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(None, Some(country), None,None, None, None))
+  val country: Country                     = Country("valid", "GB", "United Kingdom")
+  val taxRefNumbers: TaxReferenceNumbers   = TaxReferenceNumbers("utr", None, None)
+  val address: Address                     = Address(None, None, None, "", None, country)
+  val loopDetails: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(None, Some(country), None, None, None, None))
 
   "AssociatedEnterpriseTypePage" - {
 
@@ -45,45 +45,66 @@ class AssociatedEnterpriseTypePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
             .set(IndividualNamePage, 0, Name("First", "Last"))
-            .success.value
+            .success
+            .value
             .set(IndividualDateOfBirthPage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(IsIndividualPlaceOfBirthKnownPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(IndividualPlaceOfBirthPage, 0, "Place of birth")
-            .success.value
+            .success
+            .value
             .set(IsIndividualAddressKnownPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(IsIndividualAddressUkPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
-            .success.value
+            .success
+            .value
             .set(IndividualSelectAddressPage, 0, "Some address")
-            .success.value
+            .success
+            .value
             .set(IndividualAddressPage, 0, address)
-            .success.value
+            .success
+            .value
             .set(EmailAddressQuestionForIndividualPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(EmailAddressForIndividualPage, 0, "email@email.com")
-            .success.value
+            .success
+            .value
             .set(WhichCountryTaxForIndividualPage, 0, country)
-            .success.value
+            .success
+            .value
             .set(DoYouKnowAnyTINForUKIndividualPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(WhatAreTheTaxNumbersForUKIndividualPage, 0, taxRefNumbers)
-            .success.value
+            .success
+            .value
             .set(IsIndividualResidentForTaxOtherCountriesPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(DoYouKnowTINForNonUKIndividualPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(WhatAreTheTaxNumbersForNonUKIndividualPage, 0, taxRefNumbers)
-            .success.value
+            .success
+            .value
             .set(IndividualLoopPage, 0, loopDetails)
-            .success.value
+            .success
+            .value
             .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
-            .success.value
+            .success
+            .value
 
           result.get(IndividualNamePage, 0) mustBe None
           result.get(IndividualDateOfBirthPage, 0) mustBe None
@@ -111,39 +132,57 @@ class AssociatedEnterpriseTypePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
             .set(OrganisationNamePage, 0, "Organisation name")
-            .success.value
+            .success
+            .value
             .set(IsOrganisationAddressKnownPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(IsOrganisationAddressUkPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(SelectAddressPage, 0, "Some address")
-            .success.value
+            .success
+            .value
             .set(PostcodePage, 0, "ZZ1 1ZZ")
-            .success.value
+            .success
+            .value
             .set(OrganisationAddressPage, 0, address)
-            .success.value
+            .success
+            .value
             .set(EmailAddressQuestionForOrganisationPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(EmailAddressForOrganisationPage, 0, "email@email.com")
-            .success.value
+            .success
+            .value
             .set(WhichCountryTaxForOrganisationPage, 0, country)
-            .success.value
+            .success
+            .value
             .set(DoYouKnowAnyTINForUKOrganisationPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(WhatAreTheTaxNumbersForUKOrganisationPage, 0, taxRefNumbers)
-            .success.value
+            .success
+            .value
             .set(IsOrganisationResidentForTaxOtherCountriesPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(DoYouKnowTINForNonUKOrganisationPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0, taxRefNumbers)
-            .success.value
+            .success
+            .value
             .set(OrganisationLoopPage, 0, loopDetails)
-            .success.value
+            .success
+            .value
             .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
-            .success.value
+            .success
+            .value
 
           result.get(OrganisationNamePage, 0) mustBe None
           result.get(IsOrganisationAddressKnownPage, 0) mustBe None

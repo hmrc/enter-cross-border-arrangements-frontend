@@ -25,23 +25,17 @@ import utils.RegexConstants
 
 class AddressFormProvider @Inject() extends Mappings with RegexConstants {
 
-  val fieldLength = 400
+  val fieldLength         = 400
   val postcodeFieldLength = 10
 
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
-      "addressLine1" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine1.length")),
-
-      "addressLine2" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine2.length")),
-
-      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine3.length")),
-
-      "city" -> text("address.error.city.required").verifying(maxLength(fieldLength,"address.error.city.length")),
-
-      "postCode" -> optionalText().verifying(maxLengthOption(postcodeFieldLength,"address.error.postcode.optional.length")),
-
-
-      "country" ->  text("address.error.country.required")
+      "addressLine1" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine1.length")),
+      "addressLine2" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine2.length")),
+      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine3.length")),
+      "city"         -> text("address.error.city.required").verifying(maxLength(fieldLength, "address.error.city.length")),
+      "postCode"     -> optionalText().verifying(maxLengthOption(postcodeFieldLength, "address.error.postcode.optional.length")),
+      "country" -> text("address.error.country.required")
         .verifying("address.error.country.required", value => countryList.exists(_.code == value) || value == "GB")
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)

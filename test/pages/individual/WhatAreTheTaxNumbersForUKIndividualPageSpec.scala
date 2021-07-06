@@ -20,7 +20,6 @@ import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResi
 import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
-
 class WhatAreTheTaxNumbersForUKIndividualPageSpec extends PageBehaviours {
 
   "WhatAreTheTaxNumbersForUKIndividualPage" - {
@@ -36,17 +35,17 @@ class WhatAreTheTaxNumbersForUKIndividualPageSpec extends PageBehaviours {
 
     "- when first detail in loop is from the UK " in {
 
-      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual) mustBe(validTaxResidencies.head.taxReferenceNumbers)
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual) mustBe (validTaxResidencies.head.taxReferenceNumbers)
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(None)
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe None
     }
 
     "- when details are empty " in {
 
-      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+      WhatAreTheTaxNumbersForUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe None
     }
   }
 }

@@ -20,7 +20,6 @@ import helpers.data.ValidUserAnswersForSubmission.{validAddress, validOrganisati
 import models.Address
 import pages.behaviours.PageBehaviours
 
-
 class OrganisationAddressPageSpec extends PageBehaviours {
 
   "OrganisationAddressPage" - {
@@ -36,12 +35,12 @@ class OrganisationAddressPageSpec extends PageBehaviours {
 
     "- when address exists " in {
 
-      OrganisationAddressPage.getFromModel(validOrganisation) mustBe(Some(validAddress))
+      OrganisationAddressPage.getFromModel(validOrganisation) mustBe (Some(validAddress))
     }
 
     "- when address is empty " in {
 
-      OrganisationAddressPage.getFromModel(validOrganisation.copy(address = None)) mustBe(None)
+      OrganisationAddressPage.getFromModel(validOrganisation.copy(address = None)) mustBe None
     }
   }
 }

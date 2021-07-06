@@ -26,6 +26,7 @@ class IntermediaryWhichCountriesExemptFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Set[CountryList]] =
     Form(
-      "value" -> set(enumerable[CountryList]("intermediaryWhichCountriesExempt.error.required")).verifying(nonEmptySet("intermediaryWhichCountriesExempt.error.required"))
+      "value" -> set(enumerable[CountryList]("intermediaryWhichCountriesExempt.error.required"))
+        .verifying(nonEmptySet("intermediaryWhichCountriesExempt.error.required"))
     )
 }

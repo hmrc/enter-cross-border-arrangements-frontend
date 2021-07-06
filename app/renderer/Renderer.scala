@@ -26,7 +26,7 @@ import uk.gov.hmrc.hmrcfrontend.config.TrackingConsentConfig
 
 import scala.concurrent.Future
 
-class Renderer @Inject()(appConfig: FrontendAppConfig, trackingConfig: TrackingConsentConfig, renderer: NunjucksRenderer) {
+class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: TrackingConsentConfig, renderer: NunjucksRenderer) {
 
   def render(template: String)(implicit request: RequestHeader): Future[Html] =
     renderTemplate(template, Json.obj())

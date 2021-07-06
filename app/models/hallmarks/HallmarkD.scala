@@ -45,5 +45,9 @@ object HallmarkD extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[HallmarkD] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

@@ -24,24 +24,23 @@ import utils.SummaryListDisplay.DisplayRow
 class SummaryListDisplaySpec extends SpecBase {
 
   "SummaryListDisplay" - {
-    val displayRow = DisplayRow(Key(Literal("row1"), List("govuk-!-width-two-thirds")),
-      Value(Literal("Row1Content")), Seq("govuk-summary-list--no-border"))
-    val displayRow2 =  DisplayRow(Key(Literal("row2"), List("govuk-!-width-two-thirds")),
-      Value(Literal("Row2Content")), Seq("govuk-summary-list--no-border"))
+    val displayRow  = DisplayRow(Key(Literal("row1"), List("govuk-!-width-two-thirds")), Value(Literal("Row1Content")), Seq("govuk-summary-list--no-border"))
+    val displayRow2 = DisplayRow(Key(Literal("row2"), List("govuk-!-width-two-thirds")), Value(Literal("Row2Content")), Seq("govuk-summary-list--no-border"))
 
     "must convert a row into a display row with rowToDisplayRow" in {
-      val row = Row(Key(Literal("row1")),Value(Literal("Row1Content")), Seq(Action(Literal("action"), "http://localhost")))
+      val row = Row(Key(Literal("row1")), Value(Literal("Row1Content")), Seq(Action(Literal("action"), "http://localhost")))
       SummaryListDisplay.rowToDisplayRow(row) mustBe DisplayRow(Key(Literal("row1"), List("govuk-!-width-two-thirds")), Value(Literal("Row1Content")))
     }
     "must remove formatting from a Displayrow with removeClassFromDisplayRow" in {
 
       SummaryListDisplay.removeClassFromDisplayRow(displayRow) mustBe DisplayRow(Key(Literal("row1"), List("govuk-!-width-two-thirds")),
-        Value(Literal("Row1Content")), Seq.empty[String])
+                                                                                 Value(Literal("Row1Content")),
+                                                                                 Seq.empty[String]
+      )
     }
     "must remove the formatting for the last element in a seq of DisplayRow with removeClassesFromLastElementInSeq" in {
-      val rows = Seq(displayRow, displayRow2)
-      val displayRow2WithOutFormatting = DisplayRow(Key(Literal("row2"), List("govuk-!-width-two-thirds")),
-        Value(Literal("Row2Content")), Seq.empty[String])
+      val rows                         = Seq(displayRow, displayRow2)
+      val displayRow2WithOutFormatting = DisplayRow(Key(Literal("row2"), List("govuk-!-width-two-thirds")), Value(Literal("Row2Content")), Seq.empty[String])
       SummaryListDisplay.removeClassesFromLastElementInSeq(rows) mustBe Seq(displayRow, displayRow2WithOutFormatting)
     }
   }

@@ -31,7 +31,6 @@ class YouHaveNotAddedAnyIntermediariesSpec extends ModelSpecBase with ModelGener
 
       forAll(gen) {
         youHaveNotAddedAnyIntermediaries =>
-
           JsString(youHaveNotAddedAnyIntermediaries.toString).validate[YouHaveNotAddedAnyIntermediaries].asOpt.value mustEqual youHaveNotAddedAnyIntermediaries
       }
     }
@@ -42,7 +41,6 @@ class YouHaveNotAddedAnyIntermediariesSpec extends ModelSpecBase with ModelGener
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[YouHaveNotAddedAnyIntermediaries] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class YouHaveNotAddedAnyIntermediariesSpec extends ModelSpecBase with ModelGener
 
       forAll(gen) {
         youHaveNotAddedAnyIntermediaries =>
-
           Json.toJson(youHaveNotAddedAnyIntermediaries) mustEqual JsString(youHaveNotAddedAnyIntermediaries.toString)
       }
     }

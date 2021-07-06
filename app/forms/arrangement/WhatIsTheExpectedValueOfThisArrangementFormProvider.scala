@@ -25,14 +25,16 @@ import play.api.data.Forms._
 
 class WhatIsTheExpectedValueOfThisArrangementFormProvider @Inject() extends Mappings {
 
-   def apply(currencyList: Seq[Currency]): Form[ExpectedArrangementValue] = Form(
-     mapping(
+  def apply(currencyList: Seq[Currency]): Form[ExpectedArrangementValue] = Form(
+    mapping(
       "currency" -> text("whatIsTheExpectedValueOfThisArrangement.error.currency.required")
         .verifying("whatIsTheExpectedValueOfThisArrangement.error.currency.required", value => currencyList.exists(_.code == value)),
-      "amount" -> int("whatIsTheExpectedValueOfThisArrangement.error.amount.required",
+      "amount" -> int(
+        "whatIsTheExpectedValueOfThisArrangement.error.amount.required",
         "whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber",
-        "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric")
+        "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric"
+      )
         .verifying(inRange(0, Int.MaxValue, "whatIsTheExpectedValueOfThisArrangement.error.amount.outOfRange"))
     )(ExpectedArrangementValue.apply)(ExpectedArrangementValue.unapply)
-   )
- }
+  )
+}

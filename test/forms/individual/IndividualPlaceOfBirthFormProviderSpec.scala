@@ -22,8 +22,8 @@ import play.api.data.FormError
 class IndividualPlaceOfBirthFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "individualPlaceOfBirth.error.required"
-  val lengthKey = "individualPlaceOfBirth.error.length"
-  val maxLength = 200
+  val lengthKey   = "individualPlaceOfBirth.error.length"
+  val maxLength   = 200
 
   val form = new IndividualPlaceOfBirthFormProvider()()
 

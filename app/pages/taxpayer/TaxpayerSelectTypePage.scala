@@ -21,7 +21,7 @@ import models.taxpayer.Taxpayer
 import play.api.libs.json.JsPath
 import pages.{CleanUpSelectTypePage, DetailsPage}
 
-case object TaxpayerSelectTypePage extends DetailsPage[SelectType, Taxpayer]  with CleanUpSelectTypePage {
+case object TaxpayerSelectTypePage extends DetailsPage[SelectType, Taxpayer] with CleanUpSelectTypePage {
 
   override def path: JsPath = JsPath \ toString
 

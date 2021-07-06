@@ -24,7 +24,6 @@ class ReporterOrganisationNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "organisationName" -> validatedTextMaxLength("reporterOrganisationName.error.required",
-        "reporterOrganisationName.error.length", 200)
+      "organisationName" -> validatedTextMaxLength("reporterOrganisationName.error.required", "reporterOrganisationName.error.length", 200)
     )
 }

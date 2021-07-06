@@ -19,7 +19,7 @@ package controllers.individual
 import controllers.actions._
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.individual.IsIndividualResidentForTaxOtherCountriesFormProvider
-import helpers.JourneyHelpers.{currentIndexInsideLoop, getIndividualName, checkLoopDetailsContainsCountry}
+import helpers.JourneyHelpers.{checkLoopDetailsContainsCountry, currentIndexInsideLoop, getIndividualName}
 import javax.inject.Inject
 import models.{CheckMode, LoopDetails, Mode, NormalMode}
 import navigation.NavigatorForIndividual
@@ -34,23 +34,26 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsIndividualResidentForTaxOtherCountriesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIndividual,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsIndividualResidentForTaxOtherCountriesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsIndividualResidentForTaxOtherCountriesController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsIndividualResidentForTaxOtherCountriesFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       checkLoopDetailsContainsCountry(request.userAnswers, id, IndividualLoopPage)
 
       val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
@@ -66,12 +69,12 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
+        "form"           -> preparedForm,
+        "id"             -> id,
+        "mode"           -> mode,
         "individualName" -> getIndividualName(request.userAnswers, id),
-        "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "index" -> index
+        "radios"         -> Radios.yesNo(preparedForm("confirm")),
+        "index"          -> index
       )
 
       renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(Ok(_))
@@ -82,43 +85,44 @@ class IsIndividualResidentForTaxOtherCountriesController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"           -> formWithErrors,
+              "id"             -> id,
+              "mode"           -> mode,
+              "individualName" -> getIndividualName(request.userAnswers, id),
+              "radios"         -> Radios.yesNo(formWithErrors("confirm")),
+              "index"          -> index
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "individualName" -> getIndividualName(request.userAnswers, id),
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "index" -> index
-          )
+            renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
+          },
+          value => {
 
-          renderer.render("individual/isIndividualResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
-        },
-        value => {
+            val individualLoopList = (request.userAnswers.get(IndividualLoopPage, id), mode) match {
+              case (Some(list), NormalMode) => // Add to Loop in NormalMode
+                list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
+              case (Some(list), CheckMode) =>
+                if (value.equals(false)) {
+                  list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
+                } else {
+                  list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
+                }
+              case (None, _) => // Start new Loop in Normal Mode
+                IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
+            }
 
-          val individualLoopList = (request.userAnswers.get(IndividualLoopPage, id), mode) match {
-            case (Some(list), NormalMode) => // Add to Loop in NormalMode
-              list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-            case (Some(list), CheckMode) =>
-              if (value.equals(false)) {
-                list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
-              } else {
-                list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
-              }
-            case (None, _) => // Start new Loop in Normal Mode
-              IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
           }
-
-          for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsIndividualResidentForTaxOtherCountriesPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopList))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+        )
   }
 }

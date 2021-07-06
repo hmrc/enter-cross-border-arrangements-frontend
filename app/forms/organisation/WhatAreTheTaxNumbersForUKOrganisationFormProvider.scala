@@ -29,16 +29,12 @@ class WhatAreTheTaxNumbersForUKOrganisationFormProvider @Inject() extends Mappin
   def apply(): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-      "firstTaxNumber" -> validatedTextMaxLength(
-        "whatAreTheTaxNumbersForUKOrganisation.error.required",
-        "whatAreTheTaxNumbersForUKOrganisation.label1.error.length",
-        maxLength),
-      "secondTaxNumber" -> validatedOptionalTextMaxLength(
-        "whatAreTheTaxNumbersForUKOrganisation.label2.error.length",
-        maxLength),
-      "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-        "whatAreTheTaxNumbersForUKOrganisation.label3.error.length",
-        maxLength)
+        "firstTaxNumber" -> validatedTextMaxLength("whatAreTheTaxNumbersForUKOrganisation.error.required",
+                                                   "whatAreTheTaxNumbersForUKOrganisation.label1.error.length",
+                                                   maxLength
+        ),
+        "secondTaxNumber" -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForUKOrganisation.label2.error.length", maxLength),
+        "thirdTaxNumber"  -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForUKOrganisation.label3.error.length", maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }

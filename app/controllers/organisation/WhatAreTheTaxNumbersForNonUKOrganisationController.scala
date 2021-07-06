@@ -34,23 +34,26 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForOrganisation,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatAreTheTaxNumbersForNonUKOrganisationFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForOrganisation,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatAreTheTaxNumbersForNonUKOrganisationFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
@@ -64,12 +67,12 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
+        "form"             -> preparedForm,
+        "id"               -> id,
+        "mode"             -> mode,
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "country" -> getCountry(request.userAnswers, id),
-        "index" -> index
+        "country"          -> getCountry(request.userAnswers, id),
+        "index"            -> index
       )
 
       renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(Ok(_))
@@ -80,34 +83,33 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"             -> formWithErrors,
+              "id"               -> id,
+              "mode"             -> mode,
+              "organisationName" -> getOrganisationName(request.userAnswers, id),
+              "country"          -> getCountry(request.userAnswers, id),
+              "index"            -> index
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "country" -> getCountry(request.userAnswers, id),
-            "index" -> index
-          )
-
-          renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(taxNumbersNonUK = Some(value))))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            renderer.render("organisation/whatAreTheTaxNumbersForNonUKOrganisation.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForNonUKOrganisationPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(taxNumbersNonUK = Some(value))))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+        )
   }
 
-  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String = {
+  private def getCountry(userAnswers: UserAnswers, id: Int)(implicit request: Request[AnyContent]): String =
     userAnswers.get(OrganisationLoopPage, id) match {
       case Some(loopDetailsSeq) =>
         val whichCountry = loopDetailsSeq(currentIndexInsideLoop(request)).whichCountry
@@ -118,5 +120,4 @@ class WhatAreTheTaxNumbersForNonUKOrganisationController @Inject()(
         }
       case None => "the country"
     }
-  }
 }

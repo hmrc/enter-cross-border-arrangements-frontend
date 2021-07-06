@@ -25,46 +25,58 @@ import scala.xml.NodeSeq
 case class RelevantTaxPayersXMLSection(submission: Submission) {
 
   val associatedEnterpriseSection: Option[AssociatedEnterprisesXMLSection] = Option(AssociatedEnterprisesXMLSection(submission))
-  private val isReporterTaxpayer: Option[Boolean] = submission.reporterDetails.flatMap(_.liability.map(x => x.role == RoleInArrangement.Taxpayer.toString))
+
+  private val isReporterTaxpayer: Option[Boolean] = submission.reporterDetails.flatMap(
+    _.liability.map(
+      x => x.role == RoleInArrangement.Taxpayer.toString
+    )
+  )
 
   private[xml] def getAssociatedEnterprisesForReporter(name: String) =
     associatedEnterpriseSection.map(_.buildAssociatedEnterprises(name)).getOrElse(NodeSeq.Empty)
 
-  private[xml] def buildReporterAsTaxpayer: NodeSeq = {
-
+  private[xml] def buildReporterAsTaxpayer: NodeSeq =
     (isReporterTaxpayer, submission.reporterDetails) match {
       case (Some(true), Some(reporterDetails)) =>
-
-        val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(liability => liability.implementingDate.fold(NodeSeq.Empty)(
-          date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
-        ))
+        val implementingDate = reporterDetails.liability.fold(NodeSeq.Empty)(
+          liability =>
+            liability.implementingDate.fold(NodeSeq.Empty)(
+              date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
+            )
+        )
 
         if (reporterDetails.organisation.isDefined) {
           <RelevantTaxpayer>
-            {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}{implementingDate}{getAssociatedEnterprisesForReporter(reporterDetails.organisation.get.organisationName)}
+            {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}{implementingDate}{
+            getAssociatedEnterprisesForReporter(reporterDetails.organisation.get.organisationName)
+          }
           </RelevantTaxpayer>
         } else {
           <RelevantTaxpayer>
-            {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}{implementingDate}{getAssociatedEnterprisesForReporter(reporterDetails.individual.get.nameAsString)}
+            {IndividualXMLSection.buildIDForIndividual(reporterDetails.individual.get)}{implementingDate}{
+            getAssociatedEnterprisesForReporter(reporterDetails.individual.get.nameAsString)
+          }
           </RelevantTaxpayer>
         }
 
       case _ => NodeSeq.Empty
     }
-  }
 
   private[xml] def getAssociatedEnterprisesForTaxpayers(taxpayerID: String) =
     associatedEnterpriseSection.map(_.buildAssociatedEnterprises(taxpayerID)).getOrElse(NodeSeq.Empty)
 
   private[xml] def getRelevantTaxpayers: IndexedSeq[NodeSeq] =
-    submission.taxpayers.map { taxpayer =>
-      val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>)
-      if (taxpayer.individual.isDefined) {
-        <RelevantTaxpayer>
+    submission.taxpayers.map {
+      taxpayer =>
+        val date = taxpayer.implementingDate.fold(NodeSeq.Empty)(
+          date => <TaxpayerImplementingDate>{date}</TaxpayerImplementingDate>
+        )
+        if (taxpayer.individual.isDefined) {
+          <RelevantTaxpayer>
           {IndividualXMLSection.buildIDForIndividual(taxpayer.individual.get)}{date}{getAssociatedEnterprisesForTaxpayers(taxpayer.taxpayerId)}
         </RelevantTaxpayer>
-      } else {
-        <RelevantTaxpayer>
+        } else {
+          <RelevantTaxpayer>
           {OrganisationXMLSection.buildIDForOrganisation(taxpayer.organisation.get)}{date}{getAssociatedEnterprisesForTaxpayers(taxpayer.taxpayerId)}
         </RelevantTaxpayer>
         }

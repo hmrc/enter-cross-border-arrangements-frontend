@@ -26,13 +26,13 @@ class DisclosureTypeFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "disclosureType.error.required"
 
     behave like optionsField[DisclosureType](
       form,
       fieldName,
-      validValues  = DisclosureType.values,
+      validValues = DisclosureType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

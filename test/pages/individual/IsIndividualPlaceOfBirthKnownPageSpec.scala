@@ -34,17 +34,17 @@ class IsIndividualPlaceOfBirthKnownPageSpec extends PageBehaviours {
 
     "- when place of birth exists " in {
 
-      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual) mustBe (Some(true))
     }
 
     "- when place of birth is empty " in {
 
-      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = Some(""))) mustBe(Some(false))
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = Some(""))) mustBe (Some(false))
     }
 
     "- when place of birth is not defined " in {
 
-      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = None)) mustBe(Some(false))
+      IsIndividualPlaceOfBirthKnownPage.getFromModel(validIndividual.copy(birthPlace = None)) mustBe (Some(false))
     }
   }
 }

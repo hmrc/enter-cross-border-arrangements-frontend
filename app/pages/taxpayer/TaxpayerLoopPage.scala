@@ -32,15 +32,15 @@ case object TaxpayerLoopPage extends LoopPage[Taxpayer] {
     userAnswers.get(TaxpayerLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
         list.filterNot(_.taxpayerId == buildTaxpayer.taxpayerId) :+ buildTaxpayer
-      case None =>       // start new list
+      case None => // start new list
         IndexedSeq[Taxpayer](buildTaxpayer)
     }
   }
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    TaxpayerCheckYourAnswersPage
-    , UpdateTaxpayerPage
-    , TaxpayerSelectTypePage
-    , WhatIsTaxpayersStartDateForImplementingArrangementPage
+    TaxpayerCheckYourAnswersPage,
+    UpdateTaxpayerPage,
+    TaxpayerSelectTypePage,
+    WhatIsTaxpayersStartDateForImplementingArrangementPage
   )
 }

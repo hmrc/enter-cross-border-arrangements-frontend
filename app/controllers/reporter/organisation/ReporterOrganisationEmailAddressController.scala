@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterOrganisationEmailAddressController @Inject()(
+class ReporterOrganisationEmailAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
@@ -44,7 +44,11 @@ class ReporterOrganisationEmailAddressController @Inject()(
   formProvider: ReporterEmailAddressFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private def actionUrl(id: Int, mode: Mode): String = routes.ReporterOrganisationEmailAddressController.onSubmit(id, mode).url
 
@@ -52,17 +56,16 @@ class ReporterOrganisationEmailAddressController @Inject()(
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ReporterOrganisationEmailAddressPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode,
-        "pageTitle" -> "reporterOrganisationEmailAddress.title",
-        "actionUrl" -> actionUrl(id, mode),
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "pageTitle"   -> "reporterOrganisationEmailAddress.title",
+        "actionUrl"   -> actionUrl(id, mode),
         "pageHeading" -> pageHeading(getReporterDetailsOrganisationName(request.userAnswers, id))
       )
 
@@ -74,30 +77,30 @@ class ReporterOrganisationEmailAddressController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "pageTitle"   -> "reporterOrganisationEmailAddress.title",
+              "actionUrl"   -> actionUrl(id, mode),
+              "pageHeading" -> pageHeading(getReporterDetailsOrganisationName(request.userAnswers, id))
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode,
-            "pageTitle" -> "reporterOrganisationEmailAddress.title",
-            "actionUrl" -> actionUrl(id, mode),
-            "pageHeading" -> pageHeading(getReporterDetailsOrganisationName(request.userAnswers, id))
-          )
-
-          renderer.render("reporter/reporterEmailAddress.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationEmailAddressPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("reporter/reporterEmailAddress.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationEmailAddressPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def pageHeading(name: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("reporterOrganisationEmailAddress.heading", name) }}")
-  }
+  private def pageHeading(name: String)(implicit messages: Messages): Html =
+    Html(s"${messages("reporterOrganisationEmailAddress.heading", name)}")
 }

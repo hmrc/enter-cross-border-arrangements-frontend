@@ -33,58 +33,58 @@ case class ReporterLiability(role: String,
                              nationalExemption: Option[Boolean] = None,
                              exemptCountries: Option[List[String]] = None,
                              implementingDate: Option[LocalDate] = None
-                            )
+)
 
 object ReporterLiability {
   implicit val format: OFormat[ReporterLiability] = Json.format[ReporterLiability]
 
-  private def getTaxpayerNexus(ua: UserAnswers, id: Int): Option[String] = {
+  private def getTaxpayerNexus(ua: UserAnswers, id: Int): Option[String] =
     ua.get(TaxpayerWhyReportInUKPage, id) match {
       case Some(nexus) if !nexus.equals(TaxpayerWhyReportInUK.DoNotKnow) => Some(nexus.toString)
-      case _ => None
+      case _                                                             => None
     }
-  }
 
-  private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] = {
+  private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] =
     ua.get(TaxpayerWhyReportArrangementPage, id) match {
       case Some(capacity) if !capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow) => Some(capacity.toString)
-      case _ => None
+      case _                                                                          => None
     }
-  }
 
-  private def getIntermediaryNexus(ua: UserAnswers, id: Int): Option[String] = {
+  private def getIntermediaryNexus(ua: UserAnswers, id: Int): Option[String] =
     ua.get(IntermediaryWhyReportInUKPage, id) match {
       case Some(nexus) if !nexus.equals(IntermediaryWhyReportInUK.DoNotKnow) => Some(nexus.toString)
-      case _ => None
+      case _                                                                 => None
     }
-  }
 
-  private def getIntermediaryCapacity(ua: UserAnswers, id: Int): Option[String] = {
+  private def getIntermediaryCapacity(ua: UserAnswers, id: Int): Option[String] =
     ua.get(IntermediaryRolePage, id) match {
       case Some(capacity) if !capacity.equals(IntermediaryRole.Unknown) => Some(capacity.toString)
-      case _ => None
+      case _                                                            => None
     }
-  }
 
-  private def getNationalExemption(ua: UserAnswers, id: Int): Option[Boolean] = {
+  private def getNationalExemption(ua: UserAnswers, id: Int): Option[Boolean] =
     ua.get(IntermediaryExemptionInEUPage, id) match {
       case Some(YesNoDoNotKnowRadios.Yes) => Some(true)
-      case Some(YesNoDoNotKnowRadios.No) => Some(false)
-      case _ => None
+      case Some(YesNoDoNotKnowRadios.No)  => Some(false)
+      case _                              => None
     }
-  }
 
-  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] = {
+  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] =
     ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
       case Some(true) =>
-        ua.get(IntermediaryWhichCountriesExemptPage, id).fold(throw new Exception("Reporter Liability must contain countries" +
-          "when 'yes' to 'do you know exemptions' is selected"))(selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted))
+        ua.get(IntermediaryWhichCountriesExemptPage, id)
+          .fold(
+            throw new Exception(
+              "Reporter Liability must contain countries" +
+                "when 'yes' to 'do you know exemptions' is selected"
+            )
+          )(
+            selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
+          )
       case _ => None
     }
-  }
 
-  def buildReporterLiability(ua: UserAnswers, id: Int): ReporterLiability = {
-
+  def buildReporterLiability(ua: UserAnswers, id: Int): ReporterLiability =
     ua.get(RoleInArrangementPage, id) match {
       case Some(RoleInArrangement.Taxpayer) =>
         new ReporterLiability(
@@ -105,9 +105,4 @@ object ReporterLiability {
 
       case _ => throw new Exception("Unable to build reporter liability as missing mandatory answers")
     }
-  }
 }
-
-
-
-

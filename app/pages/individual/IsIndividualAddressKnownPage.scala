@@ -38,5 +38,9 @@ case object IsIndividualAddressKnownPage extends DetailsPage[Boolean, Individual
       case _ => super.cleanup(value, userAnswers, id)
     }
 
-  override def getFromModel(model: Individual): Option[Boolean] = model.address.map(_ => true).orElse(Some(false))
+  override def getFromModel(model: Individual): Option[Boolean] = model.address
+    .map(
+      _ => true
+    )
+    .orElse(Some(false))
 }

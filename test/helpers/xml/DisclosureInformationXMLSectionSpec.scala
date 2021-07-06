@@ -69,7 +69,7 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
       val result = DisclosureInformationXMLSection(submission).buildDisclosureInformationSummary(validArrangementDetails)
 
       val expected =
-      """<Summary>
+        """<Summary>
         |    <Disclosure_Name>name</Disclosure_Name>
         |    <Disclosure_Description>arrangementDetails</Disclosure_Description>
         |</Summary>""".stripMargin
@@ -144,9 +144,9 @@ class DisclosureInformationXMLSectionSpec extends SpecBase {
           |    </Hallmarks>
           |</DisclosureInformation>""".stripMargin
 
-      result.map { result =>
-
-        prettyPrinter.formatNodes(result) mustBe expected
+      result.map {
+        result =>
+          prettyPrinter.formatNodes(result) mustBe expected
       }
     }
 

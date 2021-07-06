@@ -28,10 +28,10 @@ class ReporterEmailAddressFormProvider @Inject() extends Mappings with RegexCons
   def apply(): Form[String] =
     Form(
       "value" -> validatedText("reporterEmailAddress.error.required",
-        "reporterEmailAddress.error.invalid",
-      "reporterEmailAddress.error.length",
-        emailRegex,
-        maxLength
+                               "reporterEmailAddress.error.invalid",
+                               "reporterEmailAddress.error.length",
+                               emailRegex,
+                               maxLength
       )
     )
 }

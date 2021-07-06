@@ -22,6 +22,7 @@ import play.api.data.Form
 
 class DisclosureNameFormProvider @Inject() extends Mappings {
   private val length = 150
+
   def apply(): Form[String] =
     Form(
       "disclosureName" -> maxLengthText("disclosureName.error.required", "disclosureName.error.length", length)

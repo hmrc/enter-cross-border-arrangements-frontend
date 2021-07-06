@@ -22,7 +22,7 @@ import scala.xml.NodeSeq
 
 object TaxResidencyXMLSection {
 
-  private[xml] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
+  private[xml] def buildTINData(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq =
     taxResidencies.flatMap {
       loop =>
         if (loop.country.isDefined && loop.taxReferenceNumbers.isDefined) {
@@ -30,16 +30,19 @@ object TaxResidencyXMLSection {
 
           Seq(
             Some(<TIN issuedBy={countryCode}>{loop.taxReferenceNumbers.get.firstTaxNumber}</TIN>),
-            loop.taxReferenceNumbers.get.secondTaxNumber.map(taxNumber => <TIN issuedBy={countryCode}>{taxNumber}</TIN>),
-            loop.taxReferenceNumbers.get.thirdTaxNumber.map(taxNumber => <TIN issuedBy={countryCode}>{taxNumber}</TIN>)
+            loop.taxReferenceNumbers.get.secondTaxNumber.map(
+              taxNumber => <TIN issuedBy={countryCode}>{taxNumber}</TIN>
+            ),
+            loop.taxReferenceNumbers.get.thirdTaxNumber.map(
+              taxNumber => <TIN issuedBy={countryCode}>{taxNumber}</TIN>
+            )
           ).filter(_.isDefined).map(_.get)
         } else {
           NodeSeq.Empty
         }
     }
-  }
 
-  private[xml] def buildResCountryCode(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq = {
+  private[xml] def buildResCountryCode(taxResidencies: IndexedSeq[TaxResidency]): NodeSeq =
     taxResidencies.flatMap {
       taxResidency =>
         if (taxResidency.country.isDefined) {
@@ -48,5 +51,4 @@ object TaxResidencyXMLSection {
           throw new Exception("Unable to build Relevant taxpayers section due to missing mandatory resident country/countries.")
         }
     }
-  }
 }

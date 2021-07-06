@@ -28,14 +28,25 @@ case class HallmarksXMLSection(submission: Submission) {
 
   val groupSize = 4000
 
-  private[xml] def buildHallmarks: NodeSeq = hallmarkDetails.fold(NodeSeq.Empty) { details =>
+  private[xml] def buildHallmarks: NodeSeq = hallmarkDetails.fold(NodeSeq.Empty) {
+    details =>
+      val hallmarkContent = details.hallmarkContent.fold(NodeSeq.Empty)(
+        content =>
+          content
+            .grouped(groupSize)
+            .toList
+            .map(
+              string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>
+            )
+      )
 
-    val hallmarkContent = details.hallmarkContent.fold(NodeSeq.Empty)(content =>
-      content.grouped(groupSize).toList.map(string => <DAC6D1OtherInfo>{string}</DAC6D1OtherInfo>))
-
-    <Hallmarks>
+      <Hallmarks>
       <ListHallmarks>
-        {details.hallmarkType.map(hallmark => <Hallmark>{hallmark}</Hallmark>)}
+        {
+        details.hallmarkType.map(
+          hallmark => <Hallmark>{hallmark}</Hallmark>
+        )
+      }
       </ListHallmarks>
       {hallmarkContent}
     </Hallmarks>

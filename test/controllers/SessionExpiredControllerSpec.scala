@@ -45,7 +45,7 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
       val frontendAppConfig =  app.injector.instanceOf[FrontendAppConfig]
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       status(result) mustEqual OK
 

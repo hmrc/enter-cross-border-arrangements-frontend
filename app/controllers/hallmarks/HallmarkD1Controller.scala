@@ -33,31 +33,33 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HallmarkD1Controller @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: HallmarkD1FormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class HallmarkD1Controller @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: HallmarkD1FormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(HallmarkD1Page, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"       -> preparedForm,
-        "id" -> id,
+        "id"         -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkD1.checkboxes(preparedForm)
       )
@@ -67,24 +69,25 @@ class HallmarkD1Controller @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"       -> formWithErrors,
+              "id"         -> id,
+              "mode"       -> mode,
+              "checkboxes" -> HallmarkD1.checkboxes(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "checkboxes" -> HallmarkD1.checkboxes(formWithErrors)
-          )
-
-          renderer.render("hallmarks/hallmarkD1.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1Page, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HallmarkD1Page, id, mode, updatedAnswers))
-      )
+            renderer.render("hallmarks/hallmarkD1.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(HallmarkD1Page, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(HallmarkD1Page, id, mode, updatedAnswers))
+        )
   }
 }

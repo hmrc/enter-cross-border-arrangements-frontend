@@ -22,8 +22,8 @@ import play.api.data.FormError
 class HallmarkD1OtherFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "hallmarkD1Other.error.required"
-  val lengthKey = "hallmarkD1Other.error.length"
-  val maxLength = 100
+  val lengthKey   = "hallmarkD1Other.error.length"
+  val maxLength   = 100
 
   val form = new HallmarkD1OtherFormProvider()()
 

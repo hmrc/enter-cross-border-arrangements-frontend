@@ -24,45 +24,47 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait EnterpriseModelRows extends DisplayRowBuilder {
 
-
-  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages):
-  Seq[DisplayRow] =
-          formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers)
+  def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): Seq[DisplayRow] =
+    formatSelectedTaxpayers(associatedEnterprise.associatedTaxpayers)
 
   private def formatSelectedTaxpayers(taxpayerList: Seq[String])(implicit messages: Messages): Seq[DisplayRow] = {
 
     val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
-         |${taxpayerList.map(selectedTaxpayer => s"<li>$selectedTaxpayer</li>").mkString("\n")}
+         |${taxpayerList
+        .map(
+          selectedTaxpayer => s"<li>$selectedTaxpayer</li>"
+        )
+        .mkString("\n")}
          |</ul>""".stripMargin
     } else {
       s"${taxpayerList.head}"
     }
 
-    Seq(toDisplayRow(
-      msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
-      content = Html(s"$formattedTaxpayerList")
-    ))
+    Seq(
+      toDisplayRow(
+        msgKey = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
+        content = Html(s"$formattedTaxpayerList")
+      )
+    )
   }
 
   def associatedEnterpriseType(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow = {
     val selectType = (associatedEnterprise.individual, associatedEnterprise.organisation) match {
       case (Some(_), None) => SelectType.Individual
       case (None, Some(_)) => SelectType.Organisation
-      case _ => throw new Exception("Cannot retrieve associated enterprise type")
+      case _               => throw new Exception("Cannot retrieve associated enterprise type")
     }
-      toDisplayRow(
-        msgKey = "associatedEnterpriseType",
-        content = msg"selectType.${selectType.toString}"
-      )
+    toDisplayRow(
+      msgKey = "associatedEnterpriseType",
+      content = msg"selectType.${selectType.toString}"
+    )
   }
-
 
   def isAssociatedEnterpriseAffected(associatedEnterprise: AssociatedEnterprise)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-        msgKey = "isAssociatedEnterpriseAffected",
-        content = yesOrNo(associatedEnterprise.isAffectedBy)
-      )
-
+      msgKey = "isAssociatedEnterpriseAffected",
+      content = yesOrNo(associatedEnterprise.isAffectedBy)
+    )
 
 }

@@ -39,21 +39,29 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-            .success.value
+            .success
+            .value
             .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
-            .success.value
+            .success
+            .value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
-            .success.value
+            .success
+            .value
             .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "testNationalProvision")
-            .success.value
+            .success
+            .value
             .set(GiveDetailsOfThisArrangementPage, 0, "testArrangementDetails")
-            .success.value
+            .success
+            .value
 
         val expected = ArrangementDetails(
           arrangementName = "testArrangement",
@@ -75,23 +83,32 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, WhyAreYouReportingThisArrangementNow.Dac6701)
-            .success.value
+            .success
+            .value
             .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
-            .success.value
+            .success
+            .value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
-            .success.value
+            .success
+            .value
             .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "testNationalProvision")
-            .success.value
+            .success
+            .value
             .set(GiveDetailsOfThisArrangementPage, 0, "testArrangementDetails")
-            .success.value
+            .success
+            .value
 
         val expected = ArrangementDetails(
           arrangementName = "testArrangement",
@@ -113,7 +130,8 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -127,9 +145,11 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -143,11 +163,14 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -161,13 +184,17 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -181,17 +208,23 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-            .success.value
+            .success
+            .value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
-            .success.value
+            .success
+            .value
             .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)
@@ -205,19 +238,26 @@ class ArrangementDetailsSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsThisArrangementCalledPage, 0, "testArrangement")
-            .success.value
+            .success
+            .value
             .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-            .success.value
+            .success
+            .value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
-            .success.value
+            .success
+            .value
             .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.enumerable.withName("GB").toSet)
-            .success.value
+            .success
+            .value
             .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "testNationalProvision")
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ArrangementDetails.buildArrangementDetails(userAnswers, 0)

@@ -30,13 +30,12 @@ case object IsExemptionKnownPage extends DetailsPage[IsExemptionKnown, Intermedi
 
   override def toString: String = "isExemptionKnown"
 
-  override def cleanup(value: Option[IsExemptionKnown], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[IsExemptionKnown], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     //Clear following answers
     value match {
       case Some(No | Unknown) => userAnswers.remove(IsExemptionCountryKnownPage, id).flatMap(_.remove(ExemptCountriesPage, id))
-      case _ => super.cleanup(value, userAnswers, id)
+      case _                  => super.cleanup(value, userAnswers, id)
     }
-  }
 
   override def getFromModel(model: Intermediary): Option[IsExemptionKnown] = Option(model.isExemptionKnown)
 }

@@ -22,10 +22,10 @@ case class IDVerificationStatus(isValid: Boolean, message: String)
 
 object IDVerificationStatus {
   val ArrangementIDNotFound = "ArrangementIDNotFound"
-  val DisclosureIDNotFound = "DisclosureIDNotFound"
-  val IDsDoNotMatch = "IDsDoNotMatch"
-  val IDsNotFound = "IDsNotFound"
-  val IDsFound = "IDsFound"
+  val DisclosureIDNotFound  = "DisclosureIDNotFound"
+  val IDsDoNotMatch         = "IDsDoNotMatch"
+  val IDsNotFound           = "IDsNotFound"
+  val IDsFound              = "IDsFound"
 
   implicit val format: OFormat[IDVerificationStatus] = Json.format[IDVerificationStatus]
 }

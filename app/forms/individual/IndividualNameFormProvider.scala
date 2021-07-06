@@ -30,12 +30,8 @@ class IndividualNameFormProvider @Inject() extends Mappings with RegexConstants 
   def apply(): Form[Name] =
     Form(
       mapping(
-        "firstName" -> validatedTextMaxLength("individualName.error.firstName.required",
-          "individualName.error.firstName.length", maxLength),
-
-        "secondName" -> validatedTextMaxLength("individualName.error.secondName.required",
-          "individualName.error.secondName.length", maxLength),
-
+        "firstName"  -> validatedTextMaxLength("individualName.error.firstName.required", "individualName.error.firstName.length", maxLength),
+        "secondName" -> validatedTextMaxLength("individualName.error.secondName.required", "individualName.error.secondName.length", maxLength)
       )(Name.apply)(Name.unapply)
     )
 }

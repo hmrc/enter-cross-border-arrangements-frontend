@@ -15,11 +15,11 @@
  */
 
 package pages.organisation
+
 import models.Country
 import models.organisation.Organisation
 import pages.DetailsPage
 import play.api.libs.json.JsPath
-
 
 case object WhichCountryTaxForOrganisationPage extends DetailsPage[Country, Organisation] {
 

@@ -30,16 +30,12 @@ class WhatAreTheTaxNumbersForUKIndividualFormProvider @Inject() extends Mappings
   def apply(): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-        "firstTaxNumber" -> validatedTextMaxLength(
-          "whatAreTheTaxNumbersForUKIndividual.error.required",
-          "whatAreTheTaxNumbersForUKIndividual.label1.error.length",
-          maxLength),
-        "secondTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForUKIndividual.label2.error.length",
-          maxLength),
-        "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForUKIndividual.label3.error.length",
-          maxLength)
+        "firstTaxNumber" -> validatedTextMaxLength("whatAreTheTaxNumbersForUKIndividual.error.required",
+                                                   "whatAreTheTaxNumbersForUKIndividual.label1.error.length",
+                                                   maxLength
+        ),
+        "secondTaxNumber" -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForUKIndividual.label2.error.length", maxLength),
+        "thirdTaxNumber"  -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForUKIndividual.label3.error.length", maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }

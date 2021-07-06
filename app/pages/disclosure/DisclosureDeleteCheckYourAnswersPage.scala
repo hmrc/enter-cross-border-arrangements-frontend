@@ -31,9 +31,14 @@ case object DisclosureDeleteCheckYourAnswersPage extends QuestionPage[GeneratedI
   override def cleanupBase(value: Option[GeneratedIDs], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(_) =>
-         userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
-           .flatMap(us => us.removeBase(DisclosureNamePage))
-           .flatMap(us => us.removeBase(DisclosureTypePage))
+        userAnswers
+          .removeBase(ReplaceOrDeleteADisclosurePage)
+          .flatMap(
+            us => us.removeBase(DisclosureNamePage)
+          )
+          .flatMap(
+            us => us.removeBase(DisclosureTypePage)
+          )
       case _ => super.cleanupBase(value, userAnswers)
     }
 }

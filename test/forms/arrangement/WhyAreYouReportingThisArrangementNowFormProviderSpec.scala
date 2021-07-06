@@ -26,13 +26,13 @@ class WhyAreYouReportingThisArrangementNowFormProviderSpec extends OptionFieldBe
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "whyAreYouReportingThisArrangementNow.error.required"
 
     behave like optionsField[WhyAreYouReportingThisArrangementNow](
       form,
       fieldName,
-      validValues  = WhyAreYouReportingThisArrangementNow.values,
+      validValues = WhyAreYouReportingThisArrangementNow.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

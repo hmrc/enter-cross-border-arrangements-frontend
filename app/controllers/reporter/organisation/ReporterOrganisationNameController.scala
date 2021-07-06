@@ -33,7 +33,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterOrganisationNameController @Inject()(
+class ReporterOrganisationNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
@@ -43,21 +43,24 @@ class ReporterOrganisationNameController @Inject()(
   formProvider: ReporterOrganisationNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
-      val preparedForm =  request.userAnswers.get(ReporterOrganisationNamePage, id) match {
-        case None => form
+      val preparedForm = request.userAnswers.get(ReporterOrganisationNamePage, id) match {
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "id" -> id,
+        "id"   -> id,
         "mode" -> mode
       )
 
@@ -65,29 +68,29 @@ class ReporterOrganisationNameController @Inject()(
   }
 
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[String]): Call =
-      navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(id)(value)(0)
+    navigator.routeMap(ReporterOrganisationNamePage)(checkRoute)(id)(value)(0)
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form" -> formWithErrors,
+              "id"   -> id,
+              "mode" -> mode
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode
-          )
-
-          renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(BadRequest(_))
-        },
-        value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-     )
+            renderer.render("reporter/organisation/reporterOrganisationName.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationNamePage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

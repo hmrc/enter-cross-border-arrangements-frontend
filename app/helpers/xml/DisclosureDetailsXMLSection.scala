@@ -16,7 +16,6 @@
 
 package helpers.xml
 
-
 import models.Submission
 import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType._
@@ -25,8 +24,7 @@ import scala.xml.{Elem, NodeSeq}
 
 case class DisclosureDetailsXMLSection(submission: Submission) {
 
-  val disclosure: DisclosureDetails = submission.disclosureDetails.validate.fold(e =>
-    throw new IllegalStateException(e.defaultMessage), identity)
+  val disclosure: DisclosureDetails = submission.disclosureDetails.validate.fold(e => throw new IllegalStateException(e.defaultMessage), identity)
 
   def buildHeader(enrolmentID: String, timeStamp: String): Elem = {
     val mandatoryMessageRefId = "GB" + enrolmentID + disclosure.disclosureName
@@ -47,16 +45,18 @@ case class DisclosureDetailsXMLSection(submission: Submission) {
     disclosure.disclosureType match {
       case Dac6new => NodeSeq.Empty
       case _ =>
-        disclosure.arrangementID.fold(NodeSeq.Empty) { arrangementID =>
-          <ArrangementID>{arrangementID}</ArrangementID>
+        disclosure.arrangementID.fold(NodeSeq.Empty) {
+          arrangementID =>
+            <ArrangementID>{arrangementID}</ArrangementID>
         }
     }
 
   def buildDisclosureID: NodeSeq =
     disclosure.disclosureType match {
       case Dac6rep | Dac6del =>
-        disclosure.disclosureID.fold(NodeSeq.Empty) { disclosureID =>
-          <DisclosureID>{disclosureID}</DisclosureID>
+        disclosure.disclosureID.fold(NodeSeq.Empty) {
+          disclosureID =>
+            <DisclosureID>{disclosureID}</DisclosureID>
         }
       case _ => NodeSeq.Empty
     }

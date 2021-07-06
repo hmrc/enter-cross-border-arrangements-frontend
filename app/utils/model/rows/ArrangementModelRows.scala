@@ -25,61 +25,80 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait ArrangementModelRows extends DisplayRowBuilder {
 
-  def whatIsThisArrangementCalledPage( arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey  = "whatIsThisArrangementCalled",
-      content = formatMaxChars(arrangementDetails.arrangementName)
-    ))
-
+  def whatIsThisArrangementCalledPage(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
+    Some(
+      toDisplayRow(
+        msgKey = "whatIsThisArrangementCalled",
+        content = formatMaxChars(arrangementDetails.arrangementName)
+      )
+    )
 
   def whatIsTheImplementationDatePage(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey = "whatIsTheImplementationDate",
-      content = Literal(arrangementDetails.implementationDate.format(dateFormatter))
-    ))
-
+    Some(
+      toDisplayRow(
+        msgKey = "whatIsTheImplementationDate",
+        content = Literal(arrangementDetails.implementationDate.format(dateFormatter))
+      )
+    )
 
   def buildWhyAreYouReportingThisArrangementNow(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    arrangementDetails.reportingReason map { answer =>
-      toDisplayRow(
-      msgKey = "whyAreYouReportingThisArrangementNow",
-      content = msg"whyAreYouReportingThisArrangementNow.${answer.substring(0,1).toLowerCase + answer.substring(1)}"
-    )
-  }
+    arrangementDetails.reportingReason map {
+      answer =>
+        toDisplayRow(
+          msgKey = "whyAreYouReportingThisArrangementNow",
+          content = msg"whyAreYouReportingThisArrangementNow.${answer.substring(0, 1).toLowerCase + answer.substring(1)}"
+        )
+    }
 
   private def formatCountries(countries: List[CountryList])(implicit messages: Messages): Html = {
     val list: String = if (countries.size > 1) {
       s"""<ul>
-        |${countries.sorted.map(a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve}</li>").mkString("\n")}
+        |${countries.sorted
+        .map(
+          a => s"<li>${msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve}</li>"
+        )
+        .mkString("\n")}
         |</ul>""".stripMargin
     } else {
-      countries.map(a => msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve).mkString
+      countries
+        .map(
+          a => msg"whichExpectedInvolvedCountriesArrangement.${a.toString}".resolve
+        )
+        .mkString
     }
     Html(list)
   }
 
   def whichExpectedInvolvedCountriesArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey  = "whichExpectedInvolvedCountriesArrangement",
-      content = formatCountries(arrangementDetails.countriesInvolved)
-    ))
+    Some(
+      toDisplayRow(
+        msgKey = "whichExpectedInvolvedCountriesArrangement",
+        content = formatCountries(arrangementDetails.countriesInvolved)
+      )
+    )
 
   def whatIsTheExpectedValueOfThisArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey  = "whatIsTheExpectedValueOfThisArrangement",
-      content = lit"${arrangementDetails.expectedValue.currency} ${arrangementDetails.expectedValue.amount}"
-    ))
+    Some(
+      toDisplayRow(
+        msgKey = "whatIsTheExpectedValueOfThisArrangement",
+        content = lit"${arrangementDetails.expectedValue.currency} ${arrangementDetails.expectedValue.amount}"
+      )
+    )
 
   def whichNationalProvisionsIsThisArrangementBasedOn(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey  = "whichNationalProvisionsIsThisArrangementBasedOn",
-      content = lit"${arrangementDetails.nationalProvisionDetails}"
-    ))
+    Some(
+      toDisplayRow(
+        msgKey = "whichNationalProvisionsIsThisArrangementBasedOn",
+        content = lit"${arrangementDetails.nationalProvisionDetails}"
+      )
+    )
 
   def giveDetailsOfThisArrangement(arrangementDetails: ArrangementDetails)(implicit messages: Messages): Option[DisplayRow] =
-    Some(toDisplayRow(
-      msgKey  = "giveDetailsOfThisArrangement",
-      content = lit"${arrangementDetails.arrangementDetails}"
-    ))
+    Some(
+      toDisplayRow(
+        msgKey = "giveDetailsOfThisArrangement",
+        content = lit"${arrangementDetails.arrangementDetails}"
+      )
+    )
 
 }

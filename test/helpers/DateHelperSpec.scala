@@ -22,9 +22,8 @@ import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 class DateHelperSpec extends SpecBase {
 
-  private def generateDate(hour:Int): ZonedDateTime = {
-    ZonedDateTime.of(2021, 1, 1, hour, 1 , 0 , 0, ZoneId.of("Europe/London"))
-  }
+  private def generateDate(hour: Int): ZonedDateTime =
+    ZonedDateTime.of(2021, 1, 1, hour, 1, 0, 0, ZoneId.of("Europe/London"))
 
   "formatSummaryTimeStamp" - {
 
@@ -45,7 +44,7 @@ class DateHelperSpec extends SpecBase {
 
     "should display correct timestamp for XML" in {
 
-      val result = DateHelper.formatXMLTimeStamp(LocalDateTime.of(2021, 1, 1, 1, 1 , 1 , 1))
+      val result = DateHelper.formatXMLTimeStamp(LocalDateTime.of(2021, 1, 1, 1, 1, 1, 1))
       result mustBe s"2021-01-01T01:01:01"
     }
   }

@@ -22,7 +22,7 @@ import play.api.data.FormError
 class ReporterIndividualPostcodeFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "reporterIndividualPostcode.error.required"
-  val invalidKey = "reporterIndividualPostcode.error.invalid"
+  val invalidKey  = "reporterIndividualPostcode.error.invalid"
 
   val form = new ReporterIndividualPostcodeFormProvider()()
 

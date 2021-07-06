@@ -18,12 +18,12 @@ package models.subscription
 
 import play.api.libs.json._
 
-
 case class ResponseDetail(subscriptionID: String,
                           tradingName: Option[String],
                           isGBUser: Boolean,
                           primaryContact: PrimaryContact,
-                          secondaryContact: Option[SecondaryContact])
+                          secondaryContact: Option[SecondaryContact]
+)
 
 object ResponseDetail {
   implicit val format: OFormat[ResponseDetail] = Json.format[ResponseDetail]
@@ -35,10 +35,7 @@ object ReturnParameters {
   implicit val format: Format[ReturnParameters] = Json.format[ReturnParameters]
 }
 
-case class ResponseCommon(status: String,
-                          statusText: Option[String],
-                          processingDate: String,
-                          returnParameters: Option[Seq[ReturnParameters]])
+case class ResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[ReturnParameters]])
 
 object ResponseCommon {
   implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]

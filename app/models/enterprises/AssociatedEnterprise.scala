@@ -19,7 +19,12 @@ package models.enterprises
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
-import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage}
+import pages.enterprises.{
+  AssociatedEnterpriseCheckYourAnswersPage,
+  AssociatedEnterpriseTypePage,
+  IsAssociatedEnterpriseAffectedPage,
+  SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
+}
 import play.api.libs.json.{Json, OFormat}
 
 import java.util.UUID
@@ -29,11 +34,14 @@ case class AssociatedEnterprise(enterpriseId: String,
                                 individual: Option[Individual] = None,
                                 organisation: Option[Organisation] = None,
                                 associatedTaxpayers: List[String] = List.empty,
-                                isAffectedBy: Boolean = false) extends WithIndividualOrOrganisation with WithRestore {
+                                isAffectedBy: Boolean = false
+) extends WithIndividualOrOrganisation
+    with WithRestore {
 
   override def matchItem(itemId: String): Boolean = enterpriseId == itemId
 
   implicit val a: AssociatedEnterprise = implicitly(this)
+
   override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers
       .set(AssociatedEnterpriseCheckYourAnswersPage, id)
@@ -48,10 +56,10 @@ object AssociatedEnterprise {
   private def generateId: String = UUID.randomUUID.toString
 
   def apply(ua: UserAnswers, id: Int): AssociatedEnterprise = {
-    val enterprise: AssociatedEnterprise = (
-        ua.get(AssociatedEnterpriseCheckYourAnswersPage, id).orElse(Some(generateId))
-      , ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id)
-      , ua.get(IsAssociatedEnterpriseAffectedPage, id)) match {
+    val enterprise: AssociatedEnterprise = (ua.get(AssociatedEnterpriseCheckYourAnswersPage, id).orElse(Some(generateId)),
+                                            ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id),
+                                            ua.get(IsAssociatedEnterpriseAffectedPage, id)
+    ) match {
       case (Some(itemId), Some(associatedTaxpayers), Some(isAffectedBy)) =>
         this(itemId, None, None, associatedTaxpayers, isAffectedBy)
       case _ => throw new Exception("Unable to build associated enterprise")
@@ -59,7 +67,7 @@ object AssociatedEnterprise {
     ua.get(AssociatedEnterpriseTypePage, id) match {
       case Some(SelectType.Organisation) => enterprise.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => enterprise.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _ => throw new Exception("Unable to retrieve Intermediary select type")
+      case _                             => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }
 

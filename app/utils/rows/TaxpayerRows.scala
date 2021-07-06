@@ -37,20 +37,22 @@ trait TaxpayerRows extends RowBuilder {
 
   def whatIsTaxpayersStartDateForImplementingArrangement(id: Int): Option[Row] =
     userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
-    answer =>
-      toRow(
-        msgKey  = "whatIsTaxpayersStartDateForImplementingArrangement",
-        content = Literal(answer.format(dateFormatter)),
-        href    = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
-      )
-  }
+      answer =>
+        toRow(
+          msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",
+          content = Literal(answer.format(dateFormatter)),
+          href = controllers.taxpayer.routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, CheckMode).url
+        )
+    }
 
-  def updateTaxpayers(id: Int): Option[Row] = userAnswers.get(UpdateTaxpayerPage, id)
-    .map { answer =>
-      toRow(
-        msgKey  = "updateTaxpayer",
-        content = msg"updateTaxpayer.$answer",
-        href    = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id).url
-      )
+  def updateTaxpayers(id: Int): Option[Row] = userAnswers
+    .get(UpdateTaxpayerPage, id)
+    .map {
+      answer =>
+        toRow(
+          msgKey = "updateTaxpayer",
+          content = msg"updateTaxpayer.$answer",
+          href = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id).url
+        )
     }
 }

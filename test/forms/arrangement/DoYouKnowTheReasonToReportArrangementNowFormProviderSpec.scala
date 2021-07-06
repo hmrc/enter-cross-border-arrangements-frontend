@@ -22,7 +22,7 @@ import play.api.data.FormError
 class DoYouKnowTheReasonToReportArrangementNowFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "doYouKnowTheReasonToReportArrangementNow.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new DoYouKnowTheReasonToReportArrangementNowFormProvider()()
 

@@ -39,20 +39,24 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForReporter,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatIsTaxpayersStartDateForImplementingArrangementFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForReporter,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatIsTaxpayersStartDateForImplementingArrangementFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   val numberOfMonthsToAdd = 6
-  val form = formProvider()
+  val form                = formProvider()
 
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[LocalDate], index: Int = 0): Call =
     navigator.routeMap(ReporterTaxpayersStartDateForImplementingArrangementPage)(checkRoute)(id)(value)(index)
@@ -61,61 +65,64 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementController @Inje
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ReporterTaxpayersStartDateForImplementingArrangementPage, id) match {
         case Some(value) if mode == CheckMode => form.fill(value)
-        case _ => form
+        case _                                => form
       }
 
       val viewModel = DateInput.localDate(preparedForm("value"))
 
-      val json = Json.obj (
-        "form" -> preparedForm,
-        "mode" -> mode,
-        "date" -> viewModel,
-        "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "actionUrl" -> actionUrl(id, mode)
+      val json = Json.obj(
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "date"        -> viewModel,
+        "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
+        "actionUrl"   -> actionUrl(id, mode)
       ) ++ contentProvider(request.userAnswers, id)
 
-      renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
+      renderer.render("implementingArrangementDate.njk", json).map(Ok(_))
 
   }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors =>  {
+            val viewModel = DateInput.localDate(formWithErrors("value"))
 
-          val viewModel = DateInput.localDate(formWithErrors("value"))
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "date"        -> viewModel,
+              "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
+              "actionUrl"   -> actionUrl(id, mode)
+            ) ++ contentProvider(request.userAnswers, id)
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode,
-            "date" -> viewModel,
-            "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "actionUrl" -> actionUrl(id, mode)
-          ) ++ contentProvider(request.userAnswers, id)
-
-          renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxpayersStartDateForImplementingArrangementPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
   private def contentProvider(userAnswers: UserAnswers, id: Int): JsObject = userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
-     case Some(Individual) => Json.obj(
-       "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.title",
-       "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.heading")
-     case _ =>
-       Json.obj(
-         "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.title",
-         "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.heading",
-       "name" -> getReporterDetailsOrganisationName(userAnswers, id))
-   }
+    case Some(Individual) =>
+      Json.obj(
+        "pageTitle"   -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.title",
+        "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.ind.heading"
+      )
+    case _ =>
+      Json.obj(
+        "pageTitle"   -> "whatIsTaxpayersStartDateForImplementingArrangement.org.title",
+        "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.org.heading",
+        "name"        -> getReporterDetailsOrganisationName(userAnswers, id)
+      )
+  }
 }

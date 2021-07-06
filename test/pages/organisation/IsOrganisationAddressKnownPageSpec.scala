@@ -34,12 +34,12 @@ class IsOrganisationAddressKnownPageSpec extends PageBehaviours {
 
     "- when address exists " in {
 
-      IsOrganisationAddressKnownPage.getFromModel(validOrganisation) mustBe(Some(true))
+      IsOrganisationAddressKnownPage.getFromModel(validOrganisation) mustBe (Some(true))
     }
 
     "- when address is empty " in {
 
-      IsOrganisationAddressKnownPage.getFromModel(validOrganisation.copy(address = None)) mustBe(Some(false))
+      IsOrganisationAddressKnownPage.getFromModel(validOrganisation.copy(address = None)) mustBe (Some(false))
     }
   }
 }

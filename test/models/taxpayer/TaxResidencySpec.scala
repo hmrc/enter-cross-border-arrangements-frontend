@@ -24,52 +24,57 @@ class TaxResidencySpec extends ModelSpecBase {
 
   "TaxResidency" - {
 
-    val loopDetailsUK = IndexedSeq(LoopDetails(
-      taxResidentOtherCountries = Some(true),
-      whichCountry              = Some(Country("valid", "GB", "United Kingdom")),
-      doYouKnowTIN              = Some(false), // non uk
-      taxNumbersNonUK           = None,
-      doYouKnowUTR              = Some(true), // uk
-      taxNumbersUK              = Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
-
-    val loopDetailsFR = IndexedSeq(LoopDetails(
-      taxResidentOtherCountries = Some(true),
-      whichCountry              = Some(Country("valid", "FR", "France")),
-      doYouKnowTIN              = Some(true), // non uk
-      taxNumbersNonUK           = Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
-      doYouKnowUTR              = Some(false), // uk
-      taxNumbersUK              = None)
+    val loopDetailsUK = IndexedSeq(
+      LoopDetails(
+        taxResidentOtherCountries = Some(true),
+        whichCountry = Some(Country("valid", "GB", "United Kingdom")),
+        doYouKnowTIN = Some(false), // non uk
+        taxNumbersNonUK = None,
+        doYouKnowUTR = Some(true), // uk
+        taxNumbersUK = Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))
+      )
     )
 
-    val loopDetailsCH = IndexedSeq(LoopDetails(
-      taxResidentOtherCountries = Some(true),
-      whichCountry              = Some(Country("valid", "CH", "Switzerland")),
-      doYouKnowTIN              = Some(true), // non uk
-      taxNumbersNonUK           = Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
-      doYouKnowUTR              = Some(false), // uk
-      taxNumbersUK              = None)
+    val loopDetailsFR = IndexedSeq(
+      LoopDetails(
+        taxResidentOtherCountries = Some(true),
+        whichCountry = Some(Country("valid", "FR", "France")),
+        doYouKnowTIN = Some(true), // non uk
+        taxNumbersNonUK = Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
+        doYouKnowUTR = Some(false), // uk
+        taxNumbersUK = None
+      )
+    )
+
+    val loopDetailsCH = IndexedSeq(
+      LoopDetails(
+        taxResidentOtherCountries = Some(true),
+        whichCountry = Some(Country("valid", "CH", "Switzerland")),
+        doYouKnowTIN = Some(true), // non uk
+        taxNumbersNonUK = Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678"))),
+        doYouKnowUTR = Some(false), // uk
+        taxNumbersUK = None
+      )
     )
 
     "must be created with taxNumbersUK when Country is 'GB'" in {
 
       TaxResidency.buildFromLoopDetails(loopDetailsUK) mustEqual
-      IndexedSeq(TaxResidency(Some(Country("valid", "GB", "United Kingdom")),
-        Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
+        IndexedSeq(TaxResidency(Some(Country("valid", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR12345", Some("UTR12345"), Some("UTR12345")))))
 
     }
 
     "must be created with taxNumbersNonUK when Country is not'GB'" in {
 
       TaxResidency.buildFromLoopDetails(loopDetailsFR) mustEqual
-      IndexedSeq(TaxResidency(Some(Country("valid", "FR", "France")),
-        Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678")))))
+        IndexedSeq(TaxResidency(Some(Country("valid", "FR", "France")), Some(TaxReferenceNumbers("TIN12345678", Some("TIN12345678"), Some("TIN12345678")))))
 
     }
 
     "must be sorted with country UK first, then alphabetically" in {
 
       val sortedList: List[TaxResidency] = List(loopDetailsCH, loopDetailsUK, loopDetailsFR).flatMap(buildFromLoopDetails).sorted
-      sortedList.head.country mustEqual  Some(Country("valid", "GB", "United Kingdom"))
+      sortedList.head.country mustEqual Some(Country("valid", "GB", "United Kingdom"))
     }
   }
 }

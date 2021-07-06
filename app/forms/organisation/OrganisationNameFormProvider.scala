@@ -21,12 +21,10 @@ import javax.inject.Inject
 import play.api.data.Form
 import utils.RegexConstants
 
-class OrganisationNameFormProvider @Inject() extends Mappings with RegexConstants{
+class OrganisationNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[String] =
     Form(
-      "value" -> validatedText("organisationName.error.required",
-        "organisationName.error.invalid",
-        "organisationName.error.length", orgNameRegex, 200)
+      "value" -> validatedText("organisationName.error.required", "organisationName.error.invalid", "organisationName.error.length", orgNameRegex, 200)
     )
 }

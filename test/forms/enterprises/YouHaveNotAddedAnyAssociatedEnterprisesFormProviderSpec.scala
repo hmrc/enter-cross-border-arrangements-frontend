@@ -26,13 +26,13 @@ class YouHaveNotAddedAnyAssociatedEnterprisesFormProviderSpec extends OptionFiel
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "youHaveNotAddedAnyAssociatedEnterprises.error.required"
 
     behave like optionsField[YouHaveNotAddedAnyAssociatedEnterprises](
       form,
       fieldName,
-      validValues  = YouHaveNotAddedAnyAssociatedEnterprises.values,
+      validValues = YouHaveNotAddedAnyAssociatedEnterprises.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

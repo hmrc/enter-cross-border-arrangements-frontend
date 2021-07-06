@@ -36,7 +36,9 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
         .thenReturn(Future.successful(Html("foo")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -54,7 +56,9 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
         .thenReturn(Future.successful(Html("foo")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", deleted = true))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", deleted = true)))
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -72,7 +76,9 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures {
         .thenReturn(Future.successful(Html("foo")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", submitted = true))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First", submitted = true)))
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 

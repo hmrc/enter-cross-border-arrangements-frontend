@@ -40,17 +40,19 @@ object WhatTypeofIntermediary extends Enumerable.Implicits {
 
     val field = form("value")
     val items = Seq(
-      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61101", Promoter.toString,
-        Some(RadiosHint.Hint(msg"whatTypeofIntermediary.promoter.hint"))),
-      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61102", Serviceprovider.toString,
-        Some(RadiosHint.Hint(msg"whatTypeofIntermediary.serviceProvider.hint"))),
+      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61101", Promoter.toString, Some(RadiosHint.Hint(msg"whatTypeofIntermediary.promoter.hint"))),
+      RadiosHint.Radio(msg"whatTypeofIntermediary.DAC61102", Serviceprovider.toString, Some(RadiosHint.Hint(msg"whatTypeofIntermediary.serviceProvider.hint"))),
       RadiosHint.Radio(msg"whatTypeofIntermediary.iDoNotKnow", IDoNotKnow.toString, None)
     )
     RadiosHint(field, items)
   }
 
   implicit val enumerable: Enumerable[WhatTypeofIntermediary] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }
 
 object RadiosHint {
@@ -60,11 +62,13 @@ object RadiosHint {
   final case class Item(id: String, text: Text, hint: Option[Hint], value: String, checked: Boolean)
 
   object Item {
+
     implicit def writes(implicit messages: Messages): OWrites[Item] =
       Json.writes[Item]
   }
 
   object Hint {
+
     implicit def writes(implicit messages: Messages): OWrites[Hint] =
       Json.writes[Hint]
   }
@@ -74,9 +78,9 @@ object RadiosHint {
     val head = items.headOption.map {
       item =>
         Item(
-          id      = field.id,
-          text    = item.label,
-          value   = item.value,
+          id = field.id,
+          text = item.label,
+          value = item.value,
           hint = item.hint,
           checked = field.values.contains(item.value)
         )
@@ -85,9 +89,9 @@ object RadiosHint {
     val tail = items.zipWithIndex.tail.map {
       case (item, i) =>
         Item(
-          id      = s"${field.id}_$i",
-          text    = item.label,
-          value   = item.value,
+          id = s"${field.id}_$i",
+          text = item.label,
+          value = item.value,
           hint = item.hint,
           checked = field.values.contains(item.value)
         )

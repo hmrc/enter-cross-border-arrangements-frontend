@@ -31,8 +31,10 @@ class YouHaveNotAddedAnyAssociatedEnterprisesSpec extends ModelSpecBase {
 
       forAll(gen) {
         youHaveNotAddedAnyAssociatedEnterprises =>
-
-          JsString(youHaveNotAddedAnyAssociatedEnterprises.toString).validate[YouHaveNotAddedAnyAssociatedEnterprises].asOpt.value mustEqual youHaveNotAddedAnyAssociatedEnterprises
+          JsString(youHaveNotAddedAnyAssociatedEnterprises.toString)
+            .validate[YouHaveNotAddedAnyAssociatedEnterprises]
+            .asOpt
+            .value mustEqual youHaveNotAddedAnyAssociatedEnterprises
       }
     }
 
@@ -42,7 +44,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[YouHaveNotAddedAnyAssociatedEnterprises] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +54,6 @@ class YouHaveNotAddedAnyAssociatedEnterprisesSpec extends ModelSpecBase {
 
       forAll(gen) {
         youHaveNotAddedAnyAssociatedEnterprises =>
-
           Json.toJson(youHaveNotAddedAnyAssociatedEnterprises) mustEqual JsString(youHaveNotAddedAnyAssociatedEnterprises.toString)
       }
     }

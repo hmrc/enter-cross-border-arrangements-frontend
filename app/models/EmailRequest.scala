@@ -45,8 +45,8 @@ object EmailRequest {
                        disclosureID: String,
                        dateSubmitted: String,
                        messageRefID: String,
-                       name: Option[String]): EmailRequest = {
-
+                       name: Option[String]
+  ): EmailRequest = {
 
     val templateID = importInstruction match {
       case "dac6new" => "dac6_new_disclosure_confirmation"
@@ -58,12 +58,16 @@ object EmailRequest {
     EmailRequest(
       List(email),
       templateID,
-      name.map(n => "name" -> n).toMap ++
+      name
+        .map(
+          n => "name" -> n
+        )
+        .toMap ++
         Map(
           "arrangementID" -> arrangementID,
-          "disclosureID" -> disclosureID,
+          "disclosureID"  -> disclosureID,
           "dateSubmitted" -> dateSubmitted,
-          "messageRefID" -> messageRefID
+          "messageRefID"  -> messageRefID
         )
     )
   }

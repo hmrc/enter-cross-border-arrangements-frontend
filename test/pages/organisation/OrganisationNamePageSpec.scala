@@ -19,7 +19,6 @@ package pages.organisation
 import helpers.data.ValidUserAnswersForSubmission.validOrganisation
 import pages.behaviours.PageBehaviours
 
-
 class OrganisationNamePageSpec extends PageBehaviours {
 
   "OrganisationNamePage" - {
@@ -35,7 +34,7 @@ class OrganisationNamePageSpec extends PageBehaviours {
 
     "- when name exists " in {
 
-      OrganisationNamePage.getFromModel(validOrganisation) mustBe(Some("Taxpayers Ltd"))
+      OrganisationNamePage.getFromModel(validOrganisation) mustBe (Some("Taxpayers Ltd"))
     }
   }
 }

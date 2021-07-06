@@ -30,17 +30,31 @@ class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with Control
   "must ensure the correct updated loop list" - {
 
     val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
-    val email = "email@email.com"
-    val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+    val email            = "email@email.com"
+    val taxResidencies   = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
 
     def buildUserAnswers(list: IndexedSeq[Intermediary]): UserAnswers = UserAnswers(userAnswersId)
-      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-      .set(IntermediaryLoopPage, 0, list).success.value
-      .set(IntermediariesTypePage, 0, SelectType.Organisation).success.value
-      .set(OrganisationNamePage, 0, "Intermediary Ltd").success.value
-      .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.IDoNotKnow).success.value
-      .set(IsExemptionKnownPage,0, IsExemptionKnown.Unknown).success.value
-      .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
+      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+      .success
+      .value
+      .set(IntermediaryLoopPage, 0, list)
+      .success
+      .value
+      .set(IntermediariesTypePage, 0, SelectType.Organisation)
+      .success
+      .value
+      .set(OrganisationNamePage, 0, "Intermediary Ltd")
+      .success
+      .value
+      .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.IDoNotKnow)
+      .success
+      .value
+      .set(IsExemptionKnownPage, 0, IsExemptionKnown.Unknown)
+      .success
+      .value
+      .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("", "GB", "United Kingdom")), None, None, None, None)))
+      .success
+      .value
 
     val controller: IntermediariesCheckYourAnswersController = app.injector.instanceOf[IntermediariesCheckYourAnswersController]
 

@@ -35,8 +35,10 @@ class WhyAreYouReportingThisArrangementNowSpec extends AnyFreeSpec with Matchers
 
       forAll(gen) {
         whyAreYouReportingThisArrangementNow =>
-
-          JsString(whyAreYouReportingThisArrangementNow.toString).validate[WhyAreYouReportingThisArrangementNow].asOpt.value mustEqual whyAreYouReportingThisArrangementNow
+          JsString(whyAreYouReportingThisArrangementNow.toString)
+            .validate[WhyAreYouReportingThisArrangementNow]
+            .asOpt
+            .value mustEqual whyAreYouReportingThisArrangementNow
       }
     }
 
@@ -46,7 +48,6 @@ class WhyAreYouReportingThisArrangementNowSpec extends AnyFreeSpec with Matchers
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[WhyAreYouReportingThisArrangementNow] mustEqual JsError("error.invalid")
       }
     }
@@ -57,7 +58,6 @@ class WhyAreYouReportingThisArrangementNowSpec extends AnyFreeSpec with Matchers
 
       forAll(gen) {
         whyAreYouReportingThisArrangementNow =>
-
           Json.toJson(whyAreYouReportingThisArrangementNow) mustEqual JsString(whyAreYouReportingThisArrangementNow.toString)
       }
     }

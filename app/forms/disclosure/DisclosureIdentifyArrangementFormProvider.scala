@@ -29,10 +29,10 @@ class DisclosureIdentifyArrangementFormProvider @Inject() extends Mappings with 
 
   def apply(countryList: Seq[Country]): Form[String] =
     Form(
-      "arrangementID" -> validatedDisclosureIDsText(
-        "disclosureIdentifyArrangement.error.required",
-        "disclosureIdentifyArrangement.error.invalid",
-        countryList,
-        arrangementIDRegex)
+      "arrangementID" -> validatedDisclosureIDsText("disclosureIdentifyArrangement.error.required",
+                                                    "disclosureIdentifyArrangement.error.invalid",
+                                                    countryList,
+                                                    arrangementIDRegex
+      )
     )
 }

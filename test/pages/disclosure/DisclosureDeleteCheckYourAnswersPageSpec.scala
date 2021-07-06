@@ -34,10 +34,16 @@ class DisclosureDeleteCheckYourAnswersPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-            .setBase(DisclosureNamePage, "Disclosure").success.value
-            .setBase(DisclosureTypePage, DisclosureType.Dac6del).success.value
-            .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123","GBD20210101ABC123"))
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .setBase(DisclosureNamePage, "Disclosure")
+            .success
+            .value
+            .setBase(DisclosureTypePage, DisclosureType.Dac6del)
+            .success
+            .value
+            .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
             .success
             .value
             .setBase(DisclosureDeleteCheckYourAnswersPage, GeneratedIDs(Some("GBA20210101ABC123"), Some("GBD20210101ABC123")))

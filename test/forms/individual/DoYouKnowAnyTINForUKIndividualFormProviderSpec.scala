@@ -22,7 +22,7 @@ import play.api.data.FormError
 class DoYouKnowAnyTINForUKIndividualFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "doYouKnowAnyTINForUKIndividual.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new DoYouKnowAnyTINForUKIndividualFormProvider()()
 

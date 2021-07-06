@@ -22,10 +22,10 @@ import play.api.data.FormError
 
 class AddressFormProviderSpec extends StringFieldBehaviours {
   val countries = Seq(Country("valid", "AD", "Andorra"))
-  val form = new AddressFormProvider()(countries)
+  val form      = new AddressFormProvider()(countries)
 
   val addressLineMaxLength = 400
-  val postcodeMaxLength = 10
+  val postcodeMaxLength    = 10
 
   ".addressLine1" - {
 
@@ -86,8 +86,8 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
 
   ".city" - {
 
-    val fieldName = "city"
-    val lengthKey = "address.error.city.length"
+    val fieldName   = "city"
+    val lengthKey   = "address.error.city.length"
     val requiredKey = "address.error.city.required"
 
     behave like fieldThatBindsValidData(
@@ -131,10 +131,10 @@ class AddressFormProviderSpec extends StringFieldBehaviours {
 
   ".country" - {
 
-    val fieldName = "country"
+    val fieldName   = "country"
     val requiredKey = "address.error.country.required"
 
-      behave like mandatoryField(
+    behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)

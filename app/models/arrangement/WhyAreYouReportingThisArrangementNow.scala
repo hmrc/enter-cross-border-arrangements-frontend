@@ -51,5 +51,9 @@ object WhyAreYouReportingThisArrangementNow extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[WhyAreYouReportingThisArrangementNow] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

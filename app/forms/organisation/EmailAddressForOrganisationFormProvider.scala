@@ -26,12 +26,13 @@ class EmailAddressForOrganisationFormProvider @Inject() extends Mappings with Re
   private val maxLength = 400
 
   def apply(): Form[String] =
-  Form(
-    "email" -> validatedText(
-      "emailAddressForOrganisation.error.required",
-      "emailAddressForOrganisation.error.invalid",
-      "emailAddressForOrganisation.error.length",
-      emailRegex,
-      maxLength)
-  )
+    Form(
+      "email" -> validatedText(
+        "emailAddressForOrganisation.error.required",
+        "emailAddressForOrganisation.error.invalid",
+        "emailAddressForOrganisation.error.length",
+        emailRegex,
+        maxLength
+      )
+    )
 }

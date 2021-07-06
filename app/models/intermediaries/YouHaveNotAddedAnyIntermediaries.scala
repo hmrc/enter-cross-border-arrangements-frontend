@@ -48,5 +48,9 @@ object YouHaveNotAddedAnyIntermediaries extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[YouHaveNotAddedAnyIntermediaries] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

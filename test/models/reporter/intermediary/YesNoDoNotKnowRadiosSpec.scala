@@ -32,7 +32,6 @@ class YesNoDoNotKnowRadiosSpec extends ModelSpecBase {
 
       forAll(gen) {
         intermediaryExemptionInEU =>
-
           JsString(intermediaryExemptionInEU.toString).validate[YesNoDoNotKnowRadios].asOpt.value mustEqual intermediaryExemptionInEU
       }
     }
@@ -43,7 +42,6 @@ class YesNoDoNotKnowRadiosSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[YesNoDoNotKnowRadios] mustEqual JsError("error.invalid")
       }
     }
@@ -54,7 +52,6 @@ class YesNoDoNotKnowRadiosSpec extends ModelSpecBase {
 
       forAll(gen) {
         intermediaryExemptionInEU =>
-
           Json.toJson(intermediaryExemptionInEU) mustEqual JsString(intermediaryExemptionInEU.toString)
       }
     }

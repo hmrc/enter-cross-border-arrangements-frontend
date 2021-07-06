@@ -32,8 +32,8 @@ trait AffectedModelRows extends DisplayRowBuilder {
     }
 
     toDisplayRow(
-      msgKey  = "affectedType",
-      content = msg"affectedType.${selectType}"
+      msgKey = "affectedType",
+      content = msg"affectedType.$selectType"
     )
   }
 

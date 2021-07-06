@@ -26,8 +26,6 @@ case object UnsubmittedDisclosurePage extends QuestionPage[Seq[UnsubmittedDisclo
 
   override def toString: String = "unsubmittedDisclosures"
 
-  def fromIndex(index: Int)(implicit userAnswers: UserAnswers): UnsubmittedDisclosure = {
-    userAnswers.getBase(UnsubmittedDisclosurePage)
-      .get.zipWithIndex.find(_._2 == index).get._1
-  }
+  def fromIndex(index: Int)(implicit userAnswers: UserAnswers): UnsubmittedDisclosure =
+    userAnswers.getBase(UnsubmittedDisclosurePage).get.zipWithIndex.find(_._2 == index).get._1
 }

@@ -35,70 +35,70 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
-class HallmarkDController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: HallmarkDFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class HallmarkDController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: HallmarkDFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(HallmarkDPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"       -> preparedForm,
-        "id" -> id,
+        "id"         -> id,
         "mode"       -> mode,
         "checkboxes" -> HallmarkD.checkboxes(preparedForm)
       )
 
-      renderer.render("hallmarks/hallmarkD.njk",json).map(Ok(_))
+      renderer.render("hallmarks/hallmarkD.njk", json).map(Ok(_))
   }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"       -> formWithErrors,
+              "id"         -> id,
+              "mode"       -> mode,
+              "checkboxes" -> HallmarkD.checkboxes(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "checkboxes" -> HallmarkD.checkboxes(formWithErrors)
-          )
-
-          renderer.render("hallmarks/hallmarkD.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            userAnswers: UserAnswers <- Future.fromTry(removeD1Parts(request.userAnswers, id, value))
-            updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(HallmarkStatusPage, id, JourneyStatus.InProgress))
-            _ <- sessionRepository.set(updatedAnswersWithStatus)
-          } yield
-            Redirect(navigator.nextPage(HallmarkDPage, id, mode, updatedAnswers))
-        }
-      )
+            renderer.render("hallmarks/hallmarkD.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              userAnswers: UserAnswers    <- Future.fromTry(removeD1Parts(request.userAnswers, id, value))
+              updatedAnswers: UserAnswers <- Future.fromTry(userAnswers.set(HallmarkDPage, id, value))
+              updatedAnswersWithStatus    <- Future.fromTry(updatedAnswers.set(HallmarkStatusPage, id, JourneyStatus.InProgress))
+              _                           <- sessionRepository.set(updatedAnswersWithStatus)
+            } yield Redirect(navigator.nextPage(HallmarkDPage, id, mode, updatedAnswers))
+        )
   }
 
-  private def removeD1Parts(userAnswers: UserAnswers, id:Int, values: Set[HallmarkD]): Try[UserAnswers] =
+  private def removeD1Parts(userAnswers: UserAnswers, id: Int, values: Set[HallmarkD]): Try[UserAnswers] =
     userAnswers.get(HallmarkD1Page, id) match {
       case Some(_) if !values.contains(D1) => userAnswers.remove(HallmarkD1Page, id)
-      case _ => Success(userAnswers)
+      case _                               => Success(userAnswers)
     }
 
 }

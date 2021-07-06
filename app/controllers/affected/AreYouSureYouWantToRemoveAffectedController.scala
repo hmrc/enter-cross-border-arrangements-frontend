@@ -31,22 +31,24 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AreYouSureYouWantToRemoveAffectedController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: AreYouSureYouWantToRemoveAffectedFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class AreYouSureYouWantToRemoveAffectedController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AreYouSureYouWantToRemoveAffectedFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = form
 
       val json = Json.obj(
@@ -62,28 +64,29 @@ class AreYouSureYouWantToRemoveAffectedController @Inject()(
 
   def onSubmit(id: Int, itemId: String): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "itemId" -> itemId,
+              "name"   -> getAffectedName(request.userAnswers, id, itemId),
+              "radios" -> Radios.yesNo(formWithErrors("value"))
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id"     -> id,
-            "itemId" -> itemId,
-            "name"   -> getAffectedName(request.userAnswers, id, itemId),
-            "radios" -> Radios.yesNo(formWithErrors("value"))
-          )
-
-          renderer.render("affected/areYouSureYouWantToRemoveAffected.njk", json).map(BadRequest(_))
-        },
-        value => {
-          if (value) {
-            val updatedLoop = request.userAnswers.get(AffectedLoopPage, id).map(_.filterNot(_.affectedId == itemId)).getOrElse(IndexedSeq.empty)
-            request.userAnswers.set(AffectedLoopPage, id, updatedLoop).foreach(sessionRepository.set)
+            renderer.render("affected/areYouSureYouWantToRemoveAffected.njk", json).map(BadRequest(_))
+          },
+          value => {
+            if (value) {
+              val updatedLoop = request.userAnswers.get(AffectedLoopPage, id).map(_.filterNot(_.affectedId == itemId)).getOrElse(IndexedSeq.empty)
+              request.userAnswers.set(AffectedLoopPage, id, updatedLoop).foreach(sessionRepository.set)
+            }
+            Future.successful(Redirect(routes.YouHaveNotAddedAnyAffectedController.onPageLoad(id)))
           }
-          Future.successful(Redirect(routes.YouHaveNotAddedAnyAffectedController.onPageLoad(id)))
-        }
-      )
+        )
   }
 
   def getAffectedName(userAnswers: UserAnswers, id: Int, itemId: String): String =

@@ -27,12 +27,12 @@ class ReporterIndividualNameFormProvider @Inject() extends Mappings {
 
   private val maxLength: Int = 200
 
-   def apply(): Form[Name] = Form(
-     mapping(
+  def apply(): Form[Name] = Form(
+    mapping(
       "firstName" -> text("reporterIndividualName.error.firstName.required")
         .verifying(maxLength(maxLength, "reporterIndividualName.error.firstName.length")),
       "secondName" -> text("reporterIndividualName.error.secondName.required")
         .verifying(maxLength(maxLength, "reporterIndividualName.error.secondName.length"))
     )(Name.apply)(Name.unapply)
-   )
- }
+  )
+}

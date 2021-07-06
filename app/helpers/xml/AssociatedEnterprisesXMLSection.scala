@@ -15,6 +15,7 @@
  */
 
 package helpers.xml
+
 import models.Submission
 import models.enterprises.AssociatedEnterprise
 
@@ -41,21 +42,21 @@ case class AssociatedEnterprisesXMLSection(submission: Submission) {
   }
 
   def buildAssociatedEnterprises(taxpayerID: String): NodeSeq = {
-        val associatedEnterprisesList =
-          associatedEnterprises.flatMap {
-            associatedEnterprise =>
-              if (associatedEnterprise.associatedTaxpayers.contains(taxpayerID)) {
-                buildAssociatedEnterprise(associatedEnterprise)
-              } else {
-                NodeSeq.Empty
-              }
+    val associatedEnterprisesList =
+      associatedEnterprises.flatMap {
+        associatedEnterprise =>
+          if (associatedEnterprise.associatedTaxpayers.contains(taxpayerID)) {
+            buildAssociatedEnterprise(associatedEnterprise)
+          } else {
+            NodeSeq.Empty
           }
+      }
 
-        if (associatedEnterprisesList.nonEmpty) {
-          <AssociatedEnterprises>{associatedEnterprisesList}</AssociatedEnterprises>
-        } else {
-          NodeSeq.Empty
-        }
+    if (associatedEnterprisesList.nonEmpty) {
+      <AssociatedEnterprises>{associatedEnterprisesList}</AssociatedEnterprises>
+    } else {
+      NodeSeq.Empty
+    }
   }
 
 }

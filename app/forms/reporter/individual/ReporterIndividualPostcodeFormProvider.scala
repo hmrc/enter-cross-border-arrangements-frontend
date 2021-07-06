@@ -26,8 +26,6 @@ class ReporterIndividualPostcodeFormProvider @Inject() extends Mappings with Reg
 
   def apply(): Form[String] =
     Form(
-      "postcode" -> requiredRegexOnlyText("reporterIndividualPostcode.error.required",
-        "reporterIndividualPostcode.error.invalid",
-        regexPostcode)
+      "postcode" -> requiredRegexOnlyText("reporterIndividualPostcode.error.required", "reporterIndividualPostcode.error.invalid", regexPostcode)
     )
 }

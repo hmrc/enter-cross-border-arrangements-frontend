@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsExemptionCountryKnownFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isExemptionCountryKnown.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsExemptionCountryKnownFormProvider()()
 

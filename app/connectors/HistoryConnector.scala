@@ -26,36 +26,34 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import models.{SubmissionDetails, SubmissionHistory}
 
-class HistoryConnector @Inject()(configuration: FrontendAppConfig,
-                                                 httpClient: HttpClient)(implicit ec: ExecutionContext) {
+class HistoryConnector @Inject() (configuration: FrontendAppConfig, httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
-    val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
+  val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
 
-    def getSubmissionsUrl(enrolmentid: String) = s"$baseUrl/history/submissions/$enrolmentid"
+  def getSubmissionsUrl(enrolmentid: String) = s"$baseUrl/history/submissions/$enrolmentid"
 
-    def getSubmissionsByDisclosureIDUrl(disclosureID: String) = s"$baseUrl/history/disclosures/$disclosureID"
+  def getSubmissionsByDisclosureIDUrl(disclosureID: String) = s"$baseUrl/history/disclosures/$disclosureID"
 
-    def getSubmissionDetails(enrolmentid: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-            httpClient.GET[SubmissionHistory](getSubmissionsUrl(enrolmentid)).map { subs =>
-                  subs.details match {
-                    case Seq() => false
-                    case _ => true
-                  }
-            } recover {
-                 case _ => throw new Exception("History unavailable")
+  def getSubmissionDetails(enrolmentid: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    httpClient.GET[SubmissionHistory](getSubmissionsUrl(enrolmentid)).map {
+      subs =>
+        subs.details match {
+          case Seq() => false
+          case _     => true
+        }
+    } recover {
+      case _ => throw new Exception("History unavailable")
     }
-  }
 
   def getSubmissionDetailForDisclosure(disclosureID: String)(implicit hc: HeaderCarrier): Future[SubmissionDetails] =
     httpClient.GET[SubmissionDetails](getSubmissionsByDisclosureIDUrl(disclosureID)) recover {
       case e => throw new Exception(s"History unavailable with: $e")
     }
 
-  def searchDisclosures(searchCriteria: String)(implicit hc: HeaderCarrier): Future[SubmissionHistory] = {
+  def searchDisclosures(searchCriteria: String)(implicit hc: HeaderCarrier): Future[SubmissionHistory] =
     httpClient.GET[SubmissionHistory](s"$baseUrl/history/search-submissions/$searchCriteria").recover {
       case _ => SubmissionHistory(Seq())
     }
-  }
 
   def retrieveFirstDisclosureForArrangementID(arrangementID: String)(implicit hc: HeaderCarrier): Future[SubmissionDetails] =
     httpClient.GET[SubmissionDetails](s"$baseUrl/history/first-disclosure/$arrangementID")

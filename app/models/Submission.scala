@@ -34,15 +34,16 @@ import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import play.api.libs.json.{Json, OFormat}
 
-case class Submission(enrolmentID: String
-                      , disclosureDetails: DisclosureDetails
-                      , reporterDetails: Option[ReporterDetails] = None
-                      , associatedEnterprises: IndexedSeq[AssociatedEnterprise] = IndexedSeq.empty
-                      , taxpayers: IndexedSeq[Taxpayer] = IndexedSeq.empty
-                      , intermediaries: IndexedSeq[Intermediary] = IndexedSeq.empty
-                      , affectedPersons: IndexedSeq[Affected] = IndexedSeq.empty
-                      , hallmarkDetails: Option[HallmarkDetails] = None
-                      , arrangementDetails: Option[ArrangementDetails] = None) {
+case class Submission(enrolmentID: String,
+                      disclosureDetails: DisclosureDetails,
+                      reporterDetails: Option[ReporterDetails] = None,
+                      associatedEnterprises: IndexedSeq[AssociatedEnterprise] = IndexedSeq.empty,
+                      taxpayers: IndexedSeq[Taxpayer] = IndexedSeq.empty,
+                      intermediaries: IndexedSeq[Intermediary] = IndexedSeq.empty,
+                      affectedPersons: IndexedSeq[Affected] = IndexedSeq.empty,
+                      hallmarkDetails: Option[HallmarkDetails] = None,
+                      arrangementDetails: Option[ArrangementDetails] = None
+) {
 
   val getDisclosureID: Option[String] = disclosureDetails.disclosureID
 
@@ -71,19 +72,26 @@ object Submission {
 
   def apply(userAnswers: UserAnswers, id: Int, enrolmentID: String): Submission =
     (for {
-      disclosureDetails        <- userAnswers.get(DisclosureDetailsPage, id)
-                                  .map(_.withInitialDisclosureMA(userAnswers.getBase(FirstInitialDisclosureMAPage)))
-      reporterDetails          =  userAnswers.get(ReporterDetailsPage, id)
-      associatedEnterprises    =  userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
-      taxpayers                =  userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
-      intermediaries           =  userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
-      affectedPersons          =  userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
-      hallmarkDetails          =  userAnswers.get(HallmarkDetailsPage, id)
-      arrangementDetails       =  userAnswers.get(ArrangementDetailsPage, id)
-    } yield {
-      this(enrolmentID, disclosureDetails, reporterDetails, associatedEnterprises
-        , taxpayers, intermediaries, affectedPersons, hallmarkDetails, arrangementDetails)
-    })
+      disclosureDetails <- userAnswers
+        .get(DisclosureDetailsPage, id)
+        .map(_.withInitialDisclosureMA(userAnswers.getBase(FirstInitialDisclosureMAPage)))
+      reporterDetails       = userAnswers.get(ReporterDetailsPage, id)
+      associatedEnterprises = userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
+      taxpayers             = userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)
+      intermediaries        = userAnswers.get(IntermediaryLoopPage, id).getOrElse(IndexedSeq.empty)
+      affectedPersons       = userAnswers.get(AffectedLoopPage, id).getOrElse(IndexedSeq.empty)
+      hallmarkDetails       = userAnswers.get(HallmarkDetailsPage, id)
+      arrangementDetails    = userAnswers.get(ArrangementDetailsPage, id)
+    } yield this(enrolmentID,
+                 disclosureDetails,
+                 reporterDetails,
+                 associatedEnterprises,
+                 taxpayers,
+                 intermediaries,
+                 affectedPersons,
+                 hallmarkDetails,
+                 arrangementDetails
+    ))
       .getOrElse(throw new IllegalStateException("Unable to create submission from model"))
 
 }

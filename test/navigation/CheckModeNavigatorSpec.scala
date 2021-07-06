@@ -28,68 +28,60 @@ import play.api.test.FakeRequest
 
 class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new Navigator
-  val index: Int = 0
+  val navigator                                             = new Navigator
+  val index: Int                                            = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
   "Navigator" - {
 
     "in Check mode" - {
 
-      def assertRedirect[A](page: QuestionPage[A], route: Call)
-                           (f: UserAnswers => UserAnswers) = {
-
+      def assertRedirect[A](page: QuestionPage[A], route: Call)(f: UserAnswers => UserAnswers) =
         forAll(arbitrary[UserAnswers]) {
           answers =>
-
             val navigator = new Navigator
             navigator
               .nextPage(page, 0, CheckMode, f(answers))
               .mustBe(route)
         }
 
-      }
-
       "must go from What is the arrangement called? page to Check your answers page" in {
 
-        assertRedirect(WhatIsThisArrangementCalledPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhatIsThisArrangementCalledPage, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from What is the implementation date? page to Check your answers page" in {
 
-        assertRedirect(WhatIsTheImplementationDatePage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhatIsTheImplementationDatePage, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from the 'Why are reporting this arrangement now?' page to Check your answers page" in {
 
-        assertRedirect(WhyAreYouReportingThisArrangementNowPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhyAreYouReportingThisArrangementNowPage, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'Which of these countries are expected to be involved in this arrangement?' page to Check your answers page" in {
 
-        assertRedirect(WhichExpectedInvolvedCountriesArrangementPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhichExpectedInvolvedCountriesArrangementPage, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'What is the expected value of this arrangement?' page to Check your answers page" in {
 
-        assertRedirect(WhatIsTheExpectedValueOfThisArrangementPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhatIsTheExpectedValueOfThisArrangementPage, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
       }
 
       "must go from 'Which national provisions is this arrangement based on?' page to Check your answers page" in {
 
-        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage,
+                       controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)
+        ) _
       }
 
       "must go from Details page to Check your answers page" in {
 
-        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage
-          , controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)) _
+        assertRedirect(WhichNationalProvisionsIsThisArrangementBasedOnPage,
+                       controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(0)
+        ) _
       }
     }
   }

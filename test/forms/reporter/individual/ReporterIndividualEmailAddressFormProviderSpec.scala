@@ -22,7 +22,7 @@ import play.api.data.FormError
 class ReporterIndividualEmailAddressFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "reporterIndividualEmailAddress.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new ReporterIndividualEmailAddressFormProvider()()
 

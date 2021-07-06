@@ -22,10 +22,12 @@ import models.Currency
 import play.api.Environment
 import play.api.libs.json.Json
 
-class CurrencyListFactory @Inject()(environment: Environment, appConfig: FrontendAppConfig) {
+class CurrencyListFactory @Inject() (environment: Environment, appConfig: FrontendAppConfig) {
 
   def getCurrencyList: Option[Seq[Currency]] = environment.resourceAsStream(appConfig.currencyCodeJson) map Json.parse map {
-    _.as[Seq[Currency]].sortWith((currency, currency1) => currency.code < currency1.code)
+    _.as[Seq[Currency]].sortWith(
+      (currency, currency1) => currency.code < currency1.code
+    )
   }
 
 }

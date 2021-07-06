@@ -28,10 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.organisation._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class OrganisationSpec extends AnyFreeSpec
-  with Matchers
-  with ScalaCheckPropertyChecks
-  with ModelGenerators {
+class OrganisationSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with ModelGenerators {
 
   "Organisation" - {
 
@@ -40,14 +37,17 @@ class OrganisationSpec extends AnyFreeSpec
       "must create an Organisation if mandatory details are available" in {
         forAll(arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(OrganisationNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(OrganisationLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val expected = Organisation(
               organisationName = name,
@@ -64,19 +64,24 @@ class OrganisationSpec extends AnyFreeSpec
 
       "must create an Organisation if all details are available" in {
         forAll(arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
-          (name,address, email, loop) =>
-
+          (name, address, email, loop) =>
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(OrganisationNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(OrganisationAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForOrganisationPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(OrganisationLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val expected = Organisation(
               organisationName = name,
@@ -94,20 +99,24 @@ class OrganisationSpec extends AnyFreeSpec
       "must throw an Exception when mandatory data is not available" in {
         forAll(arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(OrganisationAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForOrganisationPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(OrganisationLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val ex = intercept[Exception] {
-                Organisation.buildOrganisationDetails(userAnswers, 0)
-              }
+              Organisation.buildOrganisationDetails(userAnswers, 0)
+            }
 
             ex.getMessage mustEqual "Organisation Taxpayer must contain a name and at minimum one tax residency"
         }
@@ -116,32 +125,36 @@ class OrganisationSpec extends AnyFreeSpec
       "must be able to restore pages from organisation" in {
         val userAnswers =
           UserAnswers("id")
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
 
-        val taxNumberUK = Some(TaxReferenceNumbers("UTR1234",None,None))
-        val taxNumberNonUK = Some(TaxReferenceNumbers("CS700100A",Some("UTR5678"),None))
-        val loopDetails = Some(Vector(
-          LoopDetails(Some(false), Some(Country.UK), None, None, Some(true), taxNumberUK)
-          , LoopDetails(Some(false), Some(Country("","FR","France")), Some(true), taxNumberNonUK, None, None))
+        val taxNumberUK    = Some(TaxReferenceNumbers("UTR1234", None, None))
+        val taxNumberNonUK = Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None))
+        val loopDetails = Some(
+          Vector(
+            LoopDetails(Some(false), Some(Country.UK), None, None, Some(true), taxNumberUK),
+            LoopDetails(Some(false), Some(Country("", "FR", "France")), Some(true), taxNumberNonUK, None, None)
+          )
         )
 
-        validOrganisation.restore(userAnswers, 0).foreach { updatedAnswers =>
-
-          updatedAnswers.get(OrganisationNamePage, 0) mustBe(Some("Taxpayers Ltd"))
-          updatedAnswers.get(IsOrganisationAddressKnownPage, 0) mustBe(Some(true))
-          updatedAnswers.get(IsOrganisationAddressUkPage, 0) mustBe(Some(false))
-          updatedAnswers.get(OrganisationAddressPage, 0) mustBe(Some(validAddress))
-          updatedAnswers.get(PostcodePage, 0) mustBe(validAddress.postCode)
-          updatedAnswers.get(SelectAddressPage, 0) mustBe(Some("value 1, value 2, value 3, value 4XX9 9XX"))
-          updatedAnswers.get(EmailAddressQuestionForOrganisationPage, 0) mustBe(Some(true))
-          updatedAnswers.get(EmailAddressForOrganisationPage, 0) mustBe(Some("email@email.com"))
-          updatedAnswers.get(OrganisationLoopPage, 0) mustBe(loopDetails)
-          updatedAnswers.get(WhichCountryTaxForOrganisationPage, 0) mustBe(Some(Country.UK))
-          updatedAnswers.get(DoYouKnowAnyTINForUKOrganisationPage, 0) mustBe(Some(true))
-          updatedAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage, 0) mustBe(taxNumberUK)
-          updatedAnswers.get(DoYouKnowTINForNonUKOrganisationPage, 0) mustBe(Some(false))
-          updatedAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0) mustBe(None)
-          updatedAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage, 0) mustBe(Some(false))
+        validOrganisation.restore(userAnswers, 0).foreach {
+          updatedAnswers =>
+            updatedAnswers.get(OrganisationNamePage, 0) mustBe (Some("Taxpayers Ltd"))
+            updatedAnswers.get(IsOrganisationAddressKnownPage, 0) mustBe (Some(true))
+            updatedAnswers.get(IsOrganisationAddressUkPage, 0) mustBe (Some(false))
+            updatedAnswers.get(OrganisationAddressPage, 0) mustBe (Some(validAddress))
+            updatedAnswers.get(PostcodePage, 0) mustBe (validAddress.postCode)
+            updatedAnswers.get(SelectAddressPage, 0) mustBe (Some("value 1, value 2, value 3, value 4XX9 9XX"))
+            updatedAnswers.get(EmailAddressQuestionForOrganisationPage, 0) mustBe (Some(true))
+            updatedAnswers.get(EmailAddressForOrganisationPage, 0) mustBe (Some("email@email.com"))
+            updatedAnswers.get(OrganisationLoopPage, 0) mustBe loopDetails
+            updatedAnswers.get(WhichCountryTaxForOrganisationPage, 0) mustBe (Some(Country.UK))
+            updatedAnswers.get(DoYouKnowAnyTINForUKOrganisationPage, 0) mustBe (Some(true))
+            updatedAnswers.get(WhatAreTheTaxNumbersForUKOrganisationPage, 0) mustBe taxNumberUK
+            updatedAnswers.get(DoYouKnowTINForNonUKOrganisationPage, 0) mustBe (Some(false))
+            updatedAnswers.get(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0) mustBe None
+            updatedAnswers.get(IsOrganisationResidentForTaxOtherCountriesPage, 0) mustBe (Some(false))
         }
       }
 

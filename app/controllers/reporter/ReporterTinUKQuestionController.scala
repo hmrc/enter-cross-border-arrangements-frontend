@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterTinUKQuestionController @Inject()(
+class ReporterTinUKQuestionController @Inject() (
   override val messagesApi: MessagesApi,
   appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
@@ -47,14 +47,17 @@ class ReporterTinUKQuestionController @Inject()(
   formProvider: ReporterTinUKQuestionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterTinUKQuestionPage)(checkRoute)(id)(value)(index)
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
@@ -71,10 +74,10 @@ class ReporterTinUKQuestionController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "index" -> index
+        "index"  -> index
       ) ++ contentProvider(request.userAnswers, id)
 
       renderer.render("reporter/reporterTinUKQuestion.njk", json).map(Ok(_))
@@ -82,56 +85,59 @@ class ReporterTinUKQuestionController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
-            "index" -> index
-          ) ++ contentProvider(request.userAnswers, id)
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> Radios.yesNo(formWithErrors("value")),
+              "index"  -> index
+            ) ++ contentProvider(request.userAnswers, id)
 
-          renderer.render("reporter/reporterTinUKQuestion.njk", json).map(BadRequest(_))
-        },
-        value => {
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
+            renderer.render("reporter/reporterTinUKQuestion.njk", json).map(BadRequest(_))
+          },
+          value => {
+            val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
 
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTinUKQuestionPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
-            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(ReporterTinUKQuestionPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+          }
+        )
   }
 
-  private def contentProvider(userAnswers: UserAnswers, id: Int)(implicit messages: Messages) = {
-
+  private def contentProvider(userAnswers: UserAnswers, id: Int)(implicit messages: Messages) =
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
-        Json.obj("pageTitle" -> "reporterIndividualTinUKQuestion.title",
+        Json.obj(
+          "pageTitle"   -> "reporterIndividualTinUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinUKQuestion.heading",
-          "hintText" -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint"))
+          "hintText"    -> hintWithLostUtrLink("reporterIndividualTinUKQuestion.hint")
+        )
 
       case _ => //Display Organisation Content
         Json.obj(
-          "pageTitle" -> "reporterOrganisationTinUKQuestion.title",
+          "pageTitle"   -> "reporterOrganisationTinUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinUKQuestion.heading",
-          "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "hintText" -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint"))
+          "name"        -> getReporterDetailsOrganisationName(userAnswers, id),
+          "hintText"    -> hintWithLostUtrLink("reporterOrganisationTinUKQuestion.hint")
+        )
     }
-  }
 
-  private def hintWithLostUtrLink(hintText: String)(implicit messages: Messages): Html = {
-    Html(s"${{messages(hintText)}}<span> You can <a class='govuk-link' id='feedback-link' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-      s"${{ messages("findLostUTR.link")}}</a>.</span>")
-  }
+  private def hintWithLostUtrLink(hintText: String)(implicit messages: Messages): Html =
+    Html(
+      s"${messages(hintText)}<span> You can <a class='govuk-link' id='feedback-link' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
+        s"${messages("findLostUTR.link")}</a>.</span>"
+    )
 
   private def getReporterTaxResidentLoopDetails(value: Boolean, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
     userAnswers.get(ReporterTaxResidencyLoopPage, id) match {

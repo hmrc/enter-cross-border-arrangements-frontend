@@ -24,9 +24,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.Future
 
-class SignOutController @Inject()(
-  config: FrontendAppConfig,
-  val controllerComponents: MessagesControllerComponents) extends FrontendBaseController with I18nSupport {
+class SignOutController @Inject() (config: FrontendAppConfig, val controllerComponents: MessagesControllerComponents)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def signOut: Action[AnyContent] = Action.async {
     implicit request =>

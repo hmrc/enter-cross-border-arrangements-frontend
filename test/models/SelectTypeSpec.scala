@@ -34,7 +34,6 @@ class SelectTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
 
       forAll(gen) {
         selectType =>
-
           JsString(selectType.toString).validate[SelectType].asOpt.value mustEqual selectType
       }
     }
@@ -45,7 +44,6 @@ class SelectTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[SelectType] mustEqual JsError("error.invalid")
       }
     }
@@ -56,7 +54,6 @@ class SelectTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
 
       forAll(gen) {
         selectType =>
-
           Json.toJson(selectType) mustEqual JsString(selectType.toString)
       }
     }

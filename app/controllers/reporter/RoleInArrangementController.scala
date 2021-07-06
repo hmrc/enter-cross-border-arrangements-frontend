@@ -34,71 +34,72 @@ import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RoleInArrangementController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForReporter,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: RoleInArrangementFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class RoleInArrangementController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForReporter,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: RoleInArrangementFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(RoleInArrangementPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios"  -> RoleInArrangement.radios(preparedForm),
+        "form"      -> preparedForm,
+        "id"        -> id,
+        "mode"      -> mode,
+        "radios"    -> RoleInArrangement.radios(preparedForm),
         "paragraph" -> roleInformation
       )
 
       renderer.render("reporter/roleInArrangement.njk", json).map(Ok(_))
   }
 
-  def redirect(id: Int, checkRoute: CheckRoute, value: Option[RoleInArrangement]): Call = {
+  def redirect(id: Int, checkRoute: CheckRoute, value: Option[RoleInArrangement]): Call =
     navigator.routeMap(RoleInArrangementPage)(checkRoute)(id)(value)(0)
-  }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"      -> formWithErrors,
+              "id"        -> id,
+              "mode"      -> mode,
+              "radios"    -> RoleInArrangement.radios(formWithErrors),
+              "paragraph" -> roleInformation
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> RoleInArrangement.radios(formWithErrors),
-            "paragraph" -> roleInformation
-          )
-
-          renderer.render("reporter/roleInArrangement.njk", json).map(BadRequest(_))
-        },
-        value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, id, value))
-            redirectMode   =  if (request.userAnswers.hasNewValue(RoleInArrangementPage, id, value)) NormalMode else mode
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("reporter/roleInArrangement.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RoleInArrangementPage, id, value))
+              redirectMode = if (request.userAnswers.hasNewValue(RoleInArrangementPage, id, value)) NormalMode else mode
+              _ <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(redirectMode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def roleInformation(implicit messages: Messages): Html = {
-    Html(s"<p id='roleInfo' class='govuk-body'>${{ messages("roleInArrangement.information") }}</p>")
-  }
+  private def roleInformation(implicit messages: Messages): Html =
+    Html(s"<p id='roleInfo' class='govuk-body'>${messages("roleInArrangement.information")}</p>")
 }

@@ -46,15 +46,21 @@ class RoleInArrangementPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
             .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident)
-            .success.value
+            .success
+            .value
             .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries)
-            .success.value
+            .success
+            .value
             .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
-            .success.value
+            .success
+            .value
             .set(RoleInArrangementPage, 0, Intermediary)
-            .success.value
+            .success
+            .value
 
           result.get(TaxpayerWhyReportInUKPage, 0) must not be defined
           result.get(TaxpayerWhyReportArrangementPage, 0) must not be defined
@@ -67,19 +73,27 @@ class RoleInArrangementPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
             .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK)
-            .success.value
+            .success
+            .value
             .set(IntermediaryRolePage, 0, Promoter)
-            .success.value
+            .success
+            .value
             .set(IntermediaryExemptionInEUPage, 0, Yes)
-            .success.value
+            .success
+            .value
             .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
-            .success.value
+            .success
+            .value
             .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("Austria").toSet)
-            .success.value
+            .success
+            .value
             .set(RoleInArrangementPage, 0, Taxpayer)
-            .success.value
+            .success
+            .value
 
           result.get(IntermediaryWhyReportInUKPage, 0) must not be defined
           result.get(IntermediaryRolePage, 0) must not be defined

@@ -22,11 +22,11 @@ import play.api.data.FormError
 class IndividualNameFormProviderSpec extends StringFieldBehaviours {
 
   val maxLength = 200
-  val form = new IndividualNameFormProvider()()
+  val form      = new IndividualNameFormProvider()()
 
   ".firstName" - {
     val requiredKey = "individualName.error.firstName.required"
-    val lengthKey = "individualName.error.firstName.length"
+    val lengthKey   = "individualName.error.firstName.length"
 
     val fieldName = "firstName"
 
@@ -52,7 +52,7 @@ class IndividualNameFormProviderSpec extends StringFieldBehaviours {
 
   ".secondName" - {
     val requiredKey = "individualName.error.secondName.required"
-    val lengthKey = "individualName.error.secondName.length"
+    val lengthKey   = "individualName.error.secondName.length"
 
     val fieldName = "secondName"
 

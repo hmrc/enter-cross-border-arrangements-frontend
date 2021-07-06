@@ -26,13 +26,13 @@ class UpdateTaxpayerFormProviderSpec extends OptionFieldBehaviours {
 
   ".confirm" - {
 
-    val fieldName = "confirm"
+    val fieldName   = "confirm"
     val requiredKey = "updateTaxpayer.error.required"
 
     behave like optionsField[UpdateTaxpayer](
       form,
       fieldName,
-      validValues  = UpdateTaxpayer.values,
+      validValues = UpdateTaxpayer.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

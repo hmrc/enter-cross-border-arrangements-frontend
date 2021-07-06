@@ -26,11 +26,13 @@ import java.util.UUID
 import scala.util.Try
 
 case class Affected(affectedId: String, individual: Option[Individual] = None, organisation: Option[Organisation] = None)
-  extends WithIndividualOrOrganisation with WithRestore {
+    extends WithIndividualOrOrganisation
+    with WithRestore {
 
   override def matchItem(itemId: String): Boolean = affectedId == itemId
 
   implicit val a: Affected = implicitly(this)
+
   override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers
       .set(AffectedCheckYourAnswersPage, id)
@@ -42,15 +44,15 @@ object Affected {
 
   def apply(ua: UserAnswers, id: Int): Affected = {
 
-    val affected: Affected = ua.get(AffectedCheckYourAnswersPage, id)
+    val affected: Affected = ua
+      .get(AffectedCheckYourAnswersPage, id)
       .fold(Affected(UUID.randomUUID.toString))(Affected(_))
     ua.get(AffectedTypePage, id) match {
       case Some(SelectType.Organisation) => affected.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
-      case Some(SelectType.Individual)   => affected.copy(individual   = Some(Individual.buildIndividualDetails(ua, id)))
+      case Some(SelectType.Individual)   => affected.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
       case _                             => throw new Exception("Unable to retrieve other parties affected select type")
     }
   }
 
   implicit val format: OFormat[Affected] = Json.format[Affected]
 }
-

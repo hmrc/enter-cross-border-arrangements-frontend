@@ -21,11 +21,11 @@ import play.api.data.FormError
 
 class WhatAreTheTaxNumbersForUKOrganisationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatAreTheTaxNumbersForUKOrganisation.error.required"
+  val requiredKey     = "whatAreTheTaxNumbersForUKOrganisation.error.required"
   val lengthKeyLabel1 = "whatAreTheTaxNumbersForUKOrganisation.label1.error.length"
   val lengthKeyLabel2 = "whatAreTheTaxNumbersForUKOrganisation.label2.error.length"
   val lengthKeyLabel3 = "whatAreTheTaxNumbersForUKOrganisation.label3.error.length"
-  val maxLength = 200
+  val maxLength       = 200
 
   val form = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()()
 

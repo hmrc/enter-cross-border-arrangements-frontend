@@ -45,10 +45,10 @@ class AffectedXMLSectionSpec extends SpecBase {
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None)))
   )
 
-  val email = "email@email.com"
-  val individualName: Name = Name("FirstName", "Surname")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
+  val email                    = "email@email.com"
+  val individualName: Name     = Name("FirstName", "Surname")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1, 1)
+  val individual: Individual   = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
 
   val organisation: Organisation = Organisation(
     organisationName = "Organisation Ltd.",
@@ -62,7 +62,7 @@ class AffectedXMLSectionSpec extends SpecBase {
   "affectedPersons" - {
 
     "must build AffectedPerson section for individual" in {
-      val affectedLoop = IndexedSeq(Affected("id", Some(individual), None))
+      val affectedLoop      = IndexedSeq(Affected("id", Some(individual), None))
       val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected: Elem =
@@ -92,15 +92,16 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
-           prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map {
+        result =>
+          prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
 
     }
 
     "must build AffectedPerson section for organisation" in {
 
-      val affectedLoop = IndexedSeq(Affected("id", None, Some(organisation)))
+      val affectedLoop      = IndexedSeq(Affected("id", None, Some(organisation)))
       val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected =
@@ -124,14 +125,15 @@ class AffectedXMLSectionSpec extends SpecBase {
            	</AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
-        prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map {
+        result =>
+          prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }
 
     "must build AffectedPerson section for organisation and individual" in {
 
-      val affectedLoop = IndexedSeq(Affected("id", None, Some(organisation)), Affected("id",Some(individual),None))
+      val affectedLoop      = IndexedSeq(Affected("id", None, Some(organisation)), Affected("id", Some(individual), None))
       val updatedSubmission = toSubmission(affectedPersons = affectedLoop)
 
       val expected =
@@ -178,8 +180,9 @@ class AffectedXMLSectionSpec extends SpecBase {
           </AffectedPerson>
            </AffectedPersons>
 
-      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map { result =>
-        prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
+      AffectedXMLSection(updatedSubmission).buildAffectedPersons.map {
+        result =>
+          prettyPrinter.formatNodes(result) mustBe prettyPrinter.formatNodes(expected)
       }
     }
   }

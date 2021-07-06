@@ -26,13 +26,13 @@ class TaxpayerSelectTypeFormProviderSpec extends OptionFieldBehaviours {
 
   ".selectType" - {
 
-    val fieldName = "selectType"
+    val fieldName   = "selectType"
     val requiredKey = "selectType.error.required"
 
     behave like optionsField[SelectType](
       form,
       fieldName,
-      validValues  = SelectType.values,
+      validValues = SelectType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

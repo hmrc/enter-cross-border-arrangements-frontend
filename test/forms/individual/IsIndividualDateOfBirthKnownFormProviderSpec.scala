@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsIndividualDateOfBirthKnownFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isIndividualDateOfBirthKnown.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsIndividualDateOfBirthKnownFormProvider()()
 

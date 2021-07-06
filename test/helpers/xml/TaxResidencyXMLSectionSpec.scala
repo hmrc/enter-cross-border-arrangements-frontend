@@ -26,7 +26,6 @@ class TaxResidencyXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
@@ -49,7 +48,6 @@ class TaxResidencyXMLSectionSpec extends SpecBase {
       prettyPrinter.formatNodes(result) mustBe ""
     }
   }
-
 
   "buildResCountryCode" - {
 

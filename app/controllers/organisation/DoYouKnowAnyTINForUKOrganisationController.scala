@@ -34,23 +34,26 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouKnowAnyTINForUKOrganisationController @Inject()(
-                                                            override val messagesApi: MessagesApi,
-                                                            sessionRepository: SessionRepository,
-                                                            navigator: NavigatorForOrganisation,
-                                                            identify: IdentifierAction,
-                                                            getData: DataRetrievalAction,
-                                                            requireData: DataRequiredAction,
-                                                            formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
-                                                            val controllerComponents: MessagesControllerComponents,
-                                                            renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class DoYouKnowAnyTINForUKOrganisationController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForOrganisation,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: DoYouKnowAnyTINForUKOrganisationFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
@@ -64,12 +67,12 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("confirm")),
+        "form"             -> preparedForm,
+        "id"               -> id,
+        "mode"             -> mode,
+        "radios"           -> Radios.yesNo(preparedForm("confirm")),
         "organisationName" -> getOrganisationName(request.userAnswers, id),
-        "index" -> index
+        "index"            -> index
       )
 
       renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(Ok(_))
@@ -80,30 +83,29 @@ class DoYouKnowAnyTINForUKOrganisationController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"             -> formWithErrors,
+              "id"               -> id,
+              "mode"             -> mode,
+              "radios"           -> Radios.yesNo(formWithErrors("confirm")),
+              "organisationName" -> getOrganisationName(request.userAnswers, id),
+              "index"            -> index
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "index" -> index
-          )
-
-          renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(doYouKnowUTR = Some(value))))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), currentIndexInsideLoop(request)))
-        }
-      )
+            renderer.render("organisation/doYouKnowAnyTINForUKOrganisation.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(DoYouKnowAnyTINForUKOrganisationPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, index)(_.copy(doYouKnowUTR = Some(value))))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), currentIndexInsideLoop(request)))
+        )
   }
 }

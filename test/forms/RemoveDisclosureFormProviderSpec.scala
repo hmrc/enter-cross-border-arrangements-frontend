@@ -22,7 +22,7 @@ import play.api.data.FormError
 class RemoveDisclosureFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "removeDisclosure.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new RemoveDisclosureFormProvider()()
 

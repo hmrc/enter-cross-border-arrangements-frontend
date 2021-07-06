@@ -32,17 +32,17 @@ case object IntermediaryLoopPage extends LoopPage[Intermediary] {
     userAnswers.get(IntermediaryLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
         list.filterNot(_.intermediaryId == intermediary.intermediaryId) :+ intermediary
-      case None =>       // start new list
+      case None => // start new list
         IndexedSeq[Intermediary](intermediary)
     }
   }
 
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    IntermediariesCheckYourAnswersPage
-    , YouHaveNotAddedAnyIntermediariesPage
-    , WhatTypeofIntermediaryPage
-    , IsExemptionKnownPage
-    , IsExemptionCountryKnownPage
-    , ExemptCountriesPage
+    IntermediariesCheckYourAnswersPage,
+    YouHaveNotAddedAnyIntermediariesPage,
+    WhatTypeofIntermediaryPage,
+    IsExemptionKnownPage,
+    IsExemptionCountryKnownPage,
+    ExemptCountriesPage
   )
 }

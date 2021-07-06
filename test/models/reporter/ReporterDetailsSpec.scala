@@ -45,45 +45,57 @@ class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
       "must create an reporterDetails as Organisation with role as Taxpayer if all details are available" in {
         forAll(arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
-          (name,address, email, loop) =>
-
+          (name, address, email, loop) =>
             val userAnswers =
               UserAnswers("id")
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationEmailAddressPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxResidencyLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
                 .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer)
-                .success.value
+                .success
+                .value
                 .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkTaxResident)
-                .success.value
+                .success
+                .value
                 .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.NoIntermediaries)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
-                .success.value
-
+                .success
+                .value
 
             val expected = ReporterDetails(
-              organisation = Some(Organisation(
-                organisationName = name,
-                address = Some(address),
-                emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
-              )),
-              liability = Some(ReporterLiability(
-                role = RoleInArrangement.Taxpayer.toString,
-                nexus = Some("RTNEXa"),
-                capacity = Some("DAC61106"),
-                implementingDate = Some(LocalDate.now())
-              ))
+              organisation = Some(
+                Organisation(
+                  organisationName = name,
+                  address = Some(address),
+                  emailAddress = Some(email),
+                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
+                )
+              ),
+              liability = Some(
+                ReporterLiability(
+                  role = RoleInArrangement.Taxpayer.toString,
+                  nexus = Some("RTNEXa"),
+                  capacity = Some("DAC61106"),
+                  implementingDate = Some(LocalDate.now())
+                )
+              )
             )
 
             val reporterOrganisation = ReporterDetails.buildReporterDetails(userAnswers, 0)
@@ -94,51 +106,65 @@ class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
       "must create an reporterDetails as Organisation with role as Intermediary if all details are available" in {
         forAll(arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
-          (name,address, email, loop) =>
-
+          (name, address, email, loop) =>
             val userAnswers =
               UserAnswers("id")
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Organisation)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationEmailAddressPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxResidencyLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
                 .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.TaxResidentUK)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
-                .success.value
-
+                .success
+                .value
 
             val expected = ReporterDetails(
-              organisation = Some(Organisation(
-                organisationName = name,
-                address = Some(address),
-                emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
-              )),
-              liability = Some(ReporterLiability(
-                role = RoleInArrangement.Intermediary.toString,
-                nexus = Some("INEXa"),
-                capacity = Some("DAC61101"),
-                nationalExemption = Some(true),
-                exemptCountries = Some(List("FR")),
-                implementingDate = None
-              ))
+              organisation = Some(
+                Organisation(
+                  organisationName = name,
+                  address = Some(address),
+                  emailAddress = Some(email),
+                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
+                )
+              ),
+              liability = Some(
+                ReporterLiability(
+                  role = RoleInArrangement.Intermediary.toString,
+                  nexus = Some("INEXa"),
+                  capacity = Some("DAC61101"),
+                  nationalExemption = Some(true),
+                  exemptCountries = Some(List("FR")),
+                  implementingDate = None
+                )
+              )
             )
 
             val reporterOrganisation = ReporterDetails.buildReporterDetails(userAnswers, 0)
@@ -150,50 +176,64 @@ class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
       "must create an reporterDetails as Individual with role as Taxpayer if all details are available" in {
         forAll(arbitrary[Name], arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, birthPlace, address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualPlaceOfBirthPage, 0, birthPlace)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualEmailAddressPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxResidencyLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
                 .set(RoleInArrangementPage, 0, RoleInArrangement.Taxpayer)
-                .success.value
+                .success
+                .value
                 .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.UkTaxResident)
-                .success.value
+                .success
+                .value
                 .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.NoIntermediaries)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
-                .success.value
-
+                .success
+                .value
 
             val expected = ReporterDetails(
-              individual = Some(Individual(
-                individualName = name,
-                birthDate = Some(LocalDate.now()),
-                birthPlace = Some(birthPlace),
-                address = Some(address),
-                emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
-              )),
-              liability = Some(ReporterLiability(
-                role = RoleInArrangement.Taxpayer.toString,
-                nexus = Some("RTNEXa"),
-                capacity = Some("DAC61106"),
-                implementingDate = Some(LocalDate.now())
-              ))
+              individual = Some(
+                Individual(
+                  individualName = name,
+                  birthDate = Some(LocalDate.now()),
+                  birthPlace = Some(birthPlace),
+                  address = Some(address),
+                  emailAddress = Some(email),
+                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
+                )
+              ),
+              liability = Some(
+                ReporterLiability(
+                  role = RoleInArrangement.Taxpayer.toString,
+                  nexus = Some("RTNEXa"),
+                  capacity = Some("DAC61106"),
+                  implementingDate = Some(LocalDate.now())
+                )
+              )
             )
 
             val reporterIndividual = ReporterDetails.buildReporterDetails(userAnswers, 0)
@@ -205,56 +245,72 @@ class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
       "must create an reporterDetails as Individual with role as Intermediary if all details are available" in {
         forAll(arbitrary[Name], arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, birthPlace, address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-                .success.value
+                .success
+                .value
                 .set(ReporterOrganisationOrIndividualPage, 0, ReporterOrganisationOrIndividual.Individual)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualPlaceOfBirthPage, 0, birthPlace)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(ReporterIndividualEmailAddressPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(ReporterTaxResidencyLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
                 .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.TaxResidentUK)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryRolePage, 0, IntermediaryRole.Promoter)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.Yes)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
-                .success.value
+                .success
+                .value
                 .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.enumerable.withName("FR").toSet)
-                .success.value
-
+                .success
+                .value
 
             val expected = ReporterDetails(
-              individual = Some(Individual(
-                individualName = name,
-                birthDate = Some(LocalDate.now()),
-                birthPlace = Some(birthPlace),
-                address = Some(address),
-                emailAddress = Some(email),
-                taxResidencies = TaxResidency.buildFromLoopDetails(loop)
-              )),
-              liability = Some(ReporterLiability(
-                role = RoleInArrangement.Intermediary.toString,
-                nexus = Some("INEXa"),
-                capacity = Some("DAC61101"),
-                nationalExemption = Some(true),
-                exemptCountries = Some(List("FR")),
-                implementingDate = None
-              ))
+              individual = Some(
+                Individual(
+                  individualName = name,
+                  birthDate = Some(LocalDate.now()),
+                  birthPlace = Some(birthPlace),
+                  address = Some(address),
+                  emailAddress = Some(email),
+                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
+                )
+              ),
+              liability = Some(
+                ReporterLiability(
+                  role = RoleInArrangement.Intermediary.toString,
+                  nexus = Some("INEXa"),
+                  capacity = Some("DAC61101"),
+                  nationalExemption = Some(true),
+                  exemptCountries = Some(List("FR")),
+                  implementingDate = None
+                )
+              )
             )
 
             val reporterIndividual = ReporterDetails.buildReporterDetails(userAnswers, 0)

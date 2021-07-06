@@ -37,18 +37,22 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterIndividualSelectAddressController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: SelectAddressFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    addressLookupConnector: AddressLookupConnector,
-    navigator: NavigatorForReporter,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class ReporterIndividualSelectAddressController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: SelectAddressFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  addressLookupConnector: AddressLookupConnector,
+  navigator: NavigatorForReporter,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private def manualAddressURL(id: Int, mode: Mode): String = routes.ReporterIndividualAddressController.onPageLoad(id, mode).url
 
@@ -58,29 +62,27 @@ class ReporterIndividualSelectAddressController @Inject()(
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         case Nil => Future.successful(Redirect(manualAddressURL(id, mode)))
         case addresses =>
-
           val preparedForm = request.userAnswers.get(ReporterIndividualSelectAddressPage, id) match {
-            case None => form
+            case None        => form
             case Some(value) => form.fill(value)
           }
 
           val addressItems: Seq[Radios.Radio] = getAddressItemsFromAddressLookup(addresses)
-          val radios = Radios(field = preparedForm("value"), items = addressItems)
+          val radios                          = Radios(field = preparedForm("value"), items = addressItems)
 
           val json = Json.obj(
-            "form" -> preparedForm,
-            "mode" -> mode,
+            "form"             -> preparedForm,
+            "mode"             -> mode,
             "manualAddressURL" -> manualAddressURL(id, mode),
-            "radios" -> radios,
-            "pageTitle" -> "reporterIndividualSelectAddress.title",
-            "pageHeading" -> "reporterIndividualSelectAddress.heading",
-            "actionUrl" -> actionUrl(id, mode)
+            "radios"           -> radios,
+            "pageTitle"        -> "reporterIndividualSelectAddress.title",
+            "pageHeading"      -> "reporterIndividualSelectAddress.heading",
+            "actionUrl"        -> actionUrl(id, mode)
           )
 
           renderer.render("reporter/reporterSelectAddress.njk", json).map(Ok(_))
@@ -92,64 +94,66 @@ class ReporterIndividualSelectAddressController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[String], isAlt: Boolean): Call =
     if (isAlt) {
       navigator.routeAltMap(ReporterIndividualSelectAddressPage)(checkRoute)(id)(value)(0)
-    }
-    else {
+    } else {
       navigator.routeMap(ReporterIndividualSelectAddressPage)(checkRoute)(id)(value)(0)
     }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val postCode = getPostCodeFromRequest(request, id)
 
       addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
         addresses =>
-          form.bindFromRequest().fold(
-            formWithErrors => {
-              val addressItems: Seq[Radios.Radio] = getAddressItemsFromAddressLookup(addresses)
-              val radios = Radios(field = formWithErrors("value"), items = addressItems)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
+                val addressItems: Seq[Radios.Radio] = getAddressItemsFromAddressLookup(addresses)
+                val radios                          = Radios(field = formWithErrors("value"), items = addressItems)
 
-              val json = Json.obj(
-                "form" -> formWithErrors,
-                "mode" -> mode,
-                "manualAddressURL" -> manualAddressURL(id, mode),
-                "radios" -> radios,
-                "pageTitle" -> "reporterIndividualSelectAddress.title",
-                "pageHeading" -> "reporterIndividualSelectAddress.heading",
-                "actionUrl" -> actionUrl(id, mode)
-              )
+                val json = Json.obj(
+                  "form"             -> formWithErrors,
+                  "mode"             -> mode,
+                  "manualAddressURL" -> manualAddressURL(id, mode),
+                  "radios"           -> radios,
+                  "pageTitle"        -> "reporterIndividualSelectAddress.title",
+                  "pageHeading"      -> "reporterIndividualSelectAddress.heading",
+                  "actionUrl"        -> actionUrl(id, mode)
+                )
 
-              renderer.render("reporter/reporterSelectAddress.njk", json).map(BadRequest(_))
-            },
-            value => {
-              val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
+                renderer.render("reporter/reporterSelectAddress.njk", json).map(BadRequest(_))
+              },
+              value => {
+                val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
-              val redirectUsers = hasValueChanged(value, id, ReporterIndividualSelectAddressPage, mode, request.userAnswers)
+                val redirectUsers = hasValueChanged(value, id, ReporterIndividualSelectAddressPage, mode, request.userAnswers)
 
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualSelectAddressPage, id, value))
-                updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, id, addressToStore))
-                _ <- sessionRepository.set(updatedAnswersWithAddress)
-                checkRoute                =  toCheckRoute(mode, updatedAnswersWithAddress, id)
-              } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
-            }
-          )
+                for {
+                  updatedAnswers            <- Future.fromTry(request.userAnswers.set(ReporterIndividualSelectAddressPage, id, value))
+                  updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(ReporterSelectedAddressLookupPage, id, addressToStore))
+                  _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                  checkRoute = toCheckRoute(mode, updatedAnswersWithAddress, id)
+                } yield Redirect(redirect(id, checkRoute, Some(value), redirectUsers))
+              }
+            )
       }
   }
 
   private def getPostCodeFromRequest[A](request: DataRequest[A], id: Int): String =
     request.userAnswers.get(ReporterIndividualPostcodePage, id) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
-      case None => ""
+      case None           => ""
     }
 
-  private def getAddressItemsFromAddressLookup(addresses: Seq[AddressLookup]): Seq[Radios.Radio] = addresses.map(address =>
-    Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
+  private def getAddressItemsFromAddressLookup(addresses: Seq[AddressLookup]): Seq[Radios.Radio] = addresses.map(
+    address => Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
   )
 
   private def formatAddress(address: AddressLookup): String = {
     val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
-    val county = address.county.fold("")(county => s"$county, ")
+    val county = address.county.fold("")(
+      county => s"$county, "
+    )
 
     s"$lines, ${address.town}, $county${address.postcode}"
   }

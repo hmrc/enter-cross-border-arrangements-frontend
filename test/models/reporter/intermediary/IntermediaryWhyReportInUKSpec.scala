@@ -31,7 +31,6 @@ class IntermediaryWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         whyReportInUK =>
-
           JsString(whyReportInUK.toString).validate[IntermediaryWhyReportInUK].asOpt.value mustEqual whyReportInUK
       }
     }
@@ -42,7 +41,6 @@ class IntermediaryWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[IntermediaryWhyReportInUK] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class IntermediaryWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         whyReportInUK =>
-
           Json.toJson(whyReportInUK) mustEqual JsString(whyReportInUK.toString)
       }
     }

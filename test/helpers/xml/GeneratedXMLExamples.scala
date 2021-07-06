@@ -22,9 +22,9 @@ import java.time.LocalDate
 
 object GeneratedXMLExamples {
 
-  private val mandatoryTimestamp: String = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
-  private val today: LocalDate = LocalDate.now
-  private val todayMinusOneMonth: LocalDate = LocalDate.now.minusMonths(1)
+  private val mandatoryTimestamp: String     = DateTime.now().toString("yyyy-MM-dd'T'hh:mm:ss")
+  private val today: LocalDate               = LocalDate.now
+  private val todayMinusOneMonth: LocalDate  = LocalDate.now.minusMonths(1)
   private val todayMinusTwoMonths: LocalDate = LocalDate.now.minusMonths(2)
 
   val xmlForOrganisation: String =

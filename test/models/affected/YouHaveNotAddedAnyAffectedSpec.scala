@@ -34,7 +34,6 @@ class YouHaveNotAddedAnyAffectedSpec extends AnyFreeSpec with Matchers with Scal
 
       forAll(gen) {
         YouHaveNotAddedAnyAffected =>
-
           JsString(YouHaveNotAddedAnyAffected.toString).validate[YouHaveNotAddedAnyAffected].asOpt.value mustEqual YouHaveNotAddedAnyAffected
       }
     }
@@ -45,7 +44,6 @@ class YouHaveNotAddedAnyAffectedSpec extends AnyFreeSpec with Matchers with Scal
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[YouHaveNotAddedAnyAffected] mustEqual JsError("error.invalid")
       }
     }
@@ -56,7 +54,6 @@ class YouHaveNotAddedAnyAffectedSpec extends AnyFreeSpec with Matchers with Scal
 
       forAll(gen) {
         YouHaveNotAddedAnyAffected =>
-
           Json.toJson(YouHaveNotAddedAnyAffected) mustEqual JsString(YouHaveNotAddedAnyAffected.toString)
       }
     }

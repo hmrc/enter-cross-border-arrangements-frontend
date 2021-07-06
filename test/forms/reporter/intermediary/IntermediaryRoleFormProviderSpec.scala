@@ -26,13 +26,13 @@ class IntermediaryRoleFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "intermediaryRole.error.required"
 
     behave like optionsField[IntermediaryRole](
       form,
       fieldName,
-      validValues  = IntermediaryRole.values,
+      validValues = IntermediaryRole.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

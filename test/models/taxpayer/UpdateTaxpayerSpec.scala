@@ -31,7 +31,6 @@ class UpdateTaxpayerSpec extends ModelSpecBase {
 
       forAll(gen) {
         updateTaxpayer =>
-
           JsString(updateTaxpayer.toString).validate[UpdateTaxpayer].asOpt.value mustEqual updateTaxpayer
       }
     }
@@ -42,7 +41,6 @@ class UpdateTaxpayerSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[UpdateTaxpayer] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class UpdateTaxpayerSpec extends ModelSpecBase {
 
       forAll(gen) {
         updateTaxpayer =>
-
           Json.toJson(updateTaxpayer) mustEqual JsString(updateTaxpayer.toString)
       }
     }

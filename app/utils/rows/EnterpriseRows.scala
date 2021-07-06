@@ -17,7 +17,12 @@
 package utils.rows
 
 import models.CheckMode
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{
+  AssociatedEnterpriseTypePage,
+  IsAssociatedEnterpriseAffectedPage,
+  SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage,
+  YouHaveNotAddedAnyAssociatedEnterprisesPage
+}
 import pages.reporter.ReporterDetailsPage
 import pages.taxpayer.TaxpayerLoopPage
 import uk.gov.hmrc.viewmodels.SummaryList.Row
@@ -25,23 +30,24 @@ import uk.gov.hmrc.viewmodels._
 
 trait EnterpriseRows extends RowBuilder {
 
-  def youHaveNotAddedAnyAssociatedEnterprises(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) map { answer =>
-
-    toRow(
-      msgKey  = "youHaveNotAddedAnyAssociatedEnterprises",
-      content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
-      href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
-    )
+  def youHaveNotAddedAnyAssociatedEnterprises(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) map {
+    answer =>
+      toRow(
+        msgKey = "youHaveNotAddedAnyAssociatedEnterprises",
+        content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
+        href = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
+      )
   }
 
-  def youHaveNotAddedAnyAssociatedEnterprisesDisplay(id: Int): Option[Row] = userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
-    .map { answer =>
-
-      toRow(
-        msgKey  = "youHaveNotAddedAnyAssociatedEnterprisesDisplay",
-        content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
-        href    = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
-      )
+  def youHaveNotAddedAnyAssociatedEnterprisesDisplay(id: Int): Option[Row] = userAnswers
+    .get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id)
+    .map {
+      answer =>
+        toRow(
+          msgKey = "youHaveNotAddedAnyAssociatedEnterprisesDisplay",
+          content = msg"youHaveNotAddedAnyAssociatedEnterprises.$answer",
+          href = controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(id, CheckMode).url
+        )
     }
 
   def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
@@ -50,7 +56,14 @@ trait EnterpriseRows extends RowBuilder {
     (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
       case (Some(selectionList), Some(taxpayers)) =>
         val relevantTaxpayerNames: Seq[String] =
-          selectionList.flatMap(eachID => taxpayers.filter(taxpayer => taxpayer.taxpayerId == eachID)).map(_.nameAsString)
+          selectionList
+            .flatMap(
+              eachID =>
+                taxpayers.filter(
+                  taxpayer => taxpayer.taxpayerId == eachID
+                )
+            )
+            .map(_.nameAsString)
 
         if (selectionList.contains(reporterName)) {
           formatSelectedTaxpayers(Seq(reporterName) ++ relevantTaxpayerNames, id)
@@ -69,17 +82,23 @@ trait EnterpriseRows extends RowBuilder {
 
     val formattedTaxpayerList = if (taxpayerList.size > 1) {
       s"""<ul class="govuk-list govuk-list--bullet">
-         |${taxpayerList.map(selectedTaxpayer => s"<li>$selectedTaxpayer</li>").mkString("\n")}
+         |${taxpayerList
+        .map(
+          selectedTaxpayer => s"<li>$selectedTaxpayer</li>"
+        )
+        .mkString("\n")}
          |</ul>""".stripMargin
     } else {
       s"${taxpayerList.head}"
     }
 
-    Seq(toRow(
-      msgKey  = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
-      content = Html(s"$formattedTaxpayerList"),
-      href    = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
-    ))
+    Seq(
+      toRow(
+        msgKey = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith",
+        content = Html(s"$formattedTaxpayerList"),
+        href = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(id, CheckMode).url
+      )
+    )
   }
 
   def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {

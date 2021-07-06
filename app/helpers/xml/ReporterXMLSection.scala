@@ -37,33 +37,35 @@ case class ReporterXMLSection(submission: Submission) {
       </Organisation>
     </ID>
 
-  def buildDisclosureDetails: NodeSeq = {
+  def buildDisclosureDetails: NodeSeq =
     Try {
       <Disclosing>
         {buildDiscloseDetailsForReporter}
       </Disclosing>
     }
-  }.getOrElse(NodeSeq.Empty)
+      .getOrElse(NodeSeq.Empty)
 
-  private[xml] def buildLiability: NodeSeq = {
-
+  private[xml] def buildLiability: NodeSeq =
     reporterDetails.flatMap(_.liability) match {
       case Some(liability) =>
-
-        val getCapacity = liability.capacity.fold(NodeSeq.Empty)(capacity =>
-        if (capacity.equals(IntermediaryRole.Unknown.toString) ||
-          capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow.toString)){
-          NodeSeq.Empty
-        } else {
-          <Capacity>{capacity}</Capacity>
-        })
+        val getCapacity = liability.capacity.fold(NodeSeq.Empty)(
+          capacity =>
+            if (
+              capacity.equals(IntermediaryRole.Unknown.toString) ||
+              capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow.toString)
+            ) {
+              NodeSeq.Empty
+            } else {
+              <Capacity>{capacity}</Capacity>
+            }
+        )
 
         (liability.role, liability.nexus) match {
 
           case (_, Some(nexus)) if nexus.equals("doNotKnow") => NodeSeq.Empty
 
           case (Taxpayer.toString, Some(nexus)) =>
-              <Liability>
+            <Liability>
                 <RelevantTaxpayerDiscloser>
                   <RelevantTaxpayerNexus>{nexus}</RelevantTaxpayerNexus>
                   {getCapacity}
@@ -83,10 +85,8 @@ case class ReporterXMLSection(submission: Submission) {
         }
       case _ => NodeSeq.Empty
     }
-  }
 
-  private[xml] def buildReporterExemptions: NodeSeq = {
-
+  private[xml] def buildReporterExemptions: NodeSeq =
     reporterDetails.flatMap(_.liability) match {
       case Some(liability) =>
         liability.nationalExemption match {
@@ -94,11 +94,15 @@ case class ReporterXMLSection(submission: Submission) {
             val countryExemptions =
               if (liability.exemptCountries.isDefined && liability.exemptCountries.get.nonEmpty) {
                 <CountryExemptions>
-                  {liability.exemptCountries.get.map(country => <CountryExemption>{country}</CountryExemption>)}
+                  {
+                  liability.exemptCountries.get.map(
+                    country => <CountryExemption>{country}</CountryExemption>
+                  )
+                }
                 </CountryExemptions>
-            } else {
-              NodeSeq.Empty
-            }
+              } else {
+                NodeSeq.Empty
+              }
 
             <NationalExemption>
               <Exemption>true</Exemption>
@@ -114,12 +118,15 @@ case class ReporterXMLSection(submission: Submission) {
         }
       case _ => throw new Exception("Unable to Construct XML for Reporter Exemptions")
     }
-  }
 
-  private[xml] def buildReporterCapacity(reporterDetails: ReporterDetails): NodeSeq = {
-    reporterDetails.liability.map(_.capacity.fold(NodeSeq.Empty)(capacity =>
-    <Capacity>{capacity}</Capacity>)).getOrElse(NodeSeq.Empty)
-  }
+  private[xml] def buildReporterCapacity(reporterDetails: ReporterDetails): NodeSeq =
+    reporterDetails.liability
+      .map(
+        _.capacity.fold(NodeSeq.Empty)(
+          capacity => <Capacity>{capacity}</Capacity>
+        )
+      )
+      .getOrElse(NodeSeq.Empty)
 
   private[xml] def buildDiscloseDetailsForReporter: NodeSeq = {
     val nodeBuffer = new xml.NodeBuffer

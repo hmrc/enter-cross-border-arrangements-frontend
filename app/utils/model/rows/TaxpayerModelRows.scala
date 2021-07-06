@@ -32,16 +32,17 @@ trait TaxpayerModelRows extends DisplayRowBuilder {
     }
 
     toDisplayRow(
-        msgKey = "selectType",
-        content = msg"selectType.$selectType"
-      )
+      msgKey = "selectType",
+      content = msg"selectType.$selectType"
+    )
   }
 
   def whatIsTaxpayersStartDateForImplementingArrangement(taxpayer: Taxpayer)(implicit messages: Messages): Option[DisplayRow] =
-    taxpayer.implementingDate map { implementingDate =>
-      toDisplayRow(
-        msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",
-        content = Literal(implementingDate.format(dateFormatter))
-      )
+    taxpayer.implementingDate map {
+      implementingDate =>
+        toDisplayRow(
+          msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",
+          content = Literal(implementingDate.format(dateFormatter))
+        )
     }
 }

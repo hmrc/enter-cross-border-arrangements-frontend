@@ -36,31 +36,34 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForEnterprises,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer,
-    frontendAppConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForEnterprises,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: YouHaveNotAddedAnyAssociatedEnterprisesFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer,
+  frontendAppConfig: FrontendAppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
+        "form"                     -> preparedForm,
         "id"                       -> id,
         "mode"                     -> mode,
         "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(preparedForm),
@@ -87,37 +90,36 @@ class YouHaveNotAddedAnyAssociatedEnterprisesController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"                     -> formWithErrors,
+              "id"                       -> id,
+              "mode"                     -> mode,
+              "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
+              "associatedEnterpriseList" -> Json.toJson(toItemList(request.userAnswers, id))
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id"                       -> id,
-            "mode"                     -> mode,
-            "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(formWithErrors),
-            "associatedEnterpriseList" -> Json.toJson(toItemList(request.userAnswers, id)),
-          )
-
-          renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
-        },
-        value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, id, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AssociatedEnterpriseStatusPage, id, setStatus(value)))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(mode, updatedAnswersWithStatus, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("enterprises/youHaveNotAddedAnyAssociatedEnterprises.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAssociatedEnterprisesPage, id, value))
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AssociatedEnterpriseStatusPage, id, setStatus(value)))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithStatus, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def setStatus(selectedAnswer: YouHaveNotAddedAnyAssociatedEnterprises): JourneyStatus = {
+  private def setStatus(selectedAnswer: YouHaveNotAddedAnyAssociatedEnterprises): JourneyStatus =
     selectedAnswer match {
       case YouHaveNotAddedAnyAssociatedEnterprises.YesAddLater => JourneyStatus.InProgress
-      case YouHaveNotAddedAnyAssociatedEnterprises.No =>  JourneyStatus.Completed
-      case _ => JourneyStatus.NotStarted
+      case YouHaveNotAddedAnyAssociatedEnterprises.No          => JourneyStatus.Completed
+      case _                                                   => JourneyStatus.NotStarted
     }
-  }
 
 }

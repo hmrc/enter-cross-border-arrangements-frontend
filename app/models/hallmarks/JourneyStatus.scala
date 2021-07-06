@@ -34,7 +34,9 @@ object JourneyStatus extends Enumerable.Implicits {
     Set(Completed, InProgress, NotStarted, Restricted)
 
   implicit val enumerable: Enumerable[JourneyStatus] =
-    Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.toSeq.map(
+        v => v.toString -> v
+      ): _*
+    )
 }
-
-

@@ -30,41 +30,37 @@ import uk.gov.hmrc.viewmodels.Html
 
 object JourneyHelpers {
 
-  def getIndividualName(userAnswers: UserAnswers, id: Int, defaultMessage: Option[String] = Some("the individual")): String = {
+  def getIndividualName(userAnswers: UserAnswers, id: Int, defaultMessage: Option[String] = Some("the individual")): String =
     userAnswers.get(IndividualNamePage, id) match {
       case Some(indName) => indName.displayName
-      case _ => defaultMessage.getOrElse(throw new IllegalArgumentException("Individual must contain a name"))
+      case _             => defaultMessage.getOrElse(throw new IllegalArgumentException("Individual must contain a name"))
     }
-  }
 
-  def getOrganisationName(userAnswers: UserAnswers, id: Int): String = {
+  def getOrganisationName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(OrganisationNamePage, id) match {
       case Some(organisationName) => organisationName
-      case None => "the organisation"
+      case None                   => "the organisation"
     }
-  }
 
-  def getReporterDetailsOrganisationName(userAnswers: UserAnswers, id: Int): String = {
+  def getReporterDetailsOrganisationName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(ReporterOrganisationNamePage, id) match {
       case Some(organisationName) => organisationName
-      case None => "the organisation"
+      case None                   => "the organisation"
     }
-  }
 
-  def pageHeadingLegendProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
-    Html(s"<legend><h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1></legend>")
-  }
+  def pageHeadingLegendProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
+    Html(s"<legend><h1 class='govuk-heading-xl name-overflow'>${messages(messageKey, name)}</h1></legend>")
 
-  def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html = {
-    Html(s"<h1 class='govuk-heading-xl name-overflow'>${{ messages(messageKey, name) }}</h1>")
-  }
+  def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
+    Html(s"<h1 class='govuk-heading-xl name-overflow'>${messages(messageKey, name)}</h1>")
 
   def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =
     Json.obj("value" -> "", "text" -> "") +: currencies.map {
-      currency => Json.obj(
-        "text" -> currency.description,
-        "value" -> currency.code,
-        "selected" -> value.contains(currency.code)
+      currency =>
+        Json.obj(
+          "text"     -> currency.description,
+          "value"    -> currency.code,
+          "selected" -> value.contains(currency.code)
         )
     }
 
@@ -73,7 +69,7 @@ object JourneyHelpers {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
         case Some(countrycode) => countrycode == country.code
-        case _ => false
+        case _                 => false
       }
 
     val countryJsonList = countries.map {
@@ -84,11 +80,11 @@ object JourneyHelpers {
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
-  def incrementIndexIndividual(ua: UserAnswers, id:Int, request: Request[AnyContent]): Int = {
+  def incrementIndexIndividual(ua: UserAnswers, id: Int, request: Request[AnyContent]): Int =
     ua.get(IndividualLoopPage, id) match {
       case Some(_) =>
         try {
-          val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
+          val uriPattern           = "([A-Za-z/-]+)([0-9]+)".r
           val uriPattern(_, index) = request.uri
 
           index.toInt + 1
@@ -97,13 +93,12 @@ object JourneyHelpers {
         }
       case _ => 0
     }
-  }
 
-  def incrementIndexOrganisation(ua: UserAnswers, id:Int, request: Request[AnyContent]): Int = {
+  def incrementIndexOrganisation(ua: UserAnswers, id: Int, request: Request[AnyContent]): Int =
     ua.get(OrganisationLoopPage, id) match {
       case Some(_) =>
         try {
-          val uriPattern = "([A-Za-z/-]+)([0-9]+)".r
+          val uriPattern           = "([A-Za-z/-]+)([0-9]+)".r
           val uriPattern(_, index) = request.uri
 
           index.toInt + 1
@@ -112,43 +107,40 @@ object JourneyHelpers {
         }
       case _ => 0
     }
-  }
 
   def currentIndexInsideLoop(request: Request[AnyContent]): Int = {
-    val uriPattern = "([A-Za-z/-]+)([0-9]+)/([0-9]+)".r
+    val uriPattern              = "([A-Za-z/-]+)([0-9]+)/([0-9]+)".r
     val uriPattern(_, index, _) = request.uri
     index.toInt
   }
 
-  def hasValueChanged[T](value: T, id: Int, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
-                        (implicit rds: Reads[T]): Boolean = {
+  def hasValueChanged[T](value: T, id: Int, page: QuestionPage[T], mode: Mode, ua: UserAnswers)(implicit rds: Reads[T]): Boolean =
     ua.get(page, id) match {
       case Some(ans) if (ans != value) && (mode == CheckMode) => true
-      case _ => false
+      case _                                                  => false
     }
-  }
 
-  def checkLoopDetailsContainsCountry(ua: UserAnswers, id: Int, questionPage: QuestionPage[IndexedSeq[LoopDetails]]): Boolean = {
-    ua.get(questionPage, id).fold(throw new Exception("Mandatory userAnswer missing - LoopDetails must contain at least one country"))(
-      loopDetails => loopDetails.map(_.whichCountry.isDefined).head
-    )
-  }
+  def checkLoopDetailsContainsCountry(ua: UserAnswers, id: Int, questionPage: QuestionPage[IndexedSeq[LoopDetails]]): Boolean =
+    ua.get(questionPage, id)
+      .fold(throw new Exception("Mandatory userAnswer missing - LoopDetails must contain at least one country"))(
+        loopDetails => loopDetails.map(_.whichCountry.isDefined).head
+      )
 
   @deprecated
   def getCountry[A](userAnswers: UserAnswers, id: Int, index: Int): Option[Country] = for {
-    loopPage <- userAnswers.get(IndividualLoopPage, id)
+    loopPage    <- userAnswers.get(IndividualLoopPage, id)
     loopDetails <- loopPage.lift(index)
-    country <- loopDetails.whichCountry
+    country     <- loopDetails.whichCountry
   } yield country
 
-  def linkToHomePageText(href: String, linkText: String = "confirmation.link.text")(implicit messages: Messages): Html = {
-    Html(s"<a class='govuk-link' id='homepage-link' href='$href'>${{ messages(linkText) }}</a>")
-  }
+  def linkToHomePageText(href: String, linkText: String = "confirmation.link.text")(implicit messages: Messages): Html =
+    Html(s"<a class='govuk-link' id='homepage-link' href='$href'>${messages(linkText)}</a>")
 
-  def surveyLinkText(href: String)(implicit messages: Messages): Html = {
-    Html(s"<a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
-      s"${{ messages("confirmation.survey.link")}}</a> ${{ messages("confirmation.survey.text")}}")
-  }
+  def surveyLinkText(href: String)(implicit messages: Messages): Html =
+    Html(
+      s"<a class='govuk-link' id='feedback-link' href='$href' rel='noreferrer noopener' target='_blank'>" +
+        s"${messages("confirmation.survey.link")}</a> ${messages("confirmation.survey.text")}"
+    )
 
   def dynamicGuidance(index: Int, key: String): String =
     if (index >= 1) s"$key.moreThanOne.hint" else s"$key.hint"
@@ -156,10 +148,9 @@ object JourneyHelpers {
   def dynamicAlso(index: Int): String =
     if (index >= 1) "also" else ""
 
-  def getReporterTypeKey(userAnswers: UserAnswers, id: Int): String = {
+  def getReporterTypeKey(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => "reporterIndividual"
-      case _ => "reporterOrganisation"
+      case _                => "reporterOrganisation"
     }
-  }
 }

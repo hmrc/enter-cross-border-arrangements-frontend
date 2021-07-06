@@ -36,34 +36,37 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatTypeofIntermediaryController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIntermediaries,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatTypeofIntermediaryFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class WhatTypeofIntermediaryController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIntermediaries,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatTypeofIntermediaryFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(WhatTypeofIntermediaryPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
+        "form"         -> preparedForm,
+        "id"           -> id,
+        "mode"         -> mode,
         "intermediary" -> getName(request.userAnswers, id),
-        "radios"  -> WhatTypeofIntermediary.radios(preparedForm)
+        "radios"       -> WhatTypeofIntermediary.radios(preparedForm)
       )
 
       renderer.render("intermediaries/whatTypeofIntermediary.njk", json).map(Ok(_))
@@ -74,34 +77,34 @@ class WhatTypeofIntermediaryController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"         -> formWithErrors,
+              "id"           -> id,
+              "mode"         -> mode,
+              "intermediary" -> getName(request.userAnswers, id),
+              "radios"       -> WhatTypeofIntermediary.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "intermediary" -> getName(request.userAnswers, id),
-            "radios" -> WhatTypeofIntermediary.radios(formWithErrors)
-          )
-
-          renderer.render("intermediaries/whatTypeofIntermediary.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatTypeofIntermediaryPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("intermediaries/whatTypeofIntermediary.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatTypeofIntermediaryPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def getName(userAnswers: UserAnswers, id: Int) = {
+  private def getName(userAnswers: UserAnswers, id: Int) =
     (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
-      case _ => "this intermediary"
+      case _               => "this intermediary"
     }
-  }
 }

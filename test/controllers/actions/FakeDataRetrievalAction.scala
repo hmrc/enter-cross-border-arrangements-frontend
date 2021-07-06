@@ -38,6 +38,6 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers] = None) extends 
         Future(OptionalDataRequest(request.request, request.identifier, request.enrolmentID, Some(userAnswers)))
     }
 
-  override protected implicit val executionContext: ExecutionContext =
+  implicit override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 }

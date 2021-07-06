@@ -19,16 +19,21 @@ package models
 import play.api.libs.json.{Format, JsResult, JsValue, Json, OFormat}
 
 sealed trait ManualSubmissionValidationResult
+
 object ManualSubmissionValidationResult {
+
   implicit val validationWrites = new Format[ManualSubmissionValidationResult] {
+
     override def reads(json: JsValue): JsResult[ManualSubmissionValidationResult] =
-      json.validate[ManualSubmissionValidationSuccess].orElse(
-        json.validate[ManualSubmissionValidationFailure]
-      )
+      json
+        .validate[ManualSubmissionValidationSuccess]
+        .orElse(
+          json.validate[ManualSubmissionValidationFailure]
+        )
 
     override def writes(o: ManualSubmissionValidationResult): JsValue = o match {
-      case m@ManualSubmissionValidationSuccess(_) => ManualSubmissionValidationSuccess.format.writes(m)
-      case m@ManualSubmissionValidationFailure(_) => ManualSubmissionValidationFailure.format.writes(m)
+      case m @ ManualSubmissionValidationSuccess(_) => ManualSubmissionValidationSuccess.format.writes(m)
+      case m @ ManualSubmissionValidationFailure(_) => ManualSubmissionValidationFailure.format.writes(m)
     }
   }
 }

@@ -30,10 +30,11 @@ case object IntermediariesTypePage extends DetailsPage[SelectType, Intermediary]
   override def toString: String = "intermediariesType"
 
   override def cleanup(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.remove(ExemptCountriesPage, id)
-    .flatMap(_.remove(IsExemptionCountryKnownPage, id))
-    .flatMap(_.remove(IsExemptionKnownPage, id))
-    .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
+    userAnswers
+      .remove(ExemptCountriesPage, id)
+      .flatMap(_.remove(IsExemptionCountryKnownPage, id))
+      .flatMap(_.remove(IsExemptionKnownPage, id))
+      .flatMap(_.remove(WhatTypeofIntermediaryPage, id))
 
   override def getFromModel(model: Intermediary): Option[SelectType] = model.selectType.toOption
 }

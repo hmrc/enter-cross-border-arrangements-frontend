@@ -29,31 +29,45 @@ class IntermediariesLoopPageSpec extends PageBehaviours {
     "must be able to removed all related pages from UserAnswers" in {
 
       val gen = for {
-        userAnswersGen <- arbitrary[UserAnswers]
-        youHaveNotAddedGen <- arbitraryYouHaveNotAddedAnyIntermediaries.arbitrary
-        selectTypeGen <- arbitrarySelectType.arbitrary
-        isExemptionKnownGen <- arbitraryIsExemptionKnown.arbitrary
+        userAnswersGen             <- arbitrary[UserAnswers]
+        youHaveNotAddedGen         <- arbitraryYouHaveNotAddedAnyIntermediaries.arbitrary
+        selectTypeGen              <- arbitrarySelectType.arbitrary
+        isExemptionKnownGen        <- arbitraryIsExemptionKnown.arbitrary
         isExemptionCountryKnownGen <- arbitrary[Boolean]
-        exemptCountriesGen <- listOf(arbitraryCountryList.arbitrary)
+        exemptCountriesGen         <- listOf(arbitraryCountryList.arbitrary)
 
       } yield (userAnswersGen, youHaveNotAddedGen, selectTypeGen, isExemptionKnownGen, isExemptionCountryKnownGen, exemptCountriesGen)
 
-      forAll(gen) { case (userAnswers, youHaveNotAdded, selectType, isExemptionKnown, isExemptionCountryKnown, exemptCountries) =>
-        val answersBeforeCleanUp = userAnswers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(YouHaveNotAddedAnyIntermediariesPage, 0,  youHaveNotAdded).success.value
-          .set(IntermediariesTypePage, 0,  selectType).success.value
-          .set(IsExemptionKnownPage, 0,  isExemptionKnown).success.value
-          .set(IsExemptionCountryKnownPage, 0,  isExemptionCountryKnown).success.value
-          .set(ExemptCountriesPage, 0,  exemptCountries.toSet).success.value
-        val answersAfterCleanUp = IntermediaryLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
-        answersAfterCleanUp.foreach { ua =>
-          ua.get(YouHaveNotAddedAnyIntermediariesPage, 0) mustBe None
-          ua.get(IntermediariesTypePage, 0) mustBe None
-          ua.get(IsExemptionKnownPage, 0) mustBe None
-          ua.get(IsExemptionCountryKnownPage, 0) mustBe None
-          ua.get(ExemptCountriesPage, 0) mustBe None
-        }
+      forAll(gen) {
+        case (userAnswers, youHaveNotAdded, selectType, isExemptionKnown, isExemptionCountryKnown, exemptCountries) =>
+          val answersBeforeCleanUp = userAnswers
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(YouHaveNotAddedAnyIntermediariesPage, 0, youHaveNotAdded)
+            .success
+            .value
+            .set(IntermediariesTypePage, 0, selectType)
+            .success
+            .value
+            .set(IsExemptionKnownPage, 0, isExemptionKnown)
+            .success
+            .value
+            .set(IsExemptionCountryKnownPage, 0, isExemptionCountryKnown)
+            .success
+            .value
+            .set(ExemptCountriesPage, 0, exemptCountries.toSet)
+            .success
+            .value
+          val answersAfterCleanUp = IntermediaryLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
+          answersAfterCleanUp.foreach {
+            ua =>
+              ua.get(YouHaveNotAddedAnyIntermediariesPage, 0) mustBe None
+              ua.get(IntermediariesTypePage, 0) mustBe None
+              ua.get(IsExemptionKnownPage, 0) mustBe None
+              ua.get(IsExemptionCountryKnownPage, 0) mustBe None
+              ua.get(ExemptCountriesPage, 0) mustBe None
+          }
       }
     }
 

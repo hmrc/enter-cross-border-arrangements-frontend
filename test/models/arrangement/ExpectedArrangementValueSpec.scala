@@ -34,9 +34,11 @@ class ExpectedArrangementValueSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
             .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, ExpectedArrangementValue("GBP", 100))
-            .success.value
+            .success
+            .value
 
         val expected = ExpectedArrangementValue(
           currency = "GBP",
@@ -53,7 +55,8 @@ class ExpectedArrangementValueSpec extends ModelSpecBase with ModelGenerators {
         val userAnswers =
           UserAnswers("id")
             .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-            .success.value
+            .success
+            .value
 
         val ex = intercept[Exception] {
           ExpectedArrangementValue.buildExpectedArrangementValue(userAnswers, 0)

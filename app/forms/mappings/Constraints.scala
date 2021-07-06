@@ -34,7 +34,6 @@ trait Constraints {
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input >= minimum) {
@@ -47,7 +46,6 @@ trait Constraints {
   protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input <= maximum) {
@@ -60,7 +58,6 @@ trait Constraints {
   protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
-
         import ev._
 
         if (input >= minimum && input <= maximum) {
@@ -89,7 +86,7 @@ trait Constraints {
   protected def maxLengthOption(maximum: Int, errorKey: String): Constraint[Option[String]] =
     Constraint {
       case Some(str) =>
-        if (str.length <= maximum) Valid else Invalid(errorKey,maximum)
+        if (str.length <= maximum) Valid else Invalid(errorKey, maximum)
       case _ => Valid
     }
 

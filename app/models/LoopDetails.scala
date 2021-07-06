@@ -24,7 +24,8 @@ case class LoopDetails(taxResidentOtherCountries: Option[Boolean],
                        doYouKnowTIN: Option[Boolean],
                        taxNumbersNonUK: Option[TaxReferenceNumbers],
                        doYouKnowUTR: Option[Boolean],
-                       taxNumbersUK: Option[TaxReferenceNumbers]) extends Ordered[LoopDetails] {
+                       taxNumbersUK: Option[TaxReferenceNumbers]
+) extends Ordered[LoopDetails] {
 
   val matchingTINS: Option[TaxReferenceNumbers] =
     (whichCountry.exists(_.isUK), doYouKnowUTR.contains(true), doYouKnowTIN.contains(true)) match {
@@ -35,16 +36,14 @@ case class LoopDetails(taxResidentOtherCountries: Option[Boolean],
 
   val isUk: Boolean = whichCountry.exists(_.isUK)
 
-  override def compare(that: LoopDetails): Int = {
+  override def compare(that: LoopDetails): Int =
     (whichCountry, that.whichCountry) match { // UK must come first
       case (Some(country), _) if country.isUK => Int.MinValue
       case (_, Some(other)) if other.isUK     => Int.MaxValue
       case (Some(country), Some(other))       => country.compare(other)
       case _                                  => throw new IllegalArgumentException("Country must not be null.")
     }
-  }
 }
-
 
 object LoopDetails {
 
@@ -58,4 +57,3 @@ object LoopDetails {
 
   implicit val format: OFormat[LoopDetails] = Json.format[LoopDetails]
 }
-

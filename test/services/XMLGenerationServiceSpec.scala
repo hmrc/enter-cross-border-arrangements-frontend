@@ -31,17 +31,17 @@ class XMLGenerationServiceSpec extends SpecBase with MockServiceApp {
 
     "must build the full XML for a reporter that is an ORGANISATION" in {
 
-      xmlGenerationService.createXmlSubmission(Submission(userAnswersForOrganisation, 0, "XADAC0001122345")) map { result =>
-
-        prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
+      xmlGenerationService.createXmlSubmission(Submission(userAnswersForOrganisation, 0, "XADAC0001122345")) map {
+        result =>
+          prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForOrganisation
       }
     }
 
     "must build the full XML for a reporter that is an INDIVIDUAL" in {
 
-      xmlGenerationService.createXmlSubmission(Submission(userAnswersForIndividual, 0, "XADAC0001122345")) map { result =>
-
-        prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
+      xmlGenerationService.createXmlSubmission(Submission(userAnswersForIndividual, 0, "XADAC0001122345")) map {
+        result =>
+          prettyPrinter.format(result) mustBe GeneratedXMLExamples.xmlForIndividual
       }
     }
 

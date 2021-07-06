@@ -20,7 +20,6 @@ import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validIndivid
 import models.Name
 import pages.behaviours.PageBehaviours
 
-
 class IndividualNamePageSpec extends PageBehaviours {
 
   "IndividualNamePage" - {
@@ -36,7 +35,7 @@ class IndividualNamePageSpec extends PageBehaviours {
 
     "- when name exists " in {
 
-      IndividualNamePage.getFromModel(validIndividual) mustBe(Some(validIndividualName))
+      IndividualNamePage.getFromModel(validIndividual) mustBe (Some(validIndividualName))
     }
   }
 }

@@ -28,7 +28,7 @@ trait OrganisationModelRows extends DisplayRowBuilder {
 
   def organisationName(organisation: Organisation)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "organisationName",
+      msgKey = "organisationName",
       content = lit"${organisation.organisationName}"
     )
 
@@ -42,34 +42,33 @@ trait OrganisationModelRows extends DisplayRowBuilder {
 
   private def isOrganisationAddressKnown(addressKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "isOrganisationAddressKnown",
+      msgKey = "isOrganisationAddressKnown",
       content = yesOrNo(addressKnown)
     )
 
   private def organisationAddress(manualAddress: Address)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "organisationAddress",
+      msgKey = "organisationAddress",
       content = formatAddress(manualAddress)
     )
 
   def buildOrganisationEmailAddressGroup(organisation: Organisation)(implicit messages: Messages): Seq[DisplayRow] =
-   organisation.emailAddress match {
+    organisation.emailAddress match {
       case Some(email) =>
-        Seq(emailAddressQuestionForOrganisation(true)
-          , emailAddressForOrganisation(email))
+        Seq(emailAddressQuestionForOrganisation(true), emailAddressForOrganisation(email))
       case _ =>
         Seq(emailAddressQuestionForOrganisation(false))
     }
 
   private def emailAddressQuestionForOrganisation(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "emailAddressQuestionForOrganisation",
+      msgKey = "emailAddressQuestionForOrganisation",
       content = yesOrNo(isKnown)
     )
 
   private def emailAddressForOrganisation(email: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "emailAddressForOrganisation",
+      msgKey = "emailAddressForOrganisation",
       content = lit"$email"
     )
 
@@ -92,29 +91,24 @@ trait OrganisationModelRows extends DisplayRowBuilder {
 
   private def organisationCountryRow(countryOption: Option[Country], index: Int, loopSize: Int): DisplayRow = {
 
-    val countryDescription = countryOption.map(_.description).getOrElse(
-      throw new IllegalArgumentException("A country row must have a non-empty country"))
-    val label = messageWithPluralFormatter("whichCountryTaxForOrganisation.countryCounter")(loopSize > 1, (index + 1).toString)
+    val countryDescription = countryOption.map(_.description).getOrElse(throw new IllegalArgumentException("A country row must have a non-empty country"))
+    val label              = messageWithPluralFormatter("whichCountryTaxForOrganisation.countryCounter")(loopSize > 1, (index + 1).toString)
 
     DisplayRow(
-      key     = Key(label, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"$countryDescription"),
+      key = Key(label, classes = Seq("govuk-!-width-one-half")),
+      value = Value(lit"$countryDescription"),
       classes = Seq("govuk-summary-list--no-border")
     )
   }
 
   private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[DisplayRow] =
-  {
     (country, taxReferenceNumbers) match {
       case (Some(c), Some(taxnumbers)) =>
         if (c.isUK) {
           taxNumberRow("whatAreTheTaxNumbersForUKOrganisation", taxnumbers, country)
-        }
-        else
-        {taxNumberRow("whatAreTheTaxNumbersForNonUKOrganisation", taxnumbers, country)}
+        } else { taxNumberRow("whatAreTheTaxNumbersForNonUKOrganisation", taxnumbers, country) }
       case (_, None) => Seq()
     }
-  }
 
   private def taxNumberRow(msgKey: String, taxReferenceNumbers: TaxReferenceNumbers, country: Option[Country])(implicit messages: Messages): Seq[DisplayRow] = {
 
@@ -122,42 +116,48 @@ trait OrganisationModelRows extends DisplayRowBuilder {
     val taxRefLabel: Text.Message =
       messageWithPluralFormatter(s"$msgKey.checkYourAnswersLabel", countryLabel)(taxReferenceNumbers.isSingleTaxReferenceNumber)
 
-    Seq(DisplayRow(
-      key     = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}"),
-      classes = Seq("govuk-summary-list--no-border")
-    ))
+    Seq(
+      DisplayRow(
+        key = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"${formatReferenceNumbers(taxReferenceNumbers)}"),
+        classes = Seq("govuk-summary-list--no-border")
+      )
+    )
   }
 
   def whichCountryTaxForOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
-  organisation.firstTaxResidency.flatMap(_.country) map { country =>
-
-      toDisplayRowNoBorder(
-        msgKey  = "whichCountryTaxForOrganisation",
-        content = lit"$country"
-      )
-  }
+    organisation.firstTaxResidency.flatMap(_.country) map {
+      country =>
+        toDisplayRowNoBorder(
+          msgKey = "whichCountryTaxForOrganisation",
+          content = lit"$country"
+        )
+    }
 
   def doYouKnowAnyTINForUKOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
-  organisation.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
-      toDisplayRow(
-        msgKey  = "doYouKnowAnyTINForUKOrganisation",
-        content = yesOrNo(douYouKnowTIN)
-      )
-  }
+    organisation.firstTaxResidency.map(_.isUK).orElse(Some(false)).map {
+      douYouKnowTIN =>
+        toDisplayRow(
+          msgKey = "doYouKnowAnyTINForUKOrganisation",
+          content = yesOrNo(douYouKnowTIN)
+        )
+    }
 
   def whatAreTheTaxNumbersForUKOrganisation(organisation: Organisation)(implicit messages: Messages): Option[DisplayRow] =
-    organisation.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
-      toDisplayRow(
-        msgKey  = "whatAreTheTaxNumbersForUKOrganisation",
-        content = lit"$taxnumbers"
-      )
-  }
+    organisation.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map {
+      taxnumbers =>
+        toDisplayRow(
+          msgKey = "whatAreTheTaxNumbersForUKOrganisation",
+          content = lit"$taxnumbers"
+        )
+    }
 
   def isOrganisationResidentForTaxOtherCountries(id: Int)(implicit messages: Messages): Option[DisplayRow] =
-      Some(toDisplayRow(
-        msgKey  = "isOrganisationResidentForTaxOtherCountries",
+    Some(
+      toDisplayRow(
+        msgKey = "isOrganisationResidentForTaxOtherCountries",
         content = yesOrNo(false)
-      ))
+      )
+    )
 
 }

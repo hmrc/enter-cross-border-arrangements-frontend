@@ -22,17 +22,17 @@ import play.api.libs.json.{JsObject, Json}
 
 trait CountrySupport {
 
-  def getCountry[A](userAnswers: UserAnswers, id:Int, page: QuestionPage[IndexedSeq[LoopDetails]], index: Int): Option[Country] = for {
-    loopPage <- userAnswers.get(page, id)
+  def getCountry[A](userAnswers: UserAnswers, id: Int, page: QuestionPage[IndexedSeq[LoopDetails]], index: Int): Option[Country] = for {
+    loopPage    <- userAnswers.get(page, id)
     loopDetails <- loopPage.lift(index)
-    country <- loopDetails.whichCountry
+    country     <- loopDetails.whichCountry
   } yield country
 
   def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
     def containsCountry(country: Country): Boolean =
       value.get("country") match {
         case Some(countryCode) => countryCode == country.code
-        case _ => false
+        case _                 => false
       }
 
     val countryJsonList = countries.map {

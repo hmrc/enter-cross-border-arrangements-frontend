@@ -27,7 +27,6 @@ class IndividualPlaceOfBirthFormProvider @Inject() extends Mappings with RegexCo
 
   def apply(): Form[String] =
     Form(
-      "value" -> validatedTextMaxLength("individualPlaceOfBirth.error.required",
-        "individualPlaceOfBirth.error.length", maxLength)
-  )
+      "value" -> validatedTextMaxLength("individualPlaceOfBirth.error.required", "individualPlaceOfBirth.error.length", maxLength)
+    )
 }

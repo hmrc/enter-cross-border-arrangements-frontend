@@ -22,8 +22,7 @@ import pages.reporter.taxpayer.ReporterTaxpayersStartDateForImplementingArrangem
 
 import java.time.LocalDate
 
-class
-ReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
+class ReporterTaxpayersStartDateForImplementingArrangementPageSpec extends PageBehaviours {
 
   "WhatIsTaxpayersStartDateForImplementingArrangementPage" - {
 

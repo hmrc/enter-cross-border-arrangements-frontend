@@ -25,10 +25,10 @@ class ReporterIndividualNameFormProviderSpec extends StringFieldBehaviours {
 
   ".firstName" - {
 
-    val fieldName = "firstName"
+    val fieldName   = "firstName"
     val requiredKey = "reporterIndividualName.error.firstName.required"
-    val lengthKey = "reporterIndividualName.error.firstName.length"
-    val maxLength = 200
+    val lengthKey   = "reporterIndividualName.error.firstName.length"
+    val maxLength   = 200
 
     behave like fieldThatBindsValidData(
       form,
@@ -52,10 +52,10 @@ class ReporterIndividualNameFormProviderSpec extends StringFieldBehaviours {
 
   ".secondName" - {
 
-    val fieldName = "secondName"
+    val fieldName   = "secondName"
     val requiredKey = "reporterIndividualName.error.secondName.required"
-    val lengthKey = "reporterIndividualName.error.secondName.length"
-    val maxLength = 200
+    val lengthKey   = "reporterIndividualName.error.secondName.length"
+    val maxLength   = 200
 
     behave like fieldThatBindsValidData(
       form,

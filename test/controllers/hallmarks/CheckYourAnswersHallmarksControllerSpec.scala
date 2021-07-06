@@ -40,7 +40,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("D1").toSet)
         .success
         .value
@@ -54,7 +56,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
@@ -66,7 +68,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
         .success
         .value
@@ -83,7 +87,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       val json = jsonCaptor.getValue
@@ -100,7 +104,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1a").toSet)
         .success
         .value
@@ -117,7 +123,7 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       val json = jsonCaptor.getValue

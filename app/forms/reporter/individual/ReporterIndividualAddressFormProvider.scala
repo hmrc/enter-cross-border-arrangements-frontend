@@ -30,17 +30,12 @@ class ReporterIndividualAddressFormProvider @Inject() extends Mappings with Rege
 
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
-      "addressLine1" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine1.length")),
-
-      "addressLine2" ->  optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine2.length")),
-
-      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.addressLine3.length")),
-
-      "city" -> text("address.error.city.required").verifying(maxLength(fieldLength,"address.error.city.length")),
-
-      "postCode" -> optionalText().verifying(maxLengthOption(fieldLength,"address.error.postcode.optional.length")),
-
-      "country" ->  text("address.error.country.required")
+      "addressLine1" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine1.length")),
+      "addressLine2" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine2.length")),
+      "addressLine3" -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.addressLine3.length")),
+      "city"         -> text("address.error.city.required").verifying(maxLength(fieldLength, "address.error.city.length")),
+      "postCode"     -> optionalText().verifying(maxLengthOption(fieldLength, "address.error.postcode.optional.length")),
+      "country" -> text("address.error.country.required")
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)
   )

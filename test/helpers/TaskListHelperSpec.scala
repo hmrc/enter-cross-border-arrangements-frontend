@@ -39,11 +39,11 @@ import uk.gov.hmrc.viewmodels.Html
 
 class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val mockUrl = "home.gov.uk"
-  val mockAltURL = "notHome.gov.uk"
-  val mockLinkContent = "some link"
-  val index = 0
-  val mockDisclosure = DisclosureDetails("name", DisclosureType.Dac6new, Some("123"), Some("321"), initialDisclosureMA = true, Some("messageRefID"))
+  val mockUrl                   = "home.gov.uk"
+  val mockAltURL                = "notHome.gov.uk"
+  val mockLinkContent           = "some link"
+  val index                     = 0
+  val mockDisclosure            = DisclosureDetails("name", DisclosureType.Dac6new, Some("123"), Some("321"), initialDisclosureMA = true, Some("messageRefID"))
   val mockUnsubmittedDisclosure = UnsubmittedDisclosure("12", "name")
 
   "TaskListHelper" - {
@@ -52,16 +52,34 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
 
       "must return html for a restricted row with grey status on taskList page" in {
 
-        taskListItemProvider(None, JourneyStatus.Restricted.toString, mockLinkContent, "section-restricted", "restricted", "item", "govuk-tag govuk-tag--grey") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name'  aria-describedby='restricted'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong></li>")
+        taskListItemProvider(None,
+                             JourneyStatus.Restricted.toString,
+                             mockLinkContent,
+                             "section-restricted",
+                             "restricted",
+                             "item",
+                             "govuk-tag govuk-tag--grey"
+        ) mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name'  aria-describedby='restricted'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong></li>"
+        )
       }
 
       "must return html for a restricted row with grey status on taskList page with no bottom row line" in {
 
-        taskListItemProvider(None, JourneyStatus.Restricted.toString, mockLinkContent, "section-restricted", "restricted", "bottomless-item", "govuk-tag govuk-tag--grey") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name'  aria-describedby='restricted'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong></li>")
+        taskListItemProvider(None,
+                             JourneyStatus.Restricted.toString,
+                             mockLinkContent,
+                             "section-restricted",
+                             "restricted",
+                             "bottomless-item",
+                             "govuk-tag govuk-tag--grey"
+        ) mustBe Html(
+          s"" +
+            s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name'  aria-describedby='restricted'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='section-restricted'>Cannot start</strong></li>"
+        )
       }
     }
 
@@ -69,16 +87,20 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
 
       "must return html for a row with dark blue status on taskList page" in {
 
-        taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
+        taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "item", "govuk-tag") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>"
+        )
       }
 
       "must return html for a row with blue status on taskList page with no bottom row line" in {
 
-        taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
+        taskListItemProvider(Some(mockUrl), JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>"
+        )
       }
     }
 
@@ -86,16 +108,34 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
 
       "must return html for a row with dark light blue status on taskList page" in {
 
-        taskListItemProvider(Some(mockUrl), JourneyStatus.InProgress.toString, mockLinkContent, "completed", "link", "item", "govuk-tag govuk-tag--blue") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>")
+        taskListItemProvider(Some(mockUrl),
+                             JourneyStatus.InProgress.toString,
+                             mockLinkContent,
+                             "completed",
+                             "link",
+                             "item",
+                             "govuk-tag govuk-tag--blue"
+        ) mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>"
+        )
       }
 
       "must return html for a row with light blue status on taskList page with no bottom row line" in {
 
-        taskListItemProvider(Some(mockUrl), JourneyStatus.InProgress.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag govuk-tag--blue") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>")
+        taskListItemProvider(Some(mockUrl),
+                             JourneyStatus.InProgress.toString,
+                             mockLinkContent,
+                             "completed",
+                             "link",
+                             "bottomless-item",
+                             "govuk-tag govuk-tag--blue"
+        ) mustBe Html(
+          s"" +
+            s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='completed'>In Progress</strong></li>"
+        )
       }
     }
 
@@ -103,16 +143,20 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
 
       "must return html for a row with no journey link but a blue status on taskList page" in {
 
-        taskListItemProvider(None, JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name'  aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
+        taskListItemProvider(None, JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "item", "govuk-tag") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name'  aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>"
+        )
       }
 
       "must return html for a row with no journey link but a blue status on taskList page with no bottom row line" in {
 
-        taskListItemProvider(None, JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag") mustBe Html(s"" +
-          s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name'  aria-describedby='link'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>")
+        taskListItemProvider(None, JourneyStatus.Completed.toString, mockLinkContent, "completed", "link", "bottomless-item", "govuk-tag") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__bottomless-item'><a class='app-task-list__task-name'  aria-describedby='link'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag app-task-list__task-completed' id='completed'>Completed</strong></li>"
+        )
       }
     }
 
@@ -120,24 +164,29 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
 
       "must return html for a row with COMPLETED status" in {
 
-        retrieveRowWithStatus(Completed, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-completed'>Completed</strong></li>")
+        retrieveRowWithStatus(Completed, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag app-task-list__task-completed' id='reporter-completed'>Completed</strong></li>"
+        )
       }
 
       "must return html for a row with IN PROGRESS status" in {
 
-        retrieveRowWithStatus(InProgress, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='reporter-inProgress'>In Progress</strong></li>")
+        retrieveRowWithStatus(InProgress, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--blue app-task-list__task-completed' id='reporter-inProgress'>In Progress</strong></li>"
+        )
       }
 
-
       "must return html for a row with NOT STARTED status" in {
-        
-        retrieveRowWithStatus(NotStarted, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(s"" +
-          s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
-          s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong></li>")
+
+        retrieveRowWithStatus(NotStarted, Some("home.gov.uk"), mockLinkContent, "reporter", "aria", "item") mustBe Html(
+          s"" +
+            s"<li class='app-task-list__item'><a class='app-task-list__task-name' href=$mockUrl aria-describedby='aria'> $mockLinkContent</a>" +
+            s"<strong class='govuk-tag govuk-tag--grey app-task-list__task-completed' id='reporter-notStarted'>Not Started</strong></li>"
+        )
       }
     }
 
@@ -260,148 +309,148 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
       "must be true if user is doing ADDITIONAL DISCLOSURE & IS MARKETABLE and " +
         "has NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-          .set(RelevantTaxpayerStatusPage, index, Completed)
-          .success
-          .value
-          .set(IntermediariesStatusPage, index, Completed)
-          .success
-          .value
-          .set(AffectedStatusPage, index, Completed)
-          .success
-          .value
-          .set(AssociatedEnterpriseStatusPage, index, Completed)
-          .success
-          .value
-          .set(DisclosureStatusPage, index, Completed)
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
-      }
+          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+        }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
         "have NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-          .set(RelevantTaxpayerStatusPage, index, Completed)
-          .success
-          .value
-          .set(IntermediariesStatusPage, index, Completed)
-          .success
-          .value
-          .set(AffectedStatusPage, index, Completed)
-          .success
-          .value
-          .set(AssociatedEnterpriseStatusPage, index, Completed)
-          .success
-          .value
-          .set(DisclosureStatusPage, index, Completed)
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
-      }
+          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
+        }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
         "all relevant journeys" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureTypePage, index, Dac6new)
-          .success
-          .value
-          .set(DisclosureMarketablePage, index, true)
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-          .set(RelevantTaxpayerStatusPage, index, Completed)
-          .success
-          .value
-          .set(AssociatedEnterpriseStatusPage, index, Completed)
-          .success
-          .value
-          .set(IntermediariesStatusPage, index, Completed)
-          .success
-          .value
-          .set(AffectedStatusPage, index, Completed)
-          .success
-          .value
-          .set(DisclosureStatusPage, index, Completed)
-          .success
-          .value
-          .set(HallmarkStatusPage, index, Completed)
-          .success
-          .value
-          .set(ArrangementStatusPage, index, Completed)
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureTypePage, index, Dac6new)
+            .success
+            .value
+            .set(DisclosureMarketablePage, index, true)
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
+            .set(HallmarkStatusPage, index, Completed)
+            .success
+            .value
+            .set(ArrangementStatusPage, index, Completed)
+            .success
+            .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
-      }
+          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+        }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
         "NOT COMPLETED all relevant journeys" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureTypePage, index, Dac6new)
-          .success
-          .value
-          .set(DisclosureMarketablePage, index,false)
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-          .set(RelevantTaxpayerStatusPage, index, Completed)
-          .success
-          .value
-          .set(IntermediariesStatusPage, index, Completed)
-          .success
-          .value
-          .set(AssociatedEnterpriseStatusPage, index, Completed)
-          .success
-          .value
-          .set(AffectedStatusPage, index, Completed)
-          .success
-          .value
-          .set(DisclosureStatusPage, index, Completed)
-          .success
-          .value
-          .set(HallmarkStatusPage, index, NotStarted)
-          .success
-          .value
-          .set(ArrangementStatusPage, index, NotStarted)
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureTypePage, index, Dac6new)
+            .success
+            .value
+            .set(DisclosureMarketablePage, index, false)
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
+            .set(HallmarkStatusPage, index, NotStarted)
+            .success
+            .value
+            .set(ArrangementStatusPage, index, NotStarted)
+            .success
+            .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
-      }
+          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
+        }
 
       "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
 
@@ -492,37 +541,37 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
       "must be false if user is doing ADDITIONAL DISCLOSURE for an initial disclosure that IS MARKETABLE and " +
         "has completed HALLMARKS but not ARRANGEMENT DETAILS journey" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
-          .success
-          .value
-          .set(ReporterStatusPage, index, Completed)
-          .success
-          .value
-          .set(RelevantTaxpayerStatusPage, index, Completed)
-          .success
-          .value
-          .set(IntermediariesStatusPage, index, Completed)
-          .success
-          .value
-          .set(AffectedStatusPage, index, Completed)
-          .success
-          .value
-          .set(AssociatedEnterpriseStatusPage, index, Completed)
-          .success
-          .value
-          .set(DisclosureStatusPage, index, Completed)
-          .success
-          .value
-          .set(HallmarkStatusPage, index, Completed)
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add))
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
+            .set(HallmarkStatusPage, index, Completed)
+            .success
+            .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
-      }
+          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
+        }
     }
 
     "displaySectionOptional" - {
@@ -530,30 +579,30 @@ class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with Scal
       "must return string '(optional)' when user is disclosing an ADDITIONAL arrangement " +
         "and initialMA flag is true" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy( disclosureType = Dac6add, initialDisclosureMA = true))
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add, initialDisclosureMA = true))
+            .success
+            .value
 
-        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe "(optional)"
-      }
+          displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe "(optional)"
+        }
 
       "must return string '(optional)' when user is submitting a REPLACEMENT disclosure " +
         "for a marketable ADDITIONAL disclosure" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
-          .success
-          .value
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
+            .success
+            .value
 
-        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = true) mustBe "(optional)"
-      }
+          displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = true) mustBe "(optional)"
+        }
 
       "must return an empty string when user is disclosing an other arrangement combo" in {
 

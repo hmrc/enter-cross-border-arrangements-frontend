@@ -38,59 +38,74 @@ case object DisclosureDetailsPage extends ModelPage[DisclosureDetails] {
       ReplaceOrDeleteADisclosurePage,
       DisclosureMarketablePage,
       InitialDisclosureMAPage
-    ).foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]])) }
+    ).foldLeft(Try(userAnswers)) {
+      case (ua, page) => ua.flatMap(_.removeBase(page.asInstanceOf[QuestionPage[_]]))
+    }
 
   def restore(userAnswers: UserAnswers, id: Int, from: Option[DisclosureDetails]): Try[UserAnswers] =
-    from.fold[Try[UserAnswers]](Success(userAnswers)) { disclosureDetails =>
-      implicit val org: DisclosureDetails = implicitly(disclosureDetails)
-      userAnswers.set(DisclosureNamePage, id)
-        .flatMap(_.set(DisclosureTypePage, id))
-        .flatMap(_.set(DisclosureMarketablePage, id))
-        .flatMap(_.set(DisclosureIdentifyArrangementPage, id))
-        .flatMap(_.remove(DisclosureDetailsPage, id))
+    from.fold[Try[UserAnswers]](Success(userAnswers)) {
+      disclosureDetails =>
+        implicit val org: DisclosureDetails = implicitly(disclosureDetails)
+        userAnswers
+          .set(DisclosureNamePage, id)
+          .flatMap(_.set(DisclosureTypePage, id))
+          .flatMap(_.set(DisclosureMarketablePage, id))
+          .flatMap(_.set(DisclosureIdentifyArrangementPage, id))
+          .flatMap(_.remove(DisclosureDetailsPage, id))
     }
 
   def build(userAnswers: UserAnswers): DisclosureDetails = {
 
-    def getDisclosureDetails = userAnswers.getBase(DisclosureDetailsPage)
+    def getDisclosureDetails = userAnswers
+      .getBase(DisclosureDetailsPage)
       .orElse(Some(DisclosureDetails("")))
-    def getDisclosureName = userAnswers.getBase(DisclosureNamePage)
-    def getDisclosureType = userAnswers.getBase(DisclosureTypePage)
+    def getDisclosureName       = userAnswers.getBase(DisclosureNamePage)
+    def getDisclosureType       = userAnswers.getBase(DisclosureTypePage)
     def getDisclosureMarketable = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
-    def getDisclosureIdentifyArrangement = userAnswers.getBase(DisclosureIdentifyArrangementPage)
+    def getDisclosureIdentifyArrangement = userAnswers
+      .getBase(DisclosureIdentifyArrangementPage)
       .orElse(throw new UnsupportedOperationException(s"Additional Arrangement must be identified"))
     def getReplaceOrDeleteDisclosure: Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
-    def getInitialDisclosureMA: Boolean = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
-    def getMessageRefId = userAnswers.getBase(MessageRefIDPage).orElse(None)
+    def getInitialDisclosureMA: Boolean                                  = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
+    def getMessageRefId                                                  = userAnswers.getBase(MessageRefIDPage).orElse(None)
 
     getDisclosureDetails
-      .flatMap { details =>
-        getDisclosureName.map { disclosureName => details.copy(disclosureName = disclosureName) }
+      .flatMap {
+        details =>
+          getDisclosureName.map {
+            disclosureName => details.copy(disclosureName = disclosureName)
+          }
       }
-      .flatMap { details =>
-        getDisclosureType.flatMap {
-          case Dac6new =>
-            getDisclosureMarketable.map { initialDisclosureMA =>
-              details.copy(disclosureType = Dac6new, initialDisclosureMA = initialDisclosureMA)
-            }
-          case Dac6add =>
-            getDisclosureIdentifyArrangement.flatMap { arrangementID =>
-              getDisclosureMarketable.map { initialDisclosureMA =>
-                details.copy(disclosureType = Dac6add, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+      .flatMap {
+        details =>
+          getDisclosureType.flatMap {
+            case Dac6new =>
+              getDisclosureMarketable.map {
+                initialDisclosureMA =>
+                  details.copy(disclosureType = Dac6new, initialDisclosureMA = initialDisclosureMA)
               }
-            }
-          case repOrDel =>
-            getReplaceOrDeleteDisclosure.map { ids =>
-              details.copy(
-                disclosureType = repOrDel,
-                arrangementID = Some(ids.arrangementID),
-                disclosureID = Some(ids.disclosureID),
-                initialDisclosureMA = getInitialDisclosureMA)
-            }
-        }
+            case Dac6add =>
+              getDisclosureIdentifyArrangement.flatMap {
+                arrangementID =>
+                  getDisclosureMarketable.map {
+                    initialDisclosureMA =>
+                      details.copy(disclosureType = Dac6add, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+                  }
+              }
+            case repOrDel =>
+              getReplaceOrDeleteDisclosure.map {
+                ids =>
+                  details.copy(disclosureType = repOrDel,
+                               arrangementID = Some(ids.arrangementID),
+                               disclosureID = Some(ids.disclosureID),
+                               initialDisclosureMA = getInitialDisclosureMA
+                  )
+              }
+          }
       }
-      .map { details =>
-        details.copy(messageRefId = getMessageRefId)
+      .map {
+        details =>
+          details.copy(messageRefId = getMessageRefId)
       }
       .getOrElse(throw new IllegalStateException("Unable to build disclose details"))
   }

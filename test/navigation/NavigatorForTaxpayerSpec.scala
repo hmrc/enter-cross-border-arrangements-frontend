@@ -24,32 +24,32 @@ import models.taxpayer.UpdateTaxpayer
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.taxpayer.UpdateTaxpayerPage
 
-class NavigatorForTaxpayerSpec extends SpecBase  with ScalaCheckPropertyChecks with Generators {
+class NavigatorForTaxpayerSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator = new NavigatorForTaxpayer
 
-    "NavigatorForTaxpayers" - {
+  "NavigatorForTaxpayers" - {
 
-      "must go from 'You have not added any taxpayers' page to " +
-        "'Is this an organisation or an individual?' if answer is yes" in {
+    "must go from 'You have not added any taxpayers' page to " +
+      "'Is this an organisation or an individual?' if answer is yes" in {
         navigator
           .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.Now))(0)
           .mustBe(controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode))
       }
 
-      "must go from 'You have not added any taxpayers' page to " +
-        "'Task List page' if answer is 'No'" in {
+    "must go from 'You have not added any taxpayers' page to " +
+      "'Task List page' if answer is 'No'" in {
         navigator
           .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.No))(0)
           .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
-        }
+      }
 
-      "must go from 'You have not added any taxpayers' page to " +
-        "'Task List page' if answer is 'Add Later'" in {
+    "must go from 'You have not added any taxpayers' page to " +
+      "'Task List page' if answer is 'Add Later'" in {
         navigator
           .routeMap(UpdateTaxpayerPage)(TaxpayersRouting(NormalMode))(0)(Some(UpdateTaxpayer.Later))(0)
           .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
       }
 
-    }
+  }
 }

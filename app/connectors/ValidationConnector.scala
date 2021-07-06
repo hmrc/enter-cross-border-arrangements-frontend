@@ -25,7 +25,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.Elem
 
-class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+class ValidationConnector @Inject() (http: HttpClient, config: FrontendAppConfig) {
 
   val url = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/validate-manual-submission"
 
@@ -33,10 +33,9 @@ class ValidationConnector @Inject()(http: HttpClient, config: FrontendAppConfig)
     HeaderNames.CONTENT_TYPE -> "application/xml"
   )
 
-  def sendForValidation(xml: Elem)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[Either[Seq[String], String]] = {
+  def sendForValidation(xml: Elem)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Seq[String], String]] =
     http.POSTString[ManualSubmissionValidationResult](url, xml.mkString, headers).map {
       case ManualSubmissionValidationSuccess(a) => Right(a)
       case ManualSubmissionValidationFailure(a) => Left(a)
     }
-  }
 }

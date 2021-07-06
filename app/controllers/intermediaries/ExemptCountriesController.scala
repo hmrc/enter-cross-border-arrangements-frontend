@@ -35,33 +35,36 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExemptCountriesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIntermediaries,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: ExemptCountriesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class ExemptCountriesController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIntermediaries,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: ExemptCountriesFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ExemptCountriesPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"       -> preparedForm,
-        "id" -> id,
-        "mode"       -> mode,
-        "checkboxes" -> CountryList.checkboxes(preparedForm),
+        "form"         -> preparedForm,
+        "id"           -> id,
+        "mode"         -> mode,
+        "checkboxes"   -> CountryList.checkboxes(preparedForm),
         "intermediary" -> getName(request.userAnswers, id)
       )
 
@@ -73,34 +76,34 @@ class ExemptCountriesController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"         -> formWithErrors,
+              "id"           -> id,
+              "mode"         -> mode,
+              "checkboxes"   -> CountryList.checkboxes(formWithErrors),
+              "intermediary" -> getName(request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "checkboxes" -> CountryList.checkboxes(formWithErrors),
-            "intermediary" -> getName(request.userAnswers, id)
-          )
-
-          renderer.render("intermediaries/exemptCountries.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptCountriesPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("intermediaries/exemptCountries.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ExemptCountriesPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def getName(userAnswers: UserAnswers, id: Int) = {
+  private def getName(userAnswers: UserAnswers, id: Int) =
     (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
-      case _ => "this intermediary"
+      case _               => "this intermediary"
     }
-  }
 }

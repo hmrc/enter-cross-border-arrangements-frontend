@@ -17,6 +17,7 @@ lazy val root = (project in file("."))
   .settings(
     name := appName,
     scalaVersion := "2.12.10",
+    scalafmtOnCompile in ThisBuild := true,
     RoutesKeys.routesImport += "models._",
     PlayKeys.playDefaultPort := 9762,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +

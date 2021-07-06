@@ -37,7 +37,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpdateTaxpayerController @Inject()(
+class UpdateTaxpayerController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForTaxpayer,
@@ -48,24 +48,27 @@ class UpdateTaxpayerController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer,
   frontendAppConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
-      val preparedForm =  request.userAnswers.get(UpdateTaxpayerPage, id) match {
-        case None => form
+      val preparedForm = request.userAnswers.get(UpdateTaxpayerPage, id) match {
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
+        "form"         -> preparedForm,
         "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
-        "id" -> id,
-        "mode"   -> mode,
-        "radios"  -> UpdateTaxpayer.radios(preparedForm)
+        "id"           -> id,
+        "mode"         -> mode,
+        "radios"       -> UpdateTaxpayer.radios(preparedForm)
       )
 
       renderer.render("taxpayer/updateTaxpayer.njk", json).map(Ok(_))
@@ -76,39 +79,37 @@ class UpdateTaxpayerController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"         -> formWithErrors,
+              "id"           -> id,
+              "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
+              "mode"         -> mode,
+              "radios"       -> UpdateTaxpayer.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "taxpayerList" -> Json.toJson(toItemList(request.userAnswers, id)),
-            "mode"   -> mode,
-            "radios" -> UpdateTaxpayer.radios(formWithErrors)
-          )
-
-          renderer.render("taxpayer/updateTaxpayer.njk", json).map(BadRequest(_))
-        },
-        (value: UpdateTaxpayer) => {
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UpdateTaxpayerPage, id, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, setStatus(value, updatedAnswers, id)))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(mode, updatedAnswersWithStatus, id)
-           } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("taxpayer/updateTaxpayer.njk", json).map(BadRequest(_))
+          },
+          (value: UpdateTaxpayer) =>
+            for {
+              updatedAnswers           <- Future.fromTry(request.userAnswers.set(UpdateTaxpayerPage, id, value))
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, setStatus(value, updatedAnswers, id)))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithStatus, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def setStatus(selectedAnswer: UpdateTaxpayer, ua: UserAnswers, id: Int): JourneyStatus = {
+  private def setStatus(selectedAnswer: UpdateTaxpayer, ua: UserAnswers, id: Int): JourneyStatus =
     selectedAnswer match {
       case UpdateTaxpayer.Later => JourneyStatus.InProgress
-      case UpdateTaxpayer.No => checkTaxpayerStatusConditions(ua, id)
-      case _ => JourneyStatus.NotStarted
+      case UpdateTaxpayer.No    => checkTaxpayerStatusConditions(ua, id)
+      case _                    => JourneyStatus.NotStarted
     }
-  }
 
   private[taxpayer] def toItemList(ua: UserAnswers, id: Int) = ua.get(TaxpayerLoopPage, id) match {
 

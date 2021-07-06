@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class  ReporterTinNonUKQuestionFormProvider @Inject() extends Mappings {
+class ReporterTinNonUKQuestionFormProvider @Inject() extends Mappings {
 
   def apply(typeOfReporter: String)(implicit messages: Messages): Form[Boolean] =
     Form(

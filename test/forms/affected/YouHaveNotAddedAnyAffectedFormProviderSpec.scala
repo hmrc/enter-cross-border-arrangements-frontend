@@ -26,13 +26,13 @@ class YouHaveNotAddedAnyAffectedFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "youHaveNotAddedAnyAffected.error.required"
 
     behave like optionsField[YouHaveNotAddedAnyAffected](
       form,
       fieldName,
-      validValues  = YouHaveNotAddedAnyAffected.values,
+      validValues = YouHaveNotAddedAnyAffected.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

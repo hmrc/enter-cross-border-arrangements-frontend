@@ -19,7 +19,6 @@ package pages.organisation
 import helpers.data.ValidUserAnswersForSubmission.{validEmail, validOrganisation}
 import pages.behaviours.PageBehaviours
 
-
 class EmailAddressForOrganisationPageSpec extends PageBehaviours {
 
   "EmailAddressForOrganisationPage" - {
@@ -35,12 +34,12 @@ class EmailAddressForOrganisationPageSpec extends PageBehaviours {
 
     "- when email exists " in {
 
-      EmailAddressForOrganisationPage.getFromModel(validOrganisation) mustBe(Some(validEmail))
+      EmailAddressForOrganisationPage.getFromModel(validOrganisation) mustBe (Some(validEmail))
     }
 
     "- when email is empty " in {
 
-      EmailAddressForOrganisationPage.getFromModel(validOrganisation.copy(emailAddress = None)) mustBe(None)
+      EmailAddressForOrganisationPage.getFromModel(validOrganisation.copy(emailAddress = None)) mustBe None
     }
   }
 }

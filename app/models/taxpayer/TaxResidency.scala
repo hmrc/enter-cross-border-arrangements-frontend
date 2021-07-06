@@ -28,7 +28,7 @@ case class TaxResidency(country: Option[Country], taxReferenceNumbers: Option[Ta
   override def compare(that: TaxResidency): Int =
     (country, that.country) match {
       case (Some(thisCountry), Some(otherCountry)) => thisCountry.compare(otherCountry)
-      case _ => throw new IllegalArgumentException("Unable to order")
+      case _                                       => throw new IllegalArgumentException("Unable to order")
     }
 }
 
@@ -38,7 +38,5 @@ object TaxResidency {
 
   def apply(loopDetail: LoopDetails): TaxResidency = this(loopDetail.whichCountry, loopDetail.matchingTINS)
 
-  def buildFromLoopDetails(loopDetails: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = loopDetails.map{ apply }
+  def buildFromLoopDetails(loopDetails: IndexedSeq[LoopDetails]): IndexedSeq[TaxResidency] = loopDetails.map(apply)
 }
-
-

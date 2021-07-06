@@ -27,11 +27,11 @@ class WhatIsTaxpayersStartDateForImplementingArrangementFormProvider @Inject() e
   def apply(): Form[LocalDate] =
     Form(
       "value" -> localDate(
-        invalidKey     = "whatIsTaxpayersStartDateForImplementingArrangement.error.invalid",
+        invalidKey = "whatIsTaxpayersStartDateForImplementingArrangement.error.invalid",
         allRequiredKey = "whatIsTaxpayersStartDateForImplementingArrangement.error.required.all",
         twoRequiredKey = "whatIsTaxpayersStartDateForImplementingArrangement.error.required.two",
-        requiredKey    = "whatIsTaxpayersStartDateForImplementingArrangement.error.required"
-      ).verifying(maxDate(LocalDate.of(3000, 1,1), "whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate"))
-        .verifying(minDate(LocalDate.of(2018,6,25),"whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate"))
+        requiredKey = "whatIsTaxpayersStartDateForImplementingArrangement.error.required"
+      ).verifying(maxDate(LocalDate.of(3000, 1, 1), "whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate"))
+        .verifying(minDate(LocalDate.of(2018, 6, 25), "whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate"))
     )
 }

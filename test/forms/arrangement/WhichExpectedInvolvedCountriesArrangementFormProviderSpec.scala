@@ -26,13 +26,13 @@ class WhichExpectedInvolvedCountriesArrangementFormProviderSpec extends Checkbox
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "whichExpectedInvolvedCountriesArrangement.error.required"
 
     behave like checkboxField[CountryList](
       form,
       fieldName,
-      validValues  = CountryList.values,
+      validValues = CountryList.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

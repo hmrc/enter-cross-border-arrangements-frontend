@@ -22,25 +22,27 @@ import scala.xml.{Elem, NodeSeq}
 
 object OrganisationXMLSection {
 
-  private[xml] def buildIDForOrganisation(organisation: Organisation,
-                                          isAssociatedEnterprise: Boolean = false): Elem = {
+  private[xml] def buildIDForOrganisation(organisation: Organisation, isAssociatedEnterprise: Boolean = false): Elem = {
     val mandatoryOrganisationName = <OrganisationName>{organisation.organisationName}</OrganisationName>
 
-    val email = organisation.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
+    val email = organisation.emailAddress.fold(NodeSeq.Empty)(
+      email => <EmailAddress>{email}</EmailAddress>
+    )
 
     val mandatoryResCountryCode: NodeSeq = TaxResidencyXMLSection.buildResCountryCode(organisation.taxResidencies.filter(_.country.isDefined))
 
     val nodeBuffer = new xml.NodeBuffer
-    val organisationNodes = {
+    val organisationNodes =
       <Organisation>
-        {nodeBuffer ++
-        mandatoryOrganisationName ++
-        TaxResidencyXMLSection.buildTINData(organisation.taxResidencies) ++
-        AddressXMLSection.buildAddress(organisation.address) ++
-        email ++
-        mandatoryResCountryCode}
+        {
+        nodeBuffer ++
+          mandatoryOrganisationName ++
+          TaxResidencyXMLSection.buildTINData(organisation.taxResidencies) ++
+          AddressXMLSection.buildAddress(organisation.address) ++
+          email ++
+          mandatoryResCountryCode
+      }
       </Organisation>
-    }
 
     if (isAssociatedEnterprise) {
       <AssociatedEnterpriseID>{organisationNodes}</AssociatedEnterpriseID>

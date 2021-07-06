@@ -24,13 +24,13 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
   val lengthKeyLabel1 = "reporterUKTaxNumbers.error.length.label1"
   val lengthKeyLabel2 = "reporterUKTaxNumbers.error.length.label2"
   val lengthKeyLabel3 = "reporterUKTaxNumbers.error.length.label3"
-  val maxLength = 200
+  val maxLength       = 200
 
   val formProvider = new ReporterUKTaxNumbersFormProvider()
 
   ".firstTaxNumber for reporter as individual" - {
 
-    val form = formProvider("reporterIndividual")(messages)
+    val form      = formProvider("reporterIndividual")(messages)
     val fieldName = "firstTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -55,7 +55,7 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
   ".firstTaxNumber" - {
 
-    val form = formProvider("reporterOrganisation")(messages)
+    val form      = formProvider("reporterOrganisation")(messages)
     val fieldName = "firstTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -80,7 +80,7 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
   ".secondTaxNumber" - {
 
-    val form = formProvider("reporterIndividual")(messages)
+    val form      = formProvider("reporterIndividual")(messages)
     val fieldName = "secondTaxNumber"
 
     behave like fieldThatBindsValidData(
@@ -99,7 +99,7 @@ class ReporterUKTaxNumbersFormProviderSpec extends StringFieldBehaviours {
 
   ".thirdTaxNumber" - {
 
-    val form = formProvider("reporterIndividual")(messages)
+    val form      = formProvider("reporterIndividual")(messages)
     val fieldName = "thirdTaxNumber"
 
     behave like fieldThatBindsValidData(

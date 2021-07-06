@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterTinNonUKQuestionController @Inject()(
+class ReporterTinNonUKQuestionController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
@@ -45,18 +45,18 @@ class ReporterTinNonUKQuestionController @Inject()(
   formProvider: ReporterTinNonUKQuestionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController
-  with I18nSupport
-  with NunjucksSupport
-  with RoutingSupport
-  with CountrySupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport
+    with CountrySupport {
 
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(ReporterTinNonUKQuestionPage)(checkRoute)(id)(value)(index)
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
       val preparedForm = request.userAnswers.get(ReporterTaxResidencyLoopPage, id) match {
@@ -73,10 +73,10 @@ class ReporterTinNonUKQuestionController @Inject()(
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("value")),
-        "index" -> index,
+        "index"  -> index
       ) ++ contentProvider(request.userAnswers, id, index)
 
       renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(Ok(_))
@@ -84,33 +84,34 @@ class ReporterTinNonUKQuestionController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val form = formProvider(getReporterTypeKey(request.userAnswers, id))
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
-            "index" -> index,
-          ) ++ contentProvider(request.userAnswers, id, index)
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> Radios.yesNo(formWithErrors("value")),
+              "index"  -> index
+            ) ++ contentProvider(request.userAnswers, id, index)
 
-          renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(BadRequest(_))
-        },
-        value => {
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
+            renderer.render("reporter/reporterTinNonUKQuestion.njk", json).map(BadRequest(_))
+          },
+          value => {
+            val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
 
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTinNonUKQuestionPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
-            _              <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(ReporterTinNonUKQuestionPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+          }
+        )
   }
 
   private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int): JsObject = {
@@ -118,17 +119,21 @@ class ReporterTinNonUKQuestionController @Inject()(
 
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
-        Json.obj("country" -> country,
-          "pageTitle" -> "reporterIndividualTinNonUKQuestion.title",
+        Json.obj(
+          "country"     -> country,
+          "pageTitle"   -> "reporterIndividualTinNonUKQuestion.title",
           "pageHeading" -> "reporterIndividualTinNonUKQuestion.heading",
-          "hintText" -> "reporterIndividualTinNonUKQuestion.hint")
+          "hintText"    -> "reporterIndividualTinNonUKQuestion.hint"
+        )
 
       case _ => //Display Organisation Content
-        Json.obj("country" -> country,
-          "pageTitle" -> "reporterOrganisationTinNonUKQuestion.title",
+        Json.obj(
+          "country"     -> country,
+          "pageTitle"   -> "reporterOrganisationTinNonUKQuestion.title",
           "pageHeading" -> "reporterOrganisationTinNonUKQuestion.heading",
-          "name" -> getReporterDetailsOrganisationName(userAnswers, id),
-          "hintText" -> "reporterOrganisationTinNonUKQuestion.hint")
+          "name"        -> getReporterDetailsOrganisationName(userAnswers, id),
+          "hintText"    -> "reporterOrganisationTinNonUKQuestion.hint"
+        )
     }
   }
 

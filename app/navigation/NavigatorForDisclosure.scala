@@ -21,55 +21,80 @@ import controllers.disclosure._
 import controllers.mixins.CheckRoute
 import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
 import pages.Page
-import pages.disclosure.{DisclosureDetailsPage, DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureNamePage, DisclosureTypePage, RemoveDisclosurePage, ReplaceOrDeleteADisclosurePage, _}
+import pages.disclosure.{
+  DisclosureDetailsPage,
+  DisclosureIdentifyArrangementPage,
+  DisclosureMarketablePage,
+  DisclosureNamePage,
+  DisclosureTypePage,
+  RemoveDisclosurePage,
+  ReplaceOrDeleteADisclosurePage,
+  _
+}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForDisclosure @Inject()(appConfig: FrontendAppConfig) {
+class NavigatorForDisclosure @Inject() (appConfig: FrontendAppConfig) {
 
-  val routeMap:  Page => CheckRoute => Option[Int] => Option[Any] => Int => Call = {
+  val routeMap: Page => CheckRoute => Option[Int] => Option[Any] => Int => Call = {
 
     case DisclosureNamePage =>
       checkRoute => _ => _ => _ => controllers.disclosure.routes.DisclosureTypeController.onPageLoad(checkRoute.mode)
 
     case DisclosureTypePage =>
-      checkRoute => _ => value => _ => value match {
-        case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
-        case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
-        case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
-      }
+      checkRoute =>
+        _ =>
+          value =>
+            _ =>
+              value match {
+                case Some(Dac6new) => routes.DisclosureMarketableController.onPageLoad(checkRoute.mode)
+                case Some(Dac6add) => routes.DisclosureIdentifyArrangementController.onPageLoad(checkRoute.mode)
+                case _             => routes.ReplaceOrDeleteADisclosureController.onPageLoad(checkRoute.mode)
+              }
 
-    case RemoveDisclosurePage  =>
-      _ => _ => value => _ => value match {
-        case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
-        case _          => Call("GET", appConfig.discloseArrangeLink)
-      }
+    case RemoveDisclosurePage =>
+      _ =>
+        _ =>
+          value =>
+            _ =>
+              value match {
+                case Some(true) => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
+                case _          => Call("GET", appConfig.discloseArrangeLink)
+              }
 
     case ReplaceOrDeleteADisclosurePage =>
-      _ => _ => disclosureType => _ => disclosureType match {
-        case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad()
-        case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
-      }
+      _ =>
+        _ =>
+          disclosureType =>
+            _ =>
+              disclosureType match {
+                case None | Some(Dac6rep) => routes.DisclosureCheckYourAnswersController.onPageLoad()
+                case Some(Dac6del)        => routes.DisclosureDeleteCheckYourAnswersController.onPageLoad()
+              }
 
     case DisclosureMarketablePage =>
       _ => _ => _ => _ => routes.DisclosureCheckYourAnswersController.onPageLoad()
 
-    case DisclosureIdentifyArrangementPage =>//
+    case DisclosureIdentifyArrangementPage => //
       _ => _ => _ => _ => controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad()
 
     case DisclosureDetailsPage =>
       _ => _ => _ => _ => controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad()
 
     case DisclosureCheckYourAnswersPage =>
-      _ => id => _ => _ => id match {
-        case Some(n) => controllers.routes.DisclosureDetailsController.onPageLoad(n)
-        case None => controllers.routes.IndexController.onPageLoad()
-      }
+      _ =>
+        id =>
+          _ =>
+            _ =>
+              id match {
+                case Some(n) => controllers.routes.DisclosureDetailsController.onPageLoad(n)
+                case None    => controllers.routes.IndexController.onPageLoad()
+              }
 
-    case  DisclosureDeleteCheckYourAnswersPage  =>
-    _ =>  _ => _ => _ => controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
+    case DisclosureDeleteCheckYourAnswersPage =>
+      _ => _ => _ => _ => controllers.confirmation.routes.YourDisclosureHasBeenDeletedController.onPageLoad()
   }
 
   val routeAltMap: Page => CheckRoute => Option[Any] => Int => Call =

@@ -31,7 +31,9 @@ class TaxpayerSpec extends ModelSpecBase {
 
       val individual = Individual(
         individualName = Name("John", "Smith"),
-        birthDate =  Some(LocalDate.now()), None, None,
+        birthDate = Some(LocalDate.now()),
+        None,
+        None,
         taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
@@ -50,7 +52,7 @@ class TaxpayerSpec extends ModelSpecBase {
         taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
-      val taxpayer = Taxpayer("123456789012345678901234567890123456",  None, Some(organisation), Some(LocalDate.now()))
+      val taxpayer = Taxpayer("123456789012345678901234567890123456", None, Some(organisation), Some(LocalDate.now()))
 
       taxpayer.taxpayerId.isEmpty mustBe false
       taxpayer.taxpayerId.length mustBe 36

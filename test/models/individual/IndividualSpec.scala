@@ -36,16 +36,20 @@ class IndividualSpec extends ModelSpecBase with ModelGenerators {
       "must create an Individual if mandatory details are available" in {
         forAll(arbitrary[Name], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(IndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(IndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(IndividualLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val expected = Individual(
               individualName = name,
@@ -65,22 +69,29 @@ class IndividualSpec extends ModelSpecBase with ModelGenerators {
       "must create an Individual if all details are available" in {
         forAll(arbitrary[Name], arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, birthPlace, address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(IndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(IndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(IndividualPlaceOfBirthPage, 0, birthPlace)
-                .success.value
+                .success
+                .value
                 .set(IndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForIndividualPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(IndividualLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val expected = Individual(
               individualName = name,
@@ -100,18 +111,23 @@ class IndividualSpec extends ModelSpecBase with ModelGenerators {
       "must be None if date of birth data is missing" in {
         forAll(arbitrary[Name], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(IndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(IndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForIndividualPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(IndividualLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val expected = Individual.buildIndividualDetails(userAnswers, 0)
 
@@ -122,18 +138,23 @@ class IndividualSpec extends ModelSpecBase with ModelGenerators {
       "must throw an Exception if name is missing" in {
         forAll(arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (address, email, loop) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(IndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(IndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForIndividualPage, 0, email)
-                .success.value
+                .success
+                .value
                 .set(IndividualLoopPage, 0, loop)
-                .success.value
+                .success
+                .value
 
             val ex = intercept[Exception] {
               Individual.buildIndividualDetails(userAnswers, 0)
@@ -146,18 +167,23 @@ class IndividualSpec extends ModelSpecBase with ModelGenerators {
       "must throw an Exception if tax residency is missing" in {
         forAll(arbitrary[Name], arbitrary[Address], arbitrary[String]) {
           (name, address, email) =>
-
             val userAnswers =
               UserAnswers("id")
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
                 .set(IndividualNamePage, 0, name)
-                .success.value
+                .success
+                .value
                 .set(IndividualDateOfBirthPage, 0, LocalDate.now())
-                .success.value
+                .success
+                .value
                 .set(IndividualAddressPage, 0, address)
-                .success.value
+                .success
+                .value
                 .set(EmailAddressForIndividualPage, 0, email)
-                .success.value
+                .success
+                .value
 
             val ex = intercept[Exception] {
               Individual.buildIndividualDetails(userAnswers, 0)

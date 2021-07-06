@@ -34,7 +34,6 @@ class RoleInArrangementSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
 
       forAll(gen) {
         roleInArrangement =>
-
           JsString(roleInArrangement.toString).validate[RoleInArrangement].asOpt.value mustEqual roleInArrangement
       }
     }
@@ -45,7 +44,6 @@ class RoleInArrangementSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[RoleInArrangement] mustEqual JsError("error.invalid")
       }
     }
@@ -56,7 +54,6 @@ class RoleInArrangementSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
 
       forAll(gen) {
         roleInArrangement =>
-
           Json.toJson(roleInArrangement) mustEqual JsString(roleInArrangement.toString)
       }
     }

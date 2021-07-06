@@ -37,11 +37,11 @@ object SessionIdFilterSpec {
 
   val sessionId = "28836767-a008-46be-ac18-695ab140e705"
 
-  class TestSessionIdFilter @Inject()(
-                                       override val mat: Materializer,
-                                       sessionCookieBaker: SessionCookieBaker,
-                                       ec: ExecutionContext
-                                     ) extends SessionIdFilter(mat, UUID.fromString(sessionId), sessionCookieBaker, ec)
+  class TestSessionIdFilter @Inject() (
+    override val mat: Materializer,
+    sessionCookieBaker: SessionCookieBaker,
+    ec: ExecutionContext
+  ) extends SessionIdFilter(mat, UUID.fromString(sessionId), sessionCookieBaker, ec)
 
 }
 
@@ -54,21 +54,23 @@ class SessionIdFilterSpec extends AnyFreeSpec with Matchers with OptionValues wi
     import play.api.routing.sird._
 
     lazy val router: Router = Router.from {
-      case GET(p"/test") => defaultActionBuilder.apply {
-        request =>
-          val fromHeader = request.headers.get(HeaderNames.xSessionId).getOrElse("")
-          val fromSession = request.session.get(SessionKeys.sessionId).getOrElse("")
-          Results.Ok(
-            Json.obj(
-              "fromHeader" -> fromHeader,
-              "fromSession" -> fromSession
+      case GET(p"/test") =>
+        defaultActionBuilder.apply {
+          request =>
+            val fromHeader  = request.headers.get(HeaderNames.xSessionId).getOrElse("")
+            val fromSession = request.session.get(SessionKeys.sessionId).getOrElse("")
+            Results.Ok(
+              Json.obj(
+                "fromHeader"  -> fromHeader,
+                "fromSession" -> fromSession
+              )
             )
-          )
-      }
-      case GET(p"/test2") => defaultActionBuilder.apply {
-        implicit request =>
-          Results.Ok.addingToSession("foo" -> "bar")
-      }
+        }
+      case GET(p"/test2") =>
+        defaultActionBuilder.apply {
+          implicit request =>
+            Results.Ok.addingToSession("foo" -> "bar")
+        }
     }
   }
 

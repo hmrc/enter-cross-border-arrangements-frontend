@@ -25,12 +25,12 @@ class SelectAddressFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "selectAddress.error.required"
-    val addresses = Seq("Address 1", "Address 2", "Address 3")
+    val addresses   = Seq("Address 1", "Address 2", "Address 3")
 
     "must bind all valid values" in {
-      for(value <- addresses) {
+      for (value <- addresses) {
 
         val result = form.bind(Map(fieldName -> value)).apply(fieldName)
         result.value.value mustEqual value

@@ -34,10 +34,11 @@ class OrganisationXMLSectionSpec extends SpecBase {
       Some("value 3"),
       "value 4",
       Some("XX9 9XX"),
-      Country("valid","FR","France")
+      Country("valid", "FR", "France")
     )
 
   val email = "email@email.com"
+
   val taxResidencies = IndexedSeq(
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))),
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))

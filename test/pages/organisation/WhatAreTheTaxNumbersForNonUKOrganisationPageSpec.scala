@@ -20,7 +20,6 @@ import helpers.data.ValidUserAnswersForSubmission.{validOrganisation, validTaxRe
 import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
-
 class WhatAreTheTaxNumbersForNonUKOrganisationPageSpec extends PageBehaviours {
 
   "WhatAreTheTaxNumbersForNonUKOrganisationPage" - {
@@ -36,17 +35,19 @@ class WhatAreTheTaxNumbersForNonUKOrganisationPageSpec extends PageBehaviours {
 
     "- when first detail in loop is from the UK " in {
 
-      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(validOrganisation) mustBe(None)
+      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(validOrganisation) mustBe None
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(validTaxResidencies.reverse.head.taxReferenceNumbers)
+      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(
+        validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)
+      ) mustBe (validTaxResidencies.reverse.head.taxReferenceNumbers)
     }
 
     "- when details are empty " in {
 
-      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+      WhatAreTheTaxNumbersForNonUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe None
     }
   }
 }

@@ -32,15 +32,15 @@ class SubmissionSpec extends ModelSpecBase {
 
   import helpers.data.ValidUserAnswersForSubmission._
 
-  val submissionEnrollmentID: String = "enrolmentId"
-  val submissionDisclosureDetails: DisclosureDetails = validDisclosureDetails
-  val submissionReporterDetails: Option[ReporterDetails] = None
+  val submissionEnrollmentID: String                                    = "enrolmentId"
+  val submissionDisclosureDetails: DisclosureDetails                    = validDisclosureDetails
+  val submissionReporterDetails: Option[ReporterDetails]                = None
   val submissionAssociatedEnterprises: IndexedSeq[AssociatedEnterprise] = IndexedSeq.empty
-  val submissionTaxpayers: IndexedSeq[Taxpayer] = IndexedSeq.empty
-  val submissionIntermediaries: IndexedSeq[Intermediary] = IndexedSeq.empty
-  val submissionAffectedPersons: IndexedSeq[Affected] = IndexedSeq.empty
-  val submissionHallmarkDetails: Option[HallmarkDetails] = None
-  val submissionArrangementDetails: Option[ArrangementDetails] = None
+  val submissionTaxpayers: IndexedSeq[Taxpayer]                         = IndexedSeq.empty
+  val submissionIntermediaries: IndexedSeq[Intermediary]                = IndexedSeq.empty
+  val submissionAffectedPersons: IndexedSeq[Affected]                   = IndexedSeq.empty
+  val submissionHallmarkDetails: Option[HallmarkDetails]                = None
+  val submissionArrangementDetails: Option[ArrangementDetails]          = None
 
   "Submission" - {
 
@@ -48,9 +48,17 @@ class SubmissionSpec extends ModelSpecBase {
 
       "must build from empty or optional models" in {
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -69,16 +77,25 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionReporterDetails: Option[ReporterDetails] = Some(reporterDetailsAsIndividual)
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
-        submission.reporterDetails.map { reporterDetails =>
-          reporterDetails.individual must be(Some(validIndividual))
-          reporterDetails.organisation must be(None)
-          reporterDetails.liability must be(None)
+        submission.reporterDetails.map {
+          reporterDetails =>
+            reporterDetails.individual must be(Some(validIndividual))
+            reporterDetails.organisation must be(None)
+            reporterDetails.liability must be(None)
         }
         submission.associatedEnterprises must be(IndexedSeq.empty)
         submission.taxpayers must be(IndexedSeq.empty)
@@ -94,16 +111,25 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionReporterDetails: Option[ReporterDetails] = Some(reporterDetailsAsOrganisation)
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
-        submission.reporterDetails.map { reporterDetails =>
-          reporterDetails.individual must be(None)
-          reporterDetails.organisation must be(Some(validOrganisation))
-          reporterDetails.liability must be(Some(validLiability))
+        submission.reporterDetails.map {
+          reporterDetails =>
+            reporterDetails.individual must be(None)
+            reporterDetails.organisation must be(Some(validOrganisation))
+            reporterDetails.liability must be(Some(validLiability))
         }
         submission.associatedEnterprises must be(IndexedSeq.empty)
         submission.taxpayers must be(IndexedSeq.empty)
@@ -117,9 +143,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionAssociatedEnterprises = validEnterprises
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -136,9 +170,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionTaxpayers = validTaxpayers
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -155,9 +197,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionIntermediaries = validIntermediaries
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -174,9 +224,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionAffectedPersons = validAffectedPersons
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -193,9 +251,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionHallmarkDetails = Some(validHallmarkDetails)
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -212,9 +278,17 @@ class SubmissionSpec extends ModelSpecBase {
 
         val submissionArrangementDetails = Some(validArrangementDetails)
 
-        val submission = Submission(submissionEnrollmentID, submissionDisclosureDetails, submissionReporterDetails,
-          submissionAssociatedEnterprises, submissionTaxpayers, submissionIntermediaries, submissionAffectedPersons,
-          submissionHallmarkDetails, submissionArrangementDetails)
+        val submission = Submission(
+          submissionEnrollmentID,
+          submissionDisclosureDetails,
+          submissionReporterDetails,
+          submissionAssociatedEnterprises,
+          submissionTaxpayers,
+          submissionIntermediaries,
+          submissionAffectedPersons,
+          submissionHallmarkDetails,
+          submissionArrangementDetails
+        )
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
@@ -237,10 +311,11 @@ class SubmissionSpec extends ModelSpecBase {
 
         submission.enrolmentID must be("enrolmentId")
         submission.disclosureDetails must be(validDisclosureDetails)
-        submission.reporterDetails.map { reporterDetails =>
-          reporterDetails.individual must be(None)
-          reporterDetails.organisation must be(Some(validOrganisation))
-          reporterDetails.liability must be(None)
+        submission.reporterDetails.map {
+          reporterDetails =>
+            reporterDetails.individual must be(None)
+            reporterDetails.organisation must be(Some(validOrganisation))
+            reporterDetails.liability must be(None)
         }
         submission.associatedEnterprises must be(validEnterprises)
         submission.taxpayers must be(validTaxpayers)
@@ -253,7 +328,9 @@ class SubmissionSpec extends ModelSpecBase {
       "update initial disclosure MA when there is a first initial disclosure page" in {
 
         val submissionWithFirstInitalDisclosure = userAnswersModelsForOrganisation
-          .setBase(FirstInitialDisclosureMAPage, true).success.value
+          .setBase(FirstInitialDisclosureMAPage, true)
+          .success
+          .value
 
         val submission = Submission(submissionWithFirstInitalDisclosure, 0, "enrolmentId")
         submission.disclosureDetails.initialDisclosureMA must be(true)

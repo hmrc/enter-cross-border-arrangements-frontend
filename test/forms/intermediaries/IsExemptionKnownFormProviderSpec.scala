@@ -26,13 +26,13 @@ class IsExemptionKnownFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "isExemptionKnown.error.required"
 
     behave like optionsField[IsExemptionKnown](
       form,
       fieldName,
-      validValues  = IsExemptionKnown.values,
+      validValues = IsExemptionKnown.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 
