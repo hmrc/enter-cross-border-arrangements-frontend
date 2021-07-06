@@ -16,34 +16,29 @@
 
 package controllers.arrangement
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.arrangement.WhatIsTheImplementationDateFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.arrangement.WhatIsTheImplementationDatePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.DateInput
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class WhatIsTheImplementationDateControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatIsTheImplementationDateFormProvider()
   private def form = formProvider()
-
-  def onwardRoute = Call("GET", "/foo")
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
@@ -66,12 +61,12 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSu
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -87,8 +82,6 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -99,11 +92,12 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSu
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(WhatIsTheImplementationDatePage, 0, validAnswer).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
@@ -127,45 +121,32 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(POST, whatIsTheImplementationDateRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -181,33 +162,26 @@ class WhatIsTheImplementationDateControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "arrangement/whatIsTheImplementationDate.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
+      retrieveNoData()
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val result = route(application, getRequest).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

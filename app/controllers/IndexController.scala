@@ -32,7 +32,7 @@ class IndexController @Inject()(
                                 val controllerComponents: MessagesControllerComponents
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-   def onPageLoad: Action[AnyContent] = (identify andThen getData) { implicit request =>
+   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply()) { implicit request =>
      request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
        case Some(unsubmittedDisclosures) if filteredDisclosures(unsubmittedDisclosures).nonEmpty =>
          Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)

@@ -51,7 +51,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
 
   implicit val alternativeText: String = "the individual’s"
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -86,7 +86,7 @@ class IndividualAddressController @Inject()(override val messagesApi: MessagesAp
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Address]): Call =
     navigator.routeMap(IndividualAddressPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))

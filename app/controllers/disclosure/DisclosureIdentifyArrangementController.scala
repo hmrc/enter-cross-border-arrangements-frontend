@@ -50,7 +50,7 @@ class DisclosureIdentifyArrangementController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -72,7 +72,7 @@ class DisclosureIdentifyArrangementController @Inject()(
   def redirect(checkRoute: CheckRoute, value: Option[String]): Call =
     navigator.routeMap(DisclosureIdentifyArrangementPage)(checkRoute)(None)(value)(0)
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))

@@ -16,40 +16,36 @@
 
 package controllers.taxpayer
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.organisation.Organisation
 import models.taxpayer.{TaxResidency, Taxpayer}
 import models.{Address, Country, LoopDetails, Name, SelectType, TaxReferenceNumbers, UnsubmittedDisclosure, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.{TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.JsObject
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
+class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: String => Unit): Unit = {
 
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -63,8 +59,6 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
 
     templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
     assertFunction(taxpayersSummaryRows)
-
-    application.stop()
 
     reset(
       mockRenderer
@@ -149,9 +143,10 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
-      val result = route(application, request).value
+      val result = route(app, request).value
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -164,8 +159,6 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
 
       templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
       implementingDateRow.contains("Implementing date") mustBe true
-
-      application.stop()
     }
 
     "must return an implementing date individual" in {
@@ -186,9 +179,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
-      val result = route(application, request).value
+      val result = route(app, request).value
       status(result) mustEqual OK
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -201,8 +194,6 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
 
       templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
       implementingDateRow.contains("Implementing date") mustBe true
-
-      application.stop()
     }
 
   "TaxpayersCheckYourAnswersController - onSubmit" - {
@@ -210,8 +201,6 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
     lazy val taxpayersCheckYourAnswersRoute: String = controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url
 
     "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
-
-      val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/taxpayers/update")
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
@@ -227,34 +216,21 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
         .success.value
 
-      val mockSessionRepository = mock[SessionRepository]
+      retrieveUserAnswersData(userAnswers)
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+     when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val request =
         FakeRequest(POST, taxpayersCheckYourAnswersRoute)
           .withFormUrlEncodedBody(("", ""))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
 
     "must redirect to the taxpayers update page when valid data is submitted for an individual taxpayer" in {
-
-      val onwardRoute: Call = Call("GET", "/disclose-cross-border-arrangements/manual/taxpayers/update")
-
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
@@ -272,28 +248,18 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase {
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
         .success.value
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request =
         FakeRequest(POST, taxpayersCheckYourAnswersRoute)
           .withFormUrlEncodedBody(("", ""))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
     }
   }
 

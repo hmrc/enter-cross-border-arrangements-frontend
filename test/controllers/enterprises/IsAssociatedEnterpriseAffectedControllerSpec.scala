@@ -16,7 +16,7 @@
 
 package controllers.enterprises
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.enterprises.IsAssociatedEnterpriseAffectedFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -24,17 +24,15 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.enterprises.IsAssociatedEnterpriseAffectedPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
   private val form = formProvider()
@@ -48,12 +46,12 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -67,8 +65,6 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
 
       templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -79,12 +75,13 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -100,34 +97,23 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
 
       templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/associated-enterprises/check-answers/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -135,13 +121,13 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, isAssociatedEnterpriseAffectedRoute).withFormUrlEncodedBody(("confirm", ""))
       val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -155,40 +141,34 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Nunjuck
 
       templateCaptor.getValue mustEqual "enterprises/isAssociatedEnterpriseAffected.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, isAssociatedEnterpriseAffectedRoute)
           .withFormUrlEncodedBody(("confirm", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }

@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.disclosure.DisclosureMarketableFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -24,17 +24,15 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.disclosure.DisclosureMarketablePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class DisclosureMarketableControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DisclosureMarketableFormProvider()
   val form = formProvider()
@@ -48,12 +46,13 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(GET, disclosureMarketableRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -67,8 +66,6 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "disclosure/disclosureMarketable.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -79,12 +76,14 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .setBase(DisclosureMarketablePage, true).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, disclosureMarketableRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -100,32 +99,20 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "disclosure/disclosureMarketable.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request =
         FakeRequest(POST, disclosureMarketableRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -133,13 +120,14 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(POST, disclosureMarketableRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -153,8 +141,6 @@ class DisclosureMarketableControllerSpec extends SpecBase with NunjucksSupport w
 
       templateCaptor.getValue mustEqual "disclosure/disclosureMarketable.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }
