@@ -30,8 +30,6 @@ import scala.concurrent.Future
 
 class RendererSpec extends ControllerMockFixtures with ScalaFutures with BeforeAndAfterEach {
 
-  override def fakeApplication(): Application = applicationBuilder(None).build()
-
   implicit private val request: FakeRequest[_] = FakeRequest()
 
   "render" - {
