@@ -71,7 +71,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
   private val mockHistoryConnector = mock[HistoryConnector]
 
-  val fakeDataRetrieval = new FakeContactRetrievalProvider(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
