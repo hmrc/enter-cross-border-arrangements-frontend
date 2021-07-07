@@ -48,7 +48,7 @@ class ReporterCheckYourAnswersController  @Inject()(
    renderer: Renderer
  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -101,7 +101,7 @@ class ReporterCheckYourAnswersController  @Inject()(
     }
   }
 
-    def onContinue(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    def onContinue(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
       implicit request =>
         
         for {

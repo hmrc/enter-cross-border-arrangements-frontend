@@ -16,7 +16,7 @@
 
 package helpers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import generators.Generators
 import helpers.JourneyHelpers._
 import models.{CheckMode, Country, Currency, LoopDetails, Name, UnsubmittedDisclosure, UserAnswers}
@@ -29,7 +29,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.viewmodels.Html
 
-class JourneyHelpersSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class JourneyHelpersSpec extends ControllerMockFixtures with SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "JourneyHelpers" - {
 

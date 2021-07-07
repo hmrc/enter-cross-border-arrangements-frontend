@@ -56,7 +56,7 @@ class ReporterIndividualSelectAddressController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val postCode = getPostCodeFromRequest(request, id)
@@ -97,7 +97,7 @@ class ReporterIndividualSelectAddressController @Inject()(
       navigator.routeMap(ReporterIndividualSelectAddressPage)(checkRoute)(id)(value)(0)
     }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val postCode = getPostCodeFromRequest(request, id)

@@ -16,11 +16,11 @@
 
 package config
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 
-class FrontendAppConfigSpec extends SpecBase {
+class FrontendAppConfigSpec extends SpecBase with MockServiceApp {
 
-  val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  val config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "FrontendAppConfigSpec" - {
 

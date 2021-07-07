@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package services
+package base
 
-import base.{MockServiceApp, SpecBase}
-import helpers.Submissions
+import org.mockito.MockitoSugar
+import org.scalatest.TestSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 
-class TransformationServiceSpec extends SpecBase with MockServiceApp {
+trait MockServiceApp extends GuiceOneAppPerSuite with MockitoSugar {
+  self: TestSuite =>
 
-  "TransformationService" - {
-    "must take a valid file and replace the messageRefID" in {
-      val service = app.injector.instanceOf[TransformationService]
-      val transformedFile = service.rewriteMessageRefID(
-        Submissions.validSubmission,
-        "GB0000000YYY"
-      )
-      transformedFile mustBe Some(Submissions.updatedSubmission)
-    }
-  }
+  override def fakeApplication(): Application =
+    guiceApplicationBuilder()
+      .build()
+
+  // Override to provide custom binding
+  def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
 }

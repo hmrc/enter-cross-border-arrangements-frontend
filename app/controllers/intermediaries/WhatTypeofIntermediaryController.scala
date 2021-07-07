@@ -50,7 +50,7 @@ class WhatTypeofIntermediaryController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhatTypeofIntermediaryPage, id) match {
@@ -72,7 +72,7 @@ class WhatTypeofIntermediaryController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[WhatTypeofIntermediary]): Call =
     navigator.routeMap(WhatTypeofIntermediaryPage)(checkRoute)(id)(value)(0)
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

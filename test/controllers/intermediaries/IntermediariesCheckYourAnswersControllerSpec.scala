@@ -16,7 +16,7 @@
 
 package controllers.intermediaries
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.intermediaries.{Intermediary, WhatTypeofIntermediary}
 import models.organisation.Organisation
 import models.taxpayer.TaxResidency
@@ -25,7 +25,7 @@ import pages.intermediaries.{IntermediariesTypePage, IntermediaryLoopPage, IsExe
 import pages.organisation.{OrganisationLoopPage, OrganisationNamePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
-class IntermediariesCheckYourAnswersControllerSpec extends SpecBase {
+class IntermediariesCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "must ensure the correct updated loop list" - {
 
@@ -42,7 +42,7 @@ class IntermediariesCheckYourAnswersControllerSpec extends SpecBase {
       .set(IsExemptionKnownPage,0, IsExemptionKnown.Unknown).success.value
       .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))).success.value
 
-    val controller: IntermediariesCheckYourAnswersController = injector.instanceOf[IntermediariesCheckYourAnswersController]
+    val controller: IntermediariesCheckYourAnswersController = app.injector.instanceOf[IntermediariesCheckYourAnswersController]
 
     def organisation(name: String) = Organisation(name, Some(address), Some(email), taxResidencies)
 

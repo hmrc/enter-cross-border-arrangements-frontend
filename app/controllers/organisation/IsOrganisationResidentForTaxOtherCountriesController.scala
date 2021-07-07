@@ -48,7 +48,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       checkLoopDetailsContainsCountry(request.userAnswers, id, OrganisationLoopPage)
@@ -80,7 +80,7 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
     navigator.routeMap(IsOrganisationResidentForTaxOtherCountriesPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

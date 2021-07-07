@@ -19,7 +19,6 @@ package controllers.arrangement
 import controllers.actions._
 import forms.arrangement.WhatIsTheExpectedValueOfThisArrangementFormProvider
 import helpers.JourneyHelpers.currencyJsonList
-import javax.inject.Inject
 import models.{Currency, Mode}
 import navigation.Navigator
 import pages.WhatIsTheExpectedValueOfThisArrangementPage
@@ -32,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CurrencyListFactory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
@@ -47,13 +47,10 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  val currencies: Seq[Currency] = currencyListFactory.getCurrencyList.getOrElse(throw new Exception("Could not retrieve currency list"))
-
-  private val form = formProvider(currencies)
-
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
+      val currencies: Seq[Currency] = currencyListFactory.getCurrencyList.getOrElse(throw new Exception("Could not retrieve currency list"))
+      val form = formProvider(currencies)
 
       val preparedForm = request.userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {
         case None => form
@@ -71,8 +68,10 @@ class WhatIsTheExpectedValueOfThisArrangementController @Inject()(
       renderer.render("arrangement/whatIsTheExpectedValueOfThisArrangement.njk", json).map(Ok(_))
   }
 
-  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      val currencies: Seq[Currency] = currencyListFactory.getCurrencyList.getOrElse(throw new Exception("Could not retrieve currency list"))
+      val form = formProvider(currencies)
 
       form.bindFromRequest().fold(
         formWithErrors => {

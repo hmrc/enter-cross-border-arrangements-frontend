@@ -48,7 +48,7 @@ class FileTypeGatewayController @Inject()(
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def onRouting(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData andThen contactRetrievalAction).async {
+  def onRouting(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
       val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id)

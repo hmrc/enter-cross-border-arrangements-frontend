@@ -16,19 +16,33 @@
 
 package controllers.confirmation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
+import org.mockito.Mockito
 import pages.GeneratedIDPage
 import pages.disclosure.DisclosureDetailsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class FileTypeGatewayControllerSpec extends SpecBase {
+class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures {
+
+  val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
+
+  override def beforeEach {
+    Mockito.reset(mockContactRetrievalAction)
+    super.beforeEach()
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ContactRetrievalAction].toInstance(mockContactRetrievalAction))
 
   "FileTypeGateway Controller" - {
 
@@ -48,20 +62,18 @@ class FileTypeGatewayControllerSpec extends SpecBase {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
+      retrieveUserAnswersData(userAnswers)
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
-      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
-      val result = route(application, request).value
+     val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
+
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure-received/0"
-
-      application.stop()
     }
 
     "redirect to ADDED disclosure received when disclosure type is ADDED" in {
@@ -79,20 +91,18 @@ class FileTypeGatewayControllerSpec extends SpecBase {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
+      retrieveUserAnswersData(userAnswers)
+
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/addition-received/0"
-
-      application.stop()
     }
 
     "redirect to REPLACEMENT disclosure received when disclosure type is Dac6rep" in {
@@ -111,20 +121,19 @@ class FileTypeGatewayControllerSpec extends SpecBase {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
         .success.value
 
+      retrieveUserAnswersData(userAnswers)
+
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
+
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/replacement-received/0"
-
-      application.stop()
     }
   }
 }

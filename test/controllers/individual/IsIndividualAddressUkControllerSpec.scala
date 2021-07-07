@@ -16,7 +16,7 @@
 
 package controllers.individual
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.individual.IsIndividualAddressUkFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
@@ -25,18 +25,16 @@ import org.mockito.ArgumentMatchers.any
 import pages.individual.IsIndividualAddressUkPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
 
-class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class IsIndividualAddressUkControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -50,12 +48,13 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -69,8 +68,6 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
 
       templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -81,12 +78,12 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(IsIndividualAddressUkPage, 0, true).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -102,60 +99,40 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
 
       templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when yes is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      retrieveUserAnswersData(emptyUserAnswers)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       val request =
         FakeRequest(POST, isIndividualAddressUkRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/postcode/0"
-
-      application.stop()
     }
 
     "must redirect to the next page when no is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      retrieveUserAnswersData(emptyUserAnswers)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       val request =
         FakeRequest(POST, isIndividualAddressUkRoute)
           .withFormUrlEncodedBody(("value", "false"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/individual/address/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -163,13 +140,13 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, isIndividualAddressUkRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -183,40 +160,34 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with NunjucksSupport 
 
       templateCaptor.getValue mustEqual "individual/isIndividualAddressUk.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, isIndividualAddressUkRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, isIndividualAddressUkRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 

@@ -47,7 +47,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
 
 
-  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val country = getCountry(request.userAnswers, id)
@@ -81,7 +81,7 @@ class DoYouKnowTINForNonUKIndividualController @Inject()(
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int): Call =
     navigator.routeMap(DoYouKnowTINForNonUKIndividualPage)(checkRoute)(id)(value)(index)
 
-  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val country = getCountry(request.userAnswers, id)

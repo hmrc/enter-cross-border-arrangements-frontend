@@ -16,7 +16,7 @@
 
 package helpers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import generators.Generators
 import helpers.TaskListHelper._
 import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
@@ -37,7 +37,7 @@ import pages.taxpayer.RelevantTaxpayerStatusPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import uk.gov.hmrc.viewmodels.Html
 
-class TaskListHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val mockUrl = "home.gov.uk"
   val mockAltURL = "notHome.gov.uk"

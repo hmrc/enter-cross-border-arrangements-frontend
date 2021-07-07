@@ -46,7 +46,7 @@ class ArrangementCheckYourAnswersController @Inject()(
   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
 
-  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
@@ -64,7 +64,7 @@ class ArrangementCheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       for {

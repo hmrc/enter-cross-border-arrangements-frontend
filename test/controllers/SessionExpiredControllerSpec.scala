@@ -16,7 +16,8 @@
 
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import matchers.JsonMatchers.containJson
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +28,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SessionExpiredControllerSpec extends SpecBase {
+class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Session Expired Controller" - {
 
@@ -36,11 +37,12 @@ class SessionExpiredControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
+      val frontendAppConfig =  app.injector.instanceOf[FrontendAppConfig]
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -55,8 +57,6 @@ class SessionExpiredControllerSpec extends SpecBase {
 
       templateCaptor.getValue mustEqual "session-expired.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

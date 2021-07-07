@@ -16,7 +16,7 @@
 
 package controllers.reporter.organisation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import forms.AddressFormProvider
 import matchers.JsonMatchers
@@ -27,19 +27,18 @@ import pages.reporter.organisation.ReporterOrganisationAddressPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 
 import scala.concurrent.Future
 
-class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class ReporterOrganisationAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
@@ -51,6 +50,14 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
   lazy val organisationAddressRoute: String = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, NormalMode).url
   lazy val organisationAddressCheckModeRoute = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, CheckMode).url
 
+  override def beforeEach: Unit = {
+    reset(mockCountryFactory)
+    super.beforeEach
+  }
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
+
   "ReporterOrganisationAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -60,15 +67,13 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
 
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
       when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -81,8 +86,6 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -97,12 +100,13 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
         .set(ReporterOrganisationAddressPage, 0, address).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -126,49 +130,41 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
+      retrieveUserAnswersData(emptyUserAnswers)
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
 
       val request =
         FakeRequest(POST, organisationAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
             ("postcode", "XX9 9XX"),("country", "FR"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/organisation/email-address/0"
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(POST, organisationAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -181,39 +177,32 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with NunjucksSu
 
       templateCaptor.getValue mustEqual "address.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, organisationAddressRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, organisationAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-
-      application.stop()
     }
   }
 }
