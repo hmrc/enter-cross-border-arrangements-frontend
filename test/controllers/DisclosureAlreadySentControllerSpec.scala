@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType._
@@ -33,7 +33,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class DisclosureAlreadySentControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   "DisclosureAlreadySent Controller" - {
 

@@ -45,7 +45,7 @@ class DisclosureAlreadySentController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onDeleted(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onDeleted(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6del))(0).url
@@ -60,7 +60,7 @@ class DisclosureAlreadySentController @Inject()(
       ).map(Ok(_))
   }
 
-  def onSent(id: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSent(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val disclosureType = Try(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).getOrElse(None)
