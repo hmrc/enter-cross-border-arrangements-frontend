@@ -53,8 +53,7 @@ class ReplacementDisclosureConfirmationController @Inject()(
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
-        "emailMessage" -> emailMessage,
-        "emailToggle" -> appConfig.sendEmailToggle
+        "emailMessage" -> emailMessage
       )
 
       renderer.render("confirmation/replacementDisclosureConfirmation.njk", json).map(Ok(_))
