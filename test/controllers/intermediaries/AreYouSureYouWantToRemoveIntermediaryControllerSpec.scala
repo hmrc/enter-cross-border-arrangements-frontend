@@ -34,10 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
-
+class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
   val formProvider = new AreYouSureYouWantToRemoveIntermediaryFormProvider()
   val form = formProvider()
 

@@ -49,7 +49,7 @@ class ReporterIndividualDateOfBirthController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ReporterIndividualDateOfBirthPage, id) match {
