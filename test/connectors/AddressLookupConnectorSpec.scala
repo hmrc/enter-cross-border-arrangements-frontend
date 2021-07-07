@@ -16,28 +16,29 @@
 
 package connectors
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.AddressLookup
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class AddressLookupConnectorSpec extends SpecBase
+  with MockServiceApp
   with WireMockServerHandler
   with Generators
   with ScalaCheckPropertyChecks {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
     .configure(
       conf = "microservice.services.address-lookup.port" -> server.port()
-    ).build()
+    )
 
   lazy val connector: AddressLookupConnector = app.injector.instanceOf[AddressLookupConnector]
   val addressLookupUrl = "/v2/uk/addresses?postcode=ZZ1+1ZZ"

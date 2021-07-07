@@ -16,7 +16,7 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, EmailConnector, SubscriptionConnector}
 import controllers.RowJsonReads
@@ -24,10 +24,10 @@ import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,7 +40,7 @@ import utils.{CountryListFactory, CurrencyListFactory}
 
 import scala.concurrent.Future
 
-class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
@@ -65,21 +65,22 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
     reset(mockEmailService)
   }
 
-  def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
-
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(
       bind[EmailService].toInstance(mockEmailService),
       bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[FrontendAppConfig].toInstance(mockAppConfig),
       bind[CountryListFactory].toInstance(mockCountryFactory),
       bind[CurrencyListFactory].toInstance(mockCurrencyList)
-    ).build()
+    )
 
-
+  def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
+    retrieveUserAnswersData(userAnswers)
     val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -96,8 +97,6 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Befor
     assertFunction(list)
 
     verify(mockEmailService, times(0)).sendEmail(any(), any(), any(), any())(any())
-
-    application.stop()
   }
 
   private def assertAction(href: String, text: Option[Any] = Some(Literal("Change")), visuallyHiddenText: Option[Any] = None)(action: Action): Unit = {

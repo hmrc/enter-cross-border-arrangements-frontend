@@ -16,17 +16,17 @@
 
 package controllers.disclosure
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import connectors.CrossBorderArrangementsConnector
 import controllers.RowJsonReads
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import pages.disclosure._
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.Text.Literal
 
 import scala.concurrent.Future
 
-class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
@@ -44,9 +44,14 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super.guiceApplicationBuilder()
+      .overrides(bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector))
+
   override def beforeEach: Unit = {
     reset(
-      mockRenderer
+      mockRenderer,
+      mockCrossBorderArrangementsConnector
     )
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
@@ -54,11 +59,11 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
   def verifyList(userAnswers: UserAnswers)(assertFunction: Seq[Row] => Unit): Unit = {
 
-    val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+    retrieveUserAnswersData(userAnswers)
 
     val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
 
-    val result = route(application, request).value
+    val result = route(app, request).value
 
     status(result) mustEqual OK
 
@@ -67,14 +72,12 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json: JsObject = jsonCaptor.getValue
     import RowJsonReads._
     val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "disclosure/check-your-answers-disclosure.njk"
     assertFunction(list)
-
-    application.stop()
   }
 
   private def assertAction(href: String, text: Option[Any] = Some(Literal("Change")), visuallyHiddenText: Option[Any] = None)(action: Action): Unit = {
@@ -191,6 +194,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
     }
 
     "must be able to build disclosure details from user answers and redirect to task list" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any()))
         .thenReturn(Future.successful(false))
@@ -206,19 +210,15 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAf
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector)
-      ).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/your-disclosure-details/1"
-
-      application.stop()
     }
 
   }

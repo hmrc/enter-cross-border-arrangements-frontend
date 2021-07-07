@@ -16,7 +16,7 @@
 
 package utils
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.Country
 import models.CountryList.UnitedKingdom
 import models.affected.Affected
@@ -30,7 +30,7 @@ import utils.CreateDisplayRows._
 
 import java.time.LocalDate
 
-class CreateDisplayRowsSpec extends SpecBase {
+class CreateDisplayRowsSpec extends ControllerMockFixtures with SpecBase {
 
   val organisation = Organisation("name1", None, None, IndexedSeq(TaxResidency(Some(Country.UK), None)))
 

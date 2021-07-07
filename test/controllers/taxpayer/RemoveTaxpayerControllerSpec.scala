@@ -16,7 +16,7 @@
 
 package controllers.taxpayer
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import forms.taxpayer.RemoveTaxpayerFormProvider
 import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validOrganisation}
 import matchers.JsonMatchers
@@ -26,20 +26,15 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
-
-  def onwardRoute = Call("GET", "/foo")
+class RemoveTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new RemoveTaxpayerFormProvider()
   val form = formProvider()
@@ -55,12 +50,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
     .set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
 
-  val mockSessionRepository = mock[SessionRepository]
-
-  override def afterEach() = {
-    reset(mockSessionRepository)
-  }
-
   "RemoveTaxpayer Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -68,12 +57,13 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
       val request = FakeRequest(GET, removeTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -89,8 +79,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
 
       templateCaptor.getValue mustEqual "taxpayer/removeTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must delete the required taxpayer and redirect to the next page when 'Yes' is submitted" in {
@@ -98,18 +86,13 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
       val userAnswersCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
       when(mockSessionRepository.set(userAnswersCaptor.capture())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request =
         FakeRequest(POST, controllers.taxpayer.routes.RemoveTaxpayerController.onSubmit(0, "1").url)
           .withFormUrlEncodedBody(("value", "true"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
@@ -118,8 +101,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
       userAnswersCaptor.getValue.get(TaxpayerLoopPage, 0).map { loop =>
         loop mustBe(taxpayerLoop.filterNot(_.taxpayerId == "1"))
       }
-
-      application.stop()
     }
 
     "must not delete taxpayer and return to the update page when 'No' is submitted" in {
@@ -128,21 +109,17 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
         .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[SessionRepository].toInstance(mockSessionRepository)
-      ).build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(POST, removeTaxpayerRoute).withFormUrlEncodedBody(("value", "false"))
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 
       verify(mockSessionRepository, times(0)).set(any())
-
-      application.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -150,13 +127,13 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, removeTaxpayerRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
@@ -172,8 +149,6 @@ class RemoveTaxpayerControllerSpec extends SpecBase with NunjucksSupport with Js
 
       templateCaptor.getValue mustEqual "taxpayer/removeTaxpayer.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
   }
 }

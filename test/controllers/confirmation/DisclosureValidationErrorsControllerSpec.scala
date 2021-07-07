@@ -16,14 +16,13 @@
 
 package controllers.confirmation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers.containJson
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.ValidationErrorsPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import play.api.Application
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class DisclosureValidationErrorsControllerSpec extends SpecBase {
+class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val errors = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
   lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
@@ -40,7 +39,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase {
 
     "map keys to errors" in {
 
-      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+      val controller = app.injector.instanceOf[DisclosureValidationErrorsController]
 
       val keysToErrors = Map[String, Option[String]](
         "businessrules.initialDisclosure.needRelevantTaxPayer" ->
@@ -60,7 +59,7 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase {
 
     "map keys to table rows" in {
 
-      val controller = injector.instanceOf[DisclosureValidationErrorsController]
+      val controller = app.injector.instanceOf[DisclosureValidationErrorsController]
 
       val rows: Seq[String] = controller.toTableRows(errors, Option(_)).flatten.map(_.toString)
 
@@ -81,25 +80,24 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase {
         .set(ValidationErrorsPage, 0, errors)
         .success.value
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "errorRows" -> injector.instanceOf[DisclosureValidationErrorsController].toTableRows(errors)
+        "errorRows" -> app.injector.instanceOf[DisclosureValidationErrorsController].toTableRows(errors)
       )
 
       templateCaptor.getValue mustEqual "confirmation/validationErrors.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
     }
 
     "must throw exception when keys are empty for a GET" in {
@@ -113,16 +111,16 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase {
         .set(ValidationErrorsPage, 0, Seq())
         .success.value
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       an[Exception] mustBe thrownBy {
         status(result) mustEqual OK
       }
 
-      application.stop()
     }
 
     "must throw exception when key is unknown or invalid for a GET" in {
@@ -136,16 +134,15 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase {
         .set(ValidationErrorsPage, 0, Seq("unknown"))
         .success.value
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, disclosureValidationErrorsRoute)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       an[Exception] mustBe thrownBy {
         status(result) mustEqual OK
       }
-
-      application.stop()
     }
   }
 }

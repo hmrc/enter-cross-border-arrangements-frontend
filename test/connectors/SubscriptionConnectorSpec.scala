@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import generators.Generators
 import helpers.JsonFixtures._
 import models.subscription._
@@ -24,7 +24,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -35,6 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SubscriptionConnectorSpec extends SpecBase
+  with MockServiceApp
   with ScalaCheckPropertyChecks
   with Generators with BeforeAndAfterEach {
 
@@ -71,9 +71,9 @@ class SubscriptionConnectorSpec extends SpecBase
 
   val mockHttpClient: HttpClient = mock[HttpClient]
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(bind[HttpClient].toInstance(mockHttpClient)
-    ).build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
+    .overrides(bind[HttpClient].toInstance(mockHttpClient))
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 

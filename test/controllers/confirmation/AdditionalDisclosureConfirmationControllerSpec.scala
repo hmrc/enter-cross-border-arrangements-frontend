@@ -16,22 +16,35 @@
 
 package controllers.confirmation
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentCaptor, Mockito}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage}
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
+class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
+
+   val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
+
+  override def beforeEach {
+    Mockito.reset(mockContactRetrievalAction)
+    super.beforeEach()
+  }
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[ContactRetrievalAction].toInstance(mockContactRetrievalAction))
 
   "AdditionalDisclosureConfirmation Controller" - {
 
@@ -48,23 +61,22 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
         .set(MessageRefIDPage, 0, "")
         .success.value
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers,
+        Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[ContactRetrievalAction].toInstance(fakeDataRetrieval)).build()
+      retrieveUserAnswersData(userAnswers)
+      when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
+
       val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "confirmation/disclosureConfirmation.njk"
-
-      application.stop()
     }
 
     "throw an error then display technical error page if no MessageRefID is present" in {
@@ -78,11 +90,12 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some("")))
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
       val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       an[Exception] mustBe thrownBy {
         status(result) mustEqual OK
@@ -91,12 +104,9 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "internalServerError.njk"
       }
-
-      application.stop()
     }
 
     "throw an error then display technical error page if no disclosureID is present" in {
-
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -108,11 +118,11 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
         .set(MessageRefIDPage, 0, "")
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       an[Exception] mustBe thrownBy {
         status(result) mustEqual OK
@@ -121,10 +131,6 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase {
 
         templateCaptor.getValue mustEqual "internalServerError.njk"
       }
-
-      application.stop()
     }
-
-
   }
 }

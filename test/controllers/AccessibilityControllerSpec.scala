@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -25,7 +25,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccessibilityControllerSpec extends SpecBase {
+class AccessibilityControllerSpec extends SpecBase  with ControllerMockFixtures {
 
   "Accessibility Controller" - {
 
@@ -34,11 +34,11 @@ class AccessibilityControllerSpec extends SpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("foo")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      retrieveNoData()
 
       val request = FakeRequest(GET, routes.AccessibilityController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -47,8 +47,6 @@ class AccessibilityControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "accessibility.njk"
-
-      application.stop()
     }
   }
 }

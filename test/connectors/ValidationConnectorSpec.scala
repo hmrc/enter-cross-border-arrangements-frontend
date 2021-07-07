@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
@@ -29,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ValidationConnectorSpec  extends SpecBase
+  with MockServiceApp
   with WireMockServerHandler
   with Generators
   with ScalaCheckPropertyChecks {

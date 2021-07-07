@@ -16,14 +16,13 @@
 
 package services
 
-import base.SpecBase
+import base.{MockServiceApp, SpecBase}
 import connectors.EmailConnector
 import generators.Generators
 import models.GeneratedIDs
 import models.subscription.ContactDetails
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.OK
@@ -32,6 +31,7 @@ import uk.gov.hmrc.http.HttpResponse
 import scala.concurrent.Future
 
 class EmailServiceSpec extends SpecBase
+  with MockServiceApp
   with Generators
   with ScalaCheckPropertyChecks {
 
@@ -45,13 +45,13 @@ class EmailServiceSpec extends SpecBase
   val messageRefID = "GB0000000XXX"
 
   val mockEmailConnector: EmailConnector = mock[EmailConnector]
-  val emailService: EmailService = injector.instanceOf[EmailService]
+  val emailService: EmailService = app.injector.instanceOf[EmailService]
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
+    .guiceApplicationBuilder()
     .overrides(
       bind[EmailConnector].toInstance(mockEmailConnector)
     )
-    .build()
 
   "Email Service" - {
     "must submit to the email connector when 1 set of contact details are provided" in {
