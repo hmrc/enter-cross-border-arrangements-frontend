@@ -23,9 +23,7 @@
 
         <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</p>
 
-        {% if emailToggle %}
-            <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p3", emailMessage)}}</p>
-        {% endif %}
+        <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p3", emailMessage)}}</p>
 
         <p class="govuk-body">{{ homePageLink | safe }}</p>
         <p class="govuk-body">{{ betaFeedbackSurvey | safe }}</p>
