@@ -26,8 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AdditionalDisclosureConfirmationController @Inject()(
@@ -58,7 +58,6 @@ class AdditionalDisclosureConfirmationController @Inject()(
         "panelTitle" -> confirmationPanelTitle,
         "panelText" -> confirmationPanelText(disclosureID),
         "emailMessage" -> emailMessage,
-        "emailToggle" -> appConfig.sendEmailToggle,
         "messageRefID" -> messageRefID,
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)

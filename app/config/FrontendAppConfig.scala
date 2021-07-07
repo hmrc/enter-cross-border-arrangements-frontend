@@ -64,7 +64,4 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val timeoutSeconds: String = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
-
-  lazy val sendEmailToggle: Boolean = configuration.get[Boolean]("toggles.sendEmailToggle")
-
 }
