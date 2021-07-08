@@ -20,6 +20,7 @@ import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import connectors.{CrossBorderArrangementsConnector, EmailConnector, SubscriptionConnector}
 import controllers.RowJsonReads
+import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
 import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -143,6 +144,27 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
           "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(1))
         assertDisclosureID("GBD20210101ABC123")(list(2))
         list.size mustBe 3
+      }
+    }
+
+    "fail with DiscloseDetailsAlreadyDeletedException if ReplaceOrDeleteADisclosurePage is empty " in {
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
+        .success.value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6del)
+        .success
+        .value
+
+      retrieveUserAnswersData(userAnswers)
+
+      val request = FakeRequest(GET, disclosureCheckYourAnswersLoadRoute)
+
+      val result = route(app, request).value
+
+      an[DiscloseDetailsAlreadyDeletedException] mustBe thrownBy {
+        status(result) mustEqual OK
       }
     }
 
