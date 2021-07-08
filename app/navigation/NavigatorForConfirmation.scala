@@ -19,7 +19,7 @@ package navigation
 import controllers.confirmation._
 import controllers.mixins.{CheckRoute, DefaultRouting}
 import models.CheckMode
-import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
+import models.disclosure.DisclosureType.{Dac6add, Dac6del, Dac6new, Dac6rep}
 import pages.Page
 import pages.disclosure.DisclosureDetailsPage
 import play.api.mvc.Call
@@ -35,6 +35,7 @@ class NavigatorForConfirmation @Inject()() extends AbstractNavigator {
       case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad(id)
       case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad(id)
       case Some(Dac6rep)  => routes.ReplacementDisclosureConfirmationController.onPageLoad(id)
+      case Some(Dac6del)  => routes.YourDisclosureHasBeenDeletedController.onPageLoad()
       case disclosureType => throw new IllegalStateException(s"Navigation to $disclosureType not yet implemented")
     }
   }

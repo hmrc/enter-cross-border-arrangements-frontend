@@ -17,7 +17,7 @@
 package models.disclosure
 
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
-import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, SubmissionError}
+import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, GeneratedIDs, SubmissionError}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -27,7 +27,8 @@ case class DisclosureDetails(
   disclosureID: Option[String]  = None,
   initialDisclosureMA: Boolean  = false,
   messageRefId: Option[String]  = None,
-  firstInitialDisclosureMA: Option[Boolean] = None
+  firstInitialDisclosureMA: Option[Boolean] = None,
+  sent: Boolean = false
 ) {
 
   def withDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)

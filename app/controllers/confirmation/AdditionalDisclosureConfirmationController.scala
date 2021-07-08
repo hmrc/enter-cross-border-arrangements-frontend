@@ -19,11 +19,13 @@ package controllers.confirmation
 import config.FrontendAppConfig
 import controllers.actions._
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
+import models.GeneratedIDs
 import pages.GeneratedIDPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
 
@@ -38,13 +40,15 @@ class AdditionalDisclosureConfirmationController @Inject()(
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
+    sessionRepository: SessionRepository,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with UpdateDisclosureDetailsAsSent {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
 
-      val (disclosureID, messageRefID) = request.userAnswers.get(GeneratedIDPage, id)
+      val generatedIDs: Option[GeneratedIDs] = request.userAnswers.get(GeneratedIDPage, id)
+      val (disclosureID, messageRefID) = generatedIDs
         .map { generatedIDs =>
           (generatedIDs.disclosureID, generatedIDs.messageRefID) match {
             case (Some(disclosureID), Some(messageRefId)) => (disclosureID, messageRefId)
@@ -62,6 +66,8 @@ class AdditionalDisclosureConfirmationController @Inject()(
         "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
       )
+
+      updateDisclosureDetailsAsSent(request.userAnswers, id).map(sessionRepository.set)
 
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }

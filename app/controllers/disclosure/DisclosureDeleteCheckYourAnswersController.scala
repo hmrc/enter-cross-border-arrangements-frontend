@@ -19,6 +19,7 @@ package controllers.disclosure
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.JourneyHelpers.linkToHomePageText
 import models.disclosure.DisclosureType
@@ -59,6 +60,10 @@ class DisclosureDeleteCheckYourAnswersController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
+
+      if (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).isEmpty) {
+        throw new DiscloseDetailsAlreadyDeletedException()
+      }
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 

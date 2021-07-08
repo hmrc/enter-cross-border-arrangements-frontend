@@ -19,6 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector, ValidationConnector}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalProvider}
+import controllers.exceptions.DiscloseDetailsAlreadySentException
 import helpers.data.ValidUserAnswersForSubmission.{userAnswersForOrganisation, userAnswersModelsForOrganisation}
 import matchers.JsonMatchers
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -103,6 +104,32 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "disclosure/disclosureDetails.njk"
+    }
+
+    "fail with DiscloseDetailsAlreadySentException if DisclosureDetails is flagged with sent=true " in {
+
+      val disclosureDetails = DisclosureDetails(
+        disclosureName = "",
+        arrangementID = Some("arrangement"),
+        disclosureType = DisclosureType.Dac6new,
+        initialDisclosureMA = true,
+        sent = true
+      )
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"), UnsubmittedDisclosure("2", "The Revenge"))).success.value
+        .set(DisclosureDetailsPage, 1, disclosureDetails)
+        .success.value
+      println("C'MON "+userAnswers)
+
+      retrieveUserAnswersData(userAnswers)
+
+      val request = FakeRequest(GET, routes.DisclosureDetailsController.onPageLoad(1).url)
+
+      val result = route(app, request).value
+
+      an[DiscloseDetailsAlreadySentException] mustBe thrownBy {
+        status(result) mustEqual OK
+      }
     }
 
     "return OK and the correct view for a GET if it's a replacement disclosure" in {

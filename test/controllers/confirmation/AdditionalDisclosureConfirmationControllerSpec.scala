@@ -18,9 +18,11 @@ package controllers.confirmation
 
 import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{ContactRetrievalAction, FakeContactRetrievalAction}
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.subscription.ContactDetails
 import models.{GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentMatchers.any
+import pages.disclosure.DisclosureDetailsPage
 import org.mockito.{ArgumentCaptor, Mockito}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import pages.{GeneratedIDPage, MessageRefIDPage}
@@ -48,6 +50,13 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Contr
 
   "AdditionalDisclosureConfirmation Controller" - {
 
+    val disclosureDetails = DisclosureDetails(
+      disclosureName = "",
+      arrangementID = Some("arrangement"),
+      disclosureType = DisclosureType.Dac6new,
+      initialDisclosureMA = true
+    )
+
     "return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
@@ -59,6 +68,8 @@ class AdditionalDisclosureConfirmationControllerSpec extends SpecBase with Contr
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""),Some(""),Some("")))
         .success.value
         .set(MessageRefIDPage, 0, "")
+        .success.value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
         .success.value
 
       val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers,

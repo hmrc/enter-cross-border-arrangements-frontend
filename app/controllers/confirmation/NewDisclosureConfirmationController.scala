@@ -24,6 +24,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.Html
 
@@ -38,8 +39,9 @@ class NewDisclosureConfirmationController @Inject()(
     requireData: DataRequiredAction,
     contactRetrievalAction: ContactRetrievalAction,
     val controllerComponents: MessagesControllerComponents,
+    sessionRepository: SessionRepository,
     renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with UpdateDisclosureDetailsAsSent {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
@@ -63,6 +65,8 @@ class NewDisclosureConfirmationController @Inject()(
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
         "emailMessage" -> emailMessage
       )
+
+      updateDisclosureDetailsAsSent(request.userAnswers, id).map(sessionRepository.set)
 
       renderer.render("confirmation/disclosureConfirmation.njk", json).map(Ok(_))
   }
