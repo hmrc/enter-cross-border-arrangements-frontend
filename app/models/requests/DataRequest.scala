@@ -16,9 +16,15 @@
 
 package models.requests
 
+import models.{UserAnswers, ValidateOnLoad}
+import pages.QuestionPage
+import play.api.libs.json.Reads
 import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
 
 case class OptionalDataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
-case class DataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+case class DataRequest[A] (request: Request[A], internalId: String, enrolmentID: String, userAnswers: UserAnswers) extends WrappedRequest[A](request) {
+
+  def validateOnLoad[B <: ValidateOnLoad](page: QuestionPage[B], id: Int)(implicit rds: Reads[B]): Option[B] =
+    userAnswers.get(page, id).filter(_.validateOnLoad(id))
+}
