@@ -16,8 +16,9 @@
 
 package models.disclosure
 
+import controllers.exceptions.DiscloseDetailsAlreadySentException
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
-import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, GeneratedIDs, SubmissionError}
+import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, SubmissionError, ValidateOnLoad}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -29,7 +30,7 @@ case class DisclosureDetails(
   messageRefId: Option[String]  = None,
   firstInitialDisclosureMA: Option[Boolean] = None,
   sent: Boolean = false
-) {
+) extends ValidateOnLoad {
 
   def withDisclosureType(disclosureType: DisclosureType): DisclosureDetails = copy(disclosureType = disclosureType)
 
@@ -49,6 +50,8 @@ case class DisclosureDetails(
       _ <- Either.cond(Option(disclosureType).isDefined, disclosureType, DisclosureImportInstructionInvalidError)
       _ <- Either.cond(Option(initialDisclosureMA).isDefined, initialDisclosureMA, DisclosureInitialMarketableArrangementInvalidError)
     } yield this
+
+  override def validateOnLoad(id: Int): Boolean = if (sent) throw new DiscloseDetailsAlreadySentException(id) else true
 }
 
 object DisclosureDetails {

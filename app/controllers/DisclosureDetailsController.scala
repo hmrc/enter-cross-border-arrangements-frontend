@@ -19,7 +19,6 @@ package controllers
 import config.FrontendAppConfig
 import connectors.HistoryConnector
 import controllers.actions._
-import controllers.exceptions.DiscloseDetailsAlreadySentException
 import controllers.mixins.DefaultRouting
 import helpers.TaskListHelper.{isInitialDisclosureMarketable, _}
 import models.hallmarks.JourneyStatus
@@ -68,10 +67,9 @@ class DisclosureDetailsController @Inject()(
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
 
+      val arrangementID = request.validateOnLoad(DisclosureDetailsPage, id).flatMap(_.arrangementID)
 
-      val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).filterNot(_.sent).getOrElse(throw new DiscloseDetailsAlreadySentException(id))
-
-      val arrangementMessage: String = disclosureDetails.arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
+      val arrangementMessage: String = arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
