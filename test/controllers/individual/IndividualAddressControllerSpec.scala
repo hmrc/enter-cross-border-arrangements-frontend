@@ -39,13 +39,12 @@ import scala.concurrent.Future
 class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val mockCountryFactory: CountryListFactory   = mock[CountryListFactory]
 
-  val formProvider = new AddressFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
+  val formProvider        = new AddressFormProvider()
+  val form: Form[Address] = formProvider(Seq(Country("valid", "FR", "France")))
 
-  val validAnswer: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-    Country("valid","FR","France"))
+  val validAnswer: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
   val validData =
     Map(
@@ -68,14 +67,14 @@ class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid", "GB", "United Kingdom"))
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, individualAddressRoute)
+      val request        = FakeRequest(GET, individualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -97,17 +96,21 @@ class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid", "GB", "United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualAddressPage, 0, validAnswer).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualAddressPage, 0, validAnswer)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, individualAddressRoute)
+      val request        = FakeRequest(GET, individualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -132,10 +135,9 @@ class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtur
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-
       val request =
         FakeRequest(POST, individualAddressRoute)
-          .withFormUrlEncodedBody(validData.toList:_*)
+          .withFormUrlEncodedBody(validData.toList: _*)
 
       val result = route(app, request).value
 
@@ -148,10 +150,10 @@ class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, individualAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, individualAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -160,8 +162,8 @@ class IndividualAddressControllerSpec extends SpecBase with ControllerMockFixtur
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "address.njk"

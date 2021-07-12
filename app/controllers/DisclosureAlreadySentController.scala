@@ -34,46 +34,50 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-class DisclosureAlreadySentController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    val controllerComponents: MessagesControllerComponents,
-    frontendAppConfig: FrontendAppConfig,
-    navigator: NavigatorForConfirmation,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DisclosureAlreadySentController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  frontendAppConfig: FrontendAppConfig,
+  navigator: NavigatorForConfirmation,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onDeleted(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(0)(Some(DisclosureType.Dac6del))(0).url
 
-      renderer.render(
-        "disclosureAlreadySent.njk",
-        Json.obj(
-          "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
-          "option" -> "deleted",
-          "backLinkUrl" -> backLinkUrl
+      renderer
+        .render(
+          "disclosureAlreadySent.njk",
+          Json.obj(
+            "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
+            "option"       -> "deleted",
+            "backLinkUrl"  -> backLinkUrl
+          )
         )
-      ).map(Ok(_))
+        .map(Ok(_))
   }
 
   def onSent(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val disclosureType = Try(request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType)).getOrElse(None)
 
       val backLinkUrl: String = navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0).url
 
-      renderer.render(
-      "disclosureAlreadySent.njk",
-      Json.obj(
-        "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
-        "option" -> "sent",
-        "backLinkUrl" -> backLinkUrl
-      )
-    ).map(Ok(_))
+      renderer
+        .render(
+          "disclosureAlreadySent.njk",
+          Json.obj(
+            "homePageLink" -> linkToHomePageText(frontendAppConfig.discloseArrangeLink, "site.homePageLink.text"),
+            "option"       -> "sent",
+            "backLinkUrl"  -> backLinkUrl
+          )
+        )
+        .map(Ok(_))
   }
 }

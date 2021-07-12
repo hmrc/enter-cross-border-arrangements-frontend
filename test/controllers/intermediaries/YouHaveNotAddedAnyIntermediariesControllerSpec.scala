@@ -39,7 +39,7 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
   lazy val youHaveNotAddedAnyIntermediariesRoute = routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(0).url
 
   val formProvider = new YouHaveNotAddedAnyIntermediariesFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "YouHaveNotAddedAnyIntermediaries Controller" - {
 
@@ -47,9 +47,9 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -58,10 +58,10 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
+        "form"             -> form,
+        "mode"             -> NormalMode,
         "intermediaryList" -> Json.arr(),
-        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(form)
+        "radios"           -> YouHaveNotAddedAnyIntermediaries.radios(form)
       )
 
       templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
@@ -76,14 +76,18 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
         IndexedSeq(Intermediary("id", None, Some(validOrganisation), WhatTypeofIntermediary.Promoter, IsExemptionKnown.No, None, None))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryLoopPage, 0, intermediariesLoop).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryLoopPage, 0, intermediariesLoop)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val controller = app.injector.instanceOf[YouHaveNotAddedAnyIntermediariesController]
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller     = app.injector.instanceOf[YouHaveNotAddedAnyIntermediariesController]
 
       val result = route(app, request).value
 
@@ -94,10 +98,10 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
       val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
+        "form"             -> form,
+        "mode"             -> NormalMode,
         "intermediaryList" -> expectedList,
-        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(form)
+        "radios"           -> YouHaveNotAddedAnyIntermediaries.radios(form)
       )
 
       templateCaptor.getValue mustEqual "intermediaries/youHaveNotAddedAnyIntermediaries.njk"
@@ -109,13 +113,17 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(YouHaveNotAddedAnyIntermediariesPage, 0, YouHaveNotAddedAnyIntermediaries.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(YouHaveNotAddedAnyIntermediariesPage, 0, YouHaveNotAddedAnyIntermediaries.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyIntermediariesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -126,8 +134,8 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
       val filledForm = form.fill(YouHaveNotAddedAnyIntermediaries.values.head)
 
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
-        "mode"       -> NormalMode,
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(filledForm)
       )
 
@@ -156,10 +164,10 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request =  FakeRequest(POST, youHaveNotAddedAnyIntermediariesRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, youHaveNotAddedAnyIntermediariesRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -168,8 +176,8 @@ class YouHaveNotAddedAnyIntermediariesControllerSpec extends SpecBase with Contr
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> boundForm,
-        "mode"       -> NormalMode,
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
         "radios" -> YouHaveNotAddedAnyIntermediaries.radios(boundForm)
       )
 

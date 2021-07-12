@@ -32,46 +32,45 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class YourDisclosureHasBeenDeletedController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    appConfig: FrontendAppConfig,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
-    val controllerComponents: MessagesControllerComponents,
-    errorHandler: ErrorHandler,
-    sessionRepository: SessionRepository,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class YourDisclosureHasBeenDeletedController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  appConfig: FrontendAppConfig,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  contactRetrievalAction: ContactRetrievalAction,
+  val controllerComponents: MessagesControllerComponents,
+  errorHandler: ErrorHandler,
+  sessionRepository: SessionRepository,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
       request.userAnswers.getBase(DisclosureDeleteCheckYourAnswersPage) match {
         case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
-
-          val emailMessage = request.contacts.flatMap(_.emailMessage)
+          val emailMessage = request.contacts
+            .flatMap(_.emailMessage)
             .getOrElse(throw new RuntimeException("Contact email details are missing"))
 
-          val json = Json.obj (
-            "disclosureID" -> disclosureID,
-            "arrangementID" -> arrangementID,
-            "messageRefid" -> messageRefID,
-            "homePageLink" -> linkToHomePageText (appConfig.discloseArrangeLink),
-            "betaFeedbackSurvey" -> surveyLinkText (appConfig.betaFeedbackUrl),
-            "emailMessage" -> emailMessage
+          val json = Json.obj(
+            "disclosureID"       -> disclosureID,
+            "arrangementID"      -> arrangementID,
+            "messageRefid"       -> messageRefID,
+            "homePageLink"       -> linkToHomePageText(appConfig.discloseArrangeLink),
+            "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
+            "emailMessage"       -> emailMessage
           )
 
           for {
             updatedAnswers <- request.userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
-          } yield {
-            sessionRepository.set(updatedAnswers)
-          }
+          } yield sessionRepository.set(updatedAnswers)
 
-          renderer.render ("confirmation/yourDisclosureHasBeenDeleted.njk", json).map (Ok (_) )
+          renderer.render("confirmation/yourDisclosureHasBeenDeleted.njk", json).map(Ok(_))
 
-       case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
-    }
+        case _ => errorHandler.onServerError(request, new RuntimeException("Cannot retrieve arrangement details from session store"))
+      }
   }
 }

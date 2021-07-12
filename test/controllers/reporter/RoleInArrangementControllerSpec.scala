@@ -38,7 +38,7 @@ class RoleInArrangementControllerSpec extends SpecBase with ControllerMockFixtur
   lazy val roleInArrangementRoute = controllers.reporter.routes.RoleInArrangementController.onPageLoad(0, NormalMode).url
 
   val formProvider = new RoleInArrangementFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "RoleInArrangement Controller" - {
 
@@ -47,9 +47,9 @@ class RoleInArrangementControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, roleInArrangementRoute)
+      val request        = FakeRequest(GET, roleInArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,13 +73,17 @@ class RoleInArrangementControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(RoleInArrangementPage, 0, RoleInArrangement.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, roleInArrangementRoute)
+      val request        = FakeRequest(GET, roleInArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,10 +123,10 @@ class RoleInArrangementControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, roleInArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, roleInArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

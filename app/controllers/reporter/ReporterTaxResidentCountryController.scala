@@ -37,22 +37,23 @@ import utils.CountryListFactory
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterTaxResidentCountryController @Inject()(
-                                                      override val messagesApi: MessagesApi,
-                                                      sessionRepository: SessionRepository,
-                                                      navigator: NavigatorForReporter,
-                                                      identify: IdentifierAction,
-                                                      getData: DataRetrievalAction,
-                                                      requireData: DataRequiredAction,
-                                                      formProvider: ReporterTaxResidentCountryFormProvider,
-                                                      countryListFactory: CountryListFactory,
-                                                      val controllerComponents: MessagesControllerComponents,
-                                                      renderer: Renderer
-                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController
-  with I18nSupport
-  with NunjucksSupport
-  with RoutingSupport
-  with CountrySupport {
+class ReporterTaxResidentCountryController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForReporter,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: ReporterTaxResidentCountryFormProvider,
+  countryListFactory: CountryListFactory,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport
+    with CountrySupport {
 
   private def redirect(id: Int, checkRoute: CheckRoute, value: Option[Country], index: Int = 0): Call =
     navigator.routeMap(ReporterTaxResidentCountryPage)(checkRoute)(id)(value)(index)
@@ -60,19 +61,19 @@ class ReporterTaxResidentCountryController @Inject()(
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form                    = formProvider(countries)
 
       val preparedForm: Form[Country] = getCountry(request.userAnswers, id, ReporterTaxResidencyLoopPage, index) match {
         case Some(value) => form.fill(value)
-        case _ => form
+        case _           => form
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
+        "form"      -> preparedForm,
+        "id"        -> id,
+        "mode"      -> mode,
         "countries" -> countryJsonList(preparedForm.data, countries),
-        "index" -> index
+        "index"     -> index
       ) ++ contentProvider(request.userAnswers, id, index)
 
       renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(Ok(_))
@@ -81,54 +82,56 @@ class ReporterTaxResidentCountryController @Inject()(
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form                    = formProvider(countries)
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index
-          ) ++ contentProvider(request.userAnswers, id, index)
+            val json = Json.obj(
+              "form"      -> formWithErrors,
+              "id"        -> id,
+              "mode"      -> mode,
+              "countries" -> countryJsonList(formWithErrors.data, countries),
+              "index"     -> index
+            ) ++ contentProvider(request.userAnswers, id, index)
 
-          renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(BadRequest(_))
-        },
-        value => {
-          val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTaxResidentCountryPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
-            _ <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            renderer.render("reporter/reporterTaxResidentCountry.njk", json).map(BadRequest(_))
+          },
+          value => {
+            val taxResidencyLoopDetails = getReporterTaxResidentLoopDetails(value, request.userAnswers, id, index)
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(ReporterTaxResidentCountryPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(ReporterTaxResidencyLoopPage, id, taxResidencyLoopDetails))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+          }
+        )
   }
 
-  private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int) = {
-
+  private def contentProvider(userAnswers: UserAnswers, id: Int, index: Int) =
     userAnswers.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Individual) => //Display Individual Content
         Json.obj(
-          "pageTitle" -> "reporterIndividualTaxResidentCountry.title",
+          "pageTitle"   -> "reporterIndividualTaxResidentCountry.title",
           "pageHeading" -> "reporterIndividualTaxResidentCountry.heading",
           "displayInfo" -> false,
           "dynamicAlso" -> dynamicAlso(index),
-          "guidance" -> dynamicGuidance(index, "reporterIndividualTaxResidentCountry"))
+          "guidance"    -> dynamicGuidance(index, "reporterIndividualTaxResidentCountry")
+        )
 
       case _ => //Display Organisation Content
         Json.obj(
-          "pageTitle" -> "reporterOrganisationTaxResidentCountry.title",
+          "pageTitle"   -> "reporterOrganisationTaxResidentCountry.title",
           "pageHeading" -> "reporterOrganisationTaxResidentCountry.heading",
           "displayInfo" -> true,
-          "name" -> getReporterDetailsOrganisationName(userAnswers, id),
+          "name"        -> getReporterDetailsOrganisationName(userAnswers, id),
           "dynamicAlso" -> dynamicAlso(index),
-          "guidance" -> dynamicGuidance(index, "reporterOrganisationTaxResidentCountry"))
+          "guidance"    -> dynamicGuidance(index, "reporterOrganisationTaxResidentCountry")
+        )
     }
-  }
 
   private def getReporterTaxResidentLoopDetails(value: Country, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
     userAnswers.get(ReporterTaxResidencyLoopPage, id) match {

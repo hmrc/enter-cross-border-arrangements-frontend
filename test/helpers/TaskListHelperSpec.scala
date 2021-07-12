@@ -37,7 +37,7 @@ import pages.taxpayer.RelevantTaxpayerStatusPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import uk.gov.hmrc.viewmodels.Html
 
-class TaskListHelperSpec extends ControllerMockFixtures  with SpecBase with ScalaCheckPropertyChecks with Generators {
+class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val mockUrl                   = "home.gov.uk"
   val mockAltURL                = "notHome.gov.uk"

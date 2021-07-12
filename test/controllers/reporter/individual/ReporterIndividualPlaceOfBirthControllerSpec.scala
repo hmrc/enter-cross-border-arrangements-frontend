@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
   val formProvider = new ReporterIndividualPlaceOfBirthFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val reporterIndividualPlaceOfBirthRoute = routes.ReporterIndividualPlaceOfBirthController.onPageLoad(0, NormalMode).url
 
@@ -46,9 +46,9 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Control
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
+      val request        = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -71,12 +71,16 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Control
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterIndividualPlaceOfBirthPage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterIndividualPlaceOfBirthPage, 0, "answer")
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
+      val request        = FakeRequest(GET, reporterIndividualPlaceOfBirthRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -114,10 +118,10 @@ class ReporterIndividualPlaceOfBirthControllerSpec extends SpecBase with Control
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterIndividualPlaceOfBirthRoute).withFormUrlEncodedBody(("placeOfBirth", ""))
-      val boundForm = form.bind(Map("placeOfBirth" -> ""))
+      val request        = FakeRequest(POST, reporterIndividualPlaceOfBirthRoute).withFormUrlEncodedBody(("placeOfBirth", ""))
+      val boundForm      = form.bind(Map("placeOfBirth" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

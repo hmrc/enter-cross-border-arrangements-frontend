@@ -37,7 +37,7 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Contr
   lazy val intermediaryWhichCountriesExemptRoute = routes.IntermediaryWhichCountriesExemptController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IntermediaryWhichCountriesExemptFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "IntermediaryWhichCountriesExempt Controller" - {
 
@@ -46,9 +46,9 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Contr
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
+      val request        = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -71,12 +71,16 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Contr
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.values.tail.toSet).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryWhichCountriesExemptPage, 0, CountryList.values.tail.toSet)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
+      val request        = FakeRequest(GET, intermediaryWhichCountriesExemptRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -115,10 +119,10 @@ class IntermediaryWhichCountriesExemptControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request =  FakeRequest(POST, intermediaryWhichCountriesExemptRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, intermediaryWhichCountriesExemptRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

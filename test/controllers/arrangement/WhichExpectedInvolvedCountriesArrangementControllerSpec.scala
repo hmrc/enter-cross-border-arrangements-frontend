@@ -34,10 +34,11 @@ import scala.concurrent.Future
 
 class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  lazy val whichExpectedInvolvedCountriesArrangementRoute = controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode).url
+  lazy val whichExpectedInvolvedCountriesArrangementRoute =
+    controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(0, NormalMode).url
 
   val formProvider = new WhichExpectedInvolvedCountriesArrangementFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "WhichExpectedInvolvedCountriesArrangement Controller" - {
 
@@ -47,9 +48,9 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
+      val request        = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -72,14 +73,18 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.values.toSet).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, CountryList.values.toSet)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
+      val request        = FakeRequest(GET, whichExpectedInvolvedCountriesArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +125,10 @@ class WhichExpectedInvolvedCountriesArrangementControllerSpec extends SpecBase w
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request =  FakeRequest(POST, whichExpectedInvolvedCountriesArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, whichExpectedInvolvedCountriesArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

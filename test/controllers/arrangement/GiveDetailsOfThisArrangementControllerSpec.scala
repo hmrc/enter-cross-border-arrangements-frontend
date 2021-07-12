@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new GiveDetailsOfThisArrangementFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val giveDetailsOfThisArrangementRoute = routes.GiveDetailsOfThisArrangementController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with Controlle
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, giveDetailsOfThisArrangementRoute)
+      val request        = FakeRequest(GET, giveDetailsOfThisArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -72,14 +72,18 @@ class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with Controlle
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(GiveDetailsOfThisArrangementPage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(GiveDetailsOfThisArrangementPage, 0, "answer")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, giveDetailsOfThisArrangementRoute)
+      val request        = FakeRequest(GET, giveDetailsOfThisArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,10 +123,10 @@ class GiveDetailsOfThisArrangementControllerSpec extends SpecBase with Controlle
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, giveDetailsOfThisArrangementRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, giveDetailsOfThisArrangementRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

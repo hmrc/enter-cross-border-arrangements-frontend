@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class DisclosureNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DisclosureNameFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val disclosureNameRoute = routes.DisclosureNameController.onPageLoad(NormalMode).url
 
@@ -48,9 +48,9 @@ class DisclosureNameControllerSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, disclosureNameRoute)
+      val request        = FakeRequest(GET, disclosureNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,14 +73,18 @@ class DisclosureNameControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureNamePage, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureNamePage, "answer")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, disclosureNameRoute)
+      val request        = FakeRequest(GET, disclosureNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,10 +123,10 @@ class DisclosureNameControllerSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, disclosureNameRoute).withFormUrlEncodedBody(("disclosureName", ""))
-      val boundForm = form.bind(Map("disclosureName" -> ""))
+      val request        = FakeRequest(POST, disclosureNameRoute).withFormUrlEncodedBody(("disclosureName", ""))
+      val boundForm      = form.bind(Map("disclosureName" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

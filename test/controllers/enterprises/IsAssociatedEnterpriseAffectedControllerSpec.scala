@@ -35,9 +35,9 @@ import scala.concurrent.Future
 class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new IsAssociatedEnterpriseAffectedFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
-  lazy private val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(0, NormalMode).url
+  private lazy val isAssociatedEnterpriseAffectedRoute = controllers.enterprises.routes.IsAssociatedEnterpriseAffectedController.onPageLoad(0, NormalMode).url
 
   "IsAssociatedEnterpriseAffected Controller" - {
 
@@ -47,9 +47,9 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Control
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
+      val request        = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,13 +73,17 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Control
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, true)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
+      val request        = FakeRequest(GET, isAssociatedEnterpriseAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -122,10 +126,10 @@ class IsAssociatedEnterpriseAffectedControllerSpec extends SpecBase with Control
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, isAssociatedEnterpriseAffectedRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, isAssociatedEnterpriseAffectedRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -40,7 +40,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
   val httpClient: HttpClient = mock[HttpClient]
 
   val mockCrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-  val mockErrorHandler = mock[ErrorHandler]
+  val mockErrorHandler                     = mock[ErrorHandler]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -67,11 +67,15 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
         )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
+          .success
+          .value
         retrieveUserAnswersData(userAnswers)
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(app, request).value
 
@@ -90,14 +94,18 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
         )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
+          .success
+          .value
         retrieveUserAnswersData(userAnswers)
 
         when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(true))
 
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(app, request).value
 
@@ -105,7 +113,7 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
 
         redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/reporter/taxpayers/implementation-date/0"
       }
-  }
+    }
 
     "must redirect to 'Check your Answers' page when the arrangement is not marketable " - {
 
@@ -118,12 +126,16 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
         )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
+          .success
+          .value
 
         retrieveUserAnswersData(userAnswers)
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(app, request).value
 
@@ -141,15 +153,19 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
         )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
+          .success
+          .value
 
         retrieveUserAnswersData(userAnswers)
 
         when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(false))
 
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(app, request).value
 
@@ -167,15 +183,19 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
         )
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureDetailsPage, 0, disclosureDetails)
-          .success.value
+          .success
+          .value
 
         retrieveUserAnswersData(userAnswers)
 
         when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.successful(false))
 
-        val request = FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
+        val request =
+          FakeRequest(GET, controllers.reporter.taxpayer.routes.ReporterTaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 
         val result = route(app, request).value
 
@@ -196,14 +216,17 @@ class ReportTaxpayersMarketableArrangementGatewayControllerSpec extends SpecBase
     )
 
     val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+      .success
+      .value
       .set(DisclosureDetailsPage, 0, disclosureDetails)
-      .success.value
+      .success
+      .value
     retrieveUserAnswersData(userAnswers)
 
     when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any())).thenReturn(Future.failed(new Exception("Error")))
 
-    when(mockErrorHandler.onServerError(any(),any())).thenReturn(Future.successful(result = InternalServerError))
+    when(mockErrorHandler.onServerError(any(), any())).thenReturn(Future.successful(result = InternalServerError))
 
     val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersMarketableArrangementGatewayController.onRouting(0, NormalMode).url)
 

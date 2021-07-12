@@ -28,11 +28,7 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, NO_CONTENT}
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.WireMockHelper
 
-class CrossBorderArrangementsConnectorSpec extends SpecBase
-  with MockServiceApp
-  with ScalaCheckPropertyChecks
-  with WireMockHelper
-  with Generators {
+class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckPropertyChecks with WireMockHelper with Generators {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -48,13 +44,12 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return true if arrangement id is valid and was created by HMRC" in {
         forAll(validArrangementID) {
           id =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-arrangement-id/$id",
               NO_CONTENT
             )
 
-            whenReady(connector.verifyArrangementId(id)){
+            whenReady(connector.verifyArrangementId(id)) {
               result =>
                 result mustBe true
             }
@@ -64,13 +59,12 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if arrangement id wasn't created by HMRC" in {
         forAll(alphaStr) {
           invalidID =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-arrangement-id/$invalidID",
               NOT_FOUND
             )
 
-            whenReady(connector.verifyArrangementId(invalidID)){
+            whenReady(connector.verifyArrangementId(invalidID)) {
               result =>
                 result mustBe false
             }
@@ -84,13 +78,12 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return true if arrangement and disclosure ids exist and are from the same submission" in {
         forAll(validArrangementID, validDisclosureID) {
           (arrangementID, disclosureID) =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
               NO_CONTENT
             )
 
-            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)) {
               result =>
                 result mustBe IDVerificationStatus(isValid = true, IDVerificationStatus.IDsFound)
             }
@@ -100,14 +93,13 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if arrangement id is not found" in {
         forAll(validArrangementID, validDisclosureID) {
           (arrangementID, disclosureID) =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
               NOT_FOUND,
               "Arrangement ID not found"
             )
 
-            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)) {
               result =>
                 result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.ArrangementIDNotFound)
             }
@@ -117,14 +109,13 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if disclosure id is not found for an enrolment id" in {
         forAll(validArrangementID, validDisclosureID) {
           (arrangementID, disclosureID) =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
               NOT_FOUND,
               "Disclosure ID doesn't match enrolment ID"
             )
 
-            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)) {
               result =>
                 result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.DisclosureIDNotFound)
             }
@@ -134,14 +125,13 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if arrangement and disclosure ids are not from the same submission" in {
         forAll(validArrangementID, validDisclosureID) {
           (arrangementID, disclosureID) =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
               NOT_FOUND,
               "Arrangement ID and Disclosure ID are not from the same submission"
             )
 
-            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)) {
               result =>
                 result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.IDsDoNotMatch)
             }
@@ -151,14 +141,13 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase
       "should return false if arrangement and disclosure ids are not found" in {
         forAll(validArrangementID, validDisclosureID) {
           (arrangementID, disclosureID) =>
-
             stubResponse(
               s"/disclose-cross-border-arrangements/verify-ids/$arrangementID-$disclosureID-$enrolmentID",
               BAD_REQUEST,
               "IDs not found"
             )
 
-            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)){
+            whenReady(connector.verifyDisclosureIDs(arrangementID, disclosureID, enrolmentID)) {
               result =>
                 result mustBe IDVerificationStatus(isValid = false, IDVerificationStatus.IDsNotFound)
             }

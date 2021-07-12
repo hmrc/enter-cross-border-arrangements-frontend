@@ -39,19 +39,20 @@ import scala.concurrent.Future
 class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhatAreTheTaxNumbersForNonUKIndividualFormProvider
-  val form = formProvider()
-  val index: Int = 0
+  val form         = formProvider()
+  val index: Int   = 0
 
-  val taxNumber: String = "123ABC"
+  val taxNumber: String                        = "123ABC"
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
-  val selectedCountry: Country = Country("valid", "FR", "France")
+  val selectedCountry: Country                 = Country("valid", "FR", "France")
 
-  lazy val whatAreTheTaxNumbersForNonUKIndividualRoute = controllers.individual.routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(0, NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForNonUKIndividualRoute =
+    controllers.individual.routes.WhatAreTheTaxNumbersForNonUKIndividualController.onPageLoad(0, NormalMode, index).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
     .overrides(
-      bind[NavigatorForIndividual].toInstance(FakeIndividualNavigator()),
+      bind[NavigatorForIndividual].toInstance(FakeIndividualNavigator())
     )
 
   "WhatAreTheTaxNumbersForNonUKIndividual Controller" - {
@@ -62,13 +63,17 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
 
       val updatedUserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualNamePage, 0, Name("firstName", "lastName")).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualNamePage, 0, Name("firstName", "lastName"))
+        .success
+        .value
 
       retrieveUserAnswersData(updatedUserAnswers)
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKIndividualRoute)
+      val request        = FakeRequest(GET, whatAreTheTaxNumbersForNonUKIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -77,11 +82,11 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode,
+        "form"           -> form,
+        "mode"           -> NormalMode,
         "individualName" -> "firstName lastName",
-        "country" -> "the country",
-        "index" -> index
+        "country"        -> "the country",
+        "index"          -> index
       )
 
       templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForNonUKIndividual.njk"
@@ -94,17 +99,21 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhatAreTheTaxNumbersForNonUKOrganisationPage, 0, taxReferenceNumbers)
-        .success.value
+        .success
+        .value
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForNonUKIndividualRoute)
+      val request        = FakeRequest(GET, whatAreTheTaxNumbersForNonUKIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -112,18 +121,20 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map(
-        "firstTaxNumber" -> taxNumber,
-        "secondTaxNumber" -> "",
-        "thirdTaxNumber" -> ""
-      ))
+      val filledForm = form.bind(
+        Map(
+          "firstTaxNumber"  -> taxNumber,
+          "secondTaxNumber" -> "",
+          "thirdTaxNumber"  -> ""
+        )
+      )
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode,
+        "form"           -> filledForm,
+        "mode"           -> NormalMode,
         "individualName" -> "the individual",
-        "country" -> "France",
-        "index" -> index
+        "country"        -> "France",
+        "index"          -> index
       )
 
       templateCaptor.getValue mustEqual "individual/whatAreTheTaxNumbersForNonUKIndividual.njk"
@@ -152,10 +163,10 @@ class WhatAreTheTaxNumbersForNonUKIndividualControllerSpec extends SpecBase with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, whatAreTheTaxNumbersForNonUKIndividualRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, whatAreTheTaxNumbersForNonUKIndividualRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

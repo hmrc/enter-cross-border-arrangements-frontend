@@ -38,17 +38,19 @@ import scala.concurrent.Future
 class ReporterIndividualSelectAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  lazy val reporterIndividualSelectAddressRoute = routes.ReporterIndividualSelectAddressController.onPageLoad(0, NormalMode).url
-  lazy val manualAddressURL = routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode).url
+  lazy val reporterIndividualSelectAddressRoute          = routes.ReporterIndividualSelectAddressController.onPageLoad(0, NormalMode).url
+  lazy val manualAddressURL                              = routes.ReporterIndividualAddressController.onPageLoad(0, NormalMode).url
 
   val formProvider = new SelectAddressFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   val selectedAddress = "1 Address line 1, Town, ZZ1 1ZZ"
+
   val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
   )
+
   val addressRadios: Seq[Radios.Radio] = Seq(
     Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
     Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
@@ -56,7 +58,8 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
 
   override def beforeEach: Unit = {
     reset(
-      mockRenderer, mockAddressLookupConnector
+      mockRenderer,
+      mockAddressLookupConnector
     )
 
     when(mockRenderer.render(any(), any())(any()))
@@ -76,15 +79,18 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
     "must return OK and the correct view for a GET" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, reporterIndividualSelectAddressRoute)
+      val request        = FakeRequest(GET, reporterIndividualSelectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -93,10 +99,10 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
+        "form"             -> form,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = form("value"), items = addressRadios)
+        "radios"           -> Radios(field = form("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
@@ -106,17 +112,21 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterIndividualSelectAddressPage, 0, selectedAddress)
-        .success.value
+        .success
+        .value
         .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, reporterIndividualSelectAddressRoute)
+      val request        = FakeRequest(GET, reporterIndividualSelectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -127,10 +137,10 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
       val filledForm = form.bind(Map("value" -> selectedAddress))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
+        "form"             -> filledForm,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = filledForm("value"), items = addressRadios)
+        "radios"           -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"
@@ -143,9 +153,12 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
-        .success.value
+        .success
+        .value
 
       val request =
         FakeRequest(POST, reporterIndividualSelectAddressRoute)
@@ -161,16 +174,19 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterIndividualPostcodePage, 0, "ZZ1 1ZZ")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(POST, reporterIndividualSelectAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterIndividualSelectAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -179,10 +195,10 @@ class ReporterIndividualSelectAddressControllerSpec extends SpecBase with Contro
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
+        "form"             -> boundForm,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = boundForm("value"), items = addressRadios)
+        "radios"           -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterSelectAddress.njk"

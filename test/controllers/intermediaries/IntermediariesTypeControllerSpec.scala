@@ -35,10 +35,10 @@ import scala.concurrent.Future
 
 class IntermediariesTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  private val formProvider = new IntermediariesTypeFormProvider()
+  private val formProvider           = new IntermediariesTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(0, NormalMode).url
+  private lazy val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(0, NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -49,9 +49,9 @@ class IntermediariesTypeControllerSpec extends SpecBase with ControllerMockFixtu
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request        = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,13 +75,17 @@ class IntermediariesTypeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediariesTypePage, 0, SelectType.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediariesTypePage, 0, SelectType.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request        = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -122,10 +126,10 @@ class IntermediariesTypeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
-      val boundForm = form.bind(Map("selectType" -> ""))
+      val request        = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
+      val boundForm      = form.bind(Map("selectType" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -146,7 +150,9 @@ class IntermediariesTypeControllerSpec extends SpecBase with ControllerMockFixtu
     "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
       val associatedEnterpriseTypeRoute: String = routes.IntermediariesTypeController.onPageLoad(0, CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IntermediariesTypePage, 0, SelectType.values.head)
         .success
         .value

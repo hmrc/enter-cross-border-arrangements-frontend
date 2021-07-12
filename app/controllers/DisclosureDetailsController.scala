@@ -50,66 +50,64 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-class DisclosureDetailsController @Inject()(
-    override val messagesApi: MessagesApi,
-    xmlGenerationService: XMLGenerationService,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
-    historyConnector: HistoryConnector,
-    frontendAppConfig: FrontendAppConfig,
-    val controllerComponents: MessagesControllerComponents,
-    navigator: NavigatorForDisclosure,
-    renderer: Renderer,
-    sessionRepository: SessionRepository
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DisclosureDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  xmlGenerationService: XMLGenerationService,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  contactRetrievalAction: ContactRetrievalAction,
+  historyConnector: HistoryConnector,
+  frontendAppConfig: FrontendAppConfig,
+  val controllerComponents: MessagesControllerComponents,
+  navigator: NavigatorForDisclosure,
+  renderer: Renderer,
+  sessionRepository: SessionRepository
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
-
       val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id).filterNot(_.sent).getOrElse(throw new DiscloseDetailsAlreadySentException(id))
 
       val arrangementMessage: String = disclosureDetails.arrangementID.fold("")(msg"disclosureDetails.heading.forArrangement".withArgs(_).resolve)
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap { isInitialDisclosureMarketable =>
-
-        val json = Json.obj(
-          "id" -> id,
-          "arrangementID" -> arrangementMessage,
-          "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
-          "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, isInitialDisclosureMarketable),
-          "reporterDetailsTaskListItem" -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
-          "relevantTaxpayerTaskListItem" -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
-          "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
-          "intermediariesTaskListItem" -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
-          "othersAffectedTaskListItem" -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
-          "disclosureTaskListItem" -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-          "userCanSubmit" -> userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable),
-          "displaySectionOptional" -> displaySectionOptional(request.userAnswers, id, isInitialDisclosureMarketable),
-          "backLink" -> backLink,
-          "summaryLink" -> summaryLink
-        )
-        renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
+      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap {
+        isInitialDisclosureMarketable =>
+          val json = Json.obj(
+            "id"                               -> id,
+            "arrangementID"                    -> arrangementMessage,
+            "hallmarksTaskListItem"            -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
+            "arrangementDetailsTaskListItem"   -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, isInitialDisclosureMarketable),
+            "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
+            "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
+            "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
+            "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
+            "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
+            "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
+            "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable),
+            "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, isInitialDisclosureMarketable),
+            "backLink"                         -> backLink,
+            "summaryLink"                      -> summaryLink
+          )
+          renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
       }
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
-        _.fold (
+        _.fold(
           errors =>
             for {
               updatedAnswersWithError <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
               _                       <- sessionRepository.set(updatedAnswersWithError)
-            } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url)
-          ,
+            } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url),
           updatedIds =>
             for {
               updatedUserAnswersWithSubmission <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, updatedIds))
@@ -120,21 +118,18 @@ class DisclosureDetailsController @Inject()(
       }
   }
 
-
-
-  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    (userAnswers.getBase(UnsubmittedDisclosurePage) map { unsubmittedDisclosures =>
-      val unsubmittedDisclosure = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
-      val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot { _._2 == id }.map { _._1 }
-      userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(submitted = true))
+  private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
+    (userAnswers.getBase(UnsubmittedDisclosurePage) map {
+      unsubmittedDisclosures =>
+        val unsubmittedDisclosure         = UnsubmittedDisclosurePage.fromIndex(id)(userAnswers)
+        val updatedUnsubmittedDisclosures = unsubmittedDisclosures.zipWithIndex.filterNot(_._2 == id).map(_._1)
+        userAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures :+ unsubmittedDisclosure.copy(submitted = true))
     }).getOrElse(Failure(new IllegalArgumentException("Unable to update unsubmitted disclosure.")))
-  }
 
   private def backLink: String =
     navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(None)(None)(0).url
 
-  private def disclosureTypeItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
-
+  private def disclosureTypeItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) =
     retrieveRowWithStatus(
       getJourneyStatus(ua, page, index),
       None,
@@ -143,7 +138,6 @@ class DisclosureDetailsController @Inject()(
       ariaLabel = "disclosure-details",
       rowStyle = "item"
     )
-  }
 
   private def hallmarksItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
@@ -155,17 +149,20 @@ class DisclosureDetailsController @Inject()(
       linkContent = "disclosureDetails.hallmarksLink",
       id = "hallmarks",
       ariaLabel = "arrangementDetails",
-      rowStyle = "item")
+      rowStyle = "item"
+    )
   }
 
-  private def arrangementsItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int,
-                               isInitialDisclosureMarketable: Boolean)(implicit messages: Messages) = {
+  private def arrangementsItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int, isInitialDisclosureMarketable: Boolean)(implicit
+    messages: Messages
+  ) = {
 
-    val dynamicLink = hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
+    val dynamicLink =
+      hrefToStartJourneyOrCya(ua, page, s"${frontendAppConfig.arrangementsUrl}/$index", s"${frontendAppConfig.arrangementsCYAUrl}/$index", index)
 
     val isHallmarkSectionComplete = ua.get(HallmarkStatusPage, index) match {
       case None if isInitialDisclosureMarketable => Restricted
-      case _ => getJourneyStatus(ua, page, index)
+      case _                                     => getJourneyStatus(ua, page, index)
     }
 
     retrieveRowWithStatus(
@@ -194,33 +191,33 @@ class DisclosureDetailsController @Inject()(
 
   private def relevantTaxpayersItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
-      val isReporterSectionComplete = ua.get(ReporterStatusPage, index) match {
-        case Some(Completed) => getJourneyStatus(ua, page, index)
-        case _ => Restricted
-      }
-
-      retrieveRowWithStatus(
-        isReporterSectionComplete,
-        Some(s"${frontendAppConfig.taxpayersUrl}/$index"),
-        linkContent = "disclosureDetails.relevantTaxpayersLink",
-        id = "taxpayers",
-        ariaLabel = "connected-parties",
-        rowStyle = "bottomless-item"
-      )
+    val isReporterSectionComplete = ua.get(ReporterStatusPage, index) match {
+      case Some(Completed) => getJourneyStatus(ua, page, index)
+      case _               => Restricted
     }
+
+    retrieveRowWithStatus(
+      isReporterSectionComplete,
+      Some(s"${frontendAppConfig.taxpayersUrl}/$index"),
+      linkContent = "disclosureDetails.relevantTaxpayersLink",
+      id = "taxpayers",
+      ariaLabel = "connected-parties",
+      rowStyle = "bottomless-item"
+    )
+  }
 
   private def associatedEnterpriseItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
     val isTaxpayerSectionComplete =
-      (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index))  match {
-        case (Some(Taxpayer), _, _) => getJourneyStatus(ua, page, index)
+      (ua.get(RoleInArrangementPage, index), ua.get(TaxpayerLoopPage, index), ua.get(RelevantTaxpayerStatusPage, index)) match {
+        case (Some(Taxpayer), _, _)              => getJourneyStatus(ua, page, index)
         case (Some(_), Some(_), Some(Completed)) => getJourneyStatus(ua, page, index)
-        case _ => Restricted
+        case _                                   => Restricted
       }
 
-      retrieveRowWithStatus(
-        isTaxpayerSectionComplete,
-        Some(s"${frontendAppConfig.associatedEnterpriseUrl}/$index"),
+    retrieveRowWithStatus(
+      isTaxpayerSectionComplete,
+      Some(s"${frontendAppConfig.associatedEnterpriseUrl}/$index"),
       linkContent = "disclosureDetails.associatedEnterpriseLink",
       id = "associatedEnterprise",
       ariaLabel = "connected-parties",
@@ -228,8 +225,7 @@ class DisclosureDetailsController @Inject()(
     )
   }
 
-  private def othersAffectedItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
-
+  private def othersAffectedItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) =
     retrieveRowWithStatus(
       getJourneyStatus(ua, page, index),
       Some(s"${frontendAppConfig.othersAffectedUrl}/$index"),
@@ -238,14 +234,12 @@ class DisclosureDetailsController @Inject()(
       ariaLabel = "connected-parties",
       rowStyle = "item"
     )
-  }
 
-  private def intermediariesItem(ua: UserAnswers,
-                                 page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
+  private def intermediariesItem(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int)(implicit messages: Messages) = {
 
     val isReporterSectionComplete = ua.get(ReporterStatusPage, index) match {
       case Some(Completed) => getJourneyStatus(ua, page, index)
-      case _ => Restricted
+      case _               => Restricted
     }
 
     retrieveRowWithStatus(
@@ -259,11 +253,10 @@ class DisclosureDetailsController @Inject()(
     )
   }
 
-  private def getJourneyStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int): WithName with JourneyStatus = {
+  private def getJourneyStatus(ua: UserAnswers, page: QuestionPage[JourneyStatus], index: Int): WithName with JourneyStatus =
     ua.get(page, index) match {
-      case Some(Completed) => Completed
+      case Some(Completed)  => Completed
       case Some(InProgress) => InProgress
-      case _ => NotStarted
+      case _                => NotStarted
     }
-  }
 }

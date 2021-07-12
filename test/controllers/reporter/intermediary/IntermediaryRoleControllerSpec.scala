@@ -41,7 +41,7 @@ class IntermediaryRoleControllerSpec extends SpecBase with ControllerMockFixture
   lazy val intermediaryRoleRoute = controllers.reporter.intermediary.routes.IntermediaryRoleController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IntermediaryRoleFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "IntermediaryRole Controller" - {
 
@@ -51,9 +51,9 @@ class IntermediaryRoleControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, intermediaryRoleRoute)
+      val request        = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -77,12 +77,16 @@ class IntermediaryRoleControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryRolePage, 0, IntermediaryRole.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryRolePage, 0, IntermediaryRole.values.head)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, intermediaryRoleRoute)
+      val request        = FakeRequest(GET, intermediaryRoleRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class IntermediaryRoleControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, intermediaryRoleRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, intermediaryRoleRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

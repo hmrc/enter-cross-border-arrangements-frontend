@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class DisclosureMarketableControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DisclosureMarketableFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val disclosureMarketableRoute = routes.DisclosureMarketableController.onPageLoad(NormalMode).url
 
@@ -48,9 +48,9 @@ class DisclosureMarketableControllerSpec extends SpecBase with ControllerMockFix
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, disclosureMarketableRoute)
+      val request        = FakeRequest(GET, disclosureMarketableRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,14 +74,18 @@ class DisclosureMarketableControllerSpec extends SpecBase with ControllerMockFix
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureMarketablePage, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureMarketablePage, true)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, disclosureMarketableRoute)
+      val request        = FakeRequest(GET, disclosureMarketableRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -122,10 +126,10 @@ class DisclosureMarketableControllerSpec extends SpecBase with ControllerMockFix
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, disclosureMarketableRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, disclosureMarketableRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

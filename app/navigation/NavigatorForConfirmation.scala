@@ -27,27 +27,30 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForConfirmation @Inject()() extends AbstractNavigator {
+class NavigatorForConfirmation @Inject() () extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
+  override val routeMap: Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
-    case DisclosureDetailsPage => _ => id => value => _ => value match {
-      case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad(id)
-      case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad(id)
-      case Some(Dac6rep)  => routes.ReplacementDisclosureConfirmationController.onPageLoad(id)
-      case Some(Dac6del)  => routes.YourDisclosureHasBeenDeletedController.onPageLoad()
-      case disclosureType => throw new IllegalStateException(s"Navigation to $disclosureType not yet implemented")
-    }
+    case DisclosureDetailsPage =>
+      _ =>
+        id =>
+          value =>
+            _ =>
+              value match {
+                case Some(Dac6new)  => routes.NewDisclosureConfirmationController.onPageLoad(id)
+                case Some(Dac6add)  => routes.AdditionalDisclosureConfirmationController.onPageLoad(id)
+                case Some(Dac6rep)  => routes.ReplacementDisclosureConfirmationController.onPageLoad(id)
+                case Some(Dac6del)  => routes.YourDisclosureHasBeenDeletedController.onPageLoad()
+                case disclosureType => throw new IllegalStateException(s"Navigation to $disclosureType not yet implemented")
+              }
   }
 
-  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ =>
-    _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
+  override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call = _ => _ => _ => _ => _ => controllers.routes.IndexController.onPageLoad()
 
-  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
+  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call =
     checkRoute match {
-      case DefaultRouting(CheckMode)               => controllers.routes.IndexController.onPageLoad()
-      case _                                       => jumpTo
+      case DefaultRouting(CheckMode) => controllers.routes.IndexController.onPageLoad()
+      case _                         => jumpTo
     }
-  }
 
 }

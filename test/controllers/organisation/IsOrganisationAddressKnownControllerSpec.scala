@@ -35,9 +35,9 @@ import scala.concurrent.Future
 class IsOrganisationAddressKnownControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsOrganisationAddressKnownFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
-  lazy val isOrganisationAddressKnownRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, NormalMode).url
+  lazy val isOrganisationAddressKnownRoute          = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, NormalMode).url
   lazy val isOrganisationAddressKnownCheckModeRoute = controllers.organisation.routes.IsOrganisationAddressKnownController.onPageLoad(0, CheckMode).url
 
   "IsOrganisationAddressKnown Controller" - {
@@ -47,9 +47,9 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
+      val request        = FakeRequest(GET, isOrganisationAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,12 +73,16 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with ControllerM
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsOrganisationAddressKnownPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsOrganisationAddressKnownPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isOrganisationAddressKnownRoute)
+      val request        = FakeRequest(GET, isOrganisationAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,10 +123,10 @@ class IsOrganisationAddressKnownControllerSpec extends SpecBase with ControllerM
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, isOrganisationAddressKnownRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, isOrganisationAddressKnownRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

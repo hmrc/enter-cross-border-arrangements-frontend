@@ -37,7 +37,7 @@ class CountryListControllerSpec extends SpecBase with ControllerMockFixtures wit
   lazy val exemptCountriesRoute = routes.ExemptCountriesController.onPageLoad(0, NormalMode).url
 
   val formProvider = new ExemptCountriesFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "ExemptCountries Controller" - {
 
@@ -46,9 +46,9 @@ class CountryListControllerSpec extends SpecBase with ControllerMockFixtures wit
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, exemptCountriesRoute)
+      val request        = FakeRequest(GET, exemptCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -71,13 +71,17 @@ class CountryListControllerSpec extends SpecBase with ControllerMockFixtures wit
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ExemptCountriesPage, 0, CountryList.values.toSet).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ExemptCountriesPage, 0, CountryList.values.toSet)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, exemptCountriesRoute)
+      val request        = FakeRequest(GET, exemptCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,10 +123,10 @@ class CountryListControllerSpec extends SpecBase with ControllerMockFixtures wit
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request =  FakeRequest(POST, exemptCountriesRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, exemptCountriesRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -50,11 +50,11 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json = jsonCaptor.getValue
+    val json                 = jsonCaptor.getValue
     val taxpayersSummaryRows = (json \ "taxpayersSummary").toString
 
     templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
@@ -66,33 +66,41 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
   }
 
   val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
-  val email = "email@email.com"
-  val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
-  val taxpayers = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)), None))
+  val email            = "email@email.com"
+  val taxResidencies   = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+  val taxpayers        = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)), None))
 
   "TaxpayersCheckYourAnswers Controller - onPageload" - {
 
     "must return rows for a taxpayer who is an organisation" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
-        .success.value
+        .success
+        .value
         .set(OrganisationNamePage, 0, "Name")
-        .success.value
+        .success
+        .value
         .set(IsOrganisationAddressKnownPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(EmailAddressQuestionForOrganisationPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(EmailAddressForOrganisationPage, 0, "email@email.com")
-        .success.value
+        .success
+        .value
 
-      verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
-        rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
-        rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
+      verifyList(userAnswers) {
+        rows =>
+          rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
+          rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+          rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
       }
     }
 
@@ -100,101 +108,120 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
       val dob = LocalDate.of(2020, 1, 1)
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
-        .success.value
+        .success
+        .value
         .set(IndividualNamePage, 0, Name("First", "Last"))
-        .success.value
+        .success
+        .value
         .set(IsIndividualDateOfBirthKnownPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(IndividualDateOfBirthPage, 0, dob)
-        .success.value
+        .success
+        .value
         .set(IsIndividualPlaceOfBirthKnownPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(EmailAddressQuestionForIndividualPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(EmailAddressForIndividualPage, 0, "email@email.com")
-        .success.value
+        .success
+        .value
 
-      verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Individual"}""") mustBe true
-        rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
-        rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their place of birth?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
-        rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
+      verifyList(userAnswers) {
+        rows =>
+          rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Individual"}""") mustBe true
+          rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
+          rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their place of birth?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+          rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
       }
     }
   }
 
-    "must return an implementing date an organisation" in {
+  "must return an implementing date an organisation" in {
 
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
-        .success.value
-        .set(OrganisationNamePage, 0, "Name")
-        .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0,
-          LocalDate.of(2002,1,1))
-        .success.value
+    val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+      .success
+      .value
+      .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
+      .success
+      .value
+      .set(OrganisationNamePage, 0, "Name")
+      .success
+      .value
+      .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.of(2002, 1, 1))
+      .success
+      .value
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    when(mockRenderer.render(any(), any())(any()))
+      .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(userAnswers)
+    retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
-      val result = route(app, request).value
-      status(result) mustEqual OK
+    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
+    val result  = route(app, request).value
+    status(result) mustEqual OK
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val json = jsonCaptor.getValue
-      val implementingDateRow  = (json \ "implementingDateSummary").toString
+    val json                = jsonCaptor.getValue
+    val implementingDateRow = (json \ "implementingDateSummary").toString
 
-      templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
-      implementingDateRow.contains("Implementing date") mustBe true
-    }
+    templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
+    implementingDateRow.contains("Implementing date") mustBe true
+  }
 
-    "must return an implementing date individual" in {
-      val dob = LocalDate.of(2020, 1, 1)
+  "must return an implementing date individual" in {
+    val dob = LocalDate.of(2020, 1, 1)
 
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
-        .success.value
-        .set(IndividualNamePage, 0, Name("First", "Last"))
-        .success.value
-        .set(IndividualDateOfBirthPage, 0, dob)
-        .success.value
-        .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0,
-          LocalDate.of(2002,1,1))
-        .success.value
+    val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+      .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+      .success
+      .value
+      .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
+      .success
+      .value
+      .set(IndividualNamePage, 0, Name("First", "Last"))
+      .success
+      .value
+      .set(IndividualDateOfBirthPage, 0, dob)
+      .success
+      .value
+      .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.of(2002, 1, 1))
+      .success
+      .value
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    when(mockRenderer.render(any(), any())(any()))
+      .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
-      val result = route(app, request).value
-      status(result) mustEqual OK
+    retrieveUserAnswersData(userAnswers)
+    val request = FakeRequest(GET, controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(0, None).url)
+    val result  = route(app, request).value
+    status(result) mustEqual OK
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val json = jsonCaptor.getValue
-      val implementingDateRow  = (json \ "implementingDateSummary").toString
+    val json                = jsonCaptor.getValue
+    val implementingDateRow = (json \ "implementingDateSummary").toString
 
-      templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
-      implementingDateRow.contains("Implementing date") mustBe true
-    }
+    templateCaptor.getValue mustEqual "taxpayer/check-your-answers-taxpayers.njk"
+    implementingDateRow.contains("Implementing date") mustBe true
+  }
 
   "TaxpayersCheckYourAnswersController - onSubmit" - {
 
@@ -203,7 +230,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
     "must redirect to the taxpayers update page when valid data is submitted for an organisation taxpayer" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerSelectTypePage, 0, SelectType.Organisation)
         .success
         .value
@@ -213,12 +242,13 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
         .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
         .success
         .value
-        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
-        .success.value
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("", "GB", "United Kingdom")), None, None, None, None)))
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-     when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val request =
         FakeRequest(POST, taxpayersCheckYourAnswersRoute)
@@ -232,7 +262,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
 
     "must redirect to the taxpayers update page when valid data is submitted for an individual taxpayer" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerSelectTypePage, 0, SelectType.Individual)
         .success
         .value
@@ -245,8 +277,9 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
         .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
         .success
         .value
-        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None)))
-        .success.value
+        .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(Country("", "GB", "United Kingdom")), None, None, None, None)))
+        .success
+        .value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -264,4 +297,3 @@ class TaxpayersCheckYourAnswersControllerSpec extends SpecBase with ControllerMo
   }
 
 }
-

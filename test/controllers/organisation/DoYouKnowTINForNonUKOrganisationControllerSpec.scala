@@ -35,12 +35,13 @@ import scala.concurrent.Future
 class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   val selectedCountry: Country = Country("valid", "FR", "France")
-  val index: Int = 0
+  val index: Int               = 0
 
-  lazy val doYouKnowTINForNonUKOrganisationRoute = controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, NormalMode, index).url
+  lazy val doYouKnowTINForNonUKOrganisationRoute =
+    controllers.organisation.routes.DoYouKnowTINForNonUKOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "DoYouKnowTINForNonUKOrganisation Controller" - {
 
@@ -50,9 +51,9 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
+      val request        = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -61,12 +62,12 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("confirm")),
+        "form"             -> form,
+        "mode"             -> NormalMode,
+        "radios"           -> Radios.yesNo(form("confirm")),
         "organisationName" -> "the organisation",
-        "country" -> "the country",
-        "index" -> index
+        "country"          -> "the country",
+        "index"            -> index
       )
 
       templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
@@ -79,17 +80,21 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(DoYouKnowTINForNonUKOrganisationPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), Some(true), None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
+      val request        = FakeRequest(GET, doYouKnowTINForNonUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -100,12 +105,12 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
       val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("confirm")),
+        "form"             -> filledForm,
+        "mode"             -> NormalMode,
+        "radios"           -> Radios.yesNo(filledForm("confirm")),
         "organisationName" -> "the organisation",
-        "country" -> "France",
-        "index" -> index
+        "country"          -> "France",
+        "index"            -> index
       )
 
       templateCaptor.getValue mustEqual "organisation/doYouKnowTINForNonUKOrganisation.njk"
@@ -134,10 +139,10 @@ class DoYouKnowTINForNonUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, doYouKnowTINForNonUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

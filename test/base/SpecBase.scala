@@ -27,15 +27,24 @@ import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValues
-  with ScalaFutures with IntegrationPatience with MockitoSugar with BeforeAndAfterEach {
+trait SpecBase
+    extends AnyFreeSpec
+    with Matchers
+    with OptionValues
+    with TryValues
+    with ScalaFutures
+    with IntegrationPatience
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
   val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val userAnswersId = "id"
 
   def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 }

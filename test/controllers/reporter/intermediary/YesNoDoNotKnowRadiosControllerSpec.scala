@@ -37,7 +37,7 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFix
   lazy val intermediaryExemptionInEURoute = routes.IntermediaryExemptionInEUController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IntermediaryExemptionInEUFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "IntermediaryExemptionInEU Controller" - {
 
@@ -47,9 +47,9 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFix
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, intermediaryExemptionInEURoute)
+      val request        = FakeRequest(GET, intermediaryExemptionInEURoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,12 +73,16 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFix
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryExemptionInEUPage, 0, YesNoDoNotKnowRadios.values.head)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, intermediaryExemptionInEURoute)
+      val request        = FakeRequest(GET, intermediaryExemptionInEURoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -116,10 +120,10 @@ class YesNoDoNotKnowRadiosControllerSpec extends SpecBase with ControllerMockFix
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, intermediaryExemptionInEURoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, intermediaryExemptionInEURoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

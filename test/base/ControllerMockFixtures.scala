@@ -36,15 +36,15 @@ import uk.gov.hmrc.nunjucks.NunjucksRenderer
 trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
   self: TestSuite =>
 
-  def onwardRoute = Call("GET", "/foo")
-  final val mockRenderer: NunjucksRenderer = mock[NunjucksRenderer]
+  def onwardRoute                                        = Call("GET", "/foo")
+  final val mockRenderer: NunjucksRenderer               = mock[NunjucksRenderer]
   final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
-  final val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  protected val fakeNavigator: Navigator = new FakeNavigator(onwardRoute)
+  final val mockSessionRepository: SessionRepository     = mock[SessionRepository]
+  protected val fakeNavigator: Navigator                 = new FakeNavigator(onwardRoute)
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
-  def messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
+  def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
+  implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
 
   override def beforeEach {
     Mockito.reset(
@@ -55,13 +55,11 @@ trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppP
     super.beforeEach()
   }
 
-  protected def retrieveUserAnswersData(userAnswers: UserAnswers): Unit = {
+  protected def retrieveUserAnswersData(userAnswers: UserAnswers): Unit =
     when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(Some(userAnswers)))
-  }
 
-  protected def retrieveNoData(): Unit = {
+  protected def retrieveNoData(): Unit =
     when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(None))
-  }
 
   override def fakeApplication(): Application =
     guiceApplicationBuilder()

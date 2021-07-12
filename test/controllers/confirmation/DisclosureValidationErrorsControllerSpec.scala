@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  val errors = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
+  val errors                               = Seq("businessrules.initialDisclosure.needRelevantTaxPayer", "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates")
   lazy val disclosureValidationErrorsRoute = controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
 
   "DisclosureValidationErrors Controller" - {
@@ -45,15 +45,16 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
         "businessrules.initialDisclosure.needRelevantTaxPayer" ->
           Some("""As this arrangement is not marketable, it must have at least one relevant taxpayer.
             |If you are a relevant taxpayer, confirm this in your reporter’s details.
-            |If you are not, add at least one relevant taxpayer.""".stripMargin)
-        , "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates" ->
+            |If you are not, add at least one relevant taxpayer.""".stripMargin),
+        "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates" ->
+          Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""),
+        "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" ->
           Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates.""")
-        , "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" ->
-          Some("""As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""  )
       )
 
-      keysToErrors.keys.foreach { key =>
-        controller.keyMapper(key) must be (keysToErrors.get(key).flatten)
+      keysToErrors.keys.foreach {
+        key =>
+          controller.keyMapper(key) must be(keysToErrors.get(key).flatten)
       }
     }
 
@@ -64,9 +65,13 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
       val rows: Seq[String] = controller.toTableRows(errors, Option(_)).flatten.map(_.toString)
 
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_0"}}""")
-      rows must contain("""{"html":"businessrules.initialDisclosure.needRelevantTaxPayer","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}""")
+      rows must contain(
+        """{"html":"businessrules.initialDisclosure.needRelevantTaxPayer","classes":"govuk-table__cell","attributes":{"id":"errorMessage_0"}}"""
+      )
       rows must contain("""{"text":"Relevant taxpayers or reporter’s details","classes":"govuk-table__cell","attributes":{"id":"lineNumber_1"}}""")
-      rows must contain("""{"html":"businessrules.initialDisclosureMA.missingRelevantTaxPayerDates","classes":"govuk-table__cell","attributes":{"id":"errorMessage_1"}}""")
+      rows must contain(
+        """{"html":"businessrules.initialDisclosureMA.missingRelevantTaxPayerDates","classes":"govuk-table__cell","attributes":{"id":"errorMessage_1"}}"""
+      )
     }
 
     "must return OK and the correct view for a GET" in {
@@ -76,15 +81,17 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(ValidationErrorsPage, 0, errors)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, disclosureValidationErrorsRoute)
+      val request        = FakeRequest(GET, disclosureValidationErrorsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -107,9 +114,11 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(ValidationErrorsPage, 0, Seq())
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -130,9 +139,11 @@ class DisclosureValidationErrorsControllerSpec extends SpecBase with ControllerM
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(ValidationErrorsPage, 0, Seq("unknown"))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 

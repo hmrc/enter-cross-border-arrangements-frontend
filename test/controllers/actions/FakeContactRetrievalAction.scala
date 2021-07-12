@@ -30,7 +30,7 @@ class FakeContactRetrievalProvider(dataToReturn: UserAnswers, contactDetails: Op
 }
 
 class FakeContactRetrievalAction(dataToReturn: UserAnswers, contactDetails: Option[ContactDetails])
-  extends ActionTransformer[DataRequest, DataRequestWithContacts] {
+    extends ActionTransformer[DataRequest, DataRequestWithContacts] {
 
   override protected def transform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] =
     Future(DataRequestWithContacts(request.request, request.internalId, request.enrolmentID, dataToReturn, contactDetails))

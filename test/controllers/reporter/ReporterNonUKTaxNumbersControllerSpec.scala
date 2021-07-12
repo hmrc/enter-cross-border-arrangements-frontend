@@ -39,13 +39,13 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/tax-resident-countries-1/0")
 
   val formProvider = new ReporterNonUKTaxNumbersFormProvider()
-  val index = 0
+  val index        = 0
 
-  val taxNumber: String = "123ABC"
+  val taxNumber: String                        = "123ABC"
   val taxReferenceNumbers: TaxReferenceNumbers = TaxReferenceNumbers(taxNumber, None, None)
-  val selectedCountry: Country = Country("valid", "FR", "France")
-  val reporterIndividualKey = "reporterIndividual"
-  val reporterOrganisationKey = "reporterOrganisation"
+  val selectedCountry: Country                 = Country("valid", "FR", "France")
+  val reporterIndividualKey                    = "reporterIndividual"
+  val reporterOrganisationKey                  = "reporterOrganisation"
 
   lazy val reporterNonUKTaxNumbersRoute = routes.ReporterNonUKTaxNumbersController.onPageLoad(0, NormalMode, index).url
 
@@ -58,9 +58,9 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
 
       val form = formProvider(reporterIndividualKey)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
+      val request        = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -83,18 +83,22 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterNonUKTaxNumbersPage, 0, taxReferenceNumbers)
-        .success.value
+        .success
+        .value
         .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, Some(taxReferenceNumbers), None, None)))
-        .success.value
+        .success
+        .value
 
       val form = formProvider(reporterIndividualKey)
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
+      val request        = FakeRequest(GET, reporterNonUKTaxNumbersRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -102,16 +106,18 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map(
-        "firstTaxNumber" -> taxNumber,
-        "secondTaxNumber" -> "",
-        "thirdTaxNumber" -> ""
-      ))
+      val filledForm = form.bind(
+        Map(
+          "firstTaxNumber"  -> taxNumber,
+          "secondTaxNumber" -> "",
+          "thirdTaxNumber"  -> ""
+        )
+      )
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode,
+        "form"    -> filledForm,
+        "mode"    -> NormalMode,
         "country" -> "France",
-        "index" -> index
+        "index"   -> index
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterNonUKTaxNumbers.njk"
@@ -137,16 +143,19 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterOrganisationOrIndividualPage, 0, Individual)
-        .success.value
+        .success
+        .value
 
       val form = formProvider(reporterIndividualKey)
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -170,14 +179,17 @@ class ReporterNonUKTaxNumbersControllerSpec extends SpecBase with ControllerMock
 
       val form = formProvider(reporterOrganisationKey)
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterOrganisationOrIndividualPage, 0, Organisation)
-        .success.value
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterNonUKTaxNumbersRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

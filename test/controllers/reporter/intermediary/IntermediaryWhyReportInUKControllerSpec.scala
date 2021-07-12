@@ -41,7 +41,7 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with ControllerMo
   lazy val whyReportInUKRoute = controllers.reporter.intermediary.routes.IntermediaryWhyReportInUKController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IntermediaryWhyReportInUKFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "WhyReportInUK Controller" - {
 
@@ -50,9 +50,9 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with ControllerMo
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, whyReportInUKRoute)
+      val request        = FakeRequest(GET, whyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -76,12 +76,16 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.values.head).success.value
-     retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, whyReportInUKRoute)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryWhyReportInUKPage, 0, IntermediaryWhyReportInUK.values.head)
+        .success
+        .value
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, whyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -121,10 +125,10 @@ class IntermediaryWhyReportInUKControllerSpec extends SpecBase with ControllerMo
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val request = FakeRequest(POST, whyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, whyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -56,22 +56,19 @@ import scala.concurrent.Future
 
 class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val addressLookup = AddressLookup(
-    Some("addressLine 1"),
-    Some("addressLine 2"),
-    Some("addressLine 3"),
-    Some("addressLine 4"),
-    "town",
-    Some("county"),
-    "postcode")
+  val addressLookup =
+    AddressLookup(Some("addressLine 1"), Some("addressLine 2"), Some("addressLine 3"), Some("addressLine 4"), "town", Some("county"), "postcode")
 
-  val france: Country = Country("valid", "FR", "FRANCE")
-  val tins: TaxReferenceNumbers = TaxReferenceNumbers("TIN123123", Some("TIN123123"), Some("TIN123123"))
-  val loopDetailsNonUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(france), Some(true), Some(tins),Some(false), None))
+  val france: Country                           = Country("valid", "FR", "FRANCE")
+  val tins: TaxReferenceNumbers                 = TaxReferenceNumbers("TIN123123", Some("TIN123123"), Some("TIN123123"))
+  val loopDetailsNonUK: IndexedSeq[LoopDetails] = IndexedSeq(LoopDetails(Some(false), Some(france), Some(true), Some(tins), Some(false), None))
 
   private val mockHistoryConnector = mock[HistoryConnector]
 
-  val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswersForOrganisation, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+  val fakeDataRetrieval = new FakeContactRetrievalAction(
+    userAnswersForOrganisation,
+    Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com")))
+  )
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -81,8 +78,8 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
     "return OK and the correct view for a GET" in {
 
-      val firstDisclosureSubmissionDetails = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
-        Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
+      val firstDisclosureSubmissionDetails =
+        SubmissionDetails("id", LocalDateTime.now(), "test.xml", Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
 
       val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetails))
 
@@ -93,51 +90,73 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
         disclosureType = DisclosureType.Dac6add
       )
 
-      val userAnswers =   userAnswersForOrganisation
+      val userAnswers = userAnswersForOrganisation
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(ReporterOrganisationOrIndividualPage, 0, Individual)
-        .success.value
-        .set(ReporterIndividualNamePage, 0, Name("firstname","surname"))
-        .success.value
-        .set(ReporterIndividualDateOfBirthPage,  0, LocalDate.of(1990, 1, 1))
-        .success.value
+        .success
+        .value
+        .set(ReporterIndividualNamePage, 0, Name("firstname", "surname"))
+        .success
+        .value
+        .set(ReporterIndividualDateOfBirthPage, 0, LocalDate.of(1990, 1, 1))
+        .success
+        .value
         .set(ReporterIndividualPlaceOfBirthPage, 0, "Place of Birth")
-        .success.value
+        .success
+        .value
         .set(ReporterSelectedAddressLookupPage, 0, addressLookup)
-        .success.value
+        .success
+        .value
         .set(ReporterIndividualEmailAddressQuestionPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(ReporterIndividualEmailAddressPage, 0, "email@email.com")
-        .success.value
+        .success
+        .value
         .set(ReporterTaxResidencyLoopPage, 0, loopDetailsNonUK)
-        .success.value
+        .success
+        .value
         .set(RoleInArrangementPage, 0, Taxpayer)
-        .success.value
+        .success
+        .value
         .set(IntermediaryWhyReportInUKPage, 0, TaxResidentUK)
-        .success.value
+        .success
+        .value
         .set(TaxpayerWhyReportInUKPage, 0, UkTaxResident)
-        .success.value
+        .success
+        .value
         .set(TaxpayerWhyReportArrangementPage, 0, NoIntermediaries)
-        .success.value
+        .success
+        .value
         .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.of(2020, 1, 1))
-        .success.value
+        .success
+        .value
         .set(ReporterStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(RelevantTaxpayerStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(IntermediariesStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(DisclosureStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(AffectedStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(AssociatedEnterpriseStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(HallmarkStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
         .set(ArrangementStatusPage, 0, JourneyStatus.Completed)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -147,7 +166,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
 
-      val getRequest = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
+      val getRequest     = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, getRequest).value
@@ -164,7 +183,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
       val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
       val reporterLiability = ReporterLiability("intermediary")
-      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
 
@@ -174,14 +193,14 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       submission.taxpayers.isEmpty mustBe true
 
       // therefore
-      submission.displayAssociatedEnterprises mustBe(false)
+      submission.displayAssociatedEnterprises mustBe false
     }
 
     "display associated enterprises otherwise break condition 1" in {
 
       val disclosureDetails = DisclosureDetails(disclosureName = "name")
       val reporterLiability = ReporterLiability("intermediary")
-      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
 
@@ -190,15 +209,14 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       submission.reporterDetails.exists(_.isIntermediary) mustBe true
       submission.taxpayers.isEmpty mustBe true
 
-
-      submission.displayAssociatedEnterprises mustBe(true)
+      submission.displayAssociatedEnterprises mustBe true
     }
 
     "display associated enterprises otherwise break condition 2" in {
 
       val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
       val reporterLiability = ReporterLiability("taxpayer")
-      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
 
@@ -207,27 +225,25 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       submission.reporterDetails.exists(_.isIntermediary) mustBe false
       submission.taxpayers.isEmpty mustBe true
 
-
-      submission.displayAssociatedEnterprises mustBe(true)
+      submission.displayAssociatedEnterprises mustBe true
     }
 
     "display associated enterprises otherwise break condition 3" in {
 
       val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
       val reporterLiability = ReporterLiability("intermediary")
-      val reporterDetails = ReporterDetails(individual = Some(validIndividual), liability =  Some(reporterLiability))
+      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val taxpayers = IndexedSeq(models.taxpayer.Taxpayer("ID"))
-      val submission = Submission(
-        enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails), taxpayers = taxpayers)
+      val submission =
+        Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails), taxpayers = taxpayers)
 
       // break condition 3:
       submission.disclosureDetails.initialDisclosureMA mustBe true
       submission.reporterDetails.exists(_.isIntermediary) mustBe true
       submission.taxpayers.isEmpty mustBe false
 
-
-      submission.displayAssociatedEnterprises mustBe(true)
+      submission.displayAssociatedEnterprises mustBe true
     }
   }
 }

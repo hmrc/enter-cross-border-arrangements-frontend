@@ -38,10 +38,10 @@ import scala.concurrent.Future
 
 class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  lazy private val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
+  private lazy val youHaveNotAddedAnyAssociatedEnterprisesRoute = routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 
   private val formProvider = new YouHaveNotAddedAnyAssociatedEnterprisesFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
   "YouHaveNotAddedAnyAssociatedEnterprises Controller" - {
 
@@ -51,9 +51,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -62,9 +62,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
-        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(form),
+        "form"                     -> form,
+        "mode"                     -> NormalMode,
+        "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(form),
         "associatedEnterpriseList" -> Json.arr()
       )
 
@@ -81,22 +81,27 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
         taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
       )
 
-      val enterpriseLoop = IndexedSeq(
-        AssociatedEnterprise("id", None, Some(organisation), List("Associated Enterprise"), isAffectedBy = false))
+      val enterpriseLoop = IndexedSeq(AssociatedEnterprise("id", None, Some(organisation), List("Associated Enterprise"), isAffectedBy = false))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
-        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
+        .success
+        .value
+        .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyAssociatedEnterprisesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val controller = app.injector.instanceOf[YouHaveNotAddedAnyAssociatedEnterprisesController]
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller     = app.injector.instanceOf[YouHaveNotAddedAnyAssociatedEnterprisesController]
 
       val result = route(app, request).value
 
@@ -109,9 +114,9 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
       val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> YouHaveNotAddedAnyAssociatedEnterprises.radios(filledForm),
+        "form"                     -> filledForm,
+        "mode"                     -> NormalMode,
+        "radios"                   -> YouHaveNotAddedAnyAssociatedEnterprises.radios(filledForm),
         "associatedEnterpriseList" -> expectedList
       )
 
@@ -142,10 +147,10 @@ class YouHaveNotAddedAnyAssociatedEnterprisesControllerSpec extends SpecBase wit
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, youHaveNotAddedAnyAssociatedEnterprisesRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

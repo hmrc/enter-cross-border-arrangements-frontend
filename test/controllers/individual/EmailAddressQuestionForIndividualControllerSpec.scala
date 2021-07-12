@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EmailAddressQuestionForIndividualFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val emailAddressQuestionForIndividualRoute = controllers.individual.routes.EmailAddressQuestionForIndividualController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Cont
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, emailAddressQuestionForIndividualRoute)
+      val request        = FakeRequest(GET, emailAddressQuestionForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,12 +73,16 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Cont
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(EmailAddressQuestionForIndividualPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(EmailAddressQuestionForIndividualPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, emailAddressQuestionForIndividualRoute)
+      val request        = FakeRequest(GET, emailAddressQuestionForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -121,10 +125,10 @@ class EmailAddressQuestionForIndividualControllerSpec extends SpecBase with Cont
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, emailAddressQuestionForIndividualRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, emailAddressQuestionForIndividualRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

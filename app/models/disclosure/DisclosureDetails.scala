@@ -17,16 +17,22 @@
 package models.disclosure
 
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
-import models.{DisclosureImportInstructionInvalidError, DisclosureInitialMarketableArrangementInvalidError, DisclosureNameEmptyError, GeneratedIDs, SubmissionError}
+import models.{
+  DisclosureImportInstructionInvalidError,
+  DisclosureInitialMarketableArrangementInvalidError,
+  DisclosureNameEmptyError,
+  GeneratedIDs,
+  SubmissionError
+}
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
   disclosureName: String,
   disclosureType: DisclosureType = DisclosureType.Dac6new,
   arrangementID: Option[String] = None,
-  disclosureID: Option[String]  = None,
-  initialDisclosureMA: Boolean  = false,
-  messageRefId: Option[String]  = None,
+  disclosureID: Option[String] = None,
+  initialDisclosureMA: Boolean = false,
+  messageRefId: Option[String] = None,
   firstInitialDisclosureMA: Option[Boolean] = None,
   sent: Boolean = false
 ) {
@@ -37,10 +43,10 @@ case class DisclosureDetails(
 
   def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
     copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
-      case (Dac6add, _)     => false
-      case (Dac6rep, None)  => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
+      case (Dac6add, _)           => false
+      case (Dac6rep, None)        => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
       case (Dac6rep, Some(value)) => value
-      case _                => initialDisclosureMA
+      case _                      => initialDisclosureMA
     })
 
   def validate: Either[SubmissionError, DisclosureDetails] =
@@ -55,4 +61,3 @@ object DisclosureDetails {
 
   implicit val format: OFormat[DisclosureDetails] = Json.format[DisclosureDetails]
 }
-

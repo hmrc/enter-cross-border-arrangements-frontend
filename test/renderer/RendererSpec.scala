@@ -42,7 +42,7 @@ class RendererSpec extends ControllerMockFixtures with ScalaFutures with BeforeA
           .thenReturn(Future.successful(Html("")))
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val renderer = app.injector.instanceOf[Renderer]
 
@@ -64,7 +64,7 @@ class RendererSpec extends ControllerMockFixtures with ScalaFutures with BeforeA
           .thenReturn(Future.successful(Html("")))
 
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         val renderer = app.injector.instanceOf[Renderer]
 
@@ -85,7 +85,7 @@ class RendererSpec extends ControllerMockFixtures with ScalaFutures with BeforeA
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val templateCaptor                       = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
         val renderer = app.injector.instanceOf[Renderer]

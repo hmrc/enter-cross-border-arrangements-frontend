@@ -38,7 +38,7 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Contr
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
 
   val formProvider = new ReporterEmailAddressFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val reporterEmailAddressRoute = routes.ReporterOrganisationEmailAddressController.onPageLoad(0, NormalMode).url
 
@@ -51,9 +51,9 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Contr
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request        = FakeRequest(GET, reporterEmailAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -76,13 +76,17 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterOrganisationEmailAddressPage, 0, "email@address.com").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterOrganisationEmailAddressPage, 0, "email@address.com")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterEmailAddressRoute)
+      val request        = FakeRequest(GET, reporterEmailAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class ReporterOrganisationEmailAddressControllerSpec extends SpecBase with Contr
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, reporterEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

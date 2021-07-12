@@ -24,9 +24,9 @@ import play.api.test.Helpers._
 class SignOutControllerSpec extends SpecBase with ControllerMockFixtures {
 
   private def signOutRoute: String = controllers.routes.SignOutController.signOut().url
-  val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val frontendAppConfig            = app.injector.instanceOf[FrontendAppConfig]
 
-  "SignOut Controller"  - {
+  "SignOut Controller" - {
 
     "redirect to feedback survey page" in {
 

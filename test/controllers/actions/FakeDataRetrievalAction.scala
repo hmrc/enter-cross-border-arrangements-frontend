@@ -28,7 +28,7 @@ class FakeDataRetrievalActionProvider(dataToReturn: Option[UserAnswers]) extends
     new FakeDataRetrievalAction(dataToReturn)
 }
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers] = None) extends ActionTransformer[IdentifierRequest, OptionalDataRequest]{
+class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers] = None) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     dataToReturn match {

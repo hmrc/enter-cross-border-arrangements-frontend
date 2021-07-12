@@ -37,24 +37,26 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
 
   "DisclosureAlreadySent Controller" - {
 
-
     "return OK and the correct view for a GET when Dac6new" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement")))
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, DisclosureDetails("name", Dac6new))
-        .success.value
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "option" -> "sent",
+        "option"      -> "sent",
         "backLinkUrl" -> "/disclose-cross-border-arrangements/manual/disclosure-received/0"
       )
 
@@ -76,17 +78,20 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement")))
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, DisclosureDetails("name", Dac6add))
-        .success.value
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "option" -> "sent",
+        "option"      -> "sent",
         "backLinkUrl" -> "/disclose-cross-border-arrangements/manual/addition-received/0"
       )
 
@@ -108,17 +113,20 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement")))
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, DisclosureDetails("name", Dac6rep))
-        .success.value
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, routes.DisclosureAlreadySentController.onSent(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "option" -> "sent",
+        "option"      -> "sent",
         "backLinkUrl" -> "/disclose-cross-border-arrangements/manual/replacement-received/0"
       )
 
@@ -140,17 +148,20 @@ class DisclosureAlreadySentControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My replacement")))
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, DisclosureDetails("name", Dac6del))
-        .success.value
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, routes.DisclosureAlreadySentController.onDeleted().url)
+      val application    = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request        = FakeRequest(GET, routes.DisclosureAlreadySentController.onDeleted().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val expectedJson = Json.obj(
-        "option" -> "deleted",
+        "option"      -> "deleted",
         "backLinkUrl" -> "/disclose-cross-border-arrangements/manual/disclosure/disclosure-has-been-deleted"
       )
 

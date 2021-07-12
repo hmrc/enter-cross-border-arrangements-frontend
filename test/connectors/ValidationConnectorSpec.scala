@@ -28,19 +28,16 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ValidationConnectorSpec  extends SpecBase
-  with MockServiceApp
-  with WireMockServerHandler
-  with Generators
-  with ScalaCheckPropertyChecks {
+class ValidationConnectorSpec extends SpecBase with MockServiceApp with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.cross-border-arrangements.port" -> server.port()
-    ).build()
+    )
+    .build()
 
   lazy val connector: ValidationConnector = app.injector.instanceOf[ValidationConnector]
-  val validationUrl = "/disclose-cross-border-arrangements/validate-manual-submission"
+  val validationUrl                       = "/disclose-cross-border-arrangements/validate-manual-submission"
 
   val successPayload =
     """

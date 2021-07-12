@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class IsIndividualAddressKnownControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsIndividualAddressKnownFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val isIndividualAddressKnownRoute = controllers.individual.routes.IsIndividualAddressKnownController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, isIndividualAddressKnownRoute)
+      val request        = FakeRequest(GET, isIndividualAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,13 +73,17 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsIndividualAddressKnownPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsIndividualAddressKnownPage, 0, true)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isIndividualAddressKnownRoute)
+      val request        = FakeRequest(GET, isIndividualAddressKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +124,10 @@ class IsIndividualAddressKnownControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, isIndividualAddressKnownRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, isIndividualAddressKnownRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

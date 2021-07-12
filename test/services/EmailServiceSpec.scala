@@ -30,22 +30,19 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class EmailServiceSpec extends SpecBase
-  with MockServiceApp
-  with Generators
-  with ScalaCheckPropertyChecks {
+class EmailServiceSpec extends SpecBase with MockServiceApp with Generators with ScalaCheckPropertyChecks {
 
   override def beforeEach: Unit =
     reset(
       mockEmailConnector
     )
 
-  val ids: GeneratedIDs = GeneratedIDs(Some("123"),Some("345"))
+  val ids: GeneratedIDs = GeneratedIDs(Some("123"), Some("345"))
   val importInstruction = "dac6new"
-  val messageRefID = "GB0000000XXX"
+  val messageRefID      = "GB0000000XXX"
 
   val mockEmailConnector: EmailConnector = mock[EmailConnector]
-  val emailService: EmailService = app.injector.instanceOf[EmailService]
+  val emailService: EmailService         = app.injector.instanceOf[EmailService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -63,10 +60,11 @@ class EmailServiceSpec extends SpecBase
         )
       val result = emailService.sendEmail(Some(contactDetails), ids, importInstruction, messageRefID)
 
-      whenReady(result) { result =>
-        result.map(_.status) mustBe Some(OK)
+      whenReady(result) {
+        result =>
+          result.map(_.status) mustBe Some(OK)
 
-        verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
       }
     }
 
@@ -80,10 +78,11 @@ class EmailServiceSpec extends SpecBase
 
       val result = emailService.sendEmail(Some(contactDetails), ids, importInstruction, messageRefID)
 
-      whenReady(result) { result =>
-        result.map(_.status) mustBe Some(OK)
+      whenReady(result) {
+        result =>
+          result.map(_.status) mustBe Some(OK)
 
-        verify(mockEmailConnector, times(2)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(2)).sendEmail(any())(any())
       }
     }
 
@@ -97,8 +96,9 @@ class EmailServiceSpec extends SpecBase
 
       val result = emailService.sendEmail(Some(contactDetails), ids, importInstruction, messageRefID)
 
-      whenReady(result) { result =>
-        result.map(_.status) mustBe None
+      whenReady(result) {
+        result =>
+          result.map(_.status) mustBe None
       }
     }
   }

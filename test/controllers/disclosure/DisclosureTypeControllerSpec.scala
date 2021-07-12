@@ -36,13 +36,12 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-
 class DisclosureTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   lazy val disclosureTypeRoute = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(NormalMode).url
 
   val formProvider = new DisclosureTypeFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   val mockConnector = mock[HistoryConnector]
 
@@ -61,9 +60,9 @@ class DisclosureTypeControllerSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, disclosureTypeRoute)
+      val request        = FakeRequest(GET, disclosureTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -89,14 +88,18 @@ class DisclosureTypeControllerSpec extends SpecBase with ControllerMockFixtures 
       when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureTypePage, DisclosureType.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, disclosureTypeRoute)
+      val request        = FakeRequest(GET, disclosureTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -140,10 +143,10 @@ class DisclosureTypeControllerSpec extends SpecBase with ControllerMockFixtures 
       when(mockConnector.getSubmissionDetails(any())(any())).thenReturn(Future.successful(false))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, disclosureTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, disclosureTypeRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class EmailAddressForOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EmailAddressForOrganisationFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val emailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, emailAddressForOrganisationRoute)
+      val request        = FakeRequest(GET, emailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -72,12 +72,16 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(EmailAddressForOrganisationPage, 0, "email@email.com").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(EmailAddressForOrganisationPage, 0, "email@email.com")
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, emailAddressForOrganisationRoute)
+      val request        = FakeRequest(GET, emailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -117,10 +121,10 @@ class EmailAddressForOrganisationControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, emailAddressForOrganisationRoute).withFormUrlEncodedBody(("email", ""))
-      val boundForm = form.bind(Map("email" -> ""))
+      val request        = FakeRequest(POST, emailAddressForOrganisationRoute).withFormUrlEncodedBody(("email", ""))
+      val boundForm      = form.bind(Map("email" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

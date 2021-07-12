@@ -26,24 +26,27 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.ExecutionContext
 
-class IndexController @Inject()(
-                                identify: IdentifierAction,
-                                getData: DataRetrievalAction,
-                                val controllerComponents: MessagesControllerComponents
-                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class IndexController @Inject() (
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  val controllerComponents: MessagesControllerComponents
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
-   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply()) { implicit request =>
-     request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
-       case Some(unsubmittedDisclosures) if filteredDisclosures(unsubmittedDisclosures).nonEmpty =>
-         Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
-       case _ =>
-         Redirect(controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url)
-     }
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply()) {
+    implicit request =>
+      request.userAnswers.flatMap(_.getBase(UnsubmittedDisclosurePage)) match {
+        case Some(unsubmittedDisclosures) if filteredDisclosures(unsubmittedDisclosures).nonEmpty =>
+          Redirect(controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
+        case _ =>
+          Redirect(controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url)
+      }
   }
 
-  private def filteredDisclosures(disclosures : Seq[UnsubmittedDisclosure]): Seq[UnsubmittedDisclosure] ={
+  private def filteredDisclosures(disclosures: Seq[UnsubmittedDisclosure]): Seq[UnsubmittedDisclosure] =
+    disclosures.filter(
+      disclosure => !disclosure.deleted && !disclosure.submitted
+    )
 
-    disclosures.filter(disclosure => !disclosure.deleted && !disclosure.submitted)
-
-  }
 }

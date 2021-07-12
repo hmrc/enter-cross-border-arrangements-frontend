@@ -42,23 +42,27 @@ import scala.concurrent.Future
 
 class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode).url
-  lazy private val selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute = controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, CheckMode).url
+  private lazy val selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute =
+    controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, NormalMode).url
+
+  private lazy val selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute =
+    controllers.enterprises.routes.SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController.onPageLoad(0, CheckMode).url
 
   private val formProvider = new SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
   private val address: Address = Address(Some(""), Some(""), Some(""), "Newcastle", Some("NE1"), Country("", "GB", "United Kingdom"))
-  private val email = "email@email.com"
-  private val taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
-  private val taxpayers = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)),None))
+  private val email            = "email@email.com"
+  private val taxResidencies   = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None))))
+  private val taxpayers        = IndexedSeq(Taxpayer("123", None, Some(Organisation("Taxpayers Ltd", Some(address), Some(email), taxResidencies)), None))
 
   private def taxpayerCheckboxes(form: Form[_], taxpayersList: IndexedSeq[Taxpayer]): Seq[Checkboxes.Item] = {
-        val field = form("value")
-        val items: Seq[Checkboxes.Checkbox] = taxpayersList.map { taxpayer =>
-          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
-        }
-        Checkboxes.set(field, items)
+    val field = form("value")
+    val items: Seq[Checkboxes.Checkbox] = taxpayersList.map {
+      taxpayer =>
+        Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+    }
+    Checkboxes.set(field, items)
   }
 
   "SelectAnyTaxpayersThisEnterpriseIsAssociatedWith Controller" - {
@@ -66,7 +70,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must return OK and the correct view for a GET" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerLoopPage, 0, taxpayers)
         .success
         .value
@@ -74,9 +80,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val request        = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -97,7 +103,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must populate the view correctly on a GET when in check mode and the question has previously been answered" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(TaxpayerLoopPage, 0, taxpayers)
         .success
         .value
@@ -108,9 +116,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute)
+      val request        = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithCheckRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -133,7 +141,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must populate the view correctly on a GET when taxpayer in reporter details has been selected" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
         .success
         .value
@@ -148,21 +158,23 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       val field = form("value")
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val request        = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-      
+
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
-        "checkboxes" -> Checkboxes.set(field,
-          Seq(Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}")))
+        "form" -> form,
+        "mode" -> NormalMode,
+        "checkboxes" -> Checkboxes.set(
+          field,
+          Seq(Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}"))
+        )
       )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
@@ -172,7 +184,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
     "must populate the view correctly on a GET when taxpayer in reporter details & a relevant taxpayer have been selected" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
         .success
         .value
@@ -190,9 +204,9 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
 
       val field = form("value")
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val request        = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -203,8 +217,10 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       val expectedJson = Json.obj(
         "form" -> form,
         "mode" -> NormalMode,
-        "checkboxes" -> Checkboxes.set(field,
-          Seq(Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}"),
+        "checkboxes" -> Checkboxes.set(
+          field,
+          Seq(
+            Checkboxes.Checkbox(label = Literal(reporterDetailsAsOrganisation.nameAsString), value = s"${reporterDetailsAsOrganisation.nameAsString}"),
             Checkboxes.Checkbox(label = Literal("Taxpayers Ltd"), value = "123"),
             Checkboxes.Checkbox(label = Literal("Other Taxpayers Ltd"), value = s"Another ID")
           )
@@ -212,47 +228,50 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithControllerSpec extends Spe
       )
     }
 
-      "must populate the view correctly on a GET when intermediary in reporter details & a relevant taxpayer have been selected" in {
+    "must populate the view correctly on a GET when intermediary in reporter details & a relevant taxpayer have been selected" in {
 
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
-          .success
-          .value
-          .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
-          .success
-          .value
-          .set(TaxpayerLoopPage, 0, validTaxpayers)
-          .success
-          .value
-          .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer Ltd"))
-          .success
-          .value
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterDetailsPage, 0, reporterDetailsAsOrganisation)
+        .success
+        .value
+        .set(RoleInArrangementPage, 0, RoleInArrangement.Intermediary)
+        .success
+        .value
+        .set(TaxpayerLoopPage, 0, validTaxpayers)
+        .success
+        .value
+        .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Taxpayer Ltd"))
+        .success
+        .value
 
-        when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
+      when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-        val field = form("value")
-        retrieveUserAnswersData(userAnswers)
-        val request = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val field = form("value")
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, selectAnyTaxpayersThisEnterpriseIsAssociatedWithRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-        val result = route(app, request).value
+      val result = route(app, request).value
 
-        status(result) mustEqual OK
+      status(result) mustEqual OK
 
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-        val expectedJson = Json.obj(
-          "form"       -> form,
-          "mode"       -> NormalMode,
-          "checkboxes" -> Checkboxes.set(field,
-            Seq(
-              Checkboxes.Checkbox(label = Literal("Taxpayers Ltd"), value = "123"),
-              Checkboxes.Checkbox(label = Literal("Other Taxpayers Ltd"), value = s"Another ID")
-            )
+      val expectedJson = Json.obj(
+        "form" -> form,
+        "mode" -> NormalMode,
+        "checkboxes" -> Checkboxes.set(
+          field,
+          Seq(
+            Checkboxes.Checkbox(label = Literal("Taxpayers Ltd"), value = "123"),
+            Checkboxes.Checkbox(label = Literal("Other Taxpayers Ltd"), value = s"Another ID")
           )
         )
+      )
 
       templateCaptor.getValue mustEqual "enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk"
       jsonCaptor.getValue must containJson(expectedJson)

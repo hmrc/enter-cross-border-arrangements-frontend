@@ -38,7 +38,7 @@ class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with Controlle
   lazy val taxpayerWhyReportArrangementRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportArrangementController.onPageLoad(0, NormalMode).url
 
   val formProvider = new TaxpayerWhyReportArrangementFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "TaxpayerWhyReportArrangement Controller" - {
 
@@ -49,9 +49,9 @@ class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with Controlle
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, taxpayerWhyReportArrangementRoute)
+      val request        = FakeRequest(GET, taxpayerWhyReportArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,12 +75,16 @@ class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with Controlle
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(TaxpayerWhyReportArrangementPage, 0, TaxpayerWhyReportArrangement.values.head)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, taxpayerWhyReportArrangementRoute)
+      val request        = FakeRequest(GET, taxpayerWhyReportArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +124,10 @@ class TaxpayerWhyReportArrangementControllerSpec extends SpecBase with Controlle
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, taxpayerWhyReportArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, taxpayerWhyReportArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

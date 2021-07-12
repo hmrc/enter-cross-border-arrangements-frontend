@@ -35,12 +35,13 @@ import scala.concurrent.Future
 
 class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new DoYouKnowAnyTINForUKOrganisationFormProvider()
-  val form = formProvider()
-  val index = 0
+  val formProvider                     = new DoYouKnowAnyTINForUKOrganisationFormProvider()
+  val form                             = formProvider()
+  val index                            = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val doYouKnowAnyTINForUKOrganisationRoute: String = controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, NormalMode, index).url
+  lazy val doYouKnowAnyTINForUKOrganisationRoute: String =
+    controllers.organisation.routes.DoYouKnowAnyTINForUKOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "DoYouKnowAnyTINForUKOrganisation Controller" - {
 
@@ -50,13 +51,17 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val updatedUserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(OrganisationNamePage, 0, "Paper Org").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(OrganisationNamePage, 0, "Paper Org")
+        .success
+        .value
 
       retrieveUserAnswersData(updatedUserAnswers)
-      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
+      val request        = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -80,19 +85,19 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(DoYouKnowAnyTINForUKOrganisationPage, 0, true)
         .success
         .value
-        .set(OrganisationLoopPage, 0, IndexedSeq(
-          LoopDetails(None, selectedCountry, None,None, Some(true), None))
-        )
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, selectedCountry, None, None, Some(true), None)))
         .success
         .value
-        retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -106,7 +111,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Contr
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(filledForm("confirm")),
-        "index" -> index
+        "index"  -> index
       )
 
       templateCaptor.getValue mustEqual "organisation/doYouKnowAnyTINForUKOrganisation.njk"
@@ -135,10 +140,10 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, doYouKnowAnyTINForUKOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -158,7 +163,7 @@ class DoYouKnowAnyTINForUKOrganisationControllerSpec extends SpecBase with Contr
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request = FakeRequest(GET, doYouKnowAnyTINForUKOrganisationRoute)
 

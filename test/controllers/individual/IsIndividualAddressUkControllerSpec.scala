@@ -33,11 +33,10 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.Future
 
-
 class IsIndividualAddressUkControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider: IsIndividualAddressUkFormProvider = new IsIndividualAddressUkFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val form: Form[Boolean]                             = formProvider()
 
   lazy val isIndividualAddressUkRoute: String = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(0, NormalMode).url
 
@@ -50,9 +49,9 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with ControllerMockFi
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, isIndividualAddressUkRoute)
+      val request        = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -76,12 +75,16 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsIndividualAddressUkPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsIndividualAddressUkPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isIndividualAddressUkRoute)
+      val request        = FakeRequest(GET, isIndividualAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -141,10 +144,10 @@ class IsIndividualAddressUkControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, isIndividualAddressUkRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, isIndividualAddressUkRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
