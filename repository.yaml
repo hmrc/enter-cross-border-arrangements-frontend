@@ -4,10 +4,9 @@ digital-service: DAC6
 leakDetectionExemptions:
   - ruleId: 'aws_secret_access_key'
     filePaths:
-      - '/app/utils/rows/ReporterRows.scala'
-      - '/app/utils/rows/IndividualRows.scala'
-      - '/app/utils/model/rows/IndividualModelRows.scala'
-      - '/test/forms/arrangement/DoYouKnowTheReasonToReportArrangementNowFormProviderSpec.scala'
-      - '/test/forms/individual/IsIndividualResidentForTaxOtherCountriesFormProviderSpec.scala'
-      - '/test/forms/organisation/WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec.scala'
-  {"mode":"full","isActive":false}
+       - '/app/utils/rows/ReporterRows.scala'
+       - '/app/utils/rows/IndividualRows.scala'
+       - '/app/utils/model/rows/IndividualModelRows.scala'
+       - '/test/forms/arrangement/DoYouKnowTheReasonToReportArrangementNowFormProviderSpec.scala'
+       - '/test/forms/individual/IsIndividualResidentForTaxOtherCountriesFormProviderSpec.scala'
+       - '/test/forms/organisation/WhatAreTheTaxNumbersForNonUKOrganisationFormProviderSpec.scala'
