@@ -165,20 +165,21 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp 
     "submitXMl" - {
       val mockHttpClient: HttpClient = mock[HttpClient]
 
-      val generatedIDs = (GeneratedIDs(Some("ArrangementID"),  Some("disclosureID"), None, None))
+      val generatedIDs = GeneratedIDs(Some("ArrangementID"), Some("disclosureID"), None, None)
 
       lazy val application: Application = new GuiceApplicationBuilder()
-        .overrides(bind[HttpClient].toInstance(mockHttpClient)).build()
+        .overrides(bind[HttpClient].toInstance(mockHttpClient))
+        .build()
 
       val conn = application.injector.instanceOf[CrossBorderArrangementsConnector]
 
       "must return list of generated ids" in {
 
-        when(mockHttpClient.POSTString[GeneratedIDs](any(),any(),any())(any(), any(), any()))
-          .thenReturn(Future.successful((generatedIDs)))
+        when(mockHttpClient.POSTString[GeneratedIDs](any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(generatedIDs))
 
         val expected: NodeSeq =
-        <testXml>
+          <testXml>
           <name>test</name>
         </testXml>
 
@@ -190,12 +191,12 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp 
 
       "must return true when Ok is returned from BackEnd" in {
 
-        when(mockHttpClient.GET[HttpResponse](any(),any(),any())(any(), any(), any()))
+        when(mockHttpClient.GET[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
 
         val arrangementID = "dummy"
 
-        whenReady(conn.isMarketableArrangement(arrangementID)){
+        whenReady(conn.isMarketableArrangement(arrangementID)) {
           result =>
             result mustBe true
         }

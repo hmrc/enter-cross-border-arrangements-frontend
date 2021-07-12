@@ -291,26 +291,35 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
         Seq(CountryList.UnitedKingdom).toSet
 
       val expectedValue: ExpectedArrangementValue = ExpectedArrangementValue(
-        currency = "CURRENCY"
-        , amount = Int.MaxValue
+        currency = "CURRENCY",
+        amount = Int.MaxValue
       )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsThisArrangementCalledPage,0, "arrangement")
-        .success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(WhatIsThisArrangementCalledPage, 0, "arrangement")
+        .success
+        .value
         .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-        .success.value
+        .success
+        .value
         .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-        .success.value
+        .success
+        .value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
-        .success.value
+        .success
+        .value
         .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
-        .success.value
+        .success
+        .value
         .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National Provisions")
-        .success.value
+        .success
+        .value
         .set(GiveDetailsOfThisArrangementPage, 0, "given")
-        .success.value
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

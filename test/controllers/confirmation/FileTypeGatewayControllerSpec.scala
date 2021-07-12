@@ -94,9 +94,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures
         .success
         .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, Some("disclosureID"), Some("messageRefID")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -128,9 +130,11 @@ class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures
         .success
         .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, None, Some("messageRefID")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 

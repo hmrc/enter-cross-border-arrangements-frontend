@@ -25,7 +25,7 @@ import scala.xml.{Elem, NodeSeq}
 class TransformationServiceSpec extends SpecBase with MockServiceApp {
 
   val prettyPrinter = new scala.xml.PrettyPrinter(80, 4)
-  val service = app.injector.instanceOf[TransformationService]
+  val service       = app.injector.instanceOf[TransformationService]
 
   "TransformationService" - {
 
@@ -38,10 +38,10 @@ class TransformationServiceSpec extends SpecBase with MockServiceApp {
     }
 
     "must construct the correct submission" in {
-      val fileName = "file.xml"
+      val fileName    = "file.xml"
       val enrolmentID = "1234"
 
-      val testSubmission  =
+      val testSubmission =
         <submission>
           <fileName>{fileName}</fileName>
           <enrolmentID>{enrolmentID}</enrolmentID>
@@ -50,7 +50,7 @@ class TransformationServiceSpec extends SpecBase with MockServiceApp {
 
       val document = scala.xml.XML.loadString(GeneratedXMLExamples.xmlForOrganisation)
 
-      val correctSubmission = service.constructSubmission(fileName, enrolmentID , document)
+      val correctSubmission = service.constructSubmission(fileName, enrolmentID, document)
 
       correctSubmission.isDefined mustBe true
       val doc = correctSubmission.get \ "file" \ "DAC6_Arrangement"

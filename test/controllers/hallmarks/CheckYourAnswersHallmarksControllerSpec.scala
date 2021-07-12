@@ -28,10 +28,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
-
 import scala.concurrent.Future
 
-class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMockFixtures  {
+class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Check Your Answers Controller" - {
 
@@ -138,7 +137,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
 
     "must redirect to task list page on submit" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D2").toSet)
         .success
         .value

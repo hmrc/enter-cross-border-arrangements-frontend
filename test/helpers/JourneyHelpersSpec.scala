@@ -142,15 +142,17 @@ class JourneyHelpersSpec extends ControllerMockFixtures with SpecBase with Scala
       }
     }
 
-  "incrementIndexIndividual" - {
+    "incrementIndexIndividual" - {
       val selectedCountry: Country = Country("valid", "GB", "United Kingdom")
 
       "must return index as 1 if user previously visited UK tin pages and they know TIN for another country (matching URI pattern failed)" in {
-        val individualLoopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
+        val individualLoopDetails                        = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None))
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/")
 
         val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(IndividualLoopPage, 0, individualLoopDetails)
           .success
           .value
@@ -160,11 +162,14 @@ class JourneyHelpersSpec extends ControllerMockFixtures with SpecBase with Scala
 
       "must add 1 to index from uri if users go through the loop more than once" in {
         val individualLoopDetails = IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), Some(false), None, None, None),
-          LoopDetails(None, Some(selectedCountry), None, None, None, None))
+                                               LoopDetails(None, Some(selectedCountry), None, None, None, None)
+        )
         val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/1")
 
         val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(IndividualLoopPage, 0, individualLoopDetails)
           .success
           .value
