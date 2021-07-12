@@ -20,13 +20,20 @@ import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
+import models.GeneratedIDs
 import models.disclosure.IDVerificationStatus
 import org.scalacheck.Gen.alphaStr
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, NO_CONTENT}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, NO_CONTENT, OK}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import utils.WireMockHelper
+import org.mockito.ArgumentMatchers.any
+
+import scala.concurrent.Future
+import scala.xml.{Elem, NodeSeq}
 
 class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckPropertyChecks with WireMockHelper with Generators {
 
@@ -154,6 +161,47 @@ class CrossBorderArrangementsConnectorSpec extends SpecBase with MockServiceApp 
         }
       }
     }
+
+    "submitXMl" - {
+      val mockHttpClient: HttpClient = mock[HttpClient]
+
+      val generatedIDs = (GeneratedIDs(Some("ArrangementID"),  Some("disclosureID"), None, None))
+
+      lazy val application: Application = new GuiceApplicationBuilder()
+        .overrides(bind[HttpClient].toInstance(mockHttpClient)).build()
+
+      val conn = application.injector.instanceOf[CrossBorderArrangementsConnector]
+
+      "must return list of generated ids" in {
+
+        when(mockHttpClient.POSTString[GeneratedIDs](any(),any(),any())(any(), any(), any()))
+          .thenReturn(Future.successful((generatedIDs)))
+
+        val expected: NodeSeq =
+        <testXml>
+          <name>test</name>
+        </testXml>
+
+        whenReady(conn.submitXML(expected)) {
+          result =>
+            result mustBe generatedIDs
+        }
+      }
+
+      "must return true when Ok is returned from BackEnd" in {
+
+        when(mockHttpClient.GET[HttpResponse](any(),any(),any())(any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(OK, "true")))
+
+        val arrangementID = "dummy"
+
+        whenReady(conn.isMarketableArrangement(arrangementID)){
+          result =>
+            result mustBe true
+        }
+      }
+    }
+
   }
 
   private def stubResponse(expectedUrl: String, expectedStatus: Int, expectedBody: String = ""): StubMapping =

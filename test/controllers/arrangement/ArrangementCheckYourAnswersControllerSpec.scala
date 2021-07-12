@@ -19,6 +19,7 @@ package controllers.arrangement
 import base.{ControllerMockFixtures, SpecBase}
 import generators.ModelGenerators
 import models.arrangement.ExpectedArrangementValue
+import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -284,5 +285,42 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
       }
     }
 
+    "must redirect to next page on submit" in {
+
+      val countries: Set[CountryList] =
+        Seq(CountryList.UnitedKingdom).toSet
+
+      val expectedValue: ExpectedArrangementValue = ExpectedArrangementValue(
+        currency = "CURRENCY"
+        , amount = Int.MaxValue
+      )
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(WhatIsThisArrangementCalledPage,0, "arrangement")
+        .success.value
+        .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
+        .success.value
+        .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
+        .success.value
+        .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
+        .success.value
+        .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
+        .success.value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National Provisions")
+        .success.value
+        .set(GiveDetailsOfThisArrangementPage, 0, "given")
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(POST, controllers.arrangement.routes.ArrangementCheckYourAnswersController.onSubmit(0).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/your-disclosure-details/0"
+    }
   }
 }

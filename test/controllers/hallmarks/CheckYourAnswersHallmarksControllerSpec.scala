@@ -17,7 +17,7 @@
 package controllers.hallmarks
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.hallmarks.HallmarkD1
+import models.hallmarks.{HallmarkD, HallmarkD1}
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -28,9 +28,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
+
 import scala.concurrent.Future
 
-class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMockFixtures {
+class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMockFixtures  {
 
   "Check Your Answers Controller" - {
 
@@ -133,6 +134,24 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
       templateCaptor.getValue mustEqual "hallmarks/check-your-answers-hallmarks.njk"
       list.contains("D1a") mustBe true
       list.contains("Other page text") mustBe false
+    }
+
+    "must redirect to task list page on submit" in {
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D2").toSet)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val request = FakeRequest(POST, routes.CheckYourAnswersHallmarksController.onPageLoad(0).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/your-disclosure-details/0"
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

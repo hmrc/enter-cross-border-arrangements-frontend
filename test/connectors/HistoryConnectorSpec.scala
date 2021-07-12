@@ -20,14 +20,17 @@ import base.{MockServiceApp, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import generators.Generators
 import models.{SubmissionDetails, SubmissionHistory}
+import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.{Application, inject}
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
-import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.http.{HttpClient, UpstreamErrorResponse}
 import utils.WireMockHelper
 
 import java.time.LocalDateTime
+import scala.concurrent.Future
 
 class HistoryConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckPropertyChecks with WireMockHelper with Generators {
 
@@ -143,43 +146,73 @@ class HistoryConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckP
       }
     }
 
-    "retrieveFirstDisclosureForArrangementID" - {
-      val arrangementID = "GBA20200904AAAAAA"
-      val disclosureID  = "GBD20200904AAAAAA"
+      "getSubmisionDetailForDisclosure" - {
+        val arrangementID = "GBA20200904AAAAAA"
+        val disclosureID = "GBD20200904AAAAAA"
 
-      "should return the submission details of the first disclosure of the given arrangement ID" in {
-        val json = Json.obj(
-          "enrolmentID"         -> "enrolmentID",
-          "submissionTime"      -> "2020-05-14T17:10:00",
-          "fileName"            -> "fileName",
-          "arrangementID"       -> arrangementID,
-          "disclosureID"        -> disclosureID,
-          "importInstruction"   -> "New",
-          "initialDisclosureMA" -> true,
-          "messageRefId"        -> "GB0000000XXX"
-        )
+        "should return the submission details for the given disclosure ID" in {
+          val json = Json.obj(
+            "enrolmentID" -> "enrolmentID",
+            "submissionTime" -> "2020-05-14T17:10:00",
+            "fileName" -> "fileName",
+            "arrangementID" -> arrangementID,
+            "disclosureID" -> disclosureID,
+            "importInstruction" -> "New",
+            "initialDisclosureMA" -> true,
+            "messageRefId" -> "GB0000000XXX"
+          )
 
-        server.stubFor(
-          get(urlEqualTo(s"/disclose-cross-border-arrangements/history/first-disclosure/$arrangementID"))
-            .willReturn(
-              aResponse()
-                .withStatus(OK)
-                .withBody(json.toString())
-            )
-        )
+          val submissionDetails = json.as[SubmissionDetails]
 
-        whenReady(connector.retrieveFirstDisclosureForArrangementID(arrangementID)) {
-          result =>
-            result mustBe
-              SubmissionDetails(
-                "enrolmentID",
-                LocalDateTime.parse("2020-05-14T17:10:00"),
-                "fileName",
-                Some(arrangementID),
-                Some(disclosureID),
-                "New",
-                initialDisclosureMA = true,
-                messageRefId = "GB0000000XXX"
+          val mockHttpClient: HttpClient = mock[HttpClient]
+
+          when(mockHttpClient.GET[SubmissionDetails](any(),any(),any())(any(), any(), any()))
+            .thenReturn(Future.successful((submissionDetails)))
+
+          lazy val application: Application = new GuiceApplicationBuilder().overrides(inject.bind[HttpClient].toInstance(mockHttpClient)).build()
+
+          val conn = application.injector.instanceOf[HistoryConnector]
+
+
+          whenReady(conn.getSubmissionDetailForDisclosure(disclosureID)) {
+            result =>
+              result mustBe
+                SubmissionDetails(
+                  "enrolmentID",
+                  LocalDateTime.parse("2020-05-14T17:10:00"),
+                  "fileName",
+                  Some(arrangementID),
+                  Some(disclosureID),
+                  "New",
+                  initialDisclosureMA = true,
+                  messageRefId = "GB0000000XXX"
+                )
+          }
+        }
+      }
+
+      "retrieveFirstDisclosureForArrangementID" - {
+        val arrangementID = "GBA20200904AAAAAA"
+        val disclosureID = "GBD20200904AAAAAA"
+
+        "should return the submission details of the first disclosure of the given arrangement ID" in {
+          val json = Json.obj(
+            "enrolmentID" -> "enrolmentID",
+            "submissionTime" -> "2020-05-14T17:10:00",
+            "fileName" -> "fileName",
+            "arrangementID" -> arrangementID,
+            "disclosureID" -> disclosureID,
+            "importInstruction" -> "New",
+            "initialDisclosureMA" -> true,
+            "messageRefId" -> "GB0000000XXX"
+          )
+
+          server.stubFor(
+            get(urlEqualTo(s"/disclose-cross-border-arrangements/history/first-disclosure/$arrangementID"))
+              .willReturn(
+                aResponse()
+                  .withStatus(OK)
+                  .withBody(json.toString())
               )
         }
       }
