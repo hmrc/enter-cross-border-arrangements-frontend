@@ -35,10 +35,12 @@ import scala.concurrent.Future
 class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new EmailAddressQuestionForOrganisationFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val contactEmailAddressForOrganisationRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, NormalMode).url
-  lazy val contactEmailAddressForOrganisationCheckModeRoute = controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, CheckMode).url
+
+  lazy val contactEmailAddressForOrganisationCheckModeRoute =
+    controllers.organisation.routes.EmailAddressQuestionForOrganisationController.onPageLoad(0, CheckMode).url
 
   "ContactEmailAddressForOrganisation Controller" - {
 
@@ -48,9 +50,9 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Co
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
+      val request        = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,12 +76,16 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Co
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(EmailAddressQuestionForOrganisationPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(EmailAddressQuestionForOrganisationPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
+      val request        = FakeRequest(GET, contactEmailAddressForOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +126,10 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Co
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, contactEmailAddressForOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, contactEmailAddressForOrganisationRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -156,7 +162,7 @@ class EmailAddressQuestionForOrganisationControllerSpec extends SpecBase with Co
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, contactEmailAddressForOrganisationRoute)

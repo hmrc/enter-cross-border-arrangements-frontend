@@ -30,16 +30,18 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
 
   val prettyPrinter: PrettyPrinter = new scala.xml.PrettyPrinter(80, 4)
 
-  val reporterSection: ReporterXMLSection = mock[ReporterXMLSection]
+  val reporterSection: ReporterXMLSection                          = mock[ReporterXMLSection]
   val associatedEnterpriseSection: AssociatedEnterprisesXMLSection = mock[AssociatedEnterprisesXMLSection]
 
   val taxpayersAsOrganisation: IndexedSeq[Taxpayer] = IndexedSeq(
     Taxpayer("123", None, Some(validOrganisation), Some(todayMinusOneMonth)),
-    Taxpayer("Another ID", None, Some(validOrganisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths)))
+    Taxpayer("Another ID", None, Some(validOrganisation.copy(organisationName = "Other Taxpayers Ltd")), Some(todayMinusTwoMonths))
+  )
 
   val taxpayersAsIndividuals: IndexedSeq[Taxpayer] = IndexedSeq(
     Taxpayer("TP-123", Some(validIndividual), None, Some(todayMinusOneMonth)),
-    Taxpayer("TP-1230", Some(validIndividual.copy(individualName = Name("Another", "Individual"))), None, Some(todayMinusTwoMonths)))
+    Taxpayer("TP-1230", Some(validIndividual.copy(individualName = Name("Another", "Individual"))), None, Some(todayMinusTwoMonths))
+  )
 
   val taxpayerOrganisation: Taxpayer =
     Taxpayer("123", None, Some(validOrganisation), Some(todayMinusOneMonth))
@@ -47,7 +49,9 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
   val taxpayerIndividual: Taxpayer = Taxpayer(
     "TP-123",
     Some(Individual(validIndividualName, Some(validIndividualDOB), Some("SomePlace"), Some(validAddress), Some(validEmail), validTaxResidencies)),
-    None, Some(todayMinusOneMonth))
+    None,
+    Some(todayMinusOneMonth)
+  )
 
   private val submission: Submission = Submission("id", validDisclosureDetails)
 
@@ -64,14 +68,11 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with additional taxpayers as organisations" in {
 
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails =
+            ReporterDetails(Some(validIndividual), None, Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday))))
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Individual>
@@ -97,7 +98,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -119,7 +120,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -141,28 +142,27 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation)).buildRelevantTaxpayers.map { result =>
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
 
-          prettyPrinter.format(result) mustBe expected
-
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
         " with additional taxpayers as organisations" in {
 
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails = ReporterDetails(None,
+                                                Some(validOrganisation),
+                                                Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday)))
+          )
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
@@ -183,7 +183,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -205,7 +205,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -227,21 +227,21 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation)).buildRelevantTaxpayers.map { result =>
-
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsOrganisation)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation" +
         " with associated enterprise section if reporter selected in associated enterprise journey" in {
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
@@ -262,7 +262,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -295,35 +295,31 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
+          val enterpriseLoop =
+            IndexedSeq(AssociatedEnterprise("id", Some(validIndividual), None, List(validOrganisation.organisationName), isAffectedBy = false))
 
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(validIndividual), None, List(validOrganisation.organisationName), isAffectedBy = false))
+          val reporterDetails = ReporterDetails(None,
+                                                Some(validOrganisation),
+                                                Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday)))
+          )
 
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
+            submission.copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
 
-        def toSubmission(reporterDetails: ReporterDetails, associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
-          submission.copy(reporterDetails = Option(reporterDetails), associatedEnterprises = associatedEnterprise)
-
-          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop)).buildRelevantTaxpayers.map { result =>
-            prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, enterpriseLoop)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with additional taxpayers as Individuals" in {
 
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails =
+            ReporterDetails(Some(validIndividual), None, Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday))))
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Individual>
@@ -349,7 +345,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -376,7 +372,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -403,21 +399,22 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map { result =>
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Individual" +
         " with associated enterprise section if reporter selected in associated enterprise journey" +
         "and with additional taxpayers as individuals" in {
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Individual>
@@ -443,7 +440,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |        <AssociatedEnterprises>
              |            <AssociatedEnterprise>
              |                <AssociatedEnterpriseID>
@@ -499,34 +496,32 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.nameAsString), isAffectedBy = false))
+          val enterpriseLoop = IndexedSeq(AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.nameAsString), isAffectedBy = false))
 
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails =
+            ReporterDetails(Some(validIndividual), None, Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday))))
 
-        def toSubmission(reporterDetails: ReporterDetails,
-                         taxpayer: IndexedSeq[Taxpayer],
-                         associatedEnterprise: IndexedSeq[AssociatedEnterprise]): Submission =
-          submission.copy(reporterDetails = Option(reporterDetails), taxpayers = taxpayer, associatedEnterprises = associatedEnterprise)
+          def toSubmission(reporterDetails: ReporterDetails,
+                           taxpayer: IndexedSeq[Taxpayer],
+                           associatedEnterprise: IndexedSeq[AssociatedEnterprise]
+          ): Submission =
+            submission.copy(reporterDetails = Option(reporterDetails), taxpayers = taxpayer, associatedEnterprises = associatedEnterprise)
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, IndexedSeq(taxpayerIndividual), enterpriseLoop)).buildRelevantTaxpayers.map { result =>
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, IndexedSeq(taxpayerIndividual), enterpriseLoop)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML when Reporter is an Organisation " +
         "with additional taxpayers as Individuals" in {
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
@@ -547,7 +542,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Organisation>
              |        </ID>
-             |        <TaxpayerImplementingDate>${validToday}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -574,7 +569,7 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusOneMonth}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusOneMonth</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |    <RelevantTaxpayer>
              |        <ID>
@@ -601,23 +596,26 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |                <ResCountryCode>FR</ResCountryCode>
              |            </Individual>
              |        </ID>
-             |        <TaxpayerImplementingDate>${todayMinusTwoMonths}</TaxpayerImplementingDate>
+             |        <TaxpayerImplementingDate>$todayMinusTwoMonths</TaxpayerImplementingDate>
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        val reporterDetails = ReporterDetails(None, Some(validOrganisation), Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails = ReporterDetails(None,
+                                                Some(validOrganisation),
+                                                Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday)))
+          )
 
-        RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map { result =>
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(toSubmission(reporterDetails, taxpayersAsIndividuals)).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML with additional taxpayers as organisations and " +
         "their associated enterprise - one organisation" in {
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Organisation>
@@ -688,25 +686,27 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
-          AssociatedEnterprise("id", None, Some(validOrganisation), List(taxpayersAsOrganisation(1).taxpayerId), isAffectedBy = false))
+          val enterpriseLoop: IndexedSeq[AssociatedEnterprise] =
+            IndexedSeq(AssociatedEnterprise("id", None, Some(validOrganisation), List(taxpayersAsOrganisation(1).taxpayerId), isAffectedBy = false))
 
-        val updatedSubmission: Submission = submission.copy(taxpayers = taxpayersAsOrganisation, associatedEnterprises = enterpriseLoop)
+          val updatedSubmission: Submission = submission.copy(taxpayers = taxpayersAsOrganisation, associatedEnterprises = enterpriseLoop)
 
-        RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map { result =>
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
 
       "must build a complete RelevantTaxPayers XML with additional taxpayers as Individuals and " +
         "their associated enterprises - one individual and one organisation" in {
 
-        val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
-          AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.taxpayerId), isAffectedBy = true),
-          AssociatedEnterprise("id2", None, Some(validOrganisation), List(taxpayerIndividual.taxpayerId), isAffectedBy = true))
+          val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
+            AssociatedEnterprise("id", Some(validIndividual), None, List(taxpayerIndividual.taxpayerId), isAffectedBy = true),
+            AssociatedEnterprise("id2", None, Some(validOrganisation), List(taxpayerIndividual.taxpayerId), isAffectedBy = true)
+          )
 
-        val expected =
-          s"""<RelevantTaxPayers>
+          val expected =
+            s"""<RelevantTaxPayers>
              |    <RelevantTaxpayer>
              |        <ID>
              |            <Individual>
@@ -814,12 +814,13 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </RelevantTaxpayer>
              |</RelevantTaxPayers>""".stripMargin
 
-        val updatedSubmission = submission.copy(taxpayers = taxpayersAsIndividuals, associatedEnterprises = enterpriseLoop)
+          val updatedSubmission = submission.copy(taxpayers = taxpayersAsIndividuals, associatedEnterprises = enterpriseLoop)
 
-        RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map { result =>
-          prettyPrinter.format(result) mustBe expected
+          RelevantTaxPayersXMLSection(updatedSubmission).buildRelevantTaxpayers.map {
+            result =>
+              prettyPrinter.format(result) mustBe expected
+          }
         }
-      }
     }
 
     "buildReporterAsTaxpayer" - {
@@ -827,18 +828,17 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects ORGANISATION option " +
         "on 'reporter/organisation-or-individual page" in {
 
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails = ReporterDetails(None,
+                                                Some(validOrganisation),
+                                                Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday)))
+          )
 
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+          val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
+          val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
 
-        val expected =
-          s"""<RelevantTaxpayer>
+          val expected =
+            s"""<RelevantTaxpayer>
              |    <ID>
              |        <Organisation>
              |            <OrganisationName>Taxpayers Ltd</OrganisationName>
@@ -861,24 +861,21 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY without TaxpayerImplementingDate" +
         "when arrangement is NOT MARKETABLE" in {
 
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, None)))
+          val reporterDetails =
+            ReporterDetails(None, Some(validOrganisation), Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, None)))
 
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+          val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
+          val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
 
-        val expected =
-          s"""<RelevantTaxpayer>
+          val expected =
+            s"""<RelevantTaxpayer>
              |    <ID>
              |        <Organisation>
              |            <OrganisationName>Taxpayers Ltd</OrganisationName>
@@ -900,24 +897,21 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    </ID>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
 
       "must build a TAXPAYER section from REPORTER DETAILS JOURNEY when user selects INDIVIDUAL option " +
         "on 'reporter/organisation-or-individual page" in {
 
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Taxpayer.toString,
-            None, None, None, None, Some(validToday))))
+          val reporterDetails =
+            ReporterDetails(Some(validIndividual), None, Some(ReporterLiability(RoleInArrangement.Taxpayer.toString, None, None, None, None, Some(validToday))))
 
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+          val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
+          val result = RelevantTaxPayersXMLSection(submission).buildReporterAsTaxpayer
 
-        val expected =
-          s"""<RelevantTaxpayer>
+          val expected =
+            s"""<RelevantTaxpayer>
              |    <ID>
              |        <Individual>
              |            <IndividualName>
@@ -945,8 +939,8 @@ class RelevantTaxPayersXMLSectionSpec extends SpecBase {
              |    <TaxpayerImplementingDate>$validToday</TaxpayerImplementingDate>
              |</RelevantTaxpayer>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
     }
   }
 }

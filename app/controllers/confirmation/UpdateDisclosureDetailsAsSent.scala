@@ -26,7 +26,8 @@ import scala.util.Try
 trait UpdateDisclosureDetailsAsSent {
 
   def updateDisclosureDetailsAsSent(userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-    val disclosureDetails: DisclosureDetails = userAnswers.get(DisclosureDetailsPage, id)
+    val disclosureDetails: DisclosureDetails = userAnswers
+      .get(DisclosureDetailsPage, id)
       .getOrElse(throw new DiscloseDetailsAlreadySentException(id))
     userAnswers.set(DisclosureDetailsPage, id, disclosureDetails.copy(sent = true))
   }

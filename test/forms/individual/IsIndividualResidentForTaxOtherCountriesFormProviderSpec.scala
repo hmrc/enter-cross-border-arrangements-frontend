@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsIndividualResidentForTaxOtherCountriesFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isIndividualResidentForTaxOtherCountries.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsIndividualResidentForTaxOtherCountriesFormProvider()()
 

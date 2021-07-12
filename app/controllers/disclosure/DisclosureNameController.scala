@@ -34,25 +34,28 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureNameController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForDisclosure,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: DisclosureNameFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class DisclosureNameController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForDisclosure,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: DisclosureNameFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.flatMap(_.getBase(DisclosureNamePage)) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
@@ -69,29 +72,32 @@ class DisclosureNameController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form" -> formWithErrors,
+              "mode" -> mode
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode
-          )
+            renderer.render("disclosure/disclosureName.njk", json).map(BadRequest(_))
+          },
+          value => {
+            val initialUserAnswers = UserAnswers(request.internalId)
+            val userAnswers = request.userAnswers.fold(initialUserAnswers)(
+              ua => ua
+            )
 
-          renderer.render("disclosure/disclosureName.njk", json).map(BadRequest(_))
-        },
-        value => {
-          val initialUserAnswers = UserAnswers(request.internalId)
-          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+            for {
+              updatedAnswers           <- Future.fromTry(userAnswers.setBase(DisclosureNamePage, value))
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.setBase(DisclosureStatusPage, JourneyStatus.InProgress))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(mode, updatedAnswers)
+            } yield Redirect(redirect(checkRoute, Some(value)))
 
-          for {
-            updatedAnswers <- Future.fromTry(userAnswers.setBase(DisclosureNamePage, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.setBase(DisclosureStatusPage, JourneyStatus.InProgress))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
-
-        }
-      )
+          }
+        )
   }
 }

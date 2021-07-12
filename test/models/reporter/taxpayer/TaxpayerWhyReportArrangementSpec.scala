@@ -31,7 +31,6 @@ class TaxpayerWhyReportArrangementSpec extends ModelSpecBase {
 
       forAll(gen) {
         taxpayerWhyReportArrangement =>
-
           JsString(taxpayerWhyReportArrangement.toString).validate[TaxpayerWhyReportArrangement].asOpt.value mustEqual taxpayerWhyReportArrangement
       }
     }
@@ -42,7 +41,6 @@ class TaxpayerWhyReportArrangementSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[TaxpayerWhyReportArrangement] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class TaxpayerWhyReportArrangementSpec extends ModelSpecBase {
 
       forAll(gen) {
         taxpayerWhyReportArrangement =>
-
           Json.toJson(taxpayerWhyReportArrangement) mustEqual JsString(taxpayerWhyReportArrangement.toString)
       }
     }

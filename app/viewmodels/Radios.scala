@@ -24,27 +24,29 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
 
 object Radios extends NunjucksSupport {
 
-
-  final case class Radio(
-                          label: Text,
-                          value: String,
-                          hint: Option[Hint] = None,
-                          classes: Seq[String] = Seq.empty,
-                          labelClasses: Option[LabelClasses] = None)
+  final case class Radio(label: Text, value: String, hint: Option[Hint] = None, classes: Seq[String] = Seq.empty, labelClasses: Option[LabelClasses] = None)
 
   object Radio {
+
     implicit def writes(implicit messages: Messages): OWrites[Radio] = (
       (__ \ "label").write[Text] and
         (__ \ "value").write[String] and
         (__ \ "hint").writeNullable[Hint] and
         (__ \ "classes").writeNullable[String]
-      ) { radio =>
-      (radio.label, radio.value, radio.hint, classes(radio.classes))
+    ) {
+      radio =>
+        (radio.label, radio.value, radio.hint, classes(radio.classes))
     }
   }
 
-  final case class Item(id: String, text: Text, value: String, checked: Boolean, hint: Option[Hint] = None, classes: Seq[String] = Seq.empty,
-                        label: Option[LabelClasses] = None)
+  final case class Item(id: String,
+                        text: Text,
+                        value: String,
+                        checked: Boolean,
+                        hint: Option[Hint] = None,
+                        classes: Seq[String] = Seq.empty,
+                        label: Option[LabelClasses] = None
+  )
 
   object Item {
 
@@ -57,9 +59,9 @@ object Radios extends NunjucksSupport {
     val head = items.headOption.map {
       item =>
         Item(
-          id      = field.id,
-          text    = item.label,
-          value   = item.value,
+          id = field.id,
+          text = item.label,
+          value = item.value,
           checked = field.values.contains(item.value),
           hint = item.hint,
           classes = item.classes,
@@ -70,9 +72,9 @@ object Radios extends NunjucksSupport {
     val tail = items.zipWithIndex.tail.map {
       case (item, i) =>
         Item(
-          id      = s"${field.id}_$i",
-          text    = item.label,
-          value   = item.value,
+          id = s"${field.id}_$i",
+          text = item.label,
+          value = item.value,
           checked = field.values.contains(item.value),
           hint = item.hint,
           classes = item.classes,

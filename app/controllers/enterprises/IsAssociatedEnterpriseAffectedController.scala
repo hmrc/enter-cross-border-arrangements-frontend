@@ -35,34 +35,37 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsAssociatedEnterpriseAffectedController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForEnterprises,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsAssociatedEnterpriseAffectedFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsAssociatedEnterpriseAffectedController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForEnterprises,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsAssociatedEnterpriseAffectedFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IsAssociatedEnterpriseAffectedPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
+        "form"                 -> preparedForm,
+        "id"                   -> id,
+        "mode"                 -> mode,
         "associatedEnterprise" -> getName(request.userAnswers, id),
-        "radios" -> Radios.yesNo(preparedForm("confirm"))
+        "radios"               -> Radios.yesNo(preparedForm("confirm"))
       )
 
       renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(Ok(_))
@@ -73,34 +76,34 @@ class IsAssociatedEnterpriseAffectedController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"                 -> formWithErrors,
+              "id"                   -> id,
+              "mode"                 -> mode,
+              "associatedEnterprise" -> getName(request.userAnswers, id),
+              "radios"               -> Radios.yesNo(formWithErrors("confirm"))
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "associatedEnterprise" -> getName(request.userAnswers, id),
-            "radios" -> Radios.yesNo(formWithErrors("confirm"))
-          )
-
-          renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsAssociatedEnterpriseAffectedPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("enterprises/isAssociatedEnterpriseAffected.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsAssociatedEnterpriseAffectedPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def getName(userAnswers: UserAnswers, id: Int) = {
+  private def getName(userAnswers: UserAnswers, id: Int) =
     (userAnswers.get(IndividualNamePage, id), userAnswers.get(OrganisationNamePage, id)) match {
       case (Some(name), _) => name.displayName
       case (_, Some(name)) => name
-      case _ => "this associated enterprise"
+      case _               => "this associated enterprise"
     }
-  }
 }

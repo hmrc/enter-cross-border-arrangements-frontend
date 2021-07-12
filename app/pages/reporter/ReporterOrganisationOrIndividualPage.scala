@@ -20,7 +20,13 @@ import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
 import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.QuestionPage
 import pages.reporter.individual._
-import pages.reporter.intermediary.{IntermediaryDoYouKnowExemptionsPage, IntermediaryExemptionInEUPage, IntermediaryRolePage, IntermediaryWhichCountriesExemptPage, IntermediaryWhyReportInUKPage}
+import pages.reporter.intermediary.{
+  IntermediaryDoYouKnowExemptionsPage,
+  IntermediaryExemptionInEUPage,
+  IntermediaryRolePage,
+  IntermediaryWhichCountriesExemptPage,
+  IntermediaryWhyReportInUKPage
+}
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.JsPath
@@ -53,7 +59,7 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
     ReporterOrganisationSelectAddressPage,
     ReporterSelectedAddressLookupPage,
     ReporterUKTaxNumbersPage,
-    RoleInArrangementPage,
+    RoleInArrangementPage
   )
 
   private val reporterIntermediaryPages = List(
@@ -83,18 +89,26 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
   override def toString: String = "reporterOrganisationOrIndividual"
 
-  override def cleanup(value: Option[ReporterOrganisationOrIndividual], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-
+  override def cleanup(value: Option[ReporterOrganisationOrIndividual], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(Organisation) =>
-      (reporterIndividualPages ++ reporterResidencyPages ++ reporterTaxpayerPages ++ reporterIntermediaryPages)
-        .foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
+        (reporterIndividualPages ++ reporterResidencyPages ++ reporterTaxpayerPages ++ reporterIntermediaryPages)
+          .foldLeft(Try(userAnswers)) {
+            case (ua, page) =>
+              ua.flatMap(
+                x => x.remove(page, id)
+              )
+          }
 
       case Some(Individual) =>
         (reporterOrganisationPages ++ reporterResidencyPages ++ reporterTaxpayerPages ++ reporterIntermediaryPages)
-          .foldLeft(Try(userAnswers)) { case (ua, page) => ua.flatMap(x => x.remove(page, id)) }
+          .foldLeft(Try(userAnswers)) {
+            case (ua, page) =>
+              ua.flatMap(
+                x => x.remove(page, id)
+              )
+          }
 
       case _ => super.cleanup(value, userAnswers, id)
     }
-  }
 }

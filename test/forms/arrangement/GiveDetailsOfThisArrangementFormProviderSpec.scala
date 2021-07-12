@@ -23,7 +23,6 @@ class GiveDetailsOfThisArrangementFormProviderSpec extends StringFieldBehaviours
 
   val requiredKey = "giveDetailsOfThisArrangement.error.required"
 
-
   val form = new GiveDetailsOfThisArrangementFormProvider()()
 
   ".value" - {

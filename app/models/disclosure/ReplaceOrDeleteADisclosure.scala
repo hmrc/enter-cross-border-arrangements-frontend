@@ -18,7 +18,7 @@ package models.disclosure
 
 import play.api.libs.json._
 
-case class ReplaceOrDeleteADisclosure (arrangementID: String, disclosureID: String)
+case class ReplaceOrDeleteADisclosure(arrangementID: String, disclosureID: String)
 
 object ReplaceOrDeleteADisclosure {
   implicit val format = Json.format[ReplaceOrDeleteADisclosure]

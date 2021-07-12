@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterOrganisationIsAddressUkController @Inject()(
+class ReporterOrganisationIsAddressUkController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
@@ -44,23 +44,26 @@ class ReporterOrganisationIsAddressUkController @Inject()(
   formProvider: ReporterOrganisationIsAddressUkFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ReporterOrganisationIsAddressUkPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
+        "form"             -> preparedForm,
+        "id"               -> id,
+        "mode"             -> mode,
+        "radios"           -> Radios.yesNo(preparedForm("value")),
         "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers, id)
       )
 
@@ -72,26 +75,27 @@ class ReporterOrganisationIsAddressUkController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"             -> formWithErrors,
+              "id"               -> id,
+              "mode"             -> mode,
+              "radios"           -> Radios.yesNo(formWithErrors("value")),
+              "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
-            "organisationName" -> getReporterDetailsOrganisationName(request.userAnswers, id)
-          )
-
-          renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationIsAddressUkPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("reporter/organisation/reporterOrganisationIsAddressUk.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterOrganisationIsAddressUkPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

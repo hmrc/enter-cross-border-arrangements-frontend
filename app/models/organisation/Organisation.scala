@@ -30,7 +30,8 @@ case class Organisation(organisationName: String,
                         address: Option[Address] = None,
                         emailAddress: Option[String] = None,
                         taxResidencies: IndexedSeq[TaxResidency]
-                       ) extends WithRestore with WithTaxResidency {
+) extends WithRestore
+    with WithTaxResidency {
 
   def firstTaxResidency: Option[TaxResidency] = taxResidencies.headOption
 
@@ -71,28 +72,25 @@ object Organisation {
       addressLine3 = address.addressLine3,
       city = address.town,
       postCode = Some(address.postcode),
-      country = country)
+      country = country
+    )
   }
 
-  private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
+  private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(OrganisationLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None => throw new Exception("Organisation Taxpayer must contain at minimum one tax residency")
+      case None       => throw new Exception("Organisation Taxpayer must contain at minimum one tax residency")
     }
-  }
 
   def buildOrganisationDetails(ua: UserAnswers, id: Int): Organisation = {
     val address: Option[Address] =
       (ua.get(OrganisationAddressPage, id), ua.get(SelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
-        case _ => None
+        case _                  => None
       }
 
-    (ua.get(OrganisationNamePage, id)
-      , address
-      , ua.get(EmailAddressForOrganisationPage, id)
-      , getTaxResidencies(ua, id)) match {
+    (ua.get(OrganisationNamePage, id), address, ua.get(EmailAddressForOrganisationPage, id), getTaxResidencies(ua, id)) match {
 
       case (Some(name), Some(address), Some(email), taxResidencies) => // All details
         new Organisation(name, Some(address), Some(email), taxResidencies)
@@ -116,11 +114,10 @@ object Organisation {
       (ua.get(ReporterOrganisationAddressPage, id), ua.get(ReporterSelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
-        case _ => None
+        case _                  => None
       }
 
-    (ua.get(ReporterOrganisationNamePage, id), address,
-      ua.get(ReporterOrganisationEmailAddressPage, id), ua.get(ReporterTaxResidencyLoopPage, id)) match {
+    (ua.get(ReporterOrganisationNamePage, id), address, ua.get(ReporterOrganisationEmailAddressPage, id), ua.get(ReporterTaxResidencyLoopPage, id)) match {
 
       case (Some(name), Some(address), Some(email), Some(loop)) => // All details
         new Organisation(name, Some(address), Some(email), TaxResidency.buildFromLoopDetails(loop))

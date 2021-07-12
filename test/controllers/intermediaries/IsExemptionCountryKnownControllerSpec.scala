@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class IsExemptionCountryKnownControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IsExemptionCountryKnownFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val isExemptionCountryKnownRoute = routes.IsExemptionCountryKnownController.onPageLoad(0, NormalMode).url
 
@@ -48,9 +48,9 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with ControllerMock
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, isExemptionCountryKnownRoute)
+      val request        = FakeRequest(GET, isExemptionCountryKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,14 +74,18 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsExemptionCountryKnownPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsExemptionCountryKnownPage, 0, true)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, isExemptionCountryKnownRoute)
+      val request        = FakeRequest(GET, isExemptionCountryKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class IsExemptionCountryKnownControllerSpec extends SpecBase with ControllerMock
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, isExemptionCountryKnownRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, isExemptionCountryKnownRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

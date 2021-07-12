@@ -25,60 +25,61 @@ import utils.SummaryListDisplay.DisplayRow
 
 trait IntermediariesModelRows extends DisplayRowBuilder {
 
+  def intermediariesType(intermediary: Intermediary)(implicit messages: Messages): DisplayRow = {
+    val selectType = (intermediary.individual, intermediary.organisation) match {
+      case (Some(_), None) => SelectType.Individual
+      case (None, Some(_)) => SelectType.Organisation
+    }
 
-  def intermediariesType( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
-     {
-       val selectType = (intermediary.individual, intermediary.organisation) match {
-         case (Some(_), None) => SelectType.Individual
-         case (None, Some(_)) => SelectType.Organisation
-       }
-
-      DisplayRow(
-        key     = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"intermediariesType.$selectType")
-      )
-  }
-
-  def isExemptionKnown( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
     DisplayRow(
-        key     = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}")
-      )
-
-  def isExemptionCountryKnown( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] =
-    intermediary.isExemptionCountryKnown map {
-    answer =>
-      DisplayRow(
-        key     = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer))
-      )
+      key = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+      value = Value(msg"intermediariesType.$selectType")
+    )
   }
 
-  def exemptCountries( intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
+  def isExemptionKnown(intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+    DisplayRow(
+      key = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+      value = Value(msg"isExemptionKnown.${intermediary.isExemptionKnown}")
+    )
+
+  def isExemptionCountryKnown(intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] =
+    intermediary.isExemptionCountryKnown map {
+      answer =>
+        DisplayRow(
+          key = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value = Value(yesOrNo(answer))
+        )
+    }
+
+  def exemptCountries(intermediary: Intermediary)(implicit messages: Messages): Option[DisplayRow] = intermediary.exemptCountries map {
     answer =>
       DisplayRow(
-        key     = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty)))
+        key = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(Html(formatExemptCountriesList(answer, answer.tail.isEmpty)))
       )
   }
 
   private def formatExemptCountriesList(selectedCountries: Set[CountryList], singleItem: Boolean)(implicit messages: Messages) = {
 
-    val getCountryName = selectedCountries.toSeq.sorted.map(_.toString).map { countryCode =>
-      msg"countriesListCheckboxes.$countryCode".resolve
+    val getCountryName = selectedCountries.toSeq.sorted.map(_.toString).map {
+      countryCode =>
+        msg"countriesListCheckboxes.$countryCode".resolve
     }
 
     if (singleItem) {
       getCountryName.head
     } else {
-      s"<ul class='govuk-list govuk-list--bullet'>${getCountryName.foldLeft("")((a, b) => s"$a<li>$b</li>")}</ul>"
+      s"<ul class='govuk-list govuk-list--bullet'>${getCountryName.foldLeft("")(
+        (a, b) => s"$a<li>$b</li>"
+      )}</ul>"
     }
   }
 
-  def whatTypeofIntermediary( intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
+  def whatTypeofIntermediary(intermediary: Intermediary)(implicit messages: Messages): DisplayRow =
     DisplayRow(
-        key     = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}")
-      )
+      key = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+      value = Value(msg"whatTypeofIntermediary.${intermediary.whatTypeofIntermediary}")
+    )
 
 }

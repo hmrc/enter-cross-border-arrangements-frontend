@@ -40,20 +40,20 @@ import scala.concurrent.Future
 class ReporterOrganisationAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val mockCountryFactory: CountryListFactory   = mock[CountryListFactory]
 
-  val formProvider = new AddressFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid","FR","France")))
-  val address: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-    Country("valid","FR","France"))
+  val formProvider        = new AddressFormProvider()
+  val form: Form[Address] = formProvider(Seq(Country("valid", "FR", "France")))
+  val address: Address    = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
-  lazy val organisationAddressRoute: String = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, NormalMode).url
+  lazy val organisationAddressRoute: String  = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, NormalMode).url
   lazy val organisationAddressCheckModeRoute = controllers.reporter.organisation.routes.ReporterOrganisationAddressController.onPageLoad(0, CheckMode).url
 
   override def beforeEach: Unit = {
     reset(mockCountryFactory)
     super.beforeEach
   }
+
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
     .overrides(bind[CountryListFactory].toInstance(mockCountryFactory))
@@ -65,13 +65,13 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid", "GB", "United Kingdom"))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request        = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -93,18 +93,22 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid", "GB", "United Kingdom"))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterOrganisationAddressPage, 0, address).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterOrganisationAddressPage, 0, address)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, organisationAddressRoute)
+      val request        = FakeRequest(GET, organisationAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -117,9 +121,9 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
           "addressLine1" -> "value 1",
           "addressLine2" -> "value 2",
           "addressLine3" -> "value 3",
-          "city" -> "value 4",
-          "postCode" -> "XX9 9XX",
-          "country" -> "FR"
+          "city"         -> "value 4",
+          "postCode"     -> "XX9 9XX",
+          "country"      -> "FR"
         )
       )
 
@@ -134,14 +138,19 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
 
     "must redirect to the next page when valid data is submitted" in {
       retrieveUserAnswersData(emptyUserAnswers)
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val request =
         FakeRequest(POST, organisationAddressRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("city", "value 4"),
-            ("postcode", "XX9 9XX"),("country", "FR"))
+          .withFormUrlEncodedBody(("addressLine1", "value 1"),
+                                  ("addressLine2", "value 2"),
+                                  ("addressLine3", "value 3"),
+                                  ("city", "value 4"),
+                                  ("postcode", "XX9 9XX"),
+                                  ("country", "FR")
+          )
 
       val result = route(app, request).value
 
@@ -154,15 +163,15 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
+      when(mockCountryFactory.uk).thenReturn(Country("valid", "GB", "United Kingdom"))
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, organisationAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, organisationAddressRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -171,8 +180,8 @@ class ReporterOrganisationAddressControllerSpec extends SpecBase with Controller
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "address.njk"

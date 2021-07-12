@@ -32,15 +32,16 @@ case object AssociatedEnterpriseLoopPage extends LoopPage[AssociatedEnterprise] 
     userAnswers.get(AssociatedEnterpriseLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
         list.filterNot(_.enterpriseId == associatedEnterprise.enterpriseId) :+ associatedEnterprise
-      case None =>      // start new list
+      case None => // start new list
         IndexedSeq[AssociatedEnterprise](associatedEnterprise)
     }
   }
+
   override val cleanPages: Seq[QuestionPage[_]] = Seq(
-    AssociatedEnterpriseCheckYourAnswersPage
-    , YouHaveNotAddedAnyAssociatedEnterprisesPage
-    , SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage
-    , AssociatedEnterpriseTypePage
-    , IsAssociatedEnterpriseAffectedPage
+    AssociatedEnterpriseCheckYourAnswersPage,
+    YouHaveNotAddedAnyAssociatedEnterprisesPage,
+    SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage,
+    AssociatedEnterpriseTypePage,
+    IsAssociatedEnterpriseAffectedPage
   )
 }

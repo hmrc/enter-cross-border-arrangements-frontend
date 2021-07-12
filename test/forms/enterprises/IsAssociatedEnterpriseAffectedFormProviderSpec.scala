@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsAssociatedEnterpriseAffectedFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isAssociatedEnterpriseAffected.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsAssociatedEnterpriseAffectedFormProvider()()
 

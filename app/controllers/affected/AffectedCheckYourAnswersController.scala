@@ -33,7 +33,7 @@ import utils.CheckYourAnswersHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AffectedCheckYourAnswersController @Inject()(
+class AffectedCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -42,32 +42,35 @@ class AffectedCheckYourAnswersController @Inject()(
   navigator: NavigatorForAffected,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with RoutingSupport {
 
   def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(AffectedLoopPage, id, itemId)
       sessionRepository.set(restoredUserAnswers)
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (affectedSummary, countrySummary) =
-
         restoredUserAnswers.get(AffectedTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (
               helper.affectedType(id).toSeq ++
-              helper.organisationName(id).toSeq ++
-              helper.buildOrganisationAddressGroup(id) ++
-              helper.buildOrganisationEmailAddressGroup(id),
+                helper.organisationName(id).toSeq ++
+                helper.buildOrganisationAddressGroup(id) ++
+                helper.buildOrganisationEmailAddressGroup(id),
               helper.buildTaxResidencySummaryForOrganisation(id)
             )
           case Some(SelectType.Individual) =>
             (
-              Seq(helper.affectedType(id) ++
-                helper.individualName(id)).flatten ++
+              Seq(
+                helper.affectedType(id) ++
+                  helper.individualName(id)
+              ).flatten ++
                 helper.buildIndividualDateOfBirthGroup(id) ++
                 helper.buildIndividualPlaceOfBirthGroup(id) ++
                 helper.buildIndividualAddressGroup(id) ++
@@ -76,15 +79,17 @@ class AffectedCheckYourAnswersController @Inject()(
             )
 
           case _ => throw new UnsupportedRouteException(id)
-      }
+        }
 
-      renderer.render(
-        "affected/affectedCheckYourAnswers.njk",
-        Json.obj(
-          "id" -> id,
-          "affectedSummary" -> affectedSummary,
-          "countrySummary" -> countrySummary
-        )).map(Ok(_))
+      renderer
+        .render("affected/affectedCheckYourAnswers.njk",
+                Json.obj(
+                  "id"              -> id,
+                  "affectedSummary" -> affectedSummary,
+                  "countrySummary"  -> countrySummary
+                )
+        )
+        .map(Ok(_))
   }
 
   def redirect(id: Int, checkRoute: CheckRoute): Call =
@@ -92,15 +97,11 @@ class AffectedCheckYourAnswersController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       for {
         userAnswers                 <- Future.fromTry(request.userAnswers.set(AffectedLoopPage, id))
         userAnswersWithAffectedLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyAffectedPage, id))
         _                           <- sessionRepository.set(userAnswersWithAffectedLoop)
-        checkRoute                  =  toCheckRoute(NormalMode, userAnswersWithAffectedLoop)
-      } yield {
-        Redirect(redirect(id, checkRoute))
-      }
+        checkRoute = toCheckRoute(NormalMode, userAnswersWithAffectedLoop)
+      } yield Redirect(redirect(id, checkRoute))
   }
 }
-

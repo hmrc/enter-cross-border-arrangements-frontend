@@ -26,13 +26,13 @@ import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressLookupConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) {
   private val logger: Logger = Logger(this.getClass)
 
   def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
     val addressLookupUrl: String = s"${config.addressLookUpUrl}/v2/uk/addresses"
-    val urlParams = Seq ("postcode" -> postCode)
+    val urlParams                = Seq("postcode" -> postCode)
 
     implicit val reads: Reads[Seq[AddressLookup]] = AddressLookup.addressesLookupReads
 
@@ -42,8 +42,12 @@ class AddressLookupConnector @Inject()(http: HttpClient, config: FrontendAppConf
       headers = Seq("X-Hmrc-Origin" -> "DAC6")
     ) flatMap {
       case response if response.status equals OK =>
-        Future.successful(response.json.as[Seq[AddressLookup]].filterNot(address =>
-          address.addressLine1.isEmpty && address.addressLine2.isEmpty)
+        Future.successful(
+          response.json
+            .as[Seq[AddressLookup]]
+            .filterNot(
+              address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
+            )
         )
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"

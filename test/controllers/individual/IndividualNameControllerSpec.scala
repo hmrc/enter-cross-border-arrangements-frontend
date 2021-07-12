@@ -36,16 +36,16 @@ import scala.concurrent.Future
 
 class IndividualNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val formProvider = new IndividualNameFormProvider()
-  val form: Form[Name] = formProvider()
+  val formProvider      = new IndividualNameFormProvider()
+  val form: Form[Name]  = formProvider()
   val firstName: String = "First"
-  val lastName: String = "Last"
+  val lastName: String  = "Last"
   val validAnswer: Name = Name(firstName, lastName)
+
   val validData = Map(
-    "firstName" -> firstName,
+    "firstName"  -> firstName,
     "secondName" -> lastName
   )
 
@@ -59,9 +59,9 @@ class IndividualNameControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, individualNameRoute)
+      val request        = FakeRequest(GET, individualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -84,12 +84,16 @@ class IndividualNameControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualNamePage, 0, validAnswer).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualNamePage, 0, validAnswer)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, individualNameRoute)
+      val request        = FakeRequest(GET, individualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -116,7 +120,7 @@ class IndividualNameControllerSpec extends SpecBase with ControllerMockFixtures 
 
       val request =
         FakeRequest(POST, individualNameRoute)
-          .withFormUrlEncodedBody(validData.toList:_*)
+          .withFormUrlEncodedBody(validData.toList: _*)
 
       val result = route(app, request).value
 
@@ -131,10 +135,10 @@ class IndividualNameControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, individualNameRoute).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "")
-      val boundForm = form.bind(Map("firstName" -> "", "lastName" -> ""))
+      val request        = FakeRequest(POST, individualNameRoute).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "")
+      val boundForm      = form.bind(Map("firstName" -> "", "lastName" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

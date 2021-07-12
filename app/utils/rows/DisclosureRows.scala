@@ -25,58 +25,63 @@ import utils.CheckYourAnswersHelper
 
 trait DisclosureRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
-  def disclosureNamePage: Option[Row] = userAnswers.getBase(DisclosureNamePage) map { answer =>
-    toRow(
-      msgKey  = "disclosureName",
-      content = formatMaxChars(answer, maxVisibleChars),
-      href    = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
-    )
-  }
-
-  private def disclosureMarketablePage: Option[Row] = userAnswers.getBase(DisclosureMarketablePage) map { answer =>
-    toRow(
-      msgKey  = "disclosureMarketable",
-      content = yesOrNo(answer),
-      href    = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
-    )
-  }
-
-  def disclosureTypePage: Option[Row] = userAnswers.getBase(DisclosureTypePage) map { answer =>
-    toRow(
-      msgKey  = "disclosureType",
-      content = msg"disclosureType.$answer",
-      href    = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
-    )
-  }
-
-  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.getBase(DisclosureIdentifyArrangementPage) map { answer =>
-    val arrangementID = answer.toUpperCase
-    toRow(
-      msgKey  = "disclosureIdentifyArrangement",
-      content = lit"$arrangementID",
-      href    = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url,
-      columnWidth = "govuk-!-width-one-third"
-    )
-  }
-
-  private def replaceOrDeleteADisclosureRows: Seq[Row] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(Seq[Row]()){ answer =>
-    Seq(
+  def disclosureNamePage: Option[Row] = userAnswers.getBase(DisclosureNamePage) map {
+    answer =>
       toRow(
-        msgKey  = "replaceOrDeleteADisclosure.arrangementID",
-        content = lit"${answer.arrangementID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
-        columnWidth = "govuk-!-width-one-third"
-      ),
-      toRow(
-        msgKey  = "replaceOrDeleteADisclosure.disclosureID",
-        content = lit"${answer.disclosureID}",
-        href    = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+        msgKey = "disclosureName",
+        content = formatMaxChars(answer, maxVisibleChars),
+        href = controllers.disclosure.routes.DisclosureNameController.onPageLoad(CheckMode).url,
         columnWidth = "govuk-!-width-one-third"
       )
-    )
+  }
+
+  private def disclosureMarketablePage: Option[Row] = userAnswers.getBase(DisclosureMarketablePage) map {
+    answer =>
+      toRow(
+        msgKey = "disclosureMarketable",
+        content = yesOrNo(answer),
+        href = controllers.disclosure.routes.DisclosureMarketableController.onPageLoad(CheckMode).url,
+        columnWidth = "govuk-!-width-one-third"
+      )
+  }
+
+  def disclosureTypePage: Option[Row] = userAnswers.getBase(DisclosureTypePage) map {
+    answer =>
+      toRow(
+        msgKey = "disclosureType",
+        content = msg"disclosureType.$answer",
+        href = controllers.disclosure.routes.DisclosureTypeController.onPageLoad(CheckMode).url,
+        columnWidth = "govuk-!-width-one-third"
+      )
+  }
+
+  private def disclosureIdentifyArrangement: Option[Row] = userAnswers.getBase(DisclosureIdentifyArrangementPage) map {
+    answer =>
+      val arrangementID = answer.toUpperCase
+      toRow(
+        msgKey = "disclosureIdentifyArrangement",
+        content = lit"$arrangementID",
+        href = controllers.disclosure.routes.DisclosureIdentifyArrangementController.onPageLoad(CheckMode).url,
+        columnWidth = "govuk-!-width-one-third"
+      )
+  }
+
+  private def replaceOrDeleteADisclosureRows: Seq[Row] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage).fold(Seq[Row]()) {
+    answer =>
+      Seq(
+        toRow(
+          msgKey = "replaceOrDeleteADisclosure.arrangementID",
+          content = lit"${answer.arrangementID}",
+          href = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+          columnWidth = "govuk-!-width-one-third"
+        ),
+        toRow(
+          msgKey = "replaceOrDeleteADisclosure.disclosureID",
+          content = lit"${answer.disclosureID}",
+          href = controllers.disclosure.routes.ReplaceOrDeleteADisclosureController.onPageLoad(CheckMode).url,
+          columnWidth = "govuk-!-width-one-third"
+        )
+      )
   }
 
   def buildDisclosureSummaryDetails: Seq[Row] =

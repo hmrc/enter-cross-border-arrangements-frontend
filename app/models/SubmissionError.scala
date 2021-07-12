@@ -24,49 +24,48 @@ sealed trait SubmissionError {
 
 case object DisclosureNameEmptyError extends SubmissionError {
 
-  def errorKey: String = "submission.disclosure.name.missing"
+  def errorKey: String       = "submission.disclosure.name.missing"
   def defaultMessage: String = "A disclosure must have a name"
 }
 
 case object DisclosureImportInstructionInvalidError extends SubmissionError {
 
-  def errorKey: String = "submission.disclosure.import.instruction.invalid"
+  def errorKey: String       = "submission.disclosure.import.instruction.invalid"
   def defaultMessage: String = "A submission must have a valid import instruction"
 }
 
 case object DisclosureInitialMarketableArrangementInvalidError extends SubmissionError {
 
-  def errorKey: String = "submission.disclosure.marketable.arrangement.invalid"
+  def errorKey: String       = "submission.disclosure.marketable.arrangement.invalid"
   def defaultMessage: String = "A submission must have a marketable arrangement flag when not new"
 }
 
 case object ArrangementDetailsNotDefinedError extends SubmissionError {
 
-  def errorKey: String = "submission.arrangement.details.not.defined"
+  def errorKey: String       = "submission.arrangement.details.not.defined"
   def defaultMessage: String = "A submission must have arrangement details if not deleting"
 }
 
 case object ArrangementNameEmptyError extends SubmissionError {
 
-  def errorKey: String = "submission.arrangement.name.empty"
+  def errorKey: String       = "submission.arrangement.name.empty"
   def defaultMessage: String = "A submission must have a non-empty arrangement name"
 }
 
 case object ArrangementImplementingDateInvalidError extends SubmissionError {
 
-  def errorKey: String = "submission.arrangement.date.empty"
+  def errorKey: String       = "submission.arrangement.date.empty"
   def defaultMessage: String = "A submission must have a valid arrangement implementing date"
 }
 
 case object HallmarkDetailsNotDefinedError extends SubmissionError {
 
-  def errorKey: String = "submission.halmmark.details.not.defined"
+  def errorKey: String       = "submission.halmmark.details.not.defined"
   def defaultMessage: String = "A submission must have hallmark details if not deleting"
 }
 
 case object HallmarkDMissingError extends SubmissionError {
 
-  def errorKey: String = "submission.hallmark.d.missing"
+  def errorKey: String       = "submission.hallmark.d.missing"
   def defaultMessage: String = "A submission must have at least one hallmark D"
 }
-

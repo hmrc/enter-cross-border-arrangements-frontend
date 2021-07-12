@@ -36,7 +36,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouHaveNotAddedAnyIntermediariesController @Inject()(
+class YouHaveNotAddedAnyIntermediariesController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForIntermediaries,
@@ -47,24 +47,27 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer,
   frontendAppConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyIntermediariesPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"       -> preparedForm,
-        "id" -> id,
-        "mode"       -> mode,
+        "form"             -> preparedForm,
+        "id"               -> id,
+        "mode"             -> mode,
         "intermediaryList" -> Json.toJson(toItemList(request.userAnswers, id)),
-        "radios" -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
+        "radios"           -> YouHaveNotAddedAnyIntermediaries.radios(preparedForm)
       )
 
       renderer.render("intermediaries/youHaveNotAddedAnyIntermediaries.njk", json).map(Ok(_))
@@ -87,36 +90,35 @@ class YouHaveNotAddedAnyIntermediariesController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"             -> formWithErrors,
+              "id"               -> id,
+              "mode"             -> mode,
+              "intermediaryList" -> Json.toJson(toItemList(request.userAnswers, id)),
+              "radios"           -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "intermediaryList" -> Json.toJson(toItemList(request.userAnswers, id)),
-            "radios" -> YouHaveNotAddedAnyIntermediaries.radios(formWithErrors)
-          )
-
-          renderer.render("intermediaries/youHaveNotAddedAnyIntermediaries.njk", json).map(BadRequest(_))
-        },
-        value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyIntermediariesPage, id, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(IntermediariesStatusPage, id, setStatus(value, updatedAnswers)))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("intermediaries/youHaveNotAddedAnyIntermediaries.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyIntermediariesPage, id, value))
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(IntermediariesStatusPage, id, setStatus(value, updatedAnswers)))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def setStatus(selectedAnswer: YouHaveNotAddedAnyIntermediaries, ua: UserAnswers): JourneyStatus = {
+  private def setStatus(selectedAnswer: YouHaveNotAddedAnyIntermediaries, ua: UserAnswers): JourneyStatus =
     selectedAnswer match {
       case YouHaveNotAddedAnyIntermediaries.YesAddLater => JourneyStatus.InProgress
-      case YouHaveNotAddedAnyIntermediaries.No => JourneyStatus.Completed
-      case _ => JourneyStatus.NotStarted
+      case YouHaveNotAddedAnyIntermediaries.No          => JourneyStatus.Completed
+      case _                                            => JourneyStatus.NotStarted
     }
-  }
 }

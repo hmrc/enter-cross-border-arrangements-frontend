@@ -26,12 +26,12 @@ import scala.concurrent.ExecutionContext
 
 class DisclosureIdentifyArrangementFormProviderSpec extends StringFieldBehaviours with MockitoSugar {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val hc: HeaderCarrier                  = HeaderCarrier()
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val countriesSeq: Seq[Country]                  = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
 
   val requiredKey = "disclosureIdentifyArrangement.error.required"
-  val invalidKey = "disclosureIdentifyArrangement.error.invalid"
+  val invalidKey  = "disclosureIdentifyArrangement.error.invalid"
 
   val form = new DisclosureIdentifyArrangementFormProvider()(countriesSeq)
 

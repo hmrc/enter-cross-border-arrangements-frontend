@@ -34,7 +34,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterIndividualEmailAddressQuestionController @Inject()(
+class ReporterIndividualEmailAddressQuestionController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForReporter,
@@ -44,26 +44,29 @@ class ReporterIndividualEmailAddressQuestionController @Inject()(
   formProvider: ReporterEmailAddressQuestionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private def actionUrl(id: Int, mode: Mode) = routes.ReporterIndividualEmailAddressQuestionController.onSubmit(id, mode).url
-  private val form = formProvider()
+  private val form                           = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ReporterIndividualEmailAddressQuestionPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
-        "actionUrl" -> actionUrl(id, mode),
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "pageTitle"   -> "reporterIndividualEmailAddressQuestion.title",
+        "actionUrl"   -> actionUrl(id, mode),
         "pageHeading" -> pageHeadingLegendProvider("reporterIndividualEmailAddressQuestion.heading", ""),
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios"      -> Radios.yesNo(preparedForm("value"))
       )
 
       renderer.render("reporter/reporterEmailAddressQuestion.njk", json).map(Ok(_))
@@ -74,27 +77,28 @@ class ReporterIndividualEmailAddressQuestionController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "pageTitle"   -> "reporterIndividualEmailAddressQuestion.title",
+              "actionUrl"   -> actionUrl(id, mode),
+              "pageHeading" -> pageHeadingLegendProvider("reporterIndividualEmailAddressQuestion.heading", ""),
+              "radios"      -> Radios.yesNo(formWithErrors("value"))
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "pageTitle" -> "reporterIndividualEmailAddressQuestion.title",
-            "actionUrl" -> actionUrl(id, mode),
-            "pageHeading" -> pageHeadingLegendProvider("reporterIndividualEmailAddressQuestion.heading", ""),
-            "radios" -> Radios.yesNo(formWithErrors("value"))
-          )
-
-          renderer.render("reporter/reporterEmailAddressQuestion.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualEmailAddressQuestionPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("reporter/reporterEmailAddressQuestion.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualEmailAddressQuestionPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

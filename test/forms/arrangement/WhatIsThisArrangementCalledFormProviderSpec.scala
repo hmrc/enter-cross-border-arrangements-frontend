@@ -22,8 +22,8 @@ import play.api.data.FormError
 class WhatIsThisArrangementCalledFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "whatIsThisArrangementCalled.error.required"
-  val lengthKey = "whatIsThisArrangementCalled.error.length"
-  val maxLength = 400
+  val lengthKey   = "whatIsThisArrangementCalled.error.length"
+  val maxLength   = 400
 
   val form = new WhatIsThisArrangementCalledFormProvider()()
 

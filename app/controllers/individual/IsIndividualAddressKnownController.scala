@@ -33,34 +33,37 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsIndividualAddressKnownController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIndividual,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsIndividualAddressKnownFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsIndividualAddressKnownController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsIndividualAddressKnownFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IsIndividualAddressKnownPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
+        "form"   -> preparedForm,
+        "id"     -> id,
+        "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers, id)
+        "name"   -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/isIndividualAddressKnown.njk", json).map(Ok(_))
@@ -71,34 +74,33 @@ class IsIndividualAddressKnownController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> Radios.yesNo(formWithErrors("confirm")),
+              "name"   -> getIndividualName(request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "name" -> getIndividualName(request.userAnswers, id)
-          )
-
-          renderer.render("individual/isIndividualAddressKnown.njk", json).map(BadRequest(_))
-        },
-        value =>
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressKnownPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("individual/isIndividualAddressKnown.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressKnownPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.displayName}’s"
-      case None => "their"
+      case None       => "their"
     }
-  }
 }

@@ -21,4 +21,3 @@ import pages.Page
 case object HallmarksCheckYourAnswersPage extends Page {
   override def toString: String = "hallmarksCheckYourAnswers"
 }
-

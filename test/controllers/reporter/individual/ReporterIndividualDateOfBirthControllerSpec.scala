@@ -63,7 +63,7 @@ class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with Controll
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, getRequest).value
 
@@ -89,11 +89,15 @@ class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with Controll
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterIndividualDateOfBirthPage, 0, validAnswer).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterIndividualDateOfBirthPage, 0, validAnswer)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, getRequest).value
 
@@ -138,10 +142,10 @@ class ReporterIndividualDateOfBirthControllerSpec extends SpecBase with Controll
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterIndividualDateOfBirthRoute).withFormUrlEncodedBody(("dob", "invalid value"))
-      val boundForm = form.bind(Map("dob" -> "invalid value"))
+      val request        = FakeRequest(POST, reporterIndividualDateOfBirthRoute).withFormUrlEncodedBody(("dob", "invalid value"))
+      val boundForm      = form.bind(Map("dob" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

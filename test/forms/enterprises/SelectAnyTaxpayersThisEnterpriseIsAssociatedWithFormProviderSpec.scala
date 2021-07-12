@@ -24,7 +24,7 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProviderSpec extends C
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "selectAnyTaxpayersThisEnterpriseIsAssociatedWith.error.required"
 
     behave like mandatoryCheckboxField(

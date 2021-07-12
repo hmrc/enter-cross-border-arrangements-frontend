@@ -20,8 +20,9 @@ import scala.annotation.tailrec
 import scala.util.Random
 
 object IDHelper {
+
   @tailrec
-  def generateID(existingIDs: Seq[String], suffixLength: Int = 6) : String = {
+  def generateID(existingIDs: Seq[String], suffixLength: Int = 6): String = {
     val id = Random.alphanumeric.take(suffixLength).mkString("").toUpperCase
     if (existingIDs.contains(id)) generateID(existingIDs, suffixLength)
     else id

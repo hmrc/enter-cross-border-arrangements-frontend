@@ -37,6 +37,7 @@ import scala.concurrent.Future
 class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val mockContactRetrievalAction: ContactRetrievalAction = mock[ContactRetrievalAction]
+
   override def beforeEach {
     Mockito.reset(mockContactRetrievalAction)
     super.beforeEach()
@@ -63,18 +64,24 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), Some(""), Some("")))
-        .success.value
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval =
+        new FakeContactRetrievalAction(userAnswers,
+                                       Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com")))
+        )
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
-        val request = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad(0).url)
+      val request        = FakeRequest(GET, routes.NewDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -93,13 +100,15 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), Some("")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val request        = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -120,15 +129,18 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(Some(""), None))
-        .success.value
+        .success
+        .value
         .set(MessageRefIDPage, 0, "")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val request        = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -149,15 +161,18 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, Some("")))
-        .success.value
+        .success
+        .value
         .set(MessageRefIDPage, 0, "")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val request        = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -178,14 +193,17 @@ class NewDisclosureConfirmationControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, None))
-        .success.value
+        .success
+        .value
         .set(MessageRefIDPage, 0, "")
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
+      val request        = FakeRequest(GET, routes.AdditionalDisclosureConfirmationController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

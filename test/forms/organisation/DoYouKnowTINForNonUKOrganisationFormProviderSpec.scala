@@ -22,9 +22,9 @@ import play.api.data.{Form, FormError}
 class DoYouKnowTINForNonUKOrganisationFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredMessage = "Select yes if you know the organisation’s tax identification numbers"
-  val invalidKey = "error.boolean"
+  val invalidKey      = "error.boolean"
 
-  val formProvider = new DoYouKnowTINForNonUKOrganisationFormProvider()
+  val formProvider        = new DoYouKnowTINForNonUKOrganisationFormProvider()
   val form: Form[Boolean] = formProvider()(messages)
 
   ".confirm" - {

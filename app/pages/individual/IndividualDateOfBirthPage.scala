@@ -29,5 +29,5 @@ case object IndividualDateOfBirthPage extends DetailsPage[LocalDate, Individual]
   override def toString: String = "individualDateOfBirth"
 
   override def getFromModel(model: Individual): Option[LocalDate] =
-    model.birthDate.filter(_.isAfter(LocalDate.of(1900,1,1)))
+    model.birthDate.filter(_.isAfter(LocalDate.of(1900, 1, 1)))
 }

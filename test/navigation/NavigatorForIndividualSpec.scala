@@ -26,20 +26,20 @@ import pages.individual._
 
 class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new NavigatorForIndividual
-  val country: Country = Country("valid", "GB", "United Kingdom")
-  val address: Address = Address(None, None, None, "", None, country)
+  val navigator                = new NavigatorForIndividual
+  val country: Country         = Country("valid", "GB", "United Kingdom")
+  val address: Address         = Address(None, None, None, "", None, country)
   val tin: TaxReferenceNumbers = TaxReferenceNumbers("1234567890", None, None)
 
-  val D1 = "What is their name?"
-  val D2 = "Do you know {0}'s date of birth?"
-  val D3 = "What is {0}'s date of birth?"
-  val D4 = "Do you know where {0} was born?"
-  val D5 = "Where was {0} born?"
-  val D6 = "Do you know {0}’s Address?"
-  val D7 = "Does {0}’s live in the United Kingdom?"
-  val D8 = "What is the {0}'s postcode?"
-  val D9 = "What is {0}'s address? (/select-address)"
+  val D1  = "What is their name?"
+  val D2  = "Do you know {0}'s date of birth?"
+  val D3  = "What is {0}'s date of birth?"
+  val D4  = "Do you know where {0} was born?"
+  val D5  = "Where was {0} born?"
+  val D6  = "Do you know {0}’s Address?"
+  val D7  = "Does {0}’s live in the United Kingdom?"
+  val D8  = "What is the {0}'s postcode?"
+  val D9  = "What is {0}'s address? (/select-address)"
   val D10 = "What is {0}'s address? (/address)"
   val D11 = "Do you know the email address for a main contact at {0}?"
   val D12 = "What is the email address for a main contact at {0}?"
@@ -53,10 +53,10 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
   val E10 = "Is {0} affected by the arrangement?"
   val E11 = "[Associated Enterprises] Check your answers?"
   // In the relevant taxpayers journey
-  val T9 = "Is this a marketable arrangement - gateway controller"
+  val T9  = "Is this a marketable arrangement - gateway controller"
   val T11 = "[Relevant Taxpayers] Check your answers?"
   // In the add intermediaries journey
-  val I9 = "What type of intermediary is {0}?"
+  val I9  = "What type of intermediary is {0}?"
   val I13 = "[Add Intermediaries] Check your answers?"
 
   "Individual Navigator" - {
@@ -940,4 +940,3 @@ class NavigatorForIndividualSpec extends SpecBase with ScalaCheckPropertyChecks 
 
   }
 }
-

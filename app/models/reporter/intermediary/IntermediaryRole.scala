@@ -40,14 +40,12 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(label = msg"intermediaryRole.DAC61101",
-        value = Promoter.toString,
-        hint = Some(Hint(msg"intermediaryRole.promoter.hint", "promoter-hint"))),
-
-      Radios.Radio(label = msg"intermediaryRole.DAC61102",
+      Radios.Radio(label = msg"intermediaryRole.DAC61101", value = Promoter.toString, hint = Some(Hint(msg"intermediaryRole.promoter.hint", "promoter-hint"))),
+      Radios.Radio(
+        label = msg"intermediaryRole.DAC61102",
         value = ServiceProvider.toString,
-        hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))),
-
+        hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))
+      ),
       Radios.Radio(msg"intermediaryRole.optionUnknown", Unknown.toString)
     )
 
@@ -55,5 +53,9 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
   }
 
   implicit val enumerable: Enumerable[IntermediaryRole] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

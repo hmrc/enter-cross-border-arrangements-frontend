@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
+class ReporterTaxpayersMarketableArrangementGatewayController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -40,26 +40,24 @@ class ReporterTaxpayersMarketableArrangementGatewayController @Inject()(
   errorHandler: ErrorHandler,
   crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
   val controllerComponents: MessagesControllerComponents
-  )(implicit ec: ExecutionContext) extends FrontendBaseController {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController {
 
   def onRouting(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       (request.userAnswers.get(DisclosureDetailsPage, id).map(_.disclosureType) match {
         case Some(DisclosureType.Dac6new) =>
-
           Future.successful(request.userAnswers.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA))
         case Some(DisclosureType.Dac6add | DisclosureType.Dac6rep) =>
-
           request.userAnswers.get(DisclosureDetailsPage, id).flatMap(_.arrangementID) match {
             case Some(arrangementId) =>
               crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
           }
         case _ => throw new UnsupportedOperationException("A disclosure must contain either a new or added arrangement")
 
-      }) map { isMarketableArrangement =>
-
-        Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
+      }) map {
+        isMarketableArrangement =>
+          Redirect(navigator.routeMap(DisclosureMarketablePage)(DefaultRouting(mode))(id)(Some(isMarketableArrangement))(0))
       } recoverWith {
         case ex: Exception => errorHandler.onServerError(request, ex)
       }

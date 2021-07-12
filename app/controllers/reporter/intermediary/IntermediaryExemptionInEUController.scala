@@ -33,33 +33,36 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IntermediaryExemptionInEUController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForReporter,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IntermediaryExemptionInEUFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IntermediaryExemptionInEUController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForReporter,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IntermediaryExemptionInEUFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IntermediaryExemptionInEUPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
-        "radios"  -> YesNoDoNotKnowRadios.radios(preparedForm)
+        "radios" -> YesNoDoNotKnowRadios.radios(preparedForm)
       )
 
       renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(Ok(_))
@@ -70,25 +73,26 @@ class IntermediaryExemptionInEUController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> YesNoDoNotKnowRadios.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> YesNoDoNotKnowRadios.radios(formWithErrors)
-          )
-
-          renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("reporter/intermediary/intermediaryExemptionInEU.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryExemptionInEUPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

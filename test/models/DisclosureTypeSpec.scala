@@ -35,7 +35,6 @@ class DisclosureTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       forAll(gen) {
         disclosureType =>
-
           JsString(disclosureType.toString).validate[DisclosureType].asOpt.value mustEqual disclosureType
       }
     }
@@ -46,7 +45,6 @@ class DisclosureTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[DisclosureType] mustEqual JsError("error.invalid")
       }
     }
@@ -57,7 +55,6 @@ class DisclosureTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       forAll(gen) {
         disclosureType =>
-
           Json.toJson(disclosureType) mustEqual JsString(disclosureType.toString)
       }
     }

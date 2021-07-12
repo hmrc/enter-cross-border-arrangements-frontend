@@ -22,12 +22,12 @@ import play.api.data.FormError
 
 class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val invalidKey = "error.boolean"
+  val invalidKey   = "error.boolean"
   val formProvider = new ReporterTinUKQuestionFormProvider()
 
   ".value for reporter as individual" - {
 
-    val form = formProvider("reporterIndividual")(messages)
+    val form      = formProvider("reporterIndividual")(messages)
     val fieldName = "value"
 
     behave like booleanField(
@@ -45,7 +45,7 @@ class ReporterTinUKQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
   ".value for reporter as organisation" - {
 
-    val form = formProvider("reporterOrganisation")(messages)
+    val form      = formProvider("reporterOrganisation")(messages)
     val fieldName = "value"
 
     behave like booleanField(

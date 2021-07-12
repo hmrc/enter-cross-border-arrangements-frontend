@@ -22,7 +22,7 @@ import play.api.data.FormError
 class IsOrganisationAddressKnownFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "isOrganisationAddressKnown.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new IsOrganisationAddressKnownFormProvider()()
 

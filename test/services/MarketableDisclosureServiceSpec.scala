@@ -34,14 +34,14 @@ import scala.concurrent.{Await, Future}
 
 class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
-  val mockHistoryConnector = mock[HistoryConnector]
+  val mockHistoryConnector  = mock[HistoryConnector]
   val mockSessionRepository = mock[SessionRepository]
 
-  val firstDisclosureSubmissionDetailsMarketable = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
-    Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
+  val firstDisclosureSubmissionDetailsMarketable =
+    SubmissionDetails("id", LocalDateTime.now(), "test.xml", Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
 
-  val firstDisclosureSubmissionDetailsNotMarketable = SubmissionDetails("id", LocalDateTime.now(), "test.xml",
-    Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = false, "messageRefID")
+  val firstDisclosureSubmissionDetailsNotMarketable =
+    SubmissionDetails("id", LocalDateTime.now(), "test.xml", Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = false, "messageRefID")
 
   val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetailsMarketable))
 
@@ -67,9 +67,10 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
   "isMarketableService" - {
     "must return true when the arrangement is marketable" in {
 
-    val userAnswers =   userAnswersForOrganisation
+      val userAnswers = userAnswersForOrganisation
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       val service = app.injector.instanceOf[MarketableDisclosureService]
 
@@ -81,9 +82,10 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
     "must return false when the arrangement is not marketable" in {
 
-    val userAnswers =   userAnswersForOrganisation
+      val userAnswers = userAnswersForOrganisation
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       val service = app.injector.instanceOf[MarketableDisclosureService]
 

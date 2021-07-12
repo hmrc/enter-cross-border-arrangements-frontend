@@ -30,32 +30,37 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReplacementDisclosureConfirmationController @Inject()(
-    override val messagesApi: MessagesApi,
-    appConfig: FrontendAppConfig,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
-    val controllerComponents: MessagesControllerComponents,
-    sessionRepository: SessionRepository,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with UpdateDisclosureDetailsAsSent {
+class ReplacementDisclosureConfirmationController @Inject() (
+  override val messagesApi: MessagesApi,
+  appConfig: FrontendAppConfig,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  contactRetrievalAction: ContactRetrievalAction,
+  val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with UpdateDisclosureDetailsAsSent {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
-      val messageRefID = request.userAnswers.get(GeneratedIDPage, id).map(_.messageRefID)
+      val messageRefID = request.userAnswers
+        .get(GeneratedIDPage, id)
+        .map(_.messageRefID)
         .getOrElse(throw new RuntimeException("messageRefID cannot be found"))
 
-      val emailMessage = request.contacts.flatMap(_.emailMessage)
+      val emailMessage = request.contacts
+        .flatMap(_.emailMessage)
         .getOrElse(throw new RuntimeException("Contact email details are missing"))
 
       val json = Json.obj(
-        "messageRefID" -> messageRefID,
-        "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
+        "messageRefID"       -> messageRefID,
+        "homePageLink"       -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl),
-        "emailMessage" -> emailMessage
+        "emailMessage"       -> emailMessage
       )
 
       updateDisclosureDetailsAsSent(request.userAnswers, id).map(sessionRepository.set)

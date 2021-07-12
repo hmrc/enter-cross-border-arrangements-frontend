@@ -35,17 +35,17 @@ class IsOrganisationAddressUkPageSpec extends PageBehaviours {
 
     "- when address is in the UK " in {
 
-      IsOrganisationAddressUkPage.getFromModel(validOrganisation.copy(address = Some(validAddress.copy(country = Country.UK)))) mustBe(Some(true))
+      IsOrganisationAddressUkPage.getFromModel(validOrganisation.copy(address = Some(validAddress.copy(country = Country.UK)))) mustBe (Some(true))
     }
 
     "- when address is not in the UK " in {
 
-      IsOrganisationAddressUkPage.getFromModel(validOrganisation) mustBe(Some(false))
+      IsOrganisationAddressUkPage.getFromModel(validOrganisation) mustBe (Some(false))
     }
 
     "- when address is empty " in {
 
-      IsOrganisationAddressUkPage.getFromModel(validOrganisation.copy(address = None)) mustBe(Some(false))
+      IsOrganisationAddressUkPage.getFromModel(validOrganisation.copy(address = None)) mustBe (Some(false))
     }
   }
 }

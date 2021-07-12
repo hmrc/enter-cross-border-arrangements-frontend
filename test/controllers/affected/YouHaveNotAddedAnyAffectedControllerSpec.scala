@@ -39,7 +39,7 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
   lazy val youHaveNotAddedAnyAffectedRoute = controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(0).url
 
   val formProvider = new YouHaveNotAddedAnyAffectedFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "YouHaveNotAddedAnyAffected Controller" - {
 
@@ -48,9 +48,9 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -59,10 +59,10 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
+        "form"         -> form,
+        "mode"         -> NormalMode,
         "affectedList" -> Json.arr(),
-        "radios" -> YouHaveNotAddedAnyAffected.radios(form)
+        "radios"       -> YouHaveNotAddedAnyAffected.radios(form)
       )
 
       templateCaptor.getValue mustEqual "affected/youHaveNotAddedAnyAffected.njk"
@@ -76,16 +76,20 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       val affectedLoop = IndexedSeq(Affected("id", Some(validIndividual)))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AffectedLoopPage, 0, affectedLoop).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(AffectedLoopPage, 0, affectedLoop)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val controller = app.injector.instanceOf[YouHaveNotAddedAnyAffectedController]
-      val result = route(app, request).value
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller     = app.injector.instanceOf[YouHaveNotAddedAnyAffectedController]
+      val result         = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -94,10 +98,10 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
-        "form"       -> form,
-        "mode"       -> NormalMode,
+        "form"         -> form,
+        "mode"         -> NormalMode,
         "affectedList" -> expectedList,
-        "radios" -> YouHaveNotAddedAnyAffected.radios(form)
+        "radios"       -> YouHaveNotAddedAnyAffected.radios(form)
       )
 
       templateCaptor.getValue mustEqual "affected/youHaveNotAddedAnyAffected.njk"
@@ -109,14 +113,18 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(YouHaveNotAddedAnyAffectedPage, 0, YouHaveNotAddedAnyAffected.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(YouHaveNotAddedAnyAffectedPage, 0, YouHaveNotAddedAnyAffected.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
+      val request        = FakeRequest(GET, youHaveNotAddedAnyAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -127,8 +135,8 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       val filledForm = form.fill(YouHaveNotAddedAnyAffected.values.head)
 
       val expectedJson = Json.obj(
-        "form"       -> filledForm,
-        "mode"       -> NormalMode,
+        "form"   -> filledForm,
+        "mode"   -> NormalMode,
         "radios" -> YouHaveNotAddedAnyAffected.radios(filledForm)
       )
 
@@ -159,10 +167,10 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request =  FakeRequest(POST, youHaveNotAddedAnyAffectedRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, youHaveNotAddedAnyAffectedRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -171,8 +179,8 @@ class YouHaveNotAddedAnyAffectedControllerSpec extends SpecBase with ControllerM
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"       -> boundForm,
-        "mode"       -> NormalMode,
+        "form"   -> boundForm,
+        "mode"   -> NormalMode,
         "radios" -> YouHaveNotAddedAnyAffected.radios(boundForm)
       )
 

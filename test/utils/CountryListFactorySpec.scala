@@ -39,7 +39,7 @@ class CountryListFactorySpec extends SpecBase {
     "return option of country sequence in alphabetical order when given a valid json file" in {
 
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
-      val env = mock[Environment]
+      val env                     = mock[Environment]
 
       when(conf.countryCodeJson).thenReturn("countries.json")
 
@@ -55,13 +55,14 @@ class CountryListFactorySpec extends SpecBase {
           Country("valid", "GA", "Gabon"),
           Country("valid", "ST", "Sao Tome and Principe"),
           Country("valid", "GB", "United Kingdom")
-        ))
+        )
+      )
     }
 
     "return country sequence in alphabetical order without United Kingdom when given a valid json file" in {
 
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
-      val env = mock[Environment]
+      val env                     = mock[Environment]
 
       when(conf.countryCodeJson).thenReturn("countries.json")
 
@@ -76,12 +77,13 @@ class CountryListFactorySpec extends SpecBase {
           Country("valid", "BR", "Brazil"),
           Country("valid", "GA", "Gabon"),
           Country("valid", "ST", "Sao Tome and Principe")
-        ))
+        )
+      )
     }
 
     "return None when country list cannot be loaded from environment" in {
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
-      val env = mock[Environment]
+      val env                     = mock[Environment]
 
       when(conf.countryCodeJson).thenReturn("doesntmatter.json")
       when(env.resourceAsStream(any())).thenReturn(None)
@@ -93,7 +95,6 @@ class CountryListFactorySpec extends SpecBase {
     }
   }
 
-  def sut(env: Environment = mock[Environment], config: FrontendAppConfig = mock[FrontendAppConfig]): CountryListFactory = {
+  def sut(env: Environment = mock[Environment], config: FrontendAppConfig = mock[FrontendAppConfig]): CountryListFactory =
     new CountryListFactory(env, config)
-  }
 }

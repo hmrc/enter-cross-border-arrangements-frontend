@@ -34,15 +34,17 @@ import scala.concurrent.Future
 
 class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
   val formProvider = new ReporterIndividualNameFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val reporterIndividualNameRoute = routes.ReporterIndividualNameController.onPageLoad(0, NormalMode).url
 
   val userAnswers = UserAnswers(userAnswersId)
     .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-    .success.value
-    .set(ReporterIndividualNamePage, 0, Name("value 1","value 2"))
-    .success.value
+    .success
+    .value
+    .set(ReporterIndividualNamePage, 0, Name("value 1", "value 2"))
+    .success
+    .value
 
   "ReporterIndividualName Controller" - {
 
@@ -51,9 +53,9 @@ class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockF
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, reporterIndividualNameRoute)
+      val request        = FakeRequest(GET, reporterIndividualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,9 +77,9 @@ class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockF
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterIndividualNameRoute)
+      val request        = FakeRequest(GET, reporterIndividualNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -87,7 +89,7 @@ class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockF
 
       val filledForm = form.bind(
         Map(
-          "firstName" -> "value 1",
+          "firstName"  -> "value 1",
           "secondName" -> "value 2"
         )
       )
@@ -121,10 +123,10 @@ class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockF
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterIndividualNameRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, reporterIndividualNameRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -133,8 +135,8 @@ class ReporterIndividualNameControllerSpec extends SpecBase with ControllerMockF
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
       templateCaptor.getValue mustEqual "reporter/individual/reporterIndividualName.njk"

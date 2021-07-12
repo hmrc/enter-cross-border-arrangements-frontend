@@ -32,25 +32,35 @@ case class DisclosureInformationXMLSection(submission: Submission) {
   val groupSize = 4000
 
   private[xml] def buildReason(details: ArrangementDetails): NodeSeq =
-    details.reportingReason.fold(NodeSeq.Empty) { reportingReason =>
-      <Reason>{reportingReason.toUpperCase}</Reason>
+    details.reportingReason.fold(NodeSeq.Empty) {
+      reportingReason =>
+        <Reason>{reportingReason.toUpperCase}</Reason>
     }
 
   private[xml] def buildDisclosureInformationSummary(details: ArrangementDetails): NodeSeq =
     <Summary>
-      <Disclosure_Name>{details.arrangementName}</Disclosure_Name>{details.arrangementDetails.grouped(groupSize).toList.map(string =>
-      <Disclosure_Description>{string}</Disclosure_Description>)}
+      <Disclosure_Name>{details.arrangementName}</Disclosure_Name>{
+      details.arrangementDetails
+        .grouped(groupSize)
+        .toList
+        .map(
+          string => <Disclosure_Description>{string}</Disclosure_Description>
+        )
+    }
     </Summary>
 
-
   private[xml] def buildNationalProvision(details: ArrangementDetails): NodeSeq =
-    details.nationalProvisionDetails.grouped(groupSize).toList.map { string =>
-      <NationalProvision>{string}</NationalProvision>
-  }
+    details.nationalProvisionDetails.grouped(groupSize).toList.map {
+      string =>
+        <NationalProvision>{string}</NationalProvision>
+    }
 
   private[xml] def buildConcernedMS(details: ArrangementDetails): NodeSeq =
-    <ConcernedMSs>{details.countriesInvolved.map(country => <ConcernedMS>{country}</ConcernedMS>)}</ConcernedMSs>
-
+    <ConcernedMSs>{
+      details.countriesInvolved.map(
+        country => <ConcernedMS>{country}</ConcernedMS>
+      )
+    }</ConcernedMSs>
 
   private[xml] def buildArrangementDetails(details: ArrangementDetails): NodeSeq =
     new xml.NodeBuffer ++
@@ -63,13 +73,14 @@ case class DisclosureInformationXMLSection(submission: Submission) {
 
   def buildDisclosureInformation: NodeSeq =
     //Note: MainBenefitTest1 is now always false as it doesn't apply to Hallmark D
-    arrangementDetails.fold(NodeSeq.Empty) { details =>
-      Try {
-        <DisclosureInformation>
+    arrangementDetails.fold(NodeSeq.Empty) {
+      details =>
+        Try {
+          <DisclosureInformation>
           {buildArrangementDetails(details)}
           <MainBenefitTest1>false</MainBenefitTest1>
           {hallmarksSection.buildHallmarks}
         </DisclosureInformation>
-      }.getOrElse(NodeSeq.Empty)
+        }.getOrElse(NodeSeq.Empty)
     }
 }

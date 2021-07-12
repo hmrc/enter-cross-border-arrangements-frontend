@@ -36,12 +36,12 @@ class IsIndividualDateOfBirthKnownPageSpec extends PageBehaviours {
 
     "- when dob exists " in {
 
-      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual) mustBe (Some(true))
     }
 
     "- when dob is empty (before 1900-01-02) " in {
 
-      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual.copy(birthDate = Some(LocalDate.of(1900, 1, 1)))) mustBe(Some(false))
+      IsIndividualDateOfBirthKnownPage.getFromModel(validIndividual.copy(birthDate = Some(LocalDate.of(1900, 1, 1)))) mustBe (Some(false))
     }
   }
 }

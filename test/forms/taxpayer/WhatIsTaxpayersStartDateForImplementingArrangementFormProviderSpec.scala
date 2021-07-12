@@ -27,9 +27,9 @@ class WhatIsTaxpayersStartDateForImplementingArrangementFormProviderSpec extends
 
   ".value" - {
 
-    val fieldName = "value"
-    val futureDate = LocalDate.of(3000,1, 1)
-    val minDate = LocalDate.of(2018, 6, 26)
+    val fieldName  = "value"
+    val futureDate = LocalDate.of(3000, 1, 1)
+    val minDate    = LocalDate.of(2018, 6, 26)
 
     val validData = datesBetween(
       min = minDate,
@@ -44,8 +44,7 @@ class WhatIsTaxpayersStartDateForImplementingArrangementFormProviderSpec extends
       form = form,
       key = fieldName,
       max = futureDate,
-      formError = FormError(
-        fieldName, "whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate")
+      formError = FormError(fieldName, "whatIsTaxpayersStartDateForImplementingArrangement.error.futureDate")
     )
 
     behave like dateFieldWithMin(
@@ -53,7 +52,8 @@ class WhatIsTaxpayersStartDateForImplementingArrangementFormProviderSpec extends
       key = fieldName,
       min = minDate,
       formError = FormError(
-        fieldName, "whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate"
+        fieldName,
+        "whatIsTaxpayersStartDateForImplementingArrangement.error.pastDate"
       )
     )
   }

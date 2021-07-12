@@ -36,28 +36,31 @@ import utils.CountryListFactory
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureIdentifyArrangementController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    countryListFactory: CountryListFactory,
-    navigator: NavigatorForDisclosure,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
-    formProvider: DisclosureIdentifyArrangementFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class DisclosureIdentifyArrangementController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  countryListFactory: CountryListFactory,
+  navigator: NavigatorForDisclosure,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
+  formProvider: DisclosureIdentifyArrangementFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form                    = formProvider(countries)
 
       val preparedForm = request.userAnswers.getBase(DisclosureIdentifyArrangementPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
@@ -74,10 +77,9 @@ class DisclosureIdentifyArrangementController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
-      val formReturned = form.bindFromRequest()
+      val form                    = formProvider(countries)
+      val formReturned            = form.bindFromRequest()
 
       formReturned.fold(
         formWithErrors => {
@@ -89,13 +91,13 @@ class DisclosureIdentifyArrangementController @Inject()(
 
           renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(BadRequest(_))
         },
-        value => {
+        value =>
           crossBorderArrangementsConnector.verifyArrangementId(value.toUpperCase).flatMap {
             verificationStatus =>
               if (verificationStatus) {
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureIdentifyArrangementPage, value))
-                  _ <- sessionRepository.set(updatedAnswers)
+                  _              <- sessionRepository.set(updatedAnswers)
                   checkRoute = toCheckRoute(mode, updatedAnswers)
                 } yield Redirect(redirect(checkRoute, Some(value)))
               } else {
@@ -109,7 +111,6 @@ class DisclosureIdentifyArrangementController @Inject()(
                 renderer.render("disclosure/disclosureIdentifyArrangement.njk", json).map(BadRequest(_))
               }
           }
-        }
       )
   }
 }

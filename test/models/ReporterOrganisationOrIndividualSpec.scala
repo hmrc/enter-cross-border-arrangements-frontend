@@ -31,7 +31,6 @@ class ReporterOrganisationOrIndividualSpec extends ModelSpecBase {
 
       forAll(gen) {
         reporterOrganisationOrIndividual =>
-
           JsString(reporterOrganisationOrIndividual.toString).validate[ReporterOrganisationOrIndividual].asOpt.value mustEqual reporterOrganisationOrIndividual
       }
     }
@@ -42,7 +41,6 @@ class ReporterOrganisationOrIndividualSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[ReporterOrganisationOrIndividual] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class ReporterOrganisationOrIndividualSpec extends ModelSpecBase {
 
       forAll(gen) {
         reporterOrganisationOrIndividual =>
-
           Json.toJson(reporterOrganisationOrIndividual) mustEqual JsString(reporterOrganisationOrIndividual.toString)
       }
     }

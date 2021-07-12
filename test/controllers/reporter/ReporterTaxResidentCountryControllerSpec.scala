@@ -42,11 +42,11 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/non-uk-tin-known-0/0")
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val selectedCountry: Country = Country("valid", "FR", "France")
-  val index: Int = 0
+  val countriesSeq: Seq[Country]             = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val selectedCountry: Country               = Country("valid", "FR", "France")
+  val index: Int                             = 0
 
-  val formProvider = new ReporterTaxResidentCountryFormProvider()
+  val formProvider        = new ReporterTaxResidentCountryFormProvider()
   val form: Form[Country] = formProvider(countriesSeq)
 
   lazy val reporterTaxResidentCountryRoute = routes.ReporterTaxResidentCountryController.onPageLoad(0, NormalMode, index).url
@@ -68,13 +68,13 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, reporterTaxResidentCountryRoute)
+      val request        = FakeRequest(GET, reporterTaxResidentCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -99,7 +99,9 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
       when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterTaxResidentCountryPage, 0, selectedCountry)
         .success
         .value
@@ -109,9 +111,9 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, reporterTaxResidentCountryRoute)
+      val request        = FakeRequest(GET, reporterTaxResidentCountryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -132,7 +134,7 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
 
     "must redirect to the next page when valid data is submitted" in {
       retrieveUserAnswersData(emptyUserAnswers)
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -150,13 +152,13 @@ class ReporterTaxResidentCountryControllerSpec extends SpecBase with ControllerM
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","FR","France"))))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "FR", "France"))))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterTaxResidentCountryRoute).withFormUrlEncodedBody(("country", ""))
-      val boundForm = form.bind(Map("country" -> ""))
+      val request        = FakeRequest(POST, reporterTaxResidentCountryRoute).withFormUrlEncodedBody(("country", ""))
+      val boundForm      = form.bind(Map("country" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

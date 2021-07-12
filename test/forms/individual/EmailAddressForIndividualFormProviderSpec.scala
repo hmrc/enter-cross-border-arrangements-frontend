@@ -22,9 +22,9 @@ import play.api.data.FormError
 class EmailAddressForIndividualFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "emailAddressForIndividual.error.required"
-  val invalidKey = "emailAddressForIndividual.error.invalid"
-  val lengthKey = "emailAddressForIndividual.error.length"
-  val maxLength = 400
+  val invalidKey  = "emailAddressForIndividual.error.invalid"
+  val lengthKey   = "emailAddressForIndividual.error.length"
+  val maxLength   = 400
 
   val form = new EmailAddressForIndividualFormProvider()()
 

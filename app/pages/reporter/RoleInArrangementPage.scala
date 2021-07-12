@@ -33,17 +33,18 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
 
   override def toString: String = "roleInArrangement"
 
-  override def cleanup(value: Option[RoleInArrangement], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
-
+  override def cleanup(value: Option[RoleInArrangement], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(Intermediary) =>
-        userAnswers.remove(TaxpayerWhyReportInUKPage, id)
+        userAnswers
+          .remove(TaxpayerWhyReportInUKPage, id)
           .flatMap(_.remove(TaxpayerWhyReportArrangementPage, id))
           .flatMap(_.remove(ReporterTaxpayersStartDateForImplementingArrangementPage, id))
           .flatMap(_.remove(RelevantTaxpayerStatusPage, id))
 
       case Some(Taxpayer) =>
-        userAnswers.remove(IntermediaryWhyReportInUKPage, id)
+        userAnswers
+          .remove(IntermediaryWhyReportInUKPage, id)
           .flatMap(_.remove(IntermediaryRolePage, id))
           .flatMap(_.remove(IntermediaryExemptionInEUPage, id))
           .flatMap(_.remove(IntermediaryDoYouKnowExemptionsPage, id))
@@ -51,5 +52,4 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
 
       case _ => super.cleanup(value, userAnswers, id)
     }
-  }
 }

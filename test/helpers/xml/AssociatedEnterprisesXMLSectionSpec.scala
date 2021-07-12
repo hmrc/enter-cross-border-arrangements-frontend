@@ -45,10 +45,10 @@ class AssociatedEnterprisesXMLSectionSpec extends SpecBase {
     TaxResidency(Some(Country("", "GB", "United Kingdom")), Some(TaxReferenceNumbers("UTR1234", None, None)))
   )
 
-  val email = "email@email.com"
-  val individualName: Name = Name("FirstName", "Surname")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
+  val email                    = "email@email.com"
+  val individualName: Name     = Name("FirstName", "Surname")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1, 1)
+  val individual: Individual   = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
 
   val organisation: Organisation = Organisation(
     organisationName = "Organisation Ltd.",
@@ -57,13 +57,11 @@ class AssociatedEnterprisesXMLSectionSpec extends SpecBase {
     taxResidencies = IndexedSeq(TaxResidency(Some(Country("", "GB", "United Kingdom")), None))
   )
 
-
   "AssociatedEnterprisesSection" - {
 
     "buildAssociatedEnterprises" - {
       "must build the ASSOCIATED ENTERPRISES section if they exist and there's only one" in {
-        val enterpriseLoop = IndexedSeq(
-          AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
+        val enterpriseLoop = IndexedSeq(AssociatedEnterprise("id", Some(individual), None, List(individual.nameAsString), isAffectedBy = false))
 
         val submission = Submission("id", validDisclosureDetails).copy(associatedEnterprises = enterpriseLoop)
 
@@ -103,7 +101,8 @@ class AssociatedEnterprisesXMLSectionSpec extends SpecBase {
       "must build the ASSOCIATED ENTERPRISES section if they exist and there are more than one" in {
         val enterpriseLoop = IndexedSeq(
           AssociatedEnterprise("id", None, Some(organisation), List(organisation.organisationName), isAffectedBy = true),
-          AssociatedEnterprise("id2", Some(individual), None, List(organisation.organisationName), isAffectedBy = true))
+          AssociatedEnterprise("id2", Some(individual), None, List(organisation.organisationName), isAffectedBy = true)
+        )
 
         val submission = Submission("id", validDisclosureDetails).copy(associatedEnterprises = enterpriseLoop)
 

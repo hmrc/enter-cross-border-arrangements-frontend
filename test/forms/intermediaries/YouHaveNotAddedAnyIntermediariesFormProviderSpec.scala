@@ -26,13 +26,13 @@ class YouHaveNotAddedAnyIntermediariesFormProviderSpec extends OptionFieldBehavi
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "youHaveNotAddedAnyIntermediaries.error.required"
 
     behave like optionsField[YouHaveNotAddedAnyIntermediaries](
       form,
       fieldName,
-      validValues  = YouHaveNotAddedAnyIntermediaries.values,
+      validValues = YouHaveNotAddedAnyIntermediaries.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

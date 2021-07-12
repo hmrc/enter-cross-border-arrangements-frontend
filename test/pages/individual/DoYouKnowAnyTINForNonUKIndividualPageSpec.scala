@@ -34,17 +34,17 @@ class DoYouKnowAnyTINForNonUKIndividualPageSpec extends PageBehaviours {
 
     "- when first detail in loop is from the UK " in {
 
-      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual) mustBe(Some(false))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual) mustBe (Some(false))
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(true))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe (Some(true))
     }
 
     "- when details are empty " in {
 
-      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+      DoYouKnowTINForNonUKIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe (Some(false))
     }
   }
 

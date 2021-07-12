@@ -38,7 +38,7 @@ import play.api.data.FormError
 class EmailAddressQuestionForIndividualFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "emailAddressQuestionForIndividual.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new EmailAddressQuestionForIndividualFormProvider()()
 

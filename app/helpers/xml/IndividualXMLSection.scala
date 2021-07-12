@@ -23,33 +23,39 @@ import scala.xml.{Elem, NodeSeq}
 
 object IndividualXMLSection {
 
-  private[xml] def buildIDForIndividual(individual: Individual,
-                                        isAssociatedEnterprise: Boolean = false): Elem = {
+  private[xml] def buildIDForIndividual(individual: Individual, isAssociatedEnterprise: Boolean = false): Elem = {
 
-    val defaultDOB = LocalDate.of(1900,1,1)
+    val defaultDOB = LocalDate.of(1900, 1, 1)
 
     val mandatoryIndividualName =
       <IndividualName><FirstName>{individual.individualName.firstName}</FirstName><LastName>{individual.individualName.secondName}</LastName></IndividualName>
 
     val mandatoryDOB = <BirthDate>{individual.birthDate.getOrElse(defaultDOB)}</BirthDate>
-    val mandatoryPOB = <BirthPlace>{individual.birthPlace.fold("Unknown")(pob => pob)}</BirthPlace>
-    val optionalEmail = individual.emailAddress.fold(NodeSeq.Empty)(email => <EmailAddress>{email}</EmailAddress>)
+    val mandatoryPOB = <BirthPlace>{
+      individual.birthPlace.fold("Unknown")(
+        pob => pob
+      )
+    }</BirthPlace>
+    val optionalEmail = individual.emailAddress.fold(NodeSeq.Empty)(
+      email => <EmailAddress>{email}</EmailAddress>
+    )
 
     val mandatoryResCountryCode: NodeSeq = TaxResidencyXMLSection.buildResCountryCode(individual.taxResidencies.filter(_.country.isDefined))
 
     val nodeBuffer = new xml.NodeBuffer
-    val individualNodes = {
+    val individualNodes =
       <Individual>
-        {nodeBuffer ++
-        mandatoryIndividualName ++
-        mandatoryDOB ++
-        mandatoryPOB ++
-        TaxResidencyXMLSection.buildTINData(individual.taxResidencies) ++
-        AddressXMLSection.buildAddress(individual.address) ++
-        optionalEmail ++
-        mandatoryResCountryCode}
+        {
+        nodeBuffer ++
+          mandatoryIndividualName ++
+          mandatoryDOB ++
+          mandatoryPOB ++
+          TaxResidencyXMLSection.buildTINData(individual.taxResidencies) ++
+          AddressXMLSection.buildAddress(individual.address) ++
+          optionalEmail ++
+          mandatoryResCountryCode
+      }
       </Individual>
-    }
 
     if (isAssociatedEnterprise) {
       <AssociatedEnterpriseID>{individualNodes}</AssociatedEnterpriseID>

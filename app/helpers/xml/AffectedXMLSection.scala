@@ -25,21 +25,23 @@ case class AffectedXMLSection(submission: Submission) {
 
   private[xml] def getAffectedPersons: Seq[Node] =
     Option(submission.affectedPersons) match {
-      case Some(affectedList) => affectedList.map {
-        affectedPerson =>  if (affectedPerson.individual.isDefined) {
-          <AffectedPerson>
+      case Some(affectedList) =>
+        affectedList.map {
+          affectedPerson =>
+            if (affectedPerson.individual.isDefined) {
+              <AffectedPerson>
             <AffectedPersonID>
               {IndividualXMLSection.buildIDForIndividual(affectedPerson.individual.get) \\ "Individual"}
             </AffectedPersonID>
           </AffectedPerson>
-        } else {
-          <AffectedPerson>
+            } else {
+              <AffectedPerson>
             <AffectedPersonID>
               {OrganisationXMLSection.buildIDForOrganisation(affectedPerson.organisation.get) \\ "Organisation"}
             </AffectedPersonID>
           </AffectedPerson>
+            }
         }
-      }
       case _ => NodeSeq.Empty
     }
 
@@ -50,4 +52,3 @@ case class AffectedXMLSection(submission: Submission) {
       </AffectedPersons>
     }.getOrElse(NodeSeq.Empty)
 }
-

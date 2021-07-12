@@ -37,11 +37,10 @@ class DisclosureDetailsSpec extends ModelSpecBase {
             disclosureID = Some("disclosureID"),
             initialDisclosureMA = true,
             messageRefId = Some("messageRefId")
-
           )
 
           Json.toJson(disclosureDetails).toString() mustEqual
-            s"""{"disclosureName":"name","disclosureType":"${disclosureType}","arrangementID":"arrangementID","disclosureID":"disclosureID","initialDisclosureMA":true,"messageRefId":"messageRefId","sent":false}"""
+            s"""{"disclosureName":"name","disclosureType":"$disclosureType","arrangementID":"arrangementID","disclosureID":"disclosureID","initialDisclosureMA":true,"messageRefId":"messageRefId","sent":false}"""
       }
     }
   }

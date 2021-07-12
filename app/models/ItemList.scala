@@ -18,9 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ItemList(name: String,
-                    changeUrl: String,
-                    removeUrl: String)
+case class ItemList(name: String, changeUrl: String, removeUrl: String)
 
 object ItemList {
   implicit val format: OFormat[ItemList] = Json.format[ItemList]

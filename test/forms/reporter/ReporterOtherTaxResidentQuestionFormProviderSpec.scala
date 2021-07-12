@@ -22,7 +22,7 @@ import play.api.data.FormError
 class ReporterOtherTaxResidentQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "reporterOtherTaxResidentQuestion.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new ReporterOtherTaxResidentQuestionFormProvider()()
 

@@ -22,9 +22,10 @@ import play.api.libs.json.{Reads, Writes}
 import scala.concurrent.Future
 
 object UserAnswersHelper {
-   def updateUserAnswers[A](userAnswers: UserAnswers, id: Int, page: QuestionPage[A], value: A)(implicit rds: Reads[A], wrs: Writes[A]): Future[UserAnswers] =
+
+  def updateUserAnswers[A](userAnswers: UserAnswers, id: Int, page: QuestionPage[A], value: A)(implicit rds: Reads[A], wrs: Writes[A]): Future[UserAnswers] =
     userAnswers.get(page, id) match {
-      case Some(oldValue)  if oldValue == value => Future.successful(userAnswers)
-      case _ =>  Future.fromTry(userAnswers.set(page, id, value))
+      case Some(oldValue) if oldValue == value => Future.successful(userAnswers)
+      case _                                   => Future.fromTry(userAnswers.set(page, id, value))
     }
 }

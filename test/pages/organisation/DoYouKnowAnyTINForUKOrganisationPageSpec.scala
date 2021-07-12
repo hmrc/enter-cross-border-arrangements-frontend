@@ -34,17 +34,17 @@ class DoYouKnowAnyTINForUKOrganisationPageSpec extends PageBehaviours {
 
     "- when first detail in loop is from the UK " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation) mustBe(Some(true))
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation) mustBe (Some(true))
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(false))
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = validTaxResidencies.reverse)) mustBe (Some(false))
     }
 
     "- when details are empty " in {
 
-      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe(Some(false))
+      DoYouKnowAnyTINForUKOrganisationPage.getFromModel(validOrganisation.copy(taxResidencies = IndexedSeq.empty)) mustBe (Some(false))
     }
   }
 }

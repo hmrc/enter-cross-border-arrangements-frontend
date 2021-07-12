@@ -34,34 +34,37 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsIndividualPlaceOfBirthKnownController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIndividual,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsIndividualPlaceOfBirthKnownFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsIndividualPlaceOfBirthKnownController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsIndividualPlaceOfBirthKnownFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IsIndividualPlaceOfBirthKnownPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
         "radios" -> Radios.yesNo(preparedForm("confirm")),
-        "name" -> getIndividualName(request.userAnswers, id)
+        "name"   -> getIndividualName(request.userAnswers, id)
       )
 
       renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(Ok(_))
@@ -72,27 +75,27 @@ class IsIndividualPlaceOfBirthKnownController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> Radios.yesNo(formWithErrors("confirm")),
+              "name"   -> getIndividualName(request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "name" -> getIndividualName(request.userAnswers, id)
-          )
-
-          renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))
-        },
-        value =>
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualPlaceOfBirthKnownPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("individual/isIndividualPlaceOfBirthKnown.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualPlaceOfBirthKnownPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

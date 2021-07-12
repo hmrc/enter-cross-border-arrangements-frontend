@@ -22,7 +22,7 @@ import play.api.data.FormError
 class DisclosureMarketableFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "disclosureMarketable.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new DisclosureMarketableFormProvider()()
 

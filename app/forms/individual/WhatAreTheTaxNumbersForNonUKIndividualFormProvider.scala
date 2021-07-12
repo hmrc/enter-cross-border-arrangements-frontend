@@ -29,15 +29,12 @@ class WhatAreTheTaxNumbersForNonUKIndividualFormProvider @Inject() extends Mappi
   def apply(): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-        "firstTaxNumber" -> validatedTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKIndividual.error.required",
-          "whatAreTheTaxNumbersForNonUKIndividual.label1.error.length", maxLength),
-        "secondTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKIndividual.label2.error.length",
-          maxLength),
-        "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-          "whatAreTheTaxNumbersForNonUKIndividual.label3.error.length",
-          maxLength)
+        "firstTaxNumber" -> validatedTextMaxLength("whatAreTheTaxNumbersForNonUKIndividual.error.required",
+                                                   "whatAreTheTaxNumbersForNonUKIndividual.label1.error.length",
+                                                   maxLength
+        ),
+        "secondTaxNumber" -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForNonUKIndividual.label2.error.length", maxLength),
+        "thirdTaxNumber"  -> validatedOptionalTextMaxLength("whatAreTheTaxNumbersForNonUKIndividual.label3.error.length", maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }

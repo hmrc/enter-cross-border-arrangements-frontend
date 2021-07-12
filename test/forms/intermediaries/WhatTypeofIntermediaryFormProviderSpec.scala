@@ -26,13 +26,13 @@ class WhatTypeofIntermediaryFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "whatTypeofIntermediary.error.required"
 
     behave like optionsField[WhatTypeofIntermediary](
       form,
       fieldName,
-      validValues  = WhatTypeofIntermediary.values,
+      validValues = WhatTypeofIntermediary.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

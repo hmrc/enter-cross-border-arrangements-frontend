@@ -40,8 +40,8 @@ class ContactRetrievalActionImplSpec extends SpecBase {
 
   "Contact retrieval action" - {
     "return request with contact information" in {
-      val jsonPayload: String = displaySubscriptionPayloadNoSecondary(
-        JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
+      val jsonPayload: String =
+        displaySubscriptionPayloadNoSecondary(JsString("id"), JsString("FirstName"), JsString("LastName"), JsString("test@test.com"), JsString("0191 111 2222"))
       val displaySubscriptionDetails: DisplaySubscriptionForDACResponse = Json.parse(jsonPayload).as[DisplaySubscriptionForDACResponse]
 
       when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any()))
@@ -49,11 +49,11 @@ class ContactRetrievalActionImplSpec extends SpecBase {
 
       val action = new Harness(mockSubscriptionConnector)
 
-      val futureResult = action.callTransform(new DataRequest(fakeRequest,
-        "id", "id",emptyUserAnswers))
+      val futureResult = action.callTransform(new DataRequest(fakeRequest, "id", "id", emptyUserAnswers))
 
-      whenReady(futureResult) { result =>
-        result.contacts mustBe Some(ContactDetails(Some("FirstName LastName"), Some("test@test.com"), None, None))
+      whenReady(futureResult) {
+        result =>
+          result.contacts mustBe Some(ContactDetails(Some("FirstName LastName"), Some("test@test.com"), None, None))
       }
     }
 
@@ -64,11 +64,11 @@ class ContactRetrievalActionImplSpec extends SpecBase {
 
       val action = new Harness(mockSubscriptionConnector)
 
-      val futureResult = action.callTransform(new DataRequest(fakeRequest,
-        "id", "id",emptyUserAnswers))
+      val futureResult = action.callTransform(new DataRequest(fakeRequest, "id", "id", emptyUserAnswers))
 
-      whenReady(futureResult) { result =>
-        result.contacts mustBe None
+      whenReady(futureResult) {
+        result =>
+          result.contacts mustBe None
       }
     }
 

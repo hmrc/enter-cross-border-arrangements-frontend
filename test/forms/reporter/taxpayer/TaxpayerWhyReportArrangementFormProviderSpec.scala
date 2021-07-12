@@ -26,13 +26,13 @@ class TaxpayerWhyReportArrangementFormProviderSpec extends OptionFieldBehaviours
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "taxpayerWhyReportArrangement.error.required"
 
     behave like optionsField[TaxpayerWhyReportArrangement](
       form,
       fieldName,
-      validValues  = TaxpayerWhyReportArrangement.values,
+      validValues = TaxpayerWhyReportArrangement.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

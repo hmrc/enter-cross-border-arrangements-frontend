@@ -42,12 +42,12 @@ class IndividualDateOfBirthPageSpec extends PageBehaviours {
     "- when dob exists " in {
 
       val dob = LocalDate.of(1900, 1, 2)
-      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = Some(dob))) mustBe(Some(dob))
+      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = Some(dob))) mustBe (Some(dob))
     }
 
     "- when dob is empty (before 1900-01-02) " in {
 
-      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = Some(LocalDate.of(1900, 1, 1)))) mustBe(None)
+      IndividualDateOfBirthPage.getFromModel(validIndividual.copy(birthDate = Some(LocalDate.of(1900, 1, 1)))) mustBe None
     }
   }
 }

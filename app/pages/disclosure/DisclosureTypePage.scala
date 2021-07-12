@@ -35,7 +35,7 @@ case object DisclosureTypePage extends DetailsPage[DisclosureType, DisclosureDet
         userAnswers.remove(DisclosureIdentifyArrangementPage, id)
       case Some(DisclosureType.Dac6add) =>
         userAnswers.remove(DisclosureMarketablePage, id)
-      case _ =>     super.cleanup(value, userAnswers, id)
+      case _ => super.cleanup(value, userAnswers, id)
     }
 
   override def getFromModel(model: DisclosureDetails): Option[DisclosureType] = Option(model.disclosureType)

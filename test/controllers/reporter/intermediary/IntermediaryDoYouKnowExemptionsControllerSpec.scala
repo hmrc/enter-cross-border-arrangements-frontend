@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new IntermediaryDoYouKnowExemptionsFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val intermediaryDoYouKnowExemptionsRoute = routes.IntermediaryDoYouKnowExemptionsController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with Contro
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
+      val request        = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,12 +73,16 @@ class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with Contro
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IntermediaryDoYouKnowExemptionsPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IntermediaryDoYouKnowExemptionsPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
+      val request        = FakeRequest(GET, intermediaryDoYouKnowExemptionsRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -117,10 +121,10 @@ class IntermediaryDoYouKnowExemptionsControllerSpec extends SpecBase with Contro
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, intermediaryDoYouKnowExemptionsRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, intermediaryDoYouKnowExemptionsRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

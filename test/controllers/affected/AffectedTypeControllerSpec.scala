@@ -35,10 +35,10 @@ import scala.concurrent.Future
 
 class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  private val formProvider = new AffectedTypeFormProvider()
+  private val formProvider           = new AffectedTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val affectedTypeRoute: String = routes.AffectedTypeController.onPageLoad(0, NormalMode).url
+  private lazy val affectedTypeRoute: String = routes.AffectedTypeController.onPageLoad(0, NormalMode).url
 
   "AffectedType Controller" - {
 
@@ -49,9 +49,9 @@ class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures wi
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, affectedTypeRoute)
+      val request        = FakeRequest(GET, affectedTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,14 +75,18 @@ class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures wi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AffectedTypePage, 0, SelectType.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(AffectedTypePage, 0, SelectType.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, affectedTypeRoute)
+      val request        = FakeRequest(GET, affectedTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -126,10 +130,10 @@ class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures wi
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, affectedTypeRoute).withFormUrlEncodedBody(("selectType", ""))
-      val boundForm = form.bind(Map("selectType" -> ""))
+      val request        = FakeRequest(POST, affectedTypeRoute).withFormUrlEncodedBody(("selectType", ""))
+      val boundForm      = form.bind(Map("selectType" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -151,9 +155,11 @@ class AffectedTypeControllerSpec extends SpecBase with ControllerMockFixtures wi
       val associatedEnterpriseTypeRoute: String = routes.AffectedTypeController.onPageLoad(0, CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(AffectedTypePage, 0, SelectType.values.head)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 

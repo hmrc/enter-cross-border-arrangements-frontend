@@ -19,7 +19,6 @@ package pages.reporter.organisation
 import models.Address
 import pages.behaviours.PageBehaviours
 
-
 class ReporterOrganisationAddressPageSpec extends PageBehaviours {
 
   "OrganisationAddressPage" - {

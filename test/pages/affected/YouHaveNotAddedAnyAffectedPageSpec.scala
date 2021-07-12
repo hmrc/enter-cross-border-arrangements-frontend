@@ -19,7 +19,7 @@ package pages.affected
 import models.affected.YouHaveNotAddedAnyAffected
 import pages.behaviours.PageBehaviours
 
-class YouHaveNotAddedAnyAffectedPageSpec extends PageBehaviours{
+class YouHaveNotAddedAnyAffectedPageSpec extends PageBehaviours {
 
   "YouHaveNotAddedAnyAffectedPage" - {
 

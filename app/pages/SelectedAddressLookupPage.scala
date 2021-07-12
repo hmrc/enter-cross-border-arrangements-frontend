@@ -23,7 +23,7 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-object SelectedAddressLookupPage  extends QuestionPage[AddressLookup] {
+object SelectedAddressLookupPage extends QuestionPage[AddressLookup] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "selectedAddressLookup"

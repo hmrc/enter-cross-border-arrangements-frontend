@@ -18,7 +18,6 @@ package pages.reporter.individual
 
 import pages.behaviours.PageBehaviours
 
-
 class ReporterIndividualPostcodePageSpec extends PageBehaviours {
 
   "ReporterIndividualPostcodePage" - {

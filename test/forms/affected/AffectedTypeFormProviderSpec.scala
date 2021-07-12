@@ -30,10 +30,10 @@ class AffectedTypeFormProviderSpec extends OptionFieldBehaviours {
 
     val fieldName = "selectType"
 
-    behave like optionsField[SelectType ](
+    behave like optionsField[SelectType](
       form,
       fieldName,
-      validValues  = SelectType.values,
+      validValues = SelectType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

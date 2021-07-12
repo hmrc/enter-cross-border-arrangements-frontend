@@ -39,7 +39,7 @@ import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
 class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
-  extends SpecBase
+    extends SpecBase
     with ControllerMockFixtures
     with NunjucksSupport
     with JsonMatchers {
@@ -51,12 +51,19 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, NormalMode).url
-  lazy val whatIsTaxpayersStartDateForImplementingArrangementCheckRoute = routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, CheckMode).url
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementRoute =
+    routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, NormalMode).url
+
+  lazy val whatIsTaxpayersStartDateForImplementingArrangementCheckRoute =
+    routes.WhatIsReporterTaxpayersStartDateForImplementingArrangementController.onPageLoad(0, CheckMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-    .set(OrganisationNamePage, 0, "validAnswer").success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
+    .set(OrganisationNamePage, 0, "validAnswer")
+    .success
+    .value
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, whatIsTaxpayersStartDateForImplementingArrangementRoute)
@@ -76,7 +83,9 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(OrganisationNamePage, 0, "validAnswer")
         .success
         .value
@@ -86,7 +95,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
 
       retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, getRequest).value
 
@@ -112,7 +121,9 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, validAnswer)
         .success
         .value
@@ -125,7 +136,7 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
 
       retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val request = FakeRequest("GET", whatIsTaxpayersStartDateForImplementingArrangementCheckRoute)
 
@@ -172,10 +183,10 @@ class WhatIsReporterTaxpayersStartDateForImplementingArrangementControllerSpec
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, whatIsTaxpayersStartDateForImplementingArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, whatIsTaxpayersStartDateForImplementingArrangementRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

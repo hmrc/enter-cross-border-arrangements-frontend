@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class OrganisationNameControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new OrganisationNameFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val organisationNameRoute = controllers.organisation.routes.OrganisationNameController.onPageLoad(0, NormalMode).url
 
@@ -47,9 +47,9 @@ class OrganisationNameControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, organisationNameRoute)
+      val request        = FakeRequest(GET, organisationNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -72,13 +72,17 @@ class OrganisationNameControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(OrganisationNamePage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(OrganisationNamePage, 0, "answer")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, organisationNameRoute)
+      val request        = FakeRequest(GET, organisationNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +124,10 @@ class OrganisationNameControllerSpec extends SpecBase with ControllerMockFixture
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, organisationNameRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, organisationNameRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -44,7 +44,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         arrangementID <- arbitrary[String]
-        disclosureID <- arbitrary[String]
+        disclosureID  <- arbitrary[String]
       } yield ReplaceOrDeleteADisclosure(arrangementID, disclosureID)
     }
 
@@ -128,11 +128,11 @@ trait ModelGenerators {
     Arbitrary {
       for {
         currency <- arbitrary[String]
-        amount <- arbitrary[Int]
+        amount   <- arbitrary[Int]
       } yield ExpectedArrangementValue(currency, amount)
     }
 
-implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
+  implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
     Arbitrary {
       Gen.oneOf(CountryList.values)
     }
@@ -152,7 +152,7 @@ implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
       Gen.oneOf(HallmarkD.values)
     }
 
-  implicit lazy val arbitraryCountry: Arbitrary[Country] = {
+  implicit lazy val arbitraryCountry: Arbitrary[Country] =
     Arbitrary {
       for {
         state <- Gen.oneOf(Seq("Valid", "Invalid"))
@@ -160,42 +160,41 @@ implicit lazy val arbitraryCountryList: Arbitrary[CountryList] =
         name  <- arbitrary[String]
       } yield Country(state, code.mkString, name)
     }
-  }
 
   implicit val arbitraryAddress: Arbitrary[Address] = Arbitrary {
     for {
       addressLine1 <- Gen.option(arbitrary[String])
       addressLine2 <- Gen.option(arbitrary[String])
       addressLine3 <- Gen.option(arbitrary[String])
-      city <- arbitrary[String]
-      postalCode <- Gen.option(arbitrary[String])
-      countryCode <- arbitrary[Country]
+      city         <- arbitrary[String]
+      postalCode   <- Gen.option(arbitrary[String])
+      countryCode  <- arbitrary[Country]
     } yield Address(addressLine1, addressLine2, addressLine3, city, postalCode, countryCode)
   }
 
   implicit val arbitraryName: Arbitrary[Name] = Arbitrary {
     for {
-      firstName <- arbitrary[String]
+      firstName  <- arbitrary[String]
       secondName <- arbitrary[String]
     } yield Name(firstName, secondName)
   }
 
   implicit val arbitraryTaxReferenceNumbers: Arbitrary[TaxReferenceNumbers] = Arbitrary {
     for {
-      firstTaxNumber <- arbitrary[String]
+      firstTaxNumber  <- arbitrary[String]
       secondTaxNumber <- Gen.option(arbitrary[String])
-      thirdTaxNumber <- Gen.option(arbitrary[String])
+      thirdTaxNumber  <- Gen.option(arbitrary[String])
     } yield TaxReferenceNumbers(firstTaxNumber, secondTaxNumber, thirdTaxNumber)
   }
 
   implicit val arbitraryOrganisationLoopDetails: Arbitrary[IndexedSeq[LoopDetails]] = Arbitrary {
     for {
       taxResidentOtherCountries <- Gen.option(arbitrary[Boolean])
-      whichCountry <- Gen.option(arbitrary[Country])
-      doYouKnowTIN <- Gen.option(arbitrary[Boolean])
-      taxNumbersNonUK <- Gen.option(arbitrary[TaxReferenceNumbers])
-      doYouKnowUTR <- Gen.option(arbitrary[Boolean])
-      taxNumbersUK <- Gen.option(arbitrary[TaxReferenceNumbers])
+      whichCountry              <- Gen.option(arbitrary[Country])
+      doYouKnowTIN              <- Gen.option(arbitrary[Boolean])
+      taxNumbersNonUK           <- Gen.option(arbitrary[TaxReferenceNumbers])
+      doYouKnowUTR              <- Gen.option(arbitrary[Boolean])
+      taxNumbersUK              <- Gen.option(arbitrary[TaxReferenceNumbers])
     } yield IndexedSeq(LoopDetails(taxResidentOtherCountries, whichCountry, doYouKnowTIN, taxNumbersNonUK, doYouKnowUTR, taxNumbersUK))
   }
 

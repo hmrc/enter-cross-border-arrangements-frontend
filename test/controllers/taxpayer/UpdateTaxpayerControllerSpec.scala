@@ -40,8 +40,8 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
   lazy val updateTaxpayerRoute = controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val formProvider = new UpdateTaxpayerFormProvider()
-  val form = formProvider()
+  val formProvider                             = new UpdateTaxpayerFormProvider()
+  val form                                     = formProvider()
 
   "UpdateTaxpayer Controller" - {
 
@@ -51,9 +51,9 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, updateTaxpayerRoute)
+      val request        = FakeRequest(GET, updateTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -62,10 +62,10 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
+        "form"         -> form,
         "taxpayerList" -> Json.arr(),
-        "mode"   -> NormalMode,
-        "radios" -> UpdateTaxpayer.radios(form)
+        "mode"         -> NormalMode,
+        "radios"       -> UpdateTaxpayer.radios(form)
       )
 
       templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
@@ -78,22 +78,23 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       val taxpayerLoop = IndexedSeq(
-        Taxpayer("id",
-          Some(validIndividual),
-          organisation = None,
-          implementingDate = None)
+        Taxpayer("id", Some(validIndividual), organisation = None, implementingDate = None)
       )
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(TaxpayerLoopPage, 0, taxpayerLoop)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, updateTaxpayerRoute)
+      val request        = FakeRequest(GET, updateTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val controller = app.injector.instanceOf[UpdateTaxpayerController]
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val controller     = app.injector.instanceOf[UpdateTaxpayerController]
 
       val result = route(app, request).value
 
@@ -104,10 +105,10 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
       val expectedList = Json.toJson(controller.toItemList(userAnswers, 0))
 
       val expectedJson = Json.obj(
-        "form"   -> form,
+        "form"         -> form,
         "taxpayerList" -> expectedList,
-        "mode"   -> NormalMode,
-        "radios" -> UpdateTaxpayer.radios(form)
+        "mode"         -> NormalMode,
+        "radios"       -> UpdateTaxpayer.radios(form)
       )
 
       templateCaptor.getValue mustEqual "taxpayer/updateTaxpayer.njk"
@@ -120,12 +121,16 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(UpdateTaxpayerPage, 0, UpdateTaxpayer.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(UpdateTaxpayerPage, 0, UpdateTaxpayer.values.head)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, updateTaxpayerRoute)
+      val request        = FakeRequest(GET, updateTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -167,10 +172,10 @@ class UpdateTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, updateTaxpayerRoute).withFormUrlEncodedBody(("confirm", "invalid value"))
-      val boundForm = form.bind(Map("confirm" -> "invalid value"))
+      val request        = FakeRequest(POST, updateTaxpayerRoute).withFormUrlEncodedBody(("confirm", "invalid value"))
+      val boundForm      = form.bind(Map("confirm" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

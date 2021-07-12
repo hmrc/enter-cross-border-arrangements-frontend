@@ -23,45 +23,73 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  private val contactHost = configuration.get[String]("contact-frontend.host")
+  private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "DAC6"
 
-  lazy val countryCodeJson: String = configuration.get[String]("json.countries")
-  lazy val currencyCodeJson: String = configuration.get[String]("json.currencies")
-  val analyticsToken: String = configuration.get[String](s"google-analytics.token")
-  val analyticsHost: String = configuration.get[String](s"google-analytics.host")
-  val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+  lazy val countryCodeJson: String        = configuration.get[String]("json.countries")
+  lazy val currencyCodeJson: String       = configuration.get[String]("json.currencies")
+  val analyticsToken: String              = configuration.get[String](s"google-analytics.token")
+  val analyticsHost: String               = configuration.get[String](s"google-analytics.host")
+  val reportAProblemPartialUrl            = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  val reportAProblemNonJSUrl              = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
+  lazy val authUrl: String  = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
 
-  lazy val loginContinueUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.loginContinue")}"
-  val signOutUrl: String             = configuration.get[String]("urls.logout")
+  lazy val loginContinueUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.loginContinue")}"
+  val signOutUrl: String      = configuration.get[String]("urls.logout")
   lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
-  lazy val discloseArrangeLink: String = s"${configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl}${configuration.get[String]("urls.homepage")}"
+
+  lazy val discloseArrangeLink: String =
+    s"${configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl}${configuration.get[String]("urls.homepage")}"
 
   lazy val crossBorderArrangementsUrl: String = servicesConfig.baseUrl("cross-border-arrangements")
-  lazy val discloseCrossBorderArrangementsFrontendUrl: String = configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl
-  lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
-  lazy val taxpayersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.taxpayers")}"
-  lazy val intermediariesUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
-  lazy val othersAffectedUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.othersAffected")}"
-  lazy val associatedEnterpriseUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.associatedEnterprise")}"
 
-  lazy val hallmarksUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarks")}"
-  lazy val hallmarksCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarksCYA")}"
-  lazy val reportersUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.reporters")}"
-  lazy val reportersCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.reportersCYA")}"
-  lazy val arrangementsUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.arrangements")}"
-  lazy val arrangementsCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.arrangementsCYA")}"
-  lazy val disclosureStartUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosures")}"
-  lazy val disclosureCYAUrl: String = s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosuresCYA")}"
+  lazy val discloseCrossBorderArrangementsFrontendUrl: String =
+    configuration.get[Service]("microservice.services.disclose-cross-border-arrangements-frontend").baseUrl
+  lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+
+  lazy val taxpayersUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.taxpayers")}"
+
+  lazy val intermediariesUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.intermediaries")}"
+
+  lazy val othersAffectedUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.othersAffected")}"
+
+  lazy val associatedEnterpriseUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.associatedEnterprise")}"
+
+  lazy val hallmarksUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarks")}"
+
+  lazy val hallmarksCYAUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.hallmarksCYA")}"
+
+  lazy val reportersUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.reporters")}"
+
+  lazy val reportersCYAUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.reportersCYA")}"
+
+  lazy val arrangementsUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.arrangements")}"
+
+  lazy val arrangementsCYAUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.arrangementsCYA")}"
+
+  lazy val disclosureStartUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosures")}"
+
+  lazy val disclosureCYAUrl: String =
+    s"${configuration.get[Service]("microservice.services.enter-cross-border-arrangements").baseUrl}${configuration.get[String]("urls.disclosuresCYA")}"
 
   lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
 
-  lazy val timeoutSeconds: String = configuration.get[String]("session.timeoutSeconds")
+  lazy val timeoutSeconds: String   = configuration.get[String]("session.timeoutSeconds")
   lazy val countdownSeconds: String = configuration.get[String]("session.countdownSeconds")
 }

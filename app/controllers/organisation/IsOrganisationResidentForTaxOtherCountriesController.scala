@@ -34,47 +34,50 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForOrganisation,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IsOrganisationResidentForTaxOtherCountriesFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsOrganisationResidentForTaxOtherCountriesController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForOrganisation,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsOrganisationResidentForTaxOtherCountriesFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       checkLoopDetailsContainsCountry(request.userAnswers, id, OrganisationLoopPage)
 
-        val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
-          case None => form
-          case Some(value) if value.lift(index).isDefined =>
-            val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
-            if (taxResidentOtherCountries.isDefined) {
-              form.fill(taxResidentOtherCountries.get)
-            } else {
-              form
-            }
-          case Some(_) => form
-        }
+      val preparedForm = request.userAnswers.get(OrganisationLoopPage, id) match {
+        case None => form
+        case Some(value) if value.lift(index).isDefined =>
+          val taxResidentOtherCountries = value.lift(index).get.taxResidentOtherCountries
+          if (taxResidentOtherCountries.isDefined) {
+            form.fill(taxResidentOtherCountries.get)
+          } else {
+            form
+          }
+        case Some(_) => form
+      }
 
-        val json = Json.obj(
-          "form"   -> preparedForm,
-          "id" -> id,
-          "mode"   -> mode,
-          "organisationName" -> getOrganisationName(request.userAnswers, id),
-          "radios" -> Radios.yesNo(preparedForm("confirm")),
-          "index" -> index
-        )
+      val json = Json.obj(
+        "form"             -> preparedForm,
+        "id"               -> id,
+        "mode"             -> mode,
+        "organisationName" -> getOrganisationName(request.userAnswers, id),
+        "radios"           -> Radios.yesNo(preparedForm("confirm")),
+        "index"            -> index
+      )
 
-        renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(Ok(_))
+      renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(Ok(_))
   }
 
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[Boolean], index: Int = 0): Call =
@@ -82,43 +85,44 @@ class IsOrganisationResidentForTaxOtherCountriesController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"             -> formWithErrors,
+              "id"               -> id,
+              "mode"             -> mode,
+              "organisationName" -> getOrganisationName(request.userAnswers, id),
+              "radios"           -> Radios.yesNo(formWithErrors("confirm")),
+              "index"            -> index
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "organisationName" -> getOrganisationName(request.userAnswers, id),
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "index" -> index
-          )
+            renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
+          },
+          value => {
 
-          renderer.render("organisation/isOrganisationResidentForTaxOtherCountries.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          val organisationLoopList: IndexedSeq[LoopDetails] = (request.userAnswers.get(OrganisationLoopPage, id), mode) match {
-            case (Some(list), NormalMode) => // Add to Loop in NormalMode
+            val organisationLoopList: IndexedSeq[LoopDetails] = (request.userAnswers.get(OrganisationLoopPage, id), mode) match {
+              case (Some(list), NormalMode) => // Add to Loop in NormalMode
                 list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None)
-            case (Some(list), CheckMode) =>
+              case (Some(list), CheckMode) =>
                 if (value.equals(false)) {
                   list.slice(0, currentIndexInsideLoop(request)) // Remove from loop in CheckMode
                 } else {
                   list :+ LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None) // Add to loop in CheckMode
                 }
-            case (None, _) => // Start new Loop in Normal Mode
-              IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
-          }
+              case (None, _) => // Start new Loop in Normal Mode
+                IndexedSeq[LoopDetails](LoopDetails(taxResidentOtherCountries = Some(value), None, None, None, None, None))
+            }
 
-          for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(IsOrganisationResidentForTaxOtherCountriesPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(OrganisationLoopPage, id, organisationLoopList))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+          }
+        )
   }
 }

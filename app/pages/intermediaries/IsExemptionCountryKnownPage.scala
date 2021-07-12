@@ -29,13 +29,12 @@ case object IsExemptionCountryKnownPage extends DetailsPage[Boolean, Intermediar
 
   override def toString: String = "isExemptionCountryKnown"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     //Clear following answers
     value match {
       case Some(false) => userAnswers.remove(ExemptCountriesPage, id)
-      case _ => super.cleanup(value, userAnswers, id)
+      case _           => super.cleanup(value, userAnswers, id)
     }
-  }
 
   override def getFromModel(model: Intermediary): Option[Boolean] = model.exemptCountries.map(_.nonEmpty).orElse(Some(false))
 }

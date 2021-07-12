@@ -25,7 +25,7 @@ case class ExpectedArrangementValue(currency: String, amount: Int)
 object ExpectedArrangementValue {
   implicit val format = Json.format[ExpectedArrangementValue]
 
-  def buildExpectedArrangementValue(ua: UserAnswers, id: Int): ExpectedArrangementValue = {
+  def buildExpectedArrangementValue(ua: UserAnswers, id: Int): ExpectedArrangementValue =
     ua.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {
       case Some(countryWithValue) =>
         new ExpectedArrangementValue(
@@ -34,5 +34,4 @@ object ExpectedArrangementValue {
         )
       case _ => throw new Exception("Unable to build ExpectedArrangementValue as missing mandatory answers")
     }
-  }
 }

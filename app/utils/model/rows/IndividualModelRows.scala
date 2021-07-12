@@ -27,15 +27,13 @@ import utils.SummaryListDisplay.DisplayRow
 
 import java.time.LocalDate
 
-
 trait IndividualModelRows extends DisplayRowBuilder {
 
   def individualName(individual: Individual)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "individualName",
+      msgKey = "individualName",
       content = lit"${individual.individualName.firstName} ${individual.individualName.secondName}"
     )
-
 
   def buildIndividualDateOfBirthGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
     individual.birthDate match {
@@ -48,18 +46,18 @@ trait IndividualModelRows extends DisplayRowBuilder {
 
   def isIndividualDateOfBirthKnown(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "isIndividualDateOfBirthKnown",
+      msgKey = "isIndividualDateOfBirthKnown",
       content = yesOrNo(isKnown)
     )
 
   def individualDateOfBirth(dateOfBirth: LocalDate)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "individualDateOfBirth",
+      msgKey = "individualDateOfBirth",
       content = Literal(dateOfBirth.format(dateFormatter))
     )
 
   def buildIndividualPlaceOfBirthGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
-   individual.birthPlace match {
+    individual.birthPlace match {
 
       case Some(placeOfBirth) =>
         Seq(isIndividualPlaceOfBirthKnown(true), individualPlaceOfBirth(placeOfBirth))
@@ -69,19 +67,18 @@ trait IndividualModelRows extends DisplayRowBuilder {
 
   private def isIndividualPlaceOfBirthKnown(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "isIndividualPlaceOfBirthKnown",
+      msgKey = "isIndividualPlaceOfBirthKnown",
       content = yesOrNo(isKnown)
     )
 
   private def individualPlaceOfBirth(placeOfBirth: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "individualPlaceOfBirth",
+      msgKey = "individualPlaceOfBirth",
       content = lit"$placeOfBirth"
     )
 
   def buildIndividualAddressGroup(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
-    individual.address
-    match {
+    individual.address match {
       case Some(address) =>
         Seq(isIndividualAddressKnown(true), individualAddress(address))
       case _ =>
@@ -90,13 +87,13 @@ trait IndividualModelRows extends DisplayRowBuilder {
 
   private def isIndividualAddressKnown(addressKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "isIndividualAddressKnown",
+      msgKey = "isIndividualAddressKnown",
       content = yesOrNo(addressKnown)
     )
 
   private def individualAddress(manualAddress: Address)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "individualAddress",
+      msgKey = "individualAddress",
       content = formatAddress(manualAddress)
     )
 
@@ -104,21 +101,20 @@ trait IndividualModelRows extends DisplayRowBuilder {
     individual.emailAddress match {
 
       case Some(email) =>
-        Seq(emailAddressQuestionForIndividual(true)
-          , emailAddressForIndividual(email))
+        Seq(emailAddressQuestionForIndividual(true), emailAddressForIndividual(email))
       case _ =>
         Seq(emailAddressQuestionForIndividual(false))
     }
 
   private def emailAddressQuestionForIndividual(isKnown: Boolean)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "emailAddressQuestionForIndividual",
+      msgKey = "emailAddressQuestionForIndividual",
       content = yesOrNo(isKnown)
     )
 
   private def emailAddressForIndividual(email: String)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "emailAddressForIndividual",
+      msgKey = "emailAddressForIndividual",
       content = lit"$email"
     )
 
@@ -131,36 +127,33 @@ trait IndividualModelRows extends DisplayRowBuilder {
       content = lit""
     )
 
-   val details: IndexedSeq[DisplayRow] = validDetailsWithIndex flatMap {
-        case (taxResidency, index) =>
-          individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
-      }
+    val details: IndexedSeq[DisplayRow] = validDetailsWithIndex flatMap {
+      case (taxResidency, index) =>
+        individualCountryRow(taxResidency.country, index, validDetailsWithIndex.size) +: taxNumberRow(taxResidency.country, taxResidency.taxReferenceNumbers)
+    }
 
     header +: details
   }
 
   private def individualCountryRow(countryOption: Option[Country], index: Int, loopSize: Int)(implicit messages: Messages): DisplayRow = {
 
-    val countryDescription = countryOption.map(_.description).getOrElse(
-      throw new IllegalArgumentException("A country row must have a non-empty country"))
-    val label = messageWithPluralFormatter("whichCountryTaxForIndividual.countryCounter")(loopSize > 1, (index + 1).toString)
+    val countryDescription = countryOption.map(_.description).getOrElse(throw new IllegalArgumentException("A country row must have a non-empty country"))
+    val label              = messageWithPluralFormatter("whichCountryTaxForIndividual.countryCounter")(loopSize > 1, (index + 1).toString)
 
     DisplayRow(
-      key     = Key(label, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"$countryDescription"), classes = Seq("govuk-summary-list--no-border")
+      key = Key(label, classes = Seq("govuk-!-width-one-half")),
+      value = Value(lit"$countryDescription"),
+      classes = Seq("govuk-summary-list--no-border")
     )
   }
 
-  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[DisplayRow] = {
+  private def taxNumberRow(country: Option[Country], taxReferenceNumbers: Option[TaxReferenceNumbers])(implicit messages: Messages): Seq[DisplayRow] =
     (country, taxReferenceNumbers) match {
-            case (Some(c), Some(taxnumbers)) =>
-              if (c.isUK) {
-                taxNumberRow("whatAreTheTaxNumbersForUKIndividual", taxnumbers, country)
-              }
-              else
-                {taxNumberRow("whatAreTheTaxNumbersForNonUKIndividual", taxnumbers, country)}
-          case (_, None) => Seq()
-        }
+      case (Some(c), Some(taxnumbers)) =>
+        if (c.isUK) {
+          taxNumberRow("whatAreTheTaxNumbersForUKIndividual", taxnumbers, country)
+        } else { taxNumberRow("whatAreTheTaxNumbersForNonUKIndividual", taxnumbers, country) }
+      case (_, None) => Seq()
     }
 
   private def taxNumberRow(msgKey: String, taxReferenceNumber: TaxReferenceNumbers, country: Option[Country])(implicit messages: Messages): Seq[DisplayRow] = {
@@ -169,50 +162,57 @@ trait IndividualModelRows extends DisplayRowBuilder {
     val taxRefLabel: Text.Message =
       messageWithPluralFormatter(s"$msgKey.checkYourAnswersLabel", countryLabel)(taxReferenceNumber.isSingleTaxReferenceNumber)
 
-    Seq(DisplayRow(
-      key     = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
-      value   = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}"),
-      classes = Seq("govuk-summary-list--no-border")
-    ))
-  }
-
-  def whichCountryTaxForIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] = {
-    individual.firstTaxResidency.flatMap(_.country) map { country =>
-      toDisplayRowNoBorder(
-        msgKey = "whichCountryTaxForIndividual",
-        content = lit"$country"
+    Seq(
+      DisplayRow(
+        key = Key(taxRefLabel, classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"${formatReferenceNumbers(taxReferenceNumber)}"),
+        classes = Seq("govuk-summary-list--no-border")
       )
-    }
-  }
-
-  def doYouKnowAnyTINForUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
-    individual.firstTaxResidency.map(_.isUK).orElse(Some(false)).map { douYouKnowTIN =>
-    toDisplayRow(
-      msgKey = "doYouKnowAnyTINForUKIndividual",
-      content = yesOrNo(douYouKnowTIN)
     )
   }
 
+  def whichCountryTaxForIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
+    individual.firstTaxResidency.flatMap(_.country) map {
+      country =>
+        toDisplayRowNoBorder(
+          msgKey = "whichCountryTaxForIndividual",
+          content = lit"$country"
+        )
+    }
+
+  def doYouKnowAnyTINForUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
+    individual.firstTaxResidency.map(_.isUK).orElse(Some(false)).map {
+      douYouKnowTIN =>
+        toDisplayRow(
+          msgKey = "doYouKnowAnyTINForUKIndividual",
+          content = yesOrNo(douYouKnowTIN)
+        )
+    }
+
   def whatAreTheTaxNumbersForUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
-    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumbers =>
-      toDisplayRow(
-        msgKey = "whatAreTheTaxNumbersForUKIndividual",
-        content = lit"$taxnumbers"
-      )
+    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map {
+      taxnumbers =>
+        toDisplayRow(
+          msgKey = "whatAreTheTaxNumbersForUKIndividual",
+          content = lit"$taxnumbers"
+        )
     }
 
   def whatAreTheTaxNumbersForNonUKIndividual(individual: Individual)(implicit messages: Messages): Option[DisplayRow] =
-    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map { taxnumber =>
-      toDisplayRow(
-        msgKey = "whatAreTheTaxNumbersForNonUKIndividual",
-        content = lit"$taxnumber"
-      )
+    individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers) map {
+      taxnumber =>
+        toDisplayRow(
+          msgKey = "whatAreTheTaxNumbersForNonUKIndividual",
+          content = lit"$taxnumber"
+        )
     }
 
   def isIndividualResidentForTaxOtherCountries(id: Int)(implicit messages: Messages): Option[DisplayRow] =
-     Some( toDisplayRow(
-        msgKey  = "isIndividualResidentForTaxOtherCountries",
+    Some(
+      toDisplayRow(
+        msgKey = "isIndividualResidentForTaxOtherCountries",
         content = yesOrNo(false)
-      ))
+      )
+    )
 
 }

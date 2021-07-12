@@ -26,40 +26,39 @@ trait DisclosureModelRows extends DisplayRowBuilder {
 
   def disclosureNamePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "disclosureName",
+      msgKey = "disclosureName",
       content = formatMaxChars(disclosure.disclosureName)
     )
 
   private def disclosureMarketablePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "disclosureMarketable",
+      msgKey = "disclosureMarketable",
       content = yesOrNo(disclosure.initialDisclosureMA)
     )
 
   def disclosureTypePage(disclosure: DisclosureDetails)(implicit messages: Messages): DisplayRow =
     toDisplayRow(
-      msgKey  = "disclosureType",
+      msgKey = "disclosureType",
       content = msg"disclosureType.${disclosure.disclosureType}"
     )
 
-
-  private def disclosureIdentifyArrangement(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Option[DisplayRow] = {
-    disclosureDetails.arrangementID map { arrangementID =>
-      toDisplayRow(
-        msgKey = "disclosureIdentifyArrangement",
-        content = lit"$arrangementID"
-      )
+  private def disclosureIdentifyArrangement(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Option[DisplayRow] =
+    disclosureDetails.arrangementID map {
+      arrangementID =>
+        toDisplayRow(
+          msgKey = "disclosureIdentifyArrangement",
+          content = lit"$arrangementID"
+        )
     }
-  }
 
   private def replaceOrDeleteADisclosureRows(disclosureDetails: DisclosureDetails)(implicit messages: Messages): Seq[DisplayRow] =
-     Seq(
+    Seq(
       toDisplayRow(
-        msgKey  = "replaceOrDeleteADisclosure.arrangementID",
+        msgKey = "replaceOrDeleteADisclosure.arrangementID",
         content = lit"${disclosureDetails.arrangementID.getOrElse(throw new RuntimeException("Cannot retrieve Arrangement ID"))}"
       ),
       toDisplayRow(
-        msgKey  = "replaceOrDeleteADisclosure.disclosureID",
+        msgKey = "replaceOrDeleteADisclosure.disclosureID",
         content = lit"${disclosureDetails.disclosureID.getOrElse(throw new RuntimeException("Cannot retrieve Disclosure ID"))}"
       )
     )

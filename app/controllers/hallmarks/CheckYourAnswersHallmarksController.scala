@@ -33,40 +33,41 @@ import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersHallmarksController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    navigator: Navigator,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class CheckYourAnswersHallmarksController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  navigator: Navigator,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val hallmarks = helper.buildHallmarksRow(id)
+      val hallmarks                     = helper.buildHallmarksRow(id)
       val answers: Seq[SummaryList.Row] = Seq(Some(hallmarks), helper.hallmarkD1Other(id)).flatten
 
-      renderer.render(
-        "hallmarks/check-your-answers-hallmarks.njk",
-        Json.obj("list" -> answers)
-      ).map(Ok(_))
+      renderer
+        .render(
+          "hallmarks/check-your-answers-hallmarks.njk",
+          Json.obj("list" -> answers)
+        )
+        .map(Ok(_))
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       for {
-        hallmarksModel <- Future.fromTry(request.userAnswers.set(HallmarkDetailsPage, id,
-          HallmarkDetails.buildHallmarkDetails(request.userAnswers, id)))
+        hallmarksModel           <- Future.fromTry(request.userAnswers.set(HallmarkDetailsPage, id, HallmarkDetails.buildHallmarkDetails(request.userAnswers, id)))
         userAnswers: UserAnswers <- Future.fromTry(hallmarksModel.set(HallmarkStatusPage, id, JourneyStatus.Completed))
-        _ <- sessionRepository.set(userAnswers)
-      } yield
-        Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers))
+        _                        <- sessionRepository.set(userAnswers)
+      } yield Redirect(navigator.nextPage(HallmarksCheckYourAnswersPage, id, NormalMode, request.userAnswers))
   }
 }

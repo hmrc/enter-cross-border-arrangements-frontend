@@ -18,7 +18,6 @@ package pages.hallmarks
 
 import pages.behaviours.PageBehaviours
 
-
 class HallmarkD1OtherPageSpec extends PageBehaviours {
 
   "HallmarkD1OtherPage" - {

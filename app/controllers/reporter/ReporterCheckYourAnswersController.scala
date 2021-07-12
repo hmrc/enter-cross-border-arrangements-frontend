@@ -37,78 +37,82 @@ import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterCheckYourAnswersController  @Inject()(
-   override val messagesApi: MessagesApi,
-   identify: IdentifierAction,
-   getData: DataRetrievalAction,
-   requireData: DataRequiredAction,
-   navigator: NavigatorForReporter,
-   sessionRepository: SessionRepository,
-   val controllerComponents: MessagesControllerComponents,
-   renderer: Renderer
- )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class ReporterCheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  navigator: NavigatorForReporter,
+  sessionRepository: SessionRepository,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
-      val reporterDetails = getOrganisationOrIndividualSummary(request.userAnswers, id, helper)
+      val reporterDetails        = getOrganisationOrIndividualSummary(request.userAnswers, id, helper)
       val residentCountryDetails = helper.buildTaxResidencySummaryForReporter(id)
-      val roleDetails = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper)
+      val roleDetails            = getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper)
 
-      renderer.render(
-        "reporter/reporterCheckYourAnswers.njk",
-        Json.obj("reporterDetails" -> reporterDetails,
-          "residentCountryDetails" -> residentCountryDetails,
-          "roleDetails" -> roleDetails,
-          "id" -> id
+      renderer
+        .render(
+          "reporter/reporterCheckYourAnswers.njk",
+          Json.obj("reporterDetails" -> reporterDetails, "residentCountryDetails" -> residentCountryDetails, "roleDetails" -> roleDetails, "id" -> id)
         )
-      ).map(Ok(_))
+        .map(Ok(_))
   }
 
-  private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+  private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
     ua.get(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Organisation) =>
-        Seq(helper.reporterOrganisationOrIndividual(id) ++
-        helper.reporterOrganisationName(id) ++
-        helper.buildOrganisationReporterAddressGroup(id) ++
-        helper.buildReporterOrganisationEmailGroup(id)).flatten
+        Seq(
+          helper.reporterOrganisationOrIndividual(id) ++
+            helper.reporterOrganisationName(id) ++
+            helper.buildOrganisationReporterAddressGroup(id) ++
+            helper.buildReporterOrganisationEmailGroup(id)
+        ).flatten
 
       case _ =>
-        Seq(helper.reporterOrganisationOrIndividual(id) ++
-        helper.reporterIndividualName(id) ++
-        helper.reporterIndividualDateOfBirth(id) ++
-        helper.reporterIndividualPlaceOfBirth(id) ++
-        helper.buildIndividualReporterAddressGroup(id) ++
-        helper.buildReporterIndividualEmailGroup(id)).flatten
+        Seq(
+          helper.reporterOrganisationOrIndividual(id) ++
+            helper.reporterIndividualName(id) ++
+            helper.reporterIndividualDateOfBirth(id) ++
+            helper.reporterIndividualPlaceOfBirth(id) ++
+            helper.buildIndividualReporterAddressGroup(id) ++
+            helper.buildReporterIndividualEmailGroup(id)
+        ).flatten
     }
-  }
 
-  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+  private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
     ua.get(RoleInArrangementPage, id) match {
       case Some(Intermediary) =>
-        Seq(helper.roleInArrangementPage(id) ++
-          helper.intermediaryWhyReportInUKPage(id) ++
-          helper.intermediaryRolePage(id) ++
-          helper.buildExemptCountriesSummary(id)).flatten
+        Seq(
+          helper.roleInArrangementPage(id) ++
+            helper.intermediaryWhyReportInUKPage(id) ++
+            helper.intermediaryRolePage(id) ++
+            helper.buildExemptCountriesSummary(id)
+        ).flatten
 
       case _ =>
-        Seq(helper.roleInArrangementPage(id) ++
-          helper.buildTaxpayerReporterReasonGroup(id) ++
-          helper.taxpayerImplementationDate(id)).flatten
+        Seq(
+          helper.roleInArrangementPage(id) ++
+            helper.buildTaxpayerReporterReasonGroup(id) ++
+            helper.taxpayerImplementationDate(id)
+        ).flatten
 
     }
+
+  def onContinue(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
+    implicit request =>
+      for {
+        reporterModel            <- Future.fromTry(request.userAnswers.set(ReporterDetailsPage, id, ReporterDetails.buildReporterDetails(request.userAnswers, id)))
+        userAnswers: UserAnswers <- Future.fromTry(reporterModel.set(ReporterStatusPage, id, JourneyStatus.Completed))
+        _                        <- sessionRepository.set(userAnswers)
+      } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
   }
-
-    def onContinue(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
-      implicit request =>
-        
-        for {
-          reporterModel <- Future.fromTry(request.userAnswers.set(ReporterDetailsPage, id,
-            ReporterDetails.buildReporterDetails(request.userAnswers, id)))
-          userAnswers: UserAnswers <- Future.fromTry(reporterModel.set(ReporterStatusPage, id, JourneyStatus.Completed))
-          _ <- sessionRepository.set(userAnswers)
-        } yield Redirect(navigator.routeMap(ReporterCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
-    }
 }

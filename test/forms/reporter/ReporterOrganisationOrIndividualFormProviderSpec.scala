@@ -26,13 +26,13 @@ class ReporterOrganisationOrIndividualFormProviderSpec extends OptionFieldBehavi
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "reporterOrganisationOrIndividual.error.required"
 
     behave like optionsField[ReporterOrganisationOrIndividual](
       form,
       fieldName,
-      validValues  = ReporterOrganisationOrIndividual.values,
+      validValues = ReporterOrganisationOrIndividual.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

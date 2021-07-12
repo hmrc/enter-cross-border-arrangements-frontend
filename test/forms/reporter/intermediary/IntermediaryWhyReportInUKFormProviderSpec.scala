@@ -26,13 +26,13 @@ class IntermediaryWhyReportInUKFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "whyReportInUK.error.required"
 
     behave like optionsField[IntermediaryWhyReportInUK](
       form,
       fieldName,
-      validValues  = IntermediaryWhyReportInUK.values,
+      validValues = IntermediaryWhyReportInUK.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

@@ -27,31 +27,33 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def displaySubscriptionDetails(enrolmentID: String)
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[DisplaySubscriptionForDACResponse]] = {
+  def displaySubscriptionDetails(enrolmentID: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[DisplaySubscriptionForDACResponse]] = {
 
     val submissionUrl = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/subscription/retrieve-subscription"
 
-    http.POST[DisplaySubscriptionForDACRequest, HttpResponse](
-      submissionUrl,
-      DisplaySubscriptionForDACRequest(DisplaySubscriptionDetails.createRequest(enrolmentID))
-    ).map {
-      response =>
-        response.status match {
-          case OK => response.json.validate[DisplaySubscriptionForDACResponse] match {
-            case JsSuccess(response, _) => Some(response)
-            case JsError(errors) =>
-              logger.warn("Validation of display subscription payload failed", errors)
+    http
+      .POST[DisplaySubscriptionForDACRequest, HttpResponse](
+        submissionUrl,
+        DisplaySubscriptionForDACRequest(DisplaySubscriptionDetails.createRequest(enrolmentID))
+      )
+      .map {
+        response =>
+          response.status match {
+            case OK =>
+              response.json.validate[DisplaySubscriptionForDACResponse] match {
+                case JsSuccess(response, _) => Some(response)
+                case JsError(errors) =>
+                  logger.warn("Validation of display subscription payload failed", errors)
+                  None
+              }
+            case errorStatus: Int =>
+              logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
               None
           }
-          case errorStatus: Int =>
-            logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
-            None
-        }
-    }
+      }
   }
 }

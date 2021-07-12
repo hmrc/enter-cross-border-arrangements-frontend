@@ -38,11 +38,11 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
 
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/non-uk-tax-numbers-0/0")
 
-  val formProvider = new ReporterTinNonUKQuestionFormProvider()
+  val formProvider                     = new ReporterTinNonUKQuestionFormProvider()
   val selectedCountry: Option[Country] = Some(Country("", "FR", "France"))
-  val index: Int = 0
-  val reporterIndividualKey = "reporterIndividual"
-  val reporterOrganisationKey = "reporterOrganisation"
+  val index: Int                       = 0
+  val reporterIndividualKey            = "reporterIndividual"
+  val reporterOrganisationKey          = "reporterOrganisation"
 
   lazy val reporterTinNonUKQuestionRoute = controllers.reporter.routes.ReporterTinNonUKQuestionController.onPageLoad(0, NormalMode, index).url
 
@@ -55,9 +55,9 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
 
       val form = formProvider(reporterIndividualKey)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, reporterTinNonUKQuestionRoute)
+      val request        = FakeRequest(GET, reporterTinNonUKQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -81,7 +81,9 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterTinNonUKQuestionPage, 0, true)
         .success
         .value
@@ -91,9 +93,9 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
 
       val form = formProvider(reporterIndividualKey)
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterTinNonUKQuestionRoute)
+      val request        = FakeRequest(GET, reporterTinNonUKQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -104,10 +106,10 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
       val filledForm = form.bind(Map("value" -> "true"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value")),
-        "index" -> index,
+        "form"    -> filledForm,
+        "mode"    -> NormalMode,
+        "radios"  -> Radios.yesNo(filledForm("value")),
+        "index"   -> index,
         "country" -> "France"
       )
 
@@ -135,17 +137,20 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterOrganisationOrIndividualPage, 0, Individual)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val form = formProvider(reporterIndividualKey)
-      val request = FakeRequest(POST, reporterTinNonUKQuestionRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val form           = formProvider(reporterIndividualKey)
+      val request        = FakeRequest(POST, reporterTinNonUKQuestionRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -169,16 +174,19 @@ class ReporterTinNonUKQuestionControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterOrganisationOrIndividualPage, 0, Organisation)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val form = formProvider(reporterOrganisationKey)
-      val request = FakeRequest(POST, reporterTinNonUKQuestionRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val form           = formProvider(reporterOrganisationKey)
+      val request        = FakeRequest(POST, reporterTinNonUKQuestionRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

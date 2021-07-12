@@ -35,11 +35,11 @@ import scala.concurrent.Future
 class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new WhichNationalProvisionsIsThisArrangementBasedOnFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val whichNationalProvisionsIsThisArrangementBasedOnRoute = routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(0, NormalMode).url
 
-   "WhichNationalProvisionsIsThisArrangementBasedOn Controller" - {
+  "WhichNationalProvisionsIsThisArrangementBasedOn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -48,9 +48,9 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, whichNationalProvisionsIsThisArrangementBasedOnRoute)
+      val request        = FakeRequest(GET, whichNationalProvisionsIsThisArrangementBasedOnRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,14 +73,18 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "answer")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, whichNationalProvisionsIsThisArrangementBasedOnRoute)
+      val request        = FakeRequest(GET, whichNationalProvisionsIsThisArrangementBasedOnRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +124,10 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, whichNationalProvisionsIsThisArrangementBasedOnRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, whichNationalProvisionsIsThisArrangementBasedOnRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -155,7 +159,7 @@ class WhichNationalProvisionsIsThisArrangementBasedOnControllerSpec extends Spec
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, whichNationalProvisionsIsThisArrangementBasedOnRoute)

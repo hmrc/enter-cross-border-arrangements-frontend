@@ -22,7 +22,7 @@ import play.api.data.FormError
 class ReporterOrganisationNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "reporterOrganisationName.error.required"
-  val lengthKey = "reporterOrganisationName.error.length"
+  val lengthKey   = "reporterOrganisationName.error.length"
 
   val maxLength = 200
 

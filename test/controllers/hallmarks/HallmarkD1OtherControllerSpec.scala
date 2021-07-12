@@ -34,10 +34,8 @@ import scala.concurrent.Future
 
 class HallmarkD1OtherControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-
-
   val formProvider = new HallmarkD1OtherFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val hallmarkD1OtherRoute = routes.HallmarkD1OtherController.onPageLoad(0, NormalMode).url
 
@@ -49,9 +47,9 @@ class HallmarkD1OtherControllerSpec extends SpecBase with ControllerMockFixtures
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, hallmarkD1OtherRoute)
+      val request        = FakeRequest(GET, hallmarkD1OtherRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,12 +72,16 @@ class HallmarkD1OtherControllerSpec extends SpecBase with ControllerMockFixtures
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(HallmarkD1OtherPage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(HallmarkD1OtherPage, 0, "answer")
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, hallmarkD1OtherRoute)
+      val request        = FakeRequest(GET, hallmarkD1OtherRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -120,10 +122,10 @@ class HallmarkD1OtherControllerSpec extends SpecBase with ControllerMockFixtures
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, hallmarkD1OtherRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, hallmarkD1OtherRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

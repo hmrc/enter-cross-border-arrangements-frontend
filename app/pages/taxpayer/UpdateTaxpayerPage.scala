@@ -30,6 +30,7 @@ case object UpdateTaxpayerPage extends QuestionPage[UpdateTaxpayer] {
   override def toString: String = "updateTaxpayer"
 
   override def cleanup(value: Option[UpdateTaxpayer], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.remove(TaxpayerSelectTypePage, id)
+    userAnswers
+      .remove(TaxpayerSelectTypePage, id)
       .flatMap(_.remove(TaxpayerCheckYourAnswersPage, id))
 }

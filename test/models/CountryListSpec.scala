@@ -32,7 +32,6 @@ class CountryListSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         countries =>
-
           JsString(countries.toString).validate[CountryList].asOpt.value mustEqual countries
       }
     }
@@ -43,7 +42,6 @@ class CountryListSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[CountryList] mustEqual JsError("error.invalid")
       }
     }
@@ -54,7 +52,6 @@ class CountryListSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         countries =>
-
           Json.toJson(countries) mustEqual JsString(countries.toString)
       }
     }

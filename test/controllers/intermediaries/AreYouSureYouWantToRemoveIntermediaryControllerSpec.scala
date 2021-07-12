@@ -36,18 +36,23 @@ import scala.concurrent.Future
 
 class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
   val formProvider = new AreYouSureYouWantToRemoveIntermediaryFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
-  lazy val areYouSureYouWantToRemoveIntermediaryRoute = controllers.intermediaries.routes.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(0, "itemId").url
+  lazy val areYouSureYouWantToRemoveIntermediaryRoute =
+    controllers.intermediaries.routes.AreYouSureYouWantToRemoveIntermediaryController.onPageLoad(0, "itemId").url
 
   lazy val intermediaryLoop: IndexedSeq[Intermediary] = IndexedSeq(
-    Intermediary("1", None, Some(validOrganisation))
-    , Intermediary("2", Some(validIndividual), None)
+    Intermediary("1", None, Some(validOrganisation)),
+    Intermediary("2", Some(validIndividual), None)
   )
 
   val userAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-    .set(IntermediaryLoopPage, 0, intermediaryLoop).success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
+    .set(IntermediaryLoopPage, 0, intermediaryLoop)
+    .success
+    .value
 
   "AreYouSureYouWantToRemoveIntermediary Controller" - {
 
@@ -58,9 +63,9 @@ class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with 
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, areYouSureYouWantToRemoveIntermediaryRoute)
+      val request        = FakeRequest(GET, areYouSureYouWantToRemoveIntermediaryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -119,8 +124,9 @@ class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with 
 
       redirectLocation(result).value mustEqual controllers.intermediaries.routes.YouHaveNotAddedAnyIntermediariesController.onPageLoad(0).url
 
-      userAnswersCaptor.getValue.get(IntermediaryLoopPage, 0).map { loop =>
-        loop mustBe(intermediaryLoop.filterNot(_.intermediaryId == "1"))
+      userAnswersCaptor.getValue.get(IntermediaryLoopPage, 0).map {
+        loop =>
+          loop mustBe (intermediaryLoop.filterNot(_.intermediaryId == "1"))
       }
     }
 
@@ -130,10 +136,10 @@ class AreYouSureYouWantToRemoveIntermediaryControllerSpec extends SpecBase with 
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, areYouSureYouWantToRemoveIntermediaryRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, areYouSureYouWantToRemoveIntermediaryRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

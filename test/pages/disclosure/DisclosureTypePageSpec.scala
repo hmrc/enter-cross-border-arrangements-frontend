@@ -37,7 +37,9 @@ class DisclosureTypePageSpec extends PageBehaviours {
     forAll(arbitrary[UserAnswers]) {
       answers =>
         val result = answers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureIdentifyArrangementPage, 0, "GBA20210101ABC123")
           .success
           .value
@@ -53,7 +55,9 @@ class DisclosureTypePageSpec extends PageBehaviours {
     forAll(arbitrary[UserAnswers]) {
       answers =>
         val result = answers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(DisclosureMarketablePage, 0, true)
           .success
           .value

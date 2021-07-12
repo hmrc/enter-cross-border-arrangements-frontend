@@ -32,8 +32,12 @@ case object EmailAddressQuestionForIndividualPage extends DetailsPage[Boolean, I
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     value match {
       case Some(false) => userAnswers.remove(EmailAddressForIndividualPage, id)
-      case _ =>  super.cleanup(value, userAnswers, id)
+      case _           => super.cleanup(value, userAnswers, id)
     }
 
-  override def getFromModel(model: Individual): Option[Boolean] = model.emailAddress.map(_ => true).orElse(Some(false))
+  override def getFromModel(model: Individual): Option[Boolean] = model.emailAddress
+    .map(
+      _ => true
+    )
+    .orElse(Some(false))
 }

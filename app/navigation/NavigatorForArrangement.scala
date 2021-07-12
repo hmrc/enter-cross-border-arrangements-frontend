@@ -26,29 +26,32 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForArrangement @Inject()() extends AbstractNavigator {
+class NavigatorForArrangement @Inject() () extends AbstractNavigator {
 
-  override val routeMap:  Page => CheckRoute => Int => Option[Any] => Int => Call = {
+  override val routeMap: Page => CheckRoute => Int => Option[Any] => Int => Call = {
 
     case ArrangementCheckYourAnswersPage =>
       _ => id => _ => _ => controllers.routes.DisclosureDetailsController.onPageLoad(id)
 
     case _ =>
-      checkRoute => id => _ => _ => checkRoute.mode match {
-        case NormalMode => indexRoute
-        case CheckMode  => controllers.routes.IndexController.onPageLoad()
-      }
+      checkRoute =>
+        id =>
+          _ =>
+            _ =>
+              checkRoute.mode match {
+                case NormalMode => indexRoute
+                case CheckMode  => controllers.routes.IndexController.onPageLoad()
+              }
 
   }
 
   override val routeAltMap: Page => CheckRoute => Int => Option[Any] => Int => Call =
     _ => _ => id => _ => _ => routes.ArrangementCheckYourAnswersController.onPageLoad(id)
 
-  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call = {
+  override private[navigation] def jumpOrCheckYourAnswers(id: Int, jumpTo: Call, checkRoute: CheckRoute): Call =
     checkRoute match {
-      case DefaultRouting(CheckMode)               => routes.ArrangementCheckYourAnswersController.onPageLoad(id)
-      case _                                       => jumpTo
+      case DefaultRouting(CheckMode) => routes.ArrangementCheckYourAnswersController.onPageLoad(id)
+      case _                         => jumpTo
     }
-  }
 
 }

@@ -56,18 +56,24 @@ class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(Some("arrangementID"), Some("disclosureID"), Some("messageRefID")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval =
+        new FakeContactRetrievalAction(userAnswers,
+                                       Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com")))
+        )
 
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 
-     val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
+      val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
 
       val result = route(app, request).value
 
@@ -85,15 +91,21 @@ class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
-        .success.value
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, Some("disclosureID"), Some("messageRefID")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval =
+        new FakeContactRetrievalAction(userAnswers,
+                                       Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com")))
+        )
 
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
       val request = FakeRequest(GET, routes.FileTypeGatewayController.onRouting(0).url)
@@ -115,15 +127,21 @@ class FileTypeGatewayControllerSpec extends SpecBase with ControllerMockFixtures
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("0", "My First")))
-        .success.value
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
         .set(GeneratedIDPage, 0, GeneratedIDs(None, None, Some("messageRefID")))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val fakeDataRetrieval = new FakeContactRetrievalAction(userAnswers, Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com"))))
+      val fakeDataRetrieval =
+        new FakeContactRetrievalAction(userAnswers,
+                                       Some(ContactDetails(Some("Test Testing"), Some("test@test.com"), Some("Test Testing"), Some("test@test.com")))
+        )
 
       when(mockContactRetrievalAction.apply).thenReturn(fakeDataRetrieval)
 

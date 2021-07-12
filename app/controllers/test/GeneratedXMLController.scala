@@ -28,26 +28,27 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class GeneratedXMLController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    xmlGenerationService: XMLGenerationService,
-    val controllerComponents: MessagesControllerComponents,
-    contactRetrievalAction: ContactRetrievalAction,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class GeneratedXMLController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  xmlGenerationService: XMLGenerationService,
+  val controllerComponents: MessagesControllerComponents,
+  contactRetrievalAction: ContactRetrievalAction,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
-        _.fold (
+        _.fold(
           errors => throw new RuntimeException(errors.mkString),
-          ids    => renderer.render("generatedXML.njk", Json.obj("xml" -> ids.xml.get)).map(Ok(_))
+          ids => renderer.render("generatedXML.njk", Json.obj("xml" -> ids.xml.get)).map(Ok(_))
         )
       }
   }

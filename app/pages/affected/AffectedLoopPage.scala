@@ -32,7 +32,7 @@ case object AffectedLoopPage extends LoopPage[Affected] {
     userAnswers.get(AffectedLoopPage, id) match {
       case Some(list) => // append to existing list without duplication
         list.filterNot(_.affectedId == affected.affectedId) :+ affected
-      case None =>      // start new list
+      case None => // start new list
         IndexedSeq[Affected](affected)
     }
   }

@@ -27,7 +27,7 @@ sealed trait CountryList extends Ordered[CountryList] {
     (this, that) match {
       case (UnitedKingdom, _) => Int.MinValue
       case (_, UnitedKingdom) => Int.MaxValue
-      case (country, other) => country.name.compareTo(other.name)
+      case (country, other)   => country.name.compareTo(other.name)
     }
 
   val name: String = getClass.getSimpleName
@@ -123,7 +123,7 @@ object CountryList extends Enumerable.Implicits {
     Checkboxes.Checkbox(msg"countriesListCheckboxes.SK", Slovakia.toString),
     Checkboxes.Checkbox(msg"countriesListCheckboxes.SI", Slovenia.toString),
     Checkboxes.Checkbox(msg"countriesListCheckboxes.ES", Spain.toString),
-    Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString),
+    Checkboxes.Checkbox(msg"countriesListCheckboxes.SE", Sweden.toString)
   )
 
   def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
@@ -138,5 +138,9 @@ object CountryList extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[CountryList] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

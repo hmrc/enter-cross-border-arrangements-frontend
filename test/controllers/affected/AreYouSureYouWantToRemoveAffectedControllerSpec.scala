@@ -37,18 +37,22 @@ import scala.concurrent.Future
 class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new AreYouSureYouWantToRemoveAffectedFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val areYouSureYouWantToRemoveAffectedRoute = controllers.affected.routes.AreYouSureYouWantToRemoveAffectedController.onPageLoad(0, "itemId").url
 
   lazy val affectedLoop: IndexedSeq[Affected] = IndexedSeq(
-    Affected("1", None, Some(validOrganisation))
-    , Affected("2", Some(validIndividual), None)
+    Affected("1", None, Some(validOrganisation)),
+    Affected("2", Some(validIndividual), None)
   )
 
   val userAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-    .set(AffectedLoopPage, 0, affectedLoop).success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
+    .set(AffectedLoopPage, 0, affectedLoop)
+    .success
+    .value
 
   "AreYouSureYouWantToRemoveAffected Controller" - {
 
@@ -59,9 +63,9 @@ class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with Cont
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, areYouSureYouWantToRemoveAffectedRoute)
+      val request        = FakeRequest(GET, areYouSureYouWantToRemoveAffectedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -121,8 +125,9 @@ class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with Cont
 
       redirectLocation(result).value mustEqual controllers.affected.routes.YouHaveNotAddedAnyAffectedController.onPageLoad(0).url
 
-      userAnswersCaptor.getValue.get(AffectedLoopPage, 0).map { loop =>
-        loop mustBe(affectedLoop.filterNot(_.affectedId == "1"))
+      userAnswersCaptor.getValue.get(AffectedLoopPage, 0).map {
+        loop =>
+          loop mustBe (affectedLoop.filterNot(_.affectedId == "1"))
       }
     }
 
@@ -133,10 +138,10 @@ class AreYouSureYouWantToRemoveAffectedControllerSpec extends SpecBase with Cont
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, areYouSureYouWantToRemoveAffectedRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, areYouSureYouWantToRemoveAffectedRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -34,34 +34,37 @@ import uk.gov.hmrc.viewmodels.{Html, NunjucksSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IntermediaryWhyReportInUKController @Inject()(
-   override val messagesApi: MessagesApi,
-   sessionRepository: SessionRepository,
-   navigator: NavigatorForReporter,
-   identify: IdentifierAction,
-   getData: DataRetrievalAction,
-   requireData: DataRequiredAction,
-   formProvider: IntermediaryWhyReportInUKFormProvider,
-   val controllerComponents: MessagesControllerComponents,
-   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IntermediaryWhyReportInUKController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForReporter,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IntermediaryWhyReportInUKFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IntermediaryWhyReportInUKPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios"  -> IntermediaryWhyReportInUK.radios(preparedForm),
-        "infoWithHint"-> whyReporterInfo
+        "form"         -> preparedForm,
+        "id"           -> id,
+        "mode"         -> mode,
+        "radios"       -> IntermediaryWhyReportInUK.radios(preparedForm),
+        "infoWithHint" -> whyReporterInfo
       )
 
       renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(Ok(_))
@@ -72,33 +75,30 @@ class IntermediaryWhyReportInUKController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"         -> formWithErrors,
+              "id"           -> id,
+              "mode"         -> mode,
+              "radios"       -> IntermediaryWhyReportInUK.radios(formWithErrors),
+              "infoWithHint" -> whyReporterInfo
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> IntermediaryWhyReportInUK.radios(formWithErrors),
-            "infoWithHint"-> whyReporterInfo
-          )
-
-          renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhyReportInUKPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-
-        }
-      )
+            renderer.render("reporter/intermediary/IntermediaryWhyReportInUK.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IntermediaryWhyReportInUKPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def whyReporterInfo(implicit messages: Messages): Html = {
-    Html(s"<p id='roleInfo' class='govuk-body'>${{ messages("whyReportInUK.info") }}</p> ${{ messages("whyReportInUK.hint") }}")
-  }
+  private def whyReporterInfo(implicit messages: Messages): Html =
+    Html(s"<p id='roleInfo' class='govuk-body'>${messages("whyReportInUK.info")}</p> ${messages("whyReportInUK.hint")}")
 }

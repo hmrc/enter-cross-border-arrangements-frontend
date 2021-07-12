@@ -30,7 +30,9 @@ class UnsubmittedDisclosurePageSpec extends PageBehaviours {
         UnsubmittedDisclosure("1", "name_1", true, true)
       )
       implicit val userAnswers = UserAnswers("internalId")
-        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures)
+        .success
+        .value
 
       UnsubmittedDisclosurePage.fromIndex(1) mustBe (UnsubmittedDisclosure("1", "name_1", true, true))
     }

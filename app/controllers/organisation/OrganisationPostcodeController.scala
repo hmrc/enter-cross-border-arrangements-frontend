@@ -37,18 +37,22 @@ import play.api.data.FormError
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationPostcodeController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForOrganisation,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: PostcodeFormProvider,
-    addressLookupConnector: AddressLookupConnector,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class OrganisationPostcodeController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForOrganisation,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: PostcodeFormProvider,
+  addressLookupConnector: AddressLookupConnector,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
@@ -58,18 +62,17 @@ class OrganisationPostcodeController @Inject()(
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(PostcodePage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
       val json = Json.obj(
-        "form" -> preparedForm,
-        "displayName" -> getOrganisationName(request.userAnswers, id),
+        "form"             -> preparedForm,
+        "displayName"      -> getOrganisationName(request.userAnswers, id),
         "manualAddressURL" -> manualAddressURL(id, mode),
-        "actionUrl" -> actionUrl(id, mode),
-        "individual" -> false,
-        "mode" -> mode
+        "actionUrl"        -> actionUrl(id, mode),
+        "individual"       -> false,
+        "mode"             -> mode
       )
 
       renderer.render("postcode.njk", json).map(Ok(_))
@@ -80,52 +83,54 @@ class OrganisationPostcodeController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val formReturned = form.bindFromRequest()
 
       formReturned.fold(
         formWithErrors => {
           val json = Json.obj(
-            "form" -> formWithErrors,
-            "displayName" -> getOrganisationName(request.userAnswers, id),
+            "form"             -> formWithErrors,
+            "displayName"      -> getOrganisationName(request.userAnswers, id),
             "manualAddressURL" -> manualAddressURL(id, mode),
-            "actionUrl" -> actionUrl(id, mode),
-            "individual" -> false,
-            "mode" -> mode
+            "actionUrl"        -> actionUrl(id, mode),
+            "individual"       -> false,
+            "mode"             -> mode
           )
 
-          {for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.remove(PostcodePage, id))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield renderer.render("postcode.njk", json).map(BadRequest(_))}.flatten
+          {
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.remove(PostcodePage, id))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield renderer.render("postcode.njk", json).map(BadRequest(_))
+          }.flatten
         },
-        postCode => {
+        postCode =>
           addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
             case Nil =>
               val formError = formReturned.withError(FormError("postcode", List("postcode.error.notFound")))
 
               val json = Json.obj(
-                "form" -> formError,
-                "displayName" -> getOrganisationName(request.userAnswers, id),
+                "form"             -> formError,
+                "displayName"      -> getOrganisationName(request.userAnswers, id),
                 "manualAddressURL" -> manualAddressURL(id, mode),
-                "actionUrl" -> actionUrl(id, mode),
-                "individual" -> false,
-                "mode" -> mode
+                "actionUrl"        -> actionUrl(id, mode),
+                "individual"       -> false,
+                "mode"             -> mode
               )
 
-              {for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, id, postCode))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield renderer.render("postcode.njk", json).map(BadRequest(_))}.flatten
+              {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(PostcodePage, id, postCode))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield renderer.render("postcode.njk", json).map(BadRequest(_))
+              }.flatten
             case addresses =>
               for {
                 updatedAnswers              <- Future.fromTry(request.userAnswers.set(PostcodePage, id, postCode))
                 updatedAnswersWithAddresses <- Future.fromTry(updatedAnswers.set(AddressLookupPage, id, addresses))
                 _                           <- sessionRepository.set(updatedAnswersWithAddresses)
-                checkRoute                   =  toCheckRoute(mode, updatedAnswers, id)
+                checkRoute = toCheckRoute(mode, updatedAnswers, id)
               } yield Redirect(redirect(id, checkRoute, Some(postCode)))
           }
-        }
       )
   }
 }

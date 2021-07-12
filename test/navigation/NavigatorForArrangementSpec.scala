@@ -28,10 +28,10 @@ class NavigatorForArrangementSpec extends SpecBase {
   "NavigatorForArrangement" - {
     "must go from Arrangement CYA page" +
       "to Task list page" in {
-          navigator
-            .routeMap(ArrangementCheckYourAnswersPage)(ArrangementRouting(NormalMode))(0)(None)(0)
-            .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
-    }
+        navigator
+          .routeMap(ArrangementCheckYourAnswersPage)(ArrangementRouting(NormalMode))(0)(None)(0)
+          .mustBe(controllers.routes.DisclosureDetailsController.onPageLoad(0))
+      }
   }
 
 }

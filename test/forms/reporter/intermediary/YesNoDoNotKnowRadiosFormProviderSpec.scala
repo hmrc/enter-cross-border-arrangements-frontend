@@ -26,13 +26,13 @@ class YesNoDoNotKnowRadiosFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "intermediaryExemptionInEU.error.required"
 
     behave like optionsField[YesNoDoNotKnowRadios](
       form,
       fieldName,
-      validValues  = YesNoDoNotKnowRadios.values,
+      validValues = YesNoDoNotKnowRadios.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

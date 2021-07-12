@@ -29,46 +29,48 @@ import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UnsubmittedDisclosureController  @Inject()(
-                                                  override val messagesApi: MessagesApi,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  renderer: Renderer,
-                                                 appConfig: FrontendAppConfig,
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class UnsubmittedDisclosureController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer,
+  appConfig: FrontendAppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def removeFromList (zipped: (UnsubmittedDisclosure, Int)) : Boolean = {
+  def removeFromList(zipped: (UnsubmittedDisclosure, Int)): Boolean =
     zipped._1.deleted || zipped._1.submitted
-  }
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply()).async {
     implicit request =>
-
       val disclosureNameUrl = controllers.disclosure.routes.DisclosureNameController.onPageLoad(NormalMode).url
 
-
       val unsubmittedDisclosuresWithIndex: Option[Seq[(UnsubmittedDisclosure, Int)]] = for {
-        userAnswers                     <- request.userAnswers
-        unsubmittedDisclosures          <- userAnswers.getBase(UnsubmittedDisclosurePage)
+        userAnswers            <- request.userAnswers
+        unsubmittedDisclosures <- userAnswers.getBase(UnsubmittedDisclosurePage)
       } yield unsubmittedDisclosures.zipWithIndex.filterNot(removeFromList)
 
       unsubmittedDisclosuresWithIndex match {
 
         case Some(list) if list.nonEmpty =>
           val json = Json.obj(
-          "url" -> disclosureNameUrl,
-          "unsubmittedDisclosures" -> list.map{ case(unsubmittedDisclosure, id) => Json.obj(
-          "name" -> unsubmittedDisclosure.name,
-          "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(id).url,
-          "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(id).url
-          )},
-          "plural" -> (if(list.length > 1) "s" else "")
+            "url" -> disclosureNameUrl,
+            "unsubmittedDisclosures" -> list.map {
+              case (unsubmittedDisclosure, id) =>
+                Json.obj(
+                  "name"      -> unsubmittedDisclosure.name,
+                  "changeUrl" -> controllers.routes.DisclosureDetailsController.onPageLoad(id).url,
+                  "removeUrl" -> controllers.disclosure.routes.RemoveDisclosureController.onPageLoad(id).url
+                )
+            },
+            "plural" -> (if (list.length > 1) "s" else "")
           )
 
           renderer.render("unsubmitted/unsubmitted.njk", json).map(Ok(_))
 
-        case _ =>  Future.successful(Redirect(appConfig.discloseArrangeLink))
+        case _ => Future.successful(Redirect(appConfig.discloseArrangeLink))
       }
   }
 

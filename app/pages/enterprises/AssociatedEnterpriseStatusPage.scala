@@ -26,4 +26,3 @@ case object AssociatedEnterpriseStatusPage extends QuestionPage[JourneyStatus] {
 
   override def toString: String = "associatedEnterprise"
 }
-

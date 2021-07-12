@@ -16,11 +16,7 @@
 
 package models.subscription
 
-case class ContactDetails(contactName: Option[String],
-                          contactEmail: Option[String],
-                          secondContactName: Option[String],
-                          secondEmail: Option[String]
-                         ) {
+case class ContactDetails(contactName: Option[String], contactEmail: Option[String], secondContactName: Option[String], secondEmail: Option[String]) {
 
   val emailMessage: Option[String] = (secondEmail, contactEmail) match {
     case (Some(secondary), Some(primary)) => Some(primary + " and " + secondary)

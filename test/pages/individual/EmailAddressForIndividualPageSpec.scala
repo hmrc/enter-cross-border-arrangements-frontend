@@ -19,7 +19,6 @@ package pages.individual
 import helpers.data.ValidUserAnswersForSubmission.{validEmail, validIndividual}
 import pages.behaviours.PageBehaviours
 
-
 class EmailAddressForIndividualPageSpec extends PageBehaviours {
 
   "EmailAddressForIndividualPage" - {
@@ -35,12 +34,12 @@ class EmailAddressForIndividualPageSpec extends PageBehaviours {
 
     "- when email exists " in {
 
-      EmailAddressForIndividualPage.getFromModel(validIndividual) mustBe(Some(validEmail))
+      EmailAddressForIndividualPage.getFromModel(validIndividual) mustBe (Some(validEmail))
     }
 
     "- when email is empty " in {
 
-      EmailAddressForIndividualPage.getFromModel(validIndividual.copy(emailAddress = None)) mustBe(None)
+      EmailAddressForIndividualPage.getFromModel(validIndividual.copy(emailAddress = None)) mustBe None
     }
   }
 }

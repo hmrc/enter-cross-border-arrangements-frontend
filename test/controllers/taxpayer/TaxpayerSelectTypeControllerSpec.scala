@@ -34,12 +34,10 @@ import scala.concurrent.Future
 
 class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-
-
   lazy val selectTypeRoute = controllers.taxpayer.routes.TaxpayerSelectTypeController.onPageLoad(0, NormalMode).url
 
   val formProvider = new TaxpayerSelectTypeFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "SelectType Controller" - {
 
@@ -50,9 +48,9 @@ class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtu
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, selectTypeRoute)
+      val request        = FakeRequest(GET, selectTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -76,13 +74,17 @@ class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerSelectTypePage, 0, SelectType.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(TaxpayerSelectTypePage, 0, SelectType.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectTypeRoute)
+      val request        = FakeRequest(GET, selectTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -125,10 +127,10 @@ class TaxpayerSelectTypeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, selectTypeRoute).withFormUrlEncodedBody(("selectType", "invalid value"))
-      val boundForm = form.bind(Map("selectType" -> "invalid value"))
+      val request        = FakeRequest(POST, selectTypeRoute).withFormUrlEncodedBody(("selectType", "invalid value"))
+      val boundForm      = form.bind(Map("selectType" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

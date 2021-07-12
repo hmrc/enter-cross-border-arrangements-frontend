@@ -38,12 +38,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosureIdentifyArrangementControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val executionContext: ExecutionContext                            = scala.concurrent.ExecutionContext.Implicits.global
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val validArrangementID = "GBA20210101ABC123"
+  val countriesSeq: Seq[Country]                                             = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val validArrangementID                                                     = "GBA20210101ABC123"
 
-  val formProvider = new DisclosureIdentifyArrangementFormProvider()
+  val formProvider       = new DisclosureIdentifyArrangementFormProvider()
   val form: Form[String] = formProvider(countriesSeq)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
@@ -68,9 +68,9 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Controll
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
+      val request        = FakeRequest(GET, disclosureIdentifyArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -95,14 +95,18 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Controll
       when(mockCrossBorderArrangementsConnector.verifyArrangementId(any())(any())) thenReturn Future.successful(true)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureIdentifyArrangementPage, validArrangementID).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureIdentifyArrangementPage, validArrangementID)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, disclosureIdentifyArrangementRoute)
+      val request        = FakeRequest(GET, disclosureIdentifyArrangementRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -145,11 +149,12 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Controll
 
       val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", validArrangementID))
       val boundForm =
-        form.bind(Map("arrangementID" -> validArrangementID))
+        form
+          .bind(Map("arrangementID" -> validArrangementID))
           .withError(FormError("arrangementID", List("disclosureIdentifyArrangement.error.notFound")))
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -172,10 +177,10 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Controll
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", ""))
-      val boundForm = form.bind(Map("arrangementID" -> ""))
+      val request        = FakeRequest(POST, disclosureIdentifyArrangementRoute).withFormUrlEncodedBody(("arrangementID", ""))
+      val boundForm      = form.bind(Map("arrangementID" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -207,7 +212,7 @@ class DisclosureIdentifyArrangementControllerSpec extends SpecBase with Controll
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, disclosureIdentifyArrangementRoute)

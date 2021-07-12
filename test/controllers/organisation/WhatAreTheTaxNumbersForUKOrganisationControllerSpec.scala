@@ -35,14 +35,15 @@ import scala.concurrent.Future
 
 class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
+  val formProvider                    = new WhatAreTheTaxNumbersForUKOrganisationFormProvider()
   val form: Form[TaxReferenceNumbers] = formProvider()
 
-  val utr: String = "1234567890"
-  val index = 0
+  val utr: String                      = "1234567890"
+  val index                            = 0
   val selectedCountry: Option[Country] = Some(Country("", "GB", "United Kingdom"))
 
-  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String = controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, NormalMode, index).url
+  lazy val whatAreTheTaxNumbersForUKOrganisationRoute: String =
+    controllers.organisation.routes.WhatAreTheTaxNumbersForUKOrganisationController.onPageLoad(0, NormalMode, index).url
 
   "WhatAreTheTaxNumbersForUKOrganisation Controller" - {
 
@@ -52,14 +53,18 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
         .thenReturn(Future.successful(Html("")))
 
       val updatedUserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(OrganisationNamePage, 0, "Paper Org").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(OrganisationNamePage, 0, "Paper Org")
+        .success
+        .value
 
       retrieveUserAnswersData(updatedUserAnswers)
 
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
+      val request        = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -68,8 +73,8 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form" -> form,
-        "mode" -> NormalMode,
+        "form"             -> form,
+        "mode"             -> NormalMode,
         "organisationName" -> "Paper Org"
       )
 
@@ -85,20 +90,20 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       val taxReferenceNumbers = TaxReferenceNumbers(utr, None, None)
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhatAreTheTaxNumbersForUKOrganisationPage, 0, taxReferenceNumbers)
         .success
         .value
-        .set(OrganisationLoopPage, 0, IndexedSeq(
-          LoopDetails(None, selectedCountry, None,None, Some(true), Some(taxReferenceNumbers)))
-        )
+        .set(OrganisationLoopPage, 0, IndexedSeq(LoopDetails(None, selectedCountry, None, None, Some(true), Some(taxReferenceNumbers))))
         .success
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
+      val request        = FakeRequest(GET, whatAreTheTaxNumbersForUKOrganisationRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -108,14 +113,15 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
 
       val filledForm = form.bind(
         Map(
-          "firstTaxNumber" -> utr,
+          "firstTaxNumber"  -> utr,
           "secondTaxNumber" -> "",
-          "thirdTaxNumber" -> ""
-        ))
+          "thirdTaxNumber"  -> ""
+        )
+      )
 
       val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "mode" -> NormalMode,
+        "form"  -> filledForm,
+        "mode"  -> NormalMode,
         "index" -> index
       )
 
@@ -145,9 +151,9 @@ class WhatAreTheTaxNumbersForUKOrganisationControllerSpec extends SpecBase with 
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, whatAreTheTaxNumbersForUKOrganisationRoute)
         .withFormUrlEncodedBody(("value", utr))
-      val boundForm = form.bind(Map("value" -> utr))
+      val boundForm      = form.bind(Map("value" -> utr))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

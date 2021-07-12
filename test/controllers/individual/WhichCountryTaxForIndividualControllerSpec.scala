@@ -38,12 +38,12 @@ import scala.concurrent.Future
 
 class WhichCountryTaxForIndividualControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new WhichCountryTaxForIndividualFormProvider()
-  val form: Form[Country] = formProvider(Seq(Country("valid","GB","United Kingdom")))
-  val country: Country = Country("valid","GB","United Kingdom")
-  val nonUKCountry: Country = Country("valid","FR","France")
+  val formProvider                           = new WhichCountryTaxForIndividualFormProvider()
+  val form: Form[Country]                    = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
+  val country: Country                       = Country("valid", "GB", "United Kingdom")
+  val nonUKCountry: Country                  = Country("valid", "FR", "France")
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
-  val index: Int = 0
+  val index: Int                             = 0
 
   lazy val whichCountryTaxForIndividualRoute: String = controllers.individual.routes.WhichCountryTaxForIndividualController.onPageLoad(0, NormalMode, index).url
 
@@ -61,9 +61,9 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
       when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(country, nonUKCountry)))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
+      val request        = FakeRequest(GET, whichCountryTaxForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -85,21 +85,24 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
+      when(mockCountryFactory.getCountryList()).thenReturn(Some(Seq(Country("valid", "GB", "United Kingdom"))))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhichCountryTaxForIndividualPage, 0, country)
         .success
         .value
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(country), None, None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
+      val request        = FakeRequest(GET, whichCountryTaxForIndividualRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -165,10 +168,10 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, whichCountryTaxForIndividualRoute).withFormUrlEncodedBody(("country", ""))
-      val boundForm = form.bind(Map("country" -> ""))
+      val request        = FakeRequest(POST, whichCountryTaxForIndividualRoute).withFormUrlEncodedBody(("country", ""))
+      val boundForm      = form.bind(Map("country" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -187,7 +190,7 @@ class WhichCountryTaxForIndividualControllerSpec extends SpecBase with Controlle
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request = FakeRequest(GET, whichCountryTaxForIndividualRoute)
 

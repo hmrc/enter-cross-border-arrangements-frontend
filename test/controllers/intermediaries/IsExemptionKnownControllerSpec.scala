@@ -37,7 +37,7 @@ class IsExemptionKnownControllerSpec extends SpecBase with ControllerMockFixture
   lazy val isExemptionKnownRoute = routes.IsExemptionKnownController.onPageLoad(0, NormalMode).url
 
   val formProvider = new IsExemptionKnownFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "IsExemptionKnown Controller" - {
 
@@ -48,9 +48,9 @@ class IsExemptionKnownControllerSpec extends SpecBase with ControllerMockFixture
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, isExemptionKnownRoute)
+      val request        = FakeRequest(GET, isExemptionKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,13 +74,17 @@ class IsExemptionKnownControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IsExemptionKnownPage, 0, IsExemptionKnown.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IsExemptionKnownPage, 0, IsExemptionKnown.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isExemptionKnownRoute)
+      val request        = FakeRequest(GET, isExemptionKnownRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class IsExemptionKnownControllerSpec extends SpecBase with ControllerMockFixture
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, isExemptionKnownRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, isExemptionKnownRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

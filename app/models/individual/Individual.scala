@@ -35,7 +35,8 @@ case class Individual(individualName: Name,
                       address: Option[Address] = None,
                       emailAddress: Option[String] = None,
                       taxResidencies: IndexedSeq[TaxResidency]
-                     ) extends WithRestore with WithTaxResidency {
+) extends WithRestore
+    with WithTaxResidency {
 
   val nameAsString: String = individualName.displayName
 
@@ -83,25 +84,24 @@ object Individual {
       addressLine3 = address.addressLine3,
       city = address.town,
       postCode = Some(address.postcode),
-      country = country)
+      country = country
+    )
   }
 
-  private def getIndividualName(ua: UserAnswers, id: Int): Name = {
+  private def getIndividualName(ua: UserAnswers, id: Int): Name =
     ua.get(IndividualNamePage, id) match {
       case Some(name) => name
-      case None => throw new Exception("Individual Taxpayer must contain a name")
+      case None       => throw new Exception("Individual Taxpayer must contain a name")
     }
-  }
 
   private def getIndividualDateOfBirth(ua: UserAnswers, id: Int): Option[LocalDate] =
     ua.get(IndividualDateOfBirthPage, id)
 
-  private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
+  private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(IndividualLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
+      case None       => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
     }
-  }
 
   def buildIndividualDetails(ua: UserAnswers, id: Int): Individual = {
 
@@ -109,7 +109,7 @@ object Individual {
       (ua.get(IndividualAddressPage, id), ua.get(SelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
-        case _ => None
+        case _                  => None
       }
 
     new Individual(
@@ -122,26 +122,23 @@ object Individual {
     )
   }
 
-  private def getReporterIndividualName(ua: UserAnswers, id: Int): Name = {
+  private def getReporterIndividualName(ua: UserAnswers, id: Int): Name =
     ua.get(ReporterIndividualNamePage, id) match {
       case Some(name) => name
-      case None => throw new Exception("Individual Reporter must contain name")
+      case None       => throw new Exception("Individual Reporter must contain name")
     }
-  }
 
-  private def getReporterIndividualDOB(ua: UserAnswers, id: Int): Option[LocalDate] = {
+  private def getReporterIndividualDOB(ua: UserAnswers, id: Int): Option[LocalDate] =
     ua.get(ReporterIndividualDateOfBirthPage, id) match {
-      case dob => dob
+      case dob  => dob
       case None => throw new Exception("Individual Reporter must contain date of birth")
     }
-  }
 
-  private def getReporterTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] = {
+  private def getReporterTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(ReporterTaxResidencyLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None => throw new Exception("Individual Reporter must contain at minimum one tax residency")
+      case None       => throw new Exception("Individual Reporter must contain at minimum one tax residency")
     }
-  }
 
   def buildIndividualDetailsForReporter(ua: UserAnswers, id: Int): Individual = {
 
@@ -149,7 +146,7 @@ object Individual {
       (ua.get(ReporterIndividualAddressPage, id), ua.get(ReporterSelectedAddressLookupPage, id)) match {
         case (Some(address), _) => Some(address)
         case (_, Some(address)) => Some(convertAddressLookupToAddress(address))
-        case _ => None
+        case _                  => None
       }
 
     new Individual(

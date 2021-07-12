@@ -19,7 +19,6 @@ package pages.reporter.individual
 import models.Address
 import pages.behaviours.PageBehaviours
 
-
 class ReporterIndividualAddressPageSpec extends PageBehaviours {
 
   "ReporterIndividualAddressPage" - {

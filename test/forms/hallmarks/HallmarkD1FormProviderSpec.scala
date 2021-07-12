@@ -26,13 +26,13 @@ class HallmarkD1FormProviderSpec extends CheckboxFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "hallmarkD1.error.required"
 
     behave like checkboxField[HallmarkD1](
       form,
       fieldName,
-      validValues  = HallmarkD1.values,
+      validValues = HallmarkD1.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

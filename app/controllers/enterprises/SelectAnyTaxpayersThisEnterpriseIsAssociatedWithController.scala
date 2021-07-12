@@ -38,35 +38,38 @@ import uk.gov.hmrc.viewmodels.{Checkboxes, NunjucksSupport}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForEnterprises,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForEnterprises,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: SelectAnyTaxpayersThisEnterpriseIsAssociatedWithFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) match {
+        case Some(value) if mode == CheckMode => form.fill(value)
+        case _                                => form
+      }
 
-          val preparedForm = request.userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id) match {
-            case Some(value) if mode == CheckMode => form.fill(value)
-            case _ => form
-          }
-
-          val json = Json.obj(
-            "form" -> preparedForm,
-            "id" -> id,
-            "mode" -> mode,
-            "checkboxes" -> enterpriseCheckboxes(preparedForm, request.userAnswers, id)
-          )
-          renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
+      val json = Json.obj(
+        "form"       -> preparedForm,
+        "id"         -> id,
+        "mode"       -> mode,
+        "checkboxes" -> enterpriseCheckboxes(preparedForm, request.userAnswers, id)
+      )
+      renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(Ok(_))
   }
 
   def redirect(id: Int, checkRoute: CheckRoute, value: Option[List[String]]): Call =
@@ -74,44 +77,45 @@ class SelectAnyTaxpayersThisEnterpriseIsAssociatedWithController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"       -> formWithErrors,
+              "id"         -> id,
+              "mode"       -> mode,
+              "checkboxes" -> enterpriseCheckboxes(formWithErrors, request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id" -> id,
-            "mode"       -> mode,
-            "checkboxes" -> enterpriseCheckboxes(formWithErrors, request.userAnswers, id)
-          )
-
-          renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("enterprises/selectAnyTaxpayersThisEnterpriseIsAssociatedWith.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def reporterToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =  {
+  private def reporterToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =
     (ua.get(ReporterDetailsPage, id), ua.get(RoleInArrangementPage, id)) match {
       case (Some(reporter), Some(Taxpayer)) =>
         Seq(Checkboxes.Checkbox(label = Literal(reporter.nameAsString), value = s"${reporter.nameAsString}"))
       case _ => Seq.empty
     }
-  }
 
-  private def taxpayerToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] = {
+  private def taxpayerToCheckbox(ua: UserAnswers, id: Int): Seq[Checkboxes.Checkbox] =
     ua.get(TaxpayerLoopPage, id) match {
-      case Some(taxpayersList) => taxpayersList.toSeq.map { taxpayer =>
-          Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
+      case Some(taxpayersList) =>
+        taxpayersList.toSeq.map {
+          taxpayer =>
+            Checkboxes.Checkbox(label = Literal(taxpayer.nameAsString), value = s"${taxpayer.taxpayerId}")
         }
       case _ => Seq.empty
     }
-  }
 
   private def enterpriseCheckboxes(form: Form[_], ua: UserAnswers, id: Int): Seq[Checkboxes.Item] = {
     val field = form("value")

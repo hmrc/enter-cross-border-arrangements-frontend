@@ -38,5 +38,9 @@ case object IsOrganisationAddressKnownPage extends DetailsPage[Boolean, Organisa
       case _ => super.cleanup(value, userAnswers, id)
     }
 
-  def getFromModel(model: Organisation): Option[Boolean] = model.address.map(_ => true).orElse(Some(false))
+  def getFromModel(model: Organisation): Option[Boolean] = model.address
+    .map(
+      _ => true
+    )
+    .orElse(Some(false))
 }

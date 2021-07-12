@@ -34,17 +34,21 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsIndividualAddressUkController @Inject()(
-                                                    override val messagesApi: MessagesApi,
-                                                    sessionRepository: SessionRepository,
-                                                    navigator: NavigatorForIndividual,
-                                                    identify: IdentifierAction,
-                                                    getData: DataRetrievalAction,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: IsIndividualAddressUkFormProvider,
-                                                    val controllerComponents: MessagesControllerComponents,
-                                                    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IsIndividualAddressUkController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IsIndividualAddressUkFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
@@ -52,17 +56,16 @@ class IsIndividualAddressUkController @Inject()(
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IsIndividualAddressUkPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "id" -> id,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
+        "form"        -> preparedForm,
+        "id"          -> id,
+        "mode"        -> mode,
+        "radios"      -> Radios.yesNo(preparedForm("value")),
         "displayName" -> getIndividualName(request.userAnswers, id)
       )
 
@@ -74,27 +77,27 @@ class IsIndividualAddressUkController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "id"          -> id,
+              "mode"        -> mode,
+              "radios"      -> Radios.yesNo(formWithErrors("value")),
+              "displayName" -> getIndividualName(request.userAnswers, id)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
-            "displayName" -> getIndividualName(request.userAnswers, id)
-          )
-
-          renderer.render("individual/isIndividualAddressUk.njk", json).map(BadRequest(_))
-        },
-        value =>
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressUkPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("individual/isIndividualAddressUk.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsIndividualAddressUkPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

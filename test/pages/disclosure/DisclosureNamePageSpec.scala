@@ -18,7 +18,6 @@ package pages.disclosure
 
 import pages.behaviours.PageBehaviours
 
-
 class DisclosureNamePageSpec extends PageBehaviours {
 
   "DisclosureNamePage" - {

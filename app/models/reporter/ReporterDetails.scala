@@ -22,9 +22,7 @@ import models.{ReporterOrganisationOrIndividual, UserAnswers}
 import pages.reporter.ReporterOrganisationOrIndividualPage
 import play.api.libs.json.{Json, OFormat}
 
-case class ReporterDetails(individual: Option[Individual] = None,
-                           organisation: Option[Organisation] = None,
-                           liability: Option[ReporterLiability] = None) {
+case class ReporterDetails(individual: Option[Individual] = None, organisation: Option[Organisation] = None, liability: Option[ReporterLiability] = None) {
 
   val nameAsString: String = (individual, organisation) match {
     case (Some(i), _) => i.nameAsString
@@ -39,15 +37,13 @@ case class ReporterDetails(individual: Option[Individual] = None,
 
 object ReporterDetails {
 
-  def buildReporterDetails(ua: UserAnswers, id: Int): ReporterDetails = {
-
+  def buildReporterDetails(ua: UserAnswers, id: Int): ReporterDetails =
     ua.get(ReporterOrganisationOrIndividualPage, id) match {
 
       case Some(ReporterOrganisationOrIndividual.Organisation) =>
         new ReporterDetails(
           organisation = Some(Organisation.buildOrganisationDetailsForReporter(ua, id)),
-          liability = Some(ReporterLiability.buildReporterLiability(ua, id)
-          )
+          liability = Some(ReporterLiability.buildReporterLiability(ua, id))
         )
 
       case _ =>
@@ -57,8 +53,5 @@ object ReporterDetails {
         )
 
     }
-  }
   implicit val format: OFormat[ReporterDetails] = Json.format[ReporterDetails]
 }
-
-

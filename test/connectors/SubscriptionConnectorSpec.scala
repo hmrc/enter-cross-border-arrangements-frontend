@@ -33,34 +33,37 @@ import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubscriptionConnectorSpec extends SpecBase
-  with MockServiceApp
-  with ScalaCheckPropertyChecks
-  with Generators with BeforeAndAfterEach {
+class SubscriptionConnectorSpec extends SpecBase with MockServiceApp with ScalaCheckPropertyChecks with Generators with BeforeAndAfterEach {
 
-  val primaryContact: PrimaryContact = PrimaryContact(Seq(
-    ContactInformationForIndividual(
-      individual = IndividualDetails(firstName = "FirstName", lastName = "LastName", middleName = None),
-      email = "email@email.com", phone = Some("07111222333"), mobile = Some("07111222333"))
-  ))
-  val secondaryContact: SecondaryContact = SecondaryContact(Seq(
-    ContactInformationForOrganisation(
-      organisation = OrganisationDetails(organisationName = "Organisation Name"),
-      email = "email@email.com", phone = None, mobile = None)
-  ))
+  val primaryContact: PrimaryContact = PrimaryContact(
+    Seq(
+      ContactInformationForIndividual(
+        individual = IndividualDetails(firstName = "FirstName", lastName = "LastName", middleName = None),
+        email = "email@email.com",
+        phone = Some("07111222333"),
+        mobile = Some("07111222333")
+      )
+    )
+  )
 
-  val responseCommon: ResponseCommon = ResponseCommon(
-    status = "OK",
-    statusText = None,
-    processingDate = "2020-08-09T11:23:45Z",
-    returnParameters = None)
+  val secondaryContact: SecondaryContact = SecondaryContact(
+    Seq(
+      ContactInformationForOrganisation(organisation = OrganisationDetails(organisationName = "Organisation Name"),
+                                        email = "email@email.com",
+                                        phone = None,
+                                        mobile = None
+      )
+    )
+  )
 
-  val responseDetail: ResponseDetail = ResponseDetail(
-    subscriptionID = "XE0001234567890",
-    tradingName = Some("Trading Name"),
-    isGBUser = true,
-    primaryContact = primaryContact,
-    secondaryContact = Some(secondaryContact))
+  val responseCommon: ResponseCommon = ResponseCommon(status = "OK", statusText = None, processingDate = "2020-08-09T11:23:45Z", returnParameters = None)
+
+  val responseDetail: ResponseDetail = ResponseDetail(subscriptionID = "XE0001234567890",
+                                                      tradingName = Some("Trading Name"),
+                                                      isGBUser = true,
+                                                      primaryContact = primaryContact,
+                                                      secondaryContact = Some(secondaryContact)
+  )
 
   val enrolmentID: String = "1234567890"
 
@@ -88,8 +91,14 @@ class SubscriptionConnectorSpec extends SpecBase
         forAll(validDisclosureID) {
           safeID =>
             val expectedBody = displaySubscriptionPayload(
-              JsString(safeID), JsString("FirstName"), JsString("LastName"), JsString("Organisation Name"),
-              JsString("email@email.com"), JsString("email@email.com"), JsString("07111222333"))
+              JsString(safeID),
+              JsString("FirstName"),
+              JsString("LastName"),
+              JsString("Organisation Name"),
+              JsString("email@email.com"),
+              JsString("email@email.com"),
+              JsString("07111222333")
+            )
 
             val responseDetailUpdate: ResponseDetail = responseDetail.copy(subscriptionID = safeID)
 
@@ -100,7 +109,6 @@ class SubscriptionConnectorSpec extends SpecBase
 
             when(mockHttpClient.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
               .thenReturn(Future.successful(HttpResponse(OK, expectedBody)))
-
 
             val result = connector.displaySubscriptionDetails(enrolmentID)
             result.futureValue mustBe Some(displaySubscriptionForDACResponse)

@@ -26,13 +26,13 @@ class CountryListFormProviderSpec extends CheckboxFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "exemptCountries.error.required"
 
     behave like checkboxField[CountryList](
       form,
       fieldName,
-      validValues  = CountryList.values,
+      validValues = CountryList.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

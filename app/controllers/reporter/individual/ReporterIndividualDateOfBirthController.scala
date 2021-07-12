@@ -35,23 +35,26 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReporterIndividualDateOfBirthController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    navigator: NavigatorForReporter,
-    formProvider: ReporterIndividualDateOfBirthFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class ReporterIndividualDateOfBirthController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  navigator: NavigatorForReporter,
+  formProvider: ReporterIndividualDateOfBirthFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ReporterIndividualDateOfBirthPage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -61,7 +64,7 @@ class ReporterIndividualDateOfBirthController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "id" -> id,
+        "id"   -> id,
         "mode" -> mode,
         "date" -> viewModel
       )
@@ -74,27 +77,28 @@ class ReporterIndividualDateOfBirthController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors =>  {
+            val viewModel = DateInput.localDate(formWithErrors("dob"))
 
-          val viewModel = DateInput.localDate(formWithErrors("dob"))
+            val json = Json.obj(
+              "form" -> formWithErrors,
+              "id"   -> id,
+              "mode" -> mode,
+              "date" -> viewModel
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "date" -> viewModel
-          )
-
-          renderer.render("reporter/individual/reporterIndividualDateOfBirth.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualDateOfBirthPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("reporter/individual/reporterIndividualDateOfBirth.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterIndividualDateOfBirthPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

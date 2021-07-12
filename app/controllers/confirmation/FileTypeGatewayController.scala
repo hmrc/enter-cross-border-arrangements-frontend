@@ -34,7 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FileTypeGatewayController @Inject()(
+class FileTypeGatewayController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -44,42 +44,44 @@ class FileTypeGatewayController @Inject()(
   frontendAppConfig: FrontendAppConfig,
   emailService: EmailService,
   val controllerComponents: MessagesControllerComponents
-  )(implicit ec: ExecutionContext) extends FrontendBaseController {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
   def onRouting(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
       val disclosureDetails = request.userAnswers.get(DisclosureDetailsPage, id)
 
       sendMail(id, disclosureDetails.get.disclosureType.toString)
 
-      Future.successful(disclosureDetails.map(_.disclosureType)).map { disclosureType =>
-        Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
+      Future.successful(disclosureDetails.map(_.disclosureType)).map {
+        disclosureType =>
+          Redirect(navigator.routeMap(DisclosureDetailsPage)(DefaultRouting(NormalMode))(id)(disclosureType)(0))
       }
   }
 
-    def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] = {
+  def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] =
+    request.userAnswers.get(GeneratedIDPage, id) match {
 
-      request.userAnswers.get(GeneratedIDPage, id)  match {
+      //new
+      case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
+        emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), Some(arrangementID)), importInstruction, messageRefID)
 
-         //new
-        case Some(GeneratedIDs(Some(arrangementID), Some(disclosureID), Some(messageRefID), _)) =>
-          emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), Some(arrangementID)), importInstruction, messageRefID)
+      // add
+      case Some(GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _)) =>
+        val details = request.userAnswers
+          .get(DisclosureDetailsPage, id)
+          .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
+        emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), details.arrangementID), importInstruction, messageRefID)
 
-         // add
-        case Some(GeneratedIDs(None, Some(disclosureID), Some(messageRefID), _)) =>
+      //rep
+      case Some(GeneratedIDs(None, None, Some(messageRefID), _)) =>
+        val details = request.userAnswers
+          .get(DisclosureDetailsPage, id)
+          .getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
+        emailService.sendEmail(request.contacts, GeneratedIDs(details.disclosureID, details.arrangementID), importInstruction, messageRefID)
 
-          val details = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
-          emailService.sendEmail(request.contacts, GeneratedIDs(Some(disclosureID), details.arrangementID), importInstruction, messageRefID)
-
-          //rep
-        case Some(GeneratedIDs(None, None, Some(messageRefID), _)) =>
-          val details = request.userAnswers.get(DisclosureDetailsPage, id).getOrElse(throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email."))
-          emailService.sendEmail(request.contacts, GeneratedIDs(details.disclosureID, details.arrangementID), importInstruction, messageRefID)
-
-        case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
-      }
+      case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
     }
 }

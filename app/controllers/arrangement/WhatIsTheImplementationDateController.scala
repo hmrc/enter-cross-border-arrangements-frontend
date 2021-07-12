@@ -35,24 +35,25 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsTheImplementationDateController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatIsTheImplementationDateFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class WhatIsTheImplementationDateController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatIsTheImplementationDateFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   val form = formProvider()
 
-
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(WhatIsTheImplementationDatePage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -61,10 +62,10 @@ class WhatIsTheImplementationDateController @Inject()(
       val viewModel = DateInput.localDate(preparedForm("value"))
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
-        "date" -> viewModel,
+        "form"        -> preparedForm,
+        "id"          -> id,
+        "mode"        -> mode,
+        "date"        -> viewModel,
         "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
       )
 
@@ -73,28 +74,28 @@ class WhatIsTheImplementationDateController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors =>  {
+            val viewModel = DateInput.localDate(formWithErrors("value"))
 
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "id"          -> id,
+              "mode"        -> mode,
+              "date"        -> viewModel,
+              "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
+            )
 
-          val viewModel = DateInput.localDate(formWithErrors("value"))
-
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "date" -> viewModel,
-            "exampleDate" -> LocalDate.now.plusMonths(6).format(dateFormatterNumericDMY)
-          )
-
-          renderer.render("arrangement/whatIsTheImplementationDate.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheImplementationDatePage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTheImplementationDatePage, id, mode, updatedAnswers))
-      )
+            renderer.render("arrangement/whatIsTheImplementationDate.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTheImplementationDatePage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(WhatIsTheImplementationDatePage, id, mode, updatedAnswers))
+        )
   }
 }

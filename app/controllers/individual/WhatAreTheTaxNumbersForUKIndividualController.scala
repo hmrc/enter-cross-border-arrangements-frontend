@@ -33,23 +33,26 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
-                                                              override val messagesApi: MessagesApi,
-                                                              sessionRepository: SessionRepository,
-                                                              navigator: NavigatorForIndividual,
-                                                              identify: IdentifierAction,
-                                                              getData: DataRetrievalAction,
-                                                              requireData: DataRequiredAction,
-                                                              formProvider: WhatAreTheTaxNumbersForUKIndividualFormProvider,
-                                                              val controllerComponents: MessagesControllerComponents,
-                                                              renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class WhatAreTheTaxNumbersForUKIndividualController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatAreTheTaxNumbersForUKIndividualFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IndividualLoopPage, id) match {
         case None => form
         case Some(value) if value.lift(index).isDefined =>
@@ -63,10 +66,10 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
-        "name" -> getIndividualName(request.userAnswers, id),
+        "form"  -> preparedForm,
+        "id"    -> id,
+        "mode"  -> mode,
+        "name"  -> getIndividualName(request.userAnswers, id),
         "index" -> index
       )
 
@@ -78,36 +81,34 @@ class WhatAreTheTaxNumbersForUKIndividualController @Inject()(
 
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"  -> formWithErrors,
+              "id"    -> id,
+              "mode"  -> mode,
+              "name"  -> getIndividualName(request.userAnswers, id),
+              "index" -> index
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers, id),
-            "index" -> index
-          )
-
-          renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(taxNumbersUK = Some(value))))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            renderer.render("individual/whatAreTheTaxNumbersForUKIndividual.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhatAreTheTaxNumbersForUKIndividualPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, index)(_.copy(taxNumbersUK = Some(value))))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+        )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.displayName}’s"
-      case None => "their"
+      case None       => "their"
     }
-  }
 }

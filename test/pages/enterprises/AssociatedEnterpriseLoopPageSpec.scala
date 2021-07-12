@@ -29,28 +29,40 @@ class AssociatedEnterpriseLoopPageSpec extends PageBehaviours {
     "must be able to removed all related pages from UserAnswers" in {
 
       val gen = for {
-        userAnswersGen <- arbitrary[UserAnswers]
+        userAnswersGen     <- arbitrary[UserAnswers]
         youHaveNotAddedGen <- arbitraryYouHaveNotAddedAnyAssociatedEnterprises.arbitrary
-        taxpayersGen <- listOf(arbitrary[String])
-        selectTypeGen <- arbitrarySelectType.arbitrary
-        isAffectedGen <- arbitrary[Boolean]
+        taxpayersGen       <- listOf(arbitrary[String])
+        selectTypeGen      <- arbitrarySelectType.arbitrary
+        isAffectedGen      <- arbitrary[Boolean]
 
       } yield (userAnswersGen, youHaveNotAddedGen, taxpayersGen, selectTypeGen, isAffectedGen)
 
-      forAll(gen) { case (userAnswers, youHaveNotAdded, taxpayers, selectType, isAffected) =>
-        val answersBeforeCleanUp = userAnswers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0,  youHaveNotAdded).success.value
-          .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0,  taxpayers).success.value
-          .set(AssociatedEnterpriseTypePage, 0,  selectType).success.value
-          .set(IsAssociatedEnterpriseAffectedPage, 0,  isAffected).success.value
-        val answersAfterCleanUp = AssociatedEnterpriseLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
-        answersAfterCleanUp.foreach { ua =>
-          ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0) mustBe (None)
-          ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe (None)
-          ua.get(AssociatedEnterpriseTypePage, 0) mustBe (None)
-          ua.get(IsAssociatedEnterpriseAffectedPage, 0) mustBe (None)
-        }
+      forAll(gen) {
+        case (userAnswers, youHaveNotAdded, taxpayers, selectType, isAffected) =>
+          val answersBeforeCleanUp = userAnswers
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, youHaveNotAdded)
+            .success
+            .value
+            .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, taxpayers)
+            .success
+            .value
+            .set(AssociatedEnterpriseTypePage, 0, selectType)
+            .success
+            .value
+            .set(IsAssociatedEnterpriseAffectedPage, 0, isAffected)
+            .success
+            .value
+          val answersAfterCleanUp = AssociatedEnterpriseLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
+          answersAfterCleanUp.foreach {
+            ua =>
+              ua.get(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0) mustBe None
+              ua.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0) mustBe None
+              ua.get(AssociatedEnterpriseTypePage, 0) mustBe None
+              ua.get(IsAssociatedEnterpriseAffectedPage, 0) mustBe None
+          }
       }
     }
 

@@ -33,4 +33,3 @@ object FakeIndividualNavigator {
 
   def apply(): FakeIndividualNavigator = new FakeIndividualNavigator(testRoute)
 }
-

@@ -34,12 +34,12 @@ class EmailAddressQuestionForIndividualPageSpec extends PageBehaviours {
 
     "- when email exists " in {
 
-      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual) mustBe(Some(true))
+      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual) mustBe (Some(true))
     }
 
     "- when email is empty " in {
 
-      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual.copy(emailAddress = None)) mustBe(Some(false))
+      EmailAddressQuestionForIndividualPage.getFromModel(validIndividual.copy(emailAddress = None)) mustBe (Some(false))
     }
   }
 }

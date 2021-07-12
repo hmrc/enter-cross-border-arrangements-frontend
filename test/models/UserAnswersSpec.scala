@@ -22,18 +22,22 @@ import pages.SelectTypePage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class UserAnswersSpec extends SpecBase {
- "UserAnswers" - {
-   "must be able to retrieve a question from an unsubmitted disclosure" in {
-     val unsubmittedDisclosures = Seq(
-       UnsubmittedDisclosure("1", "My First Disclosure"),
-       UnsubmittedDisclosure("2", "The Revenge")
-     )
+  "UserAnswers" - {
+    "must be able to retrieve a question from an unsubmitted disclosure" in {
+      val unsubmittedDisclosures = Seq(
+        UnsubmittedDisclosure("1", "My First Disclosure"),
+        UnsubmittedDisclosure("2", "The Revenge")
+      )
 
-     implicit val userAnswers = UserAnswers(userAnswersId)
-       .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
-       .setBase(SelectTypePage, Organisation).success.value
+      implicit val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures)
+        .success
+        .value
+        .setBase(SelectTypePage, Organisation)
+        .success
+        .value
 
-     userAnswers.get(SelectTypePage, 0) mustBe None
-   }
- }
+      userAnswers.get(SelectTypePage, 0) mustBe None
+    }
+  }
 }

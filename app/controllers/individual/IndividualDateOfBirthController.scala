@@ -36,23 +36,26 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import utils.DateInput
 
-class IndividualDateOfBirthController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIndividual,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: IndividualDateOfBirthFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class IndividualDateOfBirthController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: IndividualDateOfBirthFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IndividualDateOfBirthPage, id) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -62,7 +65,7 @@ class IndividualDateOfBirthController @Inject()(
 
       val json = Json.obj(
         "form" -> preparedForm,
-        "id" -> id,
+        "id"   -> id,
         "mode" -> mode,
         "date" -> viewModel,
         "name" -> getIndividualName(request.userAnswers, id)
@@ -76,37 +79,35 @@ class IndividualDateOfBirthController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[LocalDate]) => {
 
+            val viewModel: DateInput.ViewModel = DateInput.localDate(field = formWithErrors("dob"))
 
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[LocalDate]) =>  {
+            val json = Json.obj(
+              "form" -> formWithErrors,
+              "id"   -> id,
+              "mode" -> mode,
+              "date" -> viewModel,
+              "name" -> getIndividualName(request.userAnswers, id)
+            )
 
-          val viewModel: DateInput.ViewModel = DateInput.localDate(field = formWithErrors("dob"))
-
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "date" -> viewModel,
-            "name" -> getIndividualName(request.userAnswers, id)
-          )
-
-          renderer.render("individual/individualDateOfBirth.njk", json).map(BadRequest(_))
-        },
-        value =>
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("individual/individualDateOfBirth.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualDateOfBirthPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"${name.displayName}’s"
-      case None => "their"
+      case None       => "their"
     }
-  }
 }

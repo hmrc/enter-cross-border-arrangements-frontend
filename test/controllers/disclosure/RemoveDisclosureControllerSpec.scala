@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new RemoveDisclosureFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   val disclosureDetails = DisclosureDetails(
     disclosureName = "",
@@ -54,16 +54,21 @@ class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(RemoveDisclosurePage, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(RemoveDisclosurePage, true)
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, removeDisclosureRoute)
+      val request        = FakeRequest(GET, removeDisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -86,16 +91,21 @@ class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(RemoveDisclosurePage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(RemoveDisclosurePage, 0, true)
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, removeDisclosureRoute)
+      val request        = FakeRequest(GET, removeDisclosureRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -113,12 +123,15 @@ class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixture
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
-
     "must redirect to the next page when valid data is submitted" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(DisclosureDetailsPage, 0, disclosureDetails).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(DisclosureDetailsPage, 0, disclosureDetails)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -137,15 +150,18 @@ class RemoveDisclosureControllerSpec extends SpecBase with ControllerMockFixture
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(DisclosureDetailsPage, 0, disclosureDetails)
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(POST, removeDisclosureRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, removeDisclosureRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

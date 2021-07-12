@@ -23,9 +23,9 @@ import play.api.data.FormError
 
 class WhichCountryTaxForIndividualFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whichCountryTaxForIndividual.error.required"
+  val requiredKey                = "whichCountryTaxForIndividual.error.required"
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val form = new WhichCountryTaxForIndividualFormProvider()(countriesSeq)
+  val form                       = new WhichCountryTaxForIndividualFormProvider()(countriesSeq)
 
   ".country" - {
 

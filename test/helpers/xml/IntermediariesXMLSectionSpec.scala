@@ -44,7 +44,7 @@ class IntermediariesXMLSectionSpec extends SpecBase {
       Some("value 3"),
       "value 4",
       Some("XX9 9XX"),
-      Country("valid","FR","France")
+      Country("valid", "FR", "France")
     )
 
   val taxResidencies = IndexedSeq(
@@ -53,51 +53,55 @@ class IntermediariesXMLSectionSpec extends SpecBase {
   )
 
   val loopDetails = IndexedSeq(
-    LoopDetails(Some(true), Some(Country("valid", "GB", "United Kingdom")),
-      Some(true), None, None, Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))),
-    LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None))
+    LoopDetails(Some(true),
+                Some(Country("valid", "GB", "United Kingdom")),
+                Some(true),
+                None,
+                None,
+                Some(TaxReferenceNumbers("1234567890", Some("0987654321"), None))
+    ),
+    LoopDetails(None, Some(Country("valid", "FR", "France")), None, None, None, None)
+  )
 
   val organisation: Organisation = Organisation("Reporter Name", Some(address), Some("email@email.com"), taxResidencies)
 
   val exemptCountry: Set[CountryList] = CountryList.enumerable.withName("FR").toSet
 
-  val individualName: Name = Name("Reporter", "Name")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some("email@email.com"), taxResidencies)
+  val individualName: Name     = Name("Reporter", "Name")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1, 1)
+  val individual: Individual   = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some("email@email.com"), taxResidencies)
 
-  val intermediary: Intermediary = Intermediary("123", None, Some(organisation),
-    WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)
+  val intermediary: Intermediary = Intermediary("123", None, Some(organisation), WhatTypeofIntermediary.IDoNotKnow, IsExemptionKnown.Unknown, None, None)
 
-  val intermediaryCountriesUnknown: Intermediary = intermediary.copy(
-    whatTypeofIntermediary = Promoter,
-    isExemptionKnown = Yes,
-    isExemptionCountryKnown = Some(false),
-    exemptCountries = None)
+  val intermediaryCountriesUnknown: Intermediary =
+    intermediary.copy(whatTypeofIntermediary = Promoter, isExemptionKnown = Yes, isExemptionCountryKnown = Some(false), exemptCountries = None)
 
-  val intermediaryCountriesKnown: Intermediary = intermediary.copy(
-    whatTypeofIntermediary = Promoter,
-    isExemptionKnown = Yes,
-    isExemptionCountryKnown = Some(true),
-    exemptCountries = Some(exemptCountry))
+  val intermediaryCountriesKnown: Intermediary =
+    intermediary.copy(whatTypeofIntermediary = Promoter, isExemptionKnown = Yes, isExemptionCountryKnown = Some(true), exemptCountries = Some(exemptCountry))
 
-  val intermediaryServiceProvider: Intermediary = intermediary.copy(
-    whatTypeofIntermediary = Serviceprovider,
-    isExemptionKnown = Yes,
-    isExemptionCountryKnown = Some(false),
-    exemptCountries = None)
+  val intermediaryServiceProvider: Intermediary =
+    intermediary.copy(whatTypeofIntermediary = Serviceprovider, isExemptionKnown = Yes, isExemptionCountryKnown = Some(false), exemptCountries = None)
 
   val intermediaryLoop = IndexedSeq(intermediary)
 
   private val reporterDetails: ReporterDetails = ReporterDetails(
     None,
     Some(organisation),
-    Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-      Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-      Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
+    Some(
+      ReporterLiability(
+        RoleInArrangement.Intermediary.toString,
+        Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+        Some(IntermediaryRole.Promoter.toString),
+        Some(true),
+        Some(List("FR")),
+        None
+      )
+    )
+  )
 
   private val submission = Submission("id", validDisclosureDetails)
 
-  def toSubmission(intermediaries: IndexedSeq[Intermediary]= IndexedSeq.empty[Intermediary]): Submission =
+  def toSubmission(intermediaries: IndexedSeq[Intermediary] = IndexedSeq.empty[Intermediary]): Submission =
     submission.copy(intermediaries = intermediaries, reporterDetails = Some(reporterDetails))
 
   "IntermediariesXMLSection" - {
@@ -106,21 +110,21 @@ class IntermediariesXMLSectionSpec extends SpecBase {
 
       "must build optional intermediary capacity for PROMOTER" in {
 
-        val result = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediaryCountriesKnown)
+        val result   = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediaryCountriesKnown)
         val expected = "<Capacity>DAC61101</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must build optional intermediary capacity for SERVICE PROVIDER" in {
 
-        val result = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediaryServiceProvider)
+        val result   = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediaryServiceProvider)
         val expected = "<Capacity>DAC61102</Capacity>"
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
       "must NOT build optional intermediary capacity for 'I DO NOT KNOW'" in {
 
-        val result = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediary)
+        val result   = IntermediariesXMLSection(toSubmission()).getIntermediaryCapacity(intermediary)
         val expected = ""
         prettyPrinter.formatNodes(result) mustBe expected
       }
@@ -155,15 +159,14 @@ class IntermediariesXMLSectionSpec extends SpecBase {
         prettyPrinter.formatNodes(result) mustBe expected
       }
 
+      "must NOT build optional NATIONAL EXEMPTION when EXEMPTION are NOT KNOWN" in {
 
-    "must NOT build optional NATIONAL EXEMPTION when EXEMPTION are NOT KNOWN" in {
+        val result   = IntermediariesXMLSection(toSubmission()).buildNationalExemption(intermediary)
+        val expected = ""
 
-      val result = IntermediariesXMLSection(toSubmission()).buildNationalExemption(intermediary)
-      val expected = ""
-
-      prettyPrinter.formatNodes(result) mustBe expected
+        prettyPrinter.formatNodes(result) mustBe expected
+      }
     }
-  }
 
     "buildIntermediaries" - {
 
@@ -219,8 +222,9 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    </Intermediary>
             |</Intermediaries>""".stripMargin
 
-          IntermediariesXMLSection(toSubmission(intermediaryLoop)).buildIntermediaries.map { result =>
-          prettyPrinter.formatNodes(result) mustBe expected
+        IntermediariesXMLSection(toSubmission(intermediaryLoop)).buildIntermediaries.map {
+          result =>
+            prettyPrinter.formatNodes(result) mustBe expected
         }
       }
     }
@@ -230,19 +234,27 @@ class IntermediariesXMLSectionSpec extends SpecBase {
       "must build intermediary section from REPORTER DETAILS for an ORGANISATION as an INTERMEDIARY " +
         "who is a PROMOTER with KNOWN country EXEMPTION in FRANCE" in {
 
-        val reporterDetails = ReporterDetails(
-          None,
-          Some(validOrganisation),
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-            Some(IntermediaryRole.Promoter.toString), Some(true), Some(List("FR")), None)))
+          val reporterDetails = ReporterDetails(
+            None,
+            Some(validOrganisation),
+            Some(
+              ReporterLiability(
+                RoleInArrangement.Intermediary.toString,
+                Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+                Some(IntermediaryRole.Promoter.toString),
+                Some(true),
+                Some(List("FR")),
+                None
+              )
+            )
+          )
 
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+          val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = IntermediariesXMLSection(submission).buildReporterAsIntermediary//(intermediary)
+          val result = IntermediariesXMLSection(submission).buildReporterAsIntermediary //(intermediary)
 
-        val expected =
-          """<Intermediary>
+          val expected =
+            """<Intermediary>
             |    <ID>
             |        <Organisation>
             |            <OrganisationName>Taxpayers Ltd</OrganisationName>
@@ -271,25 +283,33 @@ class IntermediariesXMLSectionSpec extends SpecBase {
             |    </NationalExemption>
             |</Intermediary>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
 
       "must build intermediary section from REPORTER DETAILS for an INDIVIDUAL as an INTERMEDIARY " +
         "who is a SERVICE PROVIDER with KNOWN country EXEMPTION in FRANCE" in {
 
-        val reporterDetails = ReporterDetails(
-          Some(validIndividual),
-          None,
-          Some(ReporterLiability(RoleInArrangement.Intermediary.toString,
-            Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
-            Some(IntermediaryRole.ServiceProvider.toString), Some(true), Some(List("FR")), None)))
+          val reporterDetails = ReporterDetails(
+            Some(validIndividual),
+            None,
+            Some(
+              ReporterLiability(
+                RoleInArrangement.Intermediary.toString,
+                Some(IntermediaryWhyReportInUK.TaxResidentUK.toString),
+                Some(IntermediaryRole.ServiceProvider.toString),
+                Some(true),
+                Some(List("FR")),
+                None
+              )
+            )
+          )
 
-        val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
+          val submission = Submission("id", validDisclosureDetails, Some(reporterDetails))
 
-        val result = IntermediariesXMLSection(submission).buildReporterAsIntermediary//(intermediary)
+          val result = IntermediariesXMLSection(submission).buildReporterAsIntermediary //(intermediary)
 
-        val expected =
-          s"""<Intermediary>
+          val expected =
+            s"""<Intermediary>
              |    <ID>
              |        <Individual>
              |            <IndividualName>
@@ -323,8 +343,8 @@ class IntermediariesXMLSectionSpec extends SpecBase {
              |    </NationalExemption>
              |</Intermediary>""".stripMargin
 
-        prettyPrinter.formatNodes(result) mustBe expected
-      }
+          prettyPrinter.formatNodes(result) mustBe expected
+        }
     }
   }
 }

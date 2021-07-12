@@ -38,7 +38,7 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
   lazy val taxpayerWhyReportInUKRoute = controllers.reporter.taxpayer.routes.TaxpayerWhyReportInUKController.onPageLoad(0, NormalMode).url
 
   val formProvider = new TaxpayerWhyReportInUKFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "TaxpayerWhyReportInUK Controller" - {
 
@@ -48,9 +48,9 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, taxpayerWhyReportInUKRoute)
+      val request        = FakeRequest(GET, taxpayerWhyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,12 +74,16 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(TaxpayerWhyReportInUKPage, 0, TaxpayerWhyReportInUK.values.head)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, taxpayerWhyReportInUKRoute)
+      val request        = FakeRequest(GET, taxpayerWhyReportInUKRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -117,10 +121,10 @@ class TaxpayerWhyReportInUKControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, taxpayerWhyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, taxpayerWhyReportInUKRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

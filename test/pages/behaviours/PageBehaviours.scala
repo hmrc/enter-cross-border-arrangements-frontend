@@ -29,6 +29,7 @@ import play.api.libs.json._
 trait PageBehaviours extends ModelSpecBase with Generators with OptionValues with TryValues {
 
   class BeRetrievable[A] {
+
     def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
 
       import models.RichJsObject
@@ -42,14 +43,18 @@ trait PageBehaviours extends ModelSpecBase with Generators with OptionValues wit
             val gen: Gen[(P, UserAnswers)] = for {
               page        <- genP
               userAnswers <- arbitrary[UserAnswers]
-              json        =  userAnswers
-                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                .data.removeObject(page.path).asOpt.getOrElse(userAnswers.data)
+              json = userAnswers
+                .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                .success
+                .value
+                .data
+                .removeObject(page.path)
+                .asOpt
+                .getOrElse(userAnswers.data)
             } yield (page, userAnswers.copy(data = json))
 
             forAll(gen) {
               case (page, userAnswers) =>
-
                 userAnswers.get(page, 0) must be(empty)
             }
           }
@@ -66,13 +71,17 @@ trait PageBehaviours extends ModelSpecBase with Generators with OptionValues wit
               page        <- genP
               savedValue  <- arbitrary[A]
               userAnswers <- arbitrary[UserAnswers]
-              } yield (page, savedValue, userAnswers)
+            } yield (page, savedValue, userAnswers)
 
             forAll(gen) {
               case (page, savedValue, userAnswers) =>
                 val updatedAnswers = userAnswers
-                  .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-                  .set(page, 0, savedValue).success.value
+                  .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+                  .success
+                  .value
+                  .set(page, 0, savedValue)
+                  .success
+                  .value
 
                 updatedAnswers.get(page, 0).value mustEqual savedValue
             }
@@ -83,8 +92,8 @@ trait PageBehaviours extends ModelSpecBase with Generators with OptionValues wit
   }
 
   class BeSettable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
 
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be set on UserAnswers" in {
 
         val gen = for {
@@ -95,19 +104,21 @@ trait PageBehaviours extends ModelSpecBase with Generators with OptionValues wit
 
         forAll(gen) {
           case (page, newValue, userAnswers) =>
-
             val updatedAnswers = userAnswers
-              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-              .set(page, 0, newValue).success.value
+              .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+              .success
+              .value
+              .set(page, 0, newValue)
+              .success
+              .value
             updatedAnswers.get(page, 0).value mustEqual newValue
         }
       }
-    }
   }
 
   class BeRemovable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
 
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be removed from UserAnswers" in {
 
         val gen = for {
@@ -117,18 +128,20 @@ trait PageBehaviours extends ModelSpecBase with Generators with OptionValues wit
         } yield (
           page,
           userAnswers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(page, 0, savedValue).success.value
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(page, 0, savedValue)
+            .success
+            .value
         )
 
         forAll(gen) {
           case (page, userAnswers) =>
-
             val updatedAnswers = userAnswers.remove(page, 0).success.value
             updatedAnswers.get(page, 0) must be(empty)
         }
       }
-    }
   }
 
   def beRetrievable[A]: BeRetrievable[A] = new BeRetrievable[A]

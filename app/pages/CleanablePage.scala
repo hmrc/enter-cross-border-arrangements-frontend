@@ -26,5 +26,7 @@ trait CleanablePage[A] extends QuestionPage[A] {
 
   override def cleanup(value: Option[A], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     cleanPages
-      .foldLeft[Try[UserAnswers]](Success(userAnswers)) { case (ua, page: QuestionPage[_]) => ua.flatMap(_.remove(page, id)) }
+      .foldLeft[Try[UserAnswers]](Success(userAnswers)) {
+        case (ua, page: QuestionPage[_]) => ua.flatMap(_.remove(page, id))
+      }
 }

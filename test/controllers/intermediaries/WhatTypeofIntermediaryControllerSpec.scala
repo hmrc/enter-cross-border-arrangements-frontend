@@ -38,7 +38,7 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with ControllerMockF
   lazy val whatTypeofIntermediaryRoute = routes.WhatTypeofIntermediaryController.onPageLoad(0, NormalMode).url
 
   val formProvider = new WhatTypeofIntermediaryFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "WhatTypeofIntermediary Controller" - {
 
@@ -49,9 +49,9 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with ControllerMockF
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, whatTypeofIntermediaryRoute)
+      val request        = FakeRequest(GET, whatTypeofIntermediaryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,13 +75,17 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with ControllerMockF
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(WhatTypeofIntermediaryPage, 0, WhatTypeofIntermediary.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, whatTypeofIntermediaryRoute)
+      val request        = FakeRequest(GET, whatTypeofIntermediaryRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class WhatTypeofIntermediaryControllerSpec extends SpecBase with ControllerMockF
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, whatTypeofIntermediaryRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, whatTypeofIntermediaryRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

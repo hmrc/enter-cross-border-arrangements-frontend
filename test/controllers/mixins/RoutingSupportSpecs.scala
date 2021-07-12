@@ -35,7 +35,9 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
           .success
           .value
@@ -49,7 +51,9 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(TaxpayerSelectTypePage, 0, SelectType.values.head)
           .success
           .value
@@ -63,7 +67,9 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(IntermediariesTypePage, 0, SelectType.values.head)
           .success
           .value
@@ -77,12 +83,14 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
           .success
           .value
 
-        toCheckRoute(CheckMode, userAnswers,0) mustBe AssociatedEnterprisesRouting(CheckMode)
+        toCheckRoute(CheckMode, userAnswers, 0) mustBe AssociatedEnterprisesRouting(CheckMode)
       }
     }
 
@@ -91,7 +99,9 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(TaxpayerSelectTypePage, 0, SelectType.values.head)
           .success
           .value
@@ -105,7 +115,9 @@ class RoutingSupportSpecs extends ModelSpecBase with TryValues {
       new RoutingSupport {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+          .success
+          .value
           .set(IntermediariesTypePage, 0, SelectType.values.head)
           .success
           .value

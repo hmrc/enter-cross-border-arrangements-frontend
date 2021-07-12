@@ -20,11 +20,7 @@ import play.api.data.{Form, FormError}
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-    def fieldWithMaxLength(form: Form[_],
-                           fieldName: String,
-                           maxLength: Int,
-                           lengthError: FormError): Unit = {
-
+  def fieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
     s"must not bind strings longer than $maxLength characters" in {
 
       forAll(stringsLongerThan(maxLength) -> "longString") {
@@ -33,14 +29,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors mustEqual Seq(lengthError)
       }
     }
-  }
 
-
-  def fieldWithMaxLengthAlpha(form: Form[_],
-                              fieldName: String,
-                              maxLength: Int,
-                              lengthError: FormError): Unit = {
-
+  def fieldWithMaxLengthAlpha(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
     s"must not bind strings longer than $maxLength characters" in {
 
       forAll(stringsLongerThanAlpha(maxLength) -> "longString") {
@@ -49,13 +39,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors mustEqual Seq(lengthError)
       }
     }
-  }
 
-  def fieldWithMaxLengthEmail(form: Form[_],
-                              fieldName: String,
-                              maxLength: Int,
-                              lengthError: FormError): Unit = {
-
+  def fieldWithMaxLengthEmail(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
     s"must not bind strings longer than $maxLength characters" in {
 
       forAll(validEmailAdressToLong(maxLength) -> "longString") {
@@ -64,16 +49,11 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors mustEqual Seq(lengthError)
       }
     }
-  }
 
-  def fieldWithNonEmptyWhitespace(form: Form[_],
-                                  fieldName: String,
-                                  requiredError: FormError): Unit = {
-
+  def fieldWithNonEmptyWhitespace(form: Form[_], fieldName: String, requiredError: FormError): Unit =
     s"must not bind strings of only whitespace" in {
 
       val result = form.bind(Map(fieldName -> " ")).apply(fieldName)
       result.errors mustEqual Seq(requiredError)
     }
-  }
 }

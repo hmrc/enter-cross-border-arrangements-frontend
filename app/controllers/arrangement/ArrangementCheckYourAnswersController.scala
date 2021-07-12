@@ -35,7 +35,7 @@ import utils.CheckYourAnswersHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrangementCheckYourAnswersController @Inject()(
+class ArrangementCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
@@ -44,35 +44,37 @@ class ArrangementCheckYourAnswersController @Inject()(
   navigator: NavigatorForArrangement,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with RoutingSupport {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val list: Seq[SummaryList.Row] =
-        Seq(helper.whatIsThisArrangementCalledPage(id)
-          , helper.whatIsTheImplementationDatePage(id)
-          , helper.buildWhyAreYouReportingThisArrangementNow(id)
-          , helper.whichExpectedInvolvedCountriesArrangement(id)
-          , helper.whatIsTheExpectedValueOfThisArrangement(id)
-          , helper.whichNationalProvisionsIsThisArrangementBasedOn(id)
-          , helper.giveDetailsOfThisArrangement(id)).flatten
+        Seq(
+          helper.whatIsThisArrangementCalledPage(id),
+          helper.whatIsTheImplementationDatePage(id),
+          helper.buildWhyAreYouReportingThisArrangementNow(id),
+          helper.whichExpectedInvolvedCountriesArrangement(id),
+          helper.whatIsTheExpectedValueOfThisArrangement(id),
+          helper.whichNationalProvisionsIsThisArrangementBasedOn(id),
+          helper.giveDetailsOfThisArrangement(id)
+        ).flatten
 
-      renderer.render("arrangement/check-your-answers-arrangement.njk",
-        Json.obj("list" -> list)
-      ).map(Ok(_))
+      renderer.render("arrangement/check-your-answers-arrangement.njk", Json.obj("list" -> list)).map(Ok(_))
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       for {
-        arrangementModel <- Future.fromTry(request.userAnswers.set(ArrangementDetailsPage, id,
-          ArrangementDetails.buildArrangementDetails(request.userAnswers, id)))
+        arrangementModel <- Future.fromTry(
+          request.userAnswers.set(ArrangementDetailsPage, id, ArrangementDetails.buildArrangementDetails(request.userAnswers, id))
+        )
         userAnswers: UserAnswers <- Future.fromTry(arrangementModel.set(ArrangementStatusPage, id, JourneyStatus.Completed))
-        _ <- sessionRepository.set(userAnswers)
-      } yield
-        Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
+        _                        <- sessionRepository.set(userAnswers)
+      } yield Redirect(navigator.routeMap(ArrangementCheckYourAnswersPage)(DefaultRouting(NormalMode))(id)(None)(0))
   }
 }

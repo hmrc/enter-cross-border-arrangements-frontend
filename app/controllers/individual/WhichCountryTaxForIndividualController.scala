@@ -35,37 +35,41 @@ import utils.CountryListFactory
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhichCountryTaxForIndividualController @Inject()(
-    override val messagesApi: MessagesApi,
-    countryListFactory: CountryListFactory,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForIndividual,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhichCountryTaxForIndividualFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport with CountrySupport {
-
+class WhichCountryTaxForIndividualController @Inject() (
+  override val messagesApi: MessagesApi,
+  countryListFactory: CountryListFactory,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForIndividual,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhichCountryTaxForIndividualFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport
+    with CountrySupport {
 
   def onPageLoad(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form                    = formProvider(countries)
 
       val preparedForm = getCountry(request.userAnswers, id, IndividualLoopPage, index) match {
         case Some(value) => form.fill(value)
-        case _ => form
+        case _           => form
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "id" -> id,
-        "mode" -> mode,
-        "name" -> getIndividualName(request.userAnswers, id),
-        "countries" -> countryJsonList(preparedForm.data, countries),
-        "index" -> index,
+        "form"        -> preparedForm,
+        "id"          -> id,
+        "mode"        -> mode,
+        "name"        -> getIndividualName(request.userAnswers, id),
+        "countries"   -> countryJsonList(preparedForm.data, countries),
+        "index"       -> index,
         "pageTitle"   -> "whichCountryTaxForIndividual.title",
         "pageHeading" -> "whichCountryTaxForIndividual.heading",
         "dynamicAlso" -> dynamicAlso(index),
@@ -81,61 +85,62 @@ class WhichCountryTaxForIndividualController @Inject()(
   def onSubmit(id: Int, mode: Mode, index: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
       val countries: Seq[Country] = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form                    = formProvider(countries)
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "id" -> id,
-            "mode" -> mode,
-            "name" -> getIndividualName(request.userAnswers, id),
-            "countries" -> countryJsonList(formWithErrors.data, countries),
-            "index" -> index,
-            "pageTitle"   -> "whichCountryTaxForIndividual.title",
-            "pageHeading" -> "whichCountryTaxForIndividual.heading",
-            "dynamicAlso" -> dynamicAlso(index),
-            "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
-          )
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "id"          -> id,
+              "mode"        -> mode,
+              "name"        -> getIndividualName(request.userAnswers, id),
+              "countries"   -> countryJsonList(formWithErrors.data, countries),
+              "index"       -> index,
+              "pageTitle"   -> "whichCountryTaxForIndividual.title",
+              "pageHeading" -> "whichCountryTaxForIndividual.heading",
+              "dynamicAlso" -> dynamicAlso(index),
+              "guidance"    -> dynamicGuidance(index, "whichCountryTaxForIndividual")
+            )
 
-          renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
-        },
-        value => {
+            renderer.render("individual/whichCountryTaxForIndividual.njk", json).map(BadRequest(_))
+          },
+          value => {
 
-          val individualLoopDetails = getIndividualLoopDetails(value, request.userAnswers, id, index)
+            val individualLoopDetails = getIndividualLoopDetails(value, request.userAnswers, id, index)
 
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, id, value))
-            updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopDetails))
-            _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
-            checkRoute                    =  toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value), index))
-        }
-      )
+            for {
+              updatedAnswers                <- Future.fromTry(request.userAnswers.set(WhichCountryTaxForIndividualPage, id, value))
+              updatedAnswersWithLoopDetails <- Future.fromTry(updatedAnswers.set(IndividualLoopPage, id, individualLoopDetails))
+              _                             <- sessionRepository.set(updatedAnswersWithLoopDetails)
+              checkRoute = toCheckRoute(mode, updatedAnswersWithLoopDetails, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value), index))
+          }
+        )
   }
 
-  private def getIndividualName(userAnswers: UserAnswers, id: Int): String = {
+  private def getIndividualName(userAnswers: UserAnswers, id: Int): String =
     userAnswers.get(IndividualNamePage, id) match {
       case Some(name) => s"is ${name.displayName}"
-      case None => "are they"
+      case None       => "are they"
     }
-  }
 
-  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, id: Int,  index: Int): IndexedSeq[LoopDetails] =
-      userAnswers.get(IndividualLoopPage, id) match {
-    case None =>
-      val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
-      IndexedSeq(newIndividualLoop)
-    case Some(list) =>
-      if (list.lift(index).isDefined) {
-        //Update value
-        val updatedLoop = list.lift(index).get.copy(whichCountry = Some(value))
-        list.updated(index, updatedLoop)
-      } else {
-        //Add to loop
+  def getIndividualLoopDetails(value: Country, userAnswers: UserAnswers, id: Int, index: Int): IndexedSeq[LoopDetails] =
+    userAnswers.get(IndividualLoopPage, id) match {
+      case None =>
         val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
-        list :+ newIndividualLoop
-      }
-  }
+        IndexedSeq(newIndividualLoop)
+      case Some(list) =>
+        if (list.lift(index).isDefined) {
+          //Update value
+          val updatedLoop = list.lift(index).get.copy(whichCountry = Some(value))
+          list.updated(index, updatedLoop)
+        } else {
+          //Add to loop
+          val newIndividualLoop = LoopDetails(None, whichCountry = Some(value), None, None, None, None)
+          list :+ newIndividualLoop
+        }
+    }
 }

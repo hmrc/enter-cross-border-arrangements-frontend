@@ -31,7 +31,6 @@ class HallmarkDSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         hallmarkD =>
-
           JsString(hallmarkD.toString).validate[HallmarkD].asOpt.value mustEqual hallmarkD
       }
     }
@@ -42,7 +41,6 @@ class HallmarkDSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[HallmarkD] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class HallmarkDSpec extends ModelSpecBase with ModelGenerators {
 
       forAll(gen) {
         hallmarkD =>
-
           Json.toJson(hallmarkD) mustEqual JsString(hallmarkD.toString)
       }
     }

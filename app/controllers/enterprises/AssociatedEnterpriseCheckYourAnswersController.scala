@@ -21,7 +21,12 @@ import controllers.exceptions.UnsupportedRouteException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForEnterprises
-import pages.enterprises.{AssociatedEnterpriseCheckYourAnswersPage, AssociatedEnterpriseLoopPage, AssociatedEnterpriseTypePage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{
+  AssociatedEnterpriseCheckYourAnswersPage,
+  AssociatedEnterpriseLoopPage,
+  AssociatedEnterpriseTypePage,
+  YouHaveNotAddedAnyAssociatedEnterprisesPage
+}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -33,20 +38,22 @@ import utils.CheckYourAnswersHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AssociatedEnterpriseCheckYourAnswersController @Inject()(
-    override val messagesApi: MessagesApi,
-    navigator: NavigatorForEnterprises,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    sessionRepository: SessionRepository,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
+class AssociatedEnterpriseCheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  navigator: NavigatorForEnterprises,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  sessionRepository: SessionRepository,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with RoutingSupport {
 
   def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(AssociatedEnterpriseLoopPage, id, itemId)
       sessionRepository.set(restoredUserAnswers)
 
@@ -57,9 +64,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
         case Some(SelectType.Organisation) =>
           (
             helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-             Seq(helper.associatedEnterpriseType(id),
-              helper.organisationName(id)
-             ).flatten ++
+              Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
               helper.buildOrganisationAddressGroup(id) ++
               helper.buildOrganisationEmailAddressGroup(id),
             helper.buildTaxResidencySummaryForOrganisation(id)
@@ -68,10 +73,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
         case Some(SelectType.Individual) =>
           (
             helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-            Seq(
-              helper.associatedEnterpriseType(id),
-              helper.individualName(id)
-            ).flatten ++
+              Seq(
+                helper.associatedEnterpriseType(id),
+                helper.individualName(id)
+              ).flatten ++
               helper.buildIndividualDateOfBirthGroup(id) ++
               helper.buildIndividualPlaceOfBirthGroup(id) ++
               helper.buildIndividualAddressGroup(id) ++
@@ -85,10 +90,10 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
       val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten
 
       val json = Json.obj(
-        "id" -> id,
-        "mode" -> NormalMode,
-        "summaryRows" -> summaryRows,
-        "countrySummary" -> countrySummary,
+        "id"                   -> id,
+        "mode"                 -> NormalMode,
+        "summaryRows"          -> summaryRows,
+        "countrySummary"       -> countrySummary,
         "isEnterpriseAffected" -> isEnterpriseAffected
       )
 
@@ -100,14 +105,11 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       for {
         userAnswers                   <- Future.fromTry(request.userAnswers.set(AssociatedEnterpriseLoopPage, id))
         userAnswersWithEnterpriseLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyAssociatedEnterprisesPage, id))
         _                             <- sessionRepository.set(userAnswersWithEnterpriseLoop)
-        checkRoute                    =  toCheckRoute(NormalMode, userAnswersWithEnterpriseLoop)
-      } yield {
-        Redirect(redirect(id, checkRoute))
-      }
+        checkRoute = toCheckRoute(NormalMode, userAnswersWithEnterpriseLoop)
+      } yield Redirect(redirect(id, checkRoute))
   }
 }

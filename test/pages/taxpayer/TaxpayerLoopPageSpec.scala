@@ -35,25 +35,35 @@ class TaxpayerLoopPageSpec extends PageBehaviours {
       }
 
       val gen = for {
-        userAnswersGen <- arbitrary[UserAnswers]
+        userAnswersGen     <- arbitrary[UserAnswers]
         youHaveNotAddedGen <- arbitraryUpdateTaxpayer.arbitrary
-        selectTypeGen <- arbitrarySelectType.arbitrary
-        startDateGen <- arbitraryLocalDate.arbitrary
+        selectTypeGen      <- arbitrarySelectType.arbitrary
+        startDateGen       <- arbitraryLocalDate.arbitrary
 
       } yield (userAnswersGen, youHaveNotAddedGen, selectTypeGen, startDateGen)
 
-      forAll(gen) { case (userAnswers, youHaveNotAdded, selectType, startDate) =>
-        val answersBeforeCleanUp = userAnswers
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(UpdateTaxpayerPage, 0,  youHaveNotAdded).success.value
-          .set(TaxpayerSelectTypePage, 0,  selectType).success.value
-          .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0,  startDate).success.value
-        val answersAfterCleanUp = TaxpayerLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
-        answersAfterCleanUp.foreach { ua =>
-          ua.get(UpdateTaxpayerPage, 0) mustBe (None)
-          ua.get(TaxpayerSelectTypePage, 0) mustBe (None)
-          ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0) mustBe (None)
-        }
+      forAll(gen) {
+        case (userAnswers, youHaveNotAdded, selectType, startDate) =>
+          val answersBeforeCleanUp = userAnswers
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(UpdateTaxpayerPage, 0, youHaveNotAdded)
+            .success
+            .value
+            .set(TaxpayerSelectTypePage, 0, selectType)
+            .success
+            .value
+            .set(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0, startDate)
+            .success
+            .value
+          val answersAfterCleanUp = TaxpayerLoopPage.cleanup(Some(IndexedSeq.empty), answersBeforeCleanUp, 0)
+          answersAfterCleanUp.foreach {
+            ua =>
+              ua.get(UpdateTaxpayerPage, 0) mustBe None
+              ua.get(TaxpayerSelectTypePage, 0) mustBe None
+              ua.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, 0) mustBe None
+          }
       }
     }
 

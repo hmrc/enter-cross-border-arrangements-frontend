@@ -54,5 +54,9 @@ object IntermediaryWhyReportInUK extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[IntermediaryWhyReportInUK] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

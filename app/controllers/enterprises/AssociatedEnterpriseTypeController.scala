@@ -35,7 +35,7 @@ import models.hallmarks.JourneyStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AssociatedEnterpriseTypeController @Inject()(
+class AssociatedEnterpriseTypeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForEnterprises,
@@ -45,21 +45,24 @@ class AssociatedEnterpriseTypeController @Inject()(
   formProvider: AssociatedEnterpriseTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(AssociatedEnterpriseTypePage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
         "radios" -> SelectType.radios(preparedForm)
       )
@@ -72,28 +75,29 @@ class AssociatedEnterpriseTypeController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> SelectType.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> SelectType.radios(formWithErrors)
-          )
-
-          renderer.render("enterprises/associatedEnterpriseType.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, AssociatedEnterpriseTypePage, value)
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AssociatedEnterpriseStatusPage, id, JourneyStatus.InProgress))
-            redirectMode   =  if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, id, value)) NormalMode else mode
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("enterprises/associatedEnterpriseType.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, AssociatedEnterpriseTypePage, value)
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AssociatedEnterpriseStatusPage, id, JourneyStatus.InProgress))
+              redirectMode = if (request.userAnswers.hasNewValue(AssociatedEnterpriseTypePage, id, value)) NormalMode else mode
+              _ <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(redirectMode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
 }

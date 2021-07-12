@@ -18,7 +18,6 @@ package pages.reporter.organisation
 
 import pages.behaviours.PageBehaviours
 
-
 class ReporterOrganisationPostcodePageSpec extends PageBehaviours {
 
   "ReporterOrganisationPostcodePage" - {

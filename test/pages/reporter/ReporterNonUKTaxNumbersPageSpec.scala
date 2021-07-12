@@ -19,7 +19,6 @@ package pages.reporter
 import models.TaxReferenceNumbers
 import pages.behaviours.PageBehaviours
 
-
 class ReporterNonUKTaxNumbersPageSpec extends PageBehaviours {
 
   "ReporterNonUKTaxNumbersPage" - {

@@ -35,7 +35,7 @@ class IndividualXMLSectionSpec extends SpecBase {
       Some("value 3"),
       "value 4",
       Some("XX9 9XX"),
-      Country("valid","FR","France")
+      Country("valid", "FR", "France")
     )
 
   val taxResidencies = IndexedSeq(
@@ -43,10 +43,10 @@ class IndividualXMLSectionSpec extends SpecBase {
     TaxResidency(Some(Country("", "FR", "France")), Some(TaxReferenceNumbers("CS700100A", Some("UTR5678"), None)))
   )
 
-  val email = "email@email.com"
-  val individualName: Name = Name("FirstName", "Surname")
-  val individualDOB: LocalDate = LocalDate.of(1990, 1,1)
-  val individual: Individual = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
+  val email                    = "email@email.com"
+  val individualName: Name     = Name("FirstName", "Surname")
+  val individualDOB: LocalDate = LocalDate.of(1990, 1, 1)
+  val individual: Individual   = Individual(individualName, Some(individualDOB), Some("SomePlace"), Some(address), Some(email), taxResidencies)
 
   "buildIDForIndividual" - {
 

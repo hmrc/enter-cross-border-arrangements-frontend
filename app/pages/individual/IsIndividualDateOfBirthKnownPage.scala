@@ -36,5 +36,10 @@ case object IsIndividualDateOfBirthKnownPage extends DetailsPage[Boolean, Indivi
     }
 
   override def getFromModel(model: Individual): Option[Boolean] =
-    IndividualDateOfBirthPage.getFromModel(model).map(_ => true).orElse(Some(false))
+    IndividualDateOfBirthPage
+      .getFromModel(model)
+      .map(
+        _ => true
+      )
+      .orElse(Some(false))
 }

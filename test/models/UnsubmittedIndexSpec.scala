@@ -30,7 +30,9 @@ class UnsubmittedIndexSpec extends SpecBase {
       )
 
       implicit val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures)
+        .success
+        .value
 
       val index = UnsubmittedIndex.fromQuestionPage(SelectTypePage, 0)
       index mustBe UnsubmittedIndex(JsPath \ "1-selectType", 0, SelectTypePage)
@@ -43,7 +45,9 @@ class UnsubmittedIndexSpec extends SpecBase {
       )
 
       implicit val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+        .setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures)
+        .success
+        .value
 
       assertThrows[Exception] {
         UnsubmittedIndex.fromQuestionPage(SelectTypePage, 4)

@@ -32,11 +32,14 @@ case class Intermediary(intermediaryId: String,
                         whatTypeofIntermediary: WhatTypeofIntermediary = IDoNotKnow,
                         isExemptionKnown: IsExemptionKnown = IsExemptionKnown.Unknown,
                         isExemptionCountryKnown: Option[Boolean] = None,
-                        exemptCountries: Option[Set[CountryList]] = None) extends WithIndividualOrOrganisation  with WithRestore {
+                        exemptCountries: Option[Set[CountryList]] = None
+) extends WithIndividualOrOrganisation
+    with WithRestore {
 
   override def matchItem(itemId: String): Boolean = intermediaryId == itemId
 
   implicit val a: Intermediary = implicitly(this)
+
   override def restore(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     userAnswers
       .set(IntermediariesCheckYourAnswersPage, id)
@@ -53,16 +56,17 @@ object Intermediary {
   private def generateId = UUID.randomUUID.toString
 
   def apply(ua: UserAnswers, id: Int): Intermediary = {
-    val intermediary = ( ua.get(IntermediariesCheckYourAnswersPage, id).orElse(Some(generateId)),
-      ua.get(WhatTypeofIntermediaryPage, id),
-      ua.get(IsExemptionKnownPage, id),
-      ua.get(IsExemptionCountryKnownPage, id),
-      ua.get(ExemptCountriesPage, id)) match {
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),Some(exemptCountries)) =>
+    val intermediary = (ua.get(IntermediariesCheckYourAnswersPage, id).orElse(Some(generateId)),
+                        ua.get(WhatTypeofIntermediaryPage, id),
+                        ua.get(IsExemptionKnownPage, id),
+                        ua.get(IsExemptionCountryKnownPage, id),
+                        ua.get(ExemptCountriesPage, id)
+    ) match {
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), Some(exemptCountries)) =>
         this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown),None) =>
-        this(itemId, None, None, whatTypeOfIntermediary,isExemptionKnown, Some(isExemptionCountryKnown), None)
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None ,None) =>
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None, None) =>
         this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, None, None)
       case _ =>
         throw new Exception("Unable to build intermediary")
@@ -70,7 +74,7 @@ object Intermediary {
     ua.get(IntermediariesTypePage, id) match {
       case Some(SelectType.Organisation) => intermediary.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => intermediary.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _ => throw new Exception("Unable to retrieve Intermediary select type")
+      case _                             => throw new Exception("Unable to retrieve Intermediary select type")
     }
   }
 

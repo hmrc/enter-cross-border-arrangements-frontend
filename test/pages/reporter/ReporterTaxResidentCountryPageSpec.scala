@@ -19,7 +19,6 @@ package pages.reporter
 import models.Country
 import pages.behaviours.PageBehaviours
 
-
 class ReporterTaxResidentCountryPageSpec extends PageBehaviours {
 
   "ReporterTaxResidentCountryPage" - {

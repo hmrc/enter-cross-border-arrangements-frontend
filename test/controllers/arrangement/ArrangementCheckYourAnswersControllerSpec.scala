@@ -41,9 +41,10 @@ import scala.concurrent.Future
 class ArrangementCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach with ModelGenerators {
 
   val oneHundredCharacters: String = "123456789 " * 10
+
   val textTuples = Seq(
-    (oneHundredCharacters, oneHundredCharacters)
-    , (s"$oneHundredCharacters longer than 100 chars", s"$oneHundredCharacters...")
+    (oneHundredCharacters, oneHundredCharacters),
+    (s"$oneHundredCharacters longer than 100 chars", s"$oneHundredCharacters...")
   )
 
   def verifyList(userAnswers: UserAnswers, nrOfInvocations: Int = 1)(assertFunction: Seq[Row] => Unit): Unit = {
@@ -60,13 +61,13 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json: JsObject = jsonCaptor.getValue
     import controllers.RowJsonReads._
-    val list = (json \ "list" ).get.as[Seq[Row]]
+    val list = (json \ "list").get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "arrangement/check-your-answers-arrangement.njk"
     assertFunction(list)
@@ -100,15 +101,20 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
         assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-name/0")(row.actions.head)
       }
 
-      textTuples.foreach { case (given, expected) =>
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(WhatIsThisArrangementCalledPage,0, given)
-          .success.value
-        verifyList(userAnswers) { list =>
-          assertName(expected)(list.head)
-          list.size mustBe(1)
-        }
+      textTuples.foreach {
+        case (given, expected) =>
+          val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(WhatIsThisArrangementCalledPage, 0, given)
+            .success
+            .value
+          verifyList(userAnswers) {
+            list =>
+              assertName(expected)(list.head)
+              list.size mustBe 1
+          }
       }
     }
 
@@ -117,19 +123,22 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
       def assertImplementationDate(implementationDateAsString: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Implementing date"))
         row.value.text mustBe Some(Literal(implementationDateAsString))
-        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-implementation-date/0"
-          , text = Some(Literal("Change")))(row.actions.head)
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-implementation-date/0", text = Some(Literal("Change")))(row.actions.head)
       }
 
-      val implementationDate = LocalDate.now()
+      val implementationDate               = LocalDate.now()
       val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-        .success.value
-      verifyList(userAnswers) { list =>
-        assertImplementationDate(dateFormatter.format(implementationDate))(list.head)
-        list.size mustBe(1)
+        .success
+        .value
+      verifyList(userAnswers) {
+        list =>
+          assertImplementationDate(dateFormatter.format(implementationDate))(list.head)
+          list.size mustBe 1
       }
     }
 
@@ -140,74 +149,89 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
 
       def assertCountries(html: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Countries involved"))
-        row.value.html.map { html =>
-          html.value mustBe Html("United Kingdom")
+        row.value.html.map {
+          html =>
+            html.value mustBe Html("United Kingdom")
         }
-        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0"
-          , text = Some(Literal("Change")))(row.actions.head)
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0", text = Some(Literal("Change")))(
+          row.actions.head
+        )
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
-        .success.value
-      verifyList(userAnswers) { list =>
-        assertCountries("United Kingdom")(list.head)
-        list.size mustBe(1)
+        .success
+        .value
+      verifyList(userAnswers) {
+        list =>
+          assertCountries("United Kingdom")(list.head)
+          list.size mustBe 1
       }
     }
 
     "must return multiple country rows with bullets" in {
 
       val countries: Set[CountryList] =
-        Set(CountryList.UnitedKingdom
-        , CountryList.Sweden)
+        Set(CountryList.UnitedKingdom, CountryList.Sweden)
 
       def assertCountries(html: String)(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Countries involved"))
-        row.value.html.map { html =>
-          html.value mustBe Html(
-            """<ul>
+        row.value.html.map {
+          html =>
+            html.value mustBe Html("""<ul>
               |<li>United Kingdom</li>
               |<li>Sweden</li>
               |</ul>""".stripMargin)
         }
-        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0"
-          , text = Some(Literal("Change")))(row.actions.head)
+        assertAction("/disclose-cross-border-arrangements/manual/arrangement/change-choose-countries-involved/0", text = Some(Literal("Change")))(
+          row.actions.head
+        )
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
-        .success.value
-      verifyList(userAnswers) { list =>
-        assertCountries("<ul></ul>")(list.head)
-        list.size mustBe(1)
+        .success
+        .value
+      verifyList(userAnswers) {
+        list =>
+          assertCountries("<ul></ul>")(list.head)
+          list.size mustBe 1
       }
     }
 
     "must return the expected value " in {
 
       val expectedValue: ExpectedArrangementValue = ExpectedArrangementValue(
-        currency = "CURRENCY"
-        , amount = Int.MaxValue
+        currency = "CURRENCY",
+        amount = Int.MaxValue
       )
 
       def assertExpectedValue(row: Row): Unit = {
         row.key.text mustBe Some(Literal("Total value"))
-        row.value.html.map { html =>
-          html.value mustBe Html("CURRENCY 1")
+        row.value.html.map {
+          html =>
+            html.value mustBe Html("CURRENCY 1")
         }
         assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-value/0")(row.actions.head)
       }
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
-        .success.value
-      verifyList(userAnswers) { list =>
-        assertExpectedValue(list.head)
-        list.size mustBe(1)
+        .success
+        .value
+      verifyList(userAnswers) {
+        list =>
+          assertExpectedValue(list.head)
+          list.size mustBe 1
       }
     }
 
@@ -219,15 +243,20 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
         assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-national-provisions/0")(row.actions.head)
       }
 
-      textTuples.foreach { case (given, expected) =>
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, given)
-          .success.value
-        verifyList(userAnswers) { list =>
-          assertNationalProvisions(expected)(list.head)
-          list.size mustBe(1)
-        }
+      textTuples.foreach {
+        case (given, expected) =>
+          val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, given)
+            .success
+            .value
+          verifyList(userAnswers) {
+            list =>
+              assertNationalProvisions(expected)(list.head)
+              list.size mustBe 1
+          }
       }
     }
 
@@ -239,15 +268,20 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
         assertAction(href = "/disclose-cross-border-arrangements/manual/arrangement/change-details/0")(row.actions.head)
       }
 
-      textTuples.foreach { case (given, expected) =>
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-          .set(GiveDetailsOfThisArrangementPage, 0, given)
-          .success.value
-        verifyList(userAnswers) { list =>
-          assertNationalProvisions(expected)(list.head)
-          list.size mustBe(1)
-        }
+      textTuples.foreach {
+        case (given, expected) =>
+          val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+            .success
+            .value
+            .set(GiveDetailsOfThisArrangementPage, 0, given)
+            .success
+            .value
+          verifyList(userAnswers) {
+            list =>
+              assertNationalProvisions(expected)(list.head)
+              list.size mustBe 1
+          }
       }
     }
 
@@ -257,26 +291,35 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
         Seq(CountryList.UnitedKingdom).toSet
 
       val expectedValue: ExpectedArrangementValue = ExpectedArrangementValue(
-        currency = "CURRENCY"
-        , amount = Int.MaxValue
+        currency = "CURRENCY",
+        amount = Int.MaxValue
       )
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(WhatIsThisArrangementCalledPage,0, "arrangement")
-        .success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(WhatIsThisArrangementCalledPage, 0, "arrangement")
+        .success
+        .value
         .set(WhatIsTheImplementationDatePage, 0, LocalDate.now())
-        .success.value
+        .success
+        .value
         .set(WhyAreYouReportingThisArrangementNowPage, 0, Dac6701)
-        .success.value
+        .success
+        .value
         .set(WhichExpectedInvolvedCountriesArrangementPage, 0, countries)
-        .success.value
+        .success
+        .value
         .set(WhatIsTheExpectedValueOfThisArrangementPage, 0, expectedValue)
-        .success.value
+        .success
+        .value
         .set(WhichNationalProvisionsIsThisArrangementBasedOnPage, 0, "National Provisions")
-        .success.value
+        .success
+        .value
         .set(GiveDetailsOfThisArrangementPage, 0, "given")
-        .success.value
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -290,4 +333,3 @@ class ArrangementCheckYourAnswersControllerSpec extends SpecBase with Controller
     }
   }
 }
-

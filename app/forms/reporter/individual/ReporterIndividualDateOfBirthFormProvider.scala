@@ -28,11 +28,11 @@ class ReporterIndividualDateOfBirthFormProvider @Inject() extends Mappings {
   def apply(): Form[LocalDate] =
     Form(
       "dob" -> localDate(
-        invalidKey     = "reporterIndividualDateOfBirth.error.invalid",
+        invalidKey = "reporterIndividualDateOfBirth.error.invalid",
         allRequiredKey = "reporterIndividualDateOfBirth.error.required.all",
         twoRequiredKey = "reporterIndividualDateOfBirth.error.required.two",
-        requiredKey    = "reporterIndividualDateOfBirth.error.required"
+        requiredKey = "reporterIndividualDateOfBirth.error.required"
       ).verifying(maxDate(today, "reporterIndividualDateOfBirth.error.futureDate", formatDateToString(today)))
-        .verifying(minDate(LocalDate.of(1903,1,1),"reporterIndividualDateOfBirth.error.pastDate"))
+        .verifying(minDate(LocalDate.of(1903, 1, 1), "reporterIndividualDateOfBirth.error.pastDate"))
     )
 }

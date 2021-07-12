@@ -34,7 +34,7 @@ import models.hallmarks.JourneyStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxpayerSelectTypeController @Inject()(
+class TaxpayerSelectTypeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -44,23 +44,25 @@ class TaxpayerSelectTypeController @Inject()(
   formProvider: TaxpayerSelectTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(TaxpayerSelectTypePage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id"      -> id,
-        "mode"    -> mode,
-        "radios"  -> SelectType.radios(preparedForm)
+        "id"     -> id,
+        "mode"   -> mode,
+        "radios" -> SelectType.radios(preparedForm)
       )
 
       renderer.render("taxpayer/selectType.njk", json).map(Ok(_))
@@ -68,26 +70,27 @@ class TaxpayerSelectTypeController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> SelectType.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> SelectType.radios(formWithErrors)
-          )
-
-          renderer.render("taxpayer/selectType.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, TaxpayerSelectTypePage, value)
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, JourneyStatus.InProgress))
-            redirectMode   =  if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, id, value)) NormalMode else mode
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-          } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, id, redirectMode, updatedAnswers))
-      )
+            renderer.render("taxpayer/selectType.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, TaxpayerSelectTypePage, value)
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(RelevantTaxpayerStatusPage, id, JourneyStatus.InProgress))
+              redirectMode = if (request.userAnswers.hasNewValue(TaxpayerSelectTypePage, id, value)) NormalMode else mode
+              _ <- sessionRepository.set(updatedAnswersWithStatus)
+            } yield Redirect(navigator.nextPage(TaxpayerSelectTypePage, id, redirectMode, updatedAnswers))
+        )
   }
 }

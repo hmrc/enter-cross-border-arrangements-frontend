@@ -30,6 +30,7 @@ case object YouHaveNotAddedAnyIntermediariesPage extends QuestionPage[YouHaveNot
   override def toString: String = "youHaveNotAddedAnyIntermediaries"
 
   override def cleanup(value: Option[YouHaveNotAddedAnyIntermediaries], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.remove(IntermediariesTypePage, id)
+    userAnswers
+      .remove(IntermediariesTypePage, id)
       .flatMap(_.remove(IntermediariesCheckYourAnswersPage, id))
 }

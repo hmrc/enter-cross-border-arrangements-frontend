@@ -40,8 +40,8 @@ class DisclosureDetailsXMLSectionSpec extends SpecBase {
         )
 
         val submission = Submission("id", disclosureDetails)
-        val timestamp = formatXMLTimeStamp(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
-        val result = DisclosureDetailsXMLSection(submission).buildHeader("XADAC0001122345", timestamp)
+        val timestamp  = formatXMLTimeStamp(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+        val result     = DisclosureDetailsXMLSection(submission).buildHeader("XADAC0001122345", timestamp)
 
         val expected =
           s"""<Header>

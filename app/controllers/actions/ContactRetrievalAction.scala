@@ -27,30 +27,29 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactRetrievalActionImpl @Inject()(frontendAppConfig: FrontendAppConfig,
-                                           subscriptionConnector: SubscriptionConnector)
-                                          (implicit val executionContext: ExecutionContext) extends ContactRetrievalAction {
+class ContactRetrievalActionImpl @Inject() (frontendAppConfig: FrontendAppConfig, subscriptionConnector: SubscriptionConnector)(implicit
+  val executionContext: ExecutionContext
+) extends ContactRetrievalAction {
   override def apply: ActionTransformer[DataRequest, DataRequestWithContacts] = new ContactRetrievalActionProvider(frontendAppConfig, subscriptionConnector)
 }
 
-class ContactRetrievalActionProvider @Inject()(frontendAppConfig: FrontendAppConfig,
-                                           subscriptionConnector: SubscriptionConnector)
-                                          (implicit val executionContext: ExecutionContext) extends ActionTransformer[DataRequest, DataRequestWithContacts] {
+class ContactRetrievalActionProvider @Inject() (frontendAppConfig: FrontendAppConfig, subscriptionConnector: SubscriptionConnector)(implicit
+  val executionContext: ExecutionContext
+) extends ActionTransformer[DataRequest, DataRequestWithContacts] {
 
   override protected def transform[A](request: DataRequest[A]): Future[DataRequestWithContacts[A]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      subscriptionConnector.displaySubscriptionDetails(request.enrolmentID).map {
-        subscriptionDetails =>
+    subscriptionConnector.displaySubscriptionDetails(request.enrolmentID).map {
+      subscriptionDetails =>
+        val contacts = subscriptionDetails.map {
+          details =>
+            buildContactDetails(details)
+        }
 
-          val contacts = subscriptionDetails.map {
-            details =>
-              buildContactDetails(details)
-          }
-
-          DataRequestWithContacts(request.request, request.internalId, request.enrolmentID, request.userAnswers, contacts)
-      }
+        DataRequestWithContacts(request.request, request.internalId, request.enrolmentID, request.userAnswers, contacts)
+    }
   }
 
   private def buildContactDetails(details: DisplaySubscriptionForDACResponse): ContactDetails = {
@@ -58,23 +57,29 @@ class ContactRetrievalActionProvider @Inject()(frontendAppConfig: FrontendAppCon
 
     val (contactName, primaryEmail) = responseDetail.primaryContact.contactInformation.head match {
       case ContactInformationForIndividual(individual, email, _, _) =>
-        (s"${individual.firstName} ${individual.middleName.fold("")(mn => s"$mn ")}${individual.lastName}",
-          email)
+        (s"${individual.firstName} ${individual.middleName.fold("")(
+           mn => s"$mn "
+         )}${individual.lastName}",
+         email
+        )
       case ContactInformationForOrganisation(organisation, email, _, _) =>
         (s"${organisation.organisationName}", email)
     }
 
-    val secondaryContact = {
-      responseDetail.secondaryContact.map { secondaryContact =>
-        secondaryContact.contactInformation.head match {
-          case ContactInformationForIndividual(individual, email, _, _) =>
-            (s"${individual.firstName} ${individual.middleName.fold("")(mn => s"$mn ")}${individual.lastName}",
-              email)
-          case ContactInformationForOrganisation(organisation, email, _, _) =>
-            (s"${organisation.organisationName}", email)
-        }
+    val secondaryContact =
+      responseDetail.secondaryContact.map {
+        secondaryContact =>
+          secondaryContact.contactInformation.head match {
+            case ContactInformationForIndividual(individual, email, _, _) =>
+              (s"${individual.firstName} ${individual.middleName.fold("")(
+                 mn => s"$mn "
+               )}${individual.lastName}",
+               email
+              )
+            case ContactInformationForOrganisation(organisation, email, _, _) =>
+              (s"${organisation.organisationName}", email)
+          }
       }
-    }
 
     if (secondaryContact.isDefined) {
       ContactDetails(
@@ -95,6 +100,6 @@ class ContactRetrievalActionProvider @Inject()(frontendAppConfig: FrontendAppCon
 
 }
 
-trait ContactRetrievalAction  {
+trait ContactRetrievalAction {
   def apply: ActionTransformer[DataRequest, DataRequestWithContacts]
 }

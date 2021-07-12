@@ -34,12 +34,12 @@ class EmailAddressQuestionForOrganisationPageSpec extends PageBehaviours {
 
     "- when email exists " in {
 
-      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation) mustBe(Some(true))
+      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation) mustBe (Some(true))
     }
 
     "- when email is empty " in {
 
-      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation.copy(emailAddress = None)) mustBe(Some(false))
+      EmailAddressQuestionForOrganisationPage.getFromModel(validOrganisation.copy(emailAddress = None)) mustBe (Some(false))
     }
   }
 }

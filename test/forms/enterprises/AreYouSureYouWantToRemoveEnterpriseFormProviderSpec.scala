@@ -22,7 +22,7 @@ import play.api.data.FormError
 class AreYouSureYouWantToRemoveEnterpriseFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "areYouSureYouWantToRemoveEnterprise.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new AreYouSureYouWantToRemoveEnterpriseFormProvider()()
 

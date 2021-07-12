@@ -25,7 +25,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AccessibilityControllerSpec extends SpecBase  with ControllerMockFixtures {
+class AccessibilityControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "Accessibility Controller" - {
 

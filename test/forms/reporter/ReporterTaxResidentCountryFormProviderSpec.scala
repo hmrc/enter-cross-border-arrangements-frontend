@@ -23,7 +23,7 @@ import play.api.data.FormError
 
 class ReporterTaxResidentCountryFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "reporterTaxResidentCountry.error.required"
+  val requiredKey                = "reporterTaxResidentCountry.error.required"
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
 
   val form = new ReporterTaxResidentCountryFormProvider()(countriesSeq)

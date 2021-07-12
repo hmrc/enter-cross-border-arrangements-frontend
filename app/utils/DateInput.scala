@@ -20,22 +20,26 @@ import play.api.data.Field
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OWrites}
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Text}
+
 object DateInput extends NunjucksSupport {
 
   final case class ViewModel(items: Seq[Item], error: Option[Text])
   final case class Item(label: Text, name: String, id: String, value: String, classes: String)
 
   object ViewModel {
+
     implicit def writes(implicit messages: Messages): OWrites[ViewModel] =
-      OWrites { viewmodel =>
-        Json.obj(
-          "items" -> viewmodel.items,
-          "error" -> viewmodel.error.map { error =>
-            Json.obj(
-              "text" -> error
-            )
-          }
-        )
+      OWrites {
+        viewmodel =>
+          Json.obj(
+            "items" -> viewmodel.items,
+            "error" -> viewmodel.error.map {
+              error =>
+                Json.obj(
+                  "text" -> error
+                )
+            }
+          )
       }
   }
 
@@ -46,16 +50,16 @@ object DateInput extends NunjucksSupport {
   def localDate(field: Field): ViewModel = {
 
     val error = (field.error orElse field("day").error orElse field("month").error orElse field("year").error)
-      .map(formError => Text.Message(formError.message, formError.args: _*))
+      .map(
+        formError => Text.Message(formError.message, formError.args: _*)
+      )
 
-    def classes(fieldName: String, classes: String*): String = {
-
+    def classes(fieldName: String, classes: String*): String =
       error match {
         case Some(err) if err.args.map(_.toString).contains(fieldName) | err.args.isEmpty => (" govuk-input--error" :: classes.toList).mkString(" ")
-        case Some(_) => classes.toList.mkString(" ")
-        case _ => classes.toList.mkString(" ")
+        case Some(_)                                                                      => classes.toList.mkString(" ")
+        case _                                                                            => classes.toList.mkString(" ")
       }
-    }
 
     val items = Seq(
       Item(
@@ -70,7 +74,7 @@ object DateInput extends NunjucksSupport {
         name = field("month").name,
         id = field("month").id,
         value = field("month").value.getOrElse(""),
-        classes = classes("month","govuk-input--width-2")
+        classes = classes("month", "govuk-input--width-2")
       ),
       Item(
         label = msg"site.year.capitalized",
@@ -83,6 +87,5 @@ object DateInput extends NunjucksSupport {
 
     ViewModel(items, error)
   }
-
 
 }

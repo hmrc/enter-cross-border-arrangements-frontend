@@ -20,7 +20,6 @@ import helpers.data.ValidUserAnswersForSubmission.{validIndividual, validTaxResi
 import models.Country
 import pages.behaviours.PageBehaviours
 
-
 class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
 
   "WhichCountryTaxForIndividualPage" - {
@@ -36,17 +35,19 @@ class WhichCountryTaxForIndividualPageSpec extends PageBehaviours {
 
     "- when first detail in loop is the UK " in {
 
-      WhichCountryTaxForIndividualPage.getFromModel(validIndividual) mustBe(Some(Country.UK))
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual) mustBe (Some(Country.UK))
     }
 
     "- when first detail in loop is not from the UK " in {
 
-      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe(Some(Country("", "FR", "France")))
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = validTaxResidencies.reverse)) mustBe (Some(
+        Country("", "FR", "France")
+      ))
     }
 
     "- when details are empty " in {
 
-      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe(None)
+      WhichCountryTaxForIndividualPage.getFromModel(validIndividual.copy(taxResidencies = IndexedSeq.empty)) mustBe None
     }
   }
 }

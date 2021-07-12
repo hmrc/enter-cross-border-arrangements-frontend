@@ -39,24 +39,21 @@ class CreateDisplayRowsSpec extends ControllerMockFixtures with SpecBase {
       val disclosure = DisclosureDetails("disclosure1", DisclosureType.Dac6new)
       disclosure.createDisplayRows.length mustBe 3
     }
-    "must add createDisplayRow method to a ArrangementDetails object and return the correct number of rows"in {
-      val arrangement = ArrangementDetails("arrangement1",
-        LocalDate.now,
-        Some("reason1"),
-        List(UnitedKingdom),
-        ExpectedArrangementValue("USD",10), "Provision1", "Details1")
+    "must add createDisplayRow method to a ArrangementDetails object and return the correct number of rows" in {
+      val arrangement =
+        ArrangementDetails("arrangement1", LocalDate.now, Some("reason1"), List(UnitedKingdom), ExpectedArrangementValue("USD", 10), "Provision1", "Details1")
       arrangement.createDisplayRows.length mustBe 7
     }
     "must add createDisplayRow method to a TaxpayerDetails object and return the correct number of rows" in {
-      val taxpayer = Taxpayer("1",None,Some(organisation), Some(LocalDate.now()))
+      val taxpayer = Taxpayer("1", None, Some(organisation), Some(LocalDate.now()))
       taxpayer.createDisplayRows.length mustBe 7
     }
     "must add createDisplayRow method to a AssociatedEnterprises object and return the correct number of rows" in {
-      val enterprise = AssociatedEnterprise("1", None, Some(organisation), List("tax1"),true)
+      val enterprise = AssociatedEnterprise("1", None, Some(organisation), List("tax1"), true)
       enterprise.createDisplayRows.length mustBe 8
     }
     "must add createDisplayRow method to a Intermediary object and return the correct number of rows" in {
-      val intermediary = Intermediary("1",None,Some(organisation))
+      val intermediary = Intermediary("1", None, Some(organisation))
       intermediary.createDisplayRows.length mustBe 8
     }
     "must add createDisplayRow method to a Affected object and return the correct number of rows" in {
@@ -65,4 +62,3 @@ class CreateDisplayRowsSpec extends ControllerMockFixtures with SpecBase {
     }
   }
 }
-

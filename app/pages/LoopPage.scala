@@ -28,5 +28,7 @@ trait LoopPage[A] extends QuestionPage[IndexedSeq[A]] {
 
   override def cleanup(value: Option[IndexedSeq[A]], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
     cleanPages
-      .foldLeft[Try[UserAnswers]](Success(userAnswers)) { case (ua, page: QuestionPage[A]) => ua.flatMap(_.remove(page, id)) }
+      .foldLeft[Try[UserAnswers]](Success(userAnswers)) {
+        case (ua, page: QuestionPage[A]) => ua.flatMap(_.remove(page, id))
+      }
 }

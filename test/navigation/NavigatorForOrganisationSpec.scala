@@ -27,20 +27,20 @@ import play.api.test.FakeRequest
 
 class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new NavigatorForOrganisation
-  val country: Country = Country("valid", "GB", "United Kingdom")
-  val index: Int = 0
+  val navigator                                             = new NavigatorForOrganisation
+  val country: Country                                      = Country("valid", "GB", "United Kingdom")
+  val index: Int                                            = 0
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", s"/uri/$index")
 
-  val D1 = "What is the name of the organisation?"
-  val D2 = "Do you know {0}’s Address?"
-  val D3 = "Is {0}’s main address in the United Kingdom?"
-  val D4 = "What is the {0}'s postcode?"
-  val D5 = "What is {0}'s main address? (/select-address)"
-  val D6 = "What is {0}'s main address? (/address)"
-  val D7 = "Do you know the email address for a main contact at {0}?"
-  val D8 = "What is the email address for a main contact at {0}?"
-  val D9 = "Which country is {0} resident in for tax purposes?"
+  val D1  = "What is the name of the organisation?"
+  val D2  = "Do you know {0}’s Address?"
+  val D3  = "Is {0}’s main address in the United Kingdom?"
+  val D4  = "What is the {0}'s postcode?"
+  val D5  = "What is {0}'s main address? (/select-address)"
+  val D6  = "What is {0}'s main address? (/address)"
+  val D7  = "Do you know the email address for a main contact at {0}?"
+  val D8  = "What is the email address for a main contact at {0}?"
+  val D9  = "Which country is {0} resident in for tax purposes?"
   val D10 = "Do you know any of {0}’s tax reference numbers for the United Kingdom?"
   val D11 = "Do you know {0}’s tax identification numbers for the country?"
   val D12 = "What are {0}’s tax reference numbers for the United Kingdom?"
@@ -50,10 +50,10 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
   val E10 = "Is {0} affected by the arrangement?"
   val E11 = "[Associated Enterprises] Check your answers?"
   // In the relevant taxpayers journey
-  val T9 = "Is this a marketable arrangement - gateway controller"
+  val T9  = "Is this a marketable arrangement - gateway controller"
   val T11 = "[Relevant Taxpayers] Check your answers?"
   // In the add intermediaries journey
-  val I9 = "What type of intermediary is {0}?"
+  val I9  = "What type of intermediary is {0}?"
   val I13 = "[Add Intermediaries] Check your answers?"
 
   "Organisation Navigator" - {
@@ -116,8 +116,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         s"must go from $D6 to $D7 " in {
 
-          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-            Country("valid", "FR", "France"))
+          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(DefaultRouting(NormalMode))(0)(Some(address))(0)
@@ -385,8 +384,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         s"must go from $D6 to $E11 " in {
 
-          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-            Country("valid", "FR", "France"))
+          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
@@ -550,8 +548,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         s"must go from $D6 to $T11 " in {
 
-          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-            Country("valid", "FR", "France"))
+          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
@@ -715,8 +712,7 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
         s"must go from $D6 to $I13 " in {
 
-          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"),
-            Country("valid", "FR", "France"))
+          val address: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
           navigator
             .routeMap(OrganisationAddressPage)(routingInCheckMode)(0)(Some(address))(0)
@@ -811,5 +807,3 @@ class NavigatorForOrganisationSpec extends SpecBase with ScalaCheckPropertyCheck
 
   }
 }
-
-

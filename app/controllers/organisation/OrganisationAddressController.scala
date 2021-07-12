@@ -35,46 +35,55 @@ import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OrganisationAddressController @Inject()(override val messagesApi: MessagesApi,
-  countryListFactory: CountryListFactory,
-  sessionRepository: SessionRepository,
-  navigator: NavigatorForOrganisation,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: AddressFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class OrganisationAddressController @Inject() (override val messagesApi: MessagesApi,
+                                               countryListFactory: CountryListFactory,
+                                               sessionRepository: SessionRepository,
+                                               navigator: NavigatorForOrganisation,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddressFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private def actionUrl(id: Int, mode: Mode) = routes.OrganisationAddressController.onSubmit(id, mode).url
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form      = formProvider(countries)
 
       val preparedForm =
         (request.userAnswers.get(OrganisationAddressPage, id), request.userAnswers.get(PostcodePage, id)) match {
           case (Some(value), Some(postCode)) =>
-            val fullAddressWithPostCode = Address(Some(value.addressLine1).flatten, Some(value.addressLine2).flatten,
-              Some(value.addressLine3).flatten, value.city, Some(postCode), Country("valid","GB","United Kingdom"))
+            val fullAddressWithPostCode = Address(
+              Some(value.addressLine1).flatten,
+              Some(value.addressLine2).flatten,
+              Some(value.addressLine3).flatten,
+              value.city,
+              Some(postCode),
+              Country("valid", "GB", "United Kingdom")
+            )
             form.fill(fullAddressWithPostCode)
           case (None, Some(postCode)) =>
-            val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid","GB","United Kingdom"))
+            val addressWithPostCode = Address(None, None, None, "", Some(postCode), Country("valid", "GB", "United Kingdom"))
             form.fill(addressWithPostCode)
           case (Some(value), _) => form.fill(value)
-          case _ => form
+          case _                => form
         }
 
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "countries" -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "countries"   -> countryJsonList(preparedForm.data, countries.filter(_ != countryListFactory.uk)),
         "isUkAddress" -> isUkAddress(request.userAnswers, id),
-        "actionUrl" -> actionUrl(id, mode),
-        "pageTitle" -> "organisationAddress.title",
+        "actionUrl"   -> actionUrl(id, mode),
+        "pageTitle"   -> "organisationAddress.title",
         "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers, id))
       )
 
@@ -86,38 +95,37 @@ class OrganisationAddressController @Inject()(override val messagesApi: Messages
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val countries = countryListFactory.getCountryList().getOrElse(throw new Exception("Cannot retrieve country list"))
-      val form = formProvider(countries)
+      val form      = formProvider(countries)
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "countries" -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
-            "isUkAddress" -> isUkAddress(request.userAnswers, id),
-            "actionUrl" -> actionUrl(id, mode),
-            "pageTitle" -> "organisationAddress.title",
-            "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers, id))
-          )
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "countries"   -> countryJsonList(formWithErrors.data, countries.filter(_ != countryListFactory.uk)),
+              "isUkAddress" -> isUkAddress(request.userAnswers, id),
+              "actionUrl"   -> actionUrl(id, mode),
+              "pageTitle"   -> "organisationAddress.title",
+              "pageHeading" -> pageHeadingProvider("organisationAddress.heading", getOrganisationName(request.userAnswers, id))
+            )
 
-          renderer.render("address.njk", json).map(BadRequest(_))
-        },
-        value => {
-
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("address.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(OrganisationAddressPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
   private def isUkAddress(userAnswers: UserAnswers, id: Int): Boolean = userAnswers.get(IsOrganisationAddressUkPage, id) match {
     case Some(true) => true
-    case _ => false
+    case _          => false
   }
 }

@@ -40,12 +40,11 @@ import scala.concurrent.Future
 class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   private val formProvider = new PostcodeFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockFrontendAppConfig: FrontendAppConfig           = mock[FrontendAppConfig]
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  lazy private val postcodeRoute = controllers.individual.routes.IndividualPostcodeController.onPageLoad(0, NormalMode).url
-
+  private lazy val postcodeRoute                         = controllers.individual.routes.IndividualPostcodeController.onPageLoad(0, NormalMode).url
 
   override def beforeEach: Unit = {
     reset(mockAddressLookupConnector)
@@ -66,9 +65,9 @@ class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, postcodeRoute)
+      val request        = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -91,12 +90,16 @@ class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, postcodeRoute)
+      val request        = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -149,15 +152,15 @@ class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtu
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("postcode", "AA1 1AA"))
-      val boundForm = form.bind(Map("postcode" -> "AA1 1AA"))
+      val boundForm = form
+        .bind(Map("postcode" -> "AA1 1AA"))
         .withError(FormError("postcode", List("Address not found - enter a different postcode or enter the address manually")))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
       verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
@@ -178,10 +181,10 @@ class IndividualPostcodeControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

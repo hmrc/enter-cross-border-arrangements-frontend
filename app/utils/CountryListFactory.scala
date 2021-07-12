@@ -22,15 +22,21 @@ import models.Country
 import play.api.Environment
 import play.api.libs.json.Json
 
-class CountryListFactory @Inject()(environment: Environment, appConfig: FrontendAppConfig) {
+class CountryListFactory @Inject() (environment: Environment, appConfig: FrontendAppConfig) {
 
-  def uk: Country = Country("valid","GB","United Kingdom")
+  def uk: Country = Country("valid", "GB", "United Kingdom")
 
   def getCountryList(): Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map (Json.parse(_)) map {
-    _.as[Seq[Country]].sortWith((country, country2) => country.description < country2.description)
+    _.as[Seq[Country]].sortWith(
+      (country, country2) => country.description < country2.description
+    )
   }
 
   def getWithoutUKCountryList(): Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map (Json.parse(_)) map {
-    _.as[Seq[Country]].filter(_ != uk).sortWith((country, country2) => country.description < country2.description)
+    _.as[Seq[Country]]
+      .filter(_ != uk)
+      .sortWith(
+        (country, country2) => country.description < country2.description
+      )
   }
 }

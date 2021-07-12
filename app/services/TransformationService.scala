@@ -24,15 +24,16 @@ class TransformationService {
 
   def build(xml: Elem, messageRefId: String, enrolmentID: String): Try[NodeSeq] =
     (for {
-      uniqueXmlSubmission       <- rewriteMessageRefID(xml, messageRefId)
-      submission                <- constructSubmission("manual-submission.xml", enrolmentID, uniqueXmlSubmission)
+      uniqueXmlSubmission <- rewriteMessageRefID(xml, messageRefId)
+      submission          <- constructSubmission("manual-submission.xml", enrolmentID, uniqueXmlSubmission)
     } yield Success(submission)).getOrElse(Failure(new IllegalStateException("Unable to build submission")))
 
-  def rewriteMessageRefID(xml:Elem, messageRefID: String): Option[NodeSeq] =
+  def rewriteMessageRefID(xml: Elem, messageRefID: String): Option[NodeSeq] =
     new RuleTransformer(new RewriteRule {
+
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(_, "MessageRefId", _, _, _*) =>
-          <MessageRefId>{ messageRefID }</MessageRefId>
+          <MessageRefId>{messageRefID}</MessageRefId>
         case other => other
       }
     }).transform(xml).headOption
@@ -47,7 +48,7 @@ class TransformationService {
 
     new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
-        case elem : Elem if elem.label == "file" =>
+        case elem: Elem if elem.label == "file" =>
           elem.copy(child = document)
         case other => other
       }

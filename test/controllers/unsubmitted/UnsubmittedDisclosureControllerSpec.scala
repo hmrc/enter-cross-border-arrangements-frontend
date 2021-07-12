@@ -38,7 +38,7 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with ControllerMockFi
 
       val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
+      val request        = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -54,17 +54,17 @@ class UnsubmittedDisclosureControllerSpec extends SpecBase with ControllerMockFi
     "must redirect first time users to the disclosures homepage" in {
       retrieveNoData()
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
     }
 
     "must redirect users who have no unsubmitted disclosures to the no unsubmitted disclosures page" in {
       val unsubmittedDisclosures = Seq.empty[UnsubmittedDisclosure]
-      val userAnswers = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
+      val userAnswers            = UserAnswers(userAnswersId).setBase(UnsubmittedDisclosurePage, unsubmittedDisclosures).success.value
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, controllers.unsubmitted.routes.UnsubmittedDisclosureController.onPageLoad().url)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
     }

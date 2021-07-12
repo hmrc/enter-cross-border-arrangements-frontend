@@ -22,14 +22,22 @@ import scala.xml.NodeSeq
 
 object AddressXMLSection {
 
-  private[xml] def buildAddress(address: Option[Address]): NodeSeq = {
+  private[xml] def buildAddress(address: Option[Address]): NodeSeq =
     address match {
       case Some(address) =>
         val addressNode = Seq(
-          address.addressLine1.map(addressLine1 => <Street>{addressLine1}</Street>),
-          address.addressLine2.map(addressLine2 => <BuildingIdentifier>{addressLine2}</BuildingIdentifier>),
-          address.addressLine3.map(addressLine3 => <DistrictName>{addressLine3}</DistrictName>),
-          address.postCode.map(postcode => <PostCode>{postcode}</PostCode>),
+          address.addressLine1.map(
+            addressLine1 => <Street>{addressLine1}</Street>
+          ),
+          address.addressLine2.map(
+            addressLine2 => <BuildingIdentifier>{addressLine2}</BuildingIdentifier>
+          ),
+          address.addressLine3.map(
+            addressLine3 => <DistrictName>{addressLine3}</DistrictName>
+          ),
+          address.postCode.map(
+            postcode => <PostCode>{postcode}</PostCode>
+          ),
           Some(<City>{address.city}</City>),
           Some(<Country>{address.country.code}</Country>)
         ).filter(_.isDefined).map(_.get)
@@ -37,5 +45,4 @@ object AddressXMLSection {
         <Address>{addressNode}</Address>
       case None => NodeSeq.Empty
     }
-  }
 }

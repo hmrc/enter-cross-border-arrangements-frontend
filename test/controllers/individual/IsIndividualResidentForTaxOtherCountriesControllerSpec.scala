@@ -34,9 +34,9 @@ import scala.concurrent.Future
 
 class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new IsIndividualResidentForTaxOtherCountriesFormProvider()
-  val form = formProvider()
-  val index: Int = 0
+  val formProvider             = new IsIndividualResidentForTaxOtherCountriesFormProvider()
+  val form                     = formProvider()
+  val index: Int               = 0
   val selectedCountry: Country = Country("valid", "FR", "France")
 
   lazy val isIndividualResidentForTaxOtherCountriesRoute =
@@ -50,15 +50,20 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(Html("")))
 
       val updatedUserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualNamePage, 0, Name("firstName","lastName")).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualNamePage, 0, Name("firstName", "lastName"))
+        .success
+        .value
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(updatedUserAnswers)
-      val request = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
+      val request        = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -67,11 +72,11 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
+        "form"           -> form,
+        "mode"           -> NormalMode,
         "individualName" -> "firstName lastName",
-        "radios" -> Radios.yesNo(form("confirm")),
-        "index" -> index
+        "radios"         -> Radios.yesNo(form("confirm")),
+        "index"          -> index
       )
 
       templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
@@ -84,16 +89,20 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IsIndividualResidentForTaxOtherCountriesPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(IndividualLoopPage, 0, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
+      val request        = FakeRequest(GET, isIndividualResidentForTaxOtherCountriesRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -104,11 +113,11 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
       val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
+        "form"           -> filledForm,
+        "mode"           -> NormalMode,
         "individualName" -> "the individual",
-        "radios" -> Radios.yesNo(filledForm("confirm")),
-        "index" -> index
+        "radios"         -> Radios.yesNo(filledForm("confirm")),
+        "index"          -> index
       )
 
       templateCaptor.getValue mustEqual "individual/isIndividualResidentForTaxOtherCountries.njk"
@@ -136,10 +145,10 @@ class IsIndividualResidentForTaxOtherCountriesControllerSpec extends SpecBase wi
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, isIndividualResidentForTaxOtherCountriesRoute).withFormUrlEncodedBody(("confirm", ""))
-      val boundForm = form.bind(Map("confirm" -> ""))
+      val request        = FakeRequest(POST, isIndividualResidentForTaxOtherCountriesRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm      = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

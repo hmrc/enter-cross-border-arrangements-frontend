@@ -36,32 +36,34 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouHaveNotAddedAnyAffectedController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForAffected,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    formProvider: YouHaveNotAddedAnyAffectedFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    requireData: DataRequiredAction,
-    renderer: Renderer,
-    frontendAppConfig: FrontendAppConfig
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class YouHaveNotAddedAnyAffectedController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForAffected,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  formProvider: YouHaveNotAddedAnyAffectedFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  requireData: DataRequiredAction,
+  renderer: Renderer,
+  frontendAppConfig: FrontendAppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
-
       val preparedForm = request.userAnswers.get(YouHaveNotAddedAnyAffectedPage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
+        "form"         -> preparedForm,
         "id"           -> id,
         "mode"         -> mode,
         "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
@@ -88,36 +90,35 @@ class YouHaveNotAddedAnyAffectedController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"         -> formWithErrors,
+              "id"           -> id,
+              "mode"         -> mode,
+              "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
+              "radios"       -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"       -> formWithErrors,
-            "id"           -> id,
-            "mode"         -> mode,
-            "affectedList" -> Json.toJson(toItemList(request.userAnswers, id)),
-            "radios"       -> YouHaveNotAddedAnyAffected.radios(formWithErrors)
-          )
-
-          renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(BadRequest(_))
-        },
-        value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAffectedPage, id, value))
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AffectedStatusPage, id, setStatus(value, updatedAnswers)))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-        }
-      )
+            renderer.render("affected/youHaveNotAddedAnyAffected.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- Future.fromTry(request.userAnswers.set(YouHaveNotAddedAnyAffectedPage, id, value))
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(AffectedStatusPage, id, setStatus(value, updatedAnswers)))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              checkRoute = toCheckRoute(mode, updatedAnswers)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 
-  private def setStatus(selectedAnswer: YouHaveNotAddedAnyAffected, ua: UserAnswers): JourneyStatus = {
+  private def setStatus(selectedAnswer: YouHaveNotAddedAnyAffected, ua: UserAnswers): JourneyStatus =
     selectedAnswer match {
       case YouHaveNotAddedAnyAffected.YesAddLater => JourneyStatus.InProgress
-      case YouHaveNotAddedAnyAffected.No => JourneyStatus.Completed
-      case _ => JourneyStatus.NotStarted
+      case YouHaveNotAddedAnyAffected.No          => JourneyStatus.Completed
+      case _                                      => JourneyStatus.NotStarted
     }
-  }
 }

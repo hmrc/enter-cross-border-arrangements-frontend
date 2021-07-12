@@ -25,12 +25,16 @@ import pages.disclosure.DisclosureDetailsPage
 import pages.reporter.RoleInArrangementPage
 import pages.taxpayer.TaxpayerLoopPage
 
-object StatusHelper  {
+object StatusHelper {
 
   def checkTaxpayerStatusConditions(ua: UserAnswers, id: Int): JourneyStatus = {
 
-    val oneRelevantTaxpayerAdded: Boolean = ua.get(TaxpayerLoopPage, id).exists(list => list.nonEmpty)
-    val getMarketableFlag: Boolean = ua.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA)
+    val oneRelevantTaxpayerAdded: Boolean = ua
+      .get(TaxpayerLoopPage, id)
+      .exists(
+        list => list.nonEmpty
+      )
+    val getMarketableFlag: Boolean                = ua.get(DisclosureDetailsPage, id).exists(_.initialDisclosureMA)
     val getDisclosureType: Option[DisclosureType] = ua.get(DisclosureDetailsPage, id).map(_.disclosureType)
 
     (getDisclosureType, getMarketableFlag, ua.get(RoleInArrangementPage, id)) match {
@@ -43,10 +47,10 @@ object StatusHelper  {
 
       case (Some(Dac6rep), true, Some(Intermediary)) => JourneyStatus.Completed // replace journey & reporter as Intermediary & Marketable Arrangement
 
-      case (_, _, Some(Intermediary)) if oneRelevantTaxpayerAdded => JourneyStatus.Completed //non marketable & Reporter is Intermediary but has added a taxpayer
+      case (_, _, Some(Intermediary)) if oneRelevantTaxpayerAdded =>
+        JourneyStatus.Completed //non marketable & Reporter is Intermediary but has added a taxpayer
 
       case _ => JourneyStatus.NotStarted
     }
   }
 }
-

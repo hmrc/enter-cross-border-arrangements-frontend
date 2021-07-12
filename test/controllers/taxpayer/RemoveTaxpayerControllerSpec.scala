@@ -37,18 +37,22 @@ import scala.concurrent.Future
 class RemoveTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new RemoveTaxpayerFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val removeTaxpayerRoute = controllers.taxpayer.routes.RemoveTaxpayerController.onPageLoad(0, "itemId").url
 
   lazy val taxpayerLoop: IndexedSeq[Taxpayer] = IndexedSeq(
-    Taxpayer("1", None, Some(validOrganisation))
-    , Taxpayer("2", Some(validIndividual), None)
+    Taxpayer("1", None, Some(validOrganisation)),
+    Taxpayer("2", Some(validIndividual), None)
   )
 
   val userAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-    .set(TaxpayerLoopPage, 0, taxpayerLoop).success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
+    .set(TaxpayerLoopPage, 0, taxpayerLoop)
+    .success
+    .value
 
   "RemoveTaxpayer Controller" - {
 
@@ -59,9 +63,9 @@ class RemoveTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, removeTaxpayerRoute)
+      val request        = FakeRequest(GET, removeTaxpayerRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -98,8 +102,9 @@ class RemoveTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
 
       redirectLocation(result).value mustEqual controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(0).url
 
-      userAnswersCaptor.getValue.get(TaxpayerLoopPage, 0).map { loop =>
-        loop mustBe(taxpayerLoop.filterNot(_.taxpayerId == "1"))
+      userAnswersCaptor.getValue.get(TaxpayerLoopPage, 0).map {
+        loop =>
+          loop mustBe (taxpayerLoop.filterNot(_.taxpayerId == "1"))
       }
     }
 
@@ -128,10 +133,10 @@ class RemoveTaxpayerControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, removeTaxpayerRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, removeTaxpayerRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

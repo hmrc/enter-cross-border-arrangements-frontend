@@ -27,13 +27,15 @@ import scala.xml.{Node, NodeSeq}
 
 case class IntermediariesXMLSection(submission: Submission) {
 
-  private val isReporterIntermediary: Option[Boolean] = submission.reporterDetails.flatMap(_.liability.map(x => x.role == RoleInArrangement.Intermediary.toString))
+  private val isReporterIntermediary: Option[Boolean] = submission.reporterDetails.flatMap(
+    _.liability.map(
+      x => x.role == RoleInArrangement.Intermediary.toString
+    )
+  )
 
-  private[xml] def buildReporterAsIntermediary: NodeSeq = {
-
+  private[xml] def buildReporterAsIntermediary: NodeSeq =
     (isReporterIntermediary, submission.reporterDetails) match {
       case (Some(true), Some(reporterDetails)) =>
-
         if (reporterDetails.organisation.isDefined) {
           <Intermediary>
             {OrganisationXMLSection.buildIDForOrganisation(reporterDetails.organisation.get)}
@@ -50,24 +52,25 @@ case class IntermediariesXMLSection(submission: Submission) {
 
       case _ => NodeSeq.Empty
     }
-  }
 
-  private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq = {
+  private[xml] def getIntermediaryCapacity(intermediary: Intermediary): NodeSeq =
     if (intermediary.whatTypeofIntermediary.equals(IDoNotKnow)) {
       NodeSeq.Empty
     } else {
       <Capacity>{intermediary.whatTypeofIntermediary.toString}</Capacity>
     }
-  }
 
   private[xml] def buildNationalExemption(intermediary: Intermediary): NodeSeq = {
 
     val countryExemptions = intermediary.isExemptionCountryKnown.fold(NodeSeq.Empty) {
       case false => NodeSeq.Empty
       case true =>
-        val getCountries = intermediary.exemptCountries.fold(NodeSeq.Empty)(setOfCountries =>
-          setOfCountries.toList.map((country: CountryList) =>
-              <CountryExemption>{country}</CountryExemption>))
+        val getCountries = intermediary.exemptCountries.fold(NodeSeq.Empty)(
+          setOfCountries =>
+            setOfCountries.toList.map(
+              (country: CountryList) => <CountryExemption>{country}</CountryExemption>
+            )
+        )
 
         <CountryExemptions>
           {getCountries}
@@ -94,24 +97,27 @@ case class IntermediariesXMLSection(submission: Submission) {
       intermediary =>
         if (intermediary.individual.isDefined) {
           <Intermediary>
-            {IndividualXMLSection.buildIDForIndividual(intermediary.individual.get) ++
-            getIntermediaryCapacity(intermediary) ++
-            buildNationalExemption(intermediary)}
+            {
+            IndividualXMLSection.buildIDForIndividual(intermediary.individual.get) ++
+              getIntermediaryCapacity(intermediary) ++
+              buildNationalExemption(intermediary)
+          }
           </Intermediary>
         } else {
           <Intermediary>
-            {OrganisationXMLSection.buildIDForOrganisation(intermediary.organisation.get) ++
-            getIntermediaryCapacity(intermediary) ++
-            buildNationalExemption(intermediary)}
+            {
+            OrganisationXMLSection.buildIDForOrganisation(intermediary.organisation.get) ++
+              getIntermediaryCapacity(intermediary) ++
+              buildNationalExemption(intermediary)
+          }
           </Intermediary>
         }
     }
 
-  def buildIntermediaries: NodeSeq = {
+  def buildIntermediaries: NodeSeq =
     Try {
       <Intermediaries>
         {buildReporterAsIntermediary ++ getIntermediaries}
       </Intermediaries>
     }.getOrElse(NodeSeq.Empty)
-  }
 }

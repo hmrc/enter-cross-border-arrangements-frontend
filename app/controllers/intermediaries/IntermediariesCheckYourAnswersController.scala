@@ -34,7 +34,7 @@ import utils.CheckYourAnswersHelper
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IntermediariesCheckYourAnswersController @Inject()(
+class IntermediariesCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -43,62 +43,68 @@ class IntermediariesCheckYourAnswersController @Inject()(
   navigator: NavigatorForIntermediaries,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with RoutingSupport {
 
   def onPageLoad(id: Int, itemId: Option[String] = None): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val restoredUserAnswers: UserAnswers = request.userAnswers.restoreFromLoop(IntermediaryLoopPage, id, itemId)
       sessionRepository.set(restoredUserAnswers)
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
-
         restoredUserAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (helper.intermediariesType(id).toSeq ++
-              helper.organisationName(id).toSeq ++
-              helper.buildOrganisationAddressGroup(id) ++
-              helper.buildOrganisationEmailAddressGroup(id),
-
-              helper.buildTaxResidencySummaryForOrganisation(id),
-
-              Seq(helper.whatTypeofIntermediary(id) ++
-              helper.isExemptionKnown(id) ++
-              helper.isExemptionCountryKnown(id)).flatten ++
-              helper.exemptCountries(id).toSeq
-              )
+               helper.organisationName(id).toSeq ++
+               helper.buildOrganisationAddressGroup(id) ++
+               helper.buildOrganisationEmailAddressGroup(id),
+             helper.buildTaxResidencySummaryForOrganisation(id),
+             Seq(
+               helper.whatTypeofIntermediary(id) ++
+                 helper.isExemptionKnown(id) ++
+                 helper.isExemptionCountryKnown(id)
+             ).flatten ++
+               helper.exemptCountries(id).toSeq
+            )
 
           case Some(SelectType.Individual) =>
-            (Seq(helper.intermediariesType(id) ++
-              helper.individualName(id)).flatten ++
-              helper.buildIndividualDateOfBirthGroup(id) ++
-              helper.buildIndividualPlaceOfBirthGroup(id) ++
-              helper.buildIndividualAddressGroup(id) ++
-              helper.buildIndividualEmailAddressGroup(id),
-
-              helper.buildTaxResidencySummaryForIndividuals(id),
-
-              Seq(helper.whatTypeofIntermediary(id) ++
-              helper.isExemptionKnown(id) ++
-              helper.isExemptionCountryKnown(id)).flatten ++
-              helper.exemptCountries(id).toSeq
+            (Seq(
+               helper.intermediariesType(id) ++
+                 helper.individualName(id)
+             ).flatten ++
+               helper.buildIndividualDateOfBirthGroup(id) ++
+               helper.buildIndividualPlaceOfBirthGroup(id) ++
+               helper.buildIndividualAddressGroup(id) ++
+               helper.buildIndividualEmailAddressGroup(id),
+             helper.buildTaxResidencySummaryForIndividuals(id),
+             Seq(
+               helper.whatTypeofIntermediary(id) ++
+                 helper.isExemptionKnown(id) ++
+                 helper.isExemptionCountryKnown(id)
+             ).flatten ++
+               helper.exemptCountries(id).toSeq
             )
 
           case _ => throw new UnsupportedRouteException(id)
-      }
+        }
 
-      renderer.render(
-        "intermediaries/intermediariesCheckYourAnswers.njk",
-        Json.obj(
-          "intermediarySummary" -> intermediarySummary,
-          "tinCountrySummary"          -> tinCountrySummary,
-          "intermediarySummary2"      -> intermediarySummary2,
-          "id"                        -> id,
-          "mode"       -> NormalMode
-        )).map(Ok(_))
+      renderer
+        .render(
+          "intermediaries/intermediariesCheckYourAnswers.njk",
+          Json.obj(
+            "intermediarySummary"  -> intermediarySummary,
+            "tinCountrySummary"    -> tinCountrySummary,
+            "intermediarySummary2" -> intermediarySummary2,
+            "id"                   -> id,
+            "mode"                 -> NormalMode
+          )
+        )
+        .map(Ok(_))
   }
 
   def redirect(id: Int, checkRoute: CheckRoute): Call =
@@ -106,15 +112,11 @@ class IntermediariesCheckYourAnswersController @Inject()(
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       for {
         userAnswers                     <- Future.fromTry(request.userAnswers.set(IntermediaryLoopPage, id))
         userAnswersWithIntermediaryLoop <- Future.fromTry(userAnswers.remove(YouHaveNotAddedAnyIntermediariesPage, id))
         _                               <- sessionRepository.set(userAnswersWithIntermediaryLoop)
-        checkRoute                      =  toCheckRoute(NormalMode, userAnswersWithIntermediaryLoop, id)
-      } yield {
-        Redirect(redirect(id, checkRoute))
-      }
+        checkRoute = toCheckRoute(NormalMode, userAnswersWithIntermediaryLoop, id)
+      } yield Redirect(redirect(id, checkRoute))
   }
 }
-

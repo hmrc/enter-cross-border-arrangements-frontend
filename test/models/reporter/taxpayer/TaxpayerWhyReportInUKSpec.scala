@@ -31,7 +31,6 @@ class TaxpayerWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         taxpayerWhyReportInUK =>
-
           JsString(taxpayerWhyReportInUK.toString).validate[TaxpayerWhyReportInUK].asOpt.value mustEqual taxpayerWhyReportInUK
       }
     }
@@ -42,7 +41,6 @@ class TaxpayerWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[TaxpayerWhyReportInUK] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class TaxpayerWhyReportInUKSpec extends ModelSpecBase {
 
       forAll(gen) {
         taxpayerWhyReportInUK =>
-
           Json.toJson(taxpayerWhyReportInUK) mustEqual JsString(taxpayerWhyReportInUK.toString)
       }
     }

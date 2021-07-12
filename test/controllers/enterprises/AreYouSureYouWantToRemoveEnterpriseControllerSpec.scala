@@ -37,18 +37,22 @@ import scala.concurrent.Future
 class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new AreYouSureYouWantToRemoveEnterpriseFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val areYouSureYouWantToRemoveEnterpriseRoute = controllers.enterprises.routes.AreYouSureYouWantToRemoveEnterpriseController.onPageLoad(0, "itemId").url
 
   lazy val enterpriseLoop: IndexedSeq[AssociatedEnterprise] = IndexedSeq(
-    AssociatedEnterprise("1", None, Some(validOrganisation))
-    , AssociatedEnterprise("2", Some(validIndividual), None)
+    AssociatedEnterprise("1", None, Some(validOrganisation)),
+    AssociatedEnterprise("2", Some(validIndividual), None)
   )
 
   val userAnswers = UserAnswers(userAnswersId)
-    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-    .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop).success.value
+    .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+    .success
+    .value
+    .set(AssociatedEnterpriseLoopPage, 0, enterpriseLoop)
+    .success
+    .value
 
   "AreYouSureYouWantToRemoveEnterprise Controller" - {
 
@@ -61,7 +65,7 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
       val request = FakeRequest(GET, areYouSureYouWantToRemoveEnterpriseRoute)
 
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -121,8 +125,9 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       redirectLocation(result).value mustEqual controllers.enterprises.routes.YouHaveNotAddedAnyAssociatedEnterprisesController.onPageLoad(0, NormalMode).url
 
-      userAnswersCaptor.getValue.get(AssociatedEnterpriseLoopPage, 0).map { loop =>
-        loop mustBe(enterpriseLoop.filterNot(_.enterpriseId == "1"))
+      userAnswersCaptor.getValue.get(AssociatedEnterpriseLoopPage, 0).map {
+        loop =>
+          loop mustBe (enterpriseLoop.filterNot(_.enterpriseId == "1"))
       }
     }
 
@@ -133,10 +138,10 @@ class AreYouSureYouWantToRemoveEnterpriseControllerSpec extends SpecBase with Co
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(POST, areYouSureYouWantToRemoveEnterpriseRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, areYouSureYouWantToRemoveEnterpriseRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

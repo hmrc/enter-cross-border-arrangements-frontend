@@ -47,21 +47,21 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
   lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url
 
-  val mockEmailConnector: EmailConnector = mock[EmailConnector]
-  val mockEmailService: EmailService = mock[EmailService]
-  val mockCurrencyList = mock[CurrencyListFactory]
-  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
+  val mockEmailConnector: EmailConnector                                     = mock[EmailConnector]
+  val mockEmailService: EmailService                                         = mock[EmailService]
+  val mockCurrencyList                                                       = mock[CurrencyListFactory]
+  val mockCountryFactory: CountryListFactory                                 = mock[CountryListFactory]
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
-  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
-  val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val mockXMLGenerationService: XMLGenerationService = mock[XMLGenerationService]
+  val mockSubscriptionConnector: SubscriptionConnector                       = mock[SubscriptionConnector]
+  val countriesSeq: Seq[Country]                                             = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val mockXMLGenerationService: XMLGenerationService                         = mock[XMLGenerationService]
 
   override def beforeEach: Unit = {
     when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
     when(mockSubscriptionConnector.displaySubscriptionDetails(any())(any(), any())).thenReturn(Future.successful(None))
     when(mockEmailService.sendEmail(any(), any(), any(), any())(any()))
       .thenReturn(Future.successful(Some(HttpResponse(ACCEPTED, ""))))
-    when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)"))))
+    when(mockCurrencyList.getCurrencyList).thenReturn(Some(Seq(Currency("ALL", "LEK", "ALBANIA", "Albanian Lek (ALL)"))))
     when(mockCountryFactory.getCountryList()).thenReturn(Some(countriesSeq))
 
     reset(mockEmailService)
@@ -86,14 +86,14 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
 
     status(result) mustEqual OK
 
-    val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+    val templateCaptor                       = ArgumentCaptor.forClass(classOf[String])
     val jsonCaptor: ArgumentCaptor[JsObject] = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json : JsObject= jsonCaptor.getValue
+    val json: JsObject = jsonCaptor.getValue
     import RowJsonReads._
-    val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
+    val list = (json \ "disclosureSummary").get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "disclosure/check-your-answers-delete-disclosure.njk"
     assertFunction(list)
@@ -131,29 +131,35 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
     "must return correct rows for a deletion" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6del)
         .success
         .value
         .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
         .success
         .value
-      verifyList(userAnswers) { list =>
-        assertDisclosureName("My arrangement")(list.head)
-        assertArrangementID("GBA20210101ABC123",
-          "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(1))
-        assertDisclosureID("GBD20210101ABC123")(list(2))
-        list.size mustBe 3
+      verifyList(userAnswers) {
+        list =>
+          assertDisclosureName("My arrangement")(list.head)
+          assertArrangementID("GBA20210101ABC123", "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(1))
+          assertDisclosureID("GBD20210101ABC123")(list(2))
+          list.size mustBe 3
       }
     }
 
     "must redirect to your disclosure has been deleted" in {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6del)
         .success
         .value
@@ -161,18 +167,19 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
         .success
         .value
 
-      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(),any()))
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
         .thenReturn(Future.successful(Right(GeneratedIDs(None, Some("disclosureID"), Some("messageRefID")))))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
-        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-        bind[FrontendAppConfig].toInstance(mockAppConfig),
-        bind[CountryListFactory].toInstance(mockCountryFactory),
-        bind[CurrencyListFactory].toInstance(mockCurrencyList),
-        bind[XMLGenerationService].toInstance(mockXMLGenerationService)
-      ).build()
-
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[FrontendAppConfig].toInstance(mockAppConfig),
+          bind[CountryListFactory].toInstance(mockCountryFactory),
+          bind[CurrencyListFactory].toInstance(mockCurrencyList),
+          bind[XMLGenerationService].toInstance(mockXMLGenerationService)
+        )
+        .build()
 
       val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
 
@@ -183,13 +190,15 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure/disclosure-has-been-deleted"
     }
 
-
     "fail with DiscloseDetailsAlreadyDeletedException if ReplaceOrDeleteADisclosurePage is empty " in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6del)
         .success
         .value

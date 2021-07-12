@@ -39,16 +39,17 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
 
   private val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-  lazy private val selectAddressRoute = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(0, NormalMode).url
-  lazy private val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(0, NormalMode).canonical()
+  private lazy val selectAddressRoute       = controllers.individual.routes.IndividualSelectAddressController.onPageLoad(0, NormalMode).url
+  private lazy val manualAddressURL: String = controllers.individual.routes.IndividualAddressController.onPageLoad(0, NormalMode).canonical()
 
   private val formProvider = new SelectAddressFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
   private val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
   )
+
   private val addressRadios: Seq[Radios.Radio] = Seq(
     Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
     Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
@@ -75,16 +76,18 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 
       retrieveUserAnswersData(answers)
 
-      val request = FakeRequest(GET, selectAddressRoute)
+      val request        = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -93,10 +96,10 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> form,
-        "mode"   -> NormalMode,
+        "form"             -> form,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = form("value"), items = addressRadios)
+        "radios"           -> Radios(field = form("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
@@ -112,7 +115,9 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(addresses))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IndividualSelectAddressPage, 0, "1 Address line 1, Town, ZZ1 1ZZ")
         .success
         .value
@@ -121,9 +126,9 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, selectAddressRoute)
+      val request        = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -134,10 +139,10 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
       val filledForm = form.bind(Map("value" -> addressRadios.head.value))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "mode"   -> NormalMode,
+        "form"             -> filledForm,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = filledForm("value"), items = addressRadios)
+        "radios"           -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
@@ -151,7 +156,9 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
@@ -177,17 +184,19 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(IndividualUkPostcodePage, 0, "ZZ1 1ZZ")
         .success
         .value
 
       retrieveUserAnswersData(answers)
 
-      val request = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -196,10 +205,10 @@ class IndividualSelectAddressControllerSpec extends SpecBase with ControllerMock
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode,
+        "form"             -> boundForm,
+        "mode"             -> NormalMode,
         "manualAddressURL" -> manualAddressURL,
-        "radios" -> Radios(field = boundForm("value"), items = addressRadios)
+        "radios"           -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
       templateCaptor.getValue mustEqual "selectAddress.njk"

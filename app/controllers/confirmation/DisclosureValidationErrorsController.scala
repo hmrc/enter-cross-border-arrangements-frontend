@@ -30,51 +30,54 @@ import uk.gov.hmrc.viewmodels._
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DisclosureValidationErrorsController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DisclosureValidationErrorsController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
-      val keyList: Seq[String] = request.userAnswers.get(ValidationErrorsPage, id).filter(_.nonEmpty)
+      val keyList: Seq[String] = request.userAnswers
+        .get(ValidationErrorsPage, id)
+        .filter(_.nonEmpty)
         .getOrElse(throw new IllegalStateException("Unable to retrieve validation errors."))
 
       val json = Json.obj(
-        "id" -> id,
+        "id"        -> id,
         "errorRows" -> toTableRows(keyList)
       )
 
       renderer.render("confirmation/validationErrors.njk", json).map(Ok(_))
   }
 
-  def toTableRows(keys: Seq[String], mapKey: String => Option[String] = keyMapper)(implicit messages: Messages) : Seq[Seq[JsValue]] = {
-
+  def toTableRows(keys: Seq[String], mapKey: String => Option[String] = keyMapper)(implicit messages: Messages): Seq[Seq[JsValue]] =
     for {
       (key, index) <- keys.zipWithIndex
       error        <- mapKey(key)
-    } yield {
-      Seq(
-        Json.toJson(Cell(
-          msg"global.error.validation.section.taxpayerorreporter"
-          , classes = Seq("govuk-table__cell")
-          , attributes = Map("id" -> s"lineNumber_$index")
-        )),
-        Json.toJson(Cell(
-          Html(error)
-          , classes = Seq("govuk-table__cell")
-          , attributes = Map("id" -> s"errorMessage_$index")
-        ))
+    } yield Seq(
+      Json.toJson(
+        Cell(
+          msg"global.error.validation.section.taxpayerorreporter",
+          classes = Seq("govuk-table__cell"),
+          attributes = Map("id" -> s"lineNumber_$index")
+        )
+      ),
+      Json.toJson(
+        Cell(
+          Html(error),
+          classes = Seq("govuk-table__cell"),
+          attributes = Map("id" -> s"errorMessage_$index")
+        )
       )
-    }
-  }
+    )
 
   val keyMapper: String => Option[String] =
     Option(_).map {
@@ -82,8 +85,7 @@ class DisclosureValidationErrorsController @Inject()(
         """As this arrangement is not marketable, it must have at least one relevant taxpayer.
           |If you are a relevant taxpayer, confirm this in your reporter’s details.
           |If you are not, add at least one relevant taxpayer.""".stripMargin
-      case "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates"
-           | "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" =>
+      case "businessrules.initialDisclosureMA.missingRelevantTaxPayerDates" | "businessrules.initialDisclosureMA.firstDisclosureHasInitialDisclosureMAAsTrue" =>
         """As this arrangement is marketable, all relevant taxpayers disclosed must have implementing dates."""
       case key =>
         logger.error(s"Unmapped error key: $key.")
@@ -91,4 +93,3 @@ class DisclosureValidationErrorsController @Inject()(
     }
 
 }
-

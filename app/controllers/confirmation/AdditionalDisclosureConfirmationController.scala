@@ -32,38 +32,42 @@ import uk.gov.hmrc.viewmodels.Html
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AdditionalDisclosureConfirmationController @Inject()(
-    override val messagesApi: MessagesApi,
-    appConfig: FrontendAppConfig,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    contactRetrievalAction: ContactRetrievalAction,
-    val controllerComponents: MessagesControllerComponents,
-    sessionRepository: SessionRepository,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with UpdateDisclosureDetailsAsSent {
+class AdditionalDisclosureConfirmationController @Inject() (
+  override val messagesApi: MessagesApi,
+  appConfig: FrontendAppConfig,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  contactRetrievalAction: ContactRetrievalAction,
+  val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with UpdateDisclosureDetailsAsSent {
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-
       val generatedIDs: Option[GeneratedIDs] = request.userAnswers.get(GeneratedIDPage, id)
       val (disclosureID, messageRefID) = generatedIDs
-        .map { generatedIDs =>
-          (generatedIDs.disclosureID, generatedIDs.messageRefID) match {
-            case (Some(disclosureID), Some(messageRefId)) => (disclosureID, messageRefId)
-            case _ => throw new IllegalStateException("At least one of disclosureID or messageRefID cannot be found.")
-          }
-        }.getOrElse(throw new IllegalStateException("At least one of arrangementID, disclosureID or messageRefID cannot be found."))
+        .map {
+          generatedIDs =>
+            (generatedIDs.disclosureID, generatedIDs.messageRefID) match {
+              case (Some(disclosureID), Some(messageRefId)) => (disclosureID, messageRefId)
+              case _                                        => throw new IllegalStateException("At least one of disclosureID or messageRefID cannot be found.")
+            }
+        }
+        .getOrElse(throw new IllegalStateException("At least one of arrangementID, disclosureID or messageRefID cannot be found."))
 
       val emailMessage = request.contacts.flatMap(_.emailMessage).getOrElse(throw new RuntimeException("Contact email details are missing"))
 
       val json = Json.obj(
-        "panelTitle" -> confirmationPanelTitle,
-        "panelText" -> confirmationPanelText(disclosureID),
-        "emailMessage" -> emailMessage,
-        "messageRefID" -> messageRefID,
-        "homePageLink" -> linkToHomePageText(appConfig.discloseArrangeLink),
+        "panelTitle"         -> confirmationPanelTitle,
+        "panelText"          -> confirmationPanelText(disclosureID),
+        "emailMessage"       -> emailMessage,
+        "messageRefID"       -> messageRefID,
+        "homePageLink"       -> linkToHomePageText(appConfig.discloseArrangeLink),
         "betaFeedbackSurvey" -> surveyLinkText(appConfig.betaFeedbackUrl)
       )
 
@@ -75,7 +79,6 @@ class AdditionalDisclosureConfirmationController @Inject()(
   private def confirmationPanelTitle(implicit messages: Messages): String =
     messages("disclosureConfirmation.panel.add")
 
-  private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("disclosureConfirmation.panel.add") }}<br><strong>$id</strong>")
-  }
+  private def confirmationPanelText(id: String)(implicit messages: Messages): Html =
+    Html(s"${messages("disclosureConfirmation.panel.add")}<br><strong>$id</strong>")
 }

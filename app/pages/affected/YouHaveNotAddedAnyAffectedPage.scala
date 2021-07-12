@@ -30,6 +30,7 @@ case object YouHaveNotAddedAnyAffectedPage extends QuestionPage[YouHaveNotAddedA
   override def toString: String = "youHaveNotAddedAnyAffected"
 
   override def cleanup(value: Option[YouHaveNotAddedAnyAffected], userAnswers: UserAnswers, id: Int): Try[UserAnswers] =
-    userAnswers.remove(AffectedTypePage, id)
+    userAnswers
+      .remove(AffectedTypePage, id)
       .flatMap(_.remove(AffectedCheckYourAnswersPage, id))
 }

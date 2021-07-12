@@ -18,9 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TaxReferenceNumbers(firstTaxNumber: String,
-                               secondTaxNumber: Option[String],
-                               thirdTaxNumber: Option[String]) {
+case class TaxReferenceNumbers(firstTaxNumber: String, secondTaxNumber: Option[String], thirdTaxNumber: Option[String]) {
 
   val isSingleTaxReferenceNumber: Boolean = secondTaxNumber.isDefined || thirdTaxNumber.isDefined
 }

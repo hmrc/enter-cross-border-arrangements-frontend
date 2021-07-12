@@ -34,7 +34,6 @@ class IsExemptionKnownSpec extends AnyFreeSpec with Matchers with ScalaCheckProp
 
       forAll(gen) {
         isExemptionKnown =>
-
           JsString(isExemptionKnown.toString).validate[IsExemptionKnown].asOpt.value mustEqual isExemptionKnown
       }
     }
@@ -45,7 +44,6 @@ class IsExemptionKnownSpec extends AnyFreeSpec with Matchers with ScalaCheckProp
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[IsExemptionKnown] mustEqual JsError("error.invalid")
       }
     }
@@ -56,7 +54,6 @@ class IsExemptionKnownSpec extends AnyFreeSpec with Matchers with ScalaCheckProp
 
       forAll(gen) {
         isExemptionKnown =>
-
           Json.toJson(isExemptionKnown) mustEqual JsString(isExemptionKnown.toString)
       }
     }

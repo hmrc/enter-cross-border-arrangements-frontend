@@ -30,7 +30,7 @@ case class ArrangementDetails(arrangementName: String,
                               expectedValue: ExpectedArrangementValue,
                               nationalProvisionDetails: String,
                               arrangementDetails: String
-                             ) {
+) {
 
   def validate: Either[SubmissionError, ArrangementDetails] =
     for {
@@ -42,61 +42,55 @@ case class ArrangementDetails(arrangementName: String,
 object ArrangementDetails {
   implicit val format: OFormat[ArrangementDetails] = Json.format[ArrangementDetails]
 
-  private def getArrangementName(ua: UserAnswers, id: Int): String = {
+  private def getArrangementName(ua: UserAnswers, id: Int): String =
     ua.get(WhatIsThisArrangementCalledPage, id) match {
       case Some(arrangementName) => arrangementName
-      case _ => throw new Exception("Arrangement details must contain a name for Disclosure Information")
+      case _                     => throw new Exception("Arrangement details must contain a name for Disclosure Information")
     }
-  }
 
-  private def getImplementationDate(ua: UserAnswers, id: Int): LocalDate = {
+  private def getImplementationDate(ua: UserAnswers, id: Int): LocalDate =
     ua.get(WhatIsTheImplementationDatePage, id) match {
       case Some(date) => date
-      case _ => throw new Exception("Arrangement details must contain an expected implementation date for Disclosure Information")
+      case _          => throw new Exception("Arrangement details must contain an expected implementation date for Disclosure Information")
     }
-  }
 
-  private def getReportingReason(ua: UserAnswers, id: Int): Option[String] = {
-    ua.get(WhyAreYouReportingThisArrangementNowPage, id).fold(
-      throw new Exception("Arrangement details must contain a reporting reason when 'yes' " +
-        "to 'do you know reporting reason' is selected"))(
-      reason => Some(reason.toString.toUpperCase)
-    )
-  }
+  private def getReportingReason(ua: UserAnswers, id: Int): Option[String] =
+    ua.get(WhyAreYouReportingThisArrangementNowPage, id)
+      .fold(
+        throw new Exception(
+          "Arrangement details must contain a reporting reason when 'yes' " +
+            "to 'do you know reporting reason' is selected"
+        )
+      )(
+        reason => Some(reason.toString.toUpperCase)
+      )
 
-  private def getCountriesInvolved(ua: UserAnswers, id: Int): List[CountryList] = {
+  private def getCountriesInvolved(ua: UserAnswers, id: Int): List[CountryList] =
     ua.get(WhichExpectedInvolvedCountriesArrangementPage, id) match {
       case Some(countries) => countries.toList.sorted
-      case _ => throw new Exception("Arrangement details must contain expected involved countries details for Disclosure Information")
+      case _               => throw new Exception("Arrangement details must contain expected involved countries details for Disclosure Information")
     }
-  }
 
-  private def getNationalProvisionDetails(ua: UserAnswers, id: Int): String = {
+  private def getNationalProvisionDetails(ua: UserAnswers, id: Int): String =
     ua.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) match {
       case Some(details) => details
-      case _ => throw new Exception("Arrangement details must contain national provision details for Disclosure Information")
+      case _             => throw new Exception("Arrangement details must contain national provision details for Disclosure Information")
     }
-  }
 
-  private def getArrangementDetails(ua: UserAnswers, id: Int): String = {
+  private def getArrangementDetails(ua: UserAnswers, id: Int): String =
     ua.get(GiveDetailsOfThisArrangementPage, id) match {
       case Some(details) => details
-      case _ => throw new Exception("Arrangement details must contain details of arrangement for Disclosure Information")
+      case _             => throw new Exception("Arrangement details must contain details of arrangement for Disclosure Information")
     }
-  }
 
-  def buildArrangementDetails(ua: UserAnswers, id: Int): ArrangementDetails = {
+  def buildArrangementDetails(ua: UserAnswers, id: Int): ArrangementDetails =
     new ArrangementDetails(
       arrangementName = getArrangementName(ua, id),
       implementationDate = getImplementationDate(ua, id),
       reportingReason = getReportingReason(ua, id),
       countriesInvolved = getCountriesInvolved(ua, id),
-      expectedValue = ExpectedArrangementValue.buildExpectedArrangementValue(ua,id),
+      expectedValue = ExpectedArrangementValue.buildExpectedArrangementValue(ua, id),
       nationalProvisionDetails = getNationalProvisionDetails(ua, id),
       arrangementDetails = getArrangementDetails(ua, id)
     )
-  }
 }
-
-
-

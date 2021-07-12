@@ -21,9 +21,7 @@ import models.{HallmarkDMissingError, SubmissionError, UserAnswers}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
 import play.api.libs.json.{Json, OFormat}
 
-case class HallmarkDetails(hallmarkType: List[String],
-                           hallmarkContent: Option[String] = None
-                          ) {
+case class HallmarkDetails(hallmarkType: List[String], hallmarkContent: Option[String] = None) {
 
   def validate: Either[SubmissionError, HallmarkDetails] =
     Either.cond(hallmarkType.exists(_.startsWith("DAC6D")), this, HallmarkDMissingError)
@@ -34,28 +32,29 @@ object HallmarkDetails {
 
   def buildHallmarkDetails(ua: UserAnswers, id: Int): HallmarkDetails = {
 
-    lazy val mandatoryD1content = ua.get(HallmarkD1OtherPage, id)
-      .fold(throw new Exception("DAC6D1other information must be provided if DAC6D1other is selected"))(info => Some(info))
+    lazy val mandatoryD1content = ua
+      .get(HallmarkD1OtherPage, id)
+      .fold(throw new Exception("DAC6D1other information must be provided if DAC6D1other is selected"))(
+        info => Some(info)
+      )
 
     (ua.get(HallmarkDPage, id), ua.get(HallmarkD1Page, id)) match {
 
       // user selects D1 & D2
       case (Some(hallmarks), Some(hallmarkDParts)) if hallmarks.size > 1 =>
-
-          if (hallmarkDParts.contains(HallmarkD1.D1other)) {
-            new HallmarkDetails(
-              hallmarkType = hallmarkDParts.toList.map(_.toString).sorted ::: List(HallmarkD.D2.toString),
-              hallmarkContent = mandatoryD1content
-            )
-          } else {
-            new HallmarkDetails(
-              hallmarkType = hallmarkDParts.toList.map(_.toString).sorted ::: List(HallmarkD.D2.toString)
-            )
-          }
+        if (hallmarkDParts.contains(HallmarkD1.D1other)) {
+          new HallmarkDetails(
+            hallmarkType = hallmarkDParts.toList.map(_.toString).sorted ::: List(HallmarkD.D2.toString),
+            hallmarkContent = mandatoryD1content
+          )
+        } else {
+          new HallmarkDetails(
+            hallmarkType = hallmarkDParts.toList.map(_.toString).sorted ::: List(HallmarkD.D2.toString)
+          )
+        }
 
       // user selects D1 only
       case (Some(hallmarks), Some(hallmarkDParts)) if hallmarks.size == 1 && hallmarks.contains(D1) =>
-
         if (hallmarkDParts.contains(HallmarkD1.D1other)) {
           new HallmarkDetails(
             hallmarkType = hallmarkDParts.toList.map(_.toString).sorted,
@@ -77,4 +76,3 @@ object HallmarkDetails {
     }
   }
 }
-

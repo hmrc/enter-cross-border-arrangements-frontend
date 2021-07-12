@@ -29,7 +29,10 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
   private val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   class Harness(action: IdentifierAction) {
-    def onPageLoad() = action { request => Results.Ok }
+
+    def onPageLoad() = action {
+      request => Results.Ok
+    }
   }
 
   "Session Action" - {

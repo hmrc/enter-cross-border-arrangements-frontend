@@ -34,12 +34,12 @@ class IsIndividualAddressKnownPageSpec extends PageBehaviours {
 
     "- when address exists " in {
 
-      IsIndividualAddressKnownPage.getFromModel(validIndividual) mustBe(Some(true))
+      IsIndividualAddressKnownPage.getFromModel(validIndividual) mustBe (Some(true))
     }
 
     "- when address is empty " in {
 
-      IsIndividualAddressKnownPage.getFromModel(validIndividual.copy(address = None)) mustBe(Some(false))
+      IsIndividualAddressKnownPage.getFromModel(validIndividual.copy(address = None)) mustBe (Some(false))
     }
   }
 }

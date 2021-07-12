@@ -35,10 +35,10 @@ import scala.concurrent.Future
 
 class AssociatedEnterpriseTypeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  private val formProvider = new AssociatedEnterpriseTypeFormProvider()
+  private val formProvider           = new AssociatedEnterpriseTypeFormProvider()
   private val form: Form[SelectType] = formProvider()
 
-  lazy private val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(0, NormalMode).url
+  private lazy val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(0, NormalMode).url
 
   "AssociatedEnterpriseType Controller" - {
 
@@ -48,9 +48,9 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request        = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,13 +74,17 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, associatedEnterpriseTypeRoute)
+      val request        = FakeRequest(GET, associatedEnterpriseTypeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -123,10 +127,10 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
-      val boundForm = form.bind(Map("selectType" -> ""))
+      val request        = FakeRequest(POST, associatedEnterpriseTypeRoute).withFormUrlEncodedBody(("selectType", ""))
+      val boundForm      = form.bind(Map("selectType" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -147,7 +151,9 @@ class AssociatedEnterpriseTypeControllerSpec extends SpecBase with ControllerMoc
     "must redirect to the Check your answers page if user doesn't change their answer in CheckMode" in {
       val associatedEnterpriseTypeRoute: String = routes.AssociatedEnterpriseTypeController.onPageLoad(0, CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.values.head)
         .success
         .value

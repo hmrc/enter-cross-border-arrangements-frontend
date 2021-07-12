@@ -29,16 +29,9 @@ class ReporterNonUKTaxNumbersFormProvider @Inject() extends Mappings {
   def apply(reporterType: String): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-        "firstTaxNumber" -> validatedTextMaxLength(
-          s"${reporterType}NonUKTaxNumbers.error.required",
-          "reporterNonUKTaxNumbers.error.length.label1",
-          maxLength),
-        "secondTaxNumber" -> validatedOptionalTextMaxLength(
-          "reporterNonUKTaxNumbers.error.length.label2",
-          maxLength),
-        "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-          "reporterNonUKTaxNumbers.error.length.label3",
-          maxLength)
+        "firstTaxNumber"  -> validatedTextMaxLength(s"${reporterType}NonUKTaxNumbers.error.required", "reporterNonUKTaxNumbers.error.length.label1", maxLength),
+        "secondTaxNumber" -> validatedOptionalTextMaxLength("reporterNonUKTaxNumbers.error.length.label2", maxLength),
+        "thirdTaxNumber"  -> validatedOptionalTextMaxLength("reporterNonUKTaxNumbers.error.length.label3", maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }

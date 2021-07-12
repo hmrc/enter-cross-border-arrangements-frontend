@@ -35,7 +35,7 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IntermediariesTypeController @Inject()(
+class IntermediariesTypeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: NavigatorForIntermediaries,
@@ -45,21 +45,24 @@ class IntermediariesTypeController @Inject()(
   formProvider: IntermediariesTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport  with RoutingSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(IntermediariesTypePage, id) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       val json = Json.obj(
         "form"   -> preparedForm,
-        "id" -> id,
+        "id"     -> id,
         "mode"   -> mode,
         "radios" -> SelectType.radios(preparedForm)
       )
@@ -72,27 +75,28 @@ class IntermediariesTypeController @Inject()(
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
+            val json = Json.obj(
+              "form"   -> formWithErrors,
+              "id"     -> id,
+              "mode"   -> mode,
+              "radios" -> SelectType.radios(formWithErrors)
+            )
 
-          val json = Json.obj(
-            "form"   -> formWithErrors,
-            "id" -> id,
-            "mode"   -> mode,
-            "radios" -> SelectType.radios(formWithErrors)
-          )
-
-          renderer.render("intermediaries/intermediariesType.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, IntermediariesTypePage, value)
-            updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(IntermediariesStatusPage, id, JourneyStatus.InProgress))
-            _              <- sessionRepository.set(updatedAnswersWithStatus)
-            redirectMode   =  if (request.userAnswers.hasNewValue(IntermediariesTypePage, id, value)) NormalMode else mode
-            checkRoute     =  toCheckRoute(redirectMode, updatedAnswers, id)
-          } yield Redirect(redirect(id, checkRoute, Some(value)))
-      )
+            renderer.render("intermediaries/intermediariesType.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers           <- UserAnswersHelper.updateUserAnswers(request.userAnswers, id, IntermediariesTypePage, value)
+              updatedAnswersWithStatus <- Future.fromTry(updatedAnswers.set(IntermediariesStatusPage, id, JourneyStatus.InProgress))
+              _                        <- sessionRepository.set(updatedAnswersWithStatus)
+              redirectMode = if (request.userAnswers.hasNewValue(IntermediariesTypePage, id, value)) NormalMode else mode
+              checkRoute   = toCheckRoute(redirectMode, updatedAnswers, id)
+            } yield Redirect(redirect(id, checkRoute, Some(value)))
+        )
   }
 }

@@ -30,27 +30,34 @@ import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, Wha
 import play.api.mvc.{AnyContent, Call, Request}
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
-    case HallmarkDPage => hallmarkDRoutes(NormalMode)
-    case HallmarkD1Page => hallmarkD1Routes(NormalMode)
+    case HallmarkDPage       => hallmarkDRoutes(NormalMode)
+    case HallmarkD1Page      => hallmarkD1Routes(NormalMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(NormalMode)
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
 
-    case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, NormalMode))
-    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, NormalMode))
-    case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, NormalMode))
-    case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, NormalMode))
-    case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, NormalMode))
-    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => id => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, NormalMode))
+    case WhatIsThisArrangementCalledPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheImplementationDateController.onPageLoad(id, NormalMode))
+    case WhatIsTheImplementationDatePage =>
+      _ => id => _ => Some(controllers.arrangement.routes.WhyAreYouReportingThisArrangementNowController.onPageLoad(id, NormalMode))
+    case WhyAreYouReportingThisArrangementNowPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.WhichExpectedInvolvedCountriesArrangementController.onPageLoad(id, NormalMode))
+    case WhichExpectedInvolvedCountriesArrangementPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.WhatIsTheExpectedValueOfThisArrangementController.onPageLoad(id, NormalMode))
+    case WhatIsTheExpectedValueOfThisArrangementPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, NormalMode))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.GiveDetailsOfThisArrangementController.onPageLoad(id, NormalMode))
     case GiveDetailsOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case PostcodePage => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, NormalMode))
+    case PostcodePage                     => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, NormalMode))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(NormalMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage =>
+      _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
     case HallmarksCheckYourAnswersPage => _ => id => _ => Some(controllers.routes.DisclosureDetailsController.onPageLoad(id))
@@ -60,21 +67,25 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: Page => UserAnswers => Int => Request[AnyContent] => Option[Call] = {
 
-    case HallmarkDPage => hallmarkDRoutes(CheckMode)
-    case HallmarkD1Page => hallmarkD1Routes(CheckMode)
+    case HallmarkDPage       => hallmarkDRoutes(CheckMode)
+    case HallmarkD1Page      => hallmarkD1Routes(CheckMode)
     case HallmarkD1OtherPage => hallmarkD1OtherRoutes(CheckMode)
-    case PostcodePage => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, CheckMode))
+    case PostcodePage        => _ => id => _ => Some(controllers.organisation.routes.OrganisationSelectAddressController.onPageLoad(id, CheckMode))
 
-    case WhatIsThisArrangementCalledPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case WhatIsTheImplementationDatePage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhatIsThisArrangementCalledPage          => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTheImplementationDatePage          => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case WhyAreYouReportingThisArrangementNowPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case WhichExpectedInvolvedCountriesArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case WhatIsTheExpectedValueOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
-    case WhichNationalProvisionsIsThisArrangementBasedOnPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhichExpectedInvolvedCountriesArrangementPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhatIsTheExpectedValueOfThisArrangementPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
+    case WhichNationalProvisionsIsThisArrangementBasedOnPage =>
+      _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
     case GiveDetailsOfThisArrangementPage => _ => id => _ => Some(controllers.arrangement.routes.ArrangementCheckYourAnswersController.onPageLoad(id))
 
     case TaxpayerSelectTypePage => selectTypeRoutes(CheckMode)
-    case WhatIsTaxpayersStartDateForImplementingArrangementPage => _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
+    case WhatIsTaxpayersStartDateForImplementingArrangementPage =>
+      _ => id => _ => Some(controllers.taxpayer.routes.TaxpayersCheckYourAnswersController.onPageLoad(id, None))
 
     case TaxpayerCheckYourAnswersPage => _ => id => _ => Some(controllers.taxpayer.routes.UpdateTaxpayerController.onPageLoad(id))
 
@@ -82,15 +93,15 @@ class Navigator @Inject()() {
   }
 
   private def hallmarkDRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkDPage, id) match  {
+    ua.get(HallmarkDPage, id) match {
       case Some(set) if set.contains(D1) => Some(controllers.hallmarks.routes.HallmarkD1Controller.onPageLoad(id, mode))
-      case  _ =>  Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
+      case _                             => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
     }
 
   private def hallmarkD1Routes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
-    ua.get(HallmarkD1Page, id) match  {
+    ua.get(HallmarkD1Page, id) match {
       case Some(set) if set.contains(D1other) => Some(controllers.hallmarks.routes.HallmarkD1OtherController.onPageLoad(id, mode))
-      case  _ => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
+      case _                                  => Some(controllers.hallmarks.routes.CheckYourAnswersHallmarksController.onPageLoad(id))
     }
 
   private def hallmarkD1OtherRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
@@ -99,19 +110,19 @@ class Navigator @Inject()() {
   private def selectTypeRoutes(mode: Mode)(ua: UserAnswers)(id: Int)(request: Request[AnyContent]): Option[Call] =
     ua.get(TaxpayerSelectTypePage, id) map {
       case Organisation => controllers.organisation.routes.OrganisationNameController.onPageLoad(id, mode)
-      case Individual => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
+      case Individual   => controllers.individual.routes.IndividualNameController.onPageLoad(id, mode)
     }
 
   def nextPage(page: Page, id: Int, mode: Mode, userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)(id)(request) match {
         case Some(call) => call
-        case None => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad()
       }
     case CheckMode =>
       checkRouteMap(page)(userAnswers)(id)(request) match {
         case Some(call) => call
-        case None => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad()
 
       }
   }

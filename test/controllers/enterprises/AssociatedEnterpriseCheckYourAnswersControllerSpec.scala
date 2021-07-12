@@ -23,7 +23,12 @@ import models.taxpayer.Taxpayer
 import models.{Country, LoopDetails, Name, SelectType, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.enterprises.{AssociatedEnterpriseTypePage, IsAssociatedEnterpriseAffectedPage, SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, YouHaveNotAddedAnyAssociatedEnterprisesPage}
+import pages.enterprises.{
+  AssociatedEnterpriseTypePage,
+  IsAssociatedEnterpriseAffectedPage,
+  SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage,
+  YouHaveNotAddedAnyAssociatedEnterprisesPage
+}
 import pages.individual._
 import pages.organisation._
 import pages.taxpayer.TaxpayerLoopPage
@@ -55,13 +60,13 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(nrOfInvocations)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-    val json: JsObject = jsonCaptor.getValue
-    val summaryRows = (json \ "summaryRows").toString
-    val countrySummary = (json \ "countrySummary").toString
+    val json: JsObject       = jsonCaptor.getValue
+    val summaryRows          = (json \ "summaryRows").toString
+    val countrySummary       = (json \ "countrySummary").toString
     val isEnterpriseAffected = (json \ "isEnterpriseAffected").toString
 
     templateCaptor.getValue mustEqual "enterprises/associatedEnterpriseCheckYourAnswers.njk"
@@ -76,96 +81,128 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
 
     "must return rows for an associated enterprise who is an organisation" in {
 
-      val validTaxpayer = IndexedSeq(
-        Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
+      val validTaxpayer = IndexedSeq(Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("generatedID-1234567"))
-        .success.value
+        .success
+        .value
         .set(TaxpayerLoopPage, 0, validTaxpayer)
-        .success.value
+        .success
+        .value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
-        .success.value
+        .success
+        .value
         .set(OrganisationNamePage, 0, "Name")
-        .success.value
+        .success
+        .value
         .set(IsOrganisationAddressKnownPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(EmailAddressQuestionForOrganisationPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(EmailAddressForOrganisationPage, 0, "email@email.com")
-        .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, 0, true).success.value
+        .success
+        .value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, true)
+        .success
+        .value
 
-      verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
-        rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
-        rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
-        rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
-        rows.contains("""{"key":{"text":"Are they affected by the arrangement?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+      verifyList(userAnswers) {
+        rows =>
+          rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
+          rows.contains("""{"key":{"text":"Organisation or individual","classes":"govuk-!-width-one-half"},"value":{"text":"Organisation"}""") mustBe true
+          rows.contains("""{"key":{"text":"What is the name of the organisation?","classes":"govuk-!-width-one-half"},"value":{"text":"Name"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+          rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
+          rows.contains("""{"key":{"text":"Are they affected by the arrangement?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
       }
     }
 
     "must return rows for an associated enterprise who is an individual" in {
       val dob = LocalDate.of(2020, 1, 1)
 
-      val validTaxpayer = IndexedSeq(
-        Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
+      val validTaxpayer = IndexedSeq(Taxpayer("generatedID-1234567", None, Some(validOrganisation), Some(todayMinusOneMonth)))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("generatedID-1234567"))
-        .success.value
+        .success
+        .value
         .set(TaxpayerLoopPage, 0, validTaxpayer)
-        .success.value
+        .success
+        .value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
-        .success.value
+        .success
+        .value
         .set(IndividualNamePage, 0, Name("First", "Last"))
-        .success.value
+        .success
+        .value
         .set(IsIndividualDateOfBirthKnownPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(IndividualDateOfBirthPage, 0, dob)
-        .success.value
+        .success
+        .value
         .set(IsIndividualPlaceOfBirthKnownPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(EmailAddressQuestionForIndividualPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(EmailAddressForIndividualPage, 0, "email@email.com")
-        .success.value
-        .set(IsAssociatedEnterpriseAffectedPage, 0, false).success.value
+        .success
+        .value
+        .set(IsAssociatedEnterpriseAffectedPage, 0, false)
+        .success
+        .value
 
-      verifyList(userAnswers) { rows =>
-        rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
-        rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
-        rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their place of birth?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
-        rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
-        rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
-        rows.contains("""{"key":{"text":"Are they affected by the arrangement?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+      verifyList(userAnswers) {
+        rows =>
+          rows.contains("""{"key":{"text":"Taxpayers associated with","classes":"govuk-!-width-one-half"},"value":{"html":"Taxpayers Ltd"}""") mustBe true
+          rows.contains("""{"key":{"text":"Name","classes":"govuk-!-width-one-half"},"value":{"text":"First Last"}""") mustBe true
+          rows.contains("""{"key":{"text":"Date of birth","classes":"govuk-!-width-one-half"},"value":{"text":"1 January 2020"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their place of birth?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you know their address?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
+          rows.contains("""{"key":{"text":"Do you want to provide an email address?","classes":"govuk-!-width-one-half"},"value":{"text":"Yes"}""") mustBe true
+          rows.contains("""{"key":{"text":"Email address","classes":"govuk-!-width-one-half"},"value":{"text":"email@email.com"}""") mustBe true
+          rows.contains("""{"key":{"text":"Are they affected by the arrangement?","classes":"govuk-!-width-one-half"},"value":{"text":"No"}""") mustBe true
       }
     }
 
     "must redirect to the associated enterprise update page when valid data is submitted for an organisation" in {
       val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit(0).url
-      val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
+      val loopDetails                   = IndexedSeq(LoopDetails(None, Some(Country("", "GB", "United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
-        .success.value
+        .success
+        .value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Organisation)
-        .success.value
+        .success
+        .value
         .set(OrganisationNamePage, 0, "Organisation name")
-        .success.value
+        .success
+        .value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer"))
-        .success.value
+        .success
+        .value
         .set(IsAssociatedEnterpriseAffectedPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(OrganisationLoopPage, 0, loopDetails)
-        .success.value
+        .success
+        .value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -181,22 +218,30 @@ class AssociatedEnterpriseCheckYourAnswersControllerSpec extends SpecBase with C
 
     "must redirect to the associated enterprise update page when valid data is submitted for an individual" in {
       val checkYourAnswersRoute: String = controllers.enterprises.routes.AssociatedEnterpriseCheckYourAnswersController.onSubmit(0).url
-      val loopDetails = IndexedSeq(LoopDetails(None, Some(Country("","GB","United Kingdom")), None, None, None, None))
+      val loopDetails                   = IndexedSeq(LoopDetails(None, Some(Country("", "GB", "United Kingdom")), None, None, None, None))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(YouHaveNotAddedAnyAssociatedEnterprisesPage, 0, YouHaveNotAddedAnyAssociatedEnterprises.YesAddNow)
-        .success.value
+        .success
+        .value
         .set(AssociatedEnterpriseTypePage, 0, SelectType.Individual)
-        .success.value
+        .success
+        .value
         .set(IndividualNamePage, 0, Name("Name", "Name"))
-        .success.value
+        .success
+        .value
         .set(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, 0, List("Associated taxpayer"))
-        .success.value
+        .success
+        .value
         .set(IsAssociatedEnterpriseAffectedPage, 0, false)
-        .success.value
+        .success
+        .value
         .set(IndividualLoopPage, 0, loopDetails)
-        .success.value
+        .success
+        .value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

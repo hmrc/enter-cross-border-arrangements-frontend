@@ -28,11 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AddressLookupConnectorSpec extends SpecBase
-  with MockServiceApp
-  with WireMockServerHandler
-  with Generators
-  with ScalaCheckPropertyChecks {
+class AddressLookupConnectorSpec extends SpecBase with MockServiceApp with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -41,8 +37,8 @@ class AddressLookupConnectorSpec extends SpecBase
     )
 
   lazy val connector: AddressLookupConnector = app.injector.instanceOf[AddressLookupConnector]
-  val addressLookupUrl = "/v2/uk/addresses?postcode=ZZ1+1ZZ"
-  val postcode: String = "ZZ1 1ZZ"
+  val addressLookupUrl                       = "/v2/uk/addresses?postcode=ZZ1+1ZZ"
+  val postcode: String                       = "ZZ1 1ZZ"
 
   def addressJson: String =
     s"""[{

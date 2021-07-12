@@ -35,40 +35,47 @@ import handlers.ErrorHandler
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DisclosureTypeController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: NavigatorForDisclosure,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: DisclosureTypeFormProvider,
-    connector: HistoryConnector,
-    errorHandler: ErrorHandler,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport with RoutingSupport {
+class DisclosureTypeController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: NavigatorForDisclosure,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: DisclosureTypeFormProvider,
+  connector: HistoryConnector,
+  errorHandler: ErrorHandler,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport
+    with RoutingSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.getBase(DisclosureTypePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
-    { for {
-      hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
-      radios = if (hasHistory) DisclosureType.radiosComplete(preparedForm) else DisclosureType.radios(preparedForm)
-       json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios"  -> radios
-      )
-      renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
-    } yield Ok(renderedForm)}.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
+      {
+        for {
+          hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+          radios = if (hasHistory) DisclosureType.radiosComplete(preparedForm) else DisclosureType.radios(preparedForm)
+          json = Json.obj(
+            "form"   -> preparedForm,
+            "mode"   -> mode,
+            "radios" -> radios
+          )
+          renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+        } yield Ok(renderedForm)
+      }.recoverWith {
+        case ex: Exception => errorHandler.onServerError(request, ex)
+      }
   }
 
   def redirect(checkRoute: CheckRoute, value: Option[DisclosureType]): Call =
@@ -76,29 +83,31 @@ class DisclosureTypeController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            {
+              for {
+                hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
+                radios = if (hasHistory) DisclosureType.radiosComplete(formWithErrors) else DisclosureType.radios(formWithErrors)
+                json = Json.obj(
+                  "form"   -> formWithErrors,
+                  "mode"   -> mode,
+                  "radios" -> radios
+                )
+                renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
+              } yield BadRequest(renderedForm)
 
-      form.bindFromRequest().fold(
-        formWithErrors => {
-
-        {for {
-            hasHistory <- connector.getSubmissionDetails(request.enrolmentID)
-            radios = if (hasHistory) DisclosureType.radiosComplete(formWithErrors) else DisclosureType.radios(formWithErrors)
-            json = Json.obj(
-              "form"   -> formWithErrors,
-              "mode"   -> mode,
-              "radios"  -> radios
-            )
-            renderedForm <- renderer.render("disclosure/disclosureType.njk", json)
-          } yield BadRequest(renderedForm)
-
-        }.recoverWith { case  ex: Exception => errorHandler.onServerError(request, ex)}
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureTypePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-            checkRoute     =  toCheckRoute(mode, updatedAnswers)
-          } yield Redirect(redirect(checkRoute, Some(value)))
-      )
+            }.recoverWith {
+              case ex: Exception => errorHandler.onServerError(request, ex)
+            },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.setBase(DisclosureTypePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+              checkRoute = toCheckRoute(mode, updatedAnswers)
+            } yield Redirect(redirect(checkRoute, Some(value)))
+        )
   }
 }

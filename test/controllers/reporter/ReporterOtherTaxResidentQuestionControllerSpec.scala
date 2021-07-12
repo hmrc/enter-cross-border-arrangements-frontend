@@ -37,9 +37,9 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
 
   override def onwardRoute = Call("GET", "/disclose-cross-border-arrangements/manual/reporter/resident-tax-country-0/0")
 
-  val formProvider = new ReporterOtherTaxResidentQuestionFormProvider()
-  val form = formProvider()
-  val index: Int = 0
+  val formProvider             = new ReporterOtherTaxResidentQuestionFormProvider()
+  val form                     = formProvider()
+  val index: Int               = 0
   val selectedCountry: Country = Country("valid", "FR", "France")
 
   lazy val reporterOtherTaxResidentQuestionRoute = routes.ReporterOtherTaxResidentQuestionController.onPageLoad(0, NormalMode, index).url
@@ -52,14 +52,17 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(None, Some(selectedCountry), None, None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
+      val request        = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -71,7 +74,7 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
         "form"   -> form,
         "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(form("value")),
-        "index" -> index
+        "index"  -> index
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterOtherTaxResidentQuestion.njk"
@@ -84,17 +87,21 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .set(ReporterOtherTaxResidentQuestionPage, 0, true)
-        .success.value
+        .success
+        .value
         .set(ReporterTaxResidencyLoopPage, 0, IndexedSeq(LoopDetails(Some(true), Some(selectedCountry), None, None, None, None)))
-        .success.value
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
+      val request        = FakeRequest(GET, reporterOtherTaxResidentQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -108,7 +115,7 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
         "form"   -> filledForm,
         "mode"   -> NormalMode,
         "radios" -> Radios.yesNo(filledForm("value")),
-        "index" -> index
+        "index"  -> index
       )
 
       templateCaptor.getValue mustEqual "reporter/reporterOtherTaxResidentQuestion.njk"
@@ -136,10 +143,10 @@ class ReporterOtherTaxResidentQuestionControllerSpec extends SpecBase with Contr
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterOtherTaxResidentQuestionRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterOtherTaxResidentQuestionRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -35,11 +35,10 @@ import scala.concurrent.Future
 class ReporterIndividualAddressControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
-  val formProvider = new ReporterIndividualAddressFormProvider()
-  val form = formProvider(countriesSeq)
+  val formProvider               = new ReporterIndividualAddressFormProvider()
+  val form                       = formProvider(countriesSeq)
 
-  val validAnswer: Address = Address(Some("value 1"),Some("value 2"),Some("value 3"),"value 4",Some("XX9 9XX"),
-    Country("valid","FR","France"))
+  val validAnswer: Address = Address(Some("value 1"), Some("value 2"), Some("value 3"), "value 4", Some("XX9 9XX"), Country("valid", "FR", "France"))
 
   val validData =
     Map(
@@ -61,9 +60,9 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, reporterIndividualAddressRoute)
+      val request        = FakeRequest(GET, reporterIndividualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -86,12 +85,16 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with ControllerMo
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterIndividualAddressPage, 0, validAnswer).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterIndividualAddressPage, 0, validAnswer)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, reporterIndividualAddressRoute)
+      val request        = FakeRequest(GET, reporterIndividualAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -116,7 +119,7 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with ControllerMo
 
       val request =
         FakeRequest(POST, reporterIndividualAddressRoute)
-          .withFormUrlEncodedBody(validData.toList:_*)
+          .withFormUrlEncodedBody(validData.toList: _*)
 
       val result = route(app, request).value
 
@@ -129,10 +132,10 @@ class ReporterIndividualAddressControllerSpec extends SpecBase with ControllerMo
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterIndividualAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterIndividualAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

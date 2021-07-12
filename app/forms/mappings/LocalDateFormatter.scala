@@ -24,12 +24,13 @@ import play.api.data.format.Formatter
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-                                            invalidKey: String,
-                                            allRequiredKey: String,
-                                            twoRequiredKey: String,
-                                            requiredKey: String,
-                                            args: Seq[String] = Seq.empty
-                                          ) extends Formatter[LocalDate] with Formatters {
+  invalidKey: String,
+  allRequiredKey: String,
+  twoRequiredKey: String,
+  requiredKey: String,
+  args: Seq[String] = Seq.empty
+) extends Formatter[LocalDate]
+    with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
@@ -58,7 +59,7 @@ private[mappings] class LocalDateFormatter(
     } yield date
   }
 
-  val returnKey: (String, String) => String = (key: String, fieldName: String) =>  s"${key}.$fieldName"
+  val returnKey: (String, String) => String = (key: String, fieldName: String) => s"$key.$fieldName"
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
@@ -86,12 +87,10 @@ private[mappings] class LocalDateFormatter(
     }
   }
 
-
-
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"$key.day" -> value.getDayOfMonth.toString,
+      s"$key.day"   -> value.getDayOfMonth.toString,
       s"$key.month" -> value.getMonthValue.toString,
-      s"$key.year" -> value.getYear.toString
+      s"$key.year"  -> value.getYear.toString
     )
 }

@@ -37,10 +37,10 @@ class NavigatorForAffectedSpec extends SpecBase with ScalaCheckPropertyChecks wi
   "NavigatorForAffected" - {
 
     s"must go from $A1 $A2 when answer is yes" in {
-          navigator
-            .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAffected.YesAddNow))(0)
-            .mustBe(controllers.affected.routes.AffectedTypeController.onPageLoad(0, NormalMode))
-      }
+      navigator
+        .routeMap(YouHaveNotAddedAnyAffectedPage)(AffectedRouting(NormalMode))(0)(Some(YouHaveNotAddedAnyAffected.YesAddNow))(0)
+        .mustBe(controllers.affected.routes.AffectedTypeController.onPageLoad(0, NormalMode))
+    }
 
     s"must go from $A1 $TL when answer is 'No'" in {
       navigator

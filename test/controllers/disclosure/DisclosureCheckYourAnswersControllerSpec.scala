@@ -38,14 +38,15 @@ import scala.concurrent.Future
 
 class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val disclosureCheckYourAnswersLoadRoute: String     = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
+  lazy val disclosureCheckYourAnswersLoadRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url
 
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
 
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
-    super.guiceApplicationBuilder()
+    super
+      .guiceApplicationBuilder()
       .overrides(bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector))
 
   override def beforeEach: Unit = {
@@ -68,13 +69,13 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
     status(result) mustEqual OK
 
     val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-    val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+    val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
     verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
     val json: JsObject = jsonCaptor.getValue
     import RowJsonReads._
-    val list = (json \ "disclosureSummary" ).get.as[Seq[Row]]
+    val list = (json \ "disclosureSummary").get.as[Seq[Row]]
 
     templateCaptor.getValue mustEqual "disclosure/check-your-answers-disclosure.njk"
     assertFunction(list)
@@ -133,63 +134,73 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
     "must return correct rows for a new arrangement" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .setBase(DisclosureNamePage,"My arrangement")
-        .success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureNamePage, "My arrangement")
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6new)
         .success
         .value
         .setBase(DisclosureMarketablePage, false)
         .success
         .value
-      verifyList(userAnswers) { list =>
-        assertDisclosureName("My arrangement")(list.head)
-        assertTypeDac6new()(list(1))
-        assertMarketableArrangement(yesOrNo = false)(list(2))
-        list.size mustBe 3
+      verifyList(userAnswers) {
+        list =>
+          assertDisclosureName("My arrangement")(list.head)
+          assertTypeDac6new()(list(1))
+          assertMarketableArrangement(yesOrNo = false)(list(2))
+          list.size mustBe 3
       }
     }
 
     "must return correct rows for an additional arrangement" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value
         .setBase(DisclosureIdentifyArrangementPage, "GBA20210101ABC123")
         .success
         .value
-      verifyList(userAnswers) { list =>
-        assertDisclosureName("My arrangement")(list.head)
-        assertTypeDac6add()(list(1))
-        assertArrangementID("GBA20210101ABC123",
-          "/disclose-cross-border-arrangements/manual/disclosure/change-identify-arrangement")(list(2))
-        list.size mustBe 3
+      verifyList(userAnswers) {
+        list =>
+          assertDisclosureName("My arrangement")(list.head)
+          assertTypeDac6add()(list(1))
+          assertArrangementID("GBA20210101ABC123", "/disclose-cross-border-arrangements/manual/disclosure/change-identify-arrangement")(list(2))
+          list.size mustBe 3
       }
     }
 
     "must return correct rows for a replacement arrangement" in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6rep)
         .success
         .value
         .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
         .success
         .value
-      verifyList(userAnswers) { list =>
-        assertDisclosureName("My arrangement")(list.head)
-        assertTypeDac6rep()(list(1))
-        assertArrangementID("GBA20210101ABC123",
-          "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
-        assertDisclosureID("GBD20210101ABC123")(list(3))
-        list.size mustBe 4
+      verifyList(userAnswers) {
+        list =>
+          assertDisclosureName("My arrangement")(list.head)
+          assertTypeDac6rep()(list(1))
+          assertArrangementID("GBA20210101ABC123", "/disclose-cross-border-arrangements/manual/disclosure/change-identify")(list(2))
+          assertDisclosureID("GBD20210101ABC123")(list(3))
+          list.size mustBe 4
       }
     }
 
@@ -200,9 +211,12 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
         .thenReturn(Future.successful(false))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success.value
+        .success
+        .value
         .setBase(DisclosureTypePage, DisclosureType.Dac6add)
         .success
         .value

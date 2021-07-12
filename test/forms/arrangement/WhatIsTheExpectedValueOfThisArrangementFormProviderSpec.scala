@@ -23,11 +23,11 @@ import play.api.data.FormError
 
 class WhatIsTheExpectedValueOfThisArrangementFormProviderSpec extends StringFieldBehaviours with IntFieldBehaviours {
 
-  val form = new WhatIsTheExpectedValueOfThisArrangementFormProvider()(Seq(Currency("ALL", "LEK", "ALBANIA","Albanian Lek (ALL)")))
+  val form = new WhatIsTheExpectedValueOfThisArrangementFormProvider()(Seq(Currency("ALL", "LEK", "ALBANIA", "Albanian Lek (ALL)")))
 
   ".currency" - {
 
-    val fieldName = "currency"
+    val fieldName   = "currency"
     val requiredKey = "whatIsTheExpectedValueOfThisArrangement.error.currency.required"
 
     behave like fieldThatBindsValidData(
@@ -45,16 +45,16 @@ class WhatIsTheExpectedValueOfThisArrangementFormProviderSpec extends StringFiel
 
   ".amount" - {
 
-    val fieldName = "amount"
-    val requiredKey = "whatIsTheExpectedValueOfThisArrangement.error.amount.required"
-    val wholeNumberKey=  "whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber"
-    val nonNumericKey =  "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric"
+    val fieldName      = "amount"
+    val requiredKey    = "whatIsTheExpectedValueOfThisArrangement.error.amount.required"
+    val wholeNumberKey = "whatIsTheExpectedValueOfThisArrangement.error.amount.wholeNumber"
+    val nonNumericKey  = "whatIsTheExpectedValueOfThisArrangement.error.amount.nonNumeric"
 
     behave like intField(
       form,
       fieldName,
       FormError(fieldName, nonNumericKey),
-      FormError(fieldName,wholeNumberKey)
+      FormError(fieldName, wholeNumberKey)
     )
 
     behave like mandatoryField(

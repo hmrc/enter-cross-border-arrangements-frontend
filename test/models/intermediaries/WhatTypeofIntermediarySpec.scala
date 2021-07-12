@@ -31,7 +31,6 @@ class WhatTypeofIntermediarySpec extends ModelSpecBase {
 
       forAll(gen) {
         whatTypeofIntermediary =>
-
           JsString(whatTypeofIntermediary.toString).validate[WhatTypeofIntermediary].asOpt.value mustEqual whatTypeofIntermediary
       }
     }
@@ -42,7 +41,6 @@ class WhatTypeofIntermediarySpec extends ModelSpecBase {
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[WhatTypeofIntermediary] mustEqual JsError("error.invalid")
       }
     }
@@ -53,7 +51,6 @@ class WhatTypeofIntermediarySpec extends ModelSpecBase {
 
       forAll(gen) {
         whatTypeofIntermediary =>
-
           Json.toJson(whatTypeofIntermediary) mustEqual JsString(whatTypeofIntermediary.toString)
       }
     }

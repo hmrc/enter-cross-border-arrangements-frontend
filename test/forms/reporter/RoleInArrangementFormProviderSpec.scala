@@ -26,13 +26,13 @@ class RoleInArrangementFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "roleInArrangement.error.required"
 
     behave like optionsField[RoleInArrangement](
       form,
       fieldName,
-      validValues  = RoleInArrangement.values,
+      validValues = RoleInArrangement.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

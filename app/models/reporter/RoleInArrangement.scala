@@ -45,5 +45,9 @@ object RoleInArrangement extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[RoleInArrangement] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

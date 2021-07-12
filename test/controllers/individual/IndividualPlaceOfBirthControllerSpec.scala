@@ -34,10 +34,10 @@ import scala.concurrent.Future
 
 class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  val formProvider = new IndividualPlaceOfBirthFormProvider()
-  val form = formProvider()
+  val formProvider        = new IndividualPlaceOfBirthFormProvider()
+  val form                = formProvider()
   val validAnswer: String = "answer"
-  val validData = Map("value" -> validAnswer)
+  val validData           = Map("value" -> validAnswer)
 
   lazy val individualPlaceOfBirthRoute = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(0, NormalMode).url
 
@@ -49,9 +49,9 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockF
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, individualPlaceOfBirthRoute)
+      val request        = FakeRequest(GET, individualPlaceOfBirthRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -74,12 +74,16 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockF
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualPlaceOfBirthPage, 0, "answer").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualPlaceOfBirthPage, 0, "answer")
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, individualPlaceOfBirthRoute)
+      val request        = FakeRequest(GET, individualPlaceOfBirthRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -106,7 +110,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockF
 
       val request =
         FakeRequest(POST, individualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(validData.toList:_*)
+          .withFormUrlEncodedBody(validData.toList: _*)
 
       val result = route(app, request).value
 
@@ -121,10 +125,10 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockF
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, individualPlaceOfBirthRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, individualPlaceOfBirthRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -160,7 +164,7 @@ class IndividualPlaceOfBirthControllerSpec extends SpecBase with ControllerMockF
 
       val request =
         FakeRequest(POST, individualPlaceOfBirthRoute)
-          .withFormUrlEncodedBody(validData.toList:_*)
+          .withFormUrlEncodedBody(validData.toList: _*)
 
       val result = route(app, request).value
 

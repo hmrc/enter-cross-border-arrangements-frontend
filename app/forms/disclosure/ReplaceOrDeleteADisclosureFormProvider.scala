@@ -27,19 +27,19 @@ import javax.inject.Inject
 
 class ReplaceOrDeleteADisclosureFormProvider @Inject() extends Mappings with RegexConstants {
 
-   def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
-     Form(
-       mapping(
-         "arrangementID" -> validatedDisclosureIDsText(
-           "replaceOrDeleteADisclosure.error.arrangementID.required",
-           "replaceOrDeleteADisclosure.error.arrangementID.invalid",
-           countryList,
-           arrangementIDRegex),
-         "disclosureID" -> validatedDisclosureIDsText(
-           "replaceOrDeleteADisclosure.error.disclosureID.required",
-           "replaceOrDeleteADisclosure.error.disclosureID.invalid",
-           countryList,
-           disclosureIDRegex)
-       )(ReplaceOrDeleteADisclosure.apply)(ReplaceOrDeleteADisclosure.unapply)
-     )
- }
+  def apply(countryList: Seq[Country]): Form[ReplaceOrDeleteADisclosure] =
+    Form(
+      mapping(
+        "arrangementID" -> validatedDisclosureIDsText("replaceOrDeleteADisclosure.error.arrangementID.required",
+                                                      "replaceOrDeleteADisclosure.error.arrangementID.invalid",
+                                                      countryList,
+                                                      arrangementIDRegex
+        ),
+        "disclosureID" -> validatedDisclosureIDsText("replaceOrDeleteADisclosure.error.disclosureID.required",
+                                                     "replaceOrDeleteADisclosure.error.disclosureID.invalid",
+                                                     countryList,
+                                                     disclosureIDRegex
+        )
+      )(ReplaceOrDeleteADisclosure.apply)(ReplaceOrDeleteADisclosure.unapply)
+    )
+}

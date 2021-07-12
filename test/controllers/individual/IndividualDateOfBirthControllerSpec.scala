@@ -71,7 +71,7 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with ControllerMockFi
 
       retrieveUserAnswersData(emptyUserAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, getRequest).value
 
@@ -97,11 +97,15 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(IndividualDateOfBirthPage, 0, validAnswer).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(IndividualDateOfBirthPage, 0, validAnswer)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, getRequest).value
 
@@ -142,10 +146,10 @@ class IndividualDateOfBirthControllerSpec extends SpecBase with ControllerMockFi
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, individualDateOfBirthRoute).withFormUrlEncodedBody(("dob", "invalid value"))
-      val boundForm = form.bind(Map("dob" -> "invalid value"))
+      val request        = FakeRequest(POST, individualDateOfBirthRoute).withFormUrlEncodedBody(("dob", "invalid value"))
+      val boundForm      = form.bind(Map("dob" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

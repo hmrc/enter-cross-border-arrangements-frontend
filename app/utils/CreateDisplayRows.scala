@@ -25,7 +25,7 @@ import models.intermediaries.Intermediary
 import models.organisation.Organisation
 import models.taxpayer.Taxpayer
 import play.api.i18n.Messages
-import utils.SummaryListDisplay.{DisplayRow, removeClassesFromLastElementInSeq}
+import utils.SummaryListDisplay.{removeClassesFromLastElementInSeq, DisplayRow}
 import utils.model.rows._
 
 import scala.collection.immutable
@@ -34,8 +34,15 @@ trait CreateDisplayRows[A] {
   def createDisplayRows(dac6Data: A)(implicit messages: Messages): Seq[DisplayRow]
 }
 
-object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows with IndividualModelRows with OrganisationModelRows
-  with TaxpayerModelRows with EnterpriseModelRows with IntermediariesModelRows with AffectedModelRows {
+object CreateDisplayRows
+    extends DisclosureModelRows
+    with ArrangementModelRows
+    with IndividualModelRows
+    with OrganisationModelRows
+    with TaxpayerModelRows
+    with EnterpriseModelRows
+    with IntermediariesModelRows
+    with AffectedModelRows {
 
   def apply[A](implicit instance: CreateDisplayRows[A]): CreateDisplayRows[A] = instance
 
@@ -49,24 +56,28 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
   }
 
   implicit val disclosureCreateDisplayRows: CreateDisplayRows[DisclosureDetails] = new CreateDisplayRows[DisclosureDetails] {
+
     override def createDisplayRows(disclosure: DisclosureDetails)(implicit messages: Messages): immutable.Seq[DisplayRow] =
-      List(disclosureNamePage(disclosure),
-      disclosureTypePage(disclosure)) ++
-      buildDisclosureSummaryDetails(disclosure)
+      List(disclosureNamePage(disclosure), disclosureTypePage(disclosure)) ++
+        buildDisclosureSummaryDetails(disclosure)
   }
 
   implicit val arrangementDetailsDisplayRows: CreateDisplayRows[ArrangementDetails] = new CreateDisplayRows[ArrangementDetails] {
+
     override def createDisplayRows(arrangement: ArrangementDetails)(implicit messages: Messages): Seq[DisplayRow] =
-      Seq(whatIsThisArrangementCalledPage(arrangement)
-        , whatIsTheImplementationDatePage(arrangement)
-        , buildWhyAreYouReportingThisArrangementNow(arrangement)
-        , whichExpectedInvolvedCountriesArrangement(arrangement)
-        , whatIsTheExpectedValueOfThisArrangement(arrangement)
-        , whichNationalProvisionsIsThisArrangementBasedOn(arrangement)
-        , giveDetailsOfThisArrangement(arrangement)).flatten
+      Seq(
+        whatIsThisArrangementCalledPage(arrangement),
+        whatIsTheImplementationDatePage(arrangement),
+        buildWhyAreYouReportingThisArrangementNow(arrangement),
+        whichExpectedInvolvedCountriesArrangement(arrangement),
+        whatIsTheExpectedValueOfThisArrangement(arrangement),
+        whichNationalProvisionsIsThisArrangementBasedOn(arrangement),
+        giveDetailsOfThisArrangement(arrangement)
+      ).flatten
   }
 
   implicit val taxpayerDisplayRows: CreateDisplayRows[Taxpayer] = new CreateDisplayRows[Taxpayer] {
+
     override def createDisplayRows(taxPayer: Taxpayer)(implicit messages: Messages): Seq[DisplayRow] =
       (taxPayer.individual, taxPayer.organisation) match {
         case (Some(individual), _) =>
@@ -74,20 +85,21 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
             individualRowsFromModel(individual) ++
             (whatIsTaxpayersStartDateForImplementingArrangement(taxPayer) match {
               case Some(row) => Seq(row)
-              case _ => Seq()
+              case _         => Seq()
             })
         case (_, Some(organisation)) =>
           Seq(taxpayerSelectType(taxPayer)) ++
             organisationRowsFromModel(organisation) ++
             (whatIsTaxpayersStartDateForImplementingArrangement(taxPayer) match {
               case Some(row) => Seq(row)
-              case _ => Seq()
+              case _         => Seq()
             })
       }
   }
 
   implicit val enterprisesDisplayRow: CreateDisplayRows[AssociatedEnterprise] = new CreateDisplayRows[AssociatedEnterprise] {
-    override def createDisplayRows(enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[DisplayRow] = {
+
+    override def createDisplayRows(enterprises: AssociatedEnterprise)(implicit messages: Messages): Seq[DisplayRow] =
       (enterprises.individual, enterprises.organisation) match {
         case (Some(individual), _) =>
           selectAnyTaxpayersThisEnterpriseIsAssociatedWith(enterprises) ++
@@ -101,10 +113,10 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
             organisationRowsFromModel(organisation) ++
             Seq(isAssociatedEnterpriseAffected(enterprises))
       }
-    }
   }
 
   implicit val intermediariesDisplayRow: CreateDisplayRows[Intermediary] = new CreateDisplayRows[Intermediary] {
+
     override def createDisplayRows(inter: Intermediary)(implicit messages: Messages): Seq[DisplayRow] = {
       val header = (inter.individual, inter.organisation) match {
         case (Some(ind), None) =>
@@ -116,16 +128,16 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
       }
 
       header ++
-      Seq(whatTypeofIntermediary(inter),
-      isExemptionKnown(inter)) ++
-      isExemptionCountryKnown(inter) ++
-      exemptCountries(inter).toSeq
+        Seq(whatTypeofIntermediary(inter), isExemptionKnown(inter)) ++
+        isExemptionCountryKnown(inter) ++
+        exemptCountries(inter).toSeq
     }
   }
 
   implicit val affectedDisplayRow: CreateDisplayRows[Affected] = new CreateDisplayRows[Affected] {
-    override def createDisplayRows(affected: Affected)(implicit messages: Messages): Seq[DisplayRow] = {
-     (affected.individual, affected.organisation) match {
+
+    override def createDisplayRows(affected: Affected)(implicit messages: Messages): Seq[DisplayRow] =
+      (affected.individual, affected.organisation) match {
         case (Some(ind), None) =>
           Seq(affectedType(affected)) ++
             individualRowsFromModel(ind)
@@ -133,11 +145,10 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
           Seq(affectedType(affected)) ++
             organisationRowsFromModel(org)
       }
-    }
   }
 
   def individualRowsFromModel(individual: Individual)(implicit messages: Messages): Seq[DisplayRow] =
-    Seq(individualName(individual) ) ++
+    Seq(individualName(individual)) ++
       buildIndividualDateOfBirthGroup(individual) ++
       buildIndividualPlaceOfBirthGroup(individual) ++
       buildIndividualAddressGroup(individual) ++
@@ -149,6 +160,5 @@ object CreateDisplayRows extends DisclosureModelRows with ArrangementModelRows w
       buildOrganisationAddressGroup(organisation) ++
       buildOrganisationEmailAddressGroup(organisation) ++
       removeClassesFromLastElementInSeq(buildTaxResidencySummaryForOrganisation(organisation))
-
 
 }

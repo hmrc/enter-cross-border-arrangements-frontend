@@ -36,94 +36,102 @@ trait DisplayRowBuilder {
       msg"site.no"
     }
 
-  private[utils] def messageWithPluralFormatter(msgKey: String*)(isPlural: Boolean, argIfPlural: String = "s"
-                                                , argIfSingular: String = ""): Text.Message =
-    MessageInterpolators(StringContext.apply(msgKey.head)).msg()
-      .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail):_*)
+  private[utils] def messageWithPluralFormatter(msgKey: String*)(isPlural: Boolean, argIfPlural: String = "s", argIfSingular: String = ""): Text.Message =
+    MessageInterpolators(StringContext.apply(msgKey.head))
+      .msg()
+      .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail): _*)
 
-  private[utils] def toRow(msgKey: String,
-                           content: Content,
-                           href: String,
-                           columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): Row = {
-    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+  private[utils] def toRow(msgKey: String, content: Content, href: String, columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): Row = {
+    val message         = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
     val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     Row(
-      key     = Key(message, classes = Seq(columnWidth)),
-      value   = Value(content),
+      key = Key(message, classes = Seq(columnWidth)),
+      value = Value(content),
       actions = List(
         Action(
-          content            = msg"site.edit",
-          href               = href,
+          content = msg"site.edit",
+          href = href,
           visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
-          attributes         = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
+          attributes = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
         )
       )
     )
   }
 
-  private[utils] def toDisplayRow(msgKey: String,
-                           content: Content,
-                           columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
+  private[utils] def toDisplayRow(msgKey: String, content: Content, columnWidth: String = "govuk-!-width-two-thirds")(implicit
+    messages: Messages
+  ): DisplayRow = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    
+
     DisplayRow(
-      key     = Key(message, classes = Seq(columnWidth)),
-      value   = Value(content)
+      key = Key(message, classes = Seq(columnWidth)),
+      value = Value(content)
     )
   }
 
-  private[utils] def toDisplayRowNoBorder(msgKey: String,
-                                  content: Content,
-                                  columnWidth: String = "govuk-!-width-two-thirds")(implicit messages: Messages): DisplayRow = {
+  private[utils] def toDisplayRowNoBorder(msgKey: String, content: Content, columnWidth: String = "govuk-!-width-two-thirds")(implicit
+    messages: Messages
+  ): DisplayRow = {
     val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
-    
+
     DisplayRow(
-      key     = Key(message, classes = Seq(columnWidth)),
-      value   = Value(content),
+      key = Key(message, classes = Seq(columnWidth)),
+      value = Value(content),
       classes = Seq("govuk-summary-list--no-border")
     )
   }
 
-
-  private[utils] def formatAddress(address: Address): Html = {
-
+  private[utils] def formatAddress(address: Address): Html =
     Html(s"""
-        ${address.addressLine1.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
-        ${address.addressLine2.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
-        ${address.addressLine3.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${address.addressLine1.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
+        ${address.addressLine2.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
+        ${address.addressLine3.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
         ${s"${HtmlFormat.escape(address.city)}<br>"}
-        ${address.postCode.fold("")(postcode => s"${HtmlFormat.escape(postcode)}<br>")}
+        ${address.postCode.fold("")(
+      postcode => s"${HtmlFormat.escape(postcode)}<br>"
+    )}
         ${HtmlFormat.escape(address.country.description)}
      """)
-  }
 
-  private[utils] def formatAddress(addressLookup: AddressLookup): Html = {
-
+  private[utils] def formatAddress(addressLookup: AddressLookup): Html =
     Html(s"""
-        ${addressLookup.addressLine1.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
-        ${addressLookup.addressLine2.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
-        ${addressLookup.addressLine3.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
-        ${addressLookup.addressLine4.fold("")(address => s"${HtmlFormat.escape(address)}<br>")}
+        ${addressLookup.addressLine1.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
+        ${addressLookup.addressLine2.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
+        ${addressLookup.addressLine3.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
+        ${addressLookup.addressLine4.fold("")(
+      address => s"${HtmlFormat.escape(address)}<br>"
+    )}
         ${s"${HtmlFormat.escape(addressLookup.town)}<br>"}
-        ${addressLookup.county.fold("")(county => s"${HtmlFormat.escape(county)}<br>")}
+        ${addressLookup.county.fold("")(
+      county => s"${HtmlFormat.escape(county)}<br>"
+    )}
         ${HtmlFormat.escape(addressLookup.postcode)}
      """)
-  }
 
   private[utils] def formatReferenceNumbers(referenceNumber: TaxReferenceNumbers): String = {
     val first = referenceNumber.firstTaxNumber
     (referenceNumber.secondTaxNumber, referenceNumber.thirdTaxNumber) match {
       case (Some(second), Some(third)) => s"$first, $second, $third"
-      case (Some(second), None) => s"$first, $second"
-      case (None, Some(third)) => s"$first, $third"
-      case _ => s"$first"
+      case (Some(second), None)        => s"$first, $second"
+      case (None, Some(third))         => s"$first, $third"
+      case _                           => s"$first"
     }
   }
 
-
-
   private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
     val label = if (text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
-    lit"${label}"
+    lit"$label"
   }
 }

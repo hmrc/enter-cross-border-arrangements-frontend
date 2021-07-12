@@ -22,7 +22,8 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case class UnsubmittedIndex[A](path: JsPath, index: Int, page: QuestionPage[A]){
+case class UnsubmittedIndex[A](path: JsPath, index: Int, page: QuestionPage[A]) {
+
   def cleanup(value: Option[A], userAnswers: UserAnswers): Try[UserAnswers] =
     page.cleanup(value, userAnswers, index)
 }
@@ -30,8 +31,7 @@ case class UnsubmittedIndex[A](path: JsPath, index: Int, page: QuestionPage[A]){
 object UnsubmittedIndex {
 
   def fromQuestionPage[A](page: QuestionPage[A], index: Int)(implicit userAnswers: UserAnswers): UnsubmittedIndex[A] = {
-    val unsubmitted = userAnswers.getBase(UnsubmittedDisclosurePage)
-      .get.zipWithIndex.find(_._2 == index).get._1
+    val unsubmitted = userAnswers.getBase(UnsubmittedDisclosurePage).get.zipWithIndex.find(_._2 == index).get._1
 
     UnsubmittedIndex(JsPath \ s"${unsubmitted.id}-${page.toString}", index, page)
   }

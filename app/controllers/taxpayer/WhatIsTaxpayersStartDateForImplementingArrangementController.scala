@@ -37,26 +37,28 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatIsTaxpayersStartDateForImplementingArrangementFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: WhatIsTaxpayersStartDateForImplementingArrangementFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with NunjucksSupport {
 
   val numberOfMonthsToAdd = 6
-  val form = formProvider()
+  val form                = formProvider()
 
   private def actionUrl(id: Int, mode: Mode): String = routes.WhatIsTaxpayersStartDateForImplementingArrangementController.onPageLoad(id, mode).url
 
   def onPageLoad(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) match {
         case Some(value) if mode == CheckMode => form.fill(value)
         case _                                => form
@@ -64,55 +66,54 @@ class WhatIsTaxpayersStartDateForImplementingArrangementController @Inject()(
 
       val viewModel = DateInput.localDate(preparedForm("value"))
 
-
-      val json = Json.obj (
-        "form" -> preparedForm,
-        "mode" -> mode,
-        "date" -> viewModel,
-        "exampleDate" -> LocalDate.now.plusMonths (numberOfMonthsToAdd).format (dateFormatterNumericDMY),
-        "name" -> getDisplayName(request.userAnswers, id),
+      val json = Json.obj(
+        "form"        -> preparedForm,
+        "mode"        -> mode,
+        "date"        -> viewModel,
+        "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
+        "name"        -> getDisplayName(request.userAnswers, id),
         "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
-        "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
-        "actionUrl" -> actionUrl(id, mode)
+        "pageTitle"   -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
+        "actionUrl"   -> actionUrl(id, mode)
       )
 
-      renderer.render ("implementingArrangementDate.njk", json).map (Ok (_) )
+      renderer.render("implementingArrangementDate.njk", json).map(Ok(_))
 
   }
 
   def onSubmit(id: Int, mode: Mode): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
 
-      form.bindFromRequest().fold(
-        formWithErrors =>  {
+            val viewModel = DateInput.localDate(formWithErrors("value"))
 
-          val viewModel = DateInput.localDate(formWithErrors("value"))
+            val json = Json.obj(
+              "form"        -> formWithErrors,
+              "mode"        -> mode,
+              "date"        -> viewModel,
+              "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
+              "name"        -> getDisplayName(request.userAnswers, id),
+              "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
+              "pageTitle"   -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
+              "actionUrl"   -> actionUrl(id, mode)
+            )
 
-          val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode,
-            "date" -> viewModel,
-            "exampleDate" -> LocalDate.now.plusMonths(numberOfMonthsToAdd).format(dateFormatterNumericDMY),
-            "name" -> getDisplayName(request.userAnswers, id),
-            "pageHeading" -> "whatIsTaxpayersStartDateForImplementingArrangement.heading",
-            "pageTitle" -> "whatIsTaxpayersStartDateForImplementingArrangement.title",
-            "actionUrl" -> actionUrl(id, mode)
-          )
-
-          renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, mode, updatedAnswers))
-      )
+            renderer.render("implementingArrangementDate.njk", json).map(BadRequest(_))
+          },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(WhatIsTaxpayersStartDateForImplementingArrangementPage, id, mode, updatedAnswers))
+        )
   }
 
-  private def getDisplayName(userAnswers: UserAnswers, id: Int): Option[String] = {
-   userAnswers.get(TaxpayerSelectTypePage, id) map {
-     case Organisation => JourneyHelpers.getOrganisationName(userAnswers, id)
-     case Individual => JourneyHelpers.getIndividualName(userAnswers, id)
-   }
-  }
+  private def getDisplayName(userAnswers: UserAnswers, id: Int): Option[String] =
+    userAnswers.get(TaxpayerSelectTypePage, id) map {
+      case Organisation => JourneyHelpers.getOrganisationName(userAnswers, id)
+      case Individual   => JourneyHelpers.getIndividualName(userAnswers, id)
+    }
 }

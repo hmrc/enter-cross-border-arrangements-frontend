@@ -24,18 +24,18 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
-class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  with GuiceOneAppPerSuite {
+class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours with GuiceOneAppPerSuite {
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  val countries = List(Country("valid","GB","United Kingdom"))
-  val formProvider = new ReplaceOrDeleteADisclosureFormProvider()
-  val form: Form[ReplaceOrDeleteADisclosure] = formProvider(countries)
+  val countries                                    = List(Country("valid", "GB", "United Kingdom"))
+  val formProvider                                 = new ReplaceOrDeleteADisclosureFormProvider()
+  val form: Form[ReplaceOrDeleteADisclosure]       = formProvider(countries)
 
   ".arrangementID" - {
 
-    val fieldName = "arrangementID"
+    val fieldName   = "arrangementID"
     val requiredKey = "replaceOrDeleteADisclosure.error.arrangementID.required"
-    val invalidKey = "replaceOrDeleteADisclosure.error.arrangementID.invalid"
+    val invalidKey  = "replaceOrDeleteADisclosure.error.arrangementID.invalid"
 
     behave like fieldThatBindsValidData(
       form,
@@ -59,9 +59,9 @@ class ReplaceOrDeleteADisclosureFormProviderSpec extends StringFieldBehaviours  
 
   ".disclosureID" - {
 
-    val fieldName = "disclosureID"
+    val fieldName   = "disclosureID"
     val requiredKey = "replaceOrDeleteADisclosure.error.disclosureID.required"
-    val invalidKey = "replaceOrDeleteADisclosure.error.disclosureID.invalid"
+    val invalidKey  = "replaceOrDeleteADisclosure.error.disclosureID.invalid"
 
     behave like fieldThatBindsValidData(
       form,

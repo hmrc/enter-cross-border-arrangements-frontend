@@ -40,9 +40,9 @@ import scala.concurrent.Future
 class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new PostcodeFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockFrontendAppConfig: FrontendAppConfig           = mock[FrontendAppConfig]
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
   lazy val postcodeRoute = controllers.organisation.routes.OrganisationPostcodeController.onPageLoad(0, NormalMode).url
@@ -67,9 +67,9 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val request = FakeRequest(GET, postcodeRoute)
+      val request        = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -92,13 +92,17 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(PostcodePage, 0, "ZZ1 1ZZ").success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(PostcodePage, 0, "ZZ1 1ZZ")
+        .success
+        .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, postcodeRoute)
+      val request        = FakeRequest(GET, postcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -150,10 +154,11 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
       retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("postcode", "AA1 1AA"))
-      val boundForm = form.bind(Map("postcode" -> "AA1 1AA"))
+      val boundForm = form
+        .bind(Map("postcode" -> "AA1 1AA"))
         .withError(FormError("postcode", List("Address not found - enter a different postcode or enter the address manually")))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -177,10 +182,10 @@ class OrganisationPostcodeControllerSpec extends SpecBase with ControllerMockFix
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      val request = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, postcodeRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 

@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 import scala.xml.{Elem, NodeSeq}
 
-class XMLGenerationService @Inject()(
+class XMLGenerationService @Inject() (
   validationConnector: ValidationConnector,
   transformationService: TransformationService,
   crossBorderArrangementsConnector: CrossBorderArrangementsConnector
@@ -37,17 +37,17 @@ class XMLGenerationService @Inject()(
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def createXmlSubmission(submission: Submission): Try[Elem] = {
-
+  def createXmlSubmission(submission: Submission): Try[Elem] =
     (for {
-      disclosureSection            <- Option(submission).map(DisclosureDetailsXMLSection)
-                                        .toRight(new RuntimeException("Could not generate XML from disclosure details."))
-      reporterSection              =  ReporterXMLSection(submission)
-      enrolmentID                  <- Option(submission).map(_.enrolmentID)
-                                        .toRight(new RuntimeException("Could not get enrolment id from submission."))
-    } yield {
-      Try {
-        <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
+      disclosureSection <- Option(submission)
+        .map(DisclosureDetailsXMLSection)
+        .toRight(new RuntimeException("Could not generate XML from disclosure details."))
+      reporterSection = ReporterXMLSection(submission)
+      enrolmentID <- Option(submission)
+        .map(_.enrolmentID)
+        .toRight(new RuntimeException("Could not get enrolment id from submission."))
+    } yield Try {
+      <DAC6_Arrangement version="First" xmlns="urn:ukdac6:v0.1">
           {disclosureSection.buildHeader(enrolmentID, formatXMLTimeStamp(todayDateTime))}
           {disclosureSection.buildArrangementID}
           <DAC6Disclosures>
@@ -58,13 +58,9 @@ class XMLGenerationService @Inject()(
             {createPartiesSection(submission, Option(reporterSection))}
           </DAC6Disclosures>
         </DAC6_Arrangement>
-      }
     }).fold(Failure(_), identity)
 
-  }
-
-  def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq = {
-
+  def createPartiesSection(submission: Submission, reporterSection: Option[ReporterXMLSection]): NodeSeq =
     submission.getDisclosureType match {
       case DisclosureType.Dac6del => NodeSeq.Empty
       case _ =>
@@ -73,33 +69,27 @@ class XMLGenerationService @Inject()(
           AffectedXMLSection(submission).buildAffectedPersons ++
           DisclosureInformationXMLSection(submission).buildDisclosureInformation
     }
-  }
 
-  def createAndValidateXmlSubmission(submission: Submission)
-              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] = {
-
-    createXmlSubmission(submission).fold (
+  def createAndValidateXmlSubmission(submission: Submission)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Seq[String], GeneratedIDs]] =
+    createXmlSubmission(submission).fold(
       error => {
         // TODO today we rely on task list enforcement to avoid incomplete xml to be submitted; we could add an extra layer of validation here
         logger.error("""Xml generation failed before validation: """.stripMargin, error)
         throw error
       },
-      xml => {
+      xml =>
         //send it off to be validated and business rules
         validationConnector.sendForValidation(xml).flatMap {
           _.fold(
             //did it fail? oh my god - hand back to the user to fix
             errors => Future.successful(Left(errors)),
             //did it succeed - hand off to the backend to do it's generating thing
-            messageRefId => {
+            messageRefId =>
               for {
                 submissionXML <- Future.fromTry(transformationService.build(xml, messageRefId, submission.enrolmentID))
                 ids           <- crossBorderArrangementsConnector.submitXML(submissionXML)
               } yield Right(ids.withMessageRefId(messageRefId).withXml(submissionXML.toString))
-            }
           )
         }
-      }
     )
-  }
 }

@@ -32,7 +32,7 @@ class AddressXMLSectionSpec extends SpecBase {
       Some("value 3"),
       "value 4",
       Some("XX9 9XX"),
-      Country("valid","FR","France")
+      Country("valid", "FR", "France")
     )
 
   "buildAddress" - {
@@ -54,8 +54,7 @@ class AddressXMLSectionSpec extends SpecBase {
     }
 
     "must build the optional address section with only the mandatory fields" in {
-      val result = AddressXMLSection.buildAddress(
-        Some(Address(None, None, None, "City", None, Country("valid", "FR", "France"))))
+      val result = AddressXMLSection.buildAddress(Some(Address(None, None, None, "City", None, Country("valid", "FR", "France"))))
 
       val expected =
         """<Address>

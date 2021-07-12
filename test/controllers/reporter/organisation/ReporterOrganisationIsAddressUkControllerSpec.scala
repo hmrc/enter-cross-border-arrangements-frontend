@@ -35,9 +35,10 @@ import scala.concurrent.Future
 class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
   val formProvider = new ReporterOrganisationIsAddressUkFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
-  lazy val reporterOrganisationisAddressUkRoute = controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(0, NormalMode).url
+  lazy val reporterOrganisationisAddressUkRoute =
+    controllers.reporter.organisation.routes.ReporterOrganisationIsAddressUkController.onPageLoad(0, NormalMode).url
 
   "ReporterOrganisationIsAddressUk Controller" - {
 
@@ -46,9 +47,9 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Contro
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
+      val request        = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -72,13 +73,17 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Contro
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
-        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
-        .set(ReporterOrganisationIsAddressUkPage, 0, true).success.value
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(ReporterOrganisationIsAddressUkPage, 0, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
+      val request        = FakeRequest(GET, reporterOrganisationisAddressUkRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -129,10 +134,10 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Contro
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, reporterOrganisationisAddressUkRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val request        = FakeRequest(POST, reporterOrganisationisAddressUkRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -163,7 +168,7 @@ class ReporterOrganisationIsAddressUkControllerSpec extends SpecBase with Contro
 
     "must redirect to Session Expired for a POST if no existing data is found" in {
 
-     retrieveNoData()
+      retrieveNoData()
 
       val request =
         FakeRequest(POST, reporterOrganisationisAddressUkRoute)

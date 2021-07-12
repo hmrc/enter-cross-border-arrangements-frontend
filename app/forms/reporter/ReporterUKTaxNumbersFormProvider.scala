@@ -31,16 +31,12 @@ class ReporterUKTaxNumbersFormProvider @Inject() extends Mappings {
   def apply(reporterType: String)(implicit messages: Messages): Form[TaxReferenceNumbers] =
     Form(
       mapping(
-        "firstTaxNumber" -> validatedTextMaxLength(
-          messages(s"${reporterType}UKTaxNumbers.error.required"),
-          "reporterUKTaxNumbers.error.length.label1",
-          maxLength),
-        "secondTaxNumber" -> validatedOptionalTextMaxLength(
-          "reporterUKTaxNumbers.error.length.label2",
-          maxLength),
-        "thirdTaxNumber" -> validatedOptionalTextMaxLength(
-          "reporterUKTaxNumbers.error.length.label3",
-          maxLength)
+        "firstTaxNumber" -> validatedTextMaxLength(messages(s"${reporterType}UKTaxNumbers.error.required"),
+                                                   "reporterUKTaxNumbers.error.length.label1",
+                                                   maxLength
+        ),
+        "secondTaxNumber" -> validatedOptionalTextMaxLength("reporterUKTaxNumbers.error.length.label2", maxLength),
+        "thirdTaxNumber"  -> validatedOptionalTextMaxLength("reporterUKTaxNumbers.error.length.label3", maxLength)
       )(TaxReferenceNumbers.apply)(TaxReferenceNumbers.unapply)
     )
 }
