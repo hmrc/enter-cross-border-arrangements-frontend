@@ -22,9 +22,10 @@ import connectors.{CrossBorderArrangementsConnector, EmailConnector, Subscriptio
 import controllers.RowJsonReads
 import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import models.disclosure.{DisclosureType, ReplaceOrDeleteADisclosure}
-import models.{Country, Currency, UnsubmittedDisclosure, UserAnswers}
+import models.{Country, Currency, GeneratedIDs, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import pages.disclosure.{DisclosureNamePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
@@ -33,7 +34,7 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.EmailService
+import services.{EmailService, XMLGenerationService}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -53,6 +54,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
   val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
   val countriesSeq: Seq[Country] = Seq(Country("valid", "GB", "United Kingdom"), Country("valid", "FR", "France"))
+  val mockXMLGenerationService: XMLGenerationService = mock[XMLGenerationService]
 
   override def beforeEach: Unit = {
     when(mockRenderer.render(any(), any())(any())).thenReturn(Future.successful(Html("")))
@@ -97,6 +99,7 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
     assertFunction(list)
 
     verify(mockEmailService, times(0)).sendEmail(any(), any(), any(), any())(any())
+
   }
 
   private def assertAction(href: String, text: Option[Any] = Some(Literal("Change")), visuallyHiddenText: Option[Any] = None)(action: Action): Unit = {
@@ -146,6 +149,41 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
       }
     }
 
+    "must redirect to your disclosure has been deleted" in {
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First"))).success.value
+        .setBase(DisclosureNamePage, "My arrangement")
+        .success.value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6del)
+        .success
+        .value
+        .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA20210101ABC123", "GBD20210101ABC123"))
+        .success
+        .value
+
+      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(),any()))
+        .thenReturn(Future.successful(Right(GeneratedIDs(None, Some("disclosureID"), Some("messageRefID")))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector),
+        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+        bind[FrontendAppConfig].toInstance(mockAppConfig),
+        bind[CountryListFactory].toInstance(mockCountryFactory),
+        bind[CurrencyListFactory].toInstance(mockCurrencyList),
+        bind[XMLGenerationService].toInstance(mockXMLGenerationService)
+      ).build()
+
+
+      val request = FakeRequest(POST, disclosureCheckYourAnswersContinueRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure/disclosure-has-been-deleted"
+    }
+
+
     "fail with DiscloseDetailsAlreadyDeletedException if ReplaceOrDeleteADisclosurePage is empty " in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -166,7 +204,6 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
         status(result) mustEqual OK
       }
     }
-
   }
 
 }

@@ -33,11 +33,7 @@ class CrossBorderArrangementsConnector @Inject()(
 
   val baseUrl = s"${configuration.crossBorderArrangementsUrl}/disclose-cross-border-arrangements"
 
-  def verificationUrl(arrangementId: String): String = {
-    s"$baseUrl/verify-arrangement-id/$arrangementId"
-  }
-
-  def isMarketableArrangementUrl(arrangementId: String): String = {
+  private def isMarketableArrangementUrl(arrangementId: String): String = {
     s"$baseUrl/history/is-marketable-arrangement/$arrangementId"
   }
 
