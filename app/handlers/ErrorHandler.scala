@@ -16,7 +16,12 @@
 
 package handlers
 
-import controllers.exceptions.{DiscloseDetailsAlreadyDeletedException, DiscloseDetailsAlreadySentException, UnsupportedRouteException}
+import controllers.exceptions.{
+  DiscloseDetailsAlreadyDeletedException,
+  DiscloseDetailsAlreadySentException,
+  SomeInformationIsMissingException,
+  UnsupportedRouteException
+}
 import controllers.routes
 import org.slf4j.LoggerFactory
 import play.api.PlayException
@@ -69,7 +74,9 @@ class ErrorHandler @Inject() (
 
     logError(request, exception)
     exception match {
-      case e: DiscloseDetailsAlreadyDeletedException =>
+      case e: SomeInformationIsMissingException =>
+        Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(e.id)))
+      case _: DiscloseDetailsAlreadyDeletedException =>
         Future.successful(Redirect(routes.DisclosureAlreadySentController.onDeleted()))
       case e: DiscloseDetailsAlreadySentException =>
         Future.successful(Redirect(routes.DisclosureAlreadySentController.onSent(e.id)))

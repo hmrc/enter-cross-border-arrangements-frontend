@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 trait IndividualRows extends RowBuilder {
 
-  def individualName(id: Int): Option[Row] = userAnswers.get(IndividualNamePage, id) map {
+  def individualName(id: Int): Option[Row] = userAnswers.getOrThrow(IndividualNamePage, id) map {
     answer =>
       toRow(
         msgKey = "individualName",
@@ -37,7 +37,7 @@ trait IndividualRows extends RowBuilder {
   }
 
   def buildIndividualDateOfBirthGroup(id: Int): Seq[Row] =
-    (userAnswers.get(IsIndividualDateOfBirthKnownPage, id), userAnswers.get(IndividualDateOfBirthPage, id)) match {
+    (userAnswers.getOrThrow(IsIndividualDateOfBirthKnownPage, id), userAnswers.getOrThrow(IndividualDateOfBirthPage, id)) match {
 
       case (Some(true), Some(dateOfBirth)) =>
         Seq(isIndividualDateOfBirthKnown(true, id), individualDateOfBirth(dateOfBirth, id))
@@ -60,7 +60,7 @@ trait IndividualRows extends RowBuilder {
     )
 
   def buildIndividualPlaceOfBirthGroup(id: Int): Seq[Row] =
-    (userAnswers.get(IsIndividualPlaceOfBirthKnownPage, id), userAnswers.get(IndividualPlaceOfBirthPage, id)) match {
+    (userAnswers.getOrThrow(IsIndividualPlaceOfBirthKnownPage, id), userAnswers.getOrThrow(IndividualPlaceOfBirthPage, id)) match {
 
       case (Some(true), Some(placeOfBirth)) =>
         Seq(isIndividualPlaceOfBirthKnown(true, id), individualPlaceOfBirth(placeOfBirth, id))
@@ -83,7 +83,10 @@ trait IndividualRows extends RowBuilder {
     )
 
   def buildIndividualAddressGroup(id: Int): Seq[Row] =
-    (userAnswers.get(IsIndividualAddressKnownPage, id), userAnswers.get(IndividualAddressPage, id), userAnswers.get(SelectedAddressLookupPage, id)) match {
+    (userAnswers.getOrThrow(IsIndividualAddressKnownPage, id),
+     userAnswers.getOrThrow(IndividualAddressPage, id),
+     userAnswers.getOrThrow(SelectedAddressLookupPage, id)
+    ) match {
       case (Some(true), Some(manualAddress), _) =>
         Seq(isIndividualAddressKnown(true, id), individualAddress(manualAddress, id))
       case (Some(true), _, Some(addressLookup)) =>
@@ -114,7 +117,7 @@ trait IndividualRows extends RowBuilder {
     )
 
   def buildIndividualEmailAddressGroup(id: Int): Seq[Row] =
-    (userAnswers.get(EmailAddressQuestionForIndividualPage, id), userAnswers.get(EmailAddressForIndividualPage, id)) match {
+    (userAnswers.getOrThrow(EmailAddressQuestionForIndividualPage, id), userAnswers.getOrThrow(EmailAddressForIndividualPage, id)) match {
 
       case (Some(true), Some(email)) =>
         Seq(emailAddressQuestionForIndividual(true, id), emailAddressForIndividual(email, id))
@@ -136,7 +139,7 @@ trait IndividualRows extends RowBuilder {
       href = controllers.individual.routes.EmailAddressForIndividualController.onPageLoad(id, CheckMode).url
     )
 
-  def buildTaxResidencySummaryForIndividuals(id: Int): Seq[Row] = (userAnswers.get(IndividualLoopPage, id) map {
+  def buildTaxResidencySummaryForIndividuals(id: Int): Seq[Row] = (userAnswers.getOrThrow(IndividualLoopPage, id) map {
     answer =>
       val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
         .filter(_.whichCountry.isDefined)

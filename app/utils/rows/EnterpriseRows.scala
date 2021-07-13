@@ -51,7 +51,7 @@ trait EnterpriseRows extends RowBuilder {
     }
 
   def selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id: Int): Seq[Row] = {
-    val reporterName = userAnswers.get(ReporterDetailsPage, id).fold("")(_.nameAsString)
+    val reporterName = userAnswers.getOrThrow(ReporterDetailsPage, id).fold("")(_.nameAsString)
 
     (userAnswers.get(SelectAnyTaxpayersThisEnterpriseIsAssociatedWithPage, id), userAnswers.get(TaxpayerLoopPage, id)) match {
       case (Some(selectionList), Some(taxpayers)) =>
@@ -101,7 +101,7 @@ trait EnterpriseRows extends RowBuilder {
     )
   }
 
-  def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.get(AssociatedEnterpriseTypePage, id) map {
+  def associatedEnterpriseType(id: Int): Option[Row] = userAnswers.getOrThrow(AssociatedEnterpriseTypePage, id) map {
     answer =>
       toRow(
         msgKey = "associatedEnterpriseType",
@@ -110,7 +110,7 @@ trait EnterpriseRows extends RowBuilder {
       )
   }
 
-  def isAssociatedEnterpriseAffected(id: Int): Option[Row] = userAnswers.get(IsAssociatedEnterpriseAffectedPage, id) map {
+  def isAssociatedEnterpriseAffected(id: Int): Option[Row] = userAnswers.getOrThrow(IsAssociatedEnterpriseAffectedPage, id) map {
     answer =>
       toRow(
         msgKey = "isAssociatedEnterpriseAffected",

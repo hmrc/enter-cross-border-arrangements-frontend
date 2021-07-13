@@ -55,7 +55,7 @@ class TaxpayersCheckYourAnswersController @Inject() (
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) =
-        restoredUserAnswers.get(TaxpayerSelectTypePage, id) match {
+        restoredUserAnswers.getOrThrow(TaxpayerSelectTypePage, id) match {
           case Some(SelectType.Organisation) =>
             (helper.taxpayerSelectType(id).toSeq ++ helper.organisationName(id).toSeq ++
                helper.buildOrganisationAddressGroup(id) ++ helper.buildOrganisationEmailAddressGroup(id),

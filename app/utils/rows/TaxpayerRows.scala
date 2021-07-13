@@ -26,7 +26,7 @@ trait TaxpayerRows extends RowBuilder {
 
   import pages.taxpayer.WhatIsTaxpayersStartDateForImplementingArrangementPage
 
-  def taxpayerSelectType(id: Int): Option[Row] = userAnswers.get(TaxpayerSelectTypePage, id) map {
+  def taxpayerSelectType(id: Int): Option[Row] = userAnswers.getOrThrow(TaxpayerSelectTypePage, id) map {
     answer =>
       toRow(
         msgKey = "selectType",
@@ -36,7 +36,7 @@ trait TaxpayerRows extends RowBuilder {
   }
 
   def whatIsTaxpayersStartDateForImplementingArrangement(id: Int): Option[Row] =
-    userAnswers.get(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
+    userAnswers.getOrThrow(WhatIsTaxpayersStartDateForImplementingArrangementPage, id) map {
       answer =>
         toRow(
           msgKey = "whatIsTaxpayersStartDateForImplementingArrangement",

@@ -55,7 +55,7 @@ class AffectedCheckYourAnswersController @Inject() (
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (affectedSummary, countrySummary) =
-        restoredUserAnswers.get(AffectedTypePage, id) match {
+        restoredUserAnswers.getOrThrow(AffectedTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (

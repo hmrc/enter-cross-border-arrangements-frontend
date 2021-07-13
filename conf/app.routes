@@ -578,3 +578,5 @@ GET        /disclosure-summary/:id                               controllers.Sum
 
 GET        /disclosure-already-deleted                           controllers.DisclosureAlreadySentController.onDeleted()
 GET        /disclosure-already-sent/:id                          controllers.DisclosureAlreadySentController.onSent(id: Int)
+
+GET        /some-information-is-missing/:id                      controllers.SomeInformationIsMissingController.onPageLoad(id: Int)

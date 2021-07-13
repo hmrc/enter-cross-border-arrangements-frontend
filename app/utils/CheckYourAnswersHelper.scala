@@ -16,6 +16,7 @@
 
 package utils
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.hallmarks.HallmarkD.D1
 import models.hallmarks.HallmarkD1.D1other
 import models.{CheckMode, UserAnswers}
@@ -83,7 +84,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def hallmarkD1Other(id: Int): Option[Row] = userAnswers.get(HallmarkD1OtherPage, id) flatMap {
+  def hallmarkD1Other(id: Int): Option[Row] = userAnswers.getOrThrow(HallmarkD1OtherPage, id) flatMap {
     answer =>
       userAnswers.get(HallmarkD1Page, id) match {
         case Some(hallmarkSet) if hallmarkSet.contains(D1other) =>
@@ -106,7 +107,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
 
   def buildHallmarksRow(id: Int): Row = {
 
-    val hallmarkDPage = userAnswers.get(HallmarkDPage, id) match {
+    val hallmarkDPage = userAnswers.getOrThrow(HallmarkDPage, id) match {
       case Some(set) if set.contains(D1) && set.size == 1 => None
       case Some(set) if set.contains(D1)                  => Some(set.filter(_ != D1))
       case hallmarkSet                                    => hallmarkSet

@@ -26,7 +26,7 @@ import utils.CheckYourAnswersHelper
 
 trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
-  def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map {
+  def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.getOrThrow(WhatIsThisArrangementCalledPage, id) map {
     answer =>
       toRow(
         msgKey = "whatIsThisArrangementCalled",
@@ -35,7 +35,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
       )
   }
 
-  def whatIsTheImplementationDatePage(id: Int): Option[Row] = userAnswers.get(WhatIsTheImplementationDatePage, id) map {
+  def whatIsTheImplementationDatePage(id: Int): Option[Row] = userAnswers.getOrThrow(WhatIsTheImplementationDatePage, id) map {
     answer =>
       toRow(
         msgKey = "whatIsTheImplementationDate",
@@ -44,7 +44,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
       )
   }
 
-  def buildWhyAreYouReportingThisArrangementNow(id: Int): Option[Row] = userAnswers.get(WhyAreYouReportingThisArrangementNowPage, id) map {
+  def buildWhyAreYouReportingThisArrangementNow(id: Int): Option[Row] = userAnswers.getOrThrow(WhyAreYouReportingThisArrangementNowPage, id) map {
     answer =>
       toRow(
         msgKey = "whyAreYouReportingThisArrangementNow",
@@ -73,7 +73,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
     Html(list)
   }
 
-  def whichExpectedInvolvedCountriesArrangement(id: Int): Option[Row] = userAnswers.get(WhichExpectedInvolvedCountriesArrangementPage, id) map {
+  def whichExpectedInvolvedCountriesArrangement(id: Int): Option[Row] = userAnswers.getOrThrow(WhichExpectedInvolvedCountriesArrangementPage, id) map {
     answer =>
       toRow(
         msgKey = "whichExpectedInvolvedCountriesArrangement",
@@ -82,7 +82,7 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
       )
   }
 
-  def whatIsTheExpectedValueOfThisArrangement(id: Int): Option[Row] = userAnswers.get(WhatIsTheExpectedValueOfThisArrangementPage, id) map {
+  def whatIsTheExpectedValueOfThisArrangement(id: Int): Option[Row] = userAnswers.getOrThrow(WhatIsTheExpectedValueOfThisArrangementPage, id) map {
     answer =>
       toRow(
         msgKey = "whatIsTheExpectedValueOfThisArrangement",
@@ -91,16 +91,17 @@ trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
       )
   }
 
-  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int): Option[Row] = userAnswers.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) map {
-    answer =>
-      toRow(
-        msgKey = "whichNationalProvisionsIsThisArrangementBasedOn",
-        content = formatMaxChars(answer, self.maxVisibleChars),
-        href = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
-      )
-  }
+  def whichNationalProvisionsIsThisArrangementBasedOn(id: Int): Option[Row] =
+    userAnswers.getOrThrow(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) map {
+      answer =>
+        toRow(
+          msgKey = "whichNationalProvisionsIsThisArrangementBasedOn",
+          content = formatMaxChars(answer, self.maxVisibleChars),
+          href = controllers.arrangement.routes.WhichNationalProvisionsIsThisArrangementBasedOnController.onPageLoad(id, CheckMode).url
+        )
+    }
 
-  def giveDetailsOfThisArrangement(id: Int): Option[Row] = userAnswers.get(GiveDetailsOfThisArrangementPage, id) map {
+  def giveDetailsOfThisArrangement(id: Int): Option[Row] = userAnswers.getOrThrow(GiveDetailsOfThisArrangementPage, id) map {
     answer =>
       toRow(
         msgKey = "giveDetailsOfThisArrangement",
