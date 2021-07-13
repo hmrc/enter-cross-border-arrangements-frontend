@@ -62,6 +62,10 @@ class FileTypeGatewayController @Inject() (
   }
 
   def sendMail(id: Int, importInstruction: String)(implicit request: DataRequestWithContacts[_]): Future[Option[HttpResponse]] =
+    {
+      println("****************** THIS IS EMAIL SENT" + request.contacts)
+
+
     request.userAnswers.get(GeneratedIDPage, id) match {
 
       //new
@@ -84,4 +88,5 @@ class FileTypeGatewayController @Inject() (
 
       case _ => throw new IllegalStateException("DisclosureID or ArrangementID can't be found for email.")
     }
+  }
 }

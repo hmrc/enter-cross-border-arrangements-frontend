@@ -101,21 +101,24 @@ class DisclosureDetailsController @Inject() (
     implicit request =>
       val submission = Submission(request.userAnswers, id, request.enrolmentID)
 
-      xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
-        _.fold(
-          errors =>
-            for {
-              updatedAnswersWithError <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
-              _                       <- sessionRepository.set(updatedAnswersWithError)
-            } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url),
-          updatedIds =>
-            for {
-              updatedUserAnswersWithSubmission <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, updatedIds))
-              updatedUserAnswersWithFlags      <- Future.fromTry(updateFlags(updatedUserAnswersWithSubmission, id))
-              _                                <- sessionRepository.set(updatedUserAnswersWithFlags)
-            } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
-        )
-      }
+//      xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
+//        _.fold(
+//          errors =>
+//            for {
+//              updatedAnswersWithError <- Future.fromTry(request.userAnswers.set(ValidationErrorsPage, id, errors))
+//              _                       <- sessionRepository.set(updatedAnswersWithError)
+//            } yield Redirect(controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(id).url),
+//          updatedIds =>
+//            for {
+//              updatedUserAnswersWithSubmission <- Future.fromTry(request.userAnswers.set(GeneratedIDPage, id, updatedIds))
+//              updatedUserAnswersWithFlags      <- Future.fromTry(updateFlags(updatedUserAnswersWithSubmission, id))
+//              _                                <- sessionRepository.set(updatedUserAnswersWithFlags)
+//            } yield Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url)
+//        )
+//      }
+//
+
+     Future.successful(Redirect(controllers.confirmation.routes.FileTypeGatewayController.onRouting(id).url))
   }
 
   private[controllers] def updateFlags(userAnswers: UserAnswers, id: Int): Try[UserAnswers] =

@@ -35,7 +35,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit execution
   ): Future[Option[HttpResponse]] =
     contacts match {
       case Some(contactDetails) =>
-        val emailAddress          = contactDetails.contactEmail
+        val emailAddress          = Some("mahipal.padala@digital.hmrc.gov.uk")
         val primaryContactName    = contactDetails.contactName
         val secondaryEmailAddress = contactDetails.secondEmail
         val secondaryName         = contactDetails.secondContactName
