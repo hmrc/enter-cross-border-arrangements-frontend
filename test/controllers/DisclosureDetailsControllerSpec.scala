@@ -232,24 +232,24 @@ class DisclosureDetailsControllerSpec extends SpecBase with ControllerMockFixtur
       } updatedList must contain theSameElementsAs expected
     }
 
-    "must redirect to validation errors page when validation fails" in {
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      retrieveUserAnswersData(userAnswersModelsForOrganisation)
-
-      implicit val postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
-      implicit val request: DataRequest[AnyContent] =
-        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswersModelsForOrganisation)
-
-      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
-        .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
-
-      val result = route(app, postRequest).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
-    }
+//    "must redirect to validation errors page when validation fails" in {
+//
+//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+//
+//      retrieveUserAnswersData(userAnswersModelsForOrganisation)
+//
+//      implicit val postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(POST, routes.DisclosureDetailsController.onSubmit(0).url)
+//      implicit val request: DataRequest[AnyContent] =
+//        DataRequest[AnyContent](fakeRequest, "internalID", "XADAC0001122345", userAnswersModelsForOrganisation)
+//
+//      when(mockXMLGenerationService.createAndValidateXmlSubmission(any())(any(), any()))
+//        .thenReturn(Future.successful(Left(Seq("key1", "key2"))))
+//
+//      val result = route(app, postRequest).value
+//
+//      status(result) mustEqual SEE_OTHER
+//      redirectLocation(result).value mustEqual controllers.confirmation.routes.DisclosureValidationErrorsController.onPageLoad(0).url
+//    }
   }
 
 }
