@@ -16,13 +16,31 @@
 
 package pages.arrangement
 
+import models.UserAnswers
 import models.arrangement.ArrangementDetails
-import pages.QuestionPage
+import pages.ModelPage
 import play.api.libs.json.JsPath
 
-case object ArrangementDetailsPage extends QuestionPage[ArrangementDetails] {
+import scala.util.{Success, Try}
+
+case object ArrangementDetailsPage extends ModelPage[ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "arrangementDetails"
+
+  override def restore(userAnswers: UserAnswers, id: Int, from: Option[ArrangementDetails]): Try[UserAnswers] =
+    from.fold[Try[UserAnswers]](Success(userAnswers)) {
+      arrangementDetails =>
+        implicit val org: ArrangementDetails = implicitly(arrangementDetails)
+        userAnswers
+          .set(WhatIsThisArrangementCalledPage, id)
+          .flatMap(_.set(WhatIsTheImplementationDatePage, id))
+          .flatMap(_.set(WhyAreYouReportingThisArrangementNowPage, id))
+          .flatMap(_.set(WhichExpectedInvolvedCountriesArrangementPage, id))
+          .flatMap(_.set(WhatIsTheExpectedValueOfThisArrangementPage, id))
+          .flatMap(_.set(WhichNationalProvisionsIsThisArrangementBasedOnPage, id))
+          .flatMap(_.set(GiveDetailsOfThisArrangementPage, id))
+          .flatMap(_.remove(ArrangementDetailsPage, id))
+    }
 }

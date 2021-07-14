@@ -17,9 +17,9 @@
 package pages.reporter
 
 import models.UserAnswers
-import models.reporter.RoleInArrangement
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
-import pages.QuestionPage
+import models.reporter.{ReporterDetails, RoleInArrangement}
+import pages.DetailsPage
 import pages.reporter.intermediary._
 import pages.reporter.taxpayer._
 import pages.taxpayer.RelevantTaxpayerStatusPage
@@ -27,7 +27,7 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
+case object RoleInArrangementPage extends DetailsPage[RoleInArrangement, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
@@ -51,5 +51,12 @@ case object RoleInArrangementPage extends QuestionPage[RoleInArrangement] {
           .flatMap(_.remove(IntermediaryWhichCountriesExemptPage, id))
 
       case _ => super.cleanup(value, userAnswers, id)
+    }
+
+  override def getFromModel(model: ReporterDetails): Option[RoleInArrangement] =
+    model match {
+      case m if m.isTaxpayer     => Some(RoleInArrangement.Taxpayer)
+      case m if m.isIntermediary => Some(RoleInArrangement.Intermediary)
+      case _                     => None
     }
 }

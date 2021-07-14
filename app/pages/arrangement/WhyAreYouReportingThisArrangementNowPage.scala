@@ -16,13 +16,17 @@
 
 package pages.arrangement
 
-import models.arrangement.WhyAreYouReportingThisArrangementNow
-import pages.QuestionPage
+import models.arrangement.{ArrangementDetails, WhyAreYouReportingThisArrangementNow}
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhyAreYouReportingThisArrangementNowPage extends QuestionPage[WhyAreYouReportingThisArrangementNow] {
+case object WhyAreYouReportingThisArrangementNowPage extends DetailsPage[WhyAreYouReportingThisArrangementNow, ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whyAreYouReportingThisArrangementNow"
+
+  override def getFromModel(model: ArrangementDetails): Option[WhyAreYouReportingThisArrangementNow] = WhyAreYouReportingThisArrangementNow.values.find(
+    reason => model.reportingReason.contains(reason.toString)
+  )
 }

@@ -18,10 +18,11 @@ package controllers.arrangement
 
 import controllers.actions._
 import forms.arrangement.GiveDetailsOfThisArrangementFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.GiveDetailsOfThisArrangementPage
+import pages.arrangement.GiveDetailsOfThisArrangementPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

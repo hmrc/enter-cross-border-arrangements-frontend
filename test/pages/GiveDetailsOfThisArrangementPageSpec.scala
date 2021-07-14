@@ -16,6 +16,7 @@
 
 package pages
 
+import pages.arrangement.GiveDetailsOfThisArrangementPage
 import pages.behaviours.PageBehaviours
 
 class GiveDetailsOfThisArrangementPageSpec extends PageBehaviours {

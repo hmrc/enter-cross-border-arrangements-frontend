@@ -16,13 +16,20 @@
 
 package pages.reporter.taxpayer
 
+import models.reporter.ReporterDetails
 import models.reporter.taxpayer.TaxpayerWhyReportArrangement
-import pages.QuestionPage
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object TaxpayerWhyReportArrangementPage extends QuestionPage[TaxpayerWhyReportArrangement] {
+case object TaxpayerWhyReportArrangementPage extends DetailsPage[TaxpayerWhyReportArrangement, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "taxpayerWhyReportArrangement"
+
+  override def getFromModel(model: ReporterDetails): Option[TaxpayerWhyReportArrangement] =
+    model match {
+      case m if m.isTaxpayer => model.liability.flatMap(_.nexus.flatMap(TaxpayerWhyReportArrangement.fromString))
+      case _                 => None
+    }
 }

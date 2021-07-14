@@ -16,13 +16,21 @@
 
 package pages.reporter.intermediary
 
+import models.reporter.ReporterDetails
 import models.reporter.intermediary.IntermediaryWhyReportInUK
-import pages.QuestionPage
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryWhyReportInUKPage extends QuestionPage[IntermediaryWhyReportInUK] {
+case object IntermediaryWhyReportInUKPage extends DetailsPage[IntermediaryWhyReportInUK, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whyReportInUK"
+
+  override def getFromModel(model: ReporterDetails): Option[IntermediaryWhyReportInUK] =
+    model match {
+      case m if m.isIntermediary => model.liability.flatMap(_.nexus.flatMap(IntermediaryWhyReportInUK.fromString))
+      case _                     => None
+    }
+
 }

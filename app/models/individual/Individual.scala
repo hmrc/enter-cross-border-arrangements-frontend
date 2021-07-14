@@ -16,8 +16,9 @@
 
 package models.individual
 
-import java.time.LocalDate
+import controllers.exceptions.SomeInformationIsMissingException
 
+import java.time.LocalDate
 import models.taxpayer.TaxResidency
 import models.{Address, AddressLookup, Country, Name, UserAnswers, WithRestore, WithTaxResidency}
 import pages.SelectedAddressLookupPage
@@ -91,7 +92,7 @@ object Individual {
   private def getIndividualName(ua: UserAnswers, id: Int): Name =
     ua.get(IndividualNamePage, id) match {
       case Some(name) => name
-      case None       => throw new Exception("Individual Taxpayer must contain a name")
+      case None       => throw new SomeInformationIsMissingException(id, "Individual Taxpayer must contain a name")
     }
 
   private def getIndividualDateOfBirth(ua: UserAnswers, id: Int): Option[LocalDate] =
@@ -100,7 +101,7 @@ object Individual {
   private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(IndividualLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None       => throw new Exception("Individual Taxpayer must contain at minimum one tax residency")
+      case None       => throw new SomeInformationIsMissingException(id, "Individual Taxpayer must contain at minimum one tax residency")
     }
 
   def buildIndividualDetails(ua: UserAnswers, id: Int): Individual = {
@@ -125,13 +126,13 @@ object Individual {
   private def getReporterIndividualName(ua: UserAnswers, id: Int): Name =
     ua.get(ReporterIndividualNamePage, id) match {
       case Some(name) => name
-      case None       => throw new Exception("Individual Reporter must contain name")
+      case None       => throw new SomeInformationIsMissingException(id, "Individual Reporter must contain name")
     }
 
   private def getReporterIndividualDOB(ua: UserAnswers, id: Int): Option[LocalDate] =
     ua.get(ReporterIndividualDateOfBirthPage, id) match {
       case dob  => dob
-      case None => throw new Exception("Individual Reporter must contain date of birth")
+      case None => throw new SomeInformationIsMissingException(id, "Individual Reporter must contain date of birth")
     }
 
   private def getReporterTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =

@@ -16,14 +16,17 @@
 
 package pages.reporter.individual
 
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
 import java.time.LocalDate
 
-case object ReporterIndividualDateOfBirthPage extends QuestionPage[LocalDate] {
+case object ReporterIndividualDateOfBirthPage extends DetailsPage[LocalDate, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterIndividualDateOfBirth"
+
+  override def getFromModel(model: ReporterDetails): Option[LocalDate] = model.individual.flatMap(_.birthDate)
 }

@@ -32,6 +32,7 @@ import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
 class TaxpayersCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -55,21 +56,12 @@ class TaxpayersCheckYourAnswersController @Inject() (
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) =
-        restoredUserAnswers.get(TaxpayerSelectTypePage, id) match {
+        restoredUserAnswers.getOrThrow(TaxpayerSelectTypePage, id) match {
           case Some(SelectType.Organisation) =>
-            (helper.taxpayerSelectType(id).toSeq ++ helper.organisationName(id).toSeq ++
-               helper.buildOrganisationAddressGroup(id) ++ helper.buildOrganisationEmailAddressGroup(id),
-             helper.buildTaxResidencySummaryForOrganisation(id)
-            )
+            (helper.taxpayerSelectType(id).toSeq ++ helper.buildOrganisationRows(id), helper.buildTaxResidencySummaryForOrganisation(id))
 
           case Some(SelectType.Individual) =>
-            (Seq(helper.taxpayerSelectType(id), helper.individualName(id)).flatten ++
-               helper.buildIndividualDateOfBirthGroup(id) ++
-               helper.buildIndividualPlaceOfBirthGroup(id) ++
-               helper.buildIndividualAddressGroup(id) ++
-               helper.buildIndividualEmailAddressGroup(id),
-             helper.buildTaxResidencySummaryForIndividuals(id)
-            )
+            (helper.taxpayerSelectType(id).toSeq ++ helper.buildIndividualRows(id), helper.buildTaxResidencySummaryForIndividuals(id))
 
           case _ => throw new UnsupportedRouteException(id)
         }

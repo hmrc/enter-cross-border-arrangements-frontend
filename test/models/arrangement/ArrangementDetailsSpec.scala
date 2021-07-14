@@ -22,9 +22,8 @@ import models.CountryList.UnitedKingdom
 import models.arrangement.WhyAreYouReportingThisArrangementNow.Dac6701
 import models.{CountryList, UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.arrangement._
+import pages.arrangement.{GiveDetailsOfThisArrangementPage, _}
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import java.time.LocalDate
 

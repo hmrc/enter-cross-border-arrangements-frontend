@@ -17,6 +17,7 @@
 package pages
 
 import models.arrangement.ExpectedArrangementValue
+import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
 import pages.behaviours.PageBehaviours
 
 class WhatIsTheExpectedValueOfThisArrangementPageSpec extends PageBehaviours {

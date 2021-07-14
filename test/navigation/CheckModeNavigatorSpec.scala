@@ -22,7 +22,7 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.arrangement._
-import pages.{QuestionPage, WhatIsTheExpectedValueOfThisArrangementPage}
+import pages.QuestionPage
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 

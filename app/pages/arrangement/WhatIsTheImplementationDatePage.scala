@@ -16,14 +16,17 @@
 
 package pages.arrangement
 
-import java.time.LocalDate
-
-import pages.QuestionPage
+import models.arrangement.ArrangementDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhatIsTheImplementationDatePage extends QuestionPage[LocalDate] {
+import java.time.LocalDate
+
+case object WhatIsTheImplementationDatePage extends DetailsPage[LocalDate, ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsTheImplementationDate"
+
+  override def getFromModel(model: ArrangementDetails): Option[LocalDate] = Option(model.implementationDate)
 }

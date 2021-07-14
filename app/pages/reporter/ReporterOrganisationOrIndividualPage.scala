@@ -17,23 +17,18 @@
 package pages.reporter
 
 import models.ReporterOrganisationOrIndividual.{Individual, Organisation}
+import models.reporter.ReporterDetails
 import models.{ReporterOrganisationOrIndividual, UserAnswers}
-import pages.QuestionPage
+import pages.DetailsPage
 import pages.reporter.individual._
-import pages.reporter.intermediary.{
-  IntermediaryDoYouKnowExemptionsPage,
-  IntermediaryExemptionInEUPage,
-  IntermediaryRolePage,
-  IntermediaryWhichCountriesExemptPage,
-  IntermediaryWhyReportInUKPage
-}
+import pages.reporter.intermediary._
 import pages.reporter.organisation._
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOrganisationOrIndividual] {
+case object ReporterOrganisationOrIndividualPage extends DetailsPage[ReporterOrganisationOrIndividual, ReporterDetails] {
 
   private val reporterIndividualPages = List(
     ReporterIndividualNamePage,
@@ -111,4 +106,6 @@ case object ReporterOrganisationOrIndividualPage extends QuestionPage[ReporterOr
 
       case _ => super.cleanup(value, userAnswers, id)
     }
+
+  override def getFromModel(model: ReporterDetails): Option[ReporterOrganisationOrIndividual] = ???
 }

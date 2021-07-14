@@ -16,6 +16,7 @@
 
 package models.hallmarks
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.hallmarks.HallmarkD.{D1, D2}
 import models.{HallmarkDMissingError, SubmissionError, UserAnswers}
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage}
@@ -34,7 +35,7 @@ object HallmarkDetails {
 
     lazy val mandatoryD1content = ua
       .get(HallmarkD1OtherPage, id)
-      .fold(throw new Exception("DAC6D1other information must be provided if DAC6D1other is selected"))(
+      .fold(throw new SomeInformationIsMissingException(id, "DAC6D1other information must be provided if DAC6D1other is selected"))(
         info => Some(info)
       )
 
@@ -72,7 +73,7 @@ object HallmarkDetails {
           hallmarkType = List(HallmarkD.D2.toString)
         )
 
-      case _ => throw new Exception("Unable to build hallmark details as missing mandatory answers")
+      case _ => throw new SomeInformationIsMissingException(id, "Unable to build hallmark details as missing mandatory answers")
     }
   }
 }

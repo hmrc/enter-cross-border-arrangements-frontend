@@ -16,12 +16,15 @@
 
 package pages.arrangement
 
-import pages.QuestionPage
+import models.arrangement.ArrangementDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhichNationalProvisionsIsThisArrangementBasedOnPage extends QuestionPage[String] {
+case object WhichNationalProvisionsIsThisArrangementBasedOnPage extends DetailsPage[String, ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whichNationalProvisionsIsThisArrangementBasedOn"
+
+  override def getFromModel(model: ArrangementDetails): Option[String] = Option(model.nationalProvisionDetails)
 }

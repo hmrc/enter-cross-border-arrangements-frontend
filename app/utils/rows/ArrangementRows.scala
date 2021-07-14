@@ -17,7 +17,6 @@
 package utils.rows
 
 import models.{CheckMode, CountryList}
-import pages._
 import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -26,7 +25,7 @@ import utils.CheckYourAnswersHelper
 
 trait ArrangementRows extends RowBuilder { self: CheckYourAnswersHelper =>
 
-  def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.get(WhatIsThisArrangementCalledPage, id) map {
+  def whatIsThisArrangementCalledPage(id: Int): Option[Row] = userAnswers.getOrThrow(WhatIsThisArrangementCalledPage, id) map {
     answer =>
       toRow(
         msgKey = "whatIsThisArrangementCalled",

@@ -23,6 +23,14 @@ import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
 
 trait IntermediariesRows extends RowBuilder {
 
+  def buildIntermediaries(id: Int): Seq[Row] =
+    Seq(
+      whatTypeofIntermediary(id) ++
+        isExemptionKnown(id) ++
+        isExemptionCountryKnown(id)
+    ).flatten ++
+      exemptCountries(id).toSeq
+
   def intermediariesType(id: Int): Option[Row] = userAnswers.get(IntermediariesTypePage, id) map {
     answer =>
       Row(
@@ -38,7 +46,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def isExemptionKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionKnownPage, id) map {
+  private[rows] def isExemptionKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionKnownPage, id) map {
     answer =>
       Row(
         key = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -53,7 +61,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionCountryKnownPage, id) map {
+  private[rows] def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionCountryKnownPage, id) map {
     answer =>
       Row(
         key = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -79,7 +87,7 @@ trait IntermediariesRows extends RowBuilder {
     }
   }
 
-  def exemptCountries(id: Int): Option[Row] = userAnswers.get(ExemptCountriesPage, id) map {
+  private[rows] def exemptCountries(id: Int): Option[Row] = userAnswers.get(ExemptCountriesPage, id) map {
     answer =>
       Row(
         key = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -112,7 +120,7 @@ trait IntermediariesRows extends RowBuilder {
 
   import pages.intermediaries.WhatTypeofIntermediaryPage
 
-  def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage, id) map {
+  private[rows] def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage, id) map {
     answer =>
       Row(
         key = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),

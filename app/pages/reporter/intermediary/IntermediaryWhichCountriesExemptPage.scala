@@ -17,12 +17,23 @@
 package pages.reporter.intermediary
 
 import models.CountryList
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryWhichCountriesExemptPage extends QuestionPage[Set[CountryList]] {
+case object IntermediaryWhichCountriesExemptPage extends DetailsPage[Set[CountryList], ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryWhichCountriesExempt"
+
+  override def getFromModel(model: ReporterDetails): Option[Set[CountryList]] =
+    model match {
+      case m if m.isIntermediary =>
+        for {
+          liability <- model.liability
+          countries <- liability.exemptCountries
+        } yield countries.toSet.flatMap(CountryList.fromString)
+      case _ => None
+    }
 }

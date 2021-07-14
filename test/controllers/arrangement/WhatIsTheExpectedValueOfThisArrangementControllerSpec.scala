@@ -23,7 +23,7 @@ import models.arrangement.ExpectedArrangementValue
 import models.{Currency, NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentCaptor, Mockito}
-import pages.WhatIsTheExpectedValueOfThisArrangementPage
+import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

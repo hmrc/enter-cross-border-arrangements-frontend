@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package pages.reporter.organisation
+package controllers.exceptions
 
-import models.reporter.ReporterDetails
-import pages.DetailsPage
-import play.api.libs.json.JsPath
+class SomeInformationIsMissingException(val id: Int, val optMsg: Option[String] = None) extends RuntimeException {
 
-case object ReporterOrganisationIsAddressUkPage extends DetailsPage[Boolean, ReporterDetails] {
+  def this(id: Int, msg: String) = this(id, Some(msg))
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "reporterOrganisationIsAddressUk"
-
-  override def getFromModel(model: ReporterDetails): Option[Boolean] = model.organisation.map(_.address.exists(_.country.isUK))
+  override def getMessage: String = optMsg.getOrElse(super.getMessage)
 }

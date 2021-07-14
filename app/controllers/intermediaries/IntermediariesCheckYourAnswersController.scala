@@ -55,7 +55,7 @@ class IntermediariesCheckYourAnswersController @Inject() (
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
-      val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
+      val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row]) =
         restoredUserAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
@@ -63,32 +63,11 @@ class IntermediariesCheckYourAnswersController @Inject() (
                helper.organisationName(id).toSeq ++
                helper.buildOrganisationAddressGroup(id) ++
                helper.buildOrganisationEmailAddressGroup(id),
-             helper.buildTaxResidencySummaryForOrganisation(id),
-             Seq(
-               helper.whatTypeofIntermediary(id) ++
-                 helper.isExemptionKnown(id) ++
-                 helper.isExemptionCountryKnown(id)
-             ).flatten ++
-               helper.exemptCountries(id).toSeq
+             helper.buildTaxResidencySummaryForOrganisation(id)
             )
 
           case Some(SelectType.Individual) =>
-            (Seq(
-               helper.intermediariesType(id) ++
-                 helper.individualName(id)
-             ).flatten ++
-               helper.buildIndividualDateOfBirthGroup(id) ++
-               helper.buildIndividualPlaceOfBirthGroup(id) ++
-               helper.buildIndividualAddressGroup(id) ++
-               helper.buildIndividualEmailAddressGroup(id),
-             helper.buildTaxResidencySummaryForIndividuals(id),
-             Seq(
-               helper.whatTypeofIntermediary(id) ++
-                 helper.isExemptionKnown(id) ++
-                 helper.isExemptionCountryKnown(id)
-             ).flatten ++
-               helper.exemptCountries(id).toSeq
-            )
+            (helper.intermediariesType(id).toSeq ++ helper.buildIndividualRows(id), helper.buildTaxResidencySummaryForIndividuals(id))
 
           case _ => throw new UnsupportedRouteException(id)
         }
@@ -99,7 +78,7 @@ class IntermediariesCheckYourAnswersController @Inject() (
           Json.obj(
             "intermediarySummary"  -> intermediarySummary,
             "tinCountrySummary"    -> tinCountrySummary,
-            "intermediarySummary2" -> intermediarySummary2,
+            "intermediarySummary2" -> helper.buildIntermediaries(id),
             "id"                   -> id,
             "mode"                 -> NormalMode
           )

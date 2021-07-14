@@ -16,14 +16,21 @@
 
 package pages.reporter.taxpayer
 
-import java.time.LocalDate
-
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object ReporterTaxpayersStartDateForImplementingArrangementPage extends QuestionPage[LocalDate] {
+import java.time.LocalDate
+
+case object ReporterTaxpayersStartDateForImplementingArrangementPage extends DetailsPage[LocalDate, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsReporterTaxpayersStartDateForImplementingArrangement"
+
+  override def getFromModel(model: ReporterDetails): Option[LocalDate] =
+    model match {
+      case m if m.isTaxpayer => model.liability.flatMap(_.implementingDate)
+      case _                 => None
+    }
 }

@@ -17,12 +17,23 @@
 package pages.reporter.intermediary
 
 import models.YesNoDoNotKnowRadios
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryExemptionInEUPage extends QuestionPage[YesNoDoNotKnowRadios] {
+case object IntermediaryExemptionInEUPage extends DetailsPage[YesNoDoNotKnowRadios, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryExemptionInEU"
+
+  override def getFromModel(model: ReporterDetails): Option[YesNoDoNotKnowRadios] =
+    model match {
+      case m if m.isIntermediary =>
+        model.liability.flatMap(
+          _ => YesNoDoNotKnowRadios.values.find(_ == YesNoDoNotKnowRadios.Yes)
+        )
+      case _ => None
+    }
+
 }

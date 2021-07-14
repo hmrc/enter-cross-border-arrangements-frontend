@@ -16,13 +16,23 @@
 
 package pages.reporter.intermediary
 
+import models.reporter.{ReporterDetails, RoleInArrangement}
 import models.reporter.intermediary.IntermediaryRole
-import pages.QuestionPage
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryRolePage extends QuestionPage[IntermediaryRole] {
+case object IntermediaryRolePage extends DetailsPage[IntermediaryRole, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryRole"
+
+  override def getFromModel(model: ReporterDetails): Option[IntermediaryRole] =
+    model match {
+      case m if m.isIntermediary =>
+        model.liability.flatMap(
+          l => IntermediaryRole.values.find(_.toString == l.role)
+        )
+      case _ => None
+    }
 }

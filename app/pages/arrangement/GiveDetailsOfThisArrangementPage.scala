@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package pages.arrangement
 
+import models.arrangement.ArrangementDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object GiveDetailsOfThisArrangementPage extends QuestionPage[String] {
+case object GiveDetailsOfThisArrangementPage extends DetailsPage[String, ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "giveDetailsOfThisArrangement"
+
+  override def getFromModel(model: ArrangementDetails): Option[String] = Option(model.arrangementDetails)
 }

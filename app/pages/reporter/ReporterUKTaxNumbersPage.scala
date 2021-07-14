@@ -17,12 +17,20 @@
 package pages.reporter
 
 import models.TaxReferenceNumbers
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object ReporterUKTaxNumbersPage extends QuestionPage[TaxReferenceNumbers] {
+case object ReporterUKTaxNumbersPage extends DetailsPage[TaxReferenceNumbers, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterUKTaxNumbers"
+
+  override def getFromModel(model: ReporterDetails): Option[TaxReferenceNumbers] =
+    (model.organisation, model.individual) match {
+      case (Some(organisation), None) => organisation.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers)
+      case (None, Some(individual))   => individual.firstTaxResidency.filter(_.isUK).flatMap(_.taxReferenceNumbers)
+      case _                          => None
+    }
 }

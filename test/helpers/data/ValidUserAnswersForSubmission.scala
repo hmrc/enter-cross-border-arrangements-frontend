@@ -42,7 +42,7 @@ import models.{
 }
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.affected.AffectedLoopPage
-import pages.arrangement._
+import pages.arrangement.{GiveDetailsOfThisArrangementPage, _}
 import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
 import pages.enterprises.AssociatedEnterpriseLoopPage
 import pages.hallmarks.{HallmarkD1OtherPage, HallmarkD1Page, HallmarkDPage, HallmarkDetailsPage}
@@ -53,7 +53,6 @@ import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrange
 import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import java.time.LocalDate
 

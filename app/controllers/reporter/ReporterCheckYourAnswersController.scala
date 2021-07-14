@@ -53,6 +53,7 @@ class ReporterCheckYourAnswersController @Inject() (
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      ReporterDetails.buildReporterDetails(request.userAnswers, id)
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val reporterDetails        = getOrganisationOrIndividualSummary(request.userAnswers, id, helper)
@@ -68,7 +69,7 @@ class ReporterCheckYourAnswersController @Inject() (
   }
 
   private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    ua.get(ReporterOrganisationOrIndividualPage, id) match {
+    ua.getOrThrow(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Organisation) =>
         Seq(
           helper.reporterOrganisationOrIndividual(id) ++
@@ -89,7 +90,7 @@ class ReporterCheckYourAnswersController @Inject() (
     }
 
   private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    ua.get(RoleInArrangementPage, id) match {
+    ua.getOrThrow(RoleInArrangementPage, id) match {
       case Some(Intermediary) =>
         Seq(
           helper.roleInArrangementPage(id) ++

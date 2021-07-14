@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package pages.arrangement
 
-import models.arrangement.ExpectedArrangementValue
+import models.arrangement.{ArrangementDetails, ExpectedArrangementValue}
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object WhatIsTheExpectedValueOfThisArrangementPage extends QuestionPage[ExpectedArrangementValue] {
+case object WhatIsTheExpectedValueOfThisArrangementPage extends DetailsPage[ExpectedArrangementValue, ArrangementDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsTheExpectedValueOfThisArrangement"
+
+  override def getFromModel(model: ArrangementDetails): Option[ExpectedArrangementValue] = Option(model.expectedValue)
 }

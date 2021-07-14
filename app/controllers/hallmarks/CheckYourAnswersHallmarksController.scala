@@ -49,6 +49,7 @@ class CheckYourAnswersHallmarksController @Inject() (
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      HallmarkDetails.buildHallmarkDetails(request.userAnswers, id)
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val hallmarks                     = helper.buildHallmarksRow(id)

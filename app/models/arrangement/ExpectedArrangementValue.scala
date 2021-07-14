@@ -17,13 +17,15 @@
 package models.arrangement
 
 import models.UserAnswers
-import pages.WhatIsTheExpectedValueOfThisArrangementPage
+import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
 import play.api.libs.json._
 
 case class ExpectedArrangementValue(currency: String, amount: Int)
 
 object ExpectedArrangementValue {
   implicit val format = Json.format[ExpectedArrangementValue]
+
+  val zero = ExpectedArrangementValue("", 0)
 
   def buildExpectedArrangementValue(ua: UserAnswers, id: Int): ExpectedArrangementValue =
     ua.get(WhatIsTheExpectedValueOfThisArrangementPage, id) match {

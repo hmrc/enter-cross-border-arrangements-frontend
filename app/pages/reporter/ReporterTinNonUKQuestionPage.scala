@@ -16,12 +16,20 @@
 
 package pages.reporter
 
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object ReporterTinNonUKQuestionPage extends QuestionPage[Boolean] {
+case object ReporterTinNonUKQuestionPage extends DetailsPage[Boolean, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterTinNonUKQuestion"
+
+  override def getFromModel(model: ReporterDetails): Option[Boolean] =
+    (model.organisation, model.individual) match {
+      case (Some(organisation), None) => organisation.firstTaxResidency.map(!_.isUK)
+      case (None, Some(individual))   => individual.firstTaxResidency.map(!_.isUK)
+      case _                          => None
+    }
 }

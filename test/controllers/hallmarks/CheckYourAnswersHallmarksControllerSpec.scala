@@ -43,6 +43,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success
         .value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
+        .success
+        .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("D1").toSet)
         .success
         .value
@@ -69,6 +72,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
         .success
         .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1Other").toSet)
@@ -105,6 +111,9 @@ class CheckYourAnswersHallmarksControllerSpec extends SpecBase with ControllerMo
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .set(HallmarkDPage, 0, HallmarkD.enumerable.withName("DAC6D1").toSet)
         .success
         .value
         .set(HallmarkD1Page, 0, HallmarkD1.enumerable.withName("DAC6D1a").toSet)

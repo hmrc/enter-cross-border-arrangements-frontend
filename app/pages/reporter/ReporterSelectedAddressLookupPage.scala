@@ -16,15 +16,16 @@
 
 package pages.reporter
 
+import models.reporter.ReporterDetails
 import models.{AddressLookup, UserAnswers}
-import pages.QuestionPage
+import pages.DetailsPage
 import pages.reporter.individual.ReporterIndividualAddressPage
 import pages.reporter.organisation.ReporterOrganisationAddressPage
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-object ReporterSelectedAddressLookupPage extends QuestionPage[AddressLookup] {
+object ReporterSelectedAddressLookupPage extends DetailsPage[AddressLookup, ReporterDetails] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterSelectedAddressLookup"
@@ -36,5 +37,12 @@ object ReporterSelectedAddressLookupPage extends QuestionPage[AddressLookup] {
           .remove(ReporterOrganisationAddressPage, id)
           .flatMap(_.remove(ReporterIndividualAddressPage, id))
       case None => super.cleanup(value, userAnswers, id)
+    }
+
+  override def getFromModel(model: ReporterDetails): Option[AddressLookup] =
+    (model.organisation, model.individual) match {
+      case (Some(organisation), None) => organisation.address.map(_.toAddressLookup)
+      case (None, Some(individual))   => individual.address.map(_.toAddressLookup)
+      case _                          => None
     }
 }

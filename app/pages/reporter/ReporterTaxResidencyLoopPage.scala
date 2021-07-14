@@ -17,12 +17,15 @@
 package pages.reporter
 
 import models.LoopDetails
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object ReporterTaxResidencyLoopPage extends QuestionPage[IndexedSeq[LoopDetails]] {
+case object ReporterTaxResidencyLoopPage extends DetailsPage[IndexedSeq[LoopDetails], ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reporterTaxResidencyLoop"
+
+  override def getFromModel(model: ReporterDetails): Option[IndexedSeq[LoopDetails]] = ???
 }

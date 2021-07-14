@@ -27,7 +27,14 @@ import java.time.LocalDate
 
 trait IndividualRows extends RowBuilder {
 
-  def individualName(id: Int): Option[Row] = userAnswers.get(IndividualNamePage, id) map {
+  def buildIndividualRows(id: Int): Seq[Row] =
+    Seq(individualName(id)).flatten ++
+      buildIndividualDateOfBirthGroup(id) ++
+      buildIndividualPlaceOfBirthGroup(id) ++
+      buildIndividualAddressGroup(id) ++
+      buildIndividualEmailAddressGroup(id)
+
+  private[rows] def individualName(id: Int): Option[Row] = userAnswers.getOrThrow(IndividualNamePage, id) map {
     answer =>
       toRow(
         msgKey = "individualName",
@@ -36,7 +43,7 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  def buildIndividualDateOfBirthGroup(id: Int): Seq[Row] =
+  private[rows] def buildIndividualDateOfBirthGroup(id: Int): Seq[Row] =
     (userAnswers.get(IsIndividualDateOfBirthKnownPage, id), userAnswers.get(IndividualDateOfBirthPage, id)) match {
 
       case (Some(true), Some(dateOfBirth)) =>
@@ -45,21 +52,21 @@ trait IndividualRows extends RowBuilder {
         Seq(isIndividualDateOfBirthKnown(false, id))
     }
 
-  def isIndividualDateOfBirthKnown(isKnown: Boolean, id: Int): Row =
+  private[rows] def isIndividualDateOfBirthKnown(isKnown: Boolean, id: Int): Row =
     toRow(
       msgKey = "isIndividualDateOfBirthKnown",
       content = yesOrNo(isKnown),
       href = controllers.individual.routes.IsIndividualDateOfBirthKnownController.onPageLoad(id, CheckMode).url
     )
 
-  def individualDateOfBirth(dateOfBirth: LocalDate, id: Int): Row =
+  private[rows] def individualDateOfBirth(dateOfBirth: LocalDate, id: Int): Row =
     toRow(
       msgKey = "individualDateOfBirth",
       content = Literal(dateOfBirth.format(dateFormatter)),
       href = controllers.individual.routes.IndividualDateOfBirthController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualPlaceOfBirthGroup(id: Int): Seq[Row] =
+  private[rows] def buildIndividualPlaceOfBirthGroup(id: Int): Seq[Row] =
     (userAnswers.get(IsIndividualPlaceOfBirthKnownPage, id), userAnswers.get(IndividualPlaceOfBirthPage, id)) match {
 
       case (Some(true), Some(placeOfBirth)) =>
@@ -82,7 +89,7 @@ trait IndividualRows extends RowBuilder {
       href = controllers.individual.routes.IndividualPlaceOfBirthController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualAddressGroup(id: Int): Seq[Row] =
+  private[rows] def buildIndividualAddressGroup(id: Int): Seq[Row] =
     (userAnswers.get(IsIndividualAddressKnownPage, id), userAnswers.get(IndividualAddressPage, id), userAnswers.get(SelectedAddressLookupPage, id)) match {
       case (Some(true), Some(manualAddress), _) =>
         Seq(isIndividualAddressKnown(true, id), individualAddress(manualAddress, id))
@@ -113,7 +120,7 @@ trait IndividualRows extends RowBuilder {
       href = controllers.individual.routes.IsIndividualAddressUkController.onPageLoad(id, CheckMode).url
     )
 
-  def buildIndividualEmailAddressGroup(id: Int): Seq[Row] =
+  private[rows] def buildIndividualEmailAddressGroup(id: Int): Seq[Row] =
     (userAnswers.get(EmailAddressQuestionForIndividualPage, id), userAnswers.get(EmailAddressForIndividualPage, id)) match {
 
       case (Some(true), Some(email)) =>
@@ -191,7 +198,7 @@ trait IndividualRows extends RowBuilder {
     )
   }
 
-  def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
+  private[rows] def whichCountryTaxForIndividual(id: Int): Option[Row] = userAnswers.get(WhichCountryTaxForIndividualPage, id) map {
     answer =>
       toRow(
         msgKey = "whichCountryTaxForIndividual",
@@ -200,7 +207,7 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
+  private[rows] def doYouKnowAnyTINForUKIndividual(id: Int): Option[Row] = userAnswers.get(DoYouKnowAnyTINForUKIndividualPage, id) map {
     answer =>
       toRow(
         msgKey = "doYouKnowAnyTINForUKIndividual",
@@ -209,7 +216,7 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
+  private[rows] def whatAreTheTaxNumbersForUKIndividual(id: Int): Option[Row] = userAnswers.get(WhatAreTheTaxNumbersForUKIndividualPage, id) map {
     answer =>
       toRow(
         msgKey = "whatAreTheTaxNumbersForUKIndividual",
@@ -218,7 +225,7 @@ trait IndividualRows extends RowBuilder {
       )
   }
 
-  def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
+  private[rows] def isIndividualResidentForTaxOtherCountries(id: Int): Option[Row] = userAnswers.get(IsIndividualResidentForTaxOtherCountriesPage, id) map {
     answer =>
       toRow(
         msgKey = "isIndividualResidentForTaxOtherCountries",

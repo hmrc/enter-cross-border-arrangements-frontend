@@ -16,12 +16,19 @@
 
 package pages.reporter.intermediary
 
-import pages.QuestionPage
+import models.reporter.ReporterDetails
+import pages.DetailsPage
 import play.api.libs.json.JsPath
 
-case object IntermediaryDoYouKnowExemptionsPage extends QuestionPage[Boolean] {
+case object IntermediaryDoYouKnowExemptionsPage extends DetailsPage[Boolean, ReporterDetails] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "intermediaryDoYouKnowExemptions"
+
+  override def getFromModel(model: ReporterDetails): Option[Boolean] =
+    model match {
+      case m if m.isIntermediary => model.liability.flatMap(_.nationalExemption)
+      case _                     => None
+    }
 }

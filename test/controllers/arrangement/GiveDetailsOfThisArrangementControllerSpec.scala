@@ -22,7 +22,7 @@ import matchers.JsonMatchers
 import models.{NormalMode, UnsubmittedDisclosure, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.GiveDetailsOfThisArrangementPage
+import pages.arrangement.GiveDetailsOfThisArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest

@@ -51,6 +51,7 @@ class ArrangementCheckYourAnswersController @Inject() (
 
   def onPageLoad(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
     implicit request =>
+      ArrangementDetails.buildArrangementDetails(request.userAnswers, id)
       val helper = new CheckYourAnswersHelper(request.userAnswers)
 
       val list: Seq[SummaryList.Row] =

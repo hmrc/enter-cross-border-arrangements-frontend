@@ -20,7 +20,7 @@ import base.ModelSpecBase
 import generators.ModelGenerators
 import models.{UnsubmittedDisclosure, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.WhatIsTheExpectedValueOfThisArrangementPage
+import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 class ExpectedArrangementValueSpec extends ModelSpecBase with ModelGenerators {
