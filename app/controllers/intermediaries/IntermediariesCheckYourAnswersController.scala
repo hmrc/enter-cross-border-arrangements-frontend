@@ -56,7 +56,7 @@ class IntermediariesCheckYourAnswersController @Inject() (
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (intermediarySummary: Seq[SummaryList.Row], tinCountrySummary: Seq[SummaryList.Row], intermediarySummary2: Seq[SummaryList.Row]) =
-        restoredUserAnswers.get(IntermediariesTypePage, id) match {
+        restoredUserAnswers.getOrThrow(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
             (helper.intermediariesType(id).toSeq ++

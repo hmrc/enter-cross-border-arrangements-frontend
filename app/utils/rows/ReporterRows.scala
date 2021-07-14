@@ -180,7 +180,7 @@ trait ReporterRows extends RowBuilder {
 
   //Reporter - TaxResidency Loop
 
-  def buildTaxResidencySummaryForReporter(id: Int): Seq[Row] = (userAnswers.get(ReporterTaxResidencyLoopPage, id) map {
+  def buildTaxResidencySummaryForReporter(id: Int): Seq[Row] = (userAnswers.getOrThrow(ReporterTaxResidencyLoopPage, id) map {
     answer =>
       val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
         .filter(_.whichCountry.isDefined)

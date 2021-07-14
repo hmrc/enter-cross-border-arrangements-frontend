@@ -23,7 +23,7 @@ import uk.gov.hmrc.viewmodels.SummaryList.Row
 
 trait AffectedRows extends RowBuilder {
 
-  def affectedType(id: Int): Option[Row] = userAnswers.get(AffectedTypePage, id) map {
+  def affectedType(id: Int): Option[Row] = userAnswers.getOrThrow(AffectedTypePage, id) map {
     answer =>
       toRow(
         msgKey = "affectedType",

@@ -1212,3 +1212,7 @@ disclosureAlreadySent.title = You have already {0} your disclosure
 disclosureAlreadySent.heading = You have already {0} your disclosure
 disclosureAlreadySent.option.sent = sent
 disclosureAlreadySent.option.deleted = deleted
+
+someInformationIsMissing.title = Some information is missing
+someInformationIsMissing.heading = Some information is missing
+someInformationIsMissing.p1 = You must complete all sections before sending your disclosure.

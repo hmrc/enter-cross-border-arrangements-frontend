@@ -68,7 +68,7 @@ class ReporterCheckYourAnswersController @Inject() (
   }
 
   private def getOrganisationOrIndividualSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    ua.get(ReporterOrganisationOrIndividualPage, id) match {
+    ua.getOrThrow(ReporterOrganisationOrIndividualPage, id) match {
       case Some(Organisation) =>
         Seq(
           helper.reporterOrganisationOrIndividual(id) ++
@@ -89,7 +89,7 @@ class ReporterCheckYourAnswersController @Inject() (
     }
 
   private def getIntermediaryOrTaxpayerSummary(ua: UserAnswers, id: Int, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    ua.get(RoleInArrangementPage, id) match {
+    ua.getOrThrow(RoleInArrangementPage, id) match {
       case Some(Intermediary) =>
         Seq(
           helper.roleInArrangementPage(id) ++

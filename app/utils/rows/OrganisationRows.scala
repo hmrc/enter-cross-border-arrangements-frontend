@@ -24,7 +24,7 @@ import uk.gov.hmrc.viewmodels._
 
 trait OrganisationRows extends RowBuilder {
 
-  def organisationName(id: Int): Option[Row] = userAnswers.get(OrganisationNamePage, id) map {
+  def organisationName(id: Int): Option[Row] = userAnswers.getOrThrow(OrganisationNamePage, id) map {
     answer =>
       toRow(
         msgKey = "organisationName",
@@ -34,7 +34,10 @@ trait OrganisationRows extends RowBuilder {
   }
 
   def buildOrganisationAddressGroup(id: Int): Seq[Row] =
-    (userAnswers.get(IsOrganisationAddressKnownPage, id), userAnswers.get(OrganisationAddressPage, id), userAnswers.get(SelectedAddressLookupPage, id)) match {
+    (userAnswers.getOrThrow(IsOrganisationAddressKnownPage, id),
+     userAnswers.getOrThrow(OrganisationAddressPage, id),
+     userAnswers.getOrThrow(SelectedAddressLookupPage, id)
+    ) match {
       case (Some(true), Some(manualAddress), _) =>
         Seq(isOrganisationAddressKnown(true, id), organisationAddress(manualAddress, id))
       case (Some(true), _, Some(addressLookup)) =>
@@ -65,7 +68,7 @@ trait OrganisationRows extends RowBuilder {
     )
 
   def buildOrganisationEmailAddressGroup(id: Int): Seq[Row] =
-    (userAnswers.get(EmailAddressQuestionForOrganisationPage, id), userAnswers.get(EmailAddressForOrganisationPage, id)) match {
+    (userAnswers.getOrThrow(EmailAddressQuestionForOrganisationPage, id), userAnswers.getOrThrow(EmailAddressForOrganisationPage, id)) match {
 
       case (Some(true), Some(email)) =>
         Seq(emailAddressQuestionForOrganisation(true, id), emailAddressForOrganisation(email, id))
@@ -87,7 +90,7 @@ trait OrganisationRows extends RowBuilder {
       href = controllers.organisation.routes.EmailAddressForOrganisationController.onPageLoad(id, CheckMode).url
     )
 
-  def buildTaxResidencySummaryForOrganisation(id: Int): Seq[Row] = (userAnswers.get(OrganisationLoopPage, id) map {
+  def buildTaxResidencySummaryForOrganisation(id: Int): Seq[Row] = (userAnswers.getOrThrow(OrganisationLoopPage, id) map {
     answer =>
       val validDetailsWithIndex: IndexedSeq[(LoopDetails, Int)] = answer
         .filter(_.whichCountry.isDefined)

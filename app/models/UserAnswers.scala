@@ -16,6 +16,7 @@
 
 package models
 
+import controllers.exceptions.SomeInformationIsMissingException
 import pages._
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -69,6 +70,9 @@ final case class UserAnswers(
 
   def get[A](page: QuestionPage[A], index: Int)(implicit rds: Reads[A]): Option[A] =
     get(UnsubmittedIndex.fromQuestionPage(page, index)(this))
+
+  def getOrThrow[A](page: QuestionPage[A], index: Int)(implicit rds: Reads[A]): Option[A] =
+    get(page, index).orElse(throw new SomeInformationIsMissingException(index))
 
   def set[A](page: UnsubmittedIndex[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 

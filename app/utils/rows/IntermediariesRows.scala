@@ -23,7 +23,7 @@ import uk.gov.hmrc.viewmodels.{Html, MessageInterpolators}
 
 trait IntermediariesRows extends RowBuilder {
 
-  def intermediariesType(id: Int): Option[Row] = userAnswers.get(IntermediariesTypePage, id) map {
+  def intermediariesType(id: Int): Option[Row] = userAnswers.getOrThrow(IntermediariesTypePage, id) map {
     answer =>
       Row(
         key = Key(msg"intermediariesType.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -38,7 +38,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def isExemptionKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionKnownPage, id) map {
+  def isExemptionKnown(id: Int): Option[Row] = userAnswers.getOrThrow(IsExemptionKnownPage, id) map {
     answer =>
       Row(
         key = Key(msg"isExemptionKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -53,7 +53,7 @@ trait IntermediariesRows extends RowBuilder {
       )
   }
 
-  def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.get(IsExemptionCountryKnownPage, id) map {
+  def isExemptionCountryKnown(id: Int): Option[Row] = userAnswers.getOrThrow(IsExemptionCountryKnownPage, id) map {
     answer =>
       Row(
         key = Key(msg"isExemptionCountryKnown.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -79,7 +79,7 @@ trait IntermediariesRows extends RowBuilder {
     }
   }
 
-  def exemptCountries(id: Int): Option[Row] = userAnswers.get(ExemptCountriesPage, id) map {
+  def exemptCountries(id: Int): Option[Row] = userAnswers.getOrThrow(ExemptCountriesPage, id) map {
     answer =>
       Row(
         key = Key(msg"exemptCountries.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
@@ -112,7 +112,7 @@ trait IntermediariesRows extends RowBuilder {
 
   import pages.intermediaries.WhatTypeofIntermediaryPage
 
-  def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.get(WhatTypeofIntermediaryPage, id) map {
+  def whatTypeofIntermediary(id: Int): Option[Row] = userAnswers.getOrThrow(WhatTypeofIntermediaryPage, id) map {
     answer =>
       Row(
         key = Key(msg"whatTypeofIntermediary.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),

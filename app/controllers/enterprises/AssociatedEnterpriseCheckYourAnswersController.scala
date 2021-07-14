@@ -59,7 +59,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject() (
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
-      val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
+      val (summaryRows, countrySummary) = restoredUserAnswers.getOrThrow(AssociatedEnterpriseTypePage, id) match {
 
         case Some(SelectType.Organisation) =>
           (
