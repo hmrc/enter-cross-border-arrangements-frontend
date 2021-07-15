@@ -44,7 +44,8 @@ object IntermediaryRole extends Enumerable.Implicits with NunjucksSupport {
       Radios.Radio(
         label = msg"intermediaryRole.DAC61102",
         value = ServiceProvider.toString,
-        hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint"))
+        hint = Some(Hint(msg"intermediaryRole.serviceProvider.hint", "service-provider-hint")),
+        classes = Seq("name-overflow")
       ),
       Radios.Radio(msg"intermediaryRole.optionUnknown", Unknown.toString)
     )
