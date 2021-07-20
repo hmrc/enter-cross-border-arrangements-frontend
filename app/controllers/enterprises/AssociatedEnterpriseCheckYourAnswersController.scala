@@ -17,7 +17,7 @@
 package controllers.enterprises
 
 import controllers.actions._
-import controllers.exceptions.UnsupportedRouteException
+import controllers.exceptions.SomeInformationIsMissingException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForEnterprises
@@ -33,7 +33,6 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
@@ -60,7 +59,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject() (
 
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
-      val (summaryRows, countrySummary) = restoredUserAnswers.getOrThrow(AssociatedEnterpriseTypePage, id) match {
+      val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
 
         case Some(SelectType.Organisation) =>
           (helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
@@ -74,7 +73,7 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject() (
            helper.buildTaxResidencySummaryForIndividuals(id)
           )
 
-        case _ => throw new UnsupportedRouteException(id)
+        case _ => throw new SomeInformationIsMissingException(id, Some("Associated enterprise type not selected."))
       }
 
       val isEnterpriseAffected = Seq(helper.isAssociatedEnterpriseAffected(id)).flatten

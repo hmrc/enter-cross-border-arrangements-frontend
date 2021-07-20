@@ -17,7 +17,7 @@
 package controllers.affected
 
 import controllers.actions._
-import controllers.exceptions.UnsupportedRouteException
+import controllers.exceptions.SomeInformationIsMissingException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForAffected
@@ -58,17 +58,12 @@ class AffectedCheckYourAnswersController @Inject() (
         restoredUserAnswers.get(AffectedTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
-            (
-              helper.affectedType(id).toSeq ++ helper.buildOrganisationRows(id),
-              helper.buildTaxResidencySummaryForOrganisation(id)
-            )
-          case Some(SelectType.Individual) =>
-            (
-              helper.affectedType(id).toSeq ++ helper.buildIndividualRows(id),
-              helper.buildTaxResidencySummaryForIndividuals(id)
-            )
+            (helper.affectedType(id).toSeq ++ helper.buildOrganisationRows(id), helper.buildTaxResidencySummaryForOrganisation(id))
 
-          case _ => throw new UnsupportedRouteException(id)
+          case Some(SelectType.Individual) =>
+            (helper.affectedType(id).toSeq ++ helper.buildIndividualRows(id), helper.buildTaxResidencySummaryForIndividuals(id))
+
+          case _ => throw new SomeInformationIsMissingException(id, Some("Other party type not selected."))
         }
 
       renderer

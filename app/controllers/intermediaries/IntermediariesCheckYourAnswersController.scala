@@ -17,7 +17,7 @@
 package controllers.intermediaries
 
 import controllers.actions._
-import controllers.exceptions.UnsupportedRouteException
+import controllers.exceptions.SomeInformationIsMissingException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.NavigatorForIntermediaries
@@ -59,17 +59,12 @@ class IntermediariesCheckYourAnswersController @Inject() (
         restoredUserAnswers.get(IntermediariesTypePage, id) match {
 
           case Some(SelectType.Organisation) =>
-            (helper.intermediariesType(id).toSeq ++
-               helper.organisationName(id).toSeq ++
-               helper.buildOrganisationAddressGroup(id) ++
-               helper.buildOrganisationEmailAddressGroup(id),
-             helper.buildTaxResidencySummaryForOrganisation(id)
-            )
+            (helper.intermediariesType(id).toSeq ++ helper.buildOrganisationRows(id), helper.buildTaxResidencySummaryForOrganisation(id))
 
           case Some(SelectType.Individual) =>
             (helper.intermediariesType(id).toSeq ++ helper.buildIndividualRows(id), helper.buildTaxResidencySummaryForIndividuals(id))
 
-          case _ => throw new UnsupportedRouteException(id)
+          case _ => throw new SomeInformationIsMissingException(id, Some("Intermediary type not selected."))
         }
 
       renderer

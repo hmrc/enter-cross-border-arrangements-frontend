@@ -156,7 +156,7 @@ final case class UserAnswers(
           this
             .get(loopPage, id)
             .flatMap[A](_.find(_.asInstanceOf[WithRestore].matchItem(nonEmptyItemId)))
-            .map(_.asInstanceOf[WithRestore].restore(this, id).getOrElse(this))
+            .map(_.asInstanceOf[WithRestore].restore(this, id).getOrElse(throw new SomeInformationIsMissingException(id)))
       }
       .getOrElse(this)
 

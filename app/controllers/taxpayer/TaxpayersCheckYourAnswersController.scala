@@ -18,7 +18,7 @@ package controllers.taxpayer
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.exceptions.UnsupportedRouteException
+import controllers.exceptions.SomeInformationIsMissingException
 import models.{NormalMode, SelectType, UserAnswers}
 import navigation.Navigator
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerLoopPage, TaxpayerSelectTypePage, UpdateTaxpayerPage}
@@ -56,14 +56,14 @@ class TaxpayersCheckYourAnswersController @Inject() (
       val helper = new CheckYourAnswersHelper(restoredUserAnswers)
 
       val (taxpayerSummary: Seq[SummaryList.Row], countrySummary: Seq[SummaryList.Row]) =
-        restoredUserAnswers.getOrThrow(TaxpayerSelectTypePage, id) match {
+        restoredUserAnswers.get(TaxpayerSelectTypePage, id) match {
           case Some(SelectType.Organisation) =>
             (helper.taxpayerSelectType(id).toSeq ++ helper.buildOrganisationRows(id), helper.buildTaxResidencySummaryForOrganisation(id))
 
           case Some(SelectType.Individual) =>
             (helper.taxpayerSelectType(id).toSeq ++ helper.buildIndividualRows(id), helper.buildTaxResidencySummaryForIndividuals(id))
 
-          case _ => throw new UnsupportedRouteException(id)
+          case _ => throw new SomeInformationIsMissingException(id, Some("Taxpayer type not selected."))
         }
 
       val implementingDateSummary = helper.whatIsTaxpayersStartDateForImplementingArrangement(id).toSeq
