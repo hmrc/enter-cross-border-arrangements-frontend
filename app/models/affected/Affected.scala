@@ -16,6 +16,7 @@
 
 package models.affected
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
@@ -50,7 +51,7 @@ object Affected {
     ua.get(AffectedTypePage, id) match {
       case Some(SelectType.Organisation) => affected.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => affected.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _                             => throw new Exception("Unable to retrieve other parties affected select type")
+      case _                             => throw new SomeInformationIsMissingException(id, Some("Unable to retrieve other parties affected select type"))
     }
   }
 

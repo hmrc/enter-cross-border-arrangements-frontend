@@ -16,15 +16,15 @@
 
 package models.taxpayer
 
-import java.time.LocalDate
-import java.util.UUID
-
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
 import pages.taxpayer.{TaxpayerCheckYourAnswersPage, TaxpayerSelectTypePage, WhatIsTaxpayersStartDateForImplementingArrangementPage}
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+import java.util.UUID
 import scala.util.Try
 
 case class Taxpayer(taxpayerId: String,
@@ -56,12 +56,12 @@ object Taxpayer {
           this(itemId, None, None, Some(startDate))
         case (Some(itemId), None) =>
           this(itemId, None, None, None)
-        case _ => throw new Exception("Unable to build taxpayer")
+        case _ => throw new SomeInformationIsMissingException(id, Some("Unable to build taxpayer"))
       }
     ua.get(TaxpayerSelectTypePage, id) match {
       case Some(SelectType.Organisation) => taxpayer.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => taxpayer.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _                             => throw new Exception("Unable to retrieve taxpayer select type")
+      case _                             => throw new SomeInformationIsMissingException(id, Some("Unable to retrieve taxpayer select type"))
     }
   }
   implicit val format: OFormat[Taxpayer] = Json.format[Taxpayer]

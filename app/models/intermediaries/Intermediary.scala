@@ -16,14 +16,15 @@
 
 package models.intermediaries
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
 import models.{CountryList, IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
 import pages.intermediaries._
 import play.api.libs.json.{Json, OFormat}
-import java.util.UUID
 
+import java.util.UUID
 import scala.util.Try
 
 case class Intermediary(intermediaryId: String,
@@ -69,12 +70,12 @@ object Intermediary {
       case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None, None) =>
         this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, None, None)
       case _ =>
-        throw new Exception("Unable to build intermediary")
+        throw new SomeInformationIsMissingException(id, Some("Unable to build intermediary"))
     }
     ua.get(IntermediariesTypePage, id) match {
       case Some(SelectType.Organisation) => intermediary.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => intermediary.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _                             => throw new Exception("Unable to retrieve Intermediary select type")
+      case _                             => throw new SomeInformationIsMissingException(id, Some("Unable to retrieve Intermediary select type"))
     }
   }
 
