@@ -21,7 +21,7 @@ import controllers.actions._
 import handlers.ErrorHandler
 import helpers.JourneyHelpers.{linkToHomePageText, surveyLinkText}
 import models.GeneratedIDs
-import pages.disclosure.{DisclosureDeleteCheckYourAnswersPage, ReplaceOrDeleteADisclosurePage}
+import pages.disclosure.{DisclosureDeleteCheckYourAnswersPage, DisclosureTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,7 +65,7 @@ class YourDisclosureHasBeenDeletedController @Inject() (
           )
 
           for {
-            updatedAnswers <- request.userAnswers.removeBase(ReplaceOrDeleteADisclosurePage)
+            updatedAnswers <- request.userAnswers.removeBase(DisclosureTypePage)
           } yield sessionRepository.set(updatedAnswers)
 
           renderer.render("confirmation/yourDisclosureHasBeenDeleted.njk", json).map(Ok(_))

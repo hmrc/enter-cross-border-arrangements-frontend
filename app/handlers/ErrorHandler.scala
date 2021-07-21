@@ -17,6 +17,7 @@
 package handlers
 
 import controllers.exceptions.{
+  DeleteInformationIsMissingException,
   DiscloseDetailsAlreadyDeletedException,
   DiscloseDetailsAlreadySentException,
   DisclosureInformationIsMissingException,
@@ -75,8 +76,10 @@ class ErrorHandler @Inject() (
 
     logError(request, exception)
     exception match {
-      case e: DisclosureInformationIsMissingException =>
+      case _: DisclosureInformationIsMissingException =>
         Future.successful(Redirect(routes.SomeInformationIsMissingController.fromDisclose()))
+      case _: DeleteInformationIsMissingException =>
+        Future.successful(Redirect(routes.SomeInformationIsMissingController.fromDelete()))
       case e: SomeInformationIsMissingException =>
         Future.successful(Redirect(routes.SomeInformationIsMissingController.fromOther(e.id)))
       case _: DiscloseDetailsAlreadyDeletedException =>
