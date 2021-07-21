@@ -42,17 +42,7 @@ class SomeInformationIsMissingController @Inject() (
       renderer
         .render(
           "someInformationIsMissing.njk",
-          Json.obj("link" -> controllers.disclosure.routes.DisclosureCheckYourAnswersController.onPageLoad().url)
-        )
-        .map(Ok(_))
-  }
-
-  def fromDelete(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData).async {
-    implicit request =>
-      renderer
-        .render(
-          "someInformationIsMissing.njk",
-          Json.obj("link" -> controllers.disclosure.routes.DisclosureDeleteCheckYourAnswersController.onPageLoad().url)
+          Json.obj("link" -> controllers.routes.IndexController.onPageLoad().url)
         )
         .map(Ok(_))
   }

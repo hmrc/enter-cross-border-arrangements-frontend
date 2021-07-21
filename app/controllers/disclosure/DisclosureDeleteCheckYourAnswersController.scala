@@ -19,7 +19,7 @@ package controllers.disclosure
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.exceptions.{DeleteInformationIsMissingException, DiscloseDetailsAlreadyDeletedException}
+import controllers.exceptions.{DiscloseDetailsAlreadyDeletedException, DisclosureInformationIsMissingException}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.JourneyHelpers.linkToHomePageText
 import models.disclosure.{DisclosureDetails, DisclosureType}
@@ -91,7 +91,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
             .withDisclosureType(DisclosureType.Dac6del)
             .withIds(ids.arrangementID, ids.disclosureID)
           Submission(request.enrolmentID, disclosureDetails)
-        case _ => throw new DeleteInformationIsMissingException("Cannot retrieve Disclosure Information")
+        case _ => throw new DisclosureInformationIsMissingException("Cannot retrieve Disclosure Information")
       }
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
@@ -111,6 +111,6 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
       case Some(detail) =>
         emailService.sendEmail(request.contacts, GeneratedIDs(Some(detail.arrangementID), Some(detail.disclosureID)), "dac6del", ids.messageRefID.get)
-      case _ => throw new DeleteInformationIsMissingException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
+      case _ => throw new DisclosureInformationIsMissingException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
     }
 }

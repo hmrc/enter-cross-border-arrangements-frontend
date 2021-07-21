@@ -19,6 +19,7 @@ package controllers.disclosure
 import com.google.inject.Inject
 import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.exceptions.DisclosureInformationIsMissingException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.IDHelper
 import models.disclosure.DisclosureDetails
@@ -88,19 +89,19 @@ class DisclosureCheckYourAnswersController @Inject() (
         case Some(Dac6add) =>
           request.userAnswers
             .getBase(DisclosureIdentifyArrangementPage)
-            .fold(throw new Exception("Unable to retrieve isMarketableArrangement from disclosure backend"))(
+            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve isMarketableArrangement from disclosure backend"))(
               arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
             )
         case Some(Dac6rep) =>
           request.userAnswers
             .getBase(ReplaceOrDeleteADisclosurePage)
-            .fold(throw new Exception("Unable to retrieve ReplaceOrDeleteADisclosure IDs"))(
+            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ReplaceOrDeleteADisclosure IDs"))(
               ids => crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID)
             )
         case _ =>
           request.userAnswers
             .getBase(DisclosureMarketablePage)
-            .fold(throw new Exception("Unable to retrieve user answer marketable arrangement"))(
+            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve user answer marketable arrangement"))(
               bool => Future.successful(bool)
             )
       }

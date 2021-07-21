@@ -580,5 +580,4 @@ GET        /disclosure-already-deleted                           controllers.Dis
 GET        /disclosure-already-sent/:id                          controllers.DisclosureAlreadySentController.onSent(id: Int)
 
 GET        /disclosure-information-is-missing/                   controllers.SomeInformationIsMissingController.fromDisclose()
-GET        /delete-information-is-missing/                       controllers.SomeInformationIsMissingController.fromDelete()
 GET        /some-information-is-missing/:id                      controllers.SomeInformationIsMissingController.fromOther(id: Int)

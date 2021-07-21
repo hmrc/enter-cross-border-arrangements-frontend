@@ -190,16 +190,13 @@ class DisclosureDeleteCheckYourAnswersControllerSpec extends SpecBase with Contr
       redirectLocation(result).value mustEqual "/disclose-cross-border-arrangements/manual/disclosure/disclosure-has-been-deleted"
     }
 
-    "fail with DiscloseDetailsAlreadyDeletedException if ReplaceOrDeleteADisclosurePage is empty " in {
+    "fail with DiscloseDetailsAlreadyDeletedException if DisclosureTypePage is empty " in {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
         .success
         .value
         .setBase(DisclosureNamePage, "My arrangement")
-        .success
-        .value
-        .setBase(DisclosureTypePage, DisclosureType.Dac6del)
         .success
         .value
 
