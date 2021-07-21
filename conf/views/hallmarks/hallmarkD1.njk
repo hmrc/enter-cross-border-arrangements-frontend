@@ -38,11 +38,12 @@
               legend: {
                 text: messages('hallmarkD1.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl name-overflow"
               }
             },
             hint: {
-                text: messages('hallmarkD1.hint')
+                text: messages('hallmarkD1.hint'),
+                classes: "name-overflow"
              },
             items: checkboxes,
             errorMessage: form.value.error
