@@ -18,6 +18,7 @@ package controllers.disclosure
 
 import connectors.{CrossBorderArrangementsConnector, HistoryConnector}
 import controllers.actions._
+import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import controllers.mixins.{CheckRoute, RoutingSupport}
 import forms.disclosure.ReplaceOrDeleteADisclosureFormProvider
 import handlers.ErrorHandler
@@ -159,6 +160,6 @@ class ReplaceOrDeleteADisclosureController @Inject() (
   private def replaceOrDelete(userAnswers: UserAnswers)(implicit request: Request[AnyContent]): Boolean = userAnswers.getBase(DisclosureTypePage) match {
     case Some(Dac6rep) => true
     case Some(Dac6del) => false
-    case _             => throw new RuntimeException("Disclosure type should only be replace or delete")
+    case _             => throw new DiscloseDetailsAlreadyDeletedException("Disclosure type should only be replace or delete")
   }
 }

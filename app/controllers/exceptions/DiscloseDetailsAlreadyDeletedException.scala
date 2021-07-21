@@ -16,4 +16,7 @@
 
 package controllers.exceptions
 
-class DiscloseDetailsAlreadyDeletedException() extends RuntimeException
+class DiscloseDetailsAlreadyDeletedException(val msg: String) extends RuntimeException {
+
+  override def getMessage: String = msg
+}
