@@ -24,6 +24,11 @@ import uk.gov.hmrc.viewmodels._
 
 trait OrganisationRows extends RowBuilder {
 
+  def buildOrganisationRows(id: Int): Seq[Row] =
+    organisationName(id).toSeq ++
+      buildOrganisationAddressGroup(id) ++
+      buildOrganisationEmailAddressGroup(id)
+
   def organisationName(id: Int): Option[Row] = userAnswers.get(OrganisationNamePage, id) map {
     answer =>
       toRow(

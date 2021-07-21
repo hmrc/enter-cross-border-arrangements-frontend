@@ -16,14 +16,17 @@
 
 package models.disclosure
 
-import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import controllers.exceptions.DisclosureInformationIsMissingException
+import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
 import models.{
   DisclosureImportInstructionInvalidError,
   DisclosureInitialMarketableArrangementInvalidError,
   DisclosureNameEmptyError,
-  GeneratedIDs,
-  SubmissionError
+  SubmissionError,
+  UserAnswers
 }
+import pages.MessageRefIDPage
+import pages.disclosure._
 import play.api.libs.json.{Json, OFormat}
 
 case class DisclosureDetails(
@@ -44,7 +47,7 @@ case class DisclosureDetails(
   def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
     copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
       case (Dac6add, _)           => false
-      case (Dac6rep, None)        => throw new Exception("Missing first InitialDisclosureMA flag for a replace")
+      case (Dac6rep, None)        => throw new DisclosureInformationIsMissingException("Missing first InitialDisclosureMA flag for a replace")
       case (Dac6rep, Some(value)) => value
       case _                      => initialDisclosureMA
     })
@@ -58,6 +61,62 @@ case class DisclosureDetails(
 }
 
 object DisclosureDetails {
+
+  private def getDisclosureDetails(userAnswers: UserAnswers) = userAnswers
+    .getBase(DisclosureDetailsPage)
+    .orElse(Some(DisclosureDetails("")))
+  private def getDisclosureName(userAnswers: UserAnswers)       = userAnswers.getBase(DisclosureNamePage)
+  private def getDisclosureType(userAnswers: UserAnswers)       = userAnswers.getBase(DisclosureTypePage)
+  private def getDisclosureMarketable(userAnswers: UserAnswers) = userAnswers.getBase(DisclosureMarketablePage).orElse(Some(false))
+
+  private def getDisclosureIdentifyArrangement(userAnswers: UserAnswers) = userAnswers
+    .getBase(DisclosureIdentifyArrangementPage)
+    .orElse(throw new DisclosureInformationIsMissingException(s"Additional Arrangement must be identified"))
+  private def getReplaceOrDeleteDisclosure(userAnswers: UserAnswers): Option[ReplaceOrDeleteADisclosure] = userAnswers.getBase(ReplaceOrDeleteADisclosurePage)
+  private def getInitialDisclosureMA(userAnswers: UserAnswers): Boolean                                  = userAnswers.getBase(InitialDisclosureMAPage).getOrElse(false)
+  private def getMessageRefId(userAnswers: UserAnswers)                                                  = userAnswers.getBase(MessageRefIDPage).orElse(None)
+
+  def build(userAnswers: UserAnswers): DisclosureDetails =
+    getDisclosureDetails(userAnswers)
+      .flatMap {
+        details =>
+          getDisclosureName(userAnswers).map {
+            disclosureName => details.copy(disclosureName = disclosureName)
+          }
+      }
+      .flatMap {
+        details =>
+          getDisclosureType(userAnswers).flatMap {
+            case Dac6new =>
+              getDisclosureMarketable(userAnswers).map {
+                initialDisclosureMA =>
+                  details.copy(disclosureType = Dac6new, initialDisclosureMA = initialDisclosureMA)
+              }
+            case Dac6add =>
+              getDisclosureIdentifyArrangement(userAnswers).flatMap {
+                arrangementID =>
+                  getDisclosureMarketable(userAnswers).map {
+                    initialDisclosureMA =>
+                      details.copy(disclosureType = Dac6add, arrangementID = Some(arrangementID), initialDisclosureMA = initialDisclosureMA)
+                  }
+              }
+            case repOrDel =>
+              getReplaceOrDeleteDisclosure(userAnswers).map {
+                ids =>
+                  details.copy(
+                    disclosureType = repOrDel,
+                    arrangementID = Some(ids.arrangementID),
+                    disclosureID = Some(ids.disclosureID),
+                    initialDisclosureMA = getInitialDisclosureMA(userAnswers)
+                  )
+              }
+          }
+      }
+      .map {
+        details =>
+          details.copy(messageRefId = getMessageRefId(userAnswers))
+      }
+      .getOrElse(throw new DisclosureInformationIsMissingException("Unable to build disclose details"))
 
   implicit val format: OFormat[DisclosureDetails] = Json.format[DisclosureDetails]
 }

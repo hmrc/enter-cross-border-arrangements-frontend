@@ -16,6 +16,7 @@
 
 package models.reporter
 
+import base.SpecBase
 import generators.ModelGenerators
 import models.individual.Individual
 import models.organisation.Organisation
@@ -28,24 +29,46 @@ import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.arrangement.ArrangementDetailsPage
 import pages.reporter.individual._
 import pages.reporter.intermediary._
 import pages.reporter.organisation.{ReporterOrganisationAddressPage, ReporterOrganisationEmailAddressPage, ReporterOrganisationNamePage}
 import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrangementPage, TaxpayerWhyReportArrangementPage, TaxpayerWhyReportInUKPage}
-import pages.reporter.{ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
+import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.unsubmitted.UnsubmittedDisclosurePage
 
 import java.time.LocalDate
 
-class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with ModelGenerators {
+class ReporterDetailsSpec extends SpecBase with Matchers with ScalaCheckPropertyChecks with ModelGenerators {
 
   "ReporterDetails" - {
+
+//    val userAnswers: UserAnswers =
+//      ReporterDetailsPage.restore(emptyUserAnswers, 0, Some(reporterDetails.copy(arrangementName = given))).success.value
 
     "buildReporterDetails" - {
 
       "must create an reporterDetails as Organisation with role as Taxpayer if all details are available" in {
         forAll(arbitrary[String], arbitrary[Address], arbitrary[String], arbitrary[IndexedSeq[LoopDetails]]) {
           (name, address, email, loop) =>
+            val expected = ReporterDetails(
+              organisation = Some(
+                Organisation(
+                  organisationName = name,
+                  address = Some(address),
+                  emailAddress = Some(email),
+                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
+                )
+              ),
+              liability = Some(
+                ReporterLiability(
+                  role = RoleInArrangement.Taxpayer.toString,
+                  nexus = Some("RTNEXa"),
+                  capacity = Some("DAC61106"),
+                  implementingDate = Some(LocalDate.now())
+                )
+              )
+            )
             val userAnswers =
               UserAnswers("id")
                 .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
@@ -78,25 +101,6 @@ class ReporterDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
                 .set(ReporterTaxpayersStartDateForImplementingArrangementPage, 0, LocalDate.now())
                 .success
                 .value
-
-            val expected = ReporterDetails(
-              organisation = Some(
-                Organisation(
-                  organisationName = name,
-                  address = Some(address),
-                  emailAddress = Some(email),
-                  taxResidencies = TaxResidency.buildFromLoopDetails(loop)
-                )
-              ),
-              liability = Some(
-                ReporterLiability(
-                  role = RoleInArrangement.Taxpayer.toString,
-                  nexus = Some("RTNEXa"),
-                  capacity = Some("DAC61106"),
-                  implementingDate = Some(LocalDate.now())
-                )
-              )
-            )
 
             val reporterOrganisation = ReporterDetails.buildReporterDetails(userAnswers, 0)
 

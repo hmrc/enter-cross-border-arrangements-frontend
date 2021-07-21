@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package pages
+package controllers.exceptions
 
-import models.arrangement.ExpectedArrangementValue
-import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
-import pages.behaviours.PageBehaviours
+class DisclosureInformationIsMissingException(val msg: String) extends RuntimeException {
 
-class WhatIsTheExpectedValueOfThisArrangementPageSpec extends PageBehaviours {
-
-  "WhatIsTheExpectedValueOfThisArrangementPage" - {
-
-    beRetrievable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-
-    beSettable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-
-    beRemovable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-  }
+  override def getMessage: String = msg
 }

@@ -1,0 +1,36 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+
+{% block pageTitle %}
+  {{ title(messages("someInformationIsMissing.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("someInformationIsMissing.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("someInformationIsMissing.p1") }}</p>
+
+        <form action="{{ link }}" method="get">
+          <div class="govuk-!-margin-top-9">
+            {{ govukButton({
+              text: messages("site.continue"),
+              preventDoubleClick: true,
+              attributes: {id:"submit"}
+            }) }}
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

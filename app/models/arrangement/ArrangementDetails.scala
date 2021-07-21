@@ -16,6 +16,7 @@
 
 package models.arrangement
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.{ArrangementImplementingDateInvalidError, ArrangementNameEmptyError, CountryList, SubmissionError, UserAnswers}
 import pages.GiveDetailsOfThisArrangementPage
 import pages.arrangement._
@@ -45,21 +46,21 @@ object ArrangementDetails {
   private def getArrangementName(ua: UserAnswers, id: Int): String =
     ua.get(WhatIsThisArrangementCalledPage, id) match {
       case Some(arrangementName) => arrangementName
-      case _                     => throw new Exception("Arrangement details must contain a name for Disclosure Information")
+      case _                     => throw new SomeInformationIsMissingException(id, "Arrangement details must contain a name for Disclosure Information")
     }
 
   private def getImplementationDate(ua: UserAnswers, id: Int): LocalDate =
     ua.get(WhatIsTheImplementationDatePage, id) match {
       case Some(date) => date
-      case _          => throw new Exception("Arrangement details must contain an expected implementation date for Disclosure Information")
+      case _          => throw new SomeInformationIsMissingException(id, "Arrangement details must contain an expected implementation date for Disclosure Information")
     }
 
   private def getReportingReason(ua: UserAnswers, id: Int): Option[String] =
     ua.get(WhyAreYouReportingThisArrangementNowPage, id)
       .fold(
-        throw new Exception(
-          "Arrangement details must contain a reporting reason when 'yes' " +
-            "to 'do you know reporting reason' is selected"
+        throw new SomeInformationIsMissingException(id,
+                                                    "Arrangement details must contain a reporting reason when 'yes' " +
+                                                      "to 'do you know reporting reason' is selected"
         )
       )(
         reason => Some(reason.toString.toUpperCase)
@@ -68,19 +69,20 @@ object ArrangementDetails {
   private def getCountriesInvolved(ua: UserAnswers, id: Int): List[CountryList] =
     ua.get(WhichExpectedInvolvedCountriesArrangementPage, id) match {
       case Some(countries) => countries.toList.sorted
-      case _               => throw new Exception("Arrangement details must contain expected involved countries details for Disclosure Information")
+      case _ =>
+        throw new SomeInformationIsMissingException(id, "Arrangement details must contain expected involved countries details for Disclosure Information")
     }
 
   private def getNationalProvisionDetails(ua: UserAnswers, id: Int): String =
     ua.get(WhichNationalProvisionsIsThisArrangementBasedOnPage, id) match {
       case Some(details) => details
-      case _             => throw new Exception("Arrangement details must contain national provision details for Disclosure Information")
+      case _             => throw new SomeInformationIsMissingException(id, "Arrangement details must contain national provision details for Disclosure Information")
     }
 
   private def getArrangementDetails(ua: UserAnswers, id: Int): String =
     ua.get(GiveDetailsOfThisArrangementPage, id) match {
       case Some(details) => details
-      case _             => throw new Exception("Arrangement details must contain details of arrangement for Disclosure Information")
+      case _             => throw new SomeInformationIsMissingException(id, "Arrangement details must contain details of arrangement for Disclosure Information")
     }
 
   def buildArrangementDetails(ua: UserAnswers, id: Int): ArrangementDetails =

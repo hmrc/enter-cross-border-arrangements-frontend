@@ -16,6 +16,7 @@
 
 package models.reporter
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{ReporterOrganisationOrIndividual, UserAnswers}
@@ -46,12 +47,12 @@ object ReporterDetails {
           liability = Some(ReporterLiability.buildReporterLiability(ua, id))
         )
 
-      case _ =>
+      case Some(ReporterOrganisationOrIndividual.Individual) =>
         new ReporterDetails(
           individual = Some(Individual.buildIndividualDetailsForReporter(ua, id)),
           liability = Some(ReporterLiability.buildReporterLiability(ua, id))
         )
-
+      case _ => throw new SomeInformationIsMissingException(id, "Reporter must be either an organisation or an individual")
     }
   implicit val format: OFormat[ReporterDetails] = Json.format[ReporterDetails]
 }

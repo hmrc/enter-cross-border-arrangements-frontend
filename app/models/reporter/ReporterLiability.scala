@@ -16,8 +16,9 @@
 
 package models.reporter
 
-import java.time.LocalDate
+import controllers.exceptions.SomeInformationIsMissingException
 
+import java.time.LocalDate
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -103,6 +104,6 @@ object ReporterLiability {
           exemptCountries = getExemptCountries(ua, id)
         )
 
-      case _ => throw new Exception("Unable to build reporter liability as missing mandatory answers")
+      case _ => throw new SomeInformationIsMissingException(id, "Unable to build reporter liability as missing mandatory answers")
     }
 }

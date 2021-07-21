@@ -22,11 +22,10 @@ import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetr
 import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.JourneyHelpers.linkToHomePageText
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode, Submission}
 import navigation.NavigatorForDisclosure
-import org.slf4j.LoggerFactory
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -60,8 +59,6 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     with NunjucksSupport
     with RoutingSupport {
 
-  private val logger = LoggerFactory.getLogger(getClass)
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
       if (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).isEmpty) {
@@ -89,7 +86,7 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     implicit request =>
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case Some(ids) =>
-          val disclosureDetails = DisclosureDetailsPage
+          val disclosureDetails = DisclosureDetails
             .build(request.userAnswers)
             .withDisclosureType(DisclosureType.Dac6del)
             .withIds(ids.arrangementID, ids.disclosureID)

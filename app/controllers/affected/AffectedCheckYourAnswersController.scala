@@ -59,22 +59,12 @@ class AffectedCheckYourAnswersController @Inject() (
 
           case Some(SelectType.Organisation) =>
             (
-              helper.affectedType(id).toSeq ++
-                helper.organisationName(id).toSeq ++
-                helper.buildOrganisationAddressGroup(id) ++
-                helper.buildOrganisationEmailAddressGroup(id),
+              helper.affectedType(id).toSeq ++ helper.buildOrganisationRows(id),
               helper.buildTaxResidencySummaryForOrganisation(id)
             )
           case Some(SelectType.Individual) =>
             (
-              Seq(
-                helper.affectedType(id) ++
-                  helper.individualName(id)
-              ).flatten ++
-                helper.buildIndividualDateOfBirthGroup(id) ++
-                helper.buildIndividualPlaceOfBirthGroup(id) ++
-                helper.buildIndividualAddressGroup(id) ++
-                helper.buildIndividualEmailAddressGroup(id),
+              helper.affectedType(id).toSeq ++ helper.buildIndividualRows(id),
               helper.buildTaxResidencySummaryForIndividuals(id)
             )
 

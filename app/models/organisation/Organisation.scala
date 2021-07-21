@@ -16,6 +16,7 @@
 
 package models.organisation
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.taxpayer.TaxResidency
 import models.{Address, AddressLookup, Country, UserAnswers, WithRestore, WithTaxResidency}
 import pages.SelectedAddressLookupPage
@@ -104,7 +105,7 @@ object Organisation {
       case (Some(name), None, None, taxResidencies) => // No address or email address
         new Organisation(name, None, None, taxResidencies)
 
-      case _ => throw new Exception("Organisation Taxpayer must contain a name and at minimum one tax residency")
+      case _ => throw new SomeInformationIsMissingException(id, "Organisation Taxpayer must contain a name and at minimum one tax residency")
     }
   }
 
@@ -131,7 +132,7 @@ object Organisation {
       case (Some(name), None, None, Some(loop)) => // No address or email address
         new Organisation(name, None, None, TaxResidency.buildFromLoopDetails(loop))
 
-      case _ => throw new Exception("Organisation reporter must contain a name and at minimum one tax residency")
+      case _ => throw new SomeInformationIsMissingException(id, "Organisation reporter must contain a name and at minimum one tax residency")
     }
   }
 }

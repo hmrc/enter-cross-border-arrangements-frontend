@@ -21,6 +21,7 @@ import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.IDHelper
+import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.{NormalMode, UnsubmittedDisclosure}
@@ -108,7 +109,7 @@ class DisclosureCheckYourAnswersController @Inject() (
       for {
         isMarketableResult <- isMarketable
         updateAnswers      <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
-        disclosureDetails = DisclosureDetailsPage.build(updateAnswers)
+        disclosureDetails = DisclosureDetails.build(updateAnswers)
         updatedAnswers             <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers                 <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
         updateNewAnswersWithStatus <- Future.fromTry(newAnswers.set(DisclosureStatusPage, index, JourneyStatus.Completed))
