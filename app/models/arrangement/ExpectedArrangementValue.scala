@@ -16,6 +16,7 @@
 
 package models.arrangement
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.UserAnswers
 import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
 import play.api.libs.json._
@@ -34,6 +35,6 @@ object ExpectedArrangementValue {
           currency = countryWithValue.currency,
           amount = countryWithValue.amount
         )
-      case _ => throw new Exception("Unable to build ExpectedArrangementValue as missing mandatory answers")
+      case _ => throw new SomeInformationIsMissingException(id, "Unable to build ExpectedArrangementValue as missing mandatory answers")
     }
 }

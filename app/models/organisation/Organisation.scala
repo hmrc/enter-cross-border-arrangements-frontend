@@ -80,7 +80,7 @@ object Organisation {
   private def getTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(OrganisationLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None       => throw new Exception("Organisation Taxpayer must contain at minimum one tax residency")
+      case None       => throw new SomeInformationIsMissingException(id, "Organisation Taxpayer must contain at minimum one tax residency")
     }
 
   def buildOrganisationDetails(ua: UserAnswers, id: Int): Organisation = {

@@ -57,7 +57,7 @@ object Taxpayer {
           this(itemId, None, None, Some(startDate))
         case (Some(itemId), None) =>
           this(itemId, None, None, None)
-        case _ => throw new SomeInformationIsMissingException(id, Some("Unable to build taxpayer"))
+        case _ => throw new SomeInformationIsMissingException(id, "Unable to build taxpayer")
       }
     ua.get(TaxpayerSelectTypePage, id) match {
       case Some(SelectType.Organisation) => taxpayer.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))

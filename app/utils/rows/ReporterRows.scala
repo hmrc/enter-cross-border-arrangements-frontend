@@ -67,7 +67,7 @@ trait ReporterRows extends RowBuilder {
     (userAnswers.get(ReporterOrganisationAddressPage, id), userAnswers.get(ReporterSelectedAddressLookupPage, id)) match {
       case (Some(address), _)       => Seq(reporterOrganisationAddress(address, id))
       case (_, Some(addressLookup)) => Seq(reporterOrganisationAddressLookup(addressLookup, id))
-      case _                        => throw new Exception("Unable to retrieve Organisation reporter details address from user answers")
+      case _                        => Seq()
     }
 
   private def reporterOrganisationAddress(manualAddress: Address, id: Int): Row =
@@ -161,7 +161,7 @@ trait ReporterRows extends RowBuilder {
     (userAnswers.get(ReporterIndividualAddressPage, id), userAnswers.get(ReporterSelectedAddressLookupPage, id)) match {
       case (Some(address), _)       => Seq(reporterIndividualAddress(address, id))
       case (_, Some(addressLookup)) => Seq(reporterIndividualAddressLookup(addressLookup, id))
-      case _                        => throw new Exception("Unable to retrieve Individual reporter details address from user answers")
+      case _                        => Seq()
     }
 
   private def reporterIndividualAddress(manualAddress: Address, id: Int): Row =
@@ -333,6 +333,6 @@ trait ReporterRows extends RowBuilder {
       case (Some(TaxpayerWhyReportInUK.DoNotKnow), _) => Seq(taxpayerWhyReportInUKPage(TaxpayerWhyReportInUK.DoNotKnow, id))
       case (Some(otherValue), Some(answer)) =>
         Seq(taxpayerWhyReportInUKPage(otherValue, id), taxpayerWhyReportArrangementPage(answer, id))
-      case _ => throw new Exception("Unable to retrieve reporter details taxpayer's reason for reporting")
+      case _ => Seq()
     }
 }
