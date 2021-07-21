@@ -32,7 +32,7 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl govuk-!-margin-bottom-0 text-overflow">
+          <h1 class="govuk-heading-xl govuk-!-margin-bottom-0 name-overflow">
             {{ messages("whatAreTheTaxNumbersForNonUKOrganisation.heading", organisationName, country) }}
           </h1>
 
@@ -40,7 +40,8 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label1')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label1'),
+              classes: "name-overflow"
             },
             classes: "govuk-input--width-10",
             id: "firstTaxNumber",
@@ -51,7 +52,8 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label2')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label2'),
+              classes: "name-overflow"
             },
             classes: "govuk-input--width-10",
             id: "secondTaxNumber",
@@ -62,7 +64,8 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label3')
+              text: messages('whatAreTheTaxNumbersForNonUKOrganisation.label3'),
+              classes: "name-overflow"
             },
             classes: "govuk-input--width-10",
             id: "thirdTaxNumber",

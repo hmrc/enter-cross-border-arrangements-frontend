@@ -43,6 +43,7 @@
           </span>
           {{ govukRadios({
             name: 'value',
+            classes: "name-overflow",
             items: radios,
             errorMessage: form.value.error
           }) }}
