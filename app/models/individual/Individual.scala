@@ -138,7 +138,7 @@ object Individual {
   private def getReporterTaxResidencies(ua: UserAnswers, id: Int): IndexedSeq[TaxResidency] =
     ua.get(ReporterTaxResidencyLoopPage, id) match {
       case Some(loop) => TaxResidency.buildFromLoopDetails(loop)
-      case None       => throw new Exception("Individual Reporter must contain at minimum one tax residency")
+      case None       => throw new SomeInformationIsMissingException(id, "Individual Reporter must contain at minimum one tax residency")
     }
 
   def buildIndividualDetailsForReporter(ua: UserAnswers, id: Int): Individual = {
