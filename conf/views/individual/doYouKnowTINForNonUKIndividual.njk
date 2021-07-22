@@ -34,11 +34,12 @@
 
           {{ govukRadios({
             name: 'confirm',
+            classes: "name-overflow",
             fieldset: {
               legend: {
                 text: messages('doYouKnowTINForNonUKIndividual.heading', individualName, country),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl text-overflow"
+                classes: "govuk-fieldset__legend--xl name-overflow"
               }
             },
             hint: {
