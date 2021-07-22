@@ -300,8 +300,10 @@ trait ReporterRows extends RowBuilder {
         Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.Yes, id), intermediaryDoYouKnowExemptionsPage(false, id))
       case (Some(YesNoDoNotKnowRadios.No), _) =>
         Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.No, id))
-      case _ =>
+      case (Some(YesNoDoNotKnowRadios.DoNotKnow), _) =>
         Seq(intermediaryExemptionInEUPage(YesNoDoNotKnowRadios.DoNotKnow, id))
+      case _ =>
+        Seq()
     }
 
   //Reporter - Taxpayer Journey
