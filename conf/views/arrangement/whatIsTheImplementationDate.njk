@@ -35,11 +35,12 @@
           {{ csrf() | safe }}
 
           {{ govukDateInput({
+            classes: "name-overflow",
             fieldset: {
               legend: {
                 text: messages('whatIsTheImplementationDate.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl ame-overflow"
               }
             },
             hint: {

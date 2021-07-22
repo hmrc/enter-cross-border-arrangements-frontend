@@ -34,6 +34,7 @@
 
           {{ govukCheckboxes({
             name: 'value',
+            classes: "name-overflow",
             hint: {
                 text: messages('whichExpectedInvolvedCountriesArrangement.hint')
             },
@@ -41,7 +42,7 @@
               legend: {
                 text: messages('whichExpectedInvolvedCountriesArrangement.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl name-overflow"
               }
             },
             items: checkboxes,
