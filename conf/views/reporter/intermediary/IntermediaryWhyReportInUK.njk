@@ -34,11 +34,12 @@
 
           {{ govukRadios({
             name: 'value',
+            classes: "name-overflow",
             fieldset: {
               legend: {
                 text: messages('whyReportInUK.heading'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl name-overflow"
               }
              },
             hint: {

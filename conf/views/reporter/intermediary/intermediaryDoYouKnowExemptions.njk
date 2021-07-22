@@ -34,11 +34,12 @@
 
           {{ govukRadios({
             name: 'value',
+            classes: "name-overflow",
             fieldset: {
               legend: {
                 text: messages('intermediaryDoYouKnowExemptions.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl name-overflow"
               }
             },
             items: radios,
