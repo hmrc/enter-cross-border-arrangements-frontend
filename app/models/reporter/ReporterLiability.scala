@@ -65,9 +65,10 @@ object ReporterLiability {
 
   private def getNationalExemption(ua: UserAnswers, id: Int): Option[Boolean] =
     ua.get(IntermediaryExemptionInEUPage, id) match {
-      case Some(YesNoDoNotKnowRadios.Yes) => Some(true)
-      case Some(YesNoDoNotKnowRadios.No)  => Some(false)
-      case _                              => None
+      case Some(YesNoDoNotKnowRadios.Yes)       => Some(true)
+      case Some(YesNoDoNotKnowRadios.No)        => Some(false)
+      case Some(YesNoDoNotKnowRadios.DoNotKnow) => None
+      case _                                    => throw new SomeInformationIsMissingException(id, "Reporter Liability must indicate the exemption status or 'I do not know' ")
     }
 
   private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] =
@@ -76,8 +77,8 @@ object ReporterLiability {
         ua.get(IntermediaryWhichCountriesExemptPage, id)
           .fold(
             throw new SomeInformationIsMissingException(id,
-              "Reporter Liability must contain countries" +
-                "when 'yes' to 'do you know exemptions' is selected"
+                                                        "Reporter Liability must contain countries" +
+                                                          "when 'yes' to 'do you know exemptions' is selected"
             )
           )(
             selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
