@@ -20,7 +20,7 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">
+            <h1 class="govuk-heading-xl name-overflow">
               {{ messages("disclosureDetails.heading", arrangementID) }}
             </h1>
 
@@ -99,7 +99,7 @@
         {% if userCanSubmit %}
           <form action="{{ routes.controllers.DisclosureDetailsController.onSubmit(id).url }}" method="post">
             {{ csrf() | safe }}
-            <h2 class="govuk-heading-m">
+            <h2 class="govuk-heading-m name-overflow">
                 {{ messages("disclosureDetails.sendDisclosure") }}
             </h2>
 
@@ -118,7 +118,7 @@
           </form>
           {% else %}
 
-              <h2 class="govuk-heading-m">
+              <h2 class="govuk-heading-m name-overflow">
                 {{ messages("disclosureDetails.disclosureNotReady") }}
               </h2>
 
