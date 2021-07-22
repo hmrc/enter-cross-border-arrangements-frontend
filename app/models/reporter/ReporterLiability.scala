@@ -75,7 +75,7 @@ object ReporterLiability {
       case Some(true) =>
         ua.get(IntermediaryWhichCountriesExemptPage, id)
           .fold(
-            throw new Exception(
+            throw new SomeInformationIsMissingException(id,
               "Reporter Liability must contain countries" +
                 "when 'yes' to 'do you know exemptions' is selected"
             )
