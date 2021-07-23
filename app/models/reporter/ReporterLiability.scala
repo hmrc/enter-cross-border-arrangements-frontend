@@ -48,7 +48,7 @@ object ReporterLiability {
     }
 
   private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] =
-    if(!ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
+    if(ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
       None
     } else {
       ua.get(TaxpayerWhyReportArrangementPage, id) match {
