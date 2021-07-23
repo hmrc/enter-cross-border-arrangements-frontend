@@ -48,11 +48,15 @@ object ReporterLiability {
     }
 
   private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] =
-    ua.get(TaxpayerWhyReportArrangementPage, id) match {
-      case Some(capacity) if !capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow) => Some(capacity.toString)
-      case Some(_)                                                                    => None
-      case None =>
-        throw new SomeInformationIsMissingException(id, "Reporter liability must indicate why report arrangement.")
+    if(!ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
+      None
+    } else {
+      ua.get(TaxpayerWhyReportArrangementPage, id) match {
+        case Some(capacity) if !capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow) => Some(capacity.toString)
+        case Some(_)                                                                    => None
+        case None =>
+          throw new SomeInformationIsMissingException(id, "Reporter liability must indicate why report arrangement.")
+      }
     }
 
   private def getIntermediaryNexus(ua: UserAnswers, id: Int): Option[String] =
