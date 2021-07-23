@@ -59,6 +59,7 @@ object ReporterLiability {
       }
     }
 
+  ///
   private def getIntermediaryNexus(ua: UserAnswers, id: Int): Option[String] =
     ua.get(IntermediaryWhyReportInUKPage, id) match {
       case Some(nexus) if !nexus.equals(IntermediaryWhyReportInUK.DoNotKnow) => Some(nexus.toString)
@@ -79,25 +80,30 @@ object ReporterLiability {
       case _                                    => throw new SomeInformationIsMissingException(id, "Reporter liability must indicate the exemption status or 'I do not know' ")
     }
 
-  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] =
-    ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
-      case Some(true) =>
-        ua.get(IntermediaryWhichCountriesExemptPage, id)
-          .fold(
-            throw new SomeInformationIsMissingException(id,
-                                                        "Reporter Liability must contain countries" +
-                                                          "when 'yes' to 'do you know exemptions' is selected"
+  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] = {
+    if (getNationalExemption(ua, id).contains(true)) {
+      ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
+        case Some(true) =>
+          ua.get(IntermediaryWhichCountriesExemptPage, id)
+            .fold(
+              throw new SomeInformationIsMissingException(id,
+                "Reporter Liability must contain countries" +
+                  "when 'yes' to 'do you know exemptions' is selected"
+              )
+            )(
+              selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
             )
-          )(
-            selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
+        case Some(false) => None
+        case None =>
+          throw new SomeInformationIsMissingException(id,
+            "Reporter Liability must contain countries" +
+              "when 'yes' to 'do you know exemptions' is selected"
           )
-      case Some(false) => None
-      case _ =>
-        throw new SomeInformationIsMissingException(id,
-                                                    "Reporter Liability must contain countries" +
-                                                      "when 'yes' to 'do you know exemptions' is selected"
-        )
+      }
+    } else {
+      None
     }
+  }
 
   def buildReporterLiability(ua: UserAnswers, id: Int): ReporterLiability =
     ua.get(RoleInArrangementPage, id) match {
