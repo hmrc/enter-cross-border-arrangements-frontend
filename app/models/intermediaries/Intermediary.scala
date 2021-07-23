@@ -63,12 +63,14 @@ object Intermediary {
                         ua.get(IsExemptionCountryKnownPage, id),
                         ua.get(ExemptCountriesPage, id)
     ) match {
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), Some(exemptCountries)) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), None) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), None)
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None, None) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, None, None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Yes), Some(true), Some(exemptCountries)) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Yes, Some(true), Some(exemptCountries))
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Yes), Some(false), None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Yes, Some(false), None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.No), None, None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.No, None, None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Unknown), None, None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Unknown, None, None)
       case _ =>
         throw new SomeInformationIsMissingException(id, "Unable to build intermediary")
     }
