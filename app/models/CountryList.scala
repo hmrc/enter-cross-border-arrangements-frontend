@@ -95,6 +95,8 @@ object CountryList extends Enumerable.Implicits {
     Sweden
   )
 
+  def fromString(description: String): Option[CountryList] = CountryList.values.find(_.toString == description)
+
   val items = Seq(
     Checkboxes.Checkbox(msg"countriesListCheckboxes.GB", UnitedKingdom.toString),
     Checkboxes.Checkbox(msg"countriesListCheckboxes.AT", Austria.toString),

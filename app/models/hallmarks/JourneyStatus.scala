@@ -16,9 +16,13 @@
 
 package models.hallmarks
 
+import models.hallmarks.JourneyStatus.Completed
 import models.{Enumerable, WithName}
 
-sealed trait JourneyStatus
+sealed trait JourneyStatus {
+
+  val isCompleted: Boolean = this == Completed
+}
 
 object JourneyStatus extends Enumerable.Implicits {
 

@@ -41,6 +41,7 @@ import models.{
   UserAnswers
 }
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
+import pages.GiveDetailsOfThisArrangementPage
 import pages.affected.AffectedLoopPage
 import pages.arrangement._
 import pages.disclosure.{DisclosureDetailsPage, DisclosureMarketablePage}
@@ -53,7 +54,6 @@ import pages.reporter.taxpayer.{ReporterTaxpayersStartDateForImplementingArrange
 import pages.reporter.{ReporterDetailsPage, ReporterOrganisationOrIndividualPage, ReporterTaxResidencyLoopPage, RoleInArrangementPage}
 import pages.taxpayer.TaxpayerLoopPage
 import pages.unsubmitted.UnsubmittedDisclosurePage
-import pages.{GiveDetailsOfThisArrangementPage, WhatIsTheExpectedValueOfThisArrangementPage}
 
 import java.time.LocalDate
 

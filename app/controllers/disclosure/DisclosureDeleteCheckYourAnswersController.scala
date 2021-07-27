@@ -19,14 +19,13 @@ package controllers.disclosure
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ContactRetrievalAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.exceptions.DiscloseDetailsAlreadyDeletedException
+import controllers.exceptions.{DiscloseDetailsAlreadyDeletedException, DisclosureInformationIsMissingException}
 import controllers.mixins.{DefaultRouting, RoutingSupport}
 import helpers.JourneyHelpers.linkToHomePageText
-import models.disclosure.DisclosureType
+import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.requests.DataRequestWithContacts
 import models.{GeneratedIDs, NormalMode, Submission}
 import navigation.NavigatorForDisclosure
-import org.slf4j.LoggerFactory
 import pages.disclosure._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -60,12 +59,10 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     with NunjucksSupport
     with RoutingSupport {
 
-  private val logger = LoggerFactory.getLogger(getClass)
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {
     implicit request =>
-      if (request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage).isEmpty) {
-        throw new DiscloseDetailsAlreadyDeletedException()
+      if (request.userAnswers.getBase(DisclosureTypePage).isEmpty) {
+        throw new DiscloseDetailsAlreadyDeletedException("Already deleted")
       }
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -89,12 +86,12 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     implicit request =>
       val submission: Submission = request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
         case Some(ids) =>
-          val disclosureDetails = DisclosureDetailsPage
+          val disclosureDetails = DisclosureDetails
             .build(request.userAnswers)
             .withDisclosureType(DisclosureType.Dac6del)
             .withIds(ids.arrangementID, ids.disclosureID)
           Submission(request.enrolmentID, disclosureDetails)
-        case _ => throw new RuntimeException("Cannot retrieve Disclosure Information")
+        case _ => throw new DisclosureInformationIsMissingException("Cannot retrieve Disclosure Information")
       }
 
       xmlGenerationService.createAndValidateXmlSubmission(submission).flatMap {
@@ -114,6 +111,6 @@ class DisclosureDeleteCheckYourAnswersController @Inject() (
     request.userAnswers.getBase(ReplaceOrDeleteADisclosurePage) match {
       case Some(detail) =>
         emailService.sendEmail(request.contacts, GeneratedIDs(Some(detail.arrangementID), Some(detail.disclosureID)), "dac6del", ids.messageRefID.get)
-      case _ => throw new IllegalStateException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
+      case _ => throw new DisclosureInformationIsMissingException("MessageRef, DisclosureID or ArrangementID can't be found for email.")
     }
 }

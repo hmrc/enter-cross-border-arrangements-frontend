@@ -16,8 +16,9 @@
 
 package models.reporter
 
-import java.time.LocalDate
+import controllers.exceptions.SomeInformationIsMissingException
 
+import java.time.LocalDate
 import models.reporter.RoleInArrangement.{Intermediary, Taxpayer}
 import models.reporter.intermediary.{IntermediaryRole, IntermediaryWhyReportInUK}
 import models.reporter.taxpayer.{TaxpayerWhyReportArrangement, TaxpayerWhyReportInUK}
@@ -41,15 +42,24 @@ object ReporterLiability {
   private def getTaxpayerNexus(ua: UserAnswers, id: Int): Option[String] =
     ua.get(TaxpayerWhyReportInUKPage, id) match {
       case Some(nexus) if !nexus.equals(TaxpayerWhyReportInUK.DoNotKnow) => Some(nexus.toString)
-      case _                                                             => None
+      case Some(_)                                                       => None
+      case None =>
+        throw new SomeInformationIsMissingException(id, "Reporter liability must indicate why report in uk.")
     }
 
   private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] =
-    ua.get(TaxpayerWhyReportArrangementPage, id) match {
-      case Some(capacity) if !capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow) => Some(capacity.toString)
-      case _                                                                          => None
+    if(ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
+      None
+    } else {
+      ua.get(TaxpayerWhyReportArrangementPage, id) match {
+        case Some(capacity) if !capacity.equals(TaxpayerWhyReportArrangement.DoNotKnow) => Some(capacity.toString)
+        case Some(_)                                                                    => None
+        case None =>
+          throw new SomeInformationIsMissingException(id, "Reporter liability must indicate why report arrangement.")
+      }
     }
 
+  ///
   private def getIntermediaryNexus(ua: UserAnswers, id: Int): Option[String] =
     ua.get(IntermediaryWhyReportInUKPage, id) match {
       case Some(nexus) if !nexus.equals(IntermediaryWhyReportInUK.DoNotKnow) => Some(nexus.toString)
@@ -64,25 +74,36 @@ object ReporterLiability {
 
   private def getNationalExemption(ua: UserAnswers, id: Int): Option[Boolean] =
     ua.get(IntermediaryExemptionInEUPage, id) match {
-      case Some(YesNoDoNotKnowRadios.Yes) => Some(true)
-      case Some(YesNoDoNotKnowRadios.No)  => Some(false)
-      case _                              => None
+      case Some(YesNoDoNotKnowRadios.Yes)       => Some(true)
+      case Some(YesNoDoNotKnowRadios.No)        => Some(false)
+      case Some(YesNoDoNotKnowRadios.DoNotKnow) => None
+      case _                                    => throw new SomeInformationIsMissingException(id, "Reporter liability must indicate the exemption status or 'I do not know' ")
     }
 
-  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] =
-    ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
-      case Some(true) =>
-        ua.get(IntermediaryWhichCountriesExemptPage, id)
-          .fold(
-            throw new Exception(
-              "Reporter Liability must contain countries" +
-                "when 'yes' to 'do you know exemptions' is selected"
+  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] = {
+    if (getNationalExemption(ua, id).contains(true)) {
+      ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
+        case Some(true) =>
+          ua.get(IntermediaryWhichCountriesExemptPage, id)
+            .fold(
+              throw new SomeInformationIsMissingException(id,
+                "Reporter Liability must contain countries" +
+                  "when 'yes' to 'do you know exemptions' is selected"
+              )
+            )(
+              selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
             )
-          )(
-            selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
+        case Some(false) => None
+        case None =>
+          throw new SomeInformationIsMissingException(id,
+            "Reporter Liability must contain countries" +
+              "when 'yes' to 'do you know exemptions' is selected"
           )
-      case _ => None
+      }
+    } else {
+      None
     }
+  }
 
   def buildReporterLiability(ua: UserAnswers, id: Int): ReporterLiability =
     ua.get(RoleInArrangementPage, id) match {
@@ -103,6 +124,6 @@ object ReporterLiability {
           exemptCountries = getExemptCountries(ua, id)
         )
 
-      case _ => throw new Exception("Unable to build reporter liability as missing mandatory answers")
+      case _ => throw new SomeInformationIsMissingException(id, "Unable to build reporter liability as missing mandatory answers")
     }
 }

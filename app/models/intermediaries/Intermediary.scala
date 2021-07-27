@@ -16,14 +16,15 @@
 
 package models.intermediaries
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.intermediaries.WhatTypeofIntermediary.IDoNotKnow
 import models.organisation.Organisation
 import models.{CountryList, IsExemptionKnown, SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
 import pages.intermediaries._
 import play.api.libs.json.{Json, OFormat}
-import java.util.UUID
 
+import java.util.UUID
 import scala.util.Try
 
 case class Intermediary(intermediaryId: String,
@@ -62,14 +63,16 @@ object Intermediary {
                         ua.get(IsExemptionCountryKnownPage, id),
                         ua.get(ExemptCountriesPage, id)
     ) match {
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), Some(exemptCountries)) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), Some(exemptCountries))
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), Some(isExemptionCountryKnown), None) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, Some(isExemptionCountryKnown), None)
-      case (Some(itemId), Some(whatTypeOfIntermediary), Some(isExemptionKnown), None, None) =>
-        this(itemId, None, None, whatTypeOfIntermediary, isExemptionKnown, None, None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Yes), Some(true), Some(exemptCountries)) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Yes, Some(true), Some(exemptCountries))
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Yes), Some(false), None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Yes, Some(false), None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.No), None, None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.No, None, None)
+      case (Some(itemId), Some(whatTypeOfIntermediary), Some(IsExemptionKnown.Unknown), None, None) =>
+        this(itemId, None, None, whatTypeOfIntermediary, IsExemptionKnown.Unknown, None, None)
       case _ =>
-        throw new Exception("Unable to build intermediary")
+        throw new SomeInformationIsMissingException(id, "Unable to build intermediary")
     }
     ua.get(IntermediariesTypePage, id) match {
       case Some(SelectType.Organisation) => intermediary.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))

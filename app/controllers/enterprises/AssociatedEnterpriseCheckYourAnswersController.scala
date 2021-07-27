@@ -33,6 +33,7 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.SummaryList.Row
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
@@ -62,26 +63,15 @@ class AssociatedEnterpriseCheckYourAnswersController @Inject() (
       val (summaryRows, countrySummary) = restoredUserAnswers.get(AssociatedEnterpriseTypePage, id) match {
 
         case Some(SelectType.Organisation) =>
-          (
-            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-              Seq(helper.associatedEnterpriseType(id), helper.organisationName(id)).flatten ++
-              helper.buildOrganisationAddressGroup(id) ++
-              helper.buildOrganisationEmailAddressGroup(id),
-            helper.buildTaxResidencySummaryForOrganisation(id)
+          (helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+             helper.associatedEnterpriseType(id).toSeq ++ helper.buildOrganisationRows(id),
+           helper.buildTaxResidencySummaryForOrganisation(id)
           )
 
         case Some(SelectType.Individual) =>
-          (
-            helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
-              Seq(
-                helper.associatedEnterpriseType(id),
-                helper.individualName(id)
-              ).flatten ++
-              helper.buildIndividualDateOfBirthGroup(id) ++
-              helper.buildIndividualPlaceOfBirthGroup(id) ++
-              helper.buildIndividualAddressGroup(id) ++
-              helper.buildIndividualEmailAddressGroup(id),
-            helper.buildTaxResidencySummaryForIndividuals(id)
+          (helper.selectAnyTaxpayersThisEnterpriseIsAssociatedWith(id) ++
+             helper.associatedEnterpriseType(id).toSeq ++ helper.buildIndividualRows(id),
+           helper.buildTaxResidencySummaryForIndividuals(id)
           )
 
         case _ => throw new UnsupportedRouteException(id)

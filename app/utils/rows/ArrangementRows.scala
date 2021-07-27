@@ -17,7 +17,7 @@
 package utils.rows
 
 import models.{CheckMode, CountryList}
-import pages._
+import pages.GiveDetailsOfThisArrangementPage
 import pages.arrangement._
 import uk.gov.hmrc.viewmodels.SummaryList.Row
 import uk.gov.hmrc.viewmodels.Text.Literal

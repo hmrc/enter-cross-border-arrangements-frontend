@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package pages
+package controllers.exceptions
 
-import models.arrangement.ExpectedArrangementValue
-import pages.arrangement.WhatIsTheExpectedValueOfThisArrangementPage
-import pages.behaviours.PageBehaviours
+class SomeInformationIsMissingException(val id: Int, val optMsg: Option[String] = None) extends RuntimeException {
 
-class WhatIsTheExpectedValueOfThisArrangementPageSpec extends PageBehaviours {
+  def this(id: Int, msg: String) = this(id, Some(msg))
 
-  "WhatIsTheExpectedValueOfThisArrangementPage" - {
-
-    beRetrievable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-
-    beSettable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-
-    beRemovable[ExpectedArrangementValue](WhatIsTheExpectedValueOfThisArrangementPage)
-  }
+  override def getMessage: String = optMsg.getOrElse(super.getMessage)
 }

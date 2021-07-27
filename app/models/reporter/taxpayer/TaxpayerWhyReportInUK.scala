@@ -38,6 +38,8 @@ object TaxpayerWhyReportInUK extends Enumerable.Implicits {
     DoNotKnow
   )
 
+  def fromString(name: String): Option[TaxpayerWhyReportInUK] = TaxpayerWhyReportInUK.values.find(_.toString == name)
+
   def radios(form: Form[_]): Seq[Radios.Item] = {
 
     val field = form("value")

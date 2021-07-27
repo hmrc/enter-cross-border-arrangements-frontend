@@ -39,6 +39,8 @@ object IntermediaryWhyReportInUK extends Enumerable.Implicits {
     DoNotKnow
   )
 
+  def fromString(name: String): Option[IntermediaryWhyReportInUK] = IntermediaryWhyReportInUK.values.find(_.toString == name)
+
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
     val field = form("value")

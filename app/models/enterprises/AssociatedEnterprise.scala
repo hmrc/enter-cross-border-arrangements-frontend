@@ -16,6 +16,7 @@
 
 package models.enterprises
 
+import controllers.exceptions.SomeInformationIsMissingException
 import models.individual.Individual
 import models.organisation.Organisation
 import models.{SelectType, UserAnswers, WithIndividualOrOrganisation, WithRestore}
@@ -62,12 +63,12 @@ object AssociatedEnterprise {
     ) match {
       case (Some(itemId), Some(associatedTaxpayers), Some(isAffectedBy)) =>
         this(itemId, None, None, associatedTaxpayers, isAffectedBy)
-      case _ => throw new Exception("Unable to build associated enterprise")
+      case _ => throw new SomeInformationIsMissingException(id, "Unable to build associated enterprise")
     }
     ua.get(AssociatedEnterpriseTypePage, id) match {
       case Some(SelectType.Organisation) => enterprise.copy(organisation = Some(Organisation.buildOrganisationDetails(ua, id)))
       case Some(SelectType.Individual)   => enterprise.copy(individual = Some(Individual.buildIndividualDetails(ua, id)))
-      case _                             => throw new Exception("Unable to retrieve Intermediary select type")
+      case _                             => throw new SomeInformationIsMissingException(id, "Unable to retrieve Intermediary select type")
     }
   }
 
