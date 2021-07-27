@@ -41,11 +41,12 @@
 
           {{ govukRadios({
               name: 'value',
+              classes: "name-overflow",
               fieldset: {
                   legend: {
                   text: messages('youHaveNotAddedAnyIntermediaries.subHeading.1')  if intermediaryList | length == 0 else messages('youHaveNotAddedAnyIntermediaries.subHeading.2'),
                   isPageHeading: false,
-                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m name-overflow"
               }
           },
               items: radios,
