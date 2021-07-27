@@ -19,11 +19,17 @@
         titleText: messages("yourDisclosureHasBeenDeleted.heading")
         }) }}
 
-        <p class="govuk-body"> {{ messages("yourDisclosureHasBeenDeleted.p1", disclosureID, arrangementID)}}</p>
+        <p class="govuk-body">
+          <span class="name-overflow">{{ messages("yourDisclosureHasBeenDeleted.p1", disclosureID, arrangementID)}}</span>
+        </p>
 
-        <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</p>
+        <p class="govuk-body">
+          <span class="name-overflow">{{ messages("yourDisclosureHasBeenDeleted.p2", messageRefid)}}</span>
+        </p>
 
-        <p class="govuk-body">{{ messages("yourDisclosureHasBeenDeleted.p3", emailMessage)}}</p>
+        <p class="govuk-body">
+          <span class="name-overflow">{{ messages("yourDisclosureHasBeenDeleted.p3", emailMessage)}}</span>
+        </p>
 
         <p class="govuk-body">{{ homePageLink | safe }}</p>
         <p class="govuk-body">{{ betaFeedbackSurvey | safe }}</p>

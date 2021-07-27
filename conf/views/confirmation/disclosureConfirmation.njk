@@ -26,22 +26,28 @@
 
         <div class="govuk-body">
 
-          <p>{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</p>
+          <p>
+            <span class="name-overflow">{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</span>
+          </p>
 
           {% if disclosureID %}
-            <p>{{ messages("disclosureConfirmation.p2") }}</p>
-            <p>{{ messages("disclosureConfirmation.p3", disclosureID) }}</p>
+            <p><span class="name-overflow">{{ messages("disclosureConfirmation.p2") }}</span></p>
+            <p><span class="name-overflow">{{ messages("disclosureConfirmation.p3", disclosureID) }}</span></p>
             <p>
-              {{ messages("disclosureConfirmation.p4", messageRefID) }}
-              {{ messages("disclosureConfirmation.p5") }}
+              <span class="name-overflow">
+                {{ messages("disclosureConfirmation.p4", messageRefID) }}
+                {{ messages("disclosureConfirmation.p5") }}
+              </span>
             </p>
           {% else %}
             <p>
-              {{ messages("disclosureConfirmation.p4", messageRefID) }}
-              {{ messages("disclosureConfirmation.p6") }}
+              <span class="name-overflow">
+                {{ messages("disclosureConfirmation.p4", messageRefID) }}
+                {{ messages("disclosureConfirmation.p6") }}
+              </span>
             </p>
-            <p><strong>{{ messages("disclosureConfirmation.p7") }}</strong></p>
-            <p>{{ messages("disclosureConfirmation.p8") }}</p>
+            <p><span class="name-overflow"><strong>{{ messages("disclosureConfirmation.p7") }}</strong></span></p>
+            <p><span class="name-overflow">{{ messages("disclosureConfirmation.p8") }}</span></p>
           {% endif %}
 
           <p>{{ homePageLink | safe }}</p>
