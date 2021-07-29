@@ -31,21 +31,16 @@
 
         <div class="govuk-!-margin-bottom-9"></div>
 
-          {% if displayHallmarks %}
+         {% if displayHallmarksSection %}
+                <h2 class="govuk-heading-l">
+                  {{ messages("summary.hallmarks.heading") }}
+                </h2>
 
-                    <h2 class="govuk-heading-l">
-                      {{ messages("summary.hallmarks.heading") }}
-                    </h2>
+                {{ govukSummaryList({
+                  rows: hallmarksList
+                }) }}
 
-                    {{ govukSummaryList({
-                      rows: hallmarksList
-                    }) }}
-
-                    <div class="govuk-!-margin-bottom-9"></div>
-
-          {% endif %}
-
-          {% if displayArrangements %}
+                <div class="govuk-!-margin-bottom-9"></div>
 
                 <h2 class="govuk-heading-l">
                   {{ messages("summary.arrangements.heading") }}
