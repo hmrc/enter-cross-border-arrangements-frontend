@@ -31,25 +31,33 @@
 
         <div class="govuk-!-margin-bottom-9"></div>
 
-        <h2 class="govuk-heading-l">
-          {{ messages("summary.hallmarks.heading") }}
-        </h2>
+          {% if displayHallmarks %}
 
-        {{ govukSummaryList({
-          rows: hallmarksList
-        }) }}
+                    <h2 class="govuk-heading-l">
+                      {{ messages("summary.hallmarks.heading") }}
+                    </h2>
 
-        <div class="govuk-!-margin-bottom-9"></div>
+                    {{ govukSummaryList({
+                      rows: hallmarksList
+                    }) }}
 
-        <h2 class="govuk-heading-l">
-          {{ messages("summary.arrangements.heading") }}
-        </h2>
+                    <div class="govuk-!-margin-bottom-9"></div>
 
-        {{ govukSummaryList({
-          rows: arrangementList
-        }) }}
+          {% endif %}
 
-        <div class="govuk-!-margin-bottom-9"></div>
+          {% if displayArrangements %}
+
+                <h2 class="govuk-heading-l">
+                  {{ messages("summary.arrangements.heading") }}
+                </h2>
+
+                {{ govukSummaryList({
+                  rows: arrangementList
+                }) }}
+
+              <div class="govuk-!-margin-bottom-9"></div>
+          {% endif %}
+
 
        <h2 class="govuk-heading-l">
          {{ messages("summary.reporters.heading") }}

@@ -77,13 +77,15 @@ class SummaryController @Inject() (
               .render(
                 "summary.njk",
                 Json.obj(
-                  "disclosureList" -> submission.disclosureDetails.createDisplayRows,
+                  "disclosureList"      -> submission.disclosureDetails.createDisplayRows,
+                  "displayArrangements" -> displayArrangements(submission),
                   "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(
                     a => a.createDisplayRows
                   ),
                   "reporterDetails"              -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "residentCountryDetails"       -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "roleDetails"                  -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+                  "displayHallmarks"             -> displayHallmarks(submission),
                   "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
                   "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
@@ -104,6 +106,10 @@ class SummaryController @Inject() (
           }
       }
   }
+
+  private def displayArrangements(submission: Submission): Boolean = true
+
+  private def displayHallmarks(submission: Submission): Boolean = false
 
   private def getTimeStamp()(implicit messages: Messages) = {
     val today = ZonedDateTime.now(ZoneId.of("Europe/London"))
