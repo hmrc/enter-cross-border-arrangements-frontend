@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
-{% from "govuk/components/panel/macro.njk"         import govukPanel %}
+{% from "govuk/components/panel/macro.njk"         import govukPanel %} {# todo to jest webjars libs #}
 
 {% if disclosureID %}
     {% set panelKey = 'disclosureConfirmation.panel.disclosure' %}
@@ -20,7 +20,7 @@
       <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
-          titleText: messages("disclosureConfirmation.title"),
+          titleText: messages("disclosureConfirmation.title"),        {# todo similar here to jest w webjars libs #}
           html: panelText
         }) }}
 

@@ -17,7 +17,7 @@
     continue: 'Save and Continue'
 } %}
 
-<h1 class="govuk-heading-xl">
+<h1 class="govuk-heading-xl name-overflow"> {# ------------------ todo similar for other struct related find root tag and add class ------------------ #}
     {%- if params.itemList | length === 0 -%}
         {{ params.emptyList }}
     {%- else -%}
