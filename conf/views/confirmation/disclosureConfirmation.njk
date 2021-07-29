@@ -20,29 +20,36 @@
       <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
-          titleText: messages("disclosureConfirmation.title"),        {# todo similar here to jest w webjars libs #}
-          html: panelText
+          titleText: messages("disclosureConfirmation.title"),
+          html: panelText,
+          classes: "name-overflow"
         }) }}
 
         <div class="govuk-body">
 
           <p>
-            <span class="name-overflow">{{ messages("disclosureConfirmation.firstEmail", emailMessage)}}</span>
+            <span class="name-overflow">
+              {{ messages("disclosureConfirmation.firstEmail", "<span class=\"text-overflow\">"+emailMessage+"</span>")}}
+            </span>
           </p>
 
           {% if disclosureID %}
             <p><span class="name-overflow">{{ messages("disclosureConfirmation.p2") }}</span></p>
-            <p><span class="name-overflow">{{ messages("disclosureConfirmation.p3", disclosureID) }}</span></p>
             <p>
               <span class="name-overflow">
-                {{ messages("disclosureConfirmation.p4", messageRefID) }}
+                {{ messages("disclosureConfirmation.p3", "<span class=\"text-overflow\">"+disclosureID+"</span>") }}
+              </span>
+            </p>
+            <p>
+              <span class="name-overflow">
+                {{ messages("disclosureConfirmation.p4", "<span class=\"text-overflow\">"+messageRefID+"</span>") }}
                 {{ messages("disclosureConfirmation.p5") }}
               </span>
             </p>
           {% else %}
             <p>
               <span class="name-overflow">
-                {{ messages("disclosureConfirmation.p4", messageRefID) }}
+                {{ messages("disclosureConfirmation.p4", "<span class=\"text-overflow\">"+messageRefID+"</span>") }}
                 {{ messages("disclosureConfirmation.p6") }}
               </span>
             </p>

@@ -28,14 +28,13 @@
 
           {{ csrf() | safe }}
 
-{# ------------------ todo tu trzeba styl dodac ------------------ #}
             {{ hmrcAddToAList({
                 itemList: intermediaryList,
                 itemType: {
                   singular: messages("youHaveNotAddedAnyIntermediaries.singular"),
                   plural: messages("youHaveNotAddedAnyIntermediaries.plural")
                 },
-                emptyList: messages('youHaveNotAddedAnyIntermediaries.emptyList') {# ------------------ todo <span> ------------------ #}
+                emptyList: messages("<span class=\"name-overflow\">"+'youHaveNotAddedAnyIntermediaries.emptyList'+"</span>")
             }) }}
 
           <p class="govuk-body name-overflow">{{ messages('youHaveNotAddedAnyIntermediaries.hint')}}</p>

@@ -13,16 +13,25 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-        {{ govukPanel({ {# ------------------ todo similar here to jest w webjars libs------------------ #}
+        {{ govukPanel({
           titleText: messages("replacementDisclosureConfirmation.title"),
-          html: panelText
+          html: panelText,
+          classes: "name-overflow"
         }) }}
 
         <div class="govuk-body">
 
-          <p><span class="name-overflow">{{ messages("replacementDisclosureConfirmation.p1", emailMessage) }}</span></p>
+          <p>
+            <span class="name-overflow">
+              {{ messages("replacementDisclosureConfirmation.p1", "<span class=\"text-overflow\">"+emailMessage+"</span>") }}
+            </span>
+          </p>
 
-          <p><span class="name-overflow">{{ messages("replacementDisclosureConfirmation.p2", messageRefID) }}</span></p>
+          <p>
+            <span class="name-overflow">
+              {{ messages("replacementDisclosureConfirmation.p2", "<span class=\"text-overflow\">"+messageRefID+"</span>") }}
+            </span>
+          </p>
 
           <h2 class="govuk-heading-m"><span class="name-overflow">{{ messages("replacementDisclosureConfirmation.h2") }}</span></h2>
           <p><span class="name-overflow">{{ messages("replacementDisclosureConfirmation.p3") }}</span></p>
