@@ -1,7 +1,7 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
-{% from "govuk/components/panel/macro.njk"         import govukPanel %} {# todo to jest webjars libs #}
+{% from "govuk/components/panel/macro.njk"         import govukPanel %}
 
 {% if disclosureID %}
     {% set panelKey = 'disclosureConfirmation.panel.disclosure' %}
@@ -29,7 +29,8 @@
 
           <p>
             <span class="name-overflow">
-              {{ messages("disclosureConfirmation.firstEmail", "<span class=\"text-overflow\">"+emailMessage+"</span>")}}
+              {{ messages("disclosureConfirmation.firstEmail") }}
+              <span class="text-overflow">{{ emailMessage }}.</span>
             </span>
           </p>
 
@@ -37,19 +38,23 @@
             <p><span class="name-overflow">{{ messages("disclosureConfirmation.p2") }}</span></p>
             <p>
               <span class="name-overflow">
-                {{ messages("disclosureConfirmation.p3", "<span class=\"text-overflow\">"+disclosureID+"</span>") }}
+                {{ messages("disclosureConfirmation.p3.A") }}
+                <span class="text-overflow">{{ disclosureID }}</span>
+                {{ messages("disclosureConfirmation.p3.B") }}
               </span>
             </p>
             <p>
               <span class="name-overflow">
-                {{ messages("disclosureConfirmation.p4", "<span class=\"text-overflow\">"+messageRefID+"</span>") }}
+                {{ messages("disclosureConfirmation.p4") }}
+                <span class="text-overflow">{{ messageRefID }}.</span>
                 {{ messages("disclosureConfirmation.p5") }}
               </span>
             </p>
           {% else %}
             <p>
               <span class="name-overflow">
-                {{ messages("disclosureConfirmation.p4", "<span class=\"text-overflow\">"+messageRefID+"</span>") }}
+                {{ messages("disclosureConfirmation.p4") }}
+                <span class="text-overflow">{{ messageRefID }}.</span>
                 {{ messages("disclosureConfirmation.p6") }}
               </span>
             </p>

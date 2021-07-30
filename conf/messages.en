@@ -945,26 +945,33 @@ disclosureConfirmation.title = Disclosure received
 disclosureConfirmation.arrangement.title = Arrangement received
 disclosureConfirmation.panel.new = Your arrangement ID
 disclosureConfirmation.panel.add = Your disclosure ID
-disclosureConfirmation.firstEmail = We have sent a confirmation email to {0}.
+# Splitting into two messeges as argument requires different CSS style than rest of text
+disclosureConfirmation.firstEmail = We have sent a confirmation email to
 disclosureConfirmation.p2 = Share the arrangement ID above with any people or organisations involved in this arrangement.
-disclosureConfirmation.p3 = Your disclosure ID is {0}. You will need it to make any changes to the disclosure.
-disclosureConfirmation.p4 = Your message reference ID is {0}.
+
+# Splitting into two messeges as argument requires different CSS style than rest of text
+disclosureConfirmation.p3.A = Your disclosure ID is
+disclosureConfirmation.p3.B = . You will need it to make any changes to the disclosure.
+disclosureConfirmation.p4 = Your message reference ID is
 disclosureConfirmation.p5 = This is unique for every submission you make, whether it’s a new disclosure, or an update, replacement or deletion of one. Keep it for your records.
 disclosureConfirmation.p6 = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion of one. Keep it for your records.
 disclosureConfirmation.p7 = What happens next
 disclosureConfirmation.p8 = You will need the disclosure ID if you need to make further changes to the disclosure.
 
 replacementDisclosureConfirmation.title = Replacement received
-replacementDisclosureConfirmation.p1 = We have sent a confirmation email to {0}.
-replacementDisclosureConfirmation.p2 = Your message reference ID for this replacement is {0}. This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion. Keep it for your records.
+replacementDisclosureConfirmation.p1 = We have sent a confirmation email to
+replacementDisclosureConfirmation.p2.A = Your message reference ID for this replacement is
+replacementDisclosureConfirmation.p2.B = This is unique for every submission you make, whether it’s a new disclosure, or an addition to an existing one, a replacement or deletion. Keep it for your records.
 replacementDisclosureConfirmation.h2 = What happens next
 replacementDisclosureConfirmation.p3 = If we have any questions about the disclosure, we will contact you.
 
 yourDisclosureHasBeenDeleted.title = Your disclosure has been deleted
 yourDisclosureHasBeenDeleted.heading = Your disclosure has been deleted
-yourDisclosureHasBeenDeleted.p1 = Your disclosure {0} for arrangement {1} has been deleted.
-yourDisclosureHasBeenDeleted.p2 = For your records, the message reference ID for this action is: {0}.
-yourDisclosureHasBeenDeleted.p3 = We have sent this in a confirmation email to {0}.
+yourDisclosureHasBeenDeleted.p1.A = Your disclosure
+yourDisclosureHasBeenDeleted.p1.B = for arrangement
+yourDisclosureHasBeenDeleted.p1.C = has been deleted.
+yourDisclosureHasBeenDeleted.p2 = For your records, the message reference ID for this action is: .
+yourDisclosureHasBeenDeleted.p3 = We have sent this in a confirmation email to
 yourDisclosureHasBeenDeleted.link1 = Disclose a cross-border arrangement
 yourDisclosureHasBeenDeleted.link2 = What did you think of this service?
 yourDisclosureHasBeenDeleted.link2.time = (takes 30 seconds)

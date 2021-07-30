@@ -80,5 +80,5 @@ class NewDisclosureConfirmationController @Inject() (
     messages("disclosureConfirmation.panel.new")
 
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html =
-    Html(s"${messages("disclosureConfirmation.panel.new")}<br><strong>$id</strong>")
+    Html(s"""${messages("disclosureConfirmation.panel.new")}<br><strong class="text-overflow">$id</strong>""")
 }
