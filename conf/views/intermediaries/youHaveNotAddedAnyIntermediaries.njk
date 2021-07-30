@@ -29,12 +29,13 @@
           {{ csrf() | safe }}
 
             {{ hmrcAddToAList({
+                classes: "name-overflow",
                 itemList: intermediaryList,
                 itemType: {
                   singular: messages("youHaveNotAddedAnyIntermediaries.singular"),
                   plural: messages("youHaveNotAddedAnyIntermediaries.plural")
                 },
-                emptyList: messages('youHaveNotAddedAnyIntermediaries.emptyList') {# todo here is required diff solution #}
+                emptyList: messages('youHaveNotAddedAnyIntermediaries.emptyList')
             }) }}
 
           <p class="govuk-body name-overflow">{{ messages('youHaveNotAddedAnyIntermediaries.hint')}}</p>
