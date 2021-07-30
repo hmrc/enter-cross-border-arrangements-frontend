@@ -19,6 +19,7 @@ package controllers
 import connectors.HistoryConnector
 import controllers.actions._
 import helpers.DateHelper.getSummaryTimestamp
+import helpers.TaskListHelper
 import helpers.TaskListHelper.{isInitialDisclosureMarketable, userCanSubmit}
 import models.ReporterOrganisationOrIndividual.Organisation
 import models.reporter.RoleInArrangement.Intermediary
@@ -84,6 +85,7 @@ class SummaryController @Inject() (
                   "reporterDetails"              -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "residentCountryDetails"       -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "roleDetails"                  -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+                  "displayHallmarksSection"      -> displayHallmarksSection(submission, request.userAnswers, id, isInitialDisclosureMarketable),
                   "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
                   "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
                   "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
@@ -104,6 +106,16 @@ class SummaryController @Inject() (
           }
       }
   }
+
+  private def displayHallmarksSection(submission: Submission, userAnswers: UserAnswers, id: Int, marketable: Boolean): Boolean =
+    TaskListHelper.isDisplaySectionOptional(userAnswers, id, marketable) match {
+      case true =>
+        submission.hallmarkDetails match {
+          case Some(_) => true
+          case _       => false
+        }
+      case _ => true
+    }
 
   private def getTimeStamp()(implicit messages: Messages) = {
     val today = ZonedDateTime.now(ZoneId.of("Europe/London"))

@@ -125,6 +125,15 @@ object TaskListHelper {
         ""
     }
 
+  def isDisplaySectionOptional(ua: UserAnswers, id: Int, isInitialDisclosureMarketable: Boolean): Boolean =
+    getDisclosureTypeWithMAFlag(ua, id) match {
+      case (Some(Dac6add), true) =>
+        true
+      case (Some(Dac6rep), _) if isInitialDisclosureMarketable =>
+        true
+      case _ => false
+    }
+
   def userCanSubmit(ua: UserAnswers, id: Int, isInitialDisclosureMarketable: Boolean): Boolean = {
 
     val submissionContainsTaxpayer: Boolean = ua.get(TaxpayerLoopPage, id).fold(false)(_.nonEmpty) ||

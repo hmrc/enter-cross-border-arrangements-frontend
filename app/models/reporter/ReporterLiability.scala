@@ -48,7 +48,7 @@ object ReporterLiability {
     }
 
   private def getTaxpayerCapacity(ua: UserAnswers, id: Int): Option[String] =
-    if(ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
+    if (ua.get(TaxpayerWhyReportInUKPage, id).contains(TaxpayerWhyReportInUK.DoNotKnow)) {
       None
     } else {
       ua.get(TaxpayerWhyReportArrangementPage, id) match {
@@ -80,15 +80,15 @@ object ReporterLiability {
       case _                                    => throw new SomeInformationIsMissingException(id, "Reporter liability must indicate the exemption status or 'I do not know' ")
     }
 
-  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] = {
+  private def getExemptCountries(ua: UserAnswers, id: Int): Option[List[String]] =
     if (getNationalExemption(ua, id).contains(true)) {
       ua.get(IntermediaryDoYouKnowExemptionsPage, id) match {
         case Some(true) =>
           ua.get(IntermediaryWhichCountriesExemptPage, id)
             .fold(
               throw new SomeInformationIsMissingException(id,
-                "Reporter Liability must contain countries" +
-                  "when 'yes' to 'do you know exemptions' is selected"
+                                                          "Reporter Liability must contain countries" +
+                                                            "when 'yes' to 'do you know exemptions' is selected"
               )
             )(
               selectedCountries => Some(selectedCountries.toList.map(_.toString).sorted)
@@ -96,14 +96,13 @@ object ReporterLiability {
         case Some(false) => None
         case None =>
           throw new SomeInformationIsMissingException(id,
-            "Reporter Liability must contain countries" +
-              "when 'yes' to 'do you know exemptions' is selected"
+                                                      "Reporter Liability must contain countries" +
+                                                        "when 'yes' to 'do you know exemptions' is selected"
           )
       }
     } else {
       None
     }
-  }
 
   def buildReporterLiability(ua: UserAnswers, id: Int): ReporterLiability =
     ua.get(RoleInArrangementPage, id) match {
