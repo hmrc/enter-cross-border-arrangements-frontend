@@ -30,7 +30,7 @@
           <p>
             <span class="name-overflow">
               {{ messages("disclosureConfirmation.firstEmail") }}
-              <span class="text-overflow">{{ emailMessage }}.</span>
+              <span style="word-wrap: break-word;overflow-wrap: anywhere;hyphens: none">{{ emailMessage }}.</span>
             </span>
           </p>
 
@@ -39,14 +39,15 @@
             <p>
               <span class="name-overflow">
                 {{ messages("disclosureConfirmation.p3.A") }}
-                <span class="text-overflow">{{ disclosureID }}</span>
+                {# <span class="text-overflow">{{ disclosureID }}</span> #]
+                <span style="word-wrap: break-word;overflow-wrap: anywhere;hyphens: none">{{ disclosureID }}</span>
                 {{ messages("disclosureConfirmation.p3.B") }}
               </span>
             </p>
             <p>
               <span class="name-overflow">
                 {{ messages("disclosureConfirmation.p4") }}
-                <span class="text-overflow">{{ messageRefID }}.</span>
+                <span style="word-wrap: break-word;overflow-wrap: anywhere;hyphens: none">{{ messageRefID }}.</span>
                 {{ messages("disclosureConfirmation.p5") }}
               </span>
             </p>
@@ -54,7 +55,7 @@
             <p>
               <span class="name-overflow">
                 {{ messages("disclosureConfirmation.p4") }}
-                <span class="text-overflow">{{ messageRefID }}.</span>
+                <span style="word-wrap: break-word;overflow-wrap: anywhere;hyphens: none">{{ messageRefID }}.</span>
                 {{ messages("disclosureConfirmation.p6") }}
               </span>
             </p>
