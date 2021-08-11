@@ -40,12 +40,12 @@
 
           {{ govukRadios({
             name: 'confirm',
-            classes: "name-overflow",
+            classes: "text-overflow",
             fieldset: {
               legend: {
                 text: messages('updateTaxpayer.h2') if taxpayerList | length == 0 else messages('updateTaxpayer.h3'),
                 isPageHeading: false,
-                classes: "govuk-fieldset__legend govuk-fieldset__legend--m name-overflow"
+                classes: "govuk-fieldset__legend govuk-fieldset__legend--m text-overflow"
               }
             },
             items: radios,

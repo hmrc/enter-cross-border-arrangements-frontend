@@ -32,7 +32,7 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-l name-overflow">{{ messages("isExemptionKnown.heading", intermediary) }}</h1>
+          <h1 class="govuk-heading-l text-overflow">{{ messages("isExemptionKnown.heading", intermediary) }}</h1>
           <p class="govuk-body">{{ messages("isExemptionKnown.hint.1") }}</p>
 
           <ul class="govuk-list govuk-list--bullet">
@@ -43,12 +43,12 @@
 
           {{ govukRadios({
             name: 'value',
-            classes: "name-overflow",
+            classes: "text-overflow",
             fieldset: {
               legend: {
                 text: messages('isExemptionKnown.title'),
                 isPageHeading: true,
-                classes: "govuk-visually-hidden name-overflow"
+                classes: "govuk-visually-hidden text-overflow"
               }
             },
             items: radios,
