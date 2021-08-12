@@ -33,7 +33,7 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
+          <h1 class="govuk-heading-l">
             {{ messages("whatIsTheExpectedValueOfThisArrangement.heading") }}
           </h1>
 
@@ -53,7 +53,7 @@
           }) }}
 
           {{ govukInput({
-          classes: "govuk-input govuk-input--width-10",
+          classes: "govuk-input govuk-input--width-10 ",
             label: {
               text: messages('whatIsTheExpectedValueOfThisArrangement.amount')
             },

@@ -34,11 +34,12 @@
 
           {{ govukRadios({
             name: 'value',
+            classes: "name-overflow",
             fieldset: {
               legend: {
                 text: messages('whatTypeofIntermediary.heading', intermediary),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl text-overflow"
+                classes: "govuk-fieldset__legend--l text-overflow"
               }
             },
             items: radios,

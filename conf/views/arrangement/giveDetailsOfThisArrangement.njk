@@ -32,7 +32,7 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">{{messages("giveDetailsOfThisArrangement.title")}}</h1>
+          <h1 class="govuk-heading-l">{{messages("giveDetailsOfThisArrangement.title")}}</h1>
 
           <div id="details-hint" >
 
@@ -43,7 +43,7 @@
 
           {{ govukTextarea({
             label: {
-                classes: "govuk-label govuk-visually-hidden",
+                classes: "govuk-label govuk-visually-hidden name-overflow",
                 text: "Give details of this arrangement",
                 isPageHeading: false
              },

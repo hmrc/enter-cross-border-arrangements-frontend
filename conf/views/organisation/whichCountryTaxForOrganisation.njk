@@ -32,7 +32,7 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl text-overflow">{{messages(pageHeading, organisationName, dynamicAlso)}}</h1>
+          <h1 class="govuk-heading-l text-overflow">{{messages(pageHeading, organisationName, dynamicAlso)}}</h1>
 
           <p class="govuk-body">{{ messages("whichCountryTaxForOrganisation.info") }}</p>
 
@@ -43,7 +43,7 @@
             label: {
               text: messages(pageHeading, organisationName, dynamicAlso),
               isPageHeading: true,
-              classes: "govuk-label govuk-visually-hidden"
+              classes: "govuk-label govuk-visually-hidden name-overflow"
             },
             id: "country",
             name: "country",

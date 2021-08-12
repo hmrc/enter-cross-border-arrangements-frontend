@@ -49,10 +49,10 @@ object JourneyHelpers {
     }
 
   def pageHeadingLegendProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
-    Html(s"<legend><h1 class='govuk-heading-xl name-overflow'>${messages(messageKey, name)}</h1></legend>")
+    Html(s"<legend class='govuk-fieldset__legend govuk-fieldset__legend--l text-overflow'><h1 class='govuk-heading-l'>${messages(messageKey, name)}</h1></legend>")
 
   def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
-    Html(s"<h1 class='govuk-heading-xl name-overflow'>${messages(messageKey, name)}</h1>")
+    Html(s"<h1 class='govuk-heading-l text-overflow'>${messages(messageKey, name)}</h1>")
 
   def currencyJsonList(value: Option[String], currencies: Seq[Currency]): Seq[JsObject] =
     Json.obj("value" -> "", "text" -> "") +: currencies.map {

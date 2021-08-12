@@ -34,6 +34,7 @@
 
           {{ govukRadios({
             name: 'value',
+            classes: "name-overflow",
             hint: {
                 text: messages('intermediaryExemptionInEU.hint')
             },
@@ -41,7 +42,7 @@
               legend: {
                 text: messages('intermediaryExemptionInEU.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--l name-overflow"
               }
             },
             items: radios,

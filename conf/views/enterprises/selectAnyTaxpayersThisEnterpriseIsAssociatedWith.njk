@@ -32,7 +32,7 @@
 
           {{ csrf() | safe }}
 
-            <h1 class="govuk-heading-xl">
+            <h1 class="govuk-heading-l">
               {{ messages("selectAnyTaxpayersThisEnterpriseIsAssociatedWith.heading") }}
             </h1>
 
@@ -45,11 +45,12 @@
 
           {{ govukCheckboxes({
             name: 'value',
+            classes: "text-overflow",
             fieldset: {
               legend: {
                 text: messages('site.selectAllThatApply'),
                 isPageHeading: false,
-                classes: "govuk-hint"
+                classes: "govuk-hint text-overflow govuk-fieldset__legend--l"
               }
             },
             items: checkboxes,

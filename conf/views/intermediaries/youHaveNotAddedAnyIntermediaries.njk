@@ -29,6 +29,7 @@
           {{ csrf() | safe }}
 
             {{ hmrcAddToAList({
+                classes: "text-overflow",
                 itemList: intermediaryList,
                 itemType: {
                   singular: messages("youHaveNotAddedAnyIntermediaries.singular"),
@@ -37,15 +38,16 @@
                 emptyList: messages('youHaveNotAddedAnyIntermediaries.emptyList')
             }) }}
 
-          <p class="govuk-body">{{ messages('youHaveNotAddedAnyIntermediaries.hint')}}</p>
+          <p class="govuk-body text-overflow">{{ messages('youHaveNotAddedAnyIntermediaries.hint')}}</p>
 
           {{ govukRadios({
               name: 'value',
+              classes: "text-overflow",
               fieldset: {
                   legend: {
                   text: messages('youHaveNotAddedAnyIntermediaries.subHeading.1')  if intermediaryList | length == 0 else messages('youHaveNotAddedAnyIntermediaries.subHeading.2'),
                   isPageHeading: false,
-                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+                  classes: "govuk-fieldset__legend govuk-fieldset__legend--m text-overflow"
               }
           },
               items: radios,
