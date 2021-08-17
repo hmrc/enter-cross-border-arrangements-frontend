@@ -49,7 +49,9 @@ object JourneyHelpers {
     }
 
   def pageHeadingLegendProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
-    Html(s"<legend class='govuk-fieldset__legend govuk-fieldset__legend--l text-overflow'><h1 class='govuk-heading-l'>${messages(messageKey, name)}</h1></legend>")
+    Html(
+      s"<legend class='govuk-fieldset__legend govuk-fieldset__legend--l text-overflow'><h1 class='govuk-heading-l'>${messages(messageKey, name)}</h1></legend>"
+    )
 
   def pageHeadingProvider(messageKey: String, name: String)(implicit messages: Messages): Html =
     Html(s"<h1 class='govuk-heading-l text-overflow'>${messages(messageKey, name)}</h1>")
@@ -153,4 +155,7 @@ object JourneyHelpers {
       case Some(Individual) => "reporterIndividual"
       case _                => "reporterOrganisation"
     }
+
+  def isArrangementIDUK(arrangementID: String): Boolean =
+    arrangementID.substring(0, 3).contains("GBA")
 }

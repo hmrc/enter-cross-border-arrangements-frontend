@@ -290,5 +290,22 @@ class JourneyHelpersSpec extends ControllerMockFixtures with SpecBase with Scala
 
       }
     }
+
+    "isArrangementIDUK" - {
+
+      "must return false if the arrangement id is a non UK ID" in {
+
+        val arrangementID = "DEA20200701AAA000"
+
+        isArrangementIDUK(arrangementID) mustBe false
+      }
+
+      "must return true if the arrangement id is an UK ID" in {
+
+        val arrangementID = "GBA20200701AAA000"
+
+        isArrangementIDUK(arrangementID) mustBe true
+      }
+    }
   }
 }

@@ -21,7 +21,7 @@ import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.exceptions.DisclosureInformationIsMissingException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import helpers.IDHelper
+import helpers.{IDHelper, JourneyHelpers}
 import models.disclosure.DisclosureDetails
 import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
@@ -86,18 +86,26 @@ class DisclosureCheckYourAnswersController @Inject() (
       val index                         = updatedUnsubmittedDisclosures.zipWithIndex.last._2
 
       def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
+
         case Some(Dac6add) =>
           request.userAnswers
             .getBase(DisclosureIdentifyArrangementPage)
             .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve isMarketableArrangement from disclosure backend"))(
               arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
             )
+
         case Some(Dac6rep) =>
           request.userAnswers
             .getBase(ReplaceOrDeleteADisclosurePage)
             .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ReplaceOrDeleteADisclosure IDs"))(
-              ids => crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID)
+              ids =>
+                if (JourneyHelpers.isArrangementIDUK(ids.arrangementID)) {
+                  crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID)
+                } else {
+                  Future.successful(false)
+                }
             )
+
         case _ =>
           request.userAnswers
             .getBase(DisclosureMarketablePage)
