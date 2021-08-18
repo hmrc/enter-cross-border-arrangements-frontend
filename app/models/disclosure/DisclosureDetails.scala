@@ -47,7 +47,6 @@ case class DisclosureDetails(
   def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
     copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
       case (Dac6add, _)           => false
-      case (Dac6rep, None)        => throw new DisclosureInformationIsMissingException("Missing first InitialDisclosureMA flag for a replace")
       case (Dac6rep, Some(value)) => value
       case _                      => initialDisclosureMA
     })
