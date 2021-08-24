@@ -120,6 +120,38 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe true
     }
 
+    "must return initialDisclosureMA flag 'false' if the additional disclosure has a non UK arrangement ID" in {
+
+      val lastPreviousSubmission = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("arrangementID"),
+        disclosureID = Some("disclosureID"),
+        importInstruction = "DAC6NEW",
+        initialDisclosureMA = true,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
+        .success
+        .value
+        .setBase(DisclosureIdentifyArrangementPage, "CZA123")
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(lastPreviousSubmission))
+
+      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+    }
+
     "must return initialDisclosureMA flag 'false' if the disclosure being added to has a flag of 'false' with import instruction DAC6ADD" in {
 
       val lastPreviousSubmission = SubmissionDetails(

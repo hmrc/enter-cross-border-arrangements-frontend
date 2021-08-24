@@ -46,6 +46,9 @@ class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)
 
     userAnswers.getBase(DisclosureTypePage) match {
 
+      case Some(Dac6add) if !JourneyHelpers.isArrangementIDUK(userSuppliedArrangementID) =>
+        Future.successful(false)
+
       case Some(Dac6add) =>
         historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID).flatMap {
           firstDisclosure =>

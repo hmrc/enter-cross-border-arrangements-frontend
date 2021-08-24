@@ -81,7 +81,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       val firstDisclosureSubmissionDetails =
         SubmissionDetails("id", LocalDateTime.now(), "test.xml", Some("arrangementID"), Some("disclosureID"), "New", initialDisclosureMA = true, "messageRefID")
 
-      val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetails))
+//      val submissionHistory = SubmissionHistory(Seq(firstDisclosureSubmissionDetails))
 
       val disclosureDetails = DisclosureDetails(
         disclosureName = "",
@@ -163,8 +163,8 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
-        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
+//      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+//        .thenReturn(Future.successful(firstDisclosureSubmissionDetails))
 
       val getRequest     = FakeRequest(GET, routes.SummaryController.onPageLoad(0).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -174,7 +174,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-      verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
+//      verify(mockHistoryConnector, times(1)).retrieveFirstDisclosureForArrangementID(any())(any())
 
       templateCaptor.getValue mustEqual "summary.njk"
     }
