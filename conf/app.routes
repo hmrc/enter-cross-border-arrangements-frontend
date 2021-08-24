@@ -332,6 +332,8 @@ POST       /intermediaries/remove/:id/:itemId                   controllers.inte
 
 # DISCLOSURE
 
+GET       /test-only/generated-xml/:id                                     controllers.test.GeneratedXMLController.onPageLoad(id: Int)
+
 GET        /unsubmitted-disclosures          controllers.unsubmitted.UnsubmittedDisclosureController.onPageLoad()
 
 GET        /remove-disclosure/:id            controllers.disclosure.RemoveDisclosureController.onPageLoad(id: Int)

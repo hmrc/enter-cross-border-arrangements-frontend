@@ -105,7 +105,7 @@ class ReplaceOrDeleteADisclosureController @Inject() (
           )
           renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
         },
-        value =>
+        (value: ReplaceOrDeleteADisclosure) =>
           crossBorderArrangementsConnector
             .verifyDisclosureIDs(value.arrangementID.toUpperCase, value.disclosureID.toUpperCase, request.enrolmentID)
             .flatMap {
@@ -118,7 +118,7 @@ class ReplaceOrDeleteADisclosureController @Inject() (
                     "replaceOrDelete"    -> replaceOrDelete(request.userAnswers)
                   )
                   renderer.render("disclosure/replaceOrDeleteADisclosure.njk", json).map(BadRequest(_))
-                } else {
+                } else
                   for {
                     disclosureDetail <- historyConnector.getSubmissionDetailForDisclosure(value.disclosureID)
                     updatedAnswers   <- Future.fromTry(request.userAnswers.setBase(ReplaceOrDeleteADisclosurePage, value))
@@ -127,7 +127,6 @@ class ReplaceOrDeleteADisclosureController @Inject() (
                     checkRoute     = toCheckRoute(mode, updatedAnswers1)
                     disclosureType = request.userAnswers.getBase(DisclosureTypePage)
                   } yield Redirect(redirect(checkRoute, disclosureType))
-                }
             }
       ) recoverWith {
         case ex: Exception => errorHandler.onServerError(request, ex)

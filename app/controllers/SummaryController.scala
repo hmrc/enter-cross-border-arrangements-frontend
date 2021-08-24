@@ -58,6 +58,7 @@ class SummaryController @Inject() (
     implicit request =>
       val backtoDisclosuresLink = controllers.routes.DisclosureDetailsController.onPageLoad(id).url
 
+      //TODO - WIP remove below method and replace with MarketableDisclosureService
       isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap {
         isInitialDisclosureMarketable =>
           if (userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable)) {

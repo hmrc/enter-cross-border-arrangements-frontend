@@ -160,6 +160,7 @@ object TaskListHelper {
     }
   }
 
+  //WIP - METHOD BELOW NEEDS REMOVED
   def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int, historyConnector: HistoryConnector, sessionRepository: SessionRepository)(implicit
     hc: HeaderCarrier,
     executionContext: ExecutionContext

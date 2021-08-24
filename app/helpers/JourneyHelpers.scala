@@ -158,4 +158,5 @@ object JourneyHelpers {
 
   def isArrangementIDUK(arrangementID: String): Boolean =
     arrangementID.substring(0, 3).contains("GBA")
+
 }

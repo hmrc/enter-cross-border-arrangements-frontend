@@ -21,7 +21,7 @@ import connectors.HistoryConnector
 import controllers.actions._
 import controllers.exceptions.DiscloseDetailsAlreadySentException
 import controllers.mixins.DefaultRouting
-import helpers.TaskListHelper.{isInitialDisclosureMarketable, _}
+import helpers.TaskListHelper._
 import models.hallmarks.JourneyStatus
 import models.hallmarks.JourneyStatus.{Completed, InProgress, NotStarted, Restricted}
 import models.reporter.RoleInArrangement.Taxpayer
@@ -42,7 +42,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.XMLGenerationService
+import services.{MarketableDisclosureService, XMLGenerationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -62,7 +62,8 @@ class DisclosureDetailsController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   navigator: NavigatorForDisclosure,
   renderer: Renderer,
-  sessionRepository: SessionRepository
+  sessionRepository: SessionRepository,
+  marketableDisclosureService: MarketableDisclosureService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -75,26 +76,24 @@ class DisclosureDetailsController @Inject() (
 
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
-      isInitialDisclosureMarketable(request.userAnswers, id, historyConnector, sessionRepository).flatMap {
-        isInitialDisclosureMarketable =>
-          val json = Json.obj(
-            "id"                               -> id,
-            "arrangementID"                    -> arrangementMessage,
-            "hallmarksTaskListItem"            -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
-            "arrangementDetailsTaskListItem"   -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, isInitialDisclosureMarketable),
-            "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
-            "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
-            "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
-            "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
-            "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
-            "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-            "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, isInitialDisclosureMarketable),
-            "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, isInitialDisclosureMarketable),
-            "backLink"                         -> backLink,
-            "summaryLink"                      -> summaryLink
-          )
-          renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
-      }
+      val json = Json.obj(
+        "id"                               -> id,
+        "arrangementID"                    -> arrangementMessage,
+        "hallmarksTaskListItem"            -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
+        "arrangementDetailsTaskListItem"   -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, disclosureDetails.initialDisclosureMA),
+        "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
+        "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
+        "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
+        "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
+        "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
+        "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
+        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.initialDisclosureMA),
+        "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, disclosureDetails.initialDisclosureMA),
+        "backLink"                         -> backLink,
+        "summaryLink"                      -> summaryLink
+      )
+      renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
+
   }
 
   def onSubmit(id: Int): Action[AnyContent] = (identify andThen getData.apply() andThen requireData andThen contactRetrievalAction.apply).async {

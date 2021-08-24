@@ -31,6 +31,7 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.MarketableDisclosureService
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Row}
 import uk.gov.hmrc.viewmodels.Text.Literal
 
@@ -42,17 +43,19 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
 
   lazy val disclosureCheckYourAnswersContinueRoute: String = controllers.disclosure.routes.DisclosureCheckYourAnswersController.onContinue().url
 
-  val mockCrossBorderArrangementsConnector: CrossBorderArrangementsConnector = mock[CrossBorderArrangementsConnector]
+  val mockMarketableArrangementService: MarketableDisclosureService = mock[MarketableDisclosureService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderArrangementsConnector))
+      .overrides(
+        bind[MarketableDisclosureService].toInstance(mockMarketableArrangementService)
+      )
 
   override def beforeEach: Unit = {
     reset(
       mockRenderer,
-      mockCrossBorderArrangementsConnector
+      mockMarketableArrangementService
     )
     when(mockRenderer.render(any(), any())(any()))
       .thenReturn(Future.successful(Html("")))
@@ -207,7 +210,7 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
     "must be able to build disclosure details from user answers and redirect to task list" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockCrossBorderArrangementsConnector.isMarketableArrangement(any())(any()))
+      when(mockMarketableArrangementService.retrieveAndSetInitialDisclosureMAFlag(any())(any()))
         .thenReturn(Future.successful(false))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)

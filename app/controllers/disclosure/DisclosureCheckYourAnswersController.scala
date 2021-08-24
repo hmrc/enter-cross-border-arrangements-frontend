@@ -17,13 +17,10 @@
 package controllers.disclosure
 
 import com.google.inject.Inject
-import connectors.CrossBorderArrangementsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.exceptions.DisclosureInformationIsMissingException
 import controllers.mixins.{DefaultRouting, RoutingSupport}
-import helpers.{IDHelper, JourneyHelpers}
+import helpers.IDHelper
 import models.disclosure.DisclosureDetails
-import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
 import models.hallmarks.JourneyStatus
 import models.{NormalMode, UnsubmittedDisclosure}
 import navigation.NavigatorForDisclosure
@@ -34,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+import services.MarketableDisclosureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -47,7 +45,7 @@ class DisclosureCheckYourAnswersController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  crossBorderArrangementsConnector: CrossBorderArrangementsConnector,
+  marketableDisclosureService: MarketableDisclosureService,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -85,39 +83,10 @@ class DisclosureCheckYourAnswersController @Inject() (
       val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
       val index                         = updatedUnsubmittedDisclosures.zipWithIndex.last._2
 
-      def isMarketable: Future[Boolean] = request.userAnswers.getBase(DisclosureTypePage) match {
-
-        case Some(Dac6add) =>
-          request.userAnswers
-            .getBase(DisclosureIdentifyArrangementPage)
-            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve isMarketableArrangement from disclosure backend"))(
-              arrangementId => crossBorderArrangementsConnector.isMarketableArrangement(arrangementId)
-            )
-
-        case Some(Dac6rep) =>
-          request.userAnswers
-            .getBase(ReplaceOrDeleteADisclosurePage)
-            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ReplaceOrDeleteADisclosure IDs"))(
-              ids =>
-                if (JourneyHelpers.isArrangementIDUK(ids.arrangementID)) {
-                  crossBorderArrangementsConnector.isMarketableArrangement(ids.arrangementID)
-                } else {
-                  Future.successful(false)
-                }
-            )
-
-        case _ =>
-          request.userAnswers
-            .getBase(DisclosureMarketablePage)
-            .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve user answer marketable arrangement"))(
-              bool => Future.successful(bool)
-            )
-      }
-
       //build the disclosure details model from pages and store under id
       for {
-        isMarketableResult <- isMarketable
-        updateAnswers      <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
+        isMarketableResult: Boolean <- marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(request.userAnswers)
+        updateAnswers               <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
         disclosureDetails = DisclosureDetails.build(updateAnswers)
         updatedAnswers             <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
         newAnswers                 <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
@@ -125,4 +94,5 @@ class DisclosureCheckYourAnswersController @Inject() (
         _                          <- sessionRepository.set(updateNewAnswersWithStatus)
       } yield Redirect(navigator.routeMap(DisclosureCheckYourAnswersPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
+
 }

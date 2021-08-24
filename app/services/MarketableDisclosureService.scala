@@ -17,54 +17,60 @@
 package services
 
 import connectors.HistoryConnector
+import controllers.exceptions.DisclosureInformationIsMissingException
+import helpers.JourneyHelpers
 import models.UserAnswers
-import models.disclosure.DisclosureType
-import pages.disclosure.{DisclosureDetailsPage, FirstInitialDisclosureMAPage}
-import repositories.SessionRepository
+import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector, sessionRepository: SessionRepository) {
+class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)(implicit executionContext: ExecutionContext) {
 
-  def isInitialDisclosureMarketable(userAnswers: UserAnswers, id: Int)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Boolean] = {
+  def retrieveAndSetInitialDisclosureMAFlag(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] = {
 
-    val disclosureDetails = userAnswers.get(DisclosureDetailsPage, id) match {
-      case Some(details) => details
-      case None          => throw new Exception("Missing disclosure details")
+    lazy val userSuppliedBothIDs =
+      userAnswers
+        .getBase(ReplaceOrDeleteADisclosurePage)
+        .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers"))(
+          ids => ids
+        )
+
+    lazy val userSuppliedArrangementID = userAnswers
+      .getBase(DisclosureIdentifyArrangementPage)
+      .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve arrangement id from userAnswers"))(
+        arrangementID => arrangementID
+      )
+
+    userAnswers.getBase(DisclosureTypePage) match {
+
+      case Some(Dac6add) =>
+        historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID).flatMap {
+          firstDisclosure =>
+            Future.successful(firstDisclosure.initialDisclosureMA)
+        }
+
+      case Some(Dac6rep) if !JourneyHelpers.isArrangementIDUK(userSuppliedBothIDs.arrangementID) =>
+        Future.successful(false)
+
+      case Some(Dac6rep) =>
+        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs.disclosureID).flatMap {
+          lastPreviousDisclosure =>
+            if (lastPreviousDisclosure.importInstruction.toUpperCase.contains("ADD")) {
+              Future.successful(false)
+            } else {
+              Future.successful(lastPreviousDisclosure.initialDisclosureMA)
+            }
+        }
+
+      case _ =>
+        userAnswers
+          .getBase(DisclosureMarketablePage)
+          .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve disclosureMarketable flag from userAnswers"))(
+            bool => Future.successful(bool)
+          )
     }
-
-    historyConnector
-      .retrieveFirstDisclosureForArrangementID(disclosureDetails.arrangementID.getOrElse(""))
-      .flatMap {
-        firstDisclosureDetails =>
-          disclosureDetails.disclosureType match {
-            case DisclosureType.Dac6add => Future.successful(firstDisclosureDetails.initialDisclosureMA)
-            case DisclosureType.Dac6rep =>
-              historyConnector.searchDisclosures(disclosureDetails.disclosureID.getOrElse("")).flatMap {
-                submissionHistory =>
-                  for {
-                    userAnswers <- Future.fromTry(userAnswers.setBase(FirstInitialDisclosureMAPage, firstDisclosureDetails.initialDisclosureMA))
-                    _           <- sessionRepository.set(userAnswers)
-                  } yield
-                    if (
-                      submissionHistory.details.nonEmpty &&
-                      submissionHistory.details.head.importInstruction == "Add" &&
-                      firstDisclosureDetails.initialDisclosureMA
-                    ) {
-                      //Note: There should only be one submission returned with an ADD instruction for the given disclosure ID
-                      true
-                    } else {
-                      false
-                    }
-              }
-            case _ => Future.successful(false)
-          }
-      }
-      .recoverWith {
-        case _ => Future.successful(false)
-      }
   }
-
 }
