@@ -50,7 +50,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderConnector)
     )
 
-  "isMarketableService" - {
+  "retrieveAndSetInitialDisclosureMAFlag" - {
 
     "must return initialDisclosureMA flag from user answers when import instruction DAC6NEW" in {
 
@@ -303,6 +303,173 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       }
 
       ex.getMessage mustBe "Unable to retrieve disclosureMarketable flag from userAnswers"
+    }
+  }
+
+  "displayOptionalContentInTaskList" - {
+
+    "must return false when completing the first initial disclosure that is marketable" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6new)
+        .success
+        .value
+        .setBase(DisclosureMarketablePage, true)
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe false
+    }
+
+    "must return true when disclosing an additional arrangement and first initial disclosure has MA = true" in {
+
+      val firstDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("GBA123"),
+        disclosureID = Some("GBD321"),
+        importInstruction = "dac6new",
+        initialDisclosureMA = true,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
+        .success
+        .value
+        .setBase(DisclosureIdentifyArrangementPage, "GBA123")
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+
+    }
+
+    "must return false when disclosing an additional arrangement and first initial disclosure has MA = false" in {
+
+      val firstDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("GBA123"),
+        disclosureID = Some("GBD321"),
+        importInstruction = "dac6new",
+        initialDisclosureMA = false,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
+        .success
+        .value
+        .setBase(DisclosureIdentifyArrangementPage, "GBA123")
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe false
+
+    }
+
+    "must return true when disclosing a replacement arrangement of an additional disclosure and the first initial disclosure has MA = true" in {
+
+      val firstDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("CZA123"),
+        disclosureID = Some("CZA321"),
+        importInstruction = "dac6new",
+        initialDisclosureMA = true,
+        messageRefId = "messageRefID"
+      )
+
+      val lastPreviousDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("CZA123"),
+        disclosureID = Some("CZA421"),
+        importInstruction = "dac6add",
+        initialDisclosureMA = false,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6rep)
+        .success
+        .value
+        .setBase(ReplaceOrDeleteADisclosurePage, ReplaceOrDeleteADisclosure("GBA123", "GBD321"))
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any()))
+        .thenReturn(Future.successful(lastPreviousDisclosure))
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+
+    }
+
+    "must return false when disclosing an additional NonUK arrangement and first initial disclosure has MA = true" in {
+
+      val firstDisclosure = SubmissionDetails(
+        enrolmentID = "enrolmentID",
+        submissionTime = LocalDateTime.now(),
+        fileName = "submission",
+        arrangementID = Some("GBA123"),
+        disclosureID = Some("GBD321"),
+        importInstruction = "dac6new",
+        initialDisclosureMA = true,
+        messageRefId = "messageRefID"
+      )
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .setBase(UnsubmittedDisclosurePage, Seq(UnsubmittedDisclosure("1", "My First")))
+        .success
+        .value
+        .setBase(DisclosureTypePage, DisclosureType.Dac6add)
+        .success
+        .value
+        .setBase(DisclosureIdentifyArrangementPage, "CZA123")
+        .success
+        .value
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
+        .thenReturn(Future.successful(firstDisclosure))
+
+      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+
     }
   }
 }

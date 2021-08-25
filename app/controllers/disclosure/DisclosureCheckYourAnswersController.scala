@@ -85,14 +85,17 @@ class DisclosureCheckYourAnswersController @Inject() (
 
       //build the disclosure details model from pages and store under id
       for {
-        isMarketableResult: Boolean <- marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(request.userAnswers)
-        updateAnswers               <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
-        disclosureDetails = DisclosureDetails.build(updateAnswers)
-        updatedAnswers             <- Future.fromTry(updateAnswers.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures))
-        newAnswers                 <- Future.fromTry(updatedAnswers.set(DisclosureDetailsPage, index, disclosureDetails))
-        updateNewAnswersWithStatus <- Future.fromTry(newAnswers.set(DisclosureStatusPage, index, JourneyStatus.Completed))
-        _                          <- sessionRepository.set(updateNewAnswersWithStatus)
+        isMarketableResult: Boolean      <- marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(request.userAnswers)
+        updateAnswersWithMA              <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
+        displayOptionalsFromMA: Boolean  <- marketableDisclosureService.displayOptionalContentInTaskList(request.userAnswers)
+        updateAnswersWithOptionalDisplay <- Future.fromTry(updateAnswersWithMA.setBase(FirstInitialDisclosureMAPage, displayOptionalsFromMA))
+        disclosureDetails = DisclosureDetails.build(updateAnswersWithOptionalDisplay)
+        updateAnswersWithUnSubmittedDisclosure <- Future.fromTry(
+          updateAnswersWithOptionalDisplay.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures)
+        )
+        updateAnswersWithDisclosureDetails <- Future.fromTry(updateAnswersWithUnSubmittedDisclosure.set(DisclosureDetailsPage, index, disclosureDetails))
+        updateAnswersWithStatus            <- Future.fromTry(updateAnswersWithDisclosureDetails.set(DisclosureStatusPage, index, JourneyStatus.Completed))
+        _                                  <- sessionRepository.set(updateAnswersWithStatus)
       } yield Redirect(navigator.routeMap(DisclosureCheckYourAnswersPage)(DefaultRouting(NormalMode))(Some(index))(None)(0))
   }
-
 }

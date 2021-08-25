@@ -20,7 +20,7 @@ import connectors.HistoryConnector
 import controllers.exceptions.DisclosureInformationIsMissingException
 import helpers.JourneyHelpers
 import models.UserAnswers
-import models.disclosure.DisclosureType.{Dac6add, Dac6rep}
+import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -74,6 +74,58 @@ class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)
           .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve disclosureMarketable flag from userAnswers"))(
             bool => Future.successful(bool)
           )
+    }
+  }
+
+  def displayOptionalContentInTaskList(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] = {
+
+    lazy val userSuppliedArrangementID = userAnswers
+      .getBase(DisclosureIdentifyArrangementPage)
+      .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve arrangement id from userAnswers"))(
+        arrangementID => arrangementID
+      )
+
+    lazy val userSuppliedBothIDs =
+      userAnswers
+        .getBase(ReplaceOrDeleteADisclosurePage)
+        .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers"))(
+          ids => ids
+        )
+
+    userAnswers.getBase(DisclosureTypePage) match {
+
+      case Some(Dac6new) =>
+        Future.successful(false)
+
+      case Some(Dac6rep) =>
+        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs.disclosureID).flatMap {
+          submissionDetail =>
+            //Check last previous submission import Type
+            if (submissionDetail.importInstruction.toUpperCase.contains("ADD")) {
+              historyConnector
+                .retrieveFirstDisclosureForArrangementID(
+                  submissionDetail.arrangementID.getOrElse(
+                    throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers")
+                  )
+                )
+                .flatMap {
+                  firstInitialSubmission =>
+                    if (firstInitialSubmission.initialDisclosureMA) {
+                      Future.successful(true)
+                    } else {
+                      Future.successful(false)
+                    }
+                }
+            } else {
+              Future.successful(false)
+            }
+        }
+
+      case _ =>
+        historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID).flatMap {
+          firstDisclosure =>
+            Future.successful(firstDisclosure.initialDisclosureMA)
+        }
     }
   }
 }

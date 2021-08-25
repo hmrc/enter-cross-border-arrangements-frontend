@@ -77,18 +77,22 @@ class DisclosureDetailsController @Inject() (
       val summaryLink = controllers.routes.SummaryController.onPageLoad(id).url
 
       val json = Json.obj(
-        "id"                               -> id,
-        "arrangementID"                    -> arrangementMessage,
-        "hallmarksTaskListItem"            -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
-        "arrangementDetailsTaskListItem"   -> arrangementsItem(request.userAnswers, ArrangementStatusPage, id, disclosureDetails.initialDisclosureMA),
+        "id"                    -> id,
+        "arrangementID"         -> arrangementMessage,
+        "hallmarksTaskListItem" -> hallmarksItem(request.userAnswers, HallmarkStatusPage, id),
+        "arrangementDetailsTaskListItem" -> arrangementsItem(request.userAnswers,
+                                                             ArrangementStatusPage,
+                                                             id,
+                                                             disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+        ),
         "reporterDetailsTaskListItem"      -> reporterDetailsItem(request.userAnswers, ReporterStatusPage, id),
         "relevantTaxpayerTaskListItem"     -> relevantTaxpayersItem(request.userAnswers, RelevantTaxpayerStatusPage, id),
         "associatedEnterpriseTaskListItem" -> associatedEnterpriseItem(request.userAnswers, AssociatedEnterpriseStatusPage, id),
         "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
         "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.initialDisclosureMA),
-        "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, disclosureDetails.initialDisclosureMA),
+        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
+        "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
         "backLink"                         -> backLink,
         "summaryLink"                      -> summaryLink
       )
