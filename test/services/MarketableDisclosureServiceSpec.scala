@@ -50,7 +50,28 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       bind[CrossBorderArrangementsConnector].toInstance(mockCrossBorderConnector)
     )
 
-  "retrieveAndSetInitialDisclosureMAFlag" - {
+  "nonUKArrangementID" - {
+
+    "must return true if the arrangement id is a non UK ID" in {
+
+      val arrangementID = "DEA20200701AAA000"
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      marketableDisclosureService.isNonUKArrangementID(arrangementID) mustBe true
+    }
+
+    "must return false if the arrangement id is an UK ID" in {
+
+      val arrangementID = "GBA20200701AAA000"
+
+      val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
+
+      marketableDisclosureService.isNonUKArrangementID(arrangementID) mustBe false
+    }
+  }
+
+  "setMarketableFlagForCurrentDisclosure" - {
 
     "must return initialDisclosureMA flag from user answers when import instruction DAC6NEW" in {
 
@@ -67,7 +88,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
-      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe true
+      Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe true
     }
 
     "must return initialDisclosureMA flag from user answers when import instruction is DAC6DEL" in {
@@ -85,10 +106,10 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
-      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+      Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
     }
 
-    "must return initialDisclosureMA flag 'true' if the disclosure being added to has a flag of 'true' with import instruction DAC6ADD" in {
+    "must return initialDisclosureMA flag 'false' if the disclosure being added to has a flag of 'true' with import instruction DAC6ADD" in {
 
       val lastPreviousSubmission = SubmissionDetails(
         enrolmentID = "enrolmentID",
@@ -117,7 +138,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(lastPreviousSubmission))
 
-      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe true
+      Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
     }
 
     "must return initialDisclosureMA flag 'false' if the additional disclosure has a non UK arrangement ID" in {
@@ -149,7 +170,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(lastPreviousSubmission))
 
-      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+      Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
     }
 
     "must return initialDisclosureMA flag 'false' if the disclosure being added to has a flag of 'false' with import instruction DAC6ADD" in {
@@ -181,7 +202,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(lastPreviousSubmission))
 
-      Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+      Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
     }
 
     "must return submissionDetails initial disclosureMA flag as false when user selected import instruction is DAC6REP" +
@@ -214,7 +235,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
         when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any()))
           .thenReturn(Future.successful(lastPreviousSubmission))
 
-        Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+        Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
       }
 
     "must return submissionDetails initial disclosureMA flag as false when user selected import instruction is DAC6REP" +
@@ -247,7 +268,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
         when(mockHistoryConnector.getSubmissionDetailForDisclosure(any())(any()))
           .thenReturn(Future.successful(lastPreviousSubmission))
 
-        Await.result(marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers), 10.seconds) mustBe false
+        Await.result(marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers), 10.seconds) mustBe false
 
       }
 
@@ -263,7 +284,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
       val ex = intercept[Exception] {
-        marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers)
+        marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers)
       }
 
       ex.getMessage mustBe "Unable to retrieve ids from replace or delete model from userAnswers"
@@ -281,7 +302,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
       val ex = intercept[Exception] {
-        marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers)
+        marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers)
       }
 
       ex.getMessage mustBe "Unable to retrieve arrangement id from userAnswers"
@@ -299,14 +320,14 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
       val ex = intercept[Exception] {
-        marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(userAnswers)
+        marketableDisclosureService.setMarketableFlagForCurrentDisclosure(userAnswers)
       }
 
       ex.getMessage mustBe "Unable to retrieve disclosureMarketable flag from userAnswers"
     }
   }
 
-  "displayOptionalContentInTaskList" - {
+  "getMarketableFlagFromFirstInitialDisclosure" - {
 
     "must return false when completing the first initial disclosure that is marketable" in {
 
@@ -323,7 +344,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
 
       val marketableDisclosureService = app.injector.instanceOf[MarketableDisclosureService]
 
-      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe false
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe false
     }
 
     "must return true when disclosing an additional arrangement and first initial disclosure has MA = true" in {
@@ -355,7 +376,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosure))
 
-      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe true
 
     }
 
@@ -388,7 +409,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosure))
 
-      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe false
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe false
 
     }
 
@@ -435,7 +456,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosure))
 
-      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe true
 
     }
 
@@ -468,7 +489,7 @@ class MarketableDisclosureServiceSpec extends SpecBase with MockServiceApp {
       when(mockHistoryConnector.retrieveFirstDisclosureForArrangementID(any())(any()))
         .thenReturn(Future.successful(firstDisclosure))
 
-      Await.result(marketableDisclosureService.displayOptionalContentInTaskList(userAnswers), 10.seconds) mustBe true
+      Await.result(marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(userAnswers), 10.seconds) mustBe false
 
     }
   }

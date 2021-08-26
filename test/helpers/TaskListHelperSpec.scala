@@ -207,7 +207,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = false) mustBe true
 
       }
 
@@ -226,7 +226,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = true) mustBe true
 
       }
 
@@ -251,7 +251,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = true) mustBe false
 
       }
 
@@ -270,7 +270,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = false) mustBe false
 
       }
     }
@@ -335,7 +335,39 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, currentDisclosureIsMarketable = false) mustBe true
+        }
+
+      "must be true if user is doing REPLACEMENT DISCLOSURE OF ADDITIONAL DISCLOSURE & INITIAL DISCLOSURE IS MARKETABLE and " +
+        "has NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
+
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, currentDisclosureIsMarketable = false) mustBe true
         }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
@@ -367,7 +399,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, currentDisclosureIsMarketable = true) mustBe true
         }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -408,7 +440,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
         }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -449,7 +481,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe false
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe false
         }
 
       "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
@@ -492,7 +524,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
           .success
           .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
       }
 
       "must be true if user has reported as a Intermediary but no associated enterprise" in {
@@ -535,7 +567,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
           .success
           .value
 
-        userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = false) mustBe true
+        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
       }
 
       "must be false if user is doing ADDITIONAL DISCLOSURE for an initial disclosure that IS MARKETABLE and " +
@@ -570,51 +602,27 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, isInitialDisclosureMarketable = true) mustBe false
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, currentDisclosureIsMarketable = true) mustBe false
         }
     }
 
     "displaySectionOptional" - {
 
       "must return string '(optional)' when user is disclosing an ADDITIONAL arrangement " +
-        "and initialMA flag is true" in {
+        "and firstInitialDisclosureIsMarketable flag is true" in {
 
-          val userAnswers = UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-            .success
-            .value
-            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6add, initialDisclosureMA = true))
-            .success
-            .value
-
-          displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe "(optional)"
+          displaySectionOptional(DisclosureType.Dac6add, firstInitialDisclosureWasMarketable = true) mustBe "(optional)"
         }
 
       "must return string '(optional)' when user is submitting a REPLACEMENT disclosure " +
         "for a marketable ADDITIONAL disclosure" in {
 
-          val userAnswers = UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-            .success
-            .value
-            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
-            .success
-            .value
-
-          displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = true) mustBe "(optional)"
+          displaySectionOptional(DisclosureType.Dac6rep, firstInitialDisclosureWasMarketable = true) mustBe "(optional)"
         }
 
       "must return an empty string when user is disclosing an other arrangement combo" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-          .success
-          .value
-          .set(DisclosureDetailsPage, index, mockDisclosure.copy(initialDisclosureMA = false))
-          .success
-          .value
-
-        displaySectionOptional(userAnswers, index, isInitialDisclosureMarketable = false) mustBe ""
+        displaySectionOptional(DisclosureType.Dac6add, firstInitialDisclosureWasMarketable = false) mustBe ""
       }
     }
   }

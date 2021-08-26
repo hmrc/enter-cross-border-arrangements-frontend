@@ -210,7 +210,10 @@ class DisclosureCheckYourAnswersControllerSpec extends SpecBase with ControllerM
     "must be able to build disclosure details from user answers and redirect to task list" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockMarketableArrangementService.retrieveAndSetInitialDisclosureMAFlag(any())(any()))
+      when(mockMarketableArrangementService.setMarketableFlagForCurrentDisclosure(any())(any()))
+        .thenReturn(Future.successful(false))
+
+      when(mockMarketableArrangementService.getMarketableFlagFromFirstInitialDisclosure(any())(any()))
         .thenReturn(Future.successful(false))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)

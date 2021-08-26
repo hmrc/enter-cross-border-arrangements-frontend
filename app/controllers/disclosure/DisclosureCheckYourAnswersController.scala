@@ -82,13 +82,16 @@ class DisclosureCheckYourAnswersController @Inject() (
       val disclosureName                = request.userAnswers.getBase(DisclosureNamePage)
       val updatedUnsubmittedDisclosures = openDisclosures :+ UnsubmittedDisclosure(submissionID, disclosureName.get)
       val index                         = updatedUnsubmittedDisclosures.zipWithIndex.last._2
+      val disclosureType                = request.userAnswers.getBase(DisclosureTypePage)
 
-      //build the disclosure details model from pages and store under id
       for {
-        isMarketableResult: Boolean      <- marketableDisclosureService.retrieveAndSetInitialDisclosureMAFlag(request.userAnswers)
-        updateAnswersWithMA              <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
-        displayOptionalsFromMA: Boolean  <- marketableDisclosureService.displayOptionalContentInTaskList(request.userAnswers)
-        updateAnswersWithOptionalDisplay <- Future.fromTry(updateAnswersWithMA.setBase(FirstInitialDisclosureMAPage, displayOptionalsFromMA))
+        // get & set initialDisclosureMA Flag for the current disclosure
+        isMarketableResult: Boolean              <- marketableDisclosureService.setMarketableFlagForCurrentDisclosure(request.userAnswers)
+        updateAnswersWithMA                      <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
+        // get & set the original initialDisclosureMA Flag from the initial DAC6NEW Disclosure
+        firstDisclosureMarketableResult: Boolean <- marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(request.userAnswers)
+        updateAnswersWithOptionalDisplay         <- Future.fromTry(updateAnswersWithMA.setBase(FirstInitialDisclosureMAPage, firstDisclosureMarketableResult))
+        //build the disclosure details model from disclosure pages and store under id
         disclosureDetails = DisclosureDetails.build(updateAnswersWithOptionalDisplay)
         updateAnswersWithUnSubmittedDisclosure <- Future.fromTry(
           updateAnswersWithOptionalDisplay.setBase(UnsubmittedDisclosurePage, updatedUnsubmittedDisclosures)

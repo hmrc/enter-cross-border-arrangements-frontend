@@ -21,6 +21,7 @@ import helpers.DateHelper.getSummaryTimestamp
 import helpers.TaskListHelper
 import helpers.TaskListHelper.userCanSubmit
 import models.ReporterOrganisationOrIndividual.Organisation
+import models.disclosure.DisclosureType
 import models.reporter.RoleInArrangement.Intermediary
 import models.taxpayer.Taxpayer
 import models.{Submission, UserAnswers}
@@ -60,7 +61,7 @@ class SummaryController @Inject() (
         case _                => throw new RuntimeException("Unable to retrieve details from disclosure")
       }
 
-      if (userCanSubmit(request.userAnswers, id, disclosureDetails.initialDisclosureMA)) {
+      if (userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA)) {
         val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
         val submission = Submission(request.userAnswers, id, request.enrolmentID)
@@ -85,7 +86,7 @@ class SummaryController @Inject() (
               "reporterDetails"              -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
               "residentCountryDetails"       -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
               "roleDetails"                  -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "displayHallmarksSection"      -> displayHallmarksSection(submission, request.userAnswers, id, disclosureDetails.initialDisclosureMA),
+              "displayHallmarksSection"      -> displayHallmarksSection(submission, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA),
               "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
               "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
               "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),
@@ -106,14 +107,14 @@ class SummaryController @Inject() (
       }
   }
 
-  private def displayHallmarksSection(submission: Submission, userAnswers: UserAnswers, id: Int, marketable: Boolean): Boolean =
-    TaskListHelper.isDisplaySectionOptional(userAnswers, id, marketable) match {
-      case true =>
-        submission.hallmarkDetails match {
-          case Some(_) => true
-          case _       => false
-        }
-      case _ => true
+  private def displayHallmarksSection(submission: Submission, disclosureType: DisclosureType, marketable: Boolean): Boolean =
+    if (TaskListHelper.isDisplaySectionOptional(disclosureType, marketable)) {
+      submission.hallmarkDetails match {
+        case Some(_) => true
+        case _       => false
+      }
+    } else {
+      true
     }
 
   private def getTimeStamp()(implicit messages: Messages) = {

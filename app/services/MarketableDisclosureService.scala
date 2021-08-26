@@ -18,9 +18,9 @@ package services
 
 import connectors.HistoryConnector
 import controllers.exceptions.DisclosureInformationIsMissingException
-import helpers.JourneyHelpers
 import models.UserAnswers
 import models.disclosure.DisclosureType.{Dac6add, Dac6new, Dac6rep}
+import models.disclosure.ReplaceOrDeleteADisclosure
 import pages.disclosure.{DisclosureIdentifyArrangementPage, DisclosureMarketablePage, DisclosureTypePage, ReplaceOrDeleteADisclosurePage}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,76 +29,65 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)(implicit executionContext: ExecutionContext) {
 
-  def retrieveAndSetInitialDisclosureMAFlag(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def isNonUKArrangementID(arrangementID: String): Boolean =
+    !arrangementID.substring(0, 3).contains("GBA")
 
-    lazy val userSuppliedBothIDs =
-      userAnswers
-        .getBase(ReplaceOrDeleteADisclosurePage)
-        .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers"))(
-          ids => ids
-        )
+  private def userSuppliedArrangementID(userAnswers: UserAnswers): String = userAnswers
+    .getBase(DisclosureIdentifyArrangementPage)
+    .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve arrangement id from userAnswers"))(
+      arrangementID => arrangementID
+    )
 
-    lazy val userSuppliedArrangementID = userAnswers
-      .getBase(DisclosureIdentifyArrangementPage)
-      .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve arrangement id from userAnswers"))(
-        arrangementID => arrangementID
+  private def userSuppliedBothIDs(userAnswers: UserAnswers): ReplaceOrDeleteADisclosure =
+    userAnswers
+      .getBase(ReplaceOrDeleteADisclosurePage)
+      .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers"))(
+        ids => ids
       )
 
-    userAnswers.getBase(DisclosureTypePage) match {
+  def setMarketableFlagForCurrentDisclosure(ua: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] =
+    ua.getBase(DisclosureTypePage) match {
 
-      case Some(Dac6add) if !JourneyHelpers.isArrangementIDUK(userSuppliedArrangementID) =>
+      case Some(Dac6add) if isNonUKArrangementID(userSuppliedArrangementID(ua)) =>
+        Future.successful(false)
+
+      case Some(Dac6rep) if isNonUKArrangementID(userSuppliedBothIDs(ua).arrangementID) =>
         Future.successful(false)
 
       case Some(Dac6add) =>
-        historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID).flatMap {
-          firstDisclosure =>
-            Future.successful(firstDisclosure.initialDisclosureMA)
-        }
-
-      case Some(Dac6rep) if !JourneyHelpers.isArrangementIDUK(userSuppliedBothIDs.arrangementID) =>
         Future.successful(false)
 
       case Some(Dac6rep) =>
-        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs.disclosureID).flatMap {
-          lastPreviousDisclosure =>
-            if (lastPreviousDisclosure.importInstruction.toUpperCase.contains("ADD")) {
+        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs(ua).disclosureID).flatMap {
+          disclosureDetails =>
+            if (disclosureDetails.importInstruction.equals("dac6add")) {
               Future.successful(false)
             } else {
-              Future.successful(lastPreviousDisclosure.initialDisclosureMA)
+              Future.successful(disclosureDetails.initialDisclosureMA)
             }
         }
 
       case _ =>
-        userAnswers
+        ua
           .getBase(DisclosureMarketablePage)
           .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve disclosureMarketable flag from userAnswers"))(
             bool => Future.successful(bool)
           )
     }
-  }
 
-  def displayOptionalContentInTaskList(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] = {
-
-    lazy val userSuppliedArrangementID = userAnswers
-      .getBase(DisclosureIdentifyArrangementPage)
-      .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve arrangement id from userAnswers"))(
-        arrangementID => arrangementID
-      )
-
-    lazy val userSuppliedBothIDs =
-      userAnswers
-        .getBase(ReplaceOrDeleteADisclosurePage)
-        .fold(throw new DisclosureInformationIsMissingException("Unable to retrieve ids from replace or delete model from userAnswers"))(
-          ids => ids
-        )
-
-    userAnswers.getBase(DisclosureTypePage) match {
-
+  def getMarketableFlagFromFirstInitialDisclosure(ua: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] =
+    ua.getBase(DisclosureTypePage) match {
       case Some(Dac6new) =>
         Future.successful(false)
 
+      case Some(Dac6add) if isNonUKArrangementID(userSuppliedArrangementID(ua)) =>
+        Future.successful(false)
+
+      case Some(Dac6rep) if isNonUKArrangementID(userSuppliedBothIDs(ua).arrangementID) =>
+        Future.successful(false)
+
       case Some(Dac6rep) =>
-        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs.disclosureID).flatMap {
+        historyConnector.getSubmissionDetailForDisclosure(userSuppliedBothIDs(ua).disclosureID).flatMap {
           submissionDetail =>
             //Check last previous submission import Type
             if (submissionDetail.importInstruction.toUpperCase.contains("ADD")) {
@@ -109,12 +98,7 @@ class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)
                   )
                 )
                 .flatMap {
-                  firstInitialSubmission =>
-                    if (firstInitialSubmission.initialDisclosureMA) {
-                      Future.successful(true)
-                    } else {
-                      Future.successful(false)
-                    }
+                  initialDac6New => Future.successful(initialDac6New.initialDisclosureMA)
                 }
             } else {
               Future.successful(false)
@@ -122,10 +106,9 @@ class MarketableDisclosureService @Inject() (historyConnector: HistoryConnector)
         }
 
       case _ =>
-        historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID).flatMap {
-          firstDisclosure =>
-            Future.successful(firstDisclosure.initialDisclosureMA)
+        historyConnector.retrieveFirstDisclosureForArrangementID(userSuppliedArrangementID(ua)).flatMap {
+          initialDac6New =>
+            Future.successful(initialDac6New.initialDisclosureMA)
         }
     }
-  }
 }

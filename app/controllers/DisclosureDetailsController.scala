@@ -91,8 +91,8 @@ class DisclosureDetailsController @Inject() (
         "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
         "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
-        "displaySectionOptional"           -> displaySectionOptional(request.userAnswers, id, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
+        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA),
+        "displaySectionOptional"           -> displaySectionOptional(disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
         "backLink"                         -> backLink,
         "summaryLink"                      -> summaryLink
       )

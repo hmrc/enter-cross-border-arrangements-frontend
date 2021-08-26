@@ -44,13 +44,6 @@ case class DisclosureDetails(
 
   def withIds(arrangementID: String, disclosureID: String): DisclosureDetails = copy(arrangementID = Option(arrangementID), disclosureID = Option(disclosureID))
 
-//  def withInitialDisclosureMA(firstInitialDisclosureMA: Option[Boolean]): DisclosureDetails =
-//    copy(initialDisclosureMA = (disclosureType, firstInitialDisclosureMA) match {
-//      case (Dac6add, _)           => false
-//      case (Dac6rep, Some(value)) => value
-//      case _                      => initialDisclosureMA
-//    })
-
   def validate: Either[SubmissionError, DisclosureDetails] =
     for {
       _ <- Either.cond(Option(disclosureName).exists(_.nonEmpty), disclosureName, DisclosureNameEmptyError)
