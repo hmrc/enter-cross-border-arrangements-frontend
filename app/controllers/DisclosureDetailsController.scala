@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.HistoryConnector
 import controllers.actions._
 import controllers.exceptions.DiscloseDetailsAlreadySentException
 import controllers.mixins.DefaultRouting
@@ -42,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{MarketableDisclosureService, XMLGenerationService}
+import services.XMLGenerationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Radios.MessageInterpolators
 
@@ -57,13 +56,11 @@ class DisclosureDetailsController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   contactRetrievalAction: ContactRetrievalAction,
-  historyConnector: HistoryConnector,
   frontendAppConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   navigator: NavigatorForDisclosure,
   renderer: Renderer,
-  sessionRepository: SessionRepository,
-  marketableDisclosureService: MarketableDisclosureService
+  sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -91,10 +88,14 @@ class DisclosureDetailsController @Inject() (
         "intermediariesTaskListItem"       -> intermediariesItem(request.userAnswers, IntermediariesStatusPage, id),
         "othersAffectedTaskListItem"       -> othersAffectedItem(request.userAnswers, AffectedStatusPage, id),
         "disclosureTaskListItem"           -> disclosureTypeItem(request.userAnswers, DisclosureStatusPage, id),
-        "userCanSubmit"                    -> userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA),
-        "displaySectionOptional"           -> displaySectionOptional(disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
-        "backLink"                         -> backLink,
-        "summaryLink"                      -> summaryLink
+        "userCanSubmit" -> userCanSubmit(request.userAnswers,
+                                         id,
+                                         disclosureDetails.disclosureType,
+                                         disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+        ),
+        "displaySectionOptional" -> displaySectionOptional(disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false)),
+        "backLink"               -> backLink,
+        "summaryLink"            -> summaryLink
       )
       renderer.render("disclosure/disclosureDetails.njk", json).map(Ok(_))
 

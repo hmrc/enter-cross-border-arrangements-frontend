@@ -335,7 +335,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, currentDisclosureIsMarketable = false) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, firstInitialDisclosureWasMarketable = true) mustBe true
         }
 
       "must be true if user is doing REPLACEMENT DISCLOSURE OF ADDITIONAL DISCLOSURE & INITIAL DISCLOSURE IS MARKETABLE and " +
@@ -367,7 +367,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, currentDisclosureIsMarketable = false) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, firstInitialDisclosureWasMarketable = true) mustBe true
         }
 
       "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
@@ -399,7 +399,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, currentDisclosureIsMarketable = true) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6rep, firstInitialDisclosureWasMarketable = true) mustBe true
         }
 
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
@@ -440,7 +440,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, firstInitialDisclosureWasMarketable = false) mustBe true
         }
 
       "must be false if user is doing any other DISCLOSURE combination & has " +
@@ -481,7 +481,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe false
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6new, firstInitialDisclosureWasMarketable = false) mustBe false
         }
 
       "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
@@ -524,7 +524,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
           .success
           .value
 
-        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
+        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, firstInitialDisclosureWasMarketable = false) mustBe true
       }
 
       "must be true if user has reported as a Intermediary but no associated enterprise" in {
@@ -567,7 +567,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
           .success
           .value
 
-        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, currentDisclosureIsMarketable = false) mustBe true
+        userCanSubmit(userAnswers, index, DisclosureType.Dac6new, firstInitialDisclosureWasMarketable = false) mustBe true
       }
 
       "must be false if user is doing ADDITIONAL DISCLOSURE for an initial disclosure that IS MARKETABLE and " +
@@ -602,7 +602,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
             .success
             .value
 
-          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, currentDisclosureIsMarketable = true) mustBe false
+          userCanSubmit(userAnswers, index, DisclosureType.Dac6add, firstInitialDisclosureWasMarketable = true) mustBe false
         }
     }
 

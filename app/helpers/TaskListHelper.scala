@@ -122,7 +122,7 @@ object TaskListHelper {
       case _ => false
     }
 
-  def userCanSubmit(ua: UserAnswers, id: Int, disclosureType: DisclosureType, currentDisclosureIsMarketable: Boolean): Boolean = {
+  def userCanSubmit(ua: UserAnswers, id: Int, disclosureType: DisclosureType, firstInitialDisclosureWasMarketable: Boolean): Boolean = {
 
     val submissionContainsTaxpayer: Boolean = ua.get(TaxpayerLoopPage, id).fold(false)(_.nonEmpty) ||
       ua.get(RoleInArrangementPage, id).fold(false)(_.equals(RoleInArrangement.Taxpayer))
@@ -136,17 +136,17 @@ object TaskListHelper {
 
     val listToCheckForCompletion: Seq[QuestionPage[JourneyStatus]] =
       disclosureType match {
-        case DisclosureType.Dac6add if !currentDisclosureIsMarketable =>
+        case DisclosureType.Dac6add if firstInitialDisclosureWasMarketable =>
           mandatoryCompletion
-        case DisclosureType.Dac6rep if !currentDisclosureIsMarketable =>
+        case DisclosureType.Dac6rep if firstInitialDisclosureWasMarketable =>
           mandatoryCompletion
         case _ =>
           mandatoryCompletion ++ optionalCompletion
       }
 
     (ua.get(HallmarkStatusPage, id), ua.get(ArrangementStatusPage, id)) match {
-      case (Some(Completed), None) if currentDisclosureIsMarketable => false
-      case _                                                        => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, currentDisclosureIsMarketable)
+      case (Some(Completed), None) if firstInitialDisclosureWasMarketable => false
+      case _                                                              => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, firstInitialDisclosureWasMarketable)
     }
   }
 }

@@ -73,7 +73,6 @@ object Submission {
   def apply(userAnswers: UserAnswers, id: Int, enrolmentID: String): Submission =
     (for {
       disclosureDetails <- userAnswers.get(DisclosureDetailsPage, id)
-//      disclosureDetails <- userAnswers.get(DisclosureDetailsPage, id).map(_.withInitialDisclosureMA(userAnswers.getBase(FirstInitialDisclosureMAPage)))
       reporterDetails       = userAnswers.get(ReporterDetailsPage, id)
       associatedEnterprises = userAnswers.get(AssociatedEnterpriseLoopPage, id).getOrElse(IndexedSeq.empty)
       taxpayers             = userAnswers.get(TaxpayerLoopPage, id).getOrElse(IndexedSeq.empty)

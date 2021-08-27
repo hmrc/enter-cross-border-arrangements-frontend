@@ -86,8 +86,8 @@ class DisclosureCheckYourAnswersController @Inject() (
 
       for {
         // get & set initialDisclosureMA Flag for the current disclosure
-        isMarketableResult: Boolean              <- marketableDisclosureService.setMarketableFlagForCurrentDisclosure(request.userAnswers)
-        updateAnswersWithMA                      <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
+        isMarketableResult: Boolean <- marketableDisclosureService.setMarketableFlagForCurrentDisclosure(request.userAnswers)
+        updateAnswersWithMA         <- Future.fromTry(request.userAnswers.setBase(DisclosureMarketablePage, isMarketableResult))
         // get & set the original initialDisclosureMA Flag from the initial DAC6NEW Disclosure
         firstDisclosureMarketableResult: Boolean <- marketableDisclosureService.getMarketableFlagFromFirstInitialDisclosure(request.userAnswers)
         updateAnswersWithOptionalDisplay         <- Future.fromTry(updateAnswersWithMA.setBase(FirstInitialDisclosureMAPage, firstDisclosureMarketableResult))
