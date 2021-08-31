@@ -61,7 +61,7 @@ class SummaryController @Inject() (
         case _                => throw new RuntimeException("Unable to retrieve details from disclosure")
       }
 
-      if (userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA)) {
+      if (userCanSubmit(request.userAnswers, id, disclosureDetails.disclosureType, disclosureDetails.firstInitialDisclosureMA.getOrElse(false))) {
         val helper = new CheckYourAnswersHelper(request.userAnswers, 0)
 
         val submission = Submission(request.userAnswers, id, request.enrolmentID)
@@ -83,10 +83,13 @@ class SummaryController @Inject() (
               "arrangementList" -> submission.arrangementDetails.fold[Seq[DisplayRow]](Seq.empty)(
                 a => a.createDisplayRows
               ),
-              "reporterDetails"              -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "residentCountryDetails"       -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "roleDetails"                  -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
-              "displayHallmarksSection"      -> displayHallmarksSection(submission, disclosureDetails.disclosureType, disclosureDetails.initialDisclosureMA),
+              "reporterDetails"        -> getOrganisationOrIndividualSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "residentCountryDetails" -> helper.buildTaxResidencySummaryForReporter(id).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "roleDetails"            -> getIntermediaryOrTaxpayerSummary(request.userAnswers, id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
+              "displayHallmarksSection" -> displayHallmarksSection(submission,
+                                                                   disclosureDetails.disclosureType,
+                                                                   disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+              ),
               "hallmarksList"                -> getHallmarkSummaryList(id, helper).map(SummaryListDisplay.rowToDisplayRow(_)),
               "taxpayersList"                -> submission.taxpayers.map(_.createDisplayRows),
               "taxpayerUpdateRow"            -> Seq(helper.updateTaxpayers(id)).flatten.map(SummaryListDisplay.rowToDisplayRow(_)),

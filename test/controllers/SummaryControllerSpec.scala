@@ -175,31 +175,31 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
     "do not display associated enterprises under certain conditions" in {
 
-      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
-      val reporterLiability = ReporterLiability("intermediary")
-      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
-
-      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
-
-      // conditions:
-      submission.disclosureDetails.initialDisclosureMA mustBe true
-      submission.reporterDetails.exists(_.isIntermediary) mustBe true
-      submission.taxpayers.isEmpty mustBe true
-
-      // therefore
-      submission.displayAssociatedEnterprises mustBe false
-    }
-
-    "display associated enterprises otherwise break condition 1" in {
-
       val disclosureDetails = DisclosureDetails(disclosureName = "name")
       val reporterLiability = ReporterLiability("intermediary")
       val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
 
+      // conditions:
+      submission.disclosureDetails.firstInitialDisclosureMA mustBe None
+      submission.reporterDetails.exists(_.isIntermediary) mustBe true
+      submission.taxpayers.isEmpty mustBe true
+
+      // therefore
+      submission.displayAssociatedEnterprises mustBe true
+    }
+
+    "display associated enterprises otherwise break condition 1" in {
+
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", firstInitialDisclosureMA = Some(false))
+      val reporterLiability = ReporterLiability("intermediary")
+      val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
+
+      val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
+
       // break condition 1:
-      submission.disclosureDetails.initialDisclosureMA mustBe false
+      submission.disclosureDetails.firstInitialDisclosureMA mustBe Some(false)
       submission.reporterDetails.exists(_.isIntermediary) mustBe true
       submission.taxpayers.isEmpty mustBe true
 
@@ -208,14 +208,14 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
     "display associated enterprises otherwise break condition 2" in {
 
-      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", firstInitialDisclosureMA = Some(true))
       val reporterLiability = ReporterLiability("taxpayer")
       val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
       val submission = Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails))
 
       // break condition 2:
-      submission.disclosureDetails.initialDisclosureMA mustBe true
+      submission.disclosureDetails.firstInitialDisclosureMA mustBe Some(true)
       submission.reporterDetails.exists(_.isIntermediary) mustBe false
       submission.taxpayers.isEmpty mustBe true
 
@@ -224,7 +224,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
 
     "display associated enterprises otherwise break condition 3" in {
 
-      val disclosureDetails = DisclosureDetails(disclosureName = "name", initialDisclosureMA = true)
+      val disclosureDetails = DisclosureDetails(disclosureName = "name", firstInitialDisclosureMA = Some(true))
       val reporterLiability = ReporterLiability("intermediary")
       val reporterDetails   = ReporterDetails(individual = Some(validIndividual), liability = Some(reporterLiability))
 
@@ -233,7 +233,7 @@ class SummaryControllerSpec extends SpecBase with ControllerMockFixtures with Nu
         Submission(enrolmentID = "enrolmentID", disclosureDetails = disclosureDetails, reporterDetails = Some(reporterDetails), taxpayers = taxpayers)
 
       // break condition 3:
-      submission.disclosureDetails.initialDisclosureMA mustBe true
+      submission.disclosureDetails.firstInitialDisclosureMA mustBe Some(true)
       submission.reporterDetails.exists(_.isIntermediary) mustBe true
       submission.taxpayers.isEmpty mustBe false
 

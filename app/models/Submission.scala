@@ -55,7 +55,7 @@ case class Submission(enrolmentID: String,
 
   //Hide when MA = True, Reporter = intermediary, No relevant tax payers
   val displayAssociatedEnterprises: Boolean =
-    !(disclosureDetails.initialDisclosureMA && reporterDetails.exists(_.isIntermediary) && taxpayers.isEmpty)
+    !(disclosureDetails.firstInitialDisclosureMA.getOrElse(false) && reporterDetails.exists(_.isIntermediary) && taxpayers.isEmpty)
 
   def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
 
