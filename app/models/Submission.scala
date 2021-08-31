@@ -18,6 +18,7 @@ package models
 
 import models.affected.Affected
 import models.arrangement.ArrangementDetails
+import models.disclosure.DisclosureType.Dac6new
 import models.disclosure.{DisclosureDetails, DisclosureType}
 import models.enterprises.AssociatedEnterprise
 import models.hallmarks.HallmarkDetails
@@ -54,8 +55,13 @@ case class Submission(enrolmentID: String,
   val getDisclosureType: DisclosureType = disclosureDetails.disclosureType
 
   //Hide when MA = True, Reporter = intermediary, No relevant tax payers
-  val displayAssociatedEnterprises: Boolean =
-    !(disclosureDetails.firstInitialDisclosureMA.getOrElse(false) && reporterDetails.exists(_.isIntermediary) && taxpayers.isEmpty)
+  def displayAssociatedEnterprises(): Boolean =
+    disclosureDetails.disclosureType match {
+      case Dac6new =>
+        !(disclosureDetails.initialDisclosureMA && reporterDetails.exists(_.isIntermediary) && taxpayers.isEmpty)
+      case _ =>
+        !(disclosureDetails.firstInitialDisclosureMA.getOrElse(false) && reporterDetails.exists(_.isIntermediary) && taxpayers.isEmpty)
+    }
 
   def setDisclosureDetails(disclosureDetails: DisclosureDetails): Submission = copy(disclosureDetails = disclosureDetails)
 
