@@ -207,7 +207,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = false) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, mockDisclosure.copy(firstInitialDisclosureMA = Some(false))) mustBe true
 
       }
 
@@ -226,7 +226,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = true) mustBe true
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, mockDisclosure.copy(firstInitialDisclosureMA = Some(true))) mustBe true
 
       }
 
@@ -251,7 +251,7 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage, HallmarkStatusPage, ArrangementStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = true) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, mockDisclosure.copy(firstInitialDisclosureMA = Some(true))) mustBe false
 
       }
 
@@ -270,9 +270,59 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
         val listOfPages = Seq(ReporterStatusPage, DisclosureStatusPage)
 
-        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, currentDisclosureIsMarketable = false) mustBe false
+        haveAllJourneysBeenCompleted(listOfPages, userAnswers, index, mockDisclosure.copy(firstInitialDisclosureMA = Some(false))) mustBe false
 
       }
+
+      "must return false if user is doing a REPLACEMENT of an NEW DISCLOSURE that IS MARKETABLE and " +
+        "have NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
+
+          val userAnswers = UserAnswers(userAnswersId)
+            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
+            .success
+            .value
+            .set(ReporterStatusPage, index, Completed)
+            .success
+            .value
+            .set(RelevantTaxpayerStatusPage, index, Completed)
+            .success
+            .value
+            .set(IntermediariesStatusPage, index, Completed)
+            .success
+            .value
+            .set(AffectedStatusPage, index, Completed)
+            .success
+            .value
+            .set(AssociatedEnterpriseStatusPage, index, Completed)
+            .success
+            .value
+            .set(DisclosureStatusPage, index, Completed)
+            .success
+            .value
+            .set(HallmarkStatusPage, index, NotStarted)
+            .success
+            .value
+            .set(ArrangementStatusPage, index, NotStarted)
+            .success
+            .value
+
+          val listOfPages = Seq(
+            ReporterStatusPage,
+            RelevantTaxpayerStatusPage,
+            IntermediariesStatusPage,
+            AffectedStatusPage,
+            AssociatedEnterpriseStatusPage,
+            DisclosureStatusPage,
+            HallmarkStatusPage,
+            ArrangementStatusPage
+          )
+
+          haveAllJourneysBeenCompleted(listOfPages,
+                                       userAnswers,
+                                       index,
+                                       mockDisclosure.copy(disclosureType = Dac6rep, initialDisclosureMA = true, firstInitialDisclosureMA = Some(true))
+          ) mustBe false
+        }
     }
 
     "hrefToStartJourneyOrCya" - {
@@ -376,41 +426,6 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
           ) mustBe true
         }
 
-      "must be true if user is doing a REPLACEMENT of an ADDITIONAL DISCLOSURE that IS MARKETABLE and " +
-        "have NOT started HALLMARKS or ARRANGEMENT DETAILS journey" in {
-
-          val userAnswers = UserAnswers(userAnswersId)
-            .setBase(UnsubmittedDisclosurePage, Seq(mockUnsubmittedDisclosure))
-            .success
-            .value
-            .set(DisclosureDetailsPage, index, mockDisclosure.copy(disclosureType = Dac6rep))
-            .success
-            .value
-            .set(ReporterStatusPage, index, Completed)
-            .success
-            .value
-            .set(RelevantTaxpayerStatusPage, index, Completed)
-            .success
-            .value
-            .set(IntermediariesStatusPage, index, Completed)
-            .success
-            .value
-            .set(AffectedStatusPage, index, Completed)
-            .success
-            .value
-            .set(AssociatedEnterpriseStatusPage, index, Completed)
-            .success
-            .value
-            .set(DisclosureStatusPage, index, Completed)
-            .success
-            .value
-
-          userCanSubmit(userAnswers,
-                        index,
-                        mockDisclosure.copy(disclosureType = Dac6rep, initialDisclosureMA = true, firstInitialDisclosureMA = Some(true))
-          ) mustBe true
-        }
-
       "must be true if user is doing ANY DISCLOSURE & has COMPLETED " +
         "all relevant journeys" in {
 
@@ -492,7 +507,6 @@ class TaskListHelperSpec extends ControllerMockFixtures with SpecBase with Scala
 
           userCanSubmit(userAnswers, index, mockDisclosure.copy(initialDisclosureMA = false)) mustBe false
         }
-
       "must be true if user has reported as a taxpayer but not added an associated enterprise" in {
 
         val userAnswers = UserAnswers(userAnswersId)

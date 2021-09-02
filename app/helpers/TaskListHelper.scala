@@ -82,20 +82,27 @@ object TaskListHelper {
     )
   }
 
-  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]], ua: UserAnswers, id: Int, currentDisclosureIsMarketable: Boolean): Boolean =
+  def haveAllJourneysBeenCompleted(pageList: Seq[_ <: QuestionPage[JourneyStatus]], ua: UserAnswers, id: Int, disclosureDetails: DisclosureDetails): Boolean = {
+
+    val firstInitialDisclosure = disclosureDetails.firstInitialDisclosureMA.getOrElse(false)
+    val isDac6RepOfNewMarketable =
+      disclosureDetails.disclosureType.equals(DisclosureType.Dac6rep) && disclosureDetails.initialDisclosureMA && firstInitialDisclosure
+
     pageList
       .map(
         page =>
           ua.get(page, id) match {
-            case Some(Completed)                                                                        => true
-            case Some(InProgress) if currentDisclosureIsMarketable && optionalCompletion.contains(page) => false
-            case _ if currentDisclosureIsMarketable && optionalCompletion.contains(page)                => true
-            case _                                                                                      => false
+            case Some(Completed)                                                                 => true
+            case Some(InProgress) if firstInitialDisclosure && optionalCompletion.contains(page) => false
+            case _ if isDac6RepOfNewMarketable && optionalCompletion.contains(page)              => false
+            case _ if firstInitialDisclosure && optionalCompletion.contains(page)                => true
+            case _                                                                               => false
           }
       )
       .forall(
         bool => bool
       )
+  }
 
   def hrefToStartJourneyOrCya(ua: UserAnswers, page: QuestionPage[JourneyStatus], url: String, altUrl: String, id: Int): String =
     ua.get(page, id) match {
@@ -140,15 +147,20 @@ object TaskListHelper {
       disclosureDetails.disclosureType match {
         case DisclosureType.Dac6add if firstInitialDisclosureWasMarketable =>
           mandatoryCompletion
+
+        case DisclosureType.Dac6rep if firstInitialDisclosureWasMarketable && disclosureDetails.initialDisclosureMA =>
+          mandatoryCompletion ++ optionalCompletion
+
         case DisclosureType.Dac6rep if firstInitialDisclosureWasMarketable =>
           mandatoryCompletion
+
         case _ =>
           mandatoryCompletion ++ optionalCompletion
       }
 
     (ua.get(HallmarkStatusPage, id), ua.get(ArrangementStatusPage, id)) match {
       case (Some(Completed), None) if firstInitialDisclosureWasMarketable => false
-      case _                                                              => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, firstInitialDisclosureWasMarketable)
+      case _                                                              => haveAllJourneysBeenCompleted(listToCheckForCompletion, ua, id, disclosureDetails)
     }
   }
 }
